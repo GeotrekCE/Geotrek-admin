@@ -1,0 +1,13 @@
+*.pyc
+*.zip
+*.tar.gz
+# buildout stuff
+.installed.cfg
+bin/
+downloads/
+eggs/
+parts/
+docs/_build/
+var/
+# Do not track javascript lib that get downloaded by the buildout
+shared/js/lib/
