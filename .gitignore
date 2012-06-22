@@ -9,5 +9,14 @@ eggs/
 parts/
 docs/_build/
 var/
+
+# buildout stuff for poc
+poc/.installed.cfg
+poc/bin/
+poc/downloads/
+poc/eggs/
+poc/parts/
+poc/docs/_build/
+poc/var/
 # Do not track javascript lib that get downloaded by the buildout
-shared/js/lib/
+poc/shared/js/lib/
