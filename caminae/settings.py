@@ -48,6 +48,7 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+AUTH_PROFILE_MODULE = 'caminae.auth.UserProfile'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
@@ -131,6 +132,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     
     'south',
+    
+    'caminae.auth',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -11,7 +11,7 @@ clean:
 
 unit_tests: bin/
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django manage tests
+	bin/django test
 
 tests: unit_tests
 
