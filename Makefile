@@ -11,7 +11,7 @@ clean:
 
 unit_tests: bin/
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django test
+	bin/django jenkins --coverage-exclude=django
 
 tests: unit_tests
 
