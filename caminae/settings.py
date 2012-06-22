@@ -1,4 +1,6 @@
-# Django settings for caminae project.
+import os
+
+PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -11,8 +13,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'develop.db',                   # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -27,7 +29,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Paris'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -45,6 +47,10 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
+
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+LOGIN_REDIRECT_URL = '/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -67,6 +73,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT_PATH, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -77,8 +84,10 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;'
@@ -87,7 +96,7 @@ SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -106,6 +115,7 @@ ROOT_URLCONF = 'caminae.urls'
 WSGI_APPLICATION = 'caminae.wsgi.application'
 
 TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT_PATH, 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -118,10 +128,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admin',
+    
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -1,0 +1,32 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+    <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+    {% endblock head %}
+</head>
+<body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">{{ TITLE }}</a>
+          <ul class="nav pull-right">
+            {% block toolbar %}
+            {% endblock toolbar %}
+            <li class="divider-vertical"></li>
+            <li><a href="{% url logout %}">{% trans "Logout" %}</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% block body %}
+        <div class="content">
+          {% block content %}
+          {% endblock content %}
+        </div>
+    {% endblock body %}
+</body>
+</html>

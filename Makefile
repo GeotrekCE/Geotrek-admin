@@ -17,6 +17,7 @@ tests: unit_tests
 
 serve: bin/
 	bin/buildout -Nvc buildout-dev.cfg
+	bin/django syncdb --migrate
 	bin/django runserver
 
 deploy: bin/
