@@ -1,14 +1,20 @@
 *.pyc
 *.zip
 *.tar.gz
+# caminae stuff
+caminae.egg-info/
 # buildout stuff
 .installed.cfg
 bin/
 downloads/
+develop-eggs/
 eggs/
 parts/
 docs/_build/
 var/
+include/
+lib/
+local/
 
 # buildout stuff for poc
 poc/.installed.cfg

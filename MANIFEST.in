@@ -1,0 +1,2 @@
+recursive-include caminae/static *.css
+recursive-include caminae/templates *.html
