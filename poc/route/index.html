@@ -1,6 +1,8 @@
 <html>
     <head><title>POC Route</title></head>
 
+    <link rel="stylesheet" href="js/lib/leaflet/leaflet.css" />
+
     <script type="text/javascript" src="js/lib/jquery.js"></script>
     <script src="js/lib/leaflet/leaflet-src.js"></script>
 
@@ -16,12 +18,60 @@
     <script type="text/javascript" src="js/lib/underscore.js"></script>
 
 <script type="text/javascript">
+var map;
+
 $(function() {
-    $('<div/>').text('Oh Hello !').appendTo(document.body);
+    $('#map').css({
+        'width': 800, 'height': 800
+      , 'margin': '0 auto'
+      , 'border': '1px solid black'
+      , 'overflow': 'hidden'
+    });
+
+    $.getJSON('resources/rps-sentiers-wgs84.geojson', init_map_setup);
 });
+
+function init_map_setup(footpath_geojson_data) {
+    // layers //
+
+    footpath_layer = new L.GeoJSON();
+    footpath_layer.addGeoJSON(footpath_geojson_data);
+
+    // http://geobi.makina-corpus.net/livembtiles/PNE_16042012_4/11/1059/737.png
+    var tilelayer_url = 'http://geobi.makina-corpus.net/livembtiles/PNE_16042012_4/{z}/{x}/{y}.png';
+    var tilelayer = new L.TileLayer(tilelayer_url, {
+         'minZoom': 10
+    });
+
+    // map //
+
+    // http://geobi.makina-corpus.net/livembtiles/PNE_16042012_4.jsonp
+    var southWest = new L.LatLng(44.3788, 5.7651)
+      , northEast = new L.LatLng(45.2498, 6.7072)
+      , bounds = new L.LatLngBounds(southWest, northEast)
+      , center = new L.LatLng(44.8189, 6.2993) // bounds.getCenter()
+      , zoom = 12
+    ;
+
+    map = new L.Map('map', {
+        'center': center
+      , 'zoom': zoom
+      , 'layers': [ footpath_layer, tilelayer ]
+    });
+
+
+    var baseLayers = { "base": tilelayer };
+    var overlays = { "troncons": footpath_geojson_data };
+
+    layersControl = new L.Control.Layers(baseLayers, overlays);
+    map.addControl(layersControl);
+}
+
 </script>
 
 <body>
+
+    <div id="map"></div>
 
 </body>
 </html>
