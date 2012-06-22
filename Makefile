@@ -1,3 +1,5 @@
+#sudo aptitude install python-virtualenv make
+
 bin/ lib/:
 	virtualenv .
 	wget http://python-distribute.org/bootstrap.py
