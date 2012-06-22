@@ -1,1 +1,0 @@
-../../../../shared/js/lib/jquery.js
