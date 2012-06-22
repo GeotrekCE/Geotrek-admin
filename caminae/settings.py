@@ -164,3 +164,6 @@ LOGGING = {
         },
     }
 }
+
+
+DEFAULT_STRUCTURE_NAME = "PNE"
