@@ -122,7 +122,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-INSTALLED_APPS = (
+PROJECT_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -132,9 +132,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     
     'south',
-    
-    'caminae.auth',
 )
+
+INSTALLED_APPS = (
+    'caminae.auth',
+) + PROJECT_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

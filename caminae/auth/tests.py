@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from models import Structure, UserProfile
 
@@ -15,3 +16,4 @@ class UserProfileTest(TestCase):
         u = User(username="Joe", password="Bar")
         u.save()
         self.assertTrue(isinstance(u.profile, UserProfile))
+        self.assertEqual(u.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
