@@ -11,7 +11,7 @@ clean:
 
 unit_tests: bin/
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django jenkins auth
+	bin/django jenkins --coverage-rcfile=.coveragerc auth
 
 tests: unit_tests
 
