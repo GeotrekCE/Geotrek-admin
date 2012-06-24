@@ -18,7 +18,7 @@ unit_tests: bin/
 	bin/django jenkins --coverage-rcfile=.coveragerc auth
 
 functional_tests: 
-	casperjs --baseurl=$(baseurl) --save=reports/auth.xml caminae/tests/auth.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
 
 tests: unit_tests functional_tests
 
