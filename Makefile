@@ -1,3 +1,5 @@
+baseurl=http://localhost:8000
+
 bin/ lib/:
 	virtualenv .
 	wget http://python-distribute.org/bootstrap.py
@@ -7,13 +9,18 @@ bin/ lib/:
 install: bin/
 
 clean:
-	rm -rf bin/ lib/ local/ include/
+	rm -rf bin/ lib/ local/ include/ *.egg-info/ develop-eggs/ parts/
+	rm -rf reports/ var/
+	rm -f .installed.cfg 
 
 unit_tests: bin/
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/django jenkins --coverage-rcfile=.coveragerc auth
 
-tests: unit_tests
+functional_tests: 
+	casperjs --baseurl=$(baseurl) --save=reports/auth.xml caminae/tests/auth.js
+
+tests: unit_tests functional_tests
 
 serve: bin/
 	bin/buildout -Nvc buildout-dev.cfg

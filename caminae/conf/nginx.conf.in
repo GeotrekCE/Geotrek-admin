@@ -1,0 +1,33 @@
+upstream app_server {
+    server ${parts['gunicorn-conf'].bind}:${parts['gunicorn-conf'].port} fail_timeout=0;
+}
+
+server {
+    listen ${options.port} default;
+    server_name _;
+
+    keepalive_timeout 5;
+
+    location ${parts['django'].staticurl} {
+        alias ${parts['django'].staticroot};
+    }
+
+    location / {
+        proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
+        proxy_set_header Host $$http_host;
+        proxy_redirect off;
+
+        {% if options.cache in ['True', 'true'] %}
+            proxy_cache             ${options.cachename};
+            proxy_cache_key         $$scheme$$host$$uri$$is_args$$args;
+            proxy_cache_valid       200  ${options.cachetime};
+            proxy_cache_use_stale   error timeout invalid_header;
+        {% end %}
+
+        if ( $$uri ~* \.(css|js|json|jonsp|png) ) {
+            expires ${options.expiretime};
+        }
+
+        proxy_pass  http://app_server;
+    }
+}

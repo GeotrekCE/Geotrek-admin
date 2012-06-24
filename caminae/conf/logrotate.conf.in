@@ -1,0 +1,8 @@
+rotate 4
+weekly
+create
+compress
+delaycompress
+
+${parts['buildout'].directory}/var/log/*.log {
+}

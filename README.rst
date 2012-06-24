@@ -4,17 +4,18 @@
 SETUP
 =====
 
-Install dependencies :
-
-::
-
-    make install
-
 Run development server :
 
 ::
 
+    ./install.sh --dev
     make serve
+
+Run tests :
+
+::
+
+    make tests
 
 ==========
 DEPLOYMENT
@@ -22,6 +23,7 @@ DEPLOYMENT
 
 ::
 
+    ./install.sh
     make deploy
 
 =======
