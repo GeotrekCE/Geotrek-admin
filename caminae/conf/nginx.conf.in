@@ -1,5 +1,5 @@
 upstream app_server {
-    server ${parts['gunicorn-conf'].bind}:${parts['gunicorn-conf'].port} fail_timeout=0;
+    server ${parts['gunicorn-conf'].bind} fail_timeout=0;
 }
 
 server {

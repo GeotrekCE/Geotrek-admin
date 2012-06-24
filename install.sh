@@ -35,7 +35,7 @@ function ubuntu_precise {
     set -x
     
     sudo apt-get update > /dev/null
-    sudo apt-get install python-virtualenv make
+    sudo apt-get install python-virtualenv build-essential unzip
     
     if $dev ; then
         mkdir -p lib/ ; cd lib/
