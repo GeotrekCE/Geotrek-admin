@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title></title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+    <link rel="stylesheet" href="js/lib/leaflet/leaflet.css" />
+    <script type="text/javascript" src="js/lib/leaflet/leaflet-src.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+    window.onload = function() {
+        var map = new L.Map('map');
+        map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'))
+           .fitWorld();
+    };
+    //]]>
+    </script>
+    <style type="text/css">
+        #map {position: absolute; top: 1em; right: 1em; bottom: 1em; left: 1em;  border: 1px solid black;}
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
