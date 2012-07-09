@@ -7,8 +7,9 @@
     <script type="text/javascript" src="js/lib/leaflet/leaflet-src.js"></script>
     <script type="text/javascript">
     //<![CDATA[
+    var map;
     window.onload = function() {
-        var map = new L.Map('map');
+        map = new L.Map('map');
         map.addLayer(new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'))
            .fitWorld();
     };
