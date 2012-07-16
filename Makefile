@@ -29,5 +29,5 @@ serve: bin/
 
 deploy: bin/
 	bin/buildout -Nvc buildout-prod.cfg
-	bin/django syncdb --migrate
+	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
