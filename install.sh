@@ -32,8 +32,11 @@ done
 function ubuntu_precise {
     set -x
     
+    sudo apt-get install python-software-properties
+    sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
     sudo apt-get update > /dev/null
     sudo apt-get install python-virtualenv build-essential unzip
+    sudo apt-get install libjson0 libgdal1 libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2
     
     # Default settings if not any
     if [ ! -f settings.ini ]; then
@@ -49,11 +52,15 @@ dbname = caminae
 dbuser = postgres
 dbpassword = postgres
 dbhost = localhost
-dbport = 5433
+dbport = 5432
 _EOF_
     fi
     # Prompt user to edit/review settings
     editor settings.ini
+    
+    # Activate PostGIS in database
+    dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < settings.ini)
+    sudo -n -u postgres -s -- psql -d ${dbname} "CREATE EXTENSION postgis;"
     
     if $dev ; then
         mkdir -p lib/
