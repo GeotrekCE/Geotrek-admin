@@ -6,8 +6,6 @@
 
 dev=false
 
-#TODO: parameter for public portal deployment
-
 usage () {
     cat <<- _EOF_
 Usage: Install project [OPTIONS]
@@ -37,8 +35,30 @@ function ubuntu_precise {
     sudo apt-get update > /dev/null
     sudo apt-get install python-virtualenv build-essential unzip
     
+    # Default settings if not any
+    if [ ! -f settings.ini ]; then
+        cat > settings.ini << _EOF_
+#
+#  Caminae Settings
+#..........................
+# (Note: If you edit this file out of install process, 
+#  run "make deploy" to apply changes)
+
+[settings]
+dbname = caminae
+dbuser = postgres
+dbpassword = postgres
+dbhost = localhost
+dbport = 5433
+_EOF_
+    fi
+    # Prompt user to edit/review settings
+    editor settings.ini
+    
     if $dev ; then
-        mkdir -p lib/ ; cd lib/
+        mkdir -p lib/
+        cd lib/
+        
         wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
         tar -jxvf phantomjs.tar.bz2
         rm phantomjs.tar.bz2
