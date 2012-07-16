@@ -170,3 +170,7 @@ LOGGING = {
 
 
 DEFAULT_STRUCTURE_NAME = "PNE"
+
+# Geographic settings:
+# * SRS to be used (EPSG code):
+SRID = 2154
