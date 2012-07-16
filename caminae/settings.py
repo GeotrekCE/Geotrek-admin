@@ -136,6 +136,7 @@ PROJECT_APPS = (
 
 INSTALLED_APPS = (
     'caminae.auth',
+    'caminae.core',
 ) + PROJECT_APPS
 
 # A sample logging configuration. The only tangible logging
