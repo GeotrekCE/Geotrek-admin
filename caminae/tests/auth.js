@@ -3,7 +3,7 @@ var casper = require('casper').create();
 var baseurl = casper.cli.options['baseurl'];
 
 casper.start(baseurl, function() {
-    this.test.assert(this.getCurrentUrl() == baseurl + "/login/?next=/", 'url is the one expected');
+    this.test.assert(this.getCurrentUrl().indexOf(baseurl + "/login/?next=/") == 0, 'url is the one expected');
 });
 
 casper.run(function() {
