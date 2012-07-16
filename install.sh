@@ -53,6 +53,8 @@ dbuser = postgres
 dbpassword = postgres
 dbhost = localhost
 dbport = 5432
+
+rooturl = /
 _EOF_
     fi
     # Prompt user to edit/review settings
