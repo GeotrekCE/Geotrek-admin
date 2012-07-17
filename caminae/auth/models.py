@@ -8,7 +8,7 @@ from django.contrib.auth.signals import user_logged_in
 
 class Structure(models.Model):
     name = models.CharField(max_length=256)
-    
+
     def __unicode__(self):
         return self.name
 
@@ -20,7 +20,7 @@ def default_structure():
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
 
-    language = models.CharField(_('Language'), max_length=10, choices=settings.LANGUAGES, 
+    language = models.CharField(_('Language'), max_length=10, choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
     structure = models.ForeignKey(Structure, default=default_structure)
 
@@ -40,10 +40,12 @@ class StructureRelatedManager(models.Manager):
         return qs.filter(structure=user.profile.structure)
 
 
-class StructureRelated(models.Manager):
+class StructureRelated(models.Model):
+    """A mixin used for any entities that belong to a structure"""
+
     structure = models.ForeignKey(Structure, default=default_structure)
-    
+
     objects = StructureRelatedManager()
-    
+
     class Meta:
         abstract = True
