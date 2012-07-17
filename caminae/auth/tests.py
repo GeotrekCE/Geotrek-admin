@@ -15,7 +15,8 @@ class LoginTestCase(TestCase):
 
     def test_login(self):
         response = self.client.get('/')
-        self.assertRedirects(response, '/login/?next=/')
+        _next = settings.FORCE_SCRIPT_NAME + '/'
+        self.assertRedirects(response, '/login/?next=' + _next)
 
 
 class StructureTest(TestCase):
@@ -58,4 +59,4 @@ class UserProfileTest(TestCase):
         c.login(username="Joe", password="Bar")
         response = c.get(reverse('home'))
         self.assertEqual(c.session['django_language'], self.user.profile.language)
-        self.assertTrue("Logout" in response.content)
+        self.assertFalse("déconnecter" in response.content)
