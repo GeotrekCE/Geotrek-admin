@@ -34,6 +34,7 @@ function ubuntu_precise {
     
     sudo apt-get install python-software-properties
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
+    sudo apt-add-repository -y ppa:sharpie/postgis-stable 
     sudo apt-get update > /dev/null
     sudo apt-get install python-virtualenv build-essential python-dev unzip
     sudo apt-get install libjson0 libgdal1 libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
@@ -88,6 +89,14 @@ _EOF_
         cd ..
         
         cd ..
+        
+        # A postgis template is required for django tests
+        sudo -n -u postgres -s -- createdb template_postgis
+        sudo -n -u postgres -s -- psql -d template_postgis -c "CREATE EXTENSION postgis"
+        sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
+        sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
+        sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
+        
     else
         sudo apt-get install nginx
         
