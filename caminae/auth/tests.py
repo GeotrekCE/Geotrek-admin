@@ -41,17 +41,21 @@ class UserProfileTest(TestCase):
         self.assertTrue(success)
         response = c.get(reverse('home'))
         self.assertEqual(200, response.status_code)
-        print response.content
         self.assertTrue("déconnecter" in response.content)
         
         # Change user lang
         self.user.profile.language = "en"
+        self.assertEqual(settings.LANGUAGE_CODE, self.user.profile.language)
         self.user.profile.save()
         # No effect if no logout
         response = c.get(reverse('home'))
         self.assertTrue("déconnecter" in response.content)
         
         c.logout()
-        c.login(user="Joe", password="Bar")
         response = c.get(reverse('home'))
+        self.assertEqual(response.status_code, 302)
+
+        c.login(username="Joe", password="Bar")
+        response = c.get(reverse('home'))
+        self.assertEqual(c.session['django_language'], self.user.profile.language)
         self.assertTrue("Logout" in response.content)
