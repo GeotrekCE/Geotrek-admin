@@ -143,6 +143,7 @@ PROJECT_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.gis',
     
     'south',
 )
