@@ -60,6 +60,7 @@ dbport = 5432
 rooturl = 
 
 defaultstructure = PNE
+srid = 2154
 _EOF_
     fi
     # Prompt user to edit/review settings

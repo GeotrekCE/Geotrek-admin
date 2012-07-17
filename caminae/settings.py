@@ -183,7 +183,3 @@ LOGGING = {
 
 
 DEFAULT_STRUCTURE_NAME = ""
-
-# Geographic settings:
-# * SRS to be used (EPSG code):
-SRID = 2154
