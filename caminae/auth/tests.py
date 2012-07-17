@@ -54,7 +54,7 @@ class UserProfileTest(TestCase):
         c.logout()
         response = c.get(reverse('home'))
         self.assertEqual(response.status_code, 302)
-
+        
         c.login(username="Joe", password="Bar")
         response = c.get(reverse('home'))
         self.assertEqual(c.session['django_language'], self.user.profile.language)
