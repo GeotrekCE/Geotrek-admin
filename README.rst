@@ -31,6 +31,13 @@ Create a super user :
 
     bin/django createsuperuser --username=admin --email=admin@corp.com
 
+============
+INITIAL DATA
+============
+
+Load path data with the following command::
+
+    bin/django loaddata data/pathes.pne.json
 
 ==================
 DEFINITION OF DONE
