@@ -68,8 +68,8 @@ _EOF_
     
     # Activate PostGIS in database
     dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < $settingsfile)
-    sudo -n -u postgres -s -- psql "CREATE DATABASE ${dbname};"
-    sudo -n -u postgres -s -- psql -d ${dbname} "CREATE EXTENSION postgis;"
+    sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};"
+    sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
     
     if $dev ; then
         mkdir -p lib/
