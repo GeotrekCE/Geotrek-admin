@@ -15,7 +15,7 @@ clean:
 
 unit_tests: bin/
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django jenkins --coverage-rcfile=.coveragerc auth
+	bin/django jenkins --coverage-rcfile=.coveragerc auth core
 
 functional_tests: 
 	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
