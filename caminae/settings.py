@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': '',                    # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -169,7 +169,7 @@ LOGGING = {
 }
 
 
-DEFAULT_STRUCTURE_NAME = "PNE"
+DEFAULT_STRUCTURE_NAME = ""
 
 # Geographic settings:
 # * SRS to be used (EPSG code):

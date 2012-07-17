@@ -39,8 +39,10 @@ function ubuntu_precise {
     sudo apt-get install libjson0 libgdal1 libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
     
     # Default settings if not any
-    if [ ! -f settings.ini ]; then
-        cat > settings.ini << _EOF_
+    mkdir -p etc/
+    settingsfile=etc/settings.ini
+    if [ ! -f $settingsfile ]; then
+        cat > $settingsfile << _EOF_
 #
 #  Caminae Settings
 #..........................
@@ -54,14 +56,17 @@ dbpassword = postgres
 dbhost = localhost
 dbport = 5432
 
-rooturl = /
+rooturl = 
+
+defaultstructure = PNE
 _EOF_
     fi
     # Prompt user to edit/review settings
-    editor settings.ini
+    editor $settingsfile
     
     # Activate PostGIS in database
-    dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < settings.ini)
+    dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < $settingsfile)
+    sudo -n -u postgres -s -- psql "CREATE DATABASE ${dbname};"
     sudo -n -u postgres -s -- psql -d ${dbname} "CREATE EXTENSION postgis;"
     
     if $dev ; then
