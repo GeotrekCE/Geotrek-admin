@@ -6,6 +6,7 @@ caminae.egg-info/
 # buildout stuff
 .installed.cfg
 bin/
+etc/
 downloads/
 develop-eggs/
 eggs/
