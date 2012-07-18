@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block toolbar %}
-    {% if request.user.is_staff %}
-        <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
-    {% endif %}
-{% endblock toolbar %}
-
 {% block content %}
 
 <h1>Liste temporaire (recette stories #10, 15, #31)</h1>

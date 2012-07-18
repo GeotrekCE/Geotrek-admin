@@ -18,7 +18,10 @@
             {% endblock toolbar %}
             <li class="divider-vertical"></li>
             {% if request.user.is_authenticated %}
-                <li><a href="#">{{ request.user }}</a></li>
+                <li><a href="#">{{ request.user }} ({{ request.user.profile.structure }})</a></li>
+                {% if request.user.is_staff %}
+                    <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+                {% endif %}
                 <li><a href="{% url logout %}">{% trans "Logout" %}</a></li>
             {% endif %}
           </ul>

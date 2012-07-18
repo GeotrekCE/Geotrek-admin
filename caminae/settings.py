@@ -144,6 +144,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    
+    'caminae.core.context_processors.settings',
 )
 
 #
@@ -200,6 +202,6 @@ LOGGING = {
     }
 }
 
-
+TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
 SRID = None

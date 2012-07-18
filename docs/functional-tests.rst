@@ -43,3 +43,15 @@ sa langue.
     * Traduction d'un même élément en anglais/francais/italien
     * Vérification de la bonne traduction de cet élement dans chaque interface en fonction de la langue
 
+
+#15 - Limiter les listes de choix à ceux de la structure de l'utilisateur
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Créer plusieurs objets, associés à des structures différentes (ex: prestataires).
+
+Vérifier que la liste (temporaire au sprint 1) affichée dans l'interface contient 
+bien les objets crées.
+
+Si je change la structure de l'utilisateur. La liste des objets associés à la structure change.
+
+Si je change la structure d'un objet, il n'apparait plus dans la liste.
