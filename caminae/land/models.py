@@ -9,6 +9,7 @@ from caminae.core.models import TopologyMixin
 
 # Physcal nature of paths
 
+
 class PhysicalType(models.Model):
     code = models.IntegerField(primary_key=True, db_column='code_physique')
     name = models.CharField(max_length=128, db_column='physique')
@@ -16,12 +17,15 @@ class PhysicalType(models.Model):
     class Meta:
         db_table = 'nature_sentier'
 
+
 class PhysicalEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType)
 
     class Meta:
         db_table = 'nature'
+
 
 # Type of land under paths
 
@@ -33,32 +37,41 @@ class LandType(models.Model):
     class Meta:
         db_table = 'type_foncier'
 
+
 class LandEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
     land_type = models.ForeignKey(LandType)
 
     class Meta:
         db_table = 'foncier'
 
+
 # Interaction with external structures
 
 class CompetenceEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
 
     class Meta:
         db_table = 'competence'
 
+
 class WorkManagementEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
 
     class Meta:
         db_table = 'gestion_travaux'
 
+
 class SignageManagementEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
 
     class Meta:
         db_table = 'gestion_signaletique'
+
 
 # Zoning
 
@@ -71,12 +84,15 @@ class RestrictedArea(models.Model):
     class Meta:
         db_table = 'couche_zonage_reglementaire'
 
+
 class RestrictedAreaEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
     land_type = models.ForeignKey(RestrictedArea)
 
     class Meta:
         db_table = 'zonage'
+
 
 class City(models.Model):
     code = models.CharField(primary_key=True, max_length=6, db_column='insee')
@@ -86,11 +102,14 @@ class City(models.Model):
     class Meta:
         db_table = 'couche_communes'
 
+
 class CityEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
 
     class Meta:
         db_table = 'commune'
+
 
 class District(models.Model):
     code = models.IntegerField(primary_key=True, db_column='code_secteur')
@@ -100,8 +119,10 @@ class District(models.Model):
     class Meta:
         db_table = 'couche_secteurs'
 
+
 class DistrictEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True, db_column='evenement')
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
 
     class Meta:
         db_table = 'secteur'

@@ -9,7 +9,8 @@ from django.conf import settings
 
 class Path(models.Model):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
+                                           spatial_index=False)
     date_insert = models.DateField(auto_now_add=True)
     date_update = models.DateField(auto_now=True)
     valid = models.BooleanField(db_column='troncon_valide', default=True)
@@ -53,7 +54,8 @@ class TopologyMixin(models.Model):
 
 class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon')
-    topo_object = models.ForeignKey(TopologyMixin, null=False, db_column='evenement')
+    topo_object = models.ForeignKey(TopologyMixin, null=False,
+                                    db_column='evenement')
     start_position = models.FloatField(db_column='pk_debut')
     end_position = models.FloatField(db_column='pk_fin')
 
