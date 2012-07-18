@@ -38,15 +38,19 @@ class Path(models.Model):
 
 
 class TopologyMixin(models.Model):
-    date_insert = models.DateField(editable=False)
-    date_update = models.DateField(editable=False)
+    date_insert = models.DateField(auto_now_add=True)
+    date_update = models.DateField(auto_now=True)
     troncons = models.ManyToManyField(Path, through='PathAggregation')
     offset = models.IntegerField(db_column='decallage')
-    length = models.FloatField(editable=False, db_column='longueur')
     deleted = models.BooleanField(db_column='supprime')
+
+    # Override default manager
+    objects = models.GeoManager()
+
+    # Computed values (managed at DB-level with triggers)
+    length = models.FloatField(editable=False, db_column='longueur')
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
-    objects = models.GeoManager()
 
     class Meta:
         db_table = 'evenements'
