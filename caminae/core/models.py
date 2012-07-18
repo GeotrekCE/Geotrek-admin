@@ -32,8 +32,6 @@ class Path(StructureRelated):
     max_elevation = models.IntegerField(
             editable=False, default=0, db_column='altitude_maximum')
 
-    objects = models.GeoManager()
-
     class Meta:
         db_table = 'troncons'
 
