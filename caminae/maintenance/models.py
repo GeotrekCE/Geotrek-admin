@@ -73,7 +73,7 @@ class Intervention(models.Model):
 class InterventionStatus(StructureRelated):
 
     code = models.IntegerField()
-    status = models.TextField(max_length=128)
+    status = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'bib_de_suivi'
@@ -82,7 +82,7 @@ class InterventionStatus(StructureRelated):
 class InterventionTypology(StructureRelated):
 
     code = models.IntegerField(primary_key=True)
-    typology = models.TextField(max_length=128)
+    typology = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'typologie_des_interventions'
@@ -91,7 +91,7 @@ class InterventionTypology(StructureRelated):
 class InterventionDisorder(StructureRelated):
 
     code = models.IntegerField(primary_key=True)
-    disorder = models.TextField(max_length=128)
+    disorder = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'desordres'
@@ -100,7 +100,7 @@ class InterventionDisorder(StructureRelated):
 class InterventionJob(StructureRelated):
 
     code = models.IntegerField(primary_key=True)
-    job = models.TextField(max_length=128)
+    job = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'bib_fonctions'
@@ -166,7 +166,7 @@ class Project(models.Model):
 class Contractor(StructureRelated):
 
     code = models.IntegerField(primary_key=True)
-    contractor = models.TextField(max_length=128)
+    contractor = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'prestataires'
@@ -178,7 +178,7 @@ class Contractor(StructureRelated):
 class Organism(models.Model):
 
     code = models.IntegerField(primary_key=True)
-    organism = models.TextField(max_length=128)
+    organism = models.CharField(max_length=128)
 
     class Meta:
         db_table = 'liste_de_tous_les_organismes'
