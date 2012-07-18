@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 from django.conf import settings
-from caminae.auth.models import StructureRelated
+from caminae.authent.models import StructureRelated
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
