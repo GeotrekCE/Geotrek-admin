@@ -22,15 +22,15 @@ class Path(StructureRelated):
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
-    length = models.IntegerField(editable=False, db_column='longueur')
+    length = models.IntegerField(editable=False, default=0, db_column='longueur')
     ascent = models.IntegerField(
-            editable=False, db_column='denivelee_positive')
+            editable=False, default=0, db_column='denivelee_positive')
     descent = models.IntegerField(
-            editable=False, db_column='denivelee_negative')
+            editable=False, default=0, db_column='denivelee_negative')
     min_elevation = models.IntegerField(
-            editable=False, db_column='altitude_minimum')
+            editable=False, default=0, db_column='altitude_minimum')
     max_elevation = models.IntegerField(
-            editable=False, db_column='altitude_maximum')
+            editable=False, default=0, db_column='altitude_maximum')
 
     objects = models.GeoManager()
 

@@ -12,7 +12,6 @@ from models import Structure, UserProfile
 
 @override_settings(LOGIN_URL='/login/')
 class LoginTestCase(TestCase):
-
     def test_login(self):
         response = self.client.get('/')
         _next = settings.FORCE_SCRIPT_NAME + '/'

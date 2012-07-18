@@ -20,16 +20,24 @@ def default_structure():
     return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
 
 
+class StructureRelatedManager(models.Manager):
+    def byUser(self, user):
+        qs = super(StructureRelatedManager, self).get_query_set()
+        return qs.filter(structure=user.profile.structure)
+
+
 class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
     structure = models.ForeignKey(Structure, default=default_structure)
 
+    objects = models.Manager()
+    in_structure = StructureRelatedManager()
+
     @classmethod
     def forUser(cls, user):
-        qs = cls.objects.get_query_set()
-        return qs.filter(structure=user.profile.structure)
+        return cls.in_structure.byUser(user)
 
     class Meta:
         abstract = True
