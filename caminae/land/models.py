@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.conf import settings
 from caminae.core.models import TopologyMixin
+from caminae.maintenance.models import Organism
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -52,6 +53,7 @@ class LandEdge(TopologyMixin):
 class CompetenceEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
+    organization = models.ForeignKey(Organism)
 
     class Meta:
         db_table = 'competence'
@@ -60,6 +62,7 @@ class CompetenceEdge(TopologyMixin):
 class WorkManagementEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
+    organization = models.ForeignKey(Organism)
 
     class Meta:
         db_table = 'gestion_travaux'
@@ -68,6 +71,7 @@ class WorkManagementEdge(TopologyMixin):
 class SignageManagementEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
+    organization = models.ForeignKey(Organism)
 
     class Meta:
         db_table = 'gestion_signaletique'
