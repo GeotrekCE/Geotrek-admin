@@ -60,7 +60,7 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
-AUTH_PROFILE_MODULE = 'caminae.auth.UserProfile'
+AUTH_PROFILE_MODULE = 'caminae.authent.UserProfile'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
@@ -146,7 +146,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 )
 
-
+#
+# /!\ Application names (last levels) must be unique
+# (c.f. auth/authent)
+# https://code.djangoproject.com/ticket/12288
+# 
 PROJECT_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -160,12 +164,12 @@ PROJECT_APPS = (
     'south',
 )
 
-INSTALLED_APPS = (
-    'caminae.auth',
+INSTALLED_APPS = PROJECT_APPS + (
+    'caminae.authent',
     'caminae.core',
     'caminae.land',
     'caminae.maintenance',
-) + PROJECT_APPS
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

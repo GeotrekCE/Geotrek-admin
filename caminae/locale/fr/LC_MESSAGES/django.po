@@ -30,7 +30,7 @@ msgstr "Français"
 msgid "Italian"
 msgstr "Italien"
 
-#: auth/models.py:22
+#: authent/models.py:22
 msgid "Language"
 msgstr "Langue"
 

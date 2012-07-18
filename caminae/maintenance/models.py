@@ -4,7 +4,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from caminae.auth.models import StructureRelated
+from caminae.authent.models import StructureRelated
 
 
 class Intervention(models.Model):
@@ -189,5 +189,3 @@ class Funding(StructureRelated):
 
     class Meta:
         db_table = 'financement'
-
-

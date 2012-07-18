@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from caminae.auth.models import Structure
-from caminae.auth.models import UserProfile
+from caminae.authent.models import Structure
+from caminae.authent.models import UserProfile
 
 
 admin.site.unregister(User)
