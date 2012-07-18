@@ -9,7 +9,8 @@ from django.conf import settings
 
 class Path(models.Model):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
+                                           spatial_index=False)
     date_insert = models.DateField(auto_now_add=True)
     date_update = models.DateField(auto_now=True)
     valid = models.BooleanField(db_column='troncon_valide', default=True)
@@ -37,15 +38,19 @@ class Path(models.Model):
 
 
 class TopologyMixin(models.Model):
-    date_insert = models.DateField(editable=False)
-    date_update = models.DateField(editable=False)
+    date_insert = models.DateField(auto_now_add=True)
+    date_update = models.DateField(auto_now=True)
     troncons = models.ManyToManyField(Path, through='PathAggregation')
     offset = models.IntegerField(db_column='decallage')
-    length = models.FloatField(editable=False, db_column='longueur')
     deleted = models.BooleanField(db_column='supprime')
+
+    # Override default manager
+    objects = models.GeoManager()
+
+    # Computed values (managed at DB-level with triggers)
+    length = models.FloatField(editable=False, db_column='longueur')
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
-    objects = models.GeoManager()
 
     class Meta:
         db_table = 'evenements'
@@ -53,7 +58,8 @@ class TopologyMixin(models.Model):
 
 class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon')
-    topo_object = models.ForeignKey(TopologyMixin, null=False, db_column='evenement')
+    topo_object = models.ForeignKey(TopologyMixin, null=False,
+                                    db_column='evenement')
     start_position = models.FloatField(db_column='pk_debut')
     end_position = models.FloatField(db_column='pk_fin')
 
