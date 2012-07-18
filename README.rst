@@ -39,22 +39,6 @@ Load path data with the following command::
 
     bin/django loaddata data/pathes.pne.json
 
-==================
-DEFINITION OF DONE
-==================
-
-Before setting a story to `DONE`, make sure : 
-
-* Docstrings were added/updated to your code
-* Unit tests of core behaviours are up to date
-* Functional tests were added in `docs/functional-tests.rst`
-* Installation and settings management is up to date
-* No error in CI
-
-Check TODO in the source tree ::
-
-    find . | xargs egrep -n -i '(TODO|temporary)'
-
 =======
 AUTHORS
 =======
