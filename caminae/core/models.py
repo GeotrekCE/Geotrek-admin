@@ -6,6 +6,7 @@ from django.conf import settings
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
+
 class Path(models.Model):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False)
@@ -29,25 +30,26 @@ class Path(models.Model):
     max_elevation = models.IntegerField(
             editable=False, db_column='altitude_maximum')
 
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'troncons'
+
 
 class TopologyMixin(models.Model):
     date_insert = models.DateField(editable=False)
     date_update = models.DateField(editable=False)
     troncons = models.ManyToManyField(Path, through='PathAggregation')
     offset = models.IntegerField(db_column='decallage')
-    deleted = models.BooleanField(db_column='supprime')
-
-    # Override default manager
-    objects = models.GeoManager()
-
-    # Computed values (managed at DB-level with triggers)
     length = models.FloatField(editable=False, db_column='longueur')
+    deleted = models.BooleanField(db_column='supprime')
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'evenements'
+
 
 class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon')
@@ -57,5 +59,6 @@ class PathAggregation(models.Model):
 
     # Override default manager
     objects = models.GeoManager()
+
     class Meta:
         db_table = 'evenements_troncons'
