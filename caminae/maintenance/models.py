@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
 
-
 class Intervention(models.Model):
 
     # idintervention serial
