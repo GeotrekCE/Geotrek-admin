@@ -62,3 +62,17 @@ class UserProfileTest(TestCase):
 
         self.assertEqual(c.session['django_language'], "en")
         self.assertFalse("déconnecter" in response.content)
+
+    def test_admin(self):
+        self.assertFalse(self.user.is_staff)
+        c = Client()
+        success = c.login(username="Joe", password="Bar")
+        self.assertTrue(success)
+        
+        response = c.get(reverse('home'))
+        self.assertFalse("Administration" in response.content)
+        
+        self.user.is_staff = True
+        self.user.save()
+        response = c.get(reverse('home'))
+        self.assertTrue("Administration" in response.content)

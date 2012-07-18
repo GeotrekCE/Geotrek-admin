@@ -2,7 +2,9 @@
 {% load i18n %}
 
 {% block toolbar %}
-    <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+    {% if request.user.is_staff %}
+        <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+    {% endif %}
 {% endblock toolbar %}
 
 {% block content %}
