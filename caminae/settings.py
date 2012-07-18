@@ -164,6 +164,7 @@ PROJECT_APPS = (
     'django.contrib.gis',
 
     'south',
+    'modeltranslation',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -205,3 +206,6 @@ LOGGING = {
 TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
 SRID = None
+
+
+MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'

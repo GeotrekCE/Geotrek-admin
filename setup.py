@@ -13,8 +13,11 @@ setup(
     url='http://makina-corpus.com',
     description="Caminae",
     long_description=open(os.path.join(here, 'README.rst')).read(),
-    install_requires = ['django == 1.4',
-                        'South == 0.7.5'],
+    install_requires = [
+        'django == 1.4',
+        'South == 0.7.5',
+        'django-modeltranslation == 0.3.3',
+    ],
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',
                     'Environment :: Web Environment',
