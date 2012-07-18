@@ -171,6 +171,9 @@ class Contractor(StructureRelated):
     class Meta:
         db_table = 'prestataires'
 
+    def __unicode__(self):
+        return self.contractor
+
 
 class Organism(models.Model):
 

@@ -8,5 +8,20 @@
 {% endblock toolbar %}
 
 {% block content %}
-Yeah
+
+<h1>Liste temporaire (recette stories #10, 15, #31)</h1>
+<h2>{% trans "Contractors" %}</h2>
+{% for contractor in all_contractors %}
+    <li>{{ contractor }}</li>
+{% empty %}
+    {% trans "Empty" %}
+{% endfor %}
+
+<h2>{% trans "Structure related" %}</h2>
+{% for contractor in contractors %}
+    <li>{{ contractor }}</li>
+{% empty %}
+    {% trans "Empty" %}
+{% endfor %}
+
 {% endblock content %}
