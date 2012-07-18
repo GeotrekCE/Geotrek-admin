@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.conf import settings
+from caminae.auth.models import StructureRelated
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -7,7 +8,7 @@ from django.conf import settings
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
 
-class Path(models.Model):
+class Path(StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
                                            spatial_index=False)
