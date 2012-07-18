@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Path.structure'
         db.add_column('troncons', 'structure',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.Structure']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure']),
                       keep_default=False)
 
 
@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'auth.structure': {
+        'authent.structure': {
             'Meta': {'object_name': 'Structure'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
@@ -39,7 +39,7 @@ class Migration(SchemaMigration):
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'db_column': "'altitude_minimum'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.Structure']"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
