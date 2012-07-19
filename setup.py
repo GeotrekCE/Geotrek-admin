@@ -16,6 +16,7 @@ setup(
     install_requires = [
         'django == 1.4',
         'South == 0.7.5',
+        'psycopg2 == 2.4.1',
         'django-modeltranslation == 0.3.3',
     ],
     packages=find_packages(),
