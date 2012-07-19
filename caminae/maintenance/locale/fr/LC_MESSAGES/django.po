@@ -1,0 +1,222 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Makina Corpus <makina@makina-corpus.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-19 14:38+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: models.py:16
+msgid "Whether the intervention is currently happening"
+msgstr "En maintenance"
+
+#: models.py:19 models.py:156
+msgid "Name"
+msgstr "Nom"
+
+#: models.py:22
+msgid "Date"
+msgstr "Date"
+
+#: models.py:25 models.py:171
+msgid "Comments"
+msgstr "Commentaires"
+
+#: models.py:29
+msgid "Length"
+msgstr "Longueur"
+
+#: models.py:31
+msgid "Width"
+msgstr "Largeur"
+
+#: models.py:33
+msgid "Height"
+msgstr "Hauteur"
+
+#: models.py:35
+msgid "Area"
+msgstr "Surface"
+
+#: models.py:37
+msgid "Slope"
+msgstr "Pente"
+
+#: models.py:41
+msgid "Material cost"
+msgstr "Coût matériel"
+
+#: models.py:43
+msgid "Heliport cost"
+msgstr "Coût héliportage"
+
+#: models.py:45
+msgid "Subcontract cost"
+msgstr "Coût sous-traitance"
+
+#: models.py:48 models.py:174
+msgid "Insertion date"
+msgstr "Date d'insertion"
+
+#: models.py:51 models.py:177
+msgid "Update date"
+msgstr "Date de modification"
+
+#: models.py:54 models.py:180 models.py:202
+msgid "Deleted"
+msgstr "Supprimé"
+
+#: models.py:57
+msgid "Intervention status"
+msgstr "Suivi"
+
+#: models.py:60
+msgid "Intervention typology"
+msgstr "Typologie de l'intervention"
+
+#: models.py:63
+msgid "Disorders"
+msgstr "Désordres"
+
+#: models.py:66
+msgid "Jobs"
+msgstr "Fonctions"
+
+#: models.py:69 models.py:198
+msgid "Project"
+msgstr "Chantier"
+
+#: models.py:73
+msgid "Intervention"
+msgstr "Intervention"
+
+#: models.py:74
+msgid "Interventions"
+msgstr "Interventions"
+
+#: models.py:83
+msgid "Status"
+msgstr "Suivi"
+
+#: models.py:87
+msgid "Intervention's status"
+msgstr "Suivi"
+
+#: models.py:88
+msgid "Intervention's statuses"
+msgstr "Suivis"
+
+#: models.py:97
+msgid "Typology"
+msgstr "Typologie"
+
+#: models.py:101
+msgid "Intervention's typology"
+msgstr "Typologie"
+
+#: models.py:102
+msgid "Intervention's typologies"
+msgstr "Typologies"
+
+#: models.py:111
+msgid "Disorder"
+msgstr "Désordre"
+
+#: models.py:115
+msgid "Intervention's disorder"
+msgstr "Désordre"
+
+#: models.py:116
+msgid "Intervention's disorders"
+msgstr "Désordres"
+
+#: models.py:124
+msgid "Job"
+msgstr "Fonction"
+
+#: models.py:128
+msgid "Intervention's job"
+msgstr "Fonction"
+
+#: models.py:129
+msgid "Intervention's jobs"
+msgstr "Fonctions"
+
+#: models.py:137 models.py:144
+msgid "Mandays"
+msgstr "Jour-Homme"
+
+#: models.py:143
+msgid "Manday"
+msgstr "Jour-Homme"
+
+#: models.py:159
+msgid "Begin year"
+msgstr "Année de début"
+
+#: models.py:162
+msgid "End year"
+msgstr "Année de fin"
+
+#: models.py:165
+msgid "Constraint"
+msgstr "Contraintes"
+
+#: models.py:168
+msgid "Cost"
+msgstr "Coût"
+
+#: models.py:183 models.py:214
+msgid "Contractors"
+msgstr "Prestataires"
+
+#: models.py:187
+msgid "Project owner"
+msgstr "Maître d'ouvrage"
+
+#: models.py:191
+msgid "Project manager"
+msgstr "Maître d'oeuvre"
+
+#: models.py:194
+msgid "Founders"
+msgstr "Financeurs"
+
+#: models.py:199
+msgid "Projects"
+msgstr "Chantiers"
+
+#: models.py:209 models.py:213
+msgid "Contractor"
+msgstr "Prestataire"
+
+#: models.py:223 models.py:227
+msgid "Organism"
+msgstr "Organisme"
+
+#: models.py:228
+msgid "Organisms"
+msgstr "Organismes"
+
+#: models.py:236
+msgid "Amount"
+msgstr "Montant"
+
+#: models.py:242
+msgid "Funding"
+msgstr "Financement"
+
+#: models.py:243
+msgid "Fundings"
+msgstr "Financements"
