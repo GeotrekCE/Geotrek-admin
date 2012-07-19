@@ -19,6 +19,7 @@ setup(
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',
         'django-modeltranslation == 0.3.3',
+        'django-geojson',
     ],
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',

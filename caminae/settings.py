@@ -165,6 +165,8 @@ PROJECT_APPS = (
 
     'south',
     'modeltranslation',
+    
+    'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
