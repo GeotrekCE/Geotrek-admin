@@ -61,7 +61,10 @@ dbport = 5432
 rooturl = 
 
 defaultstructure = PNE
+# EPSG code of the coordinate system to use
 srid = 2154
+# (minx, miny, maxx, maxy) expressed in the coordinate system above
+spatial_extent = (898000, 6360000, 1013000, 6476000)
 _EOF_
     fi
     # Prompt user to edit/review settings
