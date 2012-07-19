@@ -1,0 +1,43 @@
+<html>
+    <head><title>POC LL93</title></head>
+
+    <link rel="stylesheet" href="js/lib/leaflet/leaflet.css" />
+
+<!--      <script type="text/javascript" src="js/lib/jquery.js"></script> -->
+    <script src="js/lib/leaflet/leaflet-src.js"></script>
+    <script src="http://localhost/leaflet/debug/leaflet-include.js"></script>
+    <script src="js/lib/proj4js/lib/proj4js.js"></script>
+    <script src="js/lib/proj4js/lib/projCode/tmerc.js" type="text/javascript"></script>
+    <script src="js/lib/proj4js/lib/projCode/lcc.js" type="text/javascript"></script>      
+    <script src="js/lib/proj4js/lib/defs/EPSG2154.js"></script >
+    <script src="js/lib/Proj4Leaflet/src/proj4leaflet.js"></script>
+    <script src="js/main.js"></script>
+
+
+    <style>
+        body {
+            font-size: 12px;
+            font-family: Verdana,Arial;
+        }
+        #map {
+            width: 800px;
+            height: 400px;
+            border: 1px solid #444;
+            margin: 0 auto;
+            float: left;
+        }
+        #infos {
+            width: 400px;
+            height: 100px;
+            border: 1px solid #444;
+            float: left;
+            margin-left: 10px;
+        }
+    </style>
+
+
+<body>
+    <div id="map"></div>
+    <div id="infos">coords</div>
+</body>
+</html>
