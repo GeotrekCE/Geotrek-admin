@@ -16,8 +16,8 @@ class Migration(SchemaMigration):
         db.create_table('troncons', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(spatial_index=False)),
-            ('geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(null=True, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
+            ('geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(null=True, srid=2154, spatial_index=False)),
             ('date_insert', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
             ('date_update', self.gf('django.db.models.fields.DateField')(auto_now=True, blank=True)),
             ('valid', self.gf('django.db.models.fields.BooleanField')(default=True, db_column='troncon_valide')),
@@ -39,7 +39,7 @@ class Migration(SchemaMigration):
             ('offset', self.gf('django.db.models.fields.IntegerField')(db_column='decallage')),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='supprime')),
             ('length', self.gf('django.db.models.fields.FloatField')(db_column='longueur')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
             ('kind', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyMixinKind'])),
         ))
         db.send_create_signal('core', ['TopologyMixin'])
