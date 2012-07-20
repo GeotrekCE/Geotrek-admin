@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 
 from django.test import TestCase
 from django.test.client import Client
@@ -20,8 +20,8 @@ class LoginTestCase(TestCase):
 
 class StructureTest(TestCase):
     def test_basic(self):
-        s = Structure(name="Mercantour")
-        self.assertEqual(unicode(s), "Mercantour")
+        s = Structure(name=u"Mercantour")
+        self.assertEqual(unicode(s), u"Mercantour")
 
 
 class UserProfileTest(TestCase):
@@ -37,41 +37,41 @@ class UserProfileTest(TestCase):
         
     def test_language(self):
         c = Client()
-        success = c.login(username="Joe", password="Bar")
+        success = c.login(username=u"Joe", password=u"Bar")
         self.assertTrue(success)
         response = c.get(reverse('home'))
         self.assertEqual(200, response.status_code)
-        self.assertTrue("déconnecter" in response.content)
+        self.assertTrue(u"déconnecter" in response.content)
         
         # Change user lang
-        self.assertNotEqual(settings.LANGUAGE_CODE, "en")
+        self.assertNotEqual(settings.LANGUAGE_CODE, u"en")
         userprofile = UserProfile.objects.get(user=self.user)
-        userprofile.language = "en"
+        userprofile.language = u"en"
         userprofile.save()
-        self.assertEqual(self.user.profile.language, "en")
+        self.assertEqual(self.user.profile.language, u"en")
         # No effect if no logout
         response = c.get(reverse('home'))
-        self.assertTrue("déconnecter" in response.content)
+        self.assertTrue(u"déconnecter" in response.content)
         
         c.logout()
         response = c.get(reverse('home'))
         self.assertEqual(response.status_code, 302)
-        c.login(username="Joe", password="Bar")
+        c.login(username=u"Joe", password=u"Bar")
         response = c.get(reverse('home'))
 
-        self.assertEqual(c.session['django_language'], "en")
-        self.assertFalse("déconnecter" in response.content)
+        self.assertEqual(c.session['django_language'], u"en")
+        self.assertFalse(u"déconnecter" in response.content)
 
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
         c = Client()
-        success = c.login(username="Joe", password="Bar")
+        success = c.login(username=u"Joe", password=u"Bar")
         self.assertTrue(success)
         
         response = c.get(reverse('home'))
-        self.assertFalse("Administration" in response.content)
+        self.assertFalse(u"Administration" in response.content)
         
         self.user.is_staff = True
         self.user.save()
         response = c.get(reverse('home'))
-        self.assertTrue("Administration" in response.content)
+        self.assertTrue(u"Administration" in response.content)
