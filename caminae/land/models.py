@@ -1,5 +1,7 @@
 from django.contrib.gis.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
 from caminae.core.models import TopologyMixin
 from caminae.maintenance.models import Organism
 
@@ -92,7 +94,7 @@ class RestrictedArea(models.Model):
 class RestrictedAreaEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
-    land_type = models.ForeignKey(RestrictedArea)
+    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"))
 
     class Meta:
         db_table = 'zonage'
@@ -111,6 +113,8 @@ class CityEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
 
+    city = models.ForeignKey(City, verbose_name=_(u"City"))
+
     class Meta:
         db_table = 'commune'
 
@@ -127,6 +131,7 @@ class District(models.Model):
 class DistrictEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
+    district = models.ForeignKey(District, verbose_name=_(u"District"))
 
     class Meta:
         db_table = 'secteur'
