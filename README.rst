@@ -31,6 +31,12 @@ Create a super user :
 
     bin/django createsuperuser --username=admin --email=admin@corp.com
 
+or change its password : 
+
+::
+
+    pbin/django changepassword --username admin <password>
+
 ============
 INITIAL DATA
 ============
