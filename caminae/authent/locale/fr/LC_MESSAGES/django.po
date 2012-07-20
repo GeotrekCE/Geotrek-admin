@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-20 11:41+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: models.py:13
+msgid "Nom"
+msgstr "Name"
+
+#: models.py:19
+msgid "Structure"
+msgstr "Entité administrative"
+
+#: models.py:20
+msgid "Structures"
+msgstr "Entités administratives"
+
+#: models.py:37 models.py:49
+msgid "Related structure"
+msgstr "Entité administrative liée"
+
+#: models.py:48
+msgid "Related structures"
+msgstr "Entité administrative liée"
+
+#: models.py:55
+msgid "Language"
+msgstr "Langage"
+
+#: models.py:59
+msgid "User's profile"
+msgstr "Profil utilisateur"
+
+#: models.py:60
+msgid "User's profiles"
+msgstr "Profils utilisateur"
+
+#: models.py:63
+#, python-format
+msgid "Profile for %s"
+msgstr "Profil de l'utilisateur %s"
