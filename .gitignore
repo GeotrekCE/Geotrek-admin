@@ -16,6 +16,8 @@ var/
 include/
 lib/
 local/
+# compile translation file
+*.mo
 
 # buildout stuff for poc
 poc/.installed.cfg
