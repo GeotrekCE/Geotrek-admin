@@ -1,6 +1,9 @@
 from django.contrib.gis.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
 from caminae.authent.models import StructureRelated
+from caminae.maintenance.models import Intervention
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -51,8 +54,21 @@ class TopologyMixin(models.Model):
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
 
+    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
+
+    interventions = models.ManyToManyField(Intervention, verbose_name=_(u"Interventions"))
+
     class Meta:
         db_table = 'evenements'
+
+
+class TopologyMixinKind(models.Model):
+
+    code = models.IntegerField(primary_key=True)
+    kind = models.CharField(verbose_name=_(u"Topology kind"), max_length=128)
+
+    class Meta:
+        db_table = 'type_evenements'
 
 
 class PathAggregation(models.Model):
