@@ -6,6 +6,7 @@ from django.test.utils import override_settings
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.translation import gettext as _
 
 from models import Structure, UserProfile
 
@@ -41,7 +42,7 @@ class UserProfileTest(TestCase):
         self.assertTrue(success)
         response = c.get(reverse('home'))
         self.assertEqual(200, response.status_code)
-        self.assertTrue(u"déconnecter" in response.content)
+        self.assertTrue(_("Logout") in response.content)
         
         # Change user lang
         self.assertNotEqual(settings.LANGUAGE_CODE, u"en")
@@ -51,7 +52,7 @@ class UserProfileTest(TestCase):
         self.assertEqual(self.user.profile.language, u"en")
         # No effect if no logout
         response = c.get(reverse('home'))
-        self.assertTrue(u"déconnecter" in response.content)
+        self.assertTrue(_("Logout") in response.content)
         
         c.logout()
         response = c.get(reverse('home'))
@@ -60,7 +61,7 @@ class UserProfileTest(TestCase):
         response = c.get(reverse('home'))
 
         self.assertEqual(c.session['django_language'], u"en")
-        self.assertFalse(u"déconnecter" in response.content)
+        self.assertFalse(_("Logout") in response.content)
 
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
@@ -69,9 +70,10 @@ class UserProfileTest(TestCase):
         self.assertTrue(success)
         
         response = c.get(reverse('home'))
-        self.assertFalse(u"Administration" in response.content)
+        
+        self.assertFalse(_("Admin") in response.content)
         
         self.user.is_staff = True
         self.user.save()
         response = c.get(reverse('home'))
-        self.assertTrue(u"Administration" in response.content)
+        self.assertTrue(_("Admin") in response.content)
