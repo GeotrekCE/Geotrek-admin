@@ -51,7 +51,7 @@ function ubuntu_precise {
     sudo apt-add-repository -y ppa:sharpie/postgis-stable 
     sudo apt-get update > /dev/null
     sudo apt-get install python-virtualenv build-essential python-dev unzip
-    sudo apt-get install libjson0 libgdal1 libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
+    sudo apt-get install libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
     sudo apt-get install gettext
 
     # Default settings if not any
