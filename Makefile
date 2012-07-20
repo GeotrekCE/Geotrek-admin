@@ -27,7 +27,13 @@ serve: bin/
 	bin/django syncdb --migrate
 	bin/django runserver
 
-deploy: bin/
+load_data:
+	# /!\ will delete existing data
+	bin/django loaddata bin/django loaddata development-pne
+
+deploy_prod: bin/
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
+
+deploy: deploy_code load_data

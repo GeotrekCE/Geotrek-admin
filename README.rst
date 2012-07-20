@@ -37,13 +37,16 @@ or change its password :
 
     pbin/django changepassword --username admin <password>
 
-============
-INITIAL DATA
-============
 
-Load path data with the following command::
+Initial Data
+------------
 
-    bin/django loaddata data/pathes.pne.json
+Load example data (used in development) :
+
+::
+
+    make load_data
+
 
 =======
 AUTHORS
