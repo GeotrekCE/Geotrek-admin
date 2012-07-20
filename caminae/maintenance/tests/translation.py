@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.test.client import RequestFactory
 from django.utils import translation
 
 
@@ -97,7 +96,3 @@ class TraductionTestCase(TestCase):
             self.assertEquals(intervention_status.status, translated_status)
 
         restore_language()
-
-
-
-
