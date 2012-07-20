@@ -206,6 +206,6 @@ LOGGING = {
 TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
 SRID = None
-
+SPATIAL_EXTENT = None
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
