@@ -1,0 +1,116 @@
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+.navbar-inner {
+    -moz-border-radius: 0px;
+}
+
+
+.navbar .brand {
+	display: inline;
+	float: none;
+}
+
+
+/***** *****/
+.nav {
+    margin-bottom: 9px;
+}
+
+.nav-tabs .dropdown {
+    float: right;
+}
+
+
+
+/***** SPAN 1 *****/
+.nav-pills.nav-stacked > li > a {
+    margin-bottom: 0;
+}
+
+
+.nav-pills > li > a {
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-bottom: 1px solid #DDDDDD;	
+	border-right: 1px solid #DDDDDD;	
+	margin-bottom: 0px;
+	margin-top: 0px;
+	background-color: #F9F9F9;	
+}
+
+
+.nav-pills > .active > a, 
+.nav-pills > .active > a:hover {
+	border-right: 1px solid #fff;
+    background-color: #fff;
+    color: #333333;
+}
+
+.nav-pills > li > a > img  {
+	padding-bottom: 4px;
+}
+
+
+/***** SPAN 5 *****/
+
+.row-fluid > .span5 {
+margin-top: 5px;
+	/*border-left: 1px solid #DDDDDD;*/
+	/*margin-left: 18px;*/
+	/*margin-right: -2.5641%;*/
+}
+
+
+
+
+/***** SPAN 6 *****/
+.row-fluid > .span6 > .pull-right {
+	margin-top: 5px;
+	/*margin-right: 5px;*/
+	padding-right: 12px;
+
+}
+
+.row-fluid > .span6 {
+	background-color: rgb(174, 199, 82);
+	height: 500px;	/* A REVOIR -> fonction de l'écran */
+/*border-left: 1px solid #DDDDDD;	
+margin-left: -1px;*/
+}
+
+
+
+
+
+
+h2 {
+	text-align: center;
+}
+
+
+#entete {
+	background-color: #CCCCCC;	
+}
+
+
+#container {
+	border-top: 1px solid #DDDDDD;	
+}
+
+
+#listeModules {
+	text-align: center;
+}
+
+
+#module {
+	border-top: 1px solid #DDDDDD;	
+}
+
+
+
+

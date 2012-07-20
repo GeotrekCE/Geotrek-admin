@@ -1,10 +1,11 @@
-{% load staticfiles i18n %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html>
 <head>
     {% block head %}
     <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" href="{% static "style.css" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
     {% endblock head %}
 </head>
@@ -12,17 +13,18 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">{{ TITLE }}</a>
+          <a class="brand" href="{% url home %}">{{ TITLE }}</a>
           <ul class="nav pull-right">
             {% block toolbar %}
             {% endblock toolbar %}
             <li class="divider-vertical"></li>
             {% if request.user.is_authenticated %}
-                <li><a href="#">{{ request.user }} ({{ request.user.profile.structure }})</a></li>
+                <li><a href="#"><img src="{% static "images/icon-user-white.png" %}"/>
+                    {{ request.user }} ({{ request.user.profile.structure }})</a></li>
                 {% if request.user.is_staff %}
                     <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
                 {% endif %}
-                <li><a href="{% url logout %}">{% trans "Logout" %}</a></li>
+                <li><a class="btn" href="{% url logout %}">{% trans "Logout" %}</a></li>
             {% endif %}
           </ul>
         </div>
@@ -34,5 +36,7 @@
           {% endblock content %}
         </div>
     {% endblock body %}
+    {% block extrabody %}
+    {% endblock extrabody %}
 </body>
 </html>

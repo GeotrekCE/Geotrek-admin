@@ -1,4 +1,10 @@
 {% include "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<img src="{% static "images/logo-200.png" %}" />
+
 <form action="{% url login %}" method="post" class="form-horizontal">
     {% csrf_token %}
     {{ form }}
@@ -6,3 +12,4 @@
         <button type="submit" class="btn btn-primary">Login</button>
     </div>
 </form>
+{% endblock content %}
