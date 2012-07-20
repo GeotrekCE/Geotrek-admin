@@ -23,23 +23,23 @@ msgstr "Name"
 
 #: models.py:19
 msgid "Structure"
-msgstr "Entité administrative"
+msgstr "Structure"
 
 #: models.py:20
 msgid "Structures"
-msgstr "Entités administratives"
+msgstr "Structures"
 
 #: models.py:37 models.py:49
 msgid "Related structure"
-msgstr "Entité administrative liée"
+msgstr "Structure liée"
 
 #: models.py:48
 msgid "Related structures"
-msgstr "Entité administrative liée"
+msgstr "Structure liée"
 
 #: models.py:55
 msgid "Language"
-msgstr "Langage"
+msgstr "Langue"
 
 #: models.py:59
 msgid "User's profile"

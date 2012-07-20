@@ -155,7 +155,7 @@ msgstr "Fonctions"
 
 #: models.py:137 models.py:144
 msgid "Mandays"
-msgstr "Jour-Homme"
+msgstr "Jours-Homme"
 
 #: models.py:143
 msgid "Manday"

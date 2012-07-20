@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-17 10:17+0200\n"
+"POT-Creation-Date: 2012-07-20 23:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,14 +30,450 @@ msgstr "Français"
 msgid "Italian"
 msgstr "Italien"
 
-#: authent/models.py:22
+#: settings.py:206
+msgid "Caminae"
+msgstr ""
+
+#: authent/models.py:13
+msgid "Nom"
+msgstr ""
+
+#: authent/models.py:19
+msgid "Structure"
+msgstr ""
+
+#: authent/models.py:20
+msgid "Structures"
+msgstr ""
+
+#: authent/models.py:37 authent/models.py:49
+msgid "Related structure"
+msgstr ""
+
+#: authent/models.py:48
+msgid "Related structures"
+msgstr ""
+
+#: authent/models.py:55
 msgid "Language"
 msgstr "Langue"
 
-#: templates/base.html:20
+#: authent/models.py:59
+msgid "User's profile"
+msgstr ""
+
+#: authent/models.py:60
+msgid "User's profiles"
+msgstr ""
+
+#: authent/models.py:63
+#, python-format
+msgid "Profile for %s"
+msgstr ""
+
+#: authent/tests.py:45 authent/tests.py:55 authent/tests.py:64
+#: templates/base.html:27
 msgid "Logout"
 msgstr "Se déconnecter"
 
-#: templates/home.html:5
+#: authent/tests.py:74 authent/tests.py:79 templates/base.html:25
 msgid "Admin"
 msgstr "Administration"
+
+#: core/models.py:19 core/models.py:49 maintenance/models.py:48
+#: maintenance/models.py:174
+msgid "Insertion date"
+msgstr ""
+
+#: core/models.py:20 core/models.py:50 maintenance/models.py:51
+#: maintenance/models.py:177
+msgid "Update date"
+msgstr ""
+
+#: core/models.py:21
+msgid "Validity"
+msgstr ""
+
+#: core/models.py:22 land/models.py:18 land/models.py:44 land/models.py:106
+#: land/models.py:132 land/models.py:158 maintenance/models.py:19
+#: maintenance/models.py:156
+msgid "Name"
+msgstr ""
+
+#: core/models.py:23 maintenance/models.py:25 maintenance/models.py:171
+msgid "Comments"
+msgstr ""
+
+#: core/models.py:29 core/models.py:59 maintenance/models.py:29
+msgid "Length"
+msgstr ""
+
+#: core/models.py:31
+msgid "Ascent"
+msgstr ""
+
+#: core/models.py:33
+msgid "Descent"
+msgstr ""
+
+#: core/models.py:35
+msgid "Minimum elevation"
+msgstr ""
+
+#: core/models.py:37
+msgid "Maximum elevation"
+msgstr ""
+
+#: core/models.py:44 core/models.py:51 core/models.py:91
+msgid "Path"
+msgstr ""
+
+#: core/models.py:45
+msgid "Paths"
+msgstr ""
+
+#: core/models.py:52
+msgid "Offset"
+msgstr ""
+
+#: core/models.py:53 maintenance/models.py:54 maintenance/models.py:180
+#: maintenance/models.py:202
+msgid "Deleted"
+msgstr ""
+
+#: core/models.py:63
+msgid "Kind"
+msgstr ""
+
+#: core/models.py:65 maintenance/models.py:74
+msgid "Interventions"
+msgstr ""
+
+#: core/models.py:68 core/models.py:72 core/models.py:93
+msgid "Topology"
+msgstr ""
+
+#: core/models.py:73
+msgid "Topologies"
+msgstr ""
+
+#: core/models.py:79 core/models.py:86
+msgid "Topology's kind"
+msgstr ""
+
+#: core/models.py:87
+msgid "Topology's kinds"
+msgstr ""
+
+#: core/models.py:94
+msgid "Start position"
+msgstr ""
+
+#: core/models.py:95
+msgid "End position"
+msgstr ""
+
+#: core/models.py:101 core/models.py:105
+msgid "Path aggregation"
+msgstr ""
+
+#: core/models.py:106
+msgid "Path aggregations"
+msgstr ""
+
+#: land/models.py:22 land/models.py:32
+msgid "Physical type"
+msgstr ""
+
+#: land/models.py:23
+msgid "Physical types"
+msgstr ""
+
+#: land/models.py:36
+msgid "Physical edge"
+msgstr ""
+
+#: land/models.py:37
+msgid "Physical edges"
+msgstr ""
+
+#: land/models.py:45
+msgid "Right of way"
+msgstr ""
+
+#: land/models.py:49 land/models.py:59
+msgid "Land type"
+msgstr ""
+
+#: land/models.py:50
+msgid "Land types"
+msgstr ""
+
+#: land/models.py:63
+msgid "Land edge"
+msgstr ""
+
+#: land/models.py:64
+msgid "Land edges"
+msgstr ""
+
+#: land/models.py:72 land/models.py:83 land/models.py:94
+#: maintenance/models.py:223 maintenance/models.py:227
+msgid "Organism"
+msgstr ""
+
+#: land/models.py:76
+msgid "Competence edge"
+msgstr ""
+
+#: land/models.py:77
+msgid "Competence edges"
+msgstr ""
+
+#: land/models.py:87
+msgid "Work management edge"
+msgstr ""
+
+#: land/models.py:88
+msgid "Work management edges"
+msgstr ""
+
+#: land/models.py:98
+msgid "Signage management edge"
+msgstr ""
+
+#: land/models.py:99
+msgid "Signage management edges"
+msgstr ""
+
+#: land/models.py:107
+msgid "Order"
+msgstr ""
+
+#: land/models.py:112 land/models.py:122
+msgid "Restricted area"
+msgstr ""
+
+#: land/models.py:113
+msgid "Restricted areas"
+msgstr ""
+
+#: land/models.py:126
+msgid "Restricted area edge"
+msgstr ""
+
+#: land/models.py:127
+msgid "Restricted area edges"
+msgstr ""
+
+#: land/models.py:137 land/models.py:148
+msgid "City"
+msgstr ""
+
+#: land/models.py:138
+msgid "Cities"
+msgstr ""
+
+#: land/models.py:152
+msgid "City edge"
+msgstr ""
+
+#: land/models.py:153
+msgid "City edges"
+msgstr ""
+
+#: land/models.py:163 land/models.py:173
+msgid "District"
+msgstr ""
+
+#: land/models.py:164
+msgid "Districts"
+msgstr ""
+
+#: land/models.py:177
+msgid "District edge"
+msgstr ""
+
+#: land/models.py:178
+msgid "District edges"
+msgstr ""
+
+#: maintenance/models.py:16
+msgid "Whether the intervention is currently happening"
+msgstr ""
+
+#: maintenance/models.py:22
+msgid "Date"
+msgstr ""
+
+#: maintenance/models.py:31
+msgid "Width"
+msgstr ""
+
+#: maintenance/models.py:33
+msgid "Height"
+msgstr ""
+
+#: maintenance/models.py:35
+msgid "Area"
+msgstr ""
+
+#: maintenance/models.py:37
+msgid "Slope"
+msgstr ""
+
+#: maintenance/models.py:41
+msgid "Material cost"
+msgstr ""
+
+#: maintenance/models.py:43
+msgid "Heliport cost"
+msgstr ""
+
+#: maintenance/models.py:45
+msgid "Subcontract cost"
+msgstr ""
+
+#: maintenance/models.py:57
+msgid "Intervention status"
+msgstr ""
+
+#: maintenance/models.py:60
+msgid "Intervention typology"
+msgstr ""
+
+#: maintenance/models.py:63
+msgid "Disorders"
+msgstr ""
+
+#: maintenance/models.py:66
+msgid "Jobs"
+msgstr ""
+
+#: maintenance/models.py:69 maintenance/models.py:198
+msgid "Project"
+msgstr ""
+
+#: maintenance/models.py:73
+msgid "Intervention"
+msgstr ""
+
+#: maintenance/models.py:83
+msgid "Status"
+msgstr ""
+
+#: maintenance/models.py:87
+msgid "Intervention's status"
+msgstr ""
+
+#: maintenance/models.py:88
+msgid "Intervention's statuses"
+msgstr ""
+
+#: maintenance/models.py:97
+msgid "Typology"
+msgstr ""
+
+#: maintenance/models.py:101
+msgid "Intervention's typology"
+msgstr ""
+
+#: maintenance/models.py:102
+msgid "Intervention's typologies"
+msgstr ""
+
+#: maintenance/models.py:111
+msgid "Disorder"
+msgstr ""
+
+#: maintenance/models.py:115
+msgid "Intervention's disorder"
+msgstr ""
+
+#: maintenance/models.py:116
+msgid "Intervention's disorders"
+msgstr ""
+
+#: maintenance/models.py:124
+msgid "Job"
+msgstr ""
+
+#: maintenance/models.py:128
+msgid "Intervention's job"
+msgstr ""
+
+#: maintenance/models.py:129
+msgid "Intervention's jobs"
+msgstr ""
+
+#: maintenance/models.py:137 maintenance/models.py:144
+msgid "Mandays"
+msgstr ""
+
+#: maintenance/models.py:143
+msgid "Manday"
+msgstr ""
+
+#: maintenance/models.py:159
+msgid "Begin year"
+msgstr ""
+
+#: maintenance/models.py:162
+msgid "End year"
+msgstr ""
+
+#: maintenance/models.py:165
+msgid "Constraint"
+msgstr ""
+
+#: maintenance/models.py:168
+msgid "Cost"
+msgstr ""
+
+#: maintenance/models.py:183 maintenance/models.py:214 templates/home.html:161
+msgid "Contractors"
+msgstr ""
+
+#: maintenance/models.py:187
+msgid "Project owner"
+msgstr ""
+
+#: maintenance/models.py:191
+msgid "Project manager"
+msgstr ""
+
+#: maintenance/models.py:194
+msgid "Founders"
+msgstr ""
+
+#: maintenance/models.py:199
+msgid "Projects"
+msgstr ""
+
+#: maintenance/models.py:209 maintenance/models.py:213
+msgid "Contractor"
+msgstr ""
+
+#: maintenance/models.py:228
+msgid "Organisms"
+msgstr ""
+
+#: maintenance/models.py:236
+msgid "Amount"
+msgstr ""
+
+#: maintenance/models.py:242
+msgid "Funding"
+msgstr ""
+
+#: maintenance/models.py:243
+msgid "Fundings"
+msgstr ""
+
+#: templates/home.html:165 templates/home.html.py:172
+msgid "Empty"
+msgstr ""
+
+#: templates/home.html:168
+msgid "Structure related"
+msgstr ""
