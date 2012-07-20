@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-20 11:22+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: models.py:19 models.py:49
+msgid "Insertion date"
+msgstr "Date d'insertion"
+
+#: models.py:20 models.py:50
+msgid "Update date"
+msgstr "Date de modification"
+
+#: models.py:21
+msgid "Validity"
+msgstr "Validité"
+
+#: models.py:22
+msgid "Name"
+msgstr "Nom"
+
+#: models.py:23
+msgid "Comments"
+msgstr "Commentaires"
+
+#: models.py:29 models.py:59
+msgid "Length"
+msgstr "Longueur"
+
+#: models.py:31
+msgid "Ascent"
+msgstr "Dénivelée positive"
+
+#: models.py:33
+msgid "Descent"
+msgstr "Dénivelée négative"
+
+#: models.py:35
+msgid "Minimum elevation"
+msgstr "Altitude minimum"
+
+#: models.py:37
+msgid "Maximum elevation"
+msgstr "Altitude maximum"
+
+#: models.py:44 models.py:51 models.py:91
+msgid "Path"
+msgstr "Tronçon"
+
+#: models.py:45
+msgid "Paths"
+msgstr "Tronçons"
+
+#: models.py:52
+msgid "Offset"
+msgstr "Décalage"
+
+#: models.py:53
+msgid "Deleted"
+msgstr "Supprimé"
+
+#: models.py:63
+msgid "Kind"
+msgstr "Type de topologie"
+
+#: models.py:65
+msgid "Interventions"
+msgstr "Interventions"
+
+#: models.py:68 models.py:72 models.py:93
+msgid "Topology"
+msgstr "Topologie"
+
+#: models.py:73
+msgid "Topologies"
+msgstr "Topologies"
+
+#: models.py:79 models.py:86
+msgid "Topology's kind"
+msgstr "Type de topologie"
+
+#: models.py:87
+msgid "Topology's kinds"
+msgstr "Types de topologie"
+
+#: models.py:94
+msgid "Start position"
+msgstr "Position de début"
+
+#: models.py:95
+msgid "End position"
+msgstr "Position de fin"
+
+#: models.py:101 models.py:105
+msgid "Path aggregation"
+msgstr "Aggrégation de tronçons"
+
+#: models.py:106
+msgid "Path aggregations"
+msgstr "Aggrégations de tronçons"
