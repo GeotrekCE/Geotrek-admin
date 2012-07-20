@@ -64,5 +64,38 @@ ALTER TABLE node ADD edge_count integer DEFAULT 0;
 UPDATE node SET edge_count = n.nb FROM (SELECT id, count(*) as nb FROM (SELECT node_end as id FROM rps UNION ALL SELECT node_start as id FROM rps) as rps_nodes GROUP BY id) as n WHERE n.id = node.id;
 -- => No network simplifcation, it's a huge work for a small benefit
 
+-- Dump RPS types dataset in the Django model
+INSERT INTO nature_sentier (code_physique, physique) SELECT t.id, coalesce(t.types[id], 'XX') FROM (SELECT generate_subscripts(array(SELECT distinct types FROM rps), 1) as id, array(SELECT distinct types FROM rps) AS types) AS t;
+
+-- Reference data (might be managed with Django's initial_data later)
+INSERT INTO authent_structure (name) VALUES ('PNE');
+INSERT INTO type_evenements (code, kind) VALUES (1, 'nature');
+
+-- Keep a reference to original dataset in order to attach nature information
+ALTER TABLE troncons ADD original_rps_id integer;
+
 -- Dump RPS dataset in the Django model
-INSERT INTO troncons (date_insert, date_update, troncon_valide, longueur, denivelee_positive, denivelee_negative, altitude_minimum, altitude_maximum, geom) SELECT now(), now(), TRUE, ST_Length(geom), 0, 0, 0, 0, geom FROM rps;
+INSERT INTO troncons (date_insert, date_update, troncon_valide, structure_id, longueur, denivelee_positive, denivelee_negative, altitude_minimum, altitude_maximum, geom, original_rps_id ) SELECT now(), now(), TRUE, 1, ST_Length(geom), 0, 0, 0, 0, geom, ogc_fid FROM rps;
+
+-- Attach each troncons to an evenement recording its nature
+CREATE FUNCTION store_t_nature() RETURNS void AS $$
+DECLARE
+    rec record;
+    eid integer;
+BEGIN
+    FOR rec IN
+        SELECT t.id as id, r.types as nature, t.geom as geom FROM troncons t, rps r WHERE t.original_rps_id = r.ogc_fid
+    LOOP
+        INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 1, 0, 0, rec.geom) RETURNING id INTO eid;
+        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, 0, 1);
+        INSERT INTO nature (evenement, physical_type_id) SELECT eid, ns.code_physique FROM nature_sentier ns WHERE physique = rec.nature;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+SELECT store_t_nature();
+
+-- Clean-up model
+ALTER TABLE troncons DROP original_rps_id ;
+DROP FUNCTION store_t_nature();
+-- DROP TABLE rps; -- Don't remove, it could be useful to export fixed data in original format
+-- DROP TABLE node;
