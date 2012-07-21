@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.maintenance.models import Organism
 
@@ -14,8 +15,8 @@ from caminae.maintenance.models import Organism
 
 
 class PhysicalType(models.Model):
-    code = models.IntegerField(primary_key=True, db_column='code_physique')
-    name = models.CharField(max_length=128, db_column='physique', verbose_name=_(u"Name"))
+    code = models.AutoField(primary_key=True, db_column='code_physique')
+    name = models.CharField(max_length=128, verbose_name=_(u"Name"))  # TODO: fix db_column="physique"
 
     class Meta:
         db_table = 'nature_sentier'
@@ -39,8 +40,8 @@ class PhysicalEdge(TopologyMixin):
 
 # Type of land under paths
 
-class LandType(models.Model):
-    code = models.IntegerField(primary_key=True, db_column='code_foncier')
+class LandType(StructureRelated):
+    code = models.AutoField(primary_key=True, db_column='code_foncier')
     name = models.CharField(max_length=128, db_column='foncier', verbose_name=_(u"Name"))
     right_of_way = models.BooleanField(db_column='droit_de_passage', verbose_name=_(u"Right of way"))
 

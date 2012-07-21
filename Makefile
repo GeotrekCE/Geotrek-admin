@@ -27,7 +27,7 @@ tests: unit_tests functional_tests
 
 serve: bin/ clean_harmless
 	bin/buildout -Nvc buildout-dev.cfg
-	bin/django syncdb --migrate
+	bin/django syncdb --noinput --migrate
 	bin/django runserver
 
 load_data:

@@ -8,143 +8,42 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'PhysicalType'
-        db.create_table('nature_sentier', (
-            ('code', self.gf('django.db.models.fields.AutoField')(primary_key=True, db_column='code_physique')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='physique')),
-        ))
-        db.send_create_signal('land', ['PhysicalType'])
+        # Adding field 'PhysicalType.name_en'
+        db.add_column('nature_sentier', 'name_en',
+                      self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True),
+                      keep_default=False)
 
-        # Adding model 'PhysicalEdge'
-        db.create_table('nature', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('physical_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.PhysicalType'])),
-        ))
-        db.send_create_signal('land', ['PhysicalEdge'])
+        # Adding field 'PhysicalType.name_fr'
+        db.add_column('nature_sentier', 'name_fr',
+                      self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True),
+                      keep_default=False)
 
-        # Adding model 'LandType'
-        db.create_table('type_foncier', (
-            ('code', self.gf('django.db.models.fields.AutoField')(primary_key=True, db_column='code_foncier')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='foncier')),
-            ('right_of_way', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='droit_de_passage')),
-        ))
-        db.send_create_signal('land', ['LandType'])
+        # Adding field 'PhysicalType.name_it'
+        db.add_column('nature_sentier', 'name_it',
+                      self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True),
+                      keep_default=False)
 
-        # Adding model 'LandEdge'
-        db.create_table('foncier', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('land_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.LandType'])),
-        ))
-        db.send_create_signal('land', ['LandEdge'])
 
-        # Adding model 'CompetenceEdge'
-        db.create_table('competence', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Organism'])),
-        ))
-        db.send_create_signal('land', ['CompetenceEdge'])
-
-        # Adding model 'WorkManagementEdge'
-        db.create_table('gestion_travaux', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Organism'])),
-        ))
-        db.send_create_signal('land', ['WorkManagementEdge'])
-
-        # Adding model 'SignageManagementEdge'
-        db.create_table('gestion_signaletique', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Organism'])),
-        ))
-        db.send_create_signal('land', ['SignageManagementEdge'])
-
-        # Adding model 'RestrictedArea'
-        db.create_table('couche_zonage_reglementaire', (
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True, db_column='code_zonage')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='zonage')),
-            ('order', self.gf('django.db.models.fields.IntegerField')(db_column='order')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        ))
-        db.send_create_signal('land', ['RestrictedArea'])
-
-        # Adding model 'RestrictedAreaEdge'
-        db.create_table('zonage', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('restricted_area', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.RestrictedArea'])),
-        ))
-        db.send_create_signal('land', ['RestrictedAreaEdge'])
-
-        # Adding model 'City'
-        db.create_table('couche_communes', (
-            ('code', self.gf('django.db.models.fields.CharField')(max_length=6, primary_key=True, db_column='insee')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='commune')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        ))
-        db.send_create_signal('land', ['City'])
-
-        # Adding model 'CityEdge'
-        db.create_table('commune', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.City'])),
-        ))
-        db.send_create_signal('land', ['CityEdge'])
-
-        # Adding model 'District'
-        db.create_table('couche_secteurs', (
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True, db_column='code_secteur')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='secteur')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        ))
-        db.send_create_signal('land', ['District'])
-
-        # Adding model 'DistrictEdge'
-        db.create_table('secteur', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
-            ('district', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.District'])),
-        ))
-        db.send_create_signal('land', ['DistrictEdge'])
-
+        # Renaming column for 'PhysicalType.name' to match new field type.
+        db.rename_column('nature_sentier', 'physique', 'name')
+        # Changing field 'PhysicalType.name'
+        db.alter_column('nature_sentier', 'name', self.gf('django.db.models.fields.CharField')(max_length=128))
 
     def backwards(self, orm):
-        # Deleting model 'PhysicalType'
-        db.delete_table('nature_sentier')
+        # Deleting field 'PhysicalType.name_en'
+        db.delete_column('nature_sentier', 'name_en')
 
-        # Deleting model 'PhysicalEdge'
-        db.delete_table('nature')
+        # Deleting field 'PhysicalType.name_fr'
+        db.delete_column('nature_sentier', 'name_fr')
 
-        # Deleting model 'LandType'
-        db.delete_table('type_foncier')
+        # Deleting field 'PhysicalType.name_it'
+        db.delete_column('nature_sentier', 'name_it')
 
-        # Deleting model 'LandEdge'
-        db.delete_table('foncier')
 
-        # Deleting model 'CompetenceEdge'
-        db.delete_table('competence')
-
-        # Deleting model 'WorkManagementEdge'
-        db.delete_table('gestion_travaux')
-
-        # Deleting model 'SignageManagementEdge'
-        db.delete_table('gestion_signaletique')
-
-        # Deleting model 'RestrictedArea'
-        db.delete_table('couche_zonage_reglementaire')
-
-        # Deleting model 'RestrictedAreaEdge'
-        db.delete_table('zonage')
-
-        # Deleting model 'City'
-        db.delete_table('couche_communes')
-
-        # Deleting model 'CityEdge'
-        db.delete_table('commune')
-
-        # Deleting model 'District'
-        db.delete_table('couche_secteurs')
-
-        # Deleting model 'DistrictEdge'
-        db.delete_table('secteur')
-
+        # Renaming column for 'PhysicalType.name' to match new field type.
+        db.rename_column('nature_sentier', 'name', 'physique')
+        # Changing field 'PhysicalType.name'
+        db.alter_column('nature_sentier', 'physique', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='physique'))
 
     models = {
         'authent.structure': {
@@ -231,7 +130,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'LandType', 'db_table': "'type_foncier'"},
             'code': ('django.db.models.fields.AutoField', [], {'primary_key': 'True', 'db_column': "'code_foncier'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'foncier'"}),
-            'right_of_way': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'droit_de_passage'"})
+            'right_of_way': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'droit_de_passage'"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'land.physicaledge': {
             'Meta': {'object_name': 'PhysicalEdge', 'db_table': "'nature'", '_ormbases': ['core.TopologyMixin']},
@@ -241,7 +141,10 @@ class Migration(SchemaMigration):
         'land.physicaltype': {
             'Meta': {'object_name': 'PhysicalType', 'db_table': "'nature_sentier'"},
             'code': ('django.db.models.fields.AutoField', [], {'primary_key': 'True', 'db_column': "'code_physique'"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'physique'"})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
+            'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
         },
         'land.restrictedarea': {
             'Meta': {'object_name': 'RestrictedArea', 'db_table': "'couche_zonage_reglementaire'"},

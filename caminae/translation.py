@@ -1,6 +1,7 @@
 from modeltranslation.translator import translator, TranslationOptions
 
 from caminae.maintenance import models as maintenance_models
+from caminae.land import models as land_models
 
 
 ## Maintenance app ##
@@ -22,4 +23,7 @@ translator.register(maintenance_models.InterventionTypology, InterventionTypolog
 translator.register(maintenance_models.InterventionDisorder, InterventionDisorderTO)
 
 
+class PhysicalTypeTO(TranslationOptions):
+    fields = ('name', )
 
+translator.register(land_models.PhysicalType, PhysicalTypeTO)
