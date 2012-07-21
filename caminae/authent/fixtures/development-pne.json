@@ -1,0 +1,63 @@
+[
+    {
+        "pk": 1, 
+        "model": "authent.structure", 
+        "fields": {
+            "name": "PNE"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "admin", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-07-20T23:19:16.306Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$M7URcO1rPRGv$2vCwLDAnfwCvP6lyA3Qo6PQ5Zqrz0YkccetVIHByODU=", 
+            "email": "admin@yopmail.com", 
+            "date_joined": "2012-07-20T23:19:16.306Z"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "authent.userprofile", 
+        "fields": {
+            "language": "fr", 
+            "user": 1, 
+            "structure": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "sheldon", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-07-20T23:24:31.911Z", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "pbkdf2_sha256$10000$EbTI2JNKTyMu$7+fjM/SoYnkyekY5KmeHbHf5rLkoJmC5CD8mfvO+e2c=", 
+            "email": "sheldon@yopmail.com", 
+            "date_joined": "2012-07-20T23:24:31.911Z"
+        }
+    },
+    {
+        "pk": 2, 
+        "model": "authent.userprofile", 
+        "fields": {
+            "language": "fr", 
+            "user": 2, 
+            "structure": 1
+        }
+    }
+]

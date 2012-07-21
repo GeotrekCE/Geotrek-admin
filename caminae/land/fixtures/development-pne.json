@@ -1,0 +1,50 @@
+[
+    {
+        "pk": 1, 
+        "model": "land.physicaltype", 
+        "fields": {
+            "name_en": "road", 
+            "name_fr": "route", 
+            "name_it": "ruta", 
+            "name": "road"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "land.physicaltype", 
+        "fields": {
+            "name_en": "track", 
+            "name_fr": "piste", 
+            "name_it": "pista", 
+            "name": "track"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "land.physicaltype", 
+        "fields": {
+            "name_en": "path", 
+            "name_fr": "sentier", 
+            "name_it": "sendero", 
+            "name": "path"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "land.landtype", 
+        "fields": {
+            "right_of_way": true, 
+            "name": "Particulier", 
+            "structure": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "land.landtype", 
+        "fields": {
+            "right_of_way": false, 
+            "name": "No man's land", 
+            "structure": 1
+        }
+    }
+]
