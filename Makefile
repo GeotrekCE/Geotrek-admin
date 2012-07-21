@@ -31,9 +31,9 @@ load_data:
 	# /!\ will delete existing data
 	bin/django loaddata bin/django loaddata development-pne
 
-deploy_prod: bin/
+deploy: bin/
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
 
-deploy: deploy_code load_data
+deploy_demo: deploy load_data
