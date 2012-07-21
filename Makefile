@@ -29,7 +29,7 @@ serve: bin/
 
 load_data:
 	# /!\ will delete existing data
-	bin/django loaddata bin/django loaddata development-pne
+	bin/django loaddata development-pne
 
 deploy: bin/
 	bin/buildout -Nvc buildout-prod.cfg
