@@ -7,40 +7,44 @@ from caminae.core.models import Path
 class GeoJsonSerializerTest (TestCase):
     def test_serializer(self):
         # Stuff to serialize
-        Path(name='green').save()
-        Path(name='blue').save()
-        Path(name='red').save()
+        Path(name='green', geom="LINESTRING (0 0, 1 1)").save()
+        Path(name='blue', geom="LINESTRING (0 0, 1 1)").save()
+        Path(name='red', geom="LINESTRING (0 0, 1 1)").save()
 
         # Expected output
-        expect_geojson = \
-            'myapp.color:\n' \
-            '  1: {name: green}\n' \
-            '  2: {name: blue}\n' \
-            '  3: {name: red}\n'
+        expect_geojson = """{"type": "FeatureCollection", "features": [{"geometry": {"type": "LineString", "coordinates": [[0.0, 0.0], [1.0, 1.0]]}, "type": "Feature", "properties": {"pk": 1, "model": "core.path", "valid": true, "name": "green"}, "id": 1}, {"geometry": {"type": "LineString", "coordinates": [[0.0, 0.0], [1.0, 1.0]]}, "type": "Feature", "properties": {"pk": 2, "model": "core.path", "valid": true, "name": "blue"}, "id": 2}, {"geometry": {"type": "LineString", "coordinates": [[0.0, 0.0], [1.0, 1.0]]}, "type": "Feature", "properties": {"pk": 3, "model": "core.path", "valid": true, "name": "red"}, "id": 3}]}"""
 
         # Do the serialization
-        actual_geojson = serializers.serialize('yaml', Path.objects.all())
+        actual_geojson = serializers.serialize('geojson', Path.objects.all(), fields=['name', 'valid'])
 
         # Did it work?
         self.assertEqual(actual_geojson, expect_geojson)
 
 
-class GeoJsonSerializerTest (TestCase):
     def test_deserializer(self):
         # Input text
-        input_geojson = \
-            'myapp.color:\n' \
-            '  1: {name: green}\n' \
-            '  2: {name: blue}\n' \
-            '  3: {name: red}\n'
-
+        input_geojson = """
+        
+        {"type": "FeatureCollection",
+         "features": [
+            { "type": "Feature",
+                "properties": {"model": "core.Path", "name": "green"},
+                "id": 1,
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [0.0, 0.0],
+                        [1.0, 1.0]
+                    ]
+                }
+            }
+        ]}"""
+        
         # Deserialize into a list of objects
         objects = list(serializers.deserialize('geojson', input_geojson))
 
         # Were three objects deserialized?
-        self.assertEqual(len(objects), 3)
+        self.assertEqual(len(objects), 1)
 
         # Did the objects deserialize correctly?
-        self.assertEqual(objects[0].object.name, 'green')
-        self.assertEqual(objects[1].object.name, 'blue')
-        self.assertEqual(objects[2].object.name, 'red')
+        self.assertEqual(objects[0].object.name, "green")
