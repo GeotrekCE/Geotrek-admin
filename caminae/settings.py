@@ -176,6 +176,10 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.land',
 )
 
+SERIALIZATION_MODULES = {
+    'geojson' : 'djgeojson.serializers'
+}
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
