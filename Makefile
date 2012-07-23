@@ -37,7 +37,7 @@ functional_tests:
 
 tests: unit_tests functional_tests
 
-serve: bin/ clean_harmless
+serve: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django runserver
@@ -46,7 +46,7 @@ load_data:
 	# /!\ will delete existing data
 	bin/django loaddata development-pne
 
-deploy: bin/ clean_harmless
+deploy: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
