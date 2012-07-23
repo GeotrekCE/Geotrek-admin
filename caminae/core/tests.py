@@ -3,9 +3,10 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now
 
 from caminae.authent.models import Structure
-from caminae.core.models import Path
+from caminae.core.models import Path, TopologyMixin, TopologyMixinKind
 
 
 class ViewsTest(TestCase):
@@ -44,3 +45,46 @@ class PathTest(TestCase):
         
         self.assertFalse(p1 in Path.in_structure.byUser(user))
         self.assertTrue(p2 in Path.in_structure.byUser(user))
+
+    def test_dates(self):
+        s = Structure(name="other")
+        s.save()
+
+        t1 = now()
+        p = Path(geom=LineString((0, 0), (1, 1), srid=settings.SRID),
+                 structure=s)
+        p.save()
+        t2 = now()
+        self.assertTrue(t1 < p.date_insert < t2,
+                        msg='Date interval failed: %s < %s < %s' % (
+                            t1, p.date_insert, t2
+                        ))
+
+        p.geom = LineString((0, 0), (2, 2), srid=settings.SRID)
+        p.save()
+        t3 = now()
+        self.assertTrue(t2 < p.date_update < t3,
+                        msg='Date interval failed: %s < %s < %s' % (
+                            t2, p.date_update, t3
+                       ))
+
+
+class TopologyMixinTest(TestCase):
+    def test_dates(self):
+        k = TopologyMixinKind(code=1, kind="other")
+        k.save()
+
+        t1 = now()
+        e = TopologyMixin(geom=LineString((0, 0), (1, 1), srid=settings.SRID),
+                          offset=0,
+                          length=0,
+                          deleted=False,
+                          kind=k)
+        e.save()
+        t2 = now()
+        self.assertTrue(t1 < e.date_insert < t2)
+
+        e.deleted = True
+        e.save()
+        t3 = now()
+        self.assertTrue(t2 < e.date_update < t3)

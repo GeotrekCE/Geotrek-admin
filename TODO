@@ -5,6 +5,7 @@ In this sprint
 * Use AutoField (serial) for code fields
 * Remove db_column for translated fields
 * Reset migrations
+* Why initial SQL is loaded twice during syncdb?
 
 ==========
 One day...

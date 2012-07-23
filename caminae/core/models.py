@@ -16,8 +16,6 @@ class Path(StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
                                            spatial_index=False)
-    date_insert = models.DateField(auto_now_add=True, verbose_name=_(u"Insertion date"))
-    date_update = models.DateField(auto_now=True, verbose_name=_(u"Update date"))
     valid = models.BooleanField(db_column='troncon_valide', default=True, verbose_name=_(u"Validity"))
     name = models.CharField(null=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
     comments = models.TextField(null=True, db_column='remarques', verbose_name=_(u"Comments"))
@@ -26,6 +24,8 @@ class Path(StructureRelated):
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
+    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
+    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
     length = models.IntegerField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(
             editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
@@ -44,25 +44,36 @@ class Path(StructureRelated):
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
 
+    def save(self, *args, **kwargs):
+        super(Path, self).save(*args, **kwargs)
+
+        # Update computed values
+        tmp = self.__class__.objects.get(pk=self.pk)
+        self.date_insert = tmp.date_insert
+        self.date_update = tmp.date_update
+        self.length = tmp.length
+        self.ascent = tmp.ascent
+        self.descent = tmp.descent
+        self.min_elevation = tmp.min_elevation
+        self.max_elevation = tmp.max_elevation
+
 
 class TopologyMixin(models.Model):
-    date_insert = models.DateField(auto_now_add=True, verbose_name=_(u"Insertion date"))
-    date_update = models.DateField(auto_now=True, verbose_name=_(u"Update date"))
     troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(db_column='decallage', verbose_name=_(u"Offset"))
     deleted = models.BooleanField(db_column='supprime', verbose_name=_(u"Deleted"))
+    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
+    interventions = models.ManyToManyField(Intervention, verbose_name=_(u"Interventions"))
 
     # Override default manager
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
+    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
+    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
     length = models.FloatField(editable=False, db_column='longueur', verbose_name=_(u"Length"))
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
-
-    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
-
-    interventions = models.ManyToManyField(Intervention, verbose_name=_(u"Interventions"))
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
@@ -71,6 +82,16 @@ class TopologyMixin(models.Model):
         db_table = 'evenements'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
+
+    def save(self, *args, **kwargs):
+        super(TopologyMixin, self).save(*args, **kwargs)
+
+        # Update computed values
+        tmp = self.__class__.objects.get(pk=self.pk)
+        self.date_insert = tmp.date_insert
+        self.date_update = tmp.date_update
+        self.length = tmp.length
+        self.geom = tmp.geom
 
 
 class TopologyMixinKind(models.Model):
