@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 
 baseurl=http://localhost:8000
+root = $(shell pwd)
 
 bin/ lib/:
 	virtualenv .
@@ -20,11 +21,11 @@ clean: clean_harmless
 
 .PHONY: all_makemessages all_compilemessages
 
-all_makemessages:
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin makemessages -a; popd > /dev/null; done
+all_makemessages: bin/
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
 
-all_compilemessages:
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin compilemessages; popd > /dev/null; done
+all_compilemessages: bin/
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
 
 unit_tests: bin/ clean_harmless
@@ -51,4 +52,3 @@ deploy: bin/ clean_harmless
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data
-
