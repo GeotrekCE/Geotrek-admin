@@ -10,7 +10,7 @@ from .models import Path
 class PathList(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
-    precision = 2
+    precision = 4
     srid = 4326
     # simplify = 0.5
 
