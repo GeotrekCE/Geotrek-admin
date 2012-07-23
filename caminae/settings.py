@@ -174,6 +174,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.core',
     'caminae.maintenance',
     'caminae.land',
+    'caminae.trekking',
 )
 
 SERIALIZATION_MODULES = {
@@ -215,3 +216,6 @@ SRID = None
 SPATIAL_EXTENT = None
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
+
+UPLOAD_DIR = 'upload'
+
