@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from caminae.authent.models import StructureRelated
 
 
-class Intervention(models.Model):
+class Intervention(StructureRelated):
 
     intervention_id = models.IntegerField(primary_key=True)
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
@@ -126,7 +126,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(models.Model):
+class Project(StructureRelated):
 
     project_id = models.IntegerField(primary_key=True)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
