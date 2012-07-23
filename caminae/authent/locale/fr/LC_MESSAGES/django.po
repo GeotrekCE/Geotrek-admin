@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-20 11:41+0200\n"
+"POT-Creation-Date: 2012-07-23 08:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,3 +53,11 @@ msgstr "Profils utilisateur"
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
+
+#: tests.py:45 tests.py:55 tests.py:64
+msgid "Logout"
+msgstr ""
+
+#: tests.py:74 tests.py:79
+msgid "Admin"
+msgstr ""

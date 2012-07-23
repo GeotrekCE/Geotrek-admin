@@ -1,3 +1,5 @@
+SHELL = /bin/bash
+
 baseurl=http://localhost:8000
 
 bin/ lib/:
@@ -43,10 +45,10 @@ deploy: bin/ clean_harmless
 .PHONY: all_makemessages all_compilemessages
 
 all_makemessages:
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin.py makemessages -a; popd > /dev/null; done
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin makemessages -a; popd > /dev/null; done
 
 all_compilemessages:
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin.py compilemessages; popd > /dev/null; done
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin compilemessages; popd > /dev/null; done
 
 deploy_demo: deploy load_data
 
