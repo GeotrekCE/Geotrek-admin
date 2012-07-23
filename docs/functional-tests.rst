@@ -39,9 +39,16 @@ sa langue.
 - Scénario 2 - CRUD et traduction
 
     * Connexion avec un compte admin.
-    * CRUD "bib de suivi" (par exemple)
-    * Traduction d'un même élément en anglais/francais/italien
-    * Vérification de la bonne traduction de cet élement dans chaque interface en fonction de la langue
+    * Changer la langue du compte.
+    * Vérifier que les menus et les formulaires des objets sont bien traduits dans
+      la langue de l'utilisateur
+
+- Scénario 3 - CRUD et champs multilingues
+
+    * CRUD "usages" (par exemple)
+    * Traduction d'un même enregistrement en anglais/francais/italien
+    * Vérification de la bonne traduction de cet élement dans l'interface en fonction de la langue
+      de l'utilisateur
 
 
 #15 - Limiter les listes de choix à ceux de la structure de l'utilisateur
