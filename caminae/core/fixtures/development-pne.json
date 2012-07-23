@@ -36269,5 +36269,82 @@
             "structure": 1, 
             "name": null
         }
+    },
+    {
+        "pk": 1,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Nature physique"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Commune"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Secteur"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Zonage r\u00e9glementaire"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Comp\u00e9tence"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Gestion travaux"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Gestion signal\u00e9tique"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Foncier"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Am\u00e9nagement"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "POI"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Intervention"
+        }
     }
 ]
