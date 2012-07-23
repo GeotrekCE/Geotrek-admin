@@ -2,8 +2,7 @@
 *.zip
 *.tar.gz
 *.mo
-# caminae stuff
-caminae.egg-info/
+
 # buildout stuff
 .installed.cfg
 bin/
@@ -17,6 +16,7 @@ var/
 include/
 lib/
 local/
+*.egg-info/
 
 # buildout stuff for poc
 poc/.installed.cfg
