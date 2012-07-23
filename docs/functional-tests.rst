@@ -62,3 +62,15 @@ bien les objets crées.
 Si je change la structure de l'utilisateur. La liste des objets associés à la structure change.
 
 Si je change la structure d'un objet, il n'apparait plus dans la liste.
+
+
+#30 - Montrer la carte globale sur la page d'accueil
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La page d'accueil affiche une carte avec les tronçons. 
+
+:note:
+
+    Pour l'instant, la carte est en projection 4326 (attente fin POC #12).
+    
+    Les performances ne sont pas au rendez-vous (6 sec. pour générer le fichier, 11 millisec. pour l'afficher)
