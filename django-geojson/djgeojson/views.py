@@ -1,6 +1,9 @@
-from http import HttpJSONResponse
-from serializers import Serializer as GeoJSONSerializer
 from django.views.generic import ListView
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
+
+from .http import HttpJSONResponse
+from .serializers import Serializer as GeoJSONSerializer
 
 
 class GeoJSONResponseMixin(object):
@@ -34,3 +37,6 @@ class GeoJSONLayerView(GeoJSONResponseMixin, ListView):
     """
     A generic view to serve a model as a layer.
     """
+    @method_decorator(gzip_page)
+    def dispatch(self, *args, **kwargs):
+        return super(GeoJSONLayerView, self).dispatch(*args, **kwargs)
