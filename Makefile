@@ -39,4 +39,14 @@ deploy: bin/ clean_harmless
 	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
 
+
+.PHONY: all_makemessages all_compilemessages
+
+all_makemessages:
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin.py makemessages -a; popd > /dev/null; done
+
+all_compilemessages:
+	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; django-admin.py compilemessages; popd > /dev/null; done
+
 deploy_demo: deploy load_data
+
