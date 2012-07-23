@@ -10,5 +10,8 @@ In this sprint
 One day...
 ==========
 
+* Docstrings for each model
+* Help text for each model field
 * Fix bug db_column in django-modeltranslation
 * Improve installation of GDAL
+* Clean-up buildout directory (all in one "env")
