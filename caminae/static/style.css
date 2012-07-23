@@ -75,16 +75,9 @@ margin-top: 5px;
 
 }
 
-.row-fluid > .span6 {
-	background-color: rgb(174, 199, 82);
+.row-fluid > .span6, .leaflet-container {
 	height: 500px;	/* A REVOIR -> fonction de l'écran */
-/*border-left: 1px solid #DDDDDD;	
-margin-left: -1px;*/
 }
-
-
-
-
 
 
 h2 {
@@ -110,7 +103,3 @@ h2 {
 #module {
 	border-top: 1px solid #DDDDDD;	
 }
-
-
-
-

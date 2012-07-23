@@ -130,6 +130,9 @@
 
                 <!-- Zone de carte -->
                 <div class="span6">
+                    {% block mainmap %}
+                    {% endblock mainmap %}
+                    
                     <div class="pull-right">
                         <p>
                             <i class="icon-download-alt"></i> 
@@ -140,9 +143,6 @@
                             <button class="btn">Type2</button>    
                         </p>
                     </div><!--/pull-right-->
-                    
-                    {% block mainmap %}
-                    {% endblock mainmap %}
                 </div><!--/span-->
 
             </div><!--/row-->
