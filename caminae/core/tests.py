@@ -2,10 +2,16 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib.gis.geos import LineString
+from django.core.urlresolvers import reverse
 
 from caminae.authent.models import Structure
 from caminae.core.models import Path
 
+
+class ViewsTest(TestCase):
+    def test_status(self):
+        response = self.client.get(reverse("core:layerpath"))
+        self.assertEqual(response.status_code, 200)
 
 class PathTest(TestCase):
     def test_paths_bystructure(self):

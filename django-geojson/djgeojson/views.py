@@ -16,7 +16,7 @@ class GeoJSONResponseMixin(object):
         """
         serializer = GeoJSONSerializer()
         response = self.response_class(**response_kwargs)
-        serializer.serialize(self.queryset, stream=response, fields=self.fields, ensure_ascii=False)
+        serializer.serialize(self.get_queryset(), stream=response, fields=self.fields, ensure_ascii=False)
         return response
 
 
