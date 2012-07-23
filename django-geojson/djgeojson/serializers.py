@@ -15,13 +15,12 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+from simplejson import encoder
 
 from django.core.serializers.base import DeserializationError
-from django.core.serializers.json import (DjangoJSONEncoder, 
-                                          Serializer as JsonSerializer)
+from django.core.serializers.json import (Serializer as JsonSerializer)
 from django.utils import simplejson
 from django.contrib.gis.db.models.fields import GeometryField
-from django.contrib.gis.geos.geometry import GEOSGeometry
 from django.core.serializers.python import Deserializer as PythonDeserializer
 from django.utils.encoding import smart_unicode
 
@@ -35,8 +34,16 @@ class Serializer(JsonSerializer):
         self.collection = None
 
     def end_serialization(self):
+        precision = self.options.get('precision')
+        floatrepr = encoder.FLOAT_REPR
+        if precision is not None:
+            # Monkey patch for float precision!
+            encoder.FLOAT_REPR = lambda o: format(o, '.%sf' % precision)
+
         self.collection = geojson.FeatureCollection(features=self.objects)
         return geojson.dump(self.collection, self.stream)
+        
+        encoder.FLOAT_REPR = floatrepr
 
     def end_object(self, obj):
         pk = smart_unicode(obj._get_pk_val(), strings_only=True)
@@ -45,27 +52,28 @@ class Serializer(JsonSerializer):
         # TODO warn if more than one ?
         geomattr = geomattrs[0]
         geomfield = getattr(obj, geomattr.name)
-        
+        # Optional geometry simplification
         simplify = self.options.get('simplify')
-        srid = self.options.get('srid')
-        
         if simplify is not None:
             geomfield = geomfield.simplify(tolerance=simplify, preserve_topology=True)
-        
+        # Optional geometry reprojection
+        srid = self.options.get('srid')
         if srid is not None:
             geomfield.transform(srid)
-        
-        gjson = geomfield.geojson
-        geometry = simplejson.loads(gjson)
-        
+        # Load Django geojson representation as dict
+        geometry = simplejson.loads(geomfield.geojson)
+        # Build properties from object fields
         properties = dict(self._current.iteritems())
         if self.selected_fields is not None:
             properties = {k:v for k,v in properties.items() if k in self.selected_fields}
+        # Add extra-info for deserializing
         properties['model'] = smart_unicode(obj._meta)
         properties['pk'] = pk
-        self.objects.append(geojson.Feature(id=pk,
-                                            properties=properties,
-                                            geometry=geometry))
+        # Build pure geojson object
+        feature = geojson.Feature(id=pk,
+                                  properties=properties,
+                                  geometry=geometry)
+        self.objects.append(feature)
         self._current = None
 
     def handle_field(self, obj, field):
@@ -77,22 +85,6 @@ class Serializer(JsonSerializer):
             self._current[field.name] = value
         else:
             super(Serializer, self).handle_field(obj, field)
-
-
-class DjangoGeoJsonEncoder(DjangoJSONEncoder):
-    """
-    DjangoGeoJsonEncoder subclass that knows how to encode GEOSGeometry value
-    """
-    def __init__(self, **options):
-        super(DjangoGeoJsonEncoder, self).__init__(self, **options)
-
-    def default(self, o):
-        """ Overload the default method to process any GEOSGeometry objects 
-        otherwise call original method """ 
-        if isinstance(o, GEOSGeometry):
-            dictval = o.loads(o.geojson)
-            return dictval
-        return super(DjangoGeoJsonEncoder, self).default(o)
 
 
 def Deserializer(stream_or_string, **options):

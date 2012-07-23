@@ -10,6 +10,8 @@ class GeoJSONResponseMixin(object):
     response_class = HttpJSONResponse
     """ Select fields for properties """
     fields = []
+    """ Limit float precision """
+    precision = None
     """ Simplify geometries """
     simplify = None
     """ Change projection of geometries """
@@ -23,7 +25,8 @@ class GeoJSONResponseMixin(object):
         response = self.response_class(**response_kwargs)
         serializer.serialize(self.get_queryset(), stream=response, 
                              fields=self.fields, simplify=self.simplify,
-                             srid=self.srid, ensure_ascii=False)
+                             srid=self.srid, precision=self.precision,
+                             ensure_ascii=False)
         return response
 
 
