@@ -1,0 +1,3 @@
+[submodule "django-leaflet"]
+	path = django-leaflet
+	url = https://github.com/makinacorpus/django-leaflet.git

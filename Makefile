@@ -47,6 +47,8 @@ load_data:
 	bin/django loaddata development-pne
 
 deploy: bin/ clean_harmless all_compilemessages
+	git submodule init
+	git submodule update
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/supervisorctl restart all
