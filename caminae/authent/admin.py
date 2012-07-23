@@ -9,9 +9,11 @@ from caminae.authent.models import UserProfile
 admin.site.unregister(User)
 
 class UserProfileInline(admin.StackedInline):
+    """ Custom form """
     model = UserProfile
 
 class UserProfileAdmin(UserAdmin):
+    """ Custom adminsite """
     inlines = [ UserProfileInline, ]
 
 admin.site.register(User, UserProfileAdmin)

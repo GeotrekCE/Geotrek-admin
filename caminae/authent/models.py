@@ -1,3 +1,6 @@
+"""
+Caminae Authentification
+"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -21,11 +24,14 @@ class Structure(models.Model):
 
 
 def default_structure():
+    """ Create default structure if necessary """
     return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
 
 
 class StructureRelatedManager(models.Manager):
+    """ A simple manager to manage structure related objects"""
     def byUser(self, user):
+        """ Filter by user's structure """
         qs = super(StructureRelatedManager, self).get_query_set()
         return qs.filter(structure=user.profile.structure)
 
@@ -41,6 +47,7 @@ class StructureRelated(models.Model):
 
     @classmethod
     def forUser(cls, user):
+        """ Shortcut to manager's filter by user """
         return cls.in_structure.byUser(user)
 
     class Meta:
@@ -50,6 +57,9 @@ class StructureRelated(models.Model):
 
 
 class UserProfile(StructureRelated):
+    """
+    A custom user profile
+    """
     user = models.OneToOneField(User, unique=True)
 
     language = models.CharField(_(u"Language"), max_length=10,
