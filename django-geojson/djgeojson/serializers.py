@@ -40,11 +40,22 @@ class Serializer(JsonSerializer):
 
     def end_object(self, obj):
         pk = smart_unicode(obj._get_pk_val(), strings_only=True)
-        geomfields = [field for field in obj._meta.fields if isinstance(field, GeometryField)]
+        geomattrs = [field for field in obj._meta.fields if isinstance(field, GeometryField)]
         # TODO will raise if not any !
         # TODO warn if more than one ?
-        geomfield = geomfields[0]
-        gjson = getattr(obj, geomfield.name).geojson
+        geomattr = geomattrs[0]
+        geomfield = getattr(obj, geomattr.name)
+        
+        simplify = self.options.get('simplify')
+        srid = self.options.get('srid')
+        
+        if simplify is not None:
+            geomfield = geomfield.simplify(tolerance=simplify, preserve_topology=True)
+        
+        if srid is not None:
+            geomfield.transform(srid)
+        
+        gjson = geomfield.geojson
         geometry = simplejson.loads(gjson)
         
         properties = dict(self._current.iteritems())
