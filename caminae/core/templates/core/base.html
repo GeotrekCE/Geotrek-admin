@@ -129,7 +129,7 @@
                 </div><!--/span-->
 
                 <!-- Zone de carte -->
-                <div class="span6">
+                <div id="panelright" class="span6">
                     {% block mainmap %}
                     {% endblock mainmap %}
                     
@@ -152,7 +152,8 @@
 
 
 {% block extrabody %}
-    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static "js/spin.js" %}"></script>
+    
     <script src="{% static "bootstrap/js/jquery.js" %}"></script>
     <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
     <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
