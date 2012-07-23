@@ -15,3 +15,4 @@ One day...
 * Fix bug db_column in django-modeltranslation
 * Improve installation of GDAL
 * Clean-up buildout directory (all in one "env")
+* Ability to format floats in geojson (%.2f)
