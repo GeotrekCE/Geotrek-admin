@@ -1,6 +1,7 @@
 *.pyc
 *.zip
 *.tar.gz
+*.mo
 # caminae stuff
 caminae.egg-info/
 # buildout stuff
