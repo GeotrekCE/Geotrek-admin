@@ -9,51 +9,30 @@ from caminae.authent.models import StructureRelated
 
 class Intervention(models.Model):
 
-    # idintervention serial
     intervention_id = models.IntegerField(primary_key=True)
-
-    # Entretien courant BOO(32)
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
-
-    # nom intervention AV(128)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-
-    # date intervention D(8)
     date = models.DateField(verbose_name=_(u"Date"))
-
-    # remarques TXT(1000)
     comment = models.TextField(verbose_name=_(u"Comments"))
 
     ## Technical information ##
-    # longueur saisie DEC(10,2)
     length = models.FloatField(verbose_name=_(u"Length"))
-    # largeur DEC(10,2)
     width = models.FloatField(verbose_name=_(u"Width"))
-    # Hauteur DEC(2,1)
     height = models.FloatField(verbose_name=_(u"Height"))
-    # surface NS(2)
     area = models.IntegerField(verbose_name=_(u"Area"))
-    # pente NS(2)
     slope = models.IntegerField(verbose_name=_(u"Slope"))
 
-    ## Suivi_ des coûts A(15) ##
-    # coût materiel NR(5,2)
+    ## Costs ##
     material_cost = models.FloatField(verbose_name=_(u"Material cost"))
-    # cout héliportage NR(5,2)
     heliport_cost = models.FloatField(verbose_name=_(u"Heliport cost"))
-    # cout sous-traitance NR(5,2)
     subcontract_cost = models.FloatField(verbose_name=_(u"Subcontract cost"))
 
-    # date_insert DH(12)
     insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-
-    # date_update DH(12)
     update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
-    # Supprime BOO(1)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
-    #
+    ## Relations ##
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
 
     typology = models.ForeignKey('InterventionTypology', null=True, blank=True,
@@ -149,44 +128,26 @@ class ManDay(models.Model):
 
 class Project(models.Model):
 
-    # idchantier serial
     project_id = models.IntegerField(primary_key=True)
-
-    # Nom du chantier AV(128)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-
-    # année debut NS(2)
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
-
-    # année fin NS(2)
     end_year = models.IntegerField(verbose_name=_(u"End year"))
-
-    # contraintes TXT(1000)
     constraint = models.TextField(verbose_name=_(u"Constraint"))
-
-    # Coût du chantier DEC(10,2)
     cost = models.FloatField(verbose_name=_(u"Cost"))
-
-    # remarques TXT(1000)
     comment = models.TextField(verbose_name=_(u"Comments"))
 
-    # date_insert DH(12)
     insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-
-    # date_update DH(12)
     update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
-    # Supprime BOO(1)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
+    ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",
             verbose_name=_(u"Contractors"))
 
-    # Maître ouvrage
     project_owner = models.ForeignKey('Organism', related_name='own',
             verbose_name=_(u"Project owner"))
 
-    # Maître d'oeuvre
     project_manager = models.ForeignKey('Organism', related_name='manage',
             verbose_name=_(u"Project manager"))
 
