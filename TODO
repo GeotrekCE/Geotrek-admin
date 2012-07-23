@@ -1,0 +1,14 @@
+==============
+In this sprint
+==============
+
+* Use AutoField (serial) for code fields
+* Remove db_column for translated fields
+* Reset migrations
+
+==========
+One day...
+==========
+
+* Fix bug db_column in django-modeltranslation
+* Improve installation of GDAL
