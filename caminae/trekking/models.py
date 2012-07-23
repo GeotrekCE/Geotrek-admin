@@ -68,6 +68,9 @@ class Trek(models.Model):
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
 
+    def __unicode__(self):
+        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+
 
 class TrekNetwork(models.Model):
 
@@ -78,6 +81,9 @@ class TrekNetwork(models.Model):
         verbose_name = _(u"Trek network")
         verbose_name_plural = _(u"Trek networks")
 
+    def __unicode__(self):
+        return self.network
+
 
 class Usage(models.Model):
 
@@ -86,6 +92,8 @@ class Usage(models.Model):
     class Meta:
         db_table = 'usages'
 
+    def __unicode__(self):
+        return self.usage
 
 class Route(models.Model):
 
@@ -96,6 +104,8 @@ class Route(models.Model):
         verbose_name = _(u"Route")
         verbose_name_plural = _(u"Routes")
 
+    def __unicode__(self):
+        return self.route
 
 
 class DifficultyLevel(models.Model):
@@ -106,6 +116,9 @@ class DifficultyLevel(models.Model):
         db_table = 'classement_difficulte'
         verbose_name = _(u"Difficulty level")
         verbose_name_plural = _(u"Difficulty levels")
+
+    def __unicode__(self):
+        return self.difficulty
 
 
 class Destination(models.Model):
@@ -118,6 +131,9 @@ class Destination(models.Model):
         verbose_name = _(u"Destination")
         verbose_name_plural = _(u"Destinations")
 
+    def __unicode__(self):
+        return self.destination
+
 
 class WebLink(models.Model):
 
@@ -129,6 +145,9 @@ class WebLink(models.Model):
         db_table = 'liens_web'
         verbose_name = _(u"Web link")
         verbose_name_plural = _(u"Web links")
+
+    def __unicode__(self):
+        return u"%s (%s)" % (self.name, self.url)
 
 
 # TODO: can not be have an intermediary table and be "symmetrical" at the same time
