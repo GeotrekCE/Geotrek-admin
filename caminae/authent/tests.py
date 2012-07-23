@@ -61,7 +61,7 @@ class UserProfileTest(TestCase):
         response = c.get(reverse('home'))
 
         self.assertEqual(c.session['django_language'], u"en")
-        self.assertFalse(_("Logout") in response.content)
+        self.assertTrue(_("Logout") in response.content)
 
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
