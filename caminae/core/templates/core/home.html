@@ -1,0 +1,73 @@
+{% extends "core/base.html" %}
+{% load i18n leaflet_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% leaflet_css %}
+    {% leaflet_js %}
+    
+    <style>
+
+    .leaflet-container {
+        width:  600px;
+        height: 400px;
+    }
+    
+    </style>
+{% endblock extrahead %}
+
+
+{% block mainmap %}
+    {% leaflet_map "mainmap" %}
+{% endblock mainmap %}
+
+
+{% block content %}
+    {{ block.super }}
+    
+    <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
+    <h2>{% trans "Usages" %}</h2>
+    {% for usage in all_usages %}
+        <li>{{ usage }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+
+    <h2>{% trans "Contractors" %}</h2>
+    {% for contractor in all_contractors %}
+        <li>{{ contractor }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+
+    <h2>{% trans "Structure related" %}</h2>
+    {% for contractor in contractors %}
+        <li>{{ contractor }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+{% endblock content %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var tilesLayer = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg');
+        var geojsonLayer = new L.GeoJSON();
+        geojsonLayer.on("featureparse", function (e) {
+            if (e.properties && e.properties.nom) {
+                e.layer.bindPopup(e.properties.nom);
+            }
+        });
+        
+        $.getJSON("{% url core:layerpath %}", function (data) {           
+            geojsonLayer.addGeoJSON(data);
+        });
+        
+        mainmap.addLayer(tilesLayer)
+               .addLayer(geojsonLayer);
+        
+        mainmap.setView(new L.LatLng(44.55, 6.07), 9)
+        
+    </script>
+{% endblock extrabody %}

@@ -165,6 +165,7 @@ PROJECT_APPS = (
 
     'south',
     'modeltranslation',
+    'leaflet',
     
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
@@ -218,4 +219,3 @@ SPATIAL_EXTENT = None
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'
-

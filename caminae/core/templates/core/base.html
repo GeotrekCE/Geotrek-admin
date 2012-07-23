@@ -140,54 +140,30 @@
                             <button class="btn">Type2</button>    
                         </p>
                     </div><!--/pull-right-->
+                    
+                    {% block mainmap %}
+                    {% endblock mainmap %}
                 </div><!--/span-->
 
             </div><!--/row-->
         </div><!--/container-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h1>Liste temporaire (recette stories #10, 15, #31)</h1>
-<h2>{% trans "Contractors" %}</h2>
-{% for contractor in all_contractors %}
-    <li>{{ contractor }}</li>
-{% empty %}
-    {% trans "Empty" %}
-{% endfor %}
-
-<h2>{% trans "Structure related" %}</h2>
-{% for contractor in contractors %}
-    <li>{{ contractor }}</li>
-{% empty %}
-    {% trans "Empty" %}
-{% endfor %}
 
 {% endblock content %}
 
 
 {% block extrabody %}
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static "assets/js/jquery.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-transition.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-alert.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-modal.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-dropdown.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-scrollspy.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-tab.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-tooltip.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-popover.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-button.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-collapse.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-carousel.js" %}"</script>
-    <script src="{% static "assets/js/bootstrap-typeahead.js" %}"</script>
+    <script src="{% static "bootstrap/js/jquery.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-dropdown.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-scrollspy.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tab.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tooltip.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-popover.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-button.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-collapse.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-carousel.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-typeahead.js" %}"></script>
 {% endblock extrabody %}
