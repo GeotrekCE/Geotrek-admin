@@ -2,24 +2,22 @@
 
 
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
 
 from caminae.maintenance.models import (
         Contractor, InterventionStatus, InterventionTypology, InterventionDisorder
 )
 
-
-class InterventionStatusAdmin(TranslationAdmin):
+class InterventionStatusAdmin(admin.ModelAdmin):
     list_display = ('status',)
     search_fields = ('status', )
 
 
-class InterventionTypologyAdmin(TranslationAdmin):
+class InterventionTypologyAdmin(admin.ModelAdmin):
     list_display = ('typology',)
     search_fields = ('typology',)
 
 
-class InterventionDisorderAdmin(TranslationAdmin):
+class InterventionDisorderAdmin(admin.ModelAdmin):
     list_display = ('disorder',)
     search_fields = ('disorder',)
 

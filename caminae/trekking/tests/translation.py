@@ -7,8 +7,7 @@ from django.test import TestCase
 from django.utils import translation
 
 
-from caminae.maintenance.models import InterventionStatus
-from caminae.authent.models import default_structure
+from caminae.trekking.models import DifficultyLevel
 
 
 Credential = namedtuple('Credential', ['username', 'password'])
@@ -30,13 +29,13 @@ def admin_list_url_from_model(model):
     info = model._meta.app_label, model._meta.module_name
     return reverse('admin:%s_%s_changelist' % info)
 
-# modeladmin = admin.site._registry[InterventionStatus]
+# modeladmin = admin.site._registry[DifficultyLevel]
 # form = modeladmin.get_form(response._request)
 
 
 class TraductionTestCase(TestCase):
     """
-    Test a superuser has access to the InterventionStatus and can enter a translation
+    Test a superuser has access to the DifficultyLevel and can enter a translation
     """
 
     def setUp(self):
@@ -48,51 +47,52 @@ class TraductionTestCase(TestCase):
         admin.autodiscover()
 
     @classmethod
-    def get_dummy_status_trad(cls):
+    def get_dummy_data_trad(cls):
         return dict(
-            status=u"status_default",
-            status_en=u"status_en",
-            status_fr=u"status_fr",
-            status_it=u"status_it",
+            difficulty=u"difficulty_descr_default",
+            difficulty_en=u"difficulty_descr_en",
+            difficulty_fr=u"difficulty_descr_fr",
+            difficulty_it=u"difficulty_descr_it",
         )
 
     def test_admin_set_trad(self):
-        # Given no InterventionStatus is present in the database
-        self.assertEquals(InterventionStatus.objects.all().count(), 0)
+        # Given no DifficultyLevel is present in the database
+        self.assertEquals(DifficultyLevel.objects.all().count(), 0)
 
         # login
         success = login_from_cred(self.client, self.cred)
         self.assertTrue(success)
 
-        add_intervention_url = admin_add_url_from_model(InterventionStatus)
+        add_intervention_url = admin_add_url_from_model(DifficultyLevel)
 
         response = self.client.get(add_intervention_url)
         self.assertEquals(response.status_code, 200)
 
-        # Get data for InterventionStatus creation and create it through admin view
-        data = dict(structure=default_structure().pk, code=1234,)
-        data.update(self.get_dummy_status_trad())
+        # Get data for DifficultyLevel creation and create it through admin view
+        data = self.get_dummy_data_trad()
 
         response = self.client.post(add_intervention_url, data, follow=True)
-        self.assertRedirects(response, admin_list_url_from_model(InterventionStatus))
+        self.assertRedirects(response, admin_list_url_from_model(DifficultyLevel))
         self.assertEquals(response.status_code, 200)
 
-        iss = InterventionStatus.objects.all()
-        self.assertEquals(len(iss), 1, "One and only one InterventionStatus should be created")
+        iss = DifficultyLevel.objects.all()
+        self.assertEquals(len(iss), 1, "One and only one DifficultyLevel should be created")
 
         # This may test too much.
-        # Test language translation for intervention_status.status works
+        # Test language translation for DifficultyLevel.difficulty works
         # Given the language set, it returns the appropriate version (fr, it, en)
 
         orig_language = translation.get_language_from_request(response._request)
         restore_language = lambda: translation.activate(orig_language)
 
-        status_trad = self.get_dummy_status_trad()
-        intervention_status = iss[0]
+        difficulty_trad = self.get_dummy_data_trad()
+        intervention_difficulty = iss[0]
 
         for language in ('fr', 'it', 'en'):
             translation.activate(language)
-            translated_status = status_trad['status_%s' % language]
-            self.assertEquals(intervention_status.status, translated_status)
+            translated_difficulty = difficulty_trad['difficulty_%s' % language]
+            self.assertEquals(intervention_difficulty.difficulty, translated_difficulty)
 
         restore_language()
+
+
