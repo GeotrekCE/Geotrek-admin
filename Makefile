@@ -30,7 +30,7 @@ all_compilemessages: bin/
 
 unit_tests: bin/ clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance
+	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking
 
 functional_tests:
 	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
