@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Date functions (wiil be used for many tables)
+-- Date functions (will be used for many tables)
 -------------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION ft_date_insert() RETURNS trigger AS $$
