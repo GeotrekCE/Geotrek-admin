@@ -3,13 +3,13 @@
 
     <link rel="stylesheet" href="js/lib/leaflet/leaflet.css" />
 
-<!--      <script type="text/javascript" src="js/lib/jquery.js"></script> -->
-    <script src="js/lib/leaflet/leaflet-src.js"></script>
+     <script type="text/javascript" src="js/lib/jquery.js"></script>
+<!--     <script src="js/lib/leaflet/leaflet-src.js"></script> -->
     <script src="http://localhost/leaflet/debug/leaflet-include.js"></script>
-    <script src="js/lib/proj4js/lib/proj4js.js"></script>
-    <script src="js/lib/proj4js/lib/projCode/tmerc.js" type="text/javascript"></script>
-    <script src="js/lib/proj4js/lib/projCode/lcc.js" type="text/javascript"></script>      
-    <script src="js/lib/proj4js/lib/defs/EPSG2154.js"></script >
+    <script src="js/lib/proj4js/proj4js.js"></script>
+    <script src="js/lib/proj4js/projCode/tmerc.js" type="text/javascript"></script>
+    <script src="js/lib/proj4js/projCode/lcc.js" type="text/javascript"></script>      
+<!--     <script src="js/lib/proj4js/lib/defs/EPSG2154.js"></script > -->
     <script src="js/lib/Proj4Leaflet/src/proj4leaflet.js"></script>
     <script src="js/main.js"></script>
 
