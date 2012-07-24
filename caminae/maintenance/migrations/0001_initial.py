@@ -104,8 +104,8 @@ class Migration(SchemaMigration):
             ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('project_owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='own', to=orm['maintenance.Organism'])),
-            ('project_manager', self.gf('django.db.models.fields.related.ForeignKey')(related_name='manage', to=orm['maintenance.Organism'])),
+            ('project_owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='own', to=orm['common.Organism'])),
+            ('project_manager', self.gf('django.db.models.fields.related.ForeignKey')(related_name='manage', to=orm['common.Organism'])),
         ))
         db.send_create_signal('maintenance', ['Project'])
 
@@ -125,20 +125,13 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('maintenance', ['Contractor'])
 
-        # Adding model 'Organism'
-        db.create_table('liste_de_tous_les_organismes', (
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
-            ('organism', self.gf('django.db.models.fields.CharField')(max_length=128)),
-        ))
-        db.send_create_signal('maintenance', ['Organism'])
-
         # Adding model 'Funding'
         db.create_table('financement', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
             ('amount', self.gf('django.db.models.fields.FloatField')()),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Project'])),
-            ('organism', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Organism'])),
+            ('organism', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Organism'])),
         ))
         db.send_create_signal('maintenance', ['Funding'])
 
@@ -177,9 +170,6 @@ class Migration(SchemaMigration):
         # Deleting model 'Contractor'
         db.delete_table('prestataires')
 
-        # Deleting model 'Organism'
-        db.delete_table('liste_de_tous_les_organismes')
-
         # Deleting model 'Funding'
         db.delete_table('financement')
 
@@ -189,6 +179,11 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Structure'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
+        },
+        'common.organism': {
+            'Meta': {'object_name': 'Organism', 'db_table': "'liste_de_tous_les_organismes'"},
+            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'organism': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'core.challengemanagement': {
             'Meta': {'object_name': 'ChallengeManagement', 'db_table': "'gestion_enjeux'"},
@@ -275,7 +270,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Funding', 'db_table': "'financement'"},
             'amount': ('django.db.models.fields.FloatField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'organism': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.Organism']"}),
+            'organism': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Organism']"}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.Project']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
@@ -337,11 +332,6 @@ class Migration(SchemaMigration):
             'job': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionJob']"}),
             'nb_days': ('django.db.models.fields.IntegerField', [], {})
         },
-        'maintenance.organism': {
-            'Meta': {'object_name': 'Organism', 'db_table': "'liste_de_tous_les_organismes'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
-            'organism': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
         'maintenance.project': {
             'Meta': {'object_name': 'Project', 'db_table': "'chantiers'"},
             'begin_year': ('django.db.models.fields.IntegerField', [], {}),
@@ -351,12 +341,12 @@ class Migration(SchemaMigration):
             'cost': ('django.db.models.fields.FloatField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'end_year': ('django.db.models.fields.IntegerField', [], {}),
-            'founders': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['maintenance.Organism']", 'through': "orm['maintenance.Funding']", 'symmetrical': 'False'}),
+            'founders': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['common.Organism']", 'through': "orm['maintenance.Funding']", 'symmetrical': 'False'}),
             'insert_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'project_id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
-            'project_manager': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'manage'", 'to': "orm['maintenance.Organism']"}),
-            'project_owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'own'", 'to': "orm['maintenance.Organism']"}),
+            'project_manager': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'manage'", 'to': "orm['common.Organism']"}),
+            'project_owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'own'", 'to': "orm['common.Organism']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'update_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         }

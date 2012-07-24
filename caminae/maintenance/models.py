@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
+from caminae.common.models import Organism
 
 
 class Intervention(StructureRelated):
@@ -153,13 +154,13 @@ class Project(StructureRelated):
     contractors = models.ManyToManyField('Contractor', related_name="projects",
             verbose_name=_(u"Contractors"))
 
-    project_owner = models.ForeignKey('Organism', related_name='own',
+    project_owner = models.ForeignKey(Organism, related_name='own',
             verbose_name=_(u"Project owner"))
 
-    project_manager = models.ForeignKey('Organism', related_name='manage',
+    project_manager = models.ForeignKey(Organism, related_name='manage',
             verbose_name=_(u"Project manager"))
 
-    founders = models.ManyToManyField('Organism', through='Funding',
+    founders = models.ManyToManyField(Organism, through='Funding',
             verbose_name=_(u"Founders"))
 
     class Meta:
@@ -184,20 +185,6 @@ class Contractor(StructureRelated):
 
     def __unicode__(self):
         return self.contractor
-
-
-class Organism(models.Model):
-
-    code = models.IntegerField(primary_key=True)
-    organism = models.CharField(max_length=128, verbose_name=_(u"Organism"))
-
-    class Meta:
-        db_table = 'liste_de_tous_les_organismes'
-        verbose_name = _(u"Organism")
-        verbose_name_plural = _(u"Organisms")
-
-    def __unicode__(self):
-        return self.organism
 
 
 class Funding(StructureRelated):
