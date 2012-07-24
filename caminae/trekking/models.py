@@ -4,6 +4,8 @@ from django.contrib.gis.db import models as gis_models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from caminae.core.models import Path
+
 
 class Trek(models.Model):
 
@@ -43,6 +45,9 @@ class Trek(models.Model):
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))
+
+    paths = models.ManyToManyField(Path, related_name="treks",
+            verbose_name=_(u"Paths composition"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
             verbose_name=_(u"Usages"))
