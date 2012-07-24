@@ -18,3 +18,5 @@ One day...
 * Clean-up buildout directory (all in one "env")
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
+* See how django manage an instance being a parent of two different child
+  instance in the case of multi-table inheritance. Could it be troublesome?
