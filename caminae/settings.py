@@ -182,6 +182,16 @@ SERIALIZATION_MODULES = {
     'geojson' : 'djgeojson.serializers'
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+    # The fat backend is used to store big chunk of data (>1 Mo)
+    'fat': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
