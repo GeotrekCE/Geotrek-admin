@@ -12,8 +12,7 @@ bin/ lib/:
 install: bin/
 
 submodules:
-	git submodule init
-	git submodule update
+	git submodule update --init
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;

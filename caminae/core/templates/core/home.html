@@ -48,15 +48,17 @@
             
             //TODO: everything is global :/
             var tilesLayer = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg');
-            var geojsonLayer = new L.GeoJSON();
-            geojsonLayer.on("featureparse", function (e) {
-                if (e.properties && e.properties.name) {
-                    e.layer.bindPopup(e.properties.name);
+            
+            var geojsonLayer = new L.GeoJSON(null, {
+                onEachFeature: function (feature, layer) {
+                    if (feature.properties && feature.properties.name) {
+                        layer.bindPopup(feature.properties.name);
+                    }
                 }
             });
             
             $.getJSON("{% url core:layerpath %}", function (data) {           
-                geojsonLayer.addGeoJSON(data);
+                geojsonLayer.addData(data);
                 spinner.stop();
             });
             
