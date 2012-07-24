@@ -11,6 +11,10 @@ bin/ lib/:
 
 install: bin/
 
+submodules:
+	git submodule init
+	git submodule update
+
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;
 
@@ -37,7 +41,8 @@ functional_tests:
 
 tests: unit_tests functional_tests
 
-serve: bin/ clean_harmless all_compilemessages
+serve: bin/ clean_harmless submodules all_compilemessages
+	git submodule update
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django runserver
@@ -46,9 +51,7 @@ load_data:
 	# /!\ will delete existing data
 	bin/django loaddata development-pne
 
-deploy: bin/ clean_harmless all_compilemessages
-	git submodule init
-	git submodule update
+deploy: bin/ clean_harmless submodules all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --noinput
