@@ -74,3 +74,10 @@ La page d'accueil affiche une carte avec les tronçons.
     Pour l'instant, la carte est en projection 4326 (attente fin POC #12).
     
     Les performances ne sont pas au rendez-vous (6 sec. pour générer le fichier, 11 millisec. pour l'afficher)
+
+
+#94 - Activer le système de cache Django
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pas de test spécifique, à part vérifier que les réponses du serveur sont
+extrèmement plus rapides que lorsque le cache est vide (i.e. après déploiement).
