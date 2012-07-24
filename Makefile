@@ -51,6 +51,7 @@ deploy: bin/ clean_harmless all_compilemessages
 	git submodule update
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
+	bin/django collectstatic --noinput
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data
