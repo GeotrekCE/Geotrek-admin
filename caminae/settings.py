@@ -226,6 +226,11 @@ DEFAULT_STRUCTURE_NAME = None
 SRID = None
 SPATIAL_EXTENT = None
 
+# TODO : Temporary : override extent in 4326, until POC Leaflet L93
+LEAFLET_CONFIG = {
+    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46),
+}
+
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'

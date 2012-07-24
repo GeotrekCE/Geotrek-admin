@@ -81,3 +81,16 @@ La page d'accueil affiche une carte avec les tronçons.
 
 Pas de test spécifique, à part vérifier que les réponses du serveur sont
 extrèmement plus rapides que lorsque le cache est vide (i.e. après déploiement).
+
+
+#28 - Paramétrer l'étendue du territoire
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La carte de la page d'accueil est restreinte à la zone du parc en fonction
+du setting ``SPATIAL_EXTENT``.
+
+Ce dernier doit être exprimé dans le système de coordonnées du setting ``SRID``.
+
+:note:
+
+    Pour l'instant, le paramètre est exprimé en dur, en coordonnées 4326 (attente fin POC #12).
