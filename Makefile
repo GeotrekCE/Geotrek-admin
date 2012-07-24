@@ -32,7 +32,7 @@ all_compilemessages: bin/
 	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
 
-unit_tests: bin/ clean_harmless
+unit_tests: bin/ clean_harmless submodules
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking
 
