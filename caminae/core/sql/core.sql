@@ -54,7 +54,7 @@ BEGIN
     IF TG_OP IN ('DELETE', 'UPDATE') THEN
         FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
         LOOP
-            FOR rec IN EXECUTE format('DELETE FROM %I t USING evenements_troncons e WHERE t.evenement = e.evenement AND e.troncon = %L RETURNING e.evenement AS id', tab, OLD.id)
+            FOR rec IN EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' t USING evenements_troncons e WHERE t.evenement = e.evenement AND e.troncon = $1 RETURNING e.evenement AS id' USING OLD.id
             LOOP
                 DELETE FROM evenements_troncons WHERE evenement = rec.id;
                 DELETE FROM evenements WHERE id = rec.id;
