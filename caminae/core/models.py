@@ -3,7 +3,6 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
-from caminae.maintenance.models import Intervention
 
 
 # GeoDjango note:
@@ -78,7 +77,6 @@ class TopologyMixin(models.Model):
     offset = models.IntegerField(db_column='decallage', verbose_name=_(u"Offset"))
     deleted = models.BooleanField(db_column='supprime', verbose_name=_(u"Deleted"))
     kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
-    interventions = models.ManyToManyField(Intervention, verbose_name=_(u"Interventions"))
 
     # Override default manager
     objects = models.GeoManager()

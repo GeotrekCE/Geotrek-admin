@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
+from caminae.core.models import TopologyMixin
 
 
 class Intervention(StructureRelated):
@@ -33,6 +34,13 @@ class Intervention(StructureRelated):
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##
+    topologies = models.ManyToManyField(TopologyMixin,
+            related_name="interventions",
+            verbose_name=_(u"Interventions"))
+
+    challenge_management = models.ForeignKey('core.ChallengeManagement',
+            related_name='interventions', verbose_name=_("Challenge management"))
+
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
 
     typology = models.ForeignKey('InterventionTypology', null=True, blank=True,
