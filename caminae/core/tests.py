@@ -103,6 +103,8 @@ class PathTest(TestCase):
         self.assertEquals(pa.end_position, 1.0)
 
         # PathAgg is splitted in 2 parts for RA
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
         pa1 = ra1.restrictedareaedge_set.get().pathaggregation_set.get()
         pa2 = ra2.restrictedareaedge_set.get().pathaggregation_set.get()
         self.assertEquals(pa1.start_position, 0.0)
@@ -110,6 +112,20 @@ class PathTest(TestCase):
         self.assertEquals(pa2.start_position, 0.5)
         self.assertEquals(pa2.end_position, 1.0)
 
+        # Ensure everything is in order after update
+        p.geom = LineString((0.5,0.5), (1.5,0.5), srid=settings.SRID)
+        p.save()
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        pa1 = ra1.restrictedareaedge_set.get().pathaggregation_set.get()
+        self.assertEquals(pa1.start_position, 0.0)
+        self.assertEquals(pa1.end_position, 1.0)
+
+        # All intermediary objects should be cleaned on delete
+        p.delete()
+        self.assertEquals(c.cityedge_set.count(), 0)
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
 
 class TopologyMixinTest(TestCase):
     def test_dates(self):
