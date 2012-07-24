@@ -40,6 +40,63 @@ CREATE TRIGGER troncons_date_update_tgr
     BEFORE INSERT OR UPDATE ON troncons
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
+-- Automatic link between Troncon and Commune/Zonage/Secteur
+
+DROP TRIGGER IF EXISTS troncons_couches_sig_tgr ON troncons;
+
+CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig() RETURNS trigger AS $$
+DECLARE
+    rec record;
+    tab varchar;
+    eid integer;
+BEGIN
+    -- Remove obsolete evenement
+    IF TG_OP IN ('DELETE', 'UPDATE') THEN
+        FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
+        LOOP
+            FOR rec IN EXECUTE format('DELETE FROM %I t USING evenements_troncons e WHERE t.evenement = e.evenement AND e.troncon = %L RETURNING e.evenement AS id', tab, OLD.id)
+            LOOP
+                DELETE FROM evenements_troncons WHERE evenement = rec.id;
+                DELETE FROM evenements WHERE id = rec.id;
+            END LOOP;
+        END LOOP;
+    END IF;
+    -- Add new evenement
+    IF TG_OP IN ('INSERT', 'UPDATE') THEN
+        -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop as above.
+
+        -- Commune
+        FOR rec IN EXECUTE 'SELECT insee as id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_communes WHERE ST_Intersects(geom, $1)' USING NEW.geom
+        LOOP
+            INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 2, 0, 0, NEW.geom) RETURNING id INTO eid;
+            INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
+            INSERT INTO commune (evenement, city_id) VALUES (eid, rec.id);
+        END LOOP;
+
+        -- Secteur
+        FOR rec IN EXECUTE 'SELECT code_secteur as id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_secteurs WHERE ST_Intersects(geom, $1)' USING NEW.geom
+        LOOP
+            INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 3, 0, 0, NEW.geom) RETURNING id INTO eid;
+            INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
+            INSERT INTO secteur (evenement, district_id) VALUES (eid, rec.id);
+        END LOOP;
+
+        -- Zonage
+        FOR rec IN EXECUTE 'SELECT code_zonage as id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_zonage_reglementaire WHERE ST_Intersects(geom, $1)' USING NEW.geom
+        LOOP
+            INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 4, 0, 0, NEW.geom) RETURNING id INTO eid;
+            INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
+            INSERT INTO zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
+        END LOOP;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER troncons_couches_sig_tgr
+AFTER INSERT OR UPDATE OR DELETE ON troncons
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig();
+
 -------------------------------------------------------------------------------
 -- Evenements
 -------------------------------------------------------------------------------

@@ -1,12 +1,15 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 
 from caminae.authent.models import Structure
-from caminae.core.models import Path, TopologyMixin, TopologyMixinKind
+from caminae.core.models import Path, PathAggregation
+from caminae.core.models import TopologyMixin, TopologyMixinKind
+from caminae.land.models import City, CityEdge, DistrictEdge
+from caminae.land.models import RestrictedArea, RestrictedAreaEdge
 
 
 class ViewsTest(TestCase):
@@ -18,7 +21,7 @@ class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = User.objects.create_user('Joe', 'temporary@yopmail.com', 'Bar')
         self.assertEqual(user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
-        
+
         p1 = Path(geom=LineString((0, 0), (1, 1), srid=settings.SRID))
         self.assertEqual(user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         p1.save()
@@ -32,17 +35,17 @@ class PathTest(TestCase):
 
         self.assertEqual(len(Structure.objects.all()), 2)
         self.assertEqual(len(Path.objects.all()), 2)
-        
+
         self.assertEqual(Path.in_structure.byUser(user)[0], Path.forUser(user)[0])
         self.assertTrue(p1 in Path.in_structure.byUser(user))
         self.assertFalse(p2 in Path.in_structure.byUser(user))
-        
+
         p = user.profile
         p.structure = structure
         p.save()
-        
+
         self.assertEqual(user.profile.structure.name, "other")
-        
+
         self.assertFalse(p1 in Path.in_structure.byUser(user))
         self.assertTrue(p2 in Path.in_structure.byUser(user))
 
@@ -67,6 +70,45 @@ class PathTest(TestCase):
                         msg='Date interval failed: %s < %s < %s' % (
                             t2, p.date_update, t3
                        ))
+
+    def test_couches_sig_link(self):
+        s = Structure(name="other")
+        s.save()
+
+        # Fake restricted areas
+        ra1 = RestrictedArea(code=1, name='Zone 1', order=1, geom=MultiPolygon(
+            Polygon(((0,0), (2,0), (2,1), (0,1), (0,0)), srid=settings.SRID)))
+        ra1.save()
+        ra2 = RestrictedArea(code=2, name='Zone 2', order=1, geom=MultiPolygon(
+            Polygon(((0,1), (2,1), (2,2), (0,2), (0,1)), srid=settings.SRID)))
+        ra2.save()
+
+        # Fake city
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0,0), (2,0), (2,2), (0,2), (0,0)),
+                              srid=settings.SRID)))
+        c.save()
+
+        # Fake paths in these areas
+        p = Path(structure=s,
+                 geom=LineString((0.5,0.5), (1.5,1.5), srid=settings.SRID))
+        p.save()
+
+        # This should results in 3 PathAggregation (2 for RA, 1 for City)
+        self.assertEquals(p.pathaggregation_set.count(), 3)
+
+        # PathAgg is plain for City
+        pa = c.cityedge_set.get().pathaggregation_set.get()
+        self.assertEquals(pa.start_position, 0.0)
+        self.assertEquals(pa.end_position, 1.0)
+
+        # PathAgg is splitted in 2 parts for RA
+        pa1 = ra1.restrictedareaedge_set.get().pathaggregation_set.get()
+        pa2 = ra2.restrictedareaedge_set.get().pathaggregation_set.get()
+        self.assertEquals(pa1.start_position, 0.0)
+        self.assertEquals(pa1.end_position, 0.5)
+        self.assertEquals(pa2.start_position, 0.5)
+        self.assertEquals(pa2.end_position, 1.0)
 
 
 class TopologyMixinTest(TestCase):
