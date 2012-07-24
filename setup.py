@@ -22,6 +22,9 @@ setup(
         'django-leaflet == 0.0.2',
         'django-geojson',
     ],
+    tests_requires = [
+        'factory_boy == 1.1.5',
+    ],
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',
                     'Environment :: Web Environment',
