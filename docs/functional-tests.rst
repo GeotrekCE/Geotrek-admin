@@ -104,3 +104,10 @@ il faut tester le trigger avec QGis et PgAdmin.
 
 Éditer la géométrie d'un tronçon existant, ou créer un nouveau tronçon, 
 vérifier que le champ ``longueur`` est bien (re)calculé.
+
+
+#86 Implémenter logique simple de base de l'affichage / édition des entités
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Créer un petit workflow CRUD : liste -> affichage -> édition pour les troncons
+
+
