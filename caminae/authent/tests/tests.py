@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 
-from .models import Structure, UserProfile
+from ..models import Structure, UserProfile
 
 
 @override_settings(LOGIN_URL='/login/')
