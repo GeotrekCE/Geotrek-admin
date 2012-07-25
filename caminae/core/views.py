@@ -29,3 +29,5 @@ def home(request):
         contractors=Contractor.forUser(request.user),
         all_contractors=Contractor.objects.all(),
     ))
+
+

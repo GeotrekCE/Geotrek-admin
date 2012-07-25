@@ -15,7 +15,7 @@
 
 {% block content %}
     {{ block.super }}
-    
+
     <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
     <h2>{% trans "Usages" %}</h2>
     {% for usage in all_usages %}
@@ -45,10 +45,10 @@
     <script type="text/javascript">
         function mainmapInit(mainmap) {
             var spinner = new Spinner().spin(document.getElementById('mainmap'));
-            
+
             //TODO: everything is global :/
             var tilesLayer = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg');
-            
+
             var geojsonLayer = new L.GeoJSON(null, {
                 onEachFeature: function (feature, layer) {
                     if (feature.properties && feature.properties.name) {
@@ -56,12 +56,12 @@
                     }
                 }
             });
-            
+
             $.getJSON("{% url core:layerpath %}", function (data) {           
                 geojsonLayer.addData(data);
                 spinner.stop();
             });
-            
+
             mainmap.addLayer(tilesLayer)
                    .addLayer(geojsonLayer);
         }

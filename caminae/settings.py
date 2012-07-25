@@ -144,7 +144,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
-    
+
     'caminae.core.context_processors.settings',
 )
 
@@ -166,7 +166,7 @@ PROJECT_APPS = (
     'south',
     'modeltranslation',
     'leaflet',
-    
+
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
 

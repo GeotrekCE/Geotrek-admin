@@ -39,7 +39,7 @@ class UserProfileTest(TestCase):
         
         self.assertEqual(self.user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
-        
+
     def test_language(self):
         c = Client()
         success = c.login(username=u"Joe", password=u"Bar")
@@ -47,7 +47,7 @@ class UserProfileTest(TestCase):
         response = c.get(reverse('home'))
         self.assertEqual(200, response.status_code)
         self.assertTrue(_("Logout") in response.content)
-        
+
         # Change user lang
         self.assertNotEqual(settings.LANGUAGE_CODE, u"en")
         userprofile = UserProfile.objects.get(user=self.user)
@@ -57,7 +57,7 @@ class UserProfileTest(TestCase):
         # No effect if no logout
         response = c.get(reverse('home'))
         self.assertTrue(_("Logout") in response.content)
-        
+
         c.logout()
         response = c.get(reverse('home'))
         self.assertEqual(response.status_code, 302)
@@ -72,11 +72,11 @@ class UserProfileTest(TestCase):
         c = Client()
         success = c.login(username=u"Joe", password=u"Bar")
         self.assertTrue(success)
-        
+
         response = c.get(reverse('home'))
-        
+
         self.assertFalse(_("Admin") in response.content)
-        
+
         self.user.is_staff = True
         self.user.save()
         response = c.get(reverse('home'))
