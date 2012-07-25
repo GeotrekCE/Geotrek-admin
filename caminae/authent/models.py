@@ -1,5 +1,5 @@
 """
-Caminae Authentification
+    Models to manage users and profiles
 """
 from django.db import models
 from django.contrib.auth.models import User

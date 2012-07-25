@@ -1,1 +1,3 @@
-# Create your views here.
+"""
+    Generic views for authentication
+"""
