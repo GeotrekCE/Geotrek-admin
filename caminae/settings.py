@@ -152,7 +152,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
-# 
+#
 PROJECT_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
