@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """
     Models to manage users and profiles
 """
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
@@ -71,6 +73,25 @@ class UserProfile(StructureRelated):
 
     def __unicode__(self):
         return _("Profile for %s") % self.user
+
+    def has_group(self, g):
+        return self.user.groups.filter(pk=g.pk).exists()
+
+    def is_path_manager(self):
+        g = Group.objects.get(name='Référents sentiers')
+        return self.has_group(g)
+
+    def is_comm_manager(self):
+        g = Group.objects.get(name='Référents communication')
+        return self.has_group(g)
+
+    def is_editor(self):
+        g = Group.objects.get(name='Rédacteurs')
+        return self.has_group(g)
+
+    def is_administrator(self):
+        g = Group.objects.get(name='Administrateurs')
+        return self.has_group(g)
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 

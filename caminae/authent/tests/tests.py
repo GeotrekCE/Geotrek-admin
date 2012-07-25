@@ -5,7 +5,7 @@
 from django.test import TestCase
 from django.test.client import Client
 from django.test.utils import override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
@@ -66,6 +66,22 @@ class UserProfileTest(TestCase):
 
         self.assertEqual(c.session['django_language'], u"en")
         self.assertTrue(_("Logout") in response.content)
+
+    def test_group(self):
+        groups = (Group.objects.create(name='Administrateurs'),
+                  Group.objects.create(name='Rédacteurs'),
+                  Group.objects.create(name='Référents sentiers'),
+                  Group.objects.create(name='Référents communication'),
+                 )
+        self.assertFalse(self.user.profile.is_administrator())
+        self.assertFalse(self.user.profile.is_editor())
+        self.assertFalse(self.user.profile.is_path_manager())
+        self.assertFalse(self.user.profile.is_comm_manager())
+        self.user.groups.add(*groups)
+        self.assertTrue(self.user.profile.is_administrator())
+        self.assertTrue(self.user.profile.is_editor())
+        self.assertTrue(self.user.profile.is_path_manager())
+        self.assertTrue(self.user.profile.is_comm_manager())
 
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
