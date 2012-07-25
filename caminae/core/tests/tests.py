@@ -129,7 +129,7 @@ class PathTest(TestCase):
 
 class TopologyMixinTest(TestCase):
     def test_dates(self):
-        k = TopologyMixinKind(code=1, kind="other")
+        k = TopologyMixinKind(kind="other")
         k.save()
 
         t1 = now()

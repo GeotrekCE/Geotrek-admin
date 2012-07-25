@@ -109,7 +109,6 @@ class TopologyMixin(models.Model):
 
 class TopologyMixinKind(models.Model):
 
-    code = models.IntegerField(primary_key=True)
     kind = models.CharField(max_length=128, verbose_name=_(u"Topology's kind"))
 
     def __unicode__(self):

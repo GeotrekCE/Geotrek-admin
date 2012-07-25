@@ -61,7 +61,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'TopologyMixinKind'
         db.create_table('type_evenements', (
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('kind', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('core', ['TopologyMixinKind'])
@@ -223,7 +223,7 @@ class Migration(SchemaMigration):
         },
         'core.topologymixinkind': {
             'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'core.usagemanagement': {
