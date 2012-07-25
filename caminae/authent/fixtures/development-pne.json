@@ -59,5 +59,135 @@
             "user": 2, 
             "structure": 1
         }
+    },
+    {
+        "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents sentiers",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents communication",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9dacteurs",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.group",
+        "fields": {
+            "name": "Administrateurs",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "sheldon",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-07-20T23:24:31.911Z",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$EbTI2JNKTyMu$7+fjM/SoYnkyekY5KmeHbHf5rLkoJmC5CD8mfvO+e2c=",
+            "email": "sheldon@yopmail.com",
+            "date_joined": "2012-07-20T23:24:31.911Z"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-07-25T09:13:26.495Z",
+            "groups": [
+                4
+            ],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$M7URcO1rPRGv$2vCwLDAnfwCvP6lyA3Qo6PQ5Zqrz0YkccetVIHByODU=",
+            "email": "admin@yopmail.com",
+            "date_joined": "2012-07-20T23:19:16.306Z"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "sentiers",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-07-25T12:05:06.305Z",
+            "groups": [
+                1
+            ],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$ptRPfqLKOLqT$mn7Q1AwWSfofjri6qhWfA1xF/C/XpR+5Zfc9XIXGXrg=",
+            "email": "sentiers@nomail.com",
+            "date_joined": "2012-07-25T12:05:06.305Z"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "comm",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-07-25T12:05:06.670Z",
+            "groups": [
+                2
+            ],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$rRpiK3kFp138$QlqdNlJkQ+ZowNcHD5BfhldUaSFZdiq6lLOik3y0358=",
+            "email": "comm@nomail.com",
+            "date_joined": "2012-07-25T12:05:06.670Z"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "redacteur",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-07-25T12:05:07.026Z",
+            "groups": [
+                3
+            ],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$3fnb6PAHcmf5$S96SUCKbMJIcOnHXOy8O9yHLpqY4sTP9fbvVtl8BgUA=",
+            "email": "redacteur@nomail.com",
+            "date_joined": "2012-07-25T12:05:07.026Z"
+        }
     }
 ]
