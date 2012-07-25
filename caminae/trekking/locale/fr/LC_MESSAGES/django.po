@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 11:17+0200\n"
+"POT-Creation-Date: 2012-07-25 15:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,151 +18,177 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:9 models.py:74 models.py:84 models.py:92 models.py:113
-#: models.py:124 models.py:125
+#: models.py:12 models.py:89 models.py:102 models.py:112 models.py:138
+#: models.py:152 models.py:153
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:10
+#: models.py:13
 msgid "Departure"
 msgstr "Départ"
 
-#: models.py:11
+#: models.py:14
 msgid "Arrival"
 msgstr "Arrivée"
 
-#: models.py:12
+#: models.py:15
 msgid "Validated"
 msgstr "Validée"
 
-#: models.py:15
+#: models.py:18
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:16
+#: models.py:19
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:17
+#: models.py:20
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:18
+#: models.py:21
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:19
+#: models.py:22
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:21
+#: models.py:24
 msgid "Description teaser"
 msgstr "Résumé"
 
-#: models.py:22
+#: models.py:25
 msgid "Description"
 msgstr "Description"
 
-#: models.py:23
+#: models.py:26
 msgid "Ambiance"
 msgstr "Ambiance"
 
-#: models.py:24
+#: models.py:27
 msgid "Handicapped's infrastructure"
 msgstr "Aménagement handicapés"
 
-#: models.py:25
+#: models.py:28
 msgid "duration"
 msgstr "durée"
 
-#: models.py:27
+#: models.py:30
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
 
-#: models.py:28
+#: models.py:31
 msgid "Is transborder"
 msgstr "Transfrontalier"
 
-#: models.py:30
+#: models.py:33
 msgid "Advised parking"
 msgstr "Parking conseillé"
 
-#: models.py:33
+#: models.py:36
 msgid "Public transport"
 msgstr "Transport en commun"
 
-#: models.py:34
+#: models.py:37
 msgid "Advice"
 msgstr "Recommandations"
 
-#: models.py:38
+#: models.py:41
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:39
+#: models.py:42
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:40
+#: models.py:43
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:44 models.py:79
+#: models.py:47 models.py:94
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
-#: models.py:47
+#: models.py:50
+msgid "Paths composition"
+msgstr ""
+
+#: models.py:53
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:50 models.py:96
+#: models.py:56 models.py:116
 msgid "Route"
 msgstr "Parcours"
 
-#: models.py:53 models.py:103 models.py:107
+#: models.py:59 models.py:125 models.py:129
 msgid "Difficulty level"
 msgstr "Niveau de difficulté"
 
-#: models.py:56 models.py:118
+#: models.py:62 models.py:143
 msgid "Destination"
 msgstr "Destination"
 
-#: models.py:59 models.py:131
+#: models.py:65 models.py:159
 msgid "Web links"
 msgstr "Liens web"
 
-#: models.py:68
+#: models.py:80
 msgid "Trek"
 msgstr "Itinérarire"
 
-#: models.py:69
+#: models.py:81
 msgid "Treks"
 msgstr "Itinérarires"
 
-#: models.py:78
+#: models.py:93
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
-#: models.py:97
+#: models.py:117
 msgid "Routes"
 msgstr "Parcours"
 
-#: models.py:108
+#: models.py:130
 msgid "Difficulty levels"
 msgstr "Niveaux de difficulté"
 
-#: models.py:114
+#: models.py:139
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-#: models.py:119
+#: models.py:144
 msgid "Destinations"
 msgstr "Destinations"
 
-#: models.py:126
+#: models.py:154
 msgid "Thumbnail"
 msgstr "Vignette"
 
-#: models.py:130
+#: models.py:158
 msgid "Web link"
 msgstr "Lien web"
+
+#: models.py:196
+#, fuzzy
+msgid "Common departure"
+msgstr "Départ"
+
+#: models.py:197
+msgid "Common edge"
+msgstr ""
+
+#: models.py:198
+msgid "Circuit step"
+msgstr ""
+
+#: models.py:205
+#, fuzzy
+msgid "Trek relationship"
+msgstr "Réseaux randonnée"
+
+#: models.py:206
+msgid "Trek relationships"
+msgstr ""
