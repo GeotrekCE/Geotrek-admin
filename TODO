@@ -32,3 +32,7 @@ One day...
   models.Model.save() method will insert/update all non-PK fields).
 * See how django manage an instance being a parent of two different child
   instance in the case of multi-table inheritance. Could it be troublesome?
+
+* Idea ? Process .sql files with template engine. Provide small tags 
+  like {% tablename Path %} {% fieldname Path.geom %}.
+  This would prevent from having hard-coded tablenames.
