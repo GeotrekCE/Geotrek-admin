@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from .. import factories
 
+
 class CoreFactoriesTest(TestCase):
     """
     Ensure factories work as expected.
