@@ -25,7 +25,7 @@ class Path(StructureRelated):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
-    length = models.IntegerField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
+    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(
             editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(
@@ -74,7 +74,7 @@ class Path(StructureRelated):
 
 class TopologyMixin(models.Model):
     troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
-    offset = models.IntegerField(db_column='decallage', verbose_name=_(u"Offset"))
+    offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
     deleted = models.BooleanField(db_column='supprime', verbose_name=_(u"Deleted"))
     kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
 
@@ -84,7 +84,7 @@ class TopologyMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
-    length = models.FloatField(editable=False, db_column='longueur', verbose_name=_(u"Length"))
+    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
     geom = models.LineStringField(
             editable=False, srid=settings.SRID, spatial_index=False)
 
@@ -205,5 +205,3 @@ class PathManagement(models.Model):
 
     def __unicode__(self):
         return u"%s (%s -> %s)" % (self.name, self.depature, self.arrival)
-
-

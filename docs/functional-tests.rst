@@ -94,3 +94,13 @@ Ce dernier doit être exprimé dans le système de coordonnées du setting ``SRI
 :note:
 
     Pour l'instant, le paramètre est exprimé en dur, en coordonnées 4326 (attente fin POC #12).
+
+
+#104 - Recalculer la longueur des tronçons et évènements par trigger
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L'édition des tronçons et évènements n'étant pas disponible dans l'interface,
+il faut tester le trigger avec QGis et PgAdmin.
+
+Éditer la géométrie d'un tronçon existant, ou créer un nouveau tronçon, 
+vérifier que le champ ``longueur`` est bien (re)calculé.

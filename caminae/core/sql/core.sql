@@ -16,6 +16,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-------------------------------------------------------------------------------
+-- Utility functions
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ft_longueur() RETURNS trigger AS $$
+BEGIN
+    NEW.longueur := ST_Length(NEW.geom);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
 -- Evenements
@@ -37,6 +47,15 @@ DROP TRIGGER IF EXISTS evenements_date_update_tgr ON evenements;
 CREATE TRIGGER evenements_date_update_tgr
     BEFORE INSERT OR UPDATE ON evenements
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
+
+
+-- Compute attributes from geom fields
+
+DROP TRIGGER IF EXISTS evenements_longueur_tgr ON evenements;
+CREATE TRIGGER evenements_longueur_tgr
+    BEFORE INSERT ON evenements
+    FOR EACH ROW EXECUTE PROCEDURE ft_longueur();
+
 
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 
@@ -87,6 +106,13 @@ DROP TRIGGER IF EXISTS troncons_date_update_tgr ON troncons;
 CREATE TRIGGER troncons_date_update_tgr
     BEFORE INSERT OR UPDATE ON troncons
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
+
+-- Compute attributes from geom fields
+
+DROP TRIGGER IF EXISTS troncons_longueur_tgr ON troncons;
+CREATE TRIGGER troncons_longueur_tgr
+    BEFORE INSERT ON troncons
+    FOR EACH ROW EXECUTE PROCEDURE ft_longueur();
 
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 
@@ -141,4 +167,3 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER troncons_couches_sig_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON troncons
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
-

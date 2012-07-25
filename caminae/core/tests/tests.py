@@ -16,7 +16,12 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("core:layerpath"))
         self.assertEqual(response.status_code, 200)
 
+
 class PathTest(TestCase):
+    def setUp(self):
+        self.structure = Structure(name="other")
+        self.structure.save()
+
     def test_paths_bystructure(self):
         user = User.objects.create_user('Joe', 'temporary@yopmail.com', 'Bar')
         self.assertEqual(user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
@@ -25,11 +30,8 @@ class PathTest(TestCase):
         self.assertEqual(user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         p1.save()
 
-        structure = Structure(name="other")
-        structure.save()
-
         p2 = Path(geom=LineString((0, 0), (1, 1), srid=settings.SRID))
-        p2.structure = structure
+        p2.structure = self.structure
         p2.save()
 
         self.assertEqual(len(Structure.objects.all()), 2)
@@ -40,7 +42,7 @@ class PathTest(TestCase):
         self.assertFalse(p2 in Path.in_structure.byUser(user))
 
         p = user.profile
-        p.structure = structure
+        p.structure = self.structure
         p.save()
 
         self.assertEqual(user.profile.structure.name, "other")
@@ -49,12 +51,9 @@ class PathTest(TestCase):
         self.assertTrue(p2 in Path.in_structure.byUser(user))
 
     def test_dates(self):
-        s = Structure(name="other")
-        s.save()
-
         t1 = dbnow()
         p = Path(geom=LineString((0, 0), (1, 1), srid=settings.SRID),
-                 structure=s)
+                 structure=self.structure)
         p.save()
         t2 = dbnow()
         self.assertTrue(t1 < p.date_insert < t2,
@@ -69,6 +68,12 @@ class PathTest(TestCase):
                         msg='Date interval failed: %s < %s < %s' % (
                             t2, p.date_update, t3
                        ))
+
+    def test_length(self):
+        p = Path(geom=LineString((0, 0), (1, 1), structure=self.structure))
+        self.assertEqual(p.length, 0)
+        p.save()
+        self.assertNotEqual(p.length, 0)
 
     def test_couches_sig_link(self):
         s = Structure(name="other")
@@ -127,16 +132,17 @@ class PathTest(TestCase):
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
 
 class TopologyMixinTest(TestCase):
-    def test_dates(self):
-        k = TopologyMixinKind(kind="other")
-        k.save()
+    def setUp(self):
+        self.k = TopologyMixinKind(kind="other")
+        self.k.save()
 
+    def test_dates(self):
         t1 = dbnow()
         e = TopologyMixin(geom=LineString((0, 0), (1, 1), srid=settings.SRID),
                           offset=0,
                           length=0,
                           deleted=False,
-                          kind=k)
+                          kind=self.k)
         e.save()
         t2 = dbnow()
         self.assertTrue(t1 < e.date_insert < t2)
@@ -145,3 +151,9 @@ class TopologyMixinTest(TestCase):
         e.save()
         t3 = dbnow()
         self.assertTrue(t2 < e.date_update < t3)
+
+    def test_length(self):
+        e = TopologyMixin(geom=LineString((0, 0), (1, 1)), kind=self.k)
+        self.assertEqual(e.length, 0)
+        e.save()
+        self.assertNotEqual(e.length, 0)
