@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^data/', include('caminae.core.urls', namespace='core', app_name='core')),
+    url(r'', include('caminae.core.urls', namespace='core', app_name='core')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
