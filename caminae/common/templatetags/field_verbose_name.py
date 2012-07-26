@@ -7,5 +7,6 @@ def field_verbose_name(obj, field):
 
     return obj._meta.get_field(field).verbose_name
 
-field_verbose_name = register.filter(field_verbose_name)
+register.filter(field_verbose_name)
+register.filter('verbose', field_verbose_name)
 
