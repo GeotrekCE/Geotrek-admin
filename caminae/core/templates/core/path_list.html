@@ -14,7 +14,11 @@
 
 
 {% block mainactions %}
-    <a class="btn" href="{{ path.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>    
+    {% if user.profile.is_path_manager %}
+    <a class="btn" href="{{ path.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    {% else %}
+    <a class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    {% endif %}
 {% endblock mainactions %}
 
 
