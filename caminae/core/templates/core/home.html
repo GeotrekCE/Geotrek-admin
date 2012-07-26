@@ -21,7 +21,7 @@
     <a href="{% url core:path_add %}">{% trans "Add a path" %}</a>
 
     {% for path in all_paths %}
-        <li><a href="{% url core:path_update path.pk %}">{{ path }}</a></li>
+        <li><a href="{% url core:path_detail path.pk %}">{{ path }}</a></li>
     {% empty %}
         {% trans "Empty" %}
     {% endfor %}
