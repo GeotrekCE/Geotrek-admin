@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load i18n field_verbose_name %}
+
+{% block extrahead %}
+<style>
+    .text-center { text-align: center; }
+</style>
+{% endblock extrahead %}
+
+{% block content %}
+    {{ block.super }}
+
+<div class="container-fluid">
+    <div class="row-fluid">
+
+    <div class="span8">
+
+    <h2>Attr</h2>
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ path|verbose:"geom" }}</th>
+            <td>{{ path.geom }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"geom_cadastre"|default:_("None") }}</th>
+            <td>{{ path.geom_cadastre }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"valid" }}</th>
+            <td>{{ path.valid }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"name"|default:_("None") }}</th>
+            <td>{{ path.name }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"comments"|default:_("None") }}</th>
+            <td>{{ path.comments }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"date_insert" }}</th>
+            <td>{{ path.date_insert }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"date_update" }}</th>
+            <td>{{ path.date_update }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"length" }}</th>
+            <td>{{ path.length }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"ascent" }}</th>
+            <td>{{ path.ascent }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"descent" }}</th>
+            <td>{{ path.descent }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"min_elevation" }}</th>
+            <td>{{ path.min_elevation }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"max_elevation" }}</th>
+            <td>{{ path.max_elevation }}</td>
+        </tr>
+    </table>
+
+    <h2>FK</h2>
+
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ path|verbose:"path_management"|default:_("None") }}</th>
+            <td>{{ path.path_management }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"datasource_management"|default:_("None") }}</th>
+            <td>{{ path.datasource_management }}</td>
+        </tr><tr>
+            <th>{{ path|verbose:"challenge_management"|default:_("None") }}</th>
+            <td>{{ path.challenge_management }}</td>
+        </tr>
+    </table>
+
+    <h2>M2M</h2>
+
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ path|verbose:"usages_management" }}</th>
+            <td>
+                <ul>
+                {% for usage in  path.usages_management.all %}
+                    <li> {{ usage }} </li>
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+                </ul>
+            </td>
+        </tr><tr>
+            <th>{{ path|verbose:"networks_management" }}</th>
+            <td>
+                <ul>
+                {% for network in  path.networks_management.all %}
+                    <li> {{ network }} </li>
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    </div> <!-- span8 -->
+
+    <div class="span4">
+
+    <h2>Actions</h2>
+
+    <div class="row-fluid" style="400px;" >
+        <div class="span4 text-center">
+            {% if user.profile.is_path_manager %}
+            <a class="btn btn-primary" href="{% url core:path_update path.pk %}">{% trans "Update" %}</a>
+            {% else %}
+            <span class="btn disabled">{% trans "Update" %}</span>
+            {% endif %}
+        </div>
+        <div class="span4 text-center">
+            {% if user.profile.is_path_manager %}
+            <a class="btn btn-danger" href="{% url core:path_delete path.pk  %}">{% trans "Delete" %}</a>
+            {% else %}
+            <span class="btn disabled">{% trans "Delete" %}</span>
+            {% endif %}
+        </div>
+        <div class="span4 text-center">
+            <a class="btn btn-inverse" href="{% url core:path_list %}">{% trans "Go back to list" %}</a>
+        </div>
+    </div>
+
+    </div> <!-- span4 -->
+</div> <!-- container-fluid -->
+</div> <!-- row-fluid -->
+
+{% endblock content %}
+

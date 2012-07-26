@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<style>
+    ul.errorlist li { color: red; }
+</style>
+{% endblock extrahead %}
+
+{% block content %}
+    {{ block.super }}
+
+    <form method="POST"
+        action="{% if path %}{% url core:path_update path.pk  %}{% else %}{% url core:path_add %}{% endif %}">
+
+        <table class="table-striped table-bordered" style="margin: 0 auto;">
+        {% csrf_token %}
+        {{ form }}
+            <tr>
+                <td colspan="2" style="text-align: center; padding-top: 10px;" >
+                    <input type="submit" class="btn btn-primary"></input>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock content %}
+

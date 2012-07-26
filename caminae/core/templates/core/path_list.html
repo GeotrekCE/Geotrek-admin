@@ -1,0 +1,109 @@
+{% extends "core/base.html" %}
+{% load i18n leaflet_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% leaflet_css %}
+    {% leaflet_js %}
+{% endblock extrahead %}
+
+
+{% block mainmap %}
+    {% leaflet_map "mainmap" %}
+{% endblock mainmap %}
+
+
+{% block mainactions %}
+    <a class="btn" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>    
+{% endblock mainactions %}
+
+
+{% block mainlist %}
+    <!-- Liste des résultats -->
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Date d'ajout</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for path in path_list|slice:":12" %}
+            <tr>
+                <td><a href="{% url core:path_detail path.pk %}">{{ path }}</a></td>
+                <td>26.07.2011</td>
+                <td>
+                    {% if user.profile.is_path_manager %}
+                    <a class="btn btn-mini" href="{% url core:path_edit path.pk  %}"><i class="icon-pencil"></i></a>
+                    {% else %}
+                    <a class="btn btn-mini disabled" href="#"><i class="icon-pencil"></i></a>
+                    {% endif %}
+
+                    {% if user.profile.is_path_manager %}
+                    <a class="btn btn-mini " href="{% url core:path_delete path.pk  %}"><i class="icon-trash"></i></a>
+                    {% else %}
+                    <a class="btn btn-mini disabled" href="#"><i class="icon-trash"></i></a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">{% trans "Empty" %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock mainlist %}
+
+
+{% block content %}
+    {{ block.super }}
+    <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
+
+    <h2>{% trans "Usages" %}</h2>
+    {% for usage in all_usages %}
+        <li>{{ usage }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+
+    <h2>{% trans "Contractors" %}</h2>
+    {% for contractor in all_contractors %}
+        <li>{{ contractor }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+
+    <h2>{% trans "Structure related" %}</h2>
+    {% for contractor in contractors %}
+        <li>{{ contractor }}</li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+{% endblock content %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function mainmapInit(mainmap) {
+            var spinner = new Spinner().spin(document.getElementById('mainmap'));
+            
+            var geojsonLayer = new L.GeoJSON(null, {
+                onEachFeature: function (feature, layer) {
+                    if (feature.properties && feature.properties.name) {
+                        layer.bindPopup(feature.properties.name);
+                    }
+                }
+            });
+            
+            $.getJSON("{% url core:layer_path %}", function (data) {           
+                geojsonLayer.addData(data);
+                spinner.stop();
+            });
+            
+            mainmap.addLayer(geojsonLayer);
+        }
+    </script>
+{% endblock extrabody %}

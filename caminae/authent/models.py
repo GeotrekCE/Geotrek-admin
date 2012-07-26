@@ -84,19 +84,19 @@ class UserProfile(StructureRelated):
 
     def is_path_manager(self):
         g = Group.objects.get(name=GROUP_PATH_MANAGER)
-        return self.has_group(g)
+        return self.has_group(g) or self.user.is_staff
 
     def is_comm_manager(self):
         g = Group.objects.get(name=GROUP_COMM_MANAGER)
-        return self.has_group(g)
+        return self.has_group(g) or self.user.is_staff
 
     def is_editor(self):
         g = Group.objects.get(name=GROUP_EDITOR)
-        return self.has_group(g)
+        return self.has_group(g) or self.user.is_staff
 
     def is_administrator(self):
         g = Group.objects.get(name=GROUP_ADMINISTRATOR)
-        return self.has_group(g)
+        return self.has_group(g) or self.user.is_staff
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
