@@ -13,7 +13,7 @@ from caminae.land.models import (City, RestrictedArea)
 
 class ViewsTest(TestCase):
     def test_status(self):
-        response = self.client.get(reverse("core:layerpath"))
+        response = self.client.get(reverse("core:layer_path"))
         self.assertEqual(response.status_code, 200)
 
 
