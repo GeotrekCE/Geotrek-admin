@@ -57,6 +57,10 @@ class StructureRelated(models.Model):
         """ Shortcut to manager's filter by user """
         return cls.in_structure.byUser(user)
 
+    def same_structure(self, user):
+        """ Returns True if the user is in the same structure, False otherwise. """
+        return user.profile.structure == self.structure
+
     class Meta:
         abstract = True
         verbose_name = _(u"Related structures")
