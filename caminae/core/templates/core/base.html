@@ -56,7 +56,11 @@
             
                     <!-- Zone des boutons -->
                     <div class="row-fluid">
-                        <button class="btn"><i class="icon-plus"></i> Ajouter un tronçon</button>    
+                        {% if user.profile.is_path_manager %}
+                        <a class="btn" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+                        {% else %}
+                        <span class="btn disabled"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
+                        {% endif %}
                         <div class="pull-right">
                             <p>
                                 <i class="icon-download-alt"></i> 
