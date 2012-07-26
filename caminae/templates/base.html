@@ -13,6 +13,16 @@
     {% endblock extrahead %}
 </head>
 <body>
+    {% if messages %}
+    <ul id="alert-box">
+        {% for message in messages %}
+        <li class="alert {{ message.tags }}">
+            <button class="close" data-dismiss="alert">×</button>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container">

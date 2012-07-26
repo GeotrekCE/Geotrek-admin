@@ -237,3 +237,12 @@ LEAFLET_CONFIG = {
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert-success',
+    messages.INFO: 'alert-info',
+    messages.DEBUG: '',
+    messages.WARNING: '',
+    messages.ERROR: 'alert-error',
+}
