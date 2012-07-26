@@ -102,6 +102,17 @@ Ce dernier doit être exprimé dans le système de coordonnées du setting ``SRI
     Pour l'instant, le paramètre est exprimé en dur, en coordonnées 4326 (attente fin POC #12).
 
 
+#27 - Affecter automatiquement le zonage/commune/secteurs aux objets crées/modifiés
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Les notions d'évènement n'étant pas disponible dans l'interface, il faut tester
+avec PgAdmin et/ou QGIS.
+
+* Éditer un tronçon (ajout/suppression/modification)
+* Dans PgAdmin, on peut constater que les tables permettant l'association avec
+  les communes/secteurs/zonages ont été mises à jour. (Ces tables sont :
+  evenements_troncons, evenements et zonage/commune/secteur).
+
 #104 - Recalculer la longueur des tronçons et évènements par trigger
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -111,7 +122,43 @@ il faut tester le trigger avec QGis et PgAdmin.
 Éditer la géométrie d'un tronçon existant, ou créer un nouveau tronçon, 
 vérifier que le champ ``longueur`` est bien (re)calculé.
 
+La géométrie (et longueur) de l'évènement n'est pas mise à jour pour le moment,
+ce sera fait dans un second temps.
+
 
 #86 Implémenter logique simple de base de l'affichage / édition des entités
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Créer un petit workflow CRUD : liste -> affichage -> édition pour les troncons
+
+
+#17 - Gérer les permissions d'accès aux modules en fonction des groupes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lorsque je me connecte en tant que "référents sentiers" ou en tant
+qu'administrateur, les boutons pour ajouter/modifier/supprimer un sentier sont
+actifs.
+
+Lorsque je me connecte avec un autre utilisateur, les boutons sont inactifs et
+si j'essaye de forcer l'accès en allant directement à l'URL :
+
+    http://server/path/edit/73/
+
+Je suis redirigé vers la vue de détail (en lecture seule) de cet objet.
+
+Les utilisateurs de tests sont :
+
+* sentiers/sentiers (référent sentier - autorisé)
+* admin/admin (administrateur - autorisé)
+* comm/comm (référent communication - non autorisé)
+* redacteur/redacteur (rédacteur - non autorisé)
+
+:note:
+
+    La notion de droit incrémental sera implémentée plus tard, lorsque
+    nous travaillerons sur la connexion avec le système de gestion des
+    utilisateurs du parc.
+
+:note:
+
+    Les droits ne sont géré que pour les sentiers pour le moment. La
+    gestion module par module arrivera plus tard.
