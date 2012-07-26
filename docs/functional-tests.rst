@@ -74,3 +74,40 @@ La page d'accueil affiche une carte avec les tronçons.
     Pour l'instant, la carte est en projection 4326 (attente fin POC #12).
     
     Les performances ne sont pas au rendez-vous (6 sec. pour générer le fichier, 11 millisec. pour l'afficher)
+
+
+#94 - Activer le système de cache Django
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pas de test spécifique, à part vérifier que les réponses du serveur sont
+extrèmement plus rapides que lorsque le cache est vide (i.e. après déploiement).
+
+
+#28 - Paramétrer l'étendue du territoire
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La carte de la page d'accueil est restreinte à la zone du parc en fonction
+du setting ``SPATIAL_EXTENT``.
+
+Ce dernier doit être exprimé dans le système de coordonnées du setting ``SRID``.
+
+:note:
+
+    Pour l'instant, le paramètre est exprimé en dur, en coordonnées 4326 (attente fin POC #12).
+
+
+#104 - Recalculer la longueur des tronçons et évènements par trigger
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L'édition des tronçons et évènements n'étant pas disponible dans l'interface,
+il faut tester le trigger avec QGis et PgAdmin.
+
+Éditer la géométrie d'un tronçon existant, ou créer un nouveau tronçon, 
+vérifier que le champ ``longueur`` est bien (re)calculé.
+
+
+#86 Implémenter logique simple de base de l'affichage / édition des entités
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Créer un petit workflow CRUD : liste -> affichage -> édition pour les troncons
+
+

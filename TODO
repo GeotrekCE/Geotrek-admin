@@ -2,10 +2,21 @@
 In this sprint
 ==============
 
-* Use AutoField (serial) for code fields
-* Remove db_column for translated fields
 * Reset migrations
 * Why initial SQL is loaded twice during syncdb?
+
+==========
+Soon...
+==========
+
+* Use AutoField (serial) for code fields
+* Remove db_column for translated fields
+
+* Switch to django-bootstrapped instead of embedding it
+
+* List TODO in Hudson
+* Generate project docs with Sphinx
+* Pylint, exclude tests
 
 ==========
 One day...
@@ -13,8 +24,15 @@ One day...
 
 * Docstrings for each model
 * Help text for each model field
+* Test cache (locmem + files + expires)
 * Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
 * Improve installation of GDAL
 * Clean-up buildout directory (all in one "env")
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
+* See how django manage an instance being a parent of two different child
+  instance in the case of multi-table inheritance. Could it be troublesome?
+
+* Idea ? Process .sql files with template engine. Provide small tags 
+  like {% tablename Path %} {% fieldname Path.geom %}.
+  This would prevent from having hard-coded tablenames.

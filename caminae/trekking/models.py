@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.contrib.gis.db import models as gis_models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
+
+from caminae.core.models import Path
 
 
 class Trek(models.Model):
@@ -11,7 +14,7 @@ class Trek(models.Model):
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
     validated = models.BooleanField(verbose_name=_(u"Validated"))
 
-    # same fileds and core.models.path
+    # same fields and core.models.path
     length = models.FloatField(verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
@@ -43,6 +46,9 @@ class Trek(models.Model):
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))
 
+    paths = models.ManyToManyField(Path, related_name="treks",
+            verbose_name=_(u"Paths composition"))
+
     usages = models.ManyToManyField('Usage', related_name="treks",
             verbose_name=_(u"Usages"))
 
@@ -58,10 +64,16 @@ class Trek(models.Model):
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             verbose_name=_(u"Web links"))
 
+    # missing: photo
+
+    ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
     # trek_relationships = models.ManyToManyField("self", through="TrekRelationship", symmetrical=True)
+    def get_relationships(self):
+        return TrekRelationship.objects.relationships(self)
 
-    # missing: photo
+    def get_related_treks_values(self):
+        return TrekRelationship.objects.related_treks_values(self)
 
     class Meta:
         db_table = 'itineraire'
@@ -150,18 +162,53 @@ class WebLink(models.Model):
         return u"%s (%s)" % (self.name, self.url)
 
 
-# TODO: can not be have an intermediary table and be "symmetrical" at the same time
-# class TrekRelationship(models.Model):
-#
-#     has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"))
-#     has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"))
-#     is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"))
-#
-#     class Meta:
-#         db_table = 'liens_itineraire'
-#         verbose_name = _(u"Trek relationship")
-#         verbose_name_plural = _(u"Trek relationships")
 
+class TrekRelationshipManager(models.Manager):
+
+    def relationships(self, trek):
+        """Ease the request to know all relationship of a given trek:
+
+            trek_1 = Trek.objects.get(pk=42)
+            TrekRelationship.objects.relationships(trek_1)
+        """
+        qs = super(TrekRelationshipManager, self).get_query_set()
+        return qs.filter(Q(trek_a=trek) | Q(trek_b=trek))
+
+    def related_treks_values(self, trek):
+        """
+        Returns related treks of a trek as an Array (and not a queryset !).
+        """
+        rss = self.relationships(trek)
+        return [ rs.trek_b if rs.trek_a == trek else rs.trek_a for rs in rss ]
+
+
+# TODO: can not be have an intermediary table and be "symmetrical" at the same time
+# We would like to use it disregarding intervention is in _a or _b:
+#
+#     trek1.save()
+#     trek2.save()
+#     rs = TrekRelationship.objects.create(trek_a=trek1, trek_b=trek2, ...)
+#
+#     trek1.relationships()
+#     trek2.relationships()
+class TrekRelationship(models.Model):
+
+    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"))
+    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"))
+    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"))
+
+    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a")
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b")
+
+    class Meta:
+        db_table = 'liens_itineraire'
+        verbose_name = _(u"Trek relationship")
+        verbose_name_plural = _(u"Trek relationships")
+        # Not sufficient we should ensure
+        # we don't get (trek_a, trek_b) and (trek_b, trek_a)
+        unique_together = (('trek_a', 'trek_b'), )
+
+    objects = TrekRelationshipManager()
 
 
 # TODO: need to define "attached files" in the MCD to complete this model

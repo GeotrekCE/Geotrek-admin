@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
-from caminae.maintenance.models import Organism
+from caminae.common.models import Organism
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a

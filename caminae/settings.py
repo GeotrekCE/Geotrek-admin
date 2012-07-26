@@ -60,7 +60,7 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
-AUTH_PROFILE_MODULE = 'caminae.authent.UserProfile'
+AUTH_PROFILE_MODULE = 'authent.UserProfile'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
@@ -144,7 +144,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
-    
+
     'caminae.core.context_processors.settings',
 )
 
@@ -152,7 +152,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
-# 
+#
 PROJECT_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -166,12 +166,13 @@ PROJECT_APPS = (
     'south',
     'modeltranslation',
     'leaflet',
-    
+
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
     'caminae.authent',
+    'caminae.common',
     'caminae.core',
     'caminae.maintenance',
     'caminae.land',
@@ -180,6 +181,16 @@ INSTALLED_APPS = PROJECT_APPS + (
 
 SERIALIZATION_MODULES = {
     'geojson' : 'djgeojson.serializers'
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+    # The fat backend is used to store big chunk of data (>1 Mo)
+    'fat': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
 }
 
 # A sample logging configuration. The only tangible logging
@@ -215,6 +226,13 @@ TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
 SRID = None
 SPATIAL_EXTENT = None
+
+# TODO : Temporary : override extent in 4326, until POC Leaflet L93
+LEAFLET_CONFIG = {
+    "LEAFLET_VERSION" :'unstable',
+    "TILES_URL" : "http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg",
+    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46),
+}
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 

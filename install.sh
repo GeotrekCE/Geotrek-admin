@@ -63,7 +63,7 @@ function ubuntu_precise {
 #  Caminae Settings
 #..........................
 # (Note: If you edit this file out of install process, 
-#  run "make deploy" to apply changes)
+#  run "make deploy" to apply changes, or "make serve" in development)
 
 [settings]
 dbname = caminae
@@ -72,8 +72,12 @@ dbpassword = postgres
 dbhost = localhost
 dbport = 5432
 
+# URL prefix, leave empty if dedicated server. (example: /ecrins)
 rooturl = 
+# Cache duration in seconds
+cachetimeout = 60 * 60
 
+# Default structure for newly created users
 defaultstructure = PNE
 # EPSG code of the coordinate system to use
 srid = 2154

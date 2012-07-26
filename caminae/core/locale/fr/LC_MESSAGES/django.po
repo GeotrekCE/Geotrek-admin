@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 08:26+0000\n"
+"POT-Creation-Date: 2012-07-25 15:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,98 +17,203 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:19 models.py:49
-msgid "Insertion date"
-msgstr "Date d'insertion"
-
-#: models.py:20 models.py:50
-msgid "Update date"
-msgstr "Date de modification"
-
-#: models.py:21
+#: models.py:18
 msgid "Validity"
 msgstr "Validité"
 
-#: models.py:22
+#: models.py:19 models.py:196 models.py:197
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:23
+#: models.py:20 models.py:199
 msgid "Comments"
 msgstr "Commentaires"
 
-#: models.py:29 models.py:59
+#: models.py:26 models.py:85
+msgid "Insertion date"
+msgstr "Date d'insertion"
+
+#: models.py:27 models.py:86
+msgid "Update date"
+msgstr "Date de modification"
+
+#: models.py:28 models.py:87
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:31
+#: models.py:30
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:33
+#: models.py:32
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:35
+#: models.py:34
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:37
+#: models.py:36
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:44 models.py:51 models.py:91
+#: models.py:41 models.py:203
+msgid "Path management"
+msgstr ""
+
+#: models.py:44
+msgid "Datasource"
+msgstr ""
+
+#: models.py:47 models.py:161
+msgid "Challenge management"
+msgstr ""
+
+#: models.py:49 models.py:175
+msgid "Usages management"
+msgstr ""
+
+#: models.py:51 models.py:188
+msgid "Networks management"
+msgstr ""
+
+#: models.py:58 models.py:76 models.py:124 templates/core/base.html:41
+#: templates/core/home.html:20
 msgid "Path"
 msgstr "Tronçon"
 
-#: models.py:45
+#: models.py:59
 msgid "Paths"
 msgstr "Tronçons"
 
-#: models.py:52
+#: models.py:77
 msgid "Offset"
 msgstr "Décalage"
 
-#: models.py:53
+#: models.py:78
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:63
+#: models.py:79
 msgid "Kind"
 msgstr "Type de topologie"
 
-#: models.py:65
-msgid "Interventions"
-msgstr "Interventions"
-
-#: models.py:68 models.py:72 models.py:93
+#: models.py:92 models.py:96 models.py:126
 msgid "Topology"
 msgstr "Topologie"
 
-#: models.py:73
+#: models.py:97
 msgid "Topologies"
 msgstr "Topologies"
 
-#: models.py:79 models.py:86
+#: models.py:112 models.py:119
 msgid "Topology's kind"
 msgstr "Type de topologie"
 
-#: models.py:87
+#: models.py:120
 msgid "Topology's kinds"
 msgstr "Types de topologie"
 
-#: models.py:94
+#: models.py:127
 msgid "Start position"
 msgstr "Position de début"
 
-#: models.py:95
+#: models.py:128
 msgid "End position"
 msgstr "Position de fin"
 
-#: models.py:101 models.py:105
+#: models.py:134 models.py:138
 msgid "Path aggregation"
 msgstr "Aggrégation de tronçons"
 
-#: models.py:106
+#: models.py:139
 msgid "Path aggregations"
 msgstr "Aggrégations de tronçons"
+
+#: models.py:144
+msgid "Source"
+msgstr ""
+
+#: models.py:148
+msgid "Datasource management"
+msgstr ""
+
+#: models.py:149
+msgid "Datasources management"
+msgstr ""
+
+#: models.py:157
+msgid "Challenge"
+msgstr ""
+
+#: models.py:162
+msgid "Challenges management"
+msgstr ""
+
+#: models.py:170
+msgid "Usage"
+msgstr ""
+
+#: models.py:174
+msgid "Usage management"
+msgstr ""
+
+#: models.py:183
+msgid "Network"
+msgstr ""
+
+#: models.py:187
+msgid "Network management"
+msgstr ""
+
+#: models.py:198
+msgid "Arrival"
+msgstr ""
+
+#: models.py:204
+msgid "Paths management"
+msgstr ""
+
+#: templates/core/base.html:42
+msgid "Work"
+msgstr "Intervention"
+
+#: templates/core/base.html:43
+msgid "Project"
+msgstr "Chantier"
+
+#: templates/core/base.html:44
+msgid "Signage"
+msgstr "Signalétique"
+
+#: templates/core/base.html:45
+msgid "Infrastructure"
+msgstr "Ouvrage"
+
+#: templates/core/base.html:46
+msgid "Trekking"
+msgstr "Itinéraire"
+
+#: templates/core/base.html:47
+msgid "POI"
+msgstr "POI"
+
+#: templates/core/home.html:24 templates/core/home.html.py:31
+#: templates/core/home.html:38 templates/core/home.html.py:45
+msgid "Empty"
+msgstr ""
+
+#: templates/core/home.html:27
+msgid "Usages"
+msgstr ""
+
+#: templates/core/home.html:34
+msgid "Contractors"
+msgstr ""
+
+#: templates/core/home.html:41
+msgid "Structure related"
+msgstr ""
+
+#~ msgid "Interventions"
+#~ msgstr "Interventions"

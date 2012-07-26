@@ -1,7 +1,13 @@
-# http://djangosnippets.org/snippets/2311/
-# Ensure South will update our custom SQL during a call to `migrate`.
+"""
+    http://djangosnippets.org/snippets/2311/
+    Ensure South will update our custom SQL during a call to `migrate`.
+"""
+import logging
+import traceback
 
 from south.signals import post_migrate
+
+logger = logging.getLogger(__name__)
 
 
 def run_initial_sql(sender, **kwargs):
@@ -17,16 +23,14 @@ def run_initial_sql(sender, **kwargs):
     for sql_file in sql_files:
         try:
             if os.path.exists(sql_file):
-                print "Loading initial SQL data from '%s'" % sql_file
+                logger.info("Loading initial SQL data from '%s'" % sql_file)
                 f = open(sql_file)
                 sql = f.read()
                 f.close()
                 cursor.execute(sql)
         except Exception, e:
-            import sys
-            sys.stderr.write("Failed to install custom SQL file '%s': %s\n" %
-                                (sql_file, e))
-            import traceback
+            logger.error("Failed to install custom SQL file '%s': %s\n" %
+                         (sql_file, e))
             traceback.print_exc()
             transaction.rollback_unless_managed()
         else:

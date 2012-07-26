@@ -5,6 +5,11 @@ from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+test_requirements = [
+    'factory_boy == 1.1.5',
+]
+
+
 setup(
     name='caminae',
     version='1.0.dev0',
@@ -21,7 +26,8 @@ setup(
         'django-modeltranslation == 0.3.3',
         'django-leaflet == 0.0.2',
         'django-geojson',
-    ],
+    ] + test_requirements,
+    tests_requires = test_requirements,
     packages=find_packages(),
     classifiers  = ['Natural Language :: English',
                     'Environment :: Web Environment',

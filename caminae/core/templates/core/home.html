@@ -43,26 +43,23 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-        var spinner = new Spinner().spin(document.getElementById('mainmap'));
-        
-        //TODO: everything is global :/
-        var tilesLayer = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg');
-        var geojsonLayer = new L.GeoJSON();
-        geojsonLayer.on("featureparse", function (e) {
-            if (e.properties && e.properties.name) {
-                e.layer.bindPopup(e.properties.name);
-            }
-        });
-        
-        $.getJSON("{% url core:layerpath %}", function (data) {           
-            geojsonLayer.addGeoJSON(data);
-            spinner.stop();
-        });
-        
-        mainmap.addLayer(tilesLayer)
-               .addLayer(geojsonLayer);
-        
-        mainmap.setView(new L.LatLng(45, 6), 9)
-        
+        function mainmapInit(mainmap) {
+            var spinner = new Spinner().spin(document.getElementById('mainmap'));
+            
+            var geojsonLayer = new L.GeoJSON(null, {
+                onEachFeature: function (feature, layer) {
+                    if (feature.properties && feature.properties.name) {
+                        layer.bindPopup(feature.properties.name);
+                    }
+                }
+            });
+            
+            $.getJSON("{% url core:layerpath %}", function (data) {           
+                geojsonLayer.addData(data);
+                spinner.stop();
+            });
+            
+            mainmap.addLayer(geojsonLayer);
+        }
     </script>
 {% endblock extrabody %}

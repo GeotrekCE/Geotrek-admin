@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 08:27+0000\n"
+"POT-Creation-Date: 2012-07-25 15:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,47 +17,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:13
+#: models.py:16
 msgid "Nom"
 msgstr "Name"
 
-#: models.py:19
+#: models.py:22
 msgid "Structure"
 msgstr "Structure"
 
-#: models.py:20
+#: models.py:23
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:37 models.py:49
+#: models.py:43 models.py:56
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:48
+#: models.py:55
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:55
+#: models.py:65
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:59
+#: models.py:69
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:60
+#: models.py:70
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:63
+#: models.py:73
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
 
-#: tests.py:45 tests.py:55 tests.py:64
+#: tests/tests.py:49 tests/tests.py:59 tests/tests.py:68
 msgid "Logout"
 msgstr ""
 
-#: tests.py:74 tests.py:79
+#: tests/tests.py:78 tests/tests.py:83
 msgid "Admin"
 msgstr ""

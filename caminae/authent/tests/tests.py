@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-
+"""
+    Unit tests
+"""
 from django.test import TestCase
 from django.test.client import Client
 from django.test.utils import override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 
-from models import Structure, UserProfile
+from ..models import Structure, UserProfile
 
 
 @override_settings(LOGIN_URL='/login/')
@@ -33,9 +35,11 @@ class UserProfileTest(TestCase):
 
     def test_profile(self):
         self.assertTrue(isinstance(self.user.profile, UserProfile))
+        self.assertEqual(self.user.profile, self.user.get_profile())
+
         self.assertEqual(self.user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
-        
+
     def test_language(self):
         c = Client()
         success = c.login(username=u"Joe", password=u"Bar")
@@ -43,7 +47,7 @@ class UserProfileTest(TestCase):
         response = c.get(reverse('home'))
         self.assertEqual(200, response.status_code)
         self.assertTrue(_("Logout") in response.content)
-        
+
         # Change user lang
         self.assertNotEqual(settings.LANGUAGE_CODE, u"en")
         userprofile = UserProfile.objects.get(user=self.user)
@@ -53,7 +57,7 @@ class UserProfileTest(TestCase):
         # No effect if no logout
         response = c.get(reverse('home'))
         self.assertTrue(_("Logout") in response.content)
-        
+
         c.logout()
         response = c.get(reverse('home'))
         self.assertEqual(response.status_code, 302)
@@ -63,16 +67,32 @@ class UserProfileTest(TestCase):
         self.assertEqual(c.session['django_language'], u"en")
         self.assertTrue(_("Logout") in response.content)
 
+    def test_group(self):
+        groups = (Group.objects.create(name='Administrateurs'),
+                  Group.objects.create(name='Rédacteurs'),
+                  Group.objects.create(name='Référents sentiers'),
+                  Group.objects.create(name='Référents communication'),
+                 )
+        self.assertFalse(self.user.profile.is_administrator())
+        self.assertFalse(self.user.profile.is_editor())
+        self.assertFalse(self.user.profile.is_path_manager())
+        self.assertFalse(self.user.profile.is_comm_manager())
+        self.user.groups.add(*groups)
+        self.assertTrue(self.user.profile.is_administrator())
+        self.assertTrue(self.user.profile.is_editor())
+        self.assertTrue(self.user.profile.is_path_manager())
+        self.assertTrue(self.user.profile.is_comm_manager())
+
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
         c = Client()
         success = c.login(username=u"Joe", password=u"Bar")
         self.assertTrue(success)
-        
+
         response = c.get(reverse('home'))
-        
+
         self.assertFalse(_("Admin") in response.content)
-        
+
         self.user.is_staff = True
         self.user.save()
         response = c.get(reverse('home'))
