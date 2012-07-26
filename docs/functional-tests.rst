@@ -16,6 +16,12 @@ Le processus d'installation demande la saisie des paramètres nécessaires.
 Le projet est ensuite accessible à l'URL du serveur.
 
 
+#90 - Fournir spécifications serveur
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+c.f. ``README.rst``.
+
+
 #84 - Afficher l'interface dans la langue de l'utilisateur
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -109,5 +115,3 @@ vérifier que le champ ``longueur`` est bien (re)calculé.
 #86 Implémenter logique simple de base de l'affichage / édition des entités
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Créer un petit workflow CRUD : liste -> affichage -> édition pour les troncons
-
-

@@ -1,31 +1,63 @@
-*caminae*, national park manager :)
+*Caminae*, a National Park Manager :)
 
 =====
 SETUP
 =====
 
-Run development server :
+Requirements
+------------
 
-::
+* Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/)
 
-    ./install.sh --dev
-    make serve
 
-Run tests :
+A first estimation on system resources is :
 
-::
+* 1 Go RAM
+* 10 Go disk space
 
-    make tests
 
-==========
-DEPLOYMENT
-==========
+Installation
+------------
+
+Once the OS is installed, copy and extract the source archive.
+
+Follow the installation process :
 
 ::
 
     ./install.sh
 
-Create a super user :
+
+You will mainly be prompt for editing the base configuration file (``settings.ini``).
+
+
+Software update
+---------------
+
+Overwrite the source code (or use symlinks), and run :
+
+::
+
+    make deploy
+
+
+Initial Data
+------------
+
+Load example data (used in development) :
+
+::
+
+    make load_data
+
+
+An administrator "admin"/"admin" will be created.
+
+
+Without Initial Data
+--------------------
+
+Create a super user manually :
 
 ::
 
@@ -38,14 +70,29 @@ or change its password :
     pbin/django changepassword --username admin <password>
 
 
-Initial Data
-------------
 
-Load example data (used in development) :
+===========
+DEVELOPMENT
+===========
+
+In order to run a development instance :
 
 ::
 
-    make load_data
+    ./install.sh --dev
+
+Start local instance :
+
+::
+
+    make serve
+
+
+Run unit tests :
+
+::
+
+    make tests
 
 
 =======
