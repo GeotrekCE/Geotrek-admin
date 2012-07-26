@@ -30,6 +30,11 @@ Follow the installation process :
 
 You will mainly be prompt for editing the base configuration file (``settings.ini``).
 
+To make sure the application runs well after a reboot, try now : reboot. And
+access the ``http://yourserver/``.
+
+See paragraph below for loading initial demonstration data.
+
 
 Software update
 ---------------
@@ -51,7 +56,7 @@ Load example data (used in development) :
     make load_data
 
 
-An administrator "admin"/"admin" will be created.
+Among other things, an administrator "admin"/"admin" will be created.
 
 
 Without Initial Data
