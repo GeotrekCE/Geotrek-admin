@@ -2,13 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.simple import direct_to_template
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
-#
+from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 from django.core.urlresolvers import reverse_lazy, reverse
 
 from djgeojson.views import GeoJSONLayerView
 
+from caminae.authent.decorators import path_manager_required
 from caminae.maintenance.models import Contractor
 from .models import Path
 
@@ -26,24 +27,40 @@ class PathLayer(GeoJSONLayerView):
         return super(PathLayer, self).dispatch(*args, **kwargs)
 
 
-@login_required
-def home(request):
-    # Temporary during Sprint1
-    return direct_to_template(request, "core/home.html", dict(
-        contractors=Contractor.forUser(request.user),
-        all_contractors=Contractor.objects.all(),
-        all_paths=Path.objects.all()[:20],
-    ))
+class PathList(ListView):
+    model = Path
+    context_object_name = 'path_list'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PathList, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PathList, self).get_context_data(**kwargs)
+        # Temporary during Sprint1
+        context.update(**dict(
+            contractors=Contractor.forUser(self.request.user),
+            all_contractors=Contractor.objects.all()
+        ))
+        return context
 
 
 class PathDetail(DetailView):
     model = Path
     context_object_name = 'path'
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PathDetail, self).dispatch(*args, **kwargs)
+
 
 class PathCreate(CreateView):
     model = Path
     context_object_name = 'path'
+
+    @method_decorator(path_manager_required('core:path_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(PathCreate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
@@ -53,13 +70,22 @@ class PathUpdate(UpdateView):
     model = Path
     context_object_name = 'path'
 
+    @method_decorator(path_manager_required('core:path_detail'))
+    def dispatch(self, *args, **kwargs):
+        return super(PathUpdate, self).dispatch(*args, **kwargs)
+
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
+
 
 class PathDelete(DeleteView):
     model = Path
     context_object_name = 'path'
     success_url = reverse_lazy('core:path_list')
 
-# redirect to home for now
-path_list = home
+    @method_decorator(path_manager_required('core:path_detail'))
+    def dispatch(self, *args, **kwargs):
+        return super(PathDelete, self).dispatch(*args, **kwargs)
+
+
+home = PathList.as_view()

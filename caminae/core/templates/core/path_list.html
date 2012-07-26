@@ -12,6 +12,34 @@
     {% leaflet_map "mainmap" %}
 {% endblock mainmap %}
 
+{% block mainlist %}
+    <!-- Liste des résultats -->
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Date d'ajout</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for path in path_list|slice:":12" %}
+            <tr>
+                <td><a href="{% url core:path_detail path.pk %}">{{ path }}</a></td>
+                <td>26.07.2011</td>
+                <td><button class="btn"><i class="icon-pencil"></i></button></td>
+                <td><button class="btn"><i class="icon-trash"></i></button></td>                                
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">{% trans "Empty" %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock mainlist %}
+
 
 {% block content %}
     {{ block.super }}
@@ -19,12 +47,6 @@
     <h2>{% trans "Path" %}</h2>
 
     <a href="{% url core:path_add %}">{% trans "Add a path" %}</a>
-
-    {% for path in all_paths %}
-        <li><a href="{% url core:path_detail path.pk %}">{{ path }}</a></li>
-    {% empty %}
-        {% trans "Empty" %}
-    {% endfor %}
 
     <h2>{% trans "Usages" %}</h2>
     {% for usage in all_usages %}
