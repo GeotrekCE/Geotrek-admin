@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-26 15:38+0200\n"
+"POT-Creation-Date: 2012-07-26 16:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,7 +78,6 @@ msgid "Networks management"
 msgstr "Gestion réseaux"
 
 #: models.py:60 models.py:78 models.py:126 templates/core/base.html:41
-#: templates/core/home.html:19
 msgid "Path"
 msgstr "Tronçon"
 
@@ -198,27 +197,6 @@ msgstr "Itinéraire"
 msgid "POI"
 msgstr "POI"
 
-#: templates/core/home.html:21
-msgid "Add a path"
-msgstr "Ajouter un tronçon"
-
-#: templates/core/home.html:26 templates/core/home.html.py:33
-#: templates/core/home.html:40 templates/core/home.html.py:47
-msgid "Empty"
-msgstr "Aucun(e)"
-
-#: templates/core/home.html:29
-msgid "Usages"
-msgstr "Usages"
-
-#: templates/core/home.html:36
-msgid "Contractors"
-msgstr "Sous-traitants"
-
-#: templates/core/home.html:43
-msgid "Structure related"
-msgstr "Structure liée"
-
 #: templates/core/path_confirm_delete.html:16
 #, python-format
 msgid "Do you really wish to delete <strong>%(path)s</strong>"
@@ -232,21 +210,45 @@ msgstr "Oui, supprimer"
 msgid "No, back to display view"
 msgstr "Non, retour à l'affichage détaillé"
 
-#: templates/core/path_detail.html:24 templates/core/path_detail.html.py:30
-#: templates/core/path_detail.html:33 templates/core/path_detail.html.py:63
-#: templates/core/path_detail.html:66 templates/core/path_detail.html.py:69
+#: templates/core/path_detail.html:25 templates/core/path_detail.html.py:31
+#: templates/core/path_detail.html:34 templates/core/path_detail.html.py:64
+#: templates/core/path_detail.html:67 templates/core/path_detail.html.py:70
 #: templates/core/path_detail.html:84 templates/core/path_detail.html.py:95
 msgid "None"
 msgstr "Aucun(e)"
 
-#: templates/core/path_detail.html:110
+#: templates/core/path_detail.html:28
+msgid "Yes,No"
+msgstr "Oui,Non"
+
+#: templates/core/path_detail.html:111 templates/core/path_detail.html:113
 msgid "Update"
 msgstr "Éditer"
 
-#: templates/core/path_detail.html:113
+#: templates/core/path_detail.html:118 templates/core/path_detail.html:120
 msgid "Delete"
 msgstr "Supprimer"
 
-#: templates/core/path_detail.html:116
+#: templates/core/path_detail.html:124
 msgid "Go back to list"
 msgstr "Retour à la liste"
+
+#: templates/core/path_list.html:36 templates/core/path_list.html.py:52
+#: templates/core/path_list.html:59 templates/core/path_list.html.py:66
+msgid "Empty"
+msgstr "Aucun(e)"
+
+#: templates/core/path_list.html:48
+msgid "Usages"
+msgstr "Usages"
+
+#: templates/core/path_list.html:55
+msgid "Contractors"
+msgstr "Sous-traitants"
+
+#: templates/core/path_list.html:62
+msgid "Structure related"
+msgstr "Structure liée"
+
+#~ msgid "Add a path"
+#~ msgstr "Ajouter un tronçon"

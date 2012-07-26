@@ -21,17 +21,17 @@
             <th>{{ path|verbose:"geom" }}</th>
             <td>{{ path.geom }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"geom_cadastre"|default:_("None") }}</th>
-            <td>{{ path.geom_cadastre }}</td>
+            <th>{{ path|verbose:"geom_cadastre" }}</th>
+            <td>{{ path.geom_cadastre|default:_("None") }}</td>
         </tr><tr>
             <th>{{ path|verbose:"valid" }}</th>
-            <td>{{ path.valid }}</td>
+            <td>{{ path.valid|yesno:_("Yes,No") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"name"|default:_("None") }}</th>
-            <td>{{ path.name }}</td>
+            <th>{{ path|verbose:"name" }}</th>
+            <td>{{ path.name|default:_("None") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"comments"|default:_("None") }}</th>
-            <td>{{ path.comments }}</td>
+            <th>{{ path|verbose:"comments" }}</th>
+            <td>{{ path.comments|default:_("None")  }}</td>
         </tr><tr>
             <th>{{ path|verbose:"date_insert" }}</th>
             <td>{{ path.date_insert }}</td>
@@ -60,14 +60,14 @@
 
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ path|verbose:"path_management"|default:_("None") }}</th>
-            <td>{{ path.path_management }}</td>
+            <th>{{ path|verbose:"path_management" }}</th>
+            <td>{{ path.path_management|default:_("None") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"datasource_management"|default:_("None") }}</th>
-            <td>{{ path.datasource_management }}</td>
+            <th>{{ path|verbose:"datasource_management" }}</th>
+            <td>{{ path.datasource_management|default:_("None") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"challenge_management"|default:_("None") }}</th>
-            <td>{{ path.challenge_management }}</td>
+            <th>{{ path|verbose:"challenge_management" }}</th>
+            <td>{{ path.challenge_management|default:_("None") }}</td>
         </tr>
     </table>
 
