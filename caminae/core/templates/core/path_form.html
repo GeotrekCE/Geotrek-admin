@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{% extends "core/base.html" %}
+{% load i18n %}
 
 {% block extrahead %}
 <style>
@@ -6,9 +7,8 @@
 </style>
 {% endblock extrahead %}
 
-{% block content %}
-    {{ block.super }}
 
+{% block mainpanel %}
     <form method="POST"
         action="{% if path %}{{ path.get_update_url }}{% else %}{{ path.get_add_url }}{% endif %}">
 
@@ -17,11 +17,10 @@
         {{ form }}
             <tr>
                 <td colspan="2" style="text-align: center; padding-top: 10px;" >
+                    <a class="btn btn-inverse" href="{{ path.get_update_url }}">{% trans "Cancel" %}</a>
                     <input type="submit" class="btn btn-primary"></input>
                 </td>
             </tr>
         </table>
     </form>
-
-{% endblock content %}
-
+{% endblock mainpanel %}

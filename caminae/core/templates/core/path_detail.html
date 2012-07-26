@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "core/base.html" %}
 {% load i18n field_verbose_name %}
 
 {% block extrahead %}
@@ -7,13 +7,8 @@
 </style>
 {% endblock extrahead %}
 
-{% block content %}
-    {{ block.super }}
-
-<div class="container-fluid">
-    <div class="row-fluid">
-
-    <div class="span8">
+{% block mainpanel %}
+    <div class="span7">
 
     <h2>Attr</h2>
     <table class="table-striped table-bordered table">
@@ -99,7 +94,7 @@
         </tr>
     </table>
 
-    </div> <!-- span8 -->
+    </div> <!-- span7 -->
 
     <div class="span4">
 
@@ -108,26 +103,20 @@
     <div class="row-fluid" style="400px;" >
         <div class="span4 text-center">
             {% if user.profile.is_path_manager %}
-            <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
+            <a class="btn btn-primary" href="{% url core:path_update path.pk %}">{% trans "Update" %}</a>
             {% else %}
             <span class="btn disabled">{% trans "Update" %}</span>
             {% endif %}
         </div>
         <div class="span4 text-center">
             {% if user.profile.is_path_manager %}
-            <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
+            <a class="btn btn-danger" href="{% url core:path_delete path.pk  %}">{% trans "Delete" %}</a>
             {% else %}
             <span class="btn disabled">{% trans "Delete" %}</span>
             {% endif %}
         </div>
-        <div class="span4 text-center">
-            <a class="btn btn-inverse" href="{{ path.get_list_url }}">{% trans "Go back to list" %}</a>
-        </div>
     </div>
 
     </div> <!-- span4 -->
-</div> <!-- container-fluid -->
-</div> <!-- row-fluid -->
 
-{% endblock content %}
-
+{% endblock mainpanel %}

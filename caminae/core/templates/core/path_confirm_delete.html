@@ -1,15 +1,14 @@
-{% extends "base.html" %}
+{% extends "core/base.html" %}
 {% load i18n field_verbose_name %}
 
 {% block extrahead %}
 <style>
     .div-center { margin: 0 auto; width: 400px; }
 </style>
-
 {% endblock extrahead %}
-{% block content %}
-    {{ block.super }}
 
+
+{% block mainpanel %}
     <div class="div-center">
         <div class="alert alert-block">
             <h4 class="alert-heading">Warning!</h4>
@@ -21,7 +20,4 @@
             <a class="btn btn-inverse" href="{{ path.get_detail_url }}">{% trans "No, back to display view" %}</a>
         </form>
     </div>
-
-{% endblock content %}
-
-
+{% endblock mainpanel %}

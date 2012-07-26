@@ -3,10 +3,11 @@
 
 {% block content %}
 
+        {% block navigation %}
         <!-- Onglets Recherche/Fiche/Histo -->
         <div class="row-fluid">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#">Modules</a></li>
+                <li class="active"><a href="{% url core:path_list %}">{% trans "Modules" %}</a></li>
                 <li><a href="#">[nom fiche]</a></li>
                 <li class="dropdown t"> <!-- Onglet Histo (avec dropdown) -->    
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -28,7 +29,7 @@
                 </li>
             </ul>
         </div> <!--/row-->    
-
+        {% endblock navigation %}
         
         <div id="container" class="container-fluid">
 
@@ -38,7 +39,7 @@
                 <!-- Liste des modules -->
                 <div class="span1">    
                     <ul id="listeModules" class="nav nav-pills nav-stacked">
-                        <li class="active"><a href="#"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
+                        <li class="active"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
                         <li><a href="#"><img src="{% static "images/work.png" %}"/>{% trans "Work" %}</a></li>
                         <li><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
                         <li><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
@@ -46,8 +47,9 @@
                         <li><a href="#"><img src="{% static "images/trekking.png" %}"/>{% trans "Trekking" %}</a></li>
                         <li><a href="#"><img src="{% static "images/poi.png" %}"/>{% trans "POI" %}</a></li>
                     </ul>
-                  </div> <!--/span-->    
+                </div> <!--/span-->
 
+                {% block mainpanel %}
                 <!-- Zone des résultats -->
                 <div class="span5">
                 
@@ -94,6 +96,8 @@
                         </p>
                     </div><!--/pull-right-->
                 </div><!--/span-->
+                
+                {% endblock mainpanel %}
 
             </div><!--/row-->
         </div><!--/container-->
