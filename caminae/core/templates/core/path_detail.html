@@ -1,27 +1,39 @@
 {% extends "base.html" %}
+{% load i18n field_verbose_name %}
 
 {% block content %}
     {{ block.super }}
 
-    {{ path.geom }}
-    {{ path.geom_cadastre }}
-    {{ path.valid }}
-    {{ path.name }}
-    {{ path.comments }}
-    {{ path.objects }}
-    {{ path.date_insert }}
-    {{ path.date_update }}
-    {{ path.length }}
-    {{ path.ascent }}
-    {{ path.descent }}
-    {{ path.min_elevation }}
-    {{ path.max_elevation }}
+    <h2>Attr</h2>
+
+    <ul><li>  {{ path|field_verbose_name:"geom" }} : {{ path.geom }}
+    </li><li> {{ path|field_verbose_name:"geom_cadastre" }} : {{ path.geom_cadastre }}
+    </li><li> {{ path|field_verbose_name:"valid" }} : {{ path.valid }}
+    </li><li> {{ path|field_verbose_name:"name" }} : {{ path.name }}
+    </li><li> {{ path|field_verbose_name:"comments" }} : {{ path.comments }}
+    </li><li> {{ path|field_verbose_name:"date_insert" }} : {{ path.date_insert }}
+    </li><li> {{ path|field_verbose_name:"date_update" }} : {{ path.date_update }}
+    </li><li> {{ path|field_verbose_name:"length" }} : {{ path.length }}
+    </li><li> {{ path|field_verbose_name:"ascent" }} : {{ path.ascent }}
+    </li><li> {{ path|field_verbose_name:"descent" }} : {{ path.descent }}
+    </li><li> {{ path|field_verbose_name:"min_elevation" }} : {{ path.min_elevation }}
+    </li><li> {{ path|field_verbose_name:"max_elevation" }} : {{ path.max_elevation }}
+    </li></ul>
 
     {# path_management datasource_management challenge_management #}
 
-    path_management datasource_management challenge_management
+    <h2>FK</h2>
 
-    {# M2M #}
+    <ul><li>
+        {{ path|field_verbose_name:"path_management" }} : path.path_management
+    </li><li>
+        {{ path|field_verbose_name:"datasource_management" }} : path.datasource_management
+    </li><li>
+        {{ path|field_verbose_name:"challenge_management" }} : path.challenge_management
+    </li></ul>
+
+    <h2>M2M</h2>
+
     <ul>
     {% for usage in  path.usages_management.all %}
         <li> {{ usage }} </li>
@@ -33,6 +45,8 @@
         <li> {{ network }} </li>
     {% endfor %}
     </ul>
+
+    <h2>Actions</h2>
 
     <div>
         <ul><li>

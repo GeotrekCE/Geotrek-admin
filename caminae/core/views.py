@@ -11,7 +11,6 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.maintenance.models import Contractor
 from .models import Path
-from .forms import PathModelForm
 
 
 class PathList(GeoJSONLayerView):
@@ -46,17 +45,16 @@ class PathCreate(CreateView):
     model = Path
     context_object_name = 'path'
 
-    def success_url(self):
-        return reverse('path_detail', self.object.pk)
+    def get_success_url(self):
+        return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
 
 class PathUpdate(UpdateView):
     model = Path
     context_object_name = 'path'
 
-    def success_url(self):
-        return reverse('path_detail', self.object.pk)
-
+    def get_success_url(self):
+        return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
 class PathDelete(DeleteView):
     model = Path
