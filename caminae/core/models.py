@@ -53,7 +53,7 @@ class Path(StructureRelated):
             verbose_name=_(u"Networks management"))
 
     def __unicode__(self):
-        return self.name
+        return self.name or 'path %d' % self.pk
 
     class Meta:
         db_table = 'troncons'
