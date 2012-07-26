@@ -59,7 +59,7 @@ class PathUpdate(UpdateView):
 class PathDelete(DeleteView):
     model = Path
     context_object_name = 'path'
-    success_url = reverse_lazy('path_list')
+    success_url = reverse_lazy('core:path_list')
 
 # redirect to home for now
 path_list = home
