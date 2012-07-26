@@ -15,8 +15,6 @@
         <table class="table-striped table-bordered" style="margin: 0 auto;">
         {% csrf_token %}
         {{ form }}
-
-
             <tr>
                 <td colspan="2" style="text-align: center; padding-top: 10px;" >
                     <input type="submit" class="btn btn-primary"></input>
@@ -24,8 +22,6 @@
             </tr>
         </table>
     </form>
-    {% if instance %}
-        {{ instance }}
-    {%  endif %}
+
 {% endblock content %}
 

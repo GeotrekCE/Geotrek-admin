@@ -13,9 +13,7 @@
     <div class="div-center">
         <div class="alert alert-block">
             <h4 class="alert-heading">Warning!</h4>
-            {% blocktrans %}
-            Do you really wish to delete <strong>{{ path }}</strong>
-            {% endblocktrans %}
+            {% blocktrans %}Do you really wish to delete <strong>{{ path }}</strong>{% endblocktrans %}
         </div>
         <form method="POST" action="{% url core:path_delete path.pk %}">
             {% csrf_token %}

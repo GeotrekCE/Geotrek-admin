@@ -21,16 +21,16 @@
             <th>{{ path|verbose:"geom" }}</th>
             <td>{{ path.geom }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"geom_cadastre" }}</th>
+            <th>{{ path|verbose:"geom_cadastre"|default:_("None") }}</th>
             <td>{{ path.geom_cadastre }}</td>
         </tr><tr>
             <th>{{ path|verbose:"valid" }}</th>
             <td>{{ path.valid }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"name" }}</th>
+            <th>{{ path|verbose:"name"|default:_("None") }}</th>
             <td>{{ path.name }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"comments" }}</th>
+            <th>{{ path|verbose:"comments"|default:_("None") }}</th>
             <td>{{ path.comments }}</td>
         </tr><tr>
             <th>{{ path|verbose:"date_insert" }}</th>
@@ -60,13 +60,13 @@
 
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ path|verbose:"path_management" }}</th>
+            <th>{{ path|verbose:"path_management"|default:_("None") }}</th>
             <td>{{ path.path_management }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"datasource_management" }}</th>
+            <th>{{ path|verbose:"datasource_management"|default:_("None") }}</th>
             <td>{{ path.datasource_management }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"challenge_management" }}</th>
+            <th>{{ path|verbose:"challenge_management"|default:_("None") }}</th>
             <td>{{ path.challenge_management }}</td>
         </tr>
     </table>
@@ -80,6 +80,8 @@
                 <ul>
                 {% for usage in  path.usages_management.all %}
                     <li> {{ usage }} </li>
+                {% empty %}
+                    {% trans "None" %}
                 {% endfor %}
                 </ul>
             </td>
@@ -89,6 +91,8 @@
                 <ul>
                 {% for network in  path.networks_management.all %}
                     <li> {{ network }} </li>
+                {% empty %}
+                    {% trans "None" %}
                 {% endfor %}
                 </ul>
             </td>
