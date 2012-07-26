@@ -108,20 +108,20 @@
     <div class="row-fluid" style="400px;" >
         <div class="span4 text-center">
             {% if user.profile.is_path_manager %}
-            <a class="btn btn-primary" href="{% url core:path_update path.pk %}">{% trans "Update" %}</a>
+            <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
             {% else %}
             <span class="btn disabled">{% trans "Update" %}</span>
             {% endif %}
         </div>
         <div class="span4 text-center">
             {% if user.profile.is_path_manager %}
-            <a class="btn btn-danger" href="{% url core:path_delete path.pk  %}">{% trans "Delete" %}</a>
+            <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
             {% else %}
             <span class="btn disabled">{% trans "Delete" %}</span>
             {% endif %}
         </div>
         <div class="span4 text-center">
-            <a class="btn btn-inverse" href="{% url core:path_list %}">{% trans "Go back to list" %}</a>
+            <a class="btn btn-inverse" href="{{ path.get_list_url }}">{% trans "Go back to list" %}</a>
         </div>
     </div>
 

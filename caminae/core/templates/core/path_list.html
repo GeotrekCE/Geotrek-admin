@@ -14,7 +14,7 @@
 
 
 {% block mainactions %}
-    <a class="btn" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>    
+    <a class="btn" href="{{ path.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>    
 {% endblock mainactions %}
 
 
@@ -31,17 +31,17 @@
         <tbody>
             {% for path in path_list|slice:":12" %}
             <tr>
-                <td><a href="{% url core:path_detail path.pk %}">{{ path }}</a></td>
+                <td><a href="{{ path.get_detail_url }}">{{ path }}</a></td>
                 <td>26.07.2011</td>
                 <td>
                     {% if user.profile.is_path_manager %}
-                    <a class="btn btn-mini" href="{% url core:path_update path.pk  %}"><i class="icon-pencil"></i></a>
+                    <a class="btn btn-mini" href="{{ path.get_update_url }}"><i class="icon-pencil"></i></a>
                     {% else %}
                     <a class="btn btn-mini disabled" href="#"><i class="icon-pencil"></i></a>
                     {% endif %}
 
                     {% if user.profile.is_path_manager %}
-                    <a class="btn btn-mini " href="{% url core:path_delete path.pk  %}"><i class="icon-trash"></i></a>
+                    <a class="btn btn-mini " href="{{ path.get_delete_url }}"><i class="icon-trash"></i></a>
                     {% else %}
                     <a class="btn btn-mini disabled" href="#"><i class="icon-trash"></i></a>
                     {% endif %}

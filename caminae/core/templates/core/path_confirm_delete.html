@@ -15,10 +15,10 @@
             <h4 class="alert-heading">Warning!</h4>
             {% blocktrans %}Do you really wish to delete <strong>{{ path }}</strong>{% endblocktrans %}
         </div>
-        <form method="POST" action="{% url core:path_delete path.pk %}">
+        <form method="POST" action="{{ path.get_delete_url }}">
             {% csrf_token %}
             <input type="submit" class="btn btn-danger" value="{% trans "Yes, delete" %}"></input>
-            <a class="btn btn-inverse" href="{% url core:path_detail path.pk %}">{% trans "No, back to display view" %}</a>
+            <a class="btn btn-inverse" href="{{ path.get_detail_url }}">{% trans "No, back to display view" %}</a>
         </form>
     </div>
 

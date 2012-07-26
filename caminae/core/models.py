@@ -74,6 +74,29 @@ class Path(StructureRelated):
         self.max_elevation = tmp.max_elevation
 
 
+    # CRUD urls
+
+    @models.permalink
+    def get_list_url(self):
+        return ('core:path_list',)
+
+    @models.permalink
+    def get_detail_url(self):
+        return ('core:path_detail', [str(self.pk)])
+
+    @models.permalink
+    def get_add_url(self):
+        return ('core:path_add', )
+
+    @models.permalink
+    def get_update_url(self):
+        return ('core:path_update', [str(self.pk)])
+
+    @models.permalink
+    def get_delete_url(self):
+        return ('core:path_delete', [str(self.pk)])
+
+
 class TopologyMixin(models.Model):
     troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))

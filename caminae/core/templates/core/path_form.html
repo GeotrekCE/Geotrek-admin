@@ -10,7 +10,7 @@
     {{ block.super }}
 
     <form method="POST"
-        action="{% if path %}{% url core:path_update path.pk  %}{% else %}{% url core:path_add %}{% endif %}">
+        action="{% if path %}{{ path.get_update_url }}{% else %}{{ path.get_add_url }}{% endif %}">
 
         <table class="table-striped table-bordered" style="margin: 0 auto;">
         {% csrf_token %}
