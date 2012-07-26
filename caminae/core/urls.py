@@ -1,15 +1,17 @@
 from django.conf.urls import patterns, url
 
 # from .views import PathList, path_list, path_create_or_edit
-from .views import PathList, path_list
+from .views import PathLayer, path_list
 from .views import PathDetail, PathCreate, PathUpdate, PathDelete
 
 from caminae.authent.decorators import path_manager_required
 
 
 urlpatterns = patterns('',
-    url(r'^path.geojson$', PathList.as_view(), name="layerpath"),
+    url(r'^path.geojson$', PathLayer.as_view(), name="layer_path"),
+)
 
+urlpatterns += patterns('',
     url(r'^path/list/$', path_list, name="path_list"),
     # url(r'^path/add/$', path_create_or_edit, name="path_add"),
     # url(r'^path/edit/(?P<path_id>\d+)/$', path_create_or_edit, name="path_edit"),

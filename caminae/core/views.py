@@ -13,7 +13,7 @@ from caminae.maintenance.models import Contractor
 from .models import Path
 
 
-class PathList(GeoJSONLayerView):
+class PathLayer(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
     precision = 4
@@ -23,7 +23,7 @@ class PathList(GeoJSONLayerView):
     @method_decorator(cache_page(60, cache="fat"))  #TODO: use settings
     @method_decorator(cache_control(max_age=3600*24))   #TODO: use settings
     def dispatch(self, *args, **kwargs):
-        return super(PathList, self).dispatch(*args, **kwargs)
+        return super(PathLayer, self).dispatch(*args, **kwargs)
 
 
 @login_required
@@ -63,5 +63,3 @@ class PathDelete(DeleteView):
 
 # redirect to home for now
 path_list = home
-
-

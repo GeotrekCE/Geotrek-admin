@@ -63,7 +63,7 @@
                 }
             });
             
-            $.getJSON("{% url core:layerpath %}", function (data) {           
+            $.getJSON("{% url core:layer_path %}", function (data) {           
                 geojsonLayer.addData(data);
                 spinner.stop();
             });
