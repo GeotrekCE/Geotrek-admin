@@ -35,7 +35,7 @@
                 <td>26.07.2011</td>
                 <td>
                     {% if user.profile.is_path_manager %}
-                    <a class="btn btn-mini" href="{% url core:path_edit path.pk  %}"><i class="icon-pencil"></i></a>
+                    <a class="btn btn-mini" href="{% url core:path_update path.pk  %}"><i class="icon-pencil"></i></a>
                     {% else %}
                     <a class="btn btn-mini disabled" href="#"><i class="icon-pencil"></i></a>
                     {% endif %}
@@ -57,8 +57,9 @@
 {% endblock mainlist %}
 
 
-{% block content %}
+{% block extrabody %}
     {{ block.super }}
+    
     <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
 
     <h2>{% trans "Usages" %}</h2>
@@ -81,11 +82,7 @@
     {% empty %}
         {% trans "Empty" %}
     {% endfor %}
-{% endblock content %}
-
-
-{% block extrabody %}
-    {{ block.super }}
+    
     <script type="text/javascript">
         function mainmapInit(mainmap) {
             var spinner = new Spinner().spin(document.getElementById('mainmap'));
