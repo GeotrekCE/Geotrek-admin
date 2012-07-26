@@ -10,6 +10,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 
+GROUP_PATH_MANAGER = 'Référents sentiers'
+GROUP_COMM_MANAGER = 'Référents communication'
+GROUP_EDITOR = 'Rédacteurs'
+GROUP_ADMINISTRATOR = 'Administrateurs'
+
 
 class Structure(models.Model):
     """
@@ -78,19 +83,19 @@ class UserProfile(StructureRelated):
         return self.user.groups.filter(pk=g.pk).exists()
 
     def is_path_manager(self):
-        g = Group.objects.get(name='Référents sentiers')
+        g = Group.objects.get(name=GROUP_PATH_MANAGER)
         return self.has_group(g)
 
     def is_comm_manager(self):
-        g = Group.objects.get(name='Référents communication')
+        g = Group.objects.get(name=GROUP_COMM_MANAGER)
         return self.has_group(g)
 
     def is_editor(self):
-        g = Group.objects.get(name='Rédacteurs')
+        g = Group.objects.get(name=GROUP_EDITOR)
         return self.has_group(g)
 
     def is_administrator(self):
-        g = Group.objects.get(name='Administrateurs')
+        g = Group.objects.get(name=GROUP_ADMINISTRATOR)
         return self.has_group(g)
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
