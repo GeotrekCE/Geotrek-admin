@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {{ block.super }}
+
+    {{ path.geom }}
+    {{ path.geom_cadastre }}
+    {{ path.valid }}
+    {{ path.name }}
+    {{ path.comments }}
+    {{ path.objects }}
+    {{ path.date_insert }}
+    {{ path.date_update }}
+    {{ path.length }}
+    {{ path.ascent }}
+    {{ path.descent }}
+    {{ path.min_elevation }}
+    {{ path.max_elevation }}
+
+    {# path_management datasource_management challenge_management #}
+
+    path_management datasource_management challenge_management
+
+    {# M2M #}
+    <ul>
+    {% for usage in  path.usages_management.all %}
+        <li> {{ usage }} </li>
+    {% endfor %}
+    </ul>
+
+    <ul>
+    {% for network in  path.networks_management.all %}
+        <li> {{ network }} </li>
+    {% endfor %}
+    </ul>
+
+    <div>
+        <ul><li>
+            <a class="btn" href="{% url core:path_update path.pk %}">{% trans "Update" %}</a>
+        </li><li>
+            <a class="btn" href="{% url core:path_delete path.pk  %}">{% trans "Delete" %}</a>
+        </li><li>
+            <a class="btn" href="{% url core:path_list %}">{% trans "Go back to list" %}</a>
+        </li></ul>
+    </div>
+
+{% endblock content %}
+

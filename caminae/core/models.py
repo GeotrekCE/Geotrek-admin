@@ -46,9 +46,11 @@ class Path(StructureRelated):
             null=True, blank=True, related_name='paths',
             verbose_name=_("Challenge management"))
     usages_management = models.ManyToManyField('UsageManagement',
-            related_name="paths", verbose_name=_(u"Usages management"))
+            blank=True, null=True, related_name="paths",
+            verbose_name=_(u"Usages management"))
     networks_management = models.ManyToManyField('NetworkManagement',
-            related_name="paths", verbose_name=_(u"Networks management"))
+            blank=True, null=True, related_name="paths",
+            verbose_name=_(u"Networks management"))
 
     def __unicode__(self):
         return self.name
@@ -204,4 +206,4 @@ class PathManagement(models.Model):
         verbose_name_plural = _(u"Paths management")
 
     def __unicode__(self):
-        return u"%s (%s -> %s)" % (self.name, self.depature, self.arrival)
+        return u"%s (%s -> %s)" % (self.name, self.departure, self.arrival)

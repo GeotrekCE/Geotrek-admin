@@ -15,8 +15,17 @@
 
 {% block content %}
     {{ block.super }}
-    
-    <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
+    <h1>Listes temporaires (recette stories #86, #10, 15, #31)</h1>
+    <h2>{% trans "Path" %}</h2>
+
+    <a href="{% url core:path_add %}">{% trans "Add a path" %}</a>
+
+    {% for path in all_paths %}
+        <li><a href="{% url core:path_update path.pk %}">{{ path }}</a></li>
+    {% empty %}
+        {% trans "Empty" %}
+    {% endfor %}
+
     <h2>{% trans "Usages" %}</h2>
     {% for usage in all_usages %}
         <li>{{ usage }}</li>
