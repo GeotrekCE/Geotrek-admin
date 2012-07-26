@@ -1,3 +1,12 @@
+/*
+ * 
+ * L'affiche des couches en WMS fonctionne.
+ * Pour le tuilage, j'ai réussi en tatonnant à affichre des tuiles à un niveau de zoom précis (mais le callage n'était plus valide pour les autres niveaux
+ * Donc je pense que la pyramide de tuiles est correcte, et que la clé réside en l'application de la bonne formule de transformation
+ * 
+ * 
+ * */
+
 var map;
 
 $(function() {
