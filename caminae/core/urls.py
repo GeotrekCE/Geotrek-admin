@@ -5,7 +5,7 @@ from .views import (PathLayer, PathList, PathDetail, PathCreate,
 
 
 urlpatterns = patterns('',
-    url(r'^path.geojson$', PathLayer.as_view(), name="layer_path"),
+    url(r'^data/paths.geojson$', PathLayer.as_view(), name="layer_path"),
 )
 
 urlpatterns += patterns('',
