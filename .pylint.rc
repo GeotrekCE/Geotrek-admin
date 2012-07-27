@@ -23,7 +23,7 @@ include-ids=yes
 
 
 [BASIC]
-no-docstring-rgx=__.*__|_.*|.*[tT]est.*|.*Meta.*|*Factories*|*Factory*
+no-docstring-rgx=__.*__|_.*|.*[tT]est.*|.*Meta.*|.*Factories.*|.*Factory.*
 class-rgx=[A-Z_][a-zA-Z0-9_]+$
 function-rgx=[a-zA_][a-zA-Z0-9_]{2,70}$
 method-rgx=[a-z_][a-zA-Z0-9_]{2,70}$
