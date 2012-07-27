@@ -2,16 +2,12 @@
 In this sprint
 ==============
 
-* Reset migrations
 * Bug supervisord not starting at boot (crontab @reboot ignored)
 
 * Check all stories are in func tests
 * Clic everywhere !
 
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
-
-* Use AutoField (serial) for code fields
-* Remove db_column for translated fields
 
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * reset IG scores
@@ -35,7 +31,6 @@ Soon...
 
 * List TODO in Hudson
 * Generate project docs with Sphinx
-
 
 ==========
 One day...

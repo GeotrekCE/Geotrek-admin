@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
             ('comments', self.gf('django.db.models.fields.TextField')(null=True, db_column='remarques')),
             ('date_insert', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_update', self.gf('django.db.models.fields.DateTimeField')()),
-            ('length', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='longueur')),
+            ('length', self.gf('django.db.models.fields.FloatField')(default=0, db_column='longueur')),
             ('ascent', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='denivelee_positive')),
             ('descent', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='denivelee_negative')),
             ('min_elevation', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='altitude_minimum')),
@@ -49,12 +49,12 @@ class Migration(SchemaMigration):
         # Adding model 'TopologyMixin'
         db.create_table('evenements', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('offset', self.gf('django.db.models.fields.IntegerField')(db_column='decallage')),
+            ('offset', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='decallage')),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='supprime')),
             ('kind', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyMixinKind'])),
             ('date_insert', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_update', self.gf('django.db.models.fields.DateTimeField')()),
-            ('length', self.gf('django.db.models.fields.FloatField')(db_column='longueur')),
+            ('length', self.gf('django.db.models.fields.FloatField')(default=0, db_column='longueur')),
             ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
         ))
         db.send_create_signal('core', ['TopologyMixin'])
@@ -183,14 +183,14 @@ class Migration(SchemaMigration):
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'length': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'longueur'"}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
+            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
             'path_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.PathManagement']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
+            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
@@ -217,8 +217,8 @@ class Migration(SchemaMigration):
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
-            'length': ('django.db.models.fields.FloatField', [], {'db_column': "'longueur'"}),
-            'offset': ('django.db.models.fields.IntegerField', [], {'db_column': "'decallage'"}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
+            'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'troncons': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'symmetrical': 'False'})
         },
         'core.topologymixinkind': {
