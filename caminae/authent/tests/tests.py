@@ -29,7 +29,7 @@ class StructureTest(TestCase):
 
 class UserProfileTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user('Joe', email='temporary@yopmail.com', password='Bar')
+        self.user = User.objects.create_user('Joe', email='joe@yopmail.com', password='Bar')
         self.user.set_password('Bar')
         self.user.save()
 

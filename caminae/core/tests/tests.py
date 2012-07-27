@@ -23,7 +23,7 @@ class PathTest(TestCase):
         self.structure.save()
 
     def test_paths_bystructure(self):
-        user = User.objects.create_user('Joe', 'temporary@yopmail.com', 'Bar')
+        user = User.objects.create_user('Joe', 'joe@yopmail.com', 'Bar')
         self.assertEqual(user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
 
         p1 = Path(geom=LineString((0, 0), (1, 1), srid=settings.SRID))
