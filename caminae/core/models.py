@@ -63,7 +63,7 @@ class Path(StructureRelated):
     def save(self, *args, **kwargs):
         super(Path, self).save(*args, **kwargs)
 
-        # Update computed values
+        # Update object's computed values (reload from database)
         tmp = self.__class__.objects.get(pk=self.pk)
         self.date_insert = tmp.date_insert
         self.date_update = tmp.date_update

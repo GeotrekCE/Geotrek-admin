@@ -44,6 +44,10 @@ class PathList(ListView):
         ))
         return context
 
+    def get_queryset(self):
+        # Temporary during Sprint1
+        return super(PathList, self).get_queryset()[:12]
+
 
 class PathDetail(DetailView):
     model = Path
