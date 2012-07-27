@@ -4,19 +4,36 @@ In this sprint
 
 * Reset migrations
 * Why initial SQL is loaded twice during syncdb?
+* Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
+
+* Check all stories are in func tests
+* Clic everywhere !
+* Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
+
+* Use AutoField (serial) for code fields
+* Remove db_column for translated fields
+
+* Add command make release (git archive)
+
+* Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
+* reset IG scores
+* grep TODO
 
 ==========
 Soon...
 ==========
 
-* Use AutoField (serial) for code fields
-* Remove db_column for translated fields
+* Each URL status (200, 302,...) in tests
+* Check form non field error
 
 * Switch to django-bootstrapped instead of embedding it
+* Use django-tabs
+* Add models test in django-geojson
+* Release django-geojson
 
 * List TODO in Hudson
 * Generate project docs with Sphinx
-* Pylint, exclude tests
+
 
 ==========
 One day...
