@@ -4,9 +4,6 @@ In this sprint
 
 * Bug supervisord not starting at boot (crontab @reboot ignored)
 
-* Check all stories are in func tests
-* Clic everywhere !
-
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?

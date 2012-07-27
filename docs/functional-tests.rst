@@ -23,6 +23,11 @@ Le processus d'installation demande la saisie des paramètres nécessaires.
 
 Le projet est ensuite accessible à l'URL du serveur.
 
+:Problèmes connus:
+
+    ``supervisord`` ne démarre pas tout seul au reboot.
+    Le paramètre ``rooturl`` non vide pose problème (404) dans la partie *admin*.
+
 
 #90 - Fournir spécifications serveur
 ------------------------------------
