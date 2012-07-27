@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-26 13:28+0000\n"
+"POT-Creation-Date: 2012-07-27 10:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: decorators.py:30
+msgid ""
+"Access to the requested resource is restricted to path managers. You have "
+"been redirected."
+msgstr "L'accès à cette ressource est restreinte aux référants sentiers."
+"Vous avez été redirigé."
+
+#: decorators.py:36
+msgid ""
+"Access to the requested resource is restricted to communication managers. "
+"You have been redirected."
+msgstr "L'accès à cette ressource est restreinte aux référants communication."
+"Vous avez été redirigé."
+
+#: decorators.py:42
+msgid ""
+"Access to the requested resource is restricted to work editor. You have been "
+"redirected."
+msgstr "L'accès à cette ressource est restreinte aux éditeurs."
+"Vous avez été redirigé."
+
+#: decorators.py:48
+msgid ""
+"Access to the requested resource is restricted to administrator. You have "
+"been redirected."
+msgstr "L'accès à cette ressource est restreinte aux administrateurs."
+"Vous avez été redirigé."
 
 #: models.py:23
 msgid "Nom"
@@ -29,27 +57,27 @@ msgstr "Structure"
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:50 models.py:63
+#: models.py:50 models.py:67
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:62
+#: models.py:66
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:72
+#: models.py:76
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:76
+#: models.py:80
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:77
+#: models.py:81
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:80
+#: models.py:84
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
