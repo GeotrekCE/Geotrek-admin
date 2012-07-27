@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 
 class Organism(models.Model):
 
-    code = models.IntegerField(primary_key=True)
     organism = models.CharField(max_length=128, verbose_name=_(u"Organism"))
 
     class Meta:

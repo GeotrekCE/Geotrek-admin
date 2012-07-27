@@ -52,32 +52,32 @@ class Migration(SchemaMigration):
 
         # Adding model 'InterventionStatus'
         db.create_table('bib_de_suivi', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('status', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('maintenance', ['InterventionStatus'])
 
         # Adding model 'InterventionTypology'
         db.create_table('typologie_des_interventions', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('typology', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('maintenance', ['InterventionTypology'])
 
         # Adding model 'InterventionDisorder'
         db.create_table('desordres', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('disorder', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('maintenance', ['InterventionDisorder'])
 
         # Adding model 'InterventionJob'
         db.create_table('bib_fonctions', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('job', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('maintenance', ['InterventionJob'])
@@ -119,8 +119,8 @@ class Migration(SchemaMigration):
 
         # Adding model 'Contractor'
         db.create_table('prestataires', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('contractor', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('maintenance', ['Contractor'])
@@ -182,7 +182,7 @@ class Migration(SchemaMigration):
         },
         'common.organism': {
             'Meta': {'object_name': 'Organism', 'db_table': "'liste_de_tous_les_organismes'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'organism': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'core.challengemanagement': {
@@ -212,14 +212,14 @@ class Migration(SchemaMigration):
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'length': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'longueur'"}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
+            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
             'path_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.PathManagement']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
+            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
@@ -246,13 +246,13 @@ class Migration(SchemaMigration):
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
-            'length': ('django.db.models.fields.FloatField', [], {'db_column': "'longueur'"}),
-            'offset': ('django.db.models.fields.IntegerField', [], {'db_column': "'decallage'"}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
+            'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'troncons': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'symmetrical': 'False'})
         },
         'core.topologymixinkind': {
             'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'core.usagemanagement': {
@@ -262,8 +262,8 @@ class Migration(SchemaMigration):
         },
         'maintenance.contractor': {
             'Meta': {'object_name': 'Contractor', 'db_table': "'prestataires'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'contractor': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'maintenance.funding': {
@@ -303,25 +303,25 @@ class Migration(SchemaMigration):
         },
         'maintenance.interventiondisorder': {
             'Meta': {'object_name': 'InterventionDisorder', 'db_table': "'desordres'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'disorder': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'maintenance.interventionjob': {
             'Meta': {'object_name': 'InterventionJob', 'db_table': "'bib_fonctions'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'job': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'maintenance.interventionstatus': {
             'Meta': {'object_name': 'InterventionStatus', 'db_table': "'bib_de_suivi'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'maintenance.interventiontypology': {
             'Meta': {'object_name': 'InterventionTypology', 'db_table': "'typologie_des_interventions'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'typology': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },

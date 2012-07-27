@@ -15,7 +15,6 @@ from caminae.common.models import Organism
 
 
 class PhysicalType(models.Model):
-    code = models.AutoField(primary_key=True, db_column='code_physique')
     name = models.CharField(max_length=128, verbose_name=_(u"Name"))  # TODO: fix db_column="physique"
 
     class Meta:
@@ -41,7 +40,6 @@ class PhysicalEdge(TopologyMixin):
 # Type of land under paths
 
 class LandType(StructureRelated):
-    code = models.AutoField(primary_key=True, db_column='code_foncier')
     name = models.CharField(max_length=128, db_column='foncier', verbose_name=_(u"Name"))
     right_of_way = models.BooleanField(db_column='droit_de_passage', verbose_name=_(u"Right of way"))
 
@@ -103,7 +101,6 @@ class SignageManagementEdge(TopologyMixin):
 # Zoning
 
 class RestrictedArea(models.Model):
-    code = models.IntegerField(primary_key=True, db_column='code_zonage')
     name = models.CharField(max_length=128, db_column='zonage', verbose_name=_(u"Name"))
     order = models.IntegerField(db_column='order', verbose_name=_(u"Order"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
@@ -155,7 +152,6 @@ class CityEdge(TopologyMixin):
 
 
 class District(models.Model):
-    code = models.IntegerField(primary_key=True, db_column='code_secteur')
     name = models.CharField(max_length=128, db_column='secteur', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 

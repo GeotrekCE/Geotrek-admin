@@ -67,7 +67,6 @@ class Intervention(StructureRelated):
 
 class InterventionStatus(StructureRelated):
 
-    code = models.IntegerField(primary_key=True)
     status = models.CharField(verbose_name=_(u"Status"), max_length=128)
 
     class Meta:
@@ -81,7 +80,6 @@ class InterventionStatus(StructureRelated):
 
 class InterventionTypology(StructureRelated):
 
-    code = models.IntegerField(primary_key=True)
     typology = models.CharField(max_length=128, verbose_name=_(u"Typology"))
 
     class Meta:
@@ -95,7 +93,6 @@ class InterventionTypology(StructureRelated):
 
 class InterventionDisorder(StructureRelated):
 
-    code = models.IntegerField(primary_key=True)
     disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"))
 
     class Meta:
@@ -108,7 +105,6 @@ class InterventionDisorder(StructureRelated):
 
 class InterventionJob(StructureRelated):
 
-    code = models.IntegerField(primary_key=True)
     job = models.CharField(max_length=128, verbose_name=_(u"Job"))
 
     class Meta:
@@ -175,7 +171,6 @@ class Project(StructureRelated):
 
 class Contractor(StructureRelated):
 
-    code = models.IntegerField(primary_key=True)
     contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"))
 
     class Meta:

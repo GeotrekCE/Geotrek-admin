@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Organism'
         db.create_table('liste_de_tous_les_organismes', (
-            ('code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('organism', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal('common', ['Organism'])
@@ -24,7 +24,7 @@ class Migration(SchemaMigration):
     models = {
         'common.organism': {
             'Meta': {'object_name': 'Organism', 'db_table': "'liste_de_tous_les_organismes'"},
-            'code': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'organism': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         }
     }
