@@ -14,6 +14,7 @@ def user_passes_test_or_redirect(f, redirect_to, msg):
     """
     Check if a user has expected group membership.
     """
+    # TODO : why not django's user_pass_test(f, login_url=url) decorator ?
     def decorator(view_func):
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
@@ -26,6 +27,7 @@ def user_passes_test_or_redirect(f, redirect_to, msg):
 
 
 def path_manager_required(redirect_to):
+    # TODO : decorate wrapped fonction with login_required instead of testing is_authenticated
     f = lambda u: u.is_authenticated() and u.profile.is_path_manager()
     m = _(u'Access to the requested resource is restricted to path managers. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
