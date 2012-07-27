@@ -172,3 +172,27 @@ Les utilisateurs de tests sont :
 
     Les droits ne sont gérés que pour les sentiers pour le moment. La
     gestion module par module arrivera plus tard.
+
+
+#16 - Gérer la projection de l'application dans un settings
+-----------------------------------------------------------
+
+c.f. procédure d'installation.
+
+
+#97 - Pouvoir éditer les structures associées des modèles dans l'AdminSite Django
+---------------------------------------------------------------------------------
+
+c.f. story #10
+
+
+#98 - Marquer pour traduction (et traduire) chaque champs et méthode unicode
+----------------------------------------------------------------------------
+
+c.f. story #84
+
+
+#105 - Créer certains helpers de tests indispensables
+-----------------------------------------------------
+
+*(interne)*
