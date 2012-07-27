@@ -47,7 +47,6 @@ class WebLinkAdmin(TranslationAdmin):
 
 # Register previously defined modeladmins
 trek_admin_to_register = [
-    (Trek, TrekAdmin),
     (TrekNetwork, TrekNetworkAdmin),
     (Usage, UsageAdmin),
     (Route, RouteAdmin),
@@ -58,4 +57,3 @@ trek_admin_to_register = [
 
 for model, model_admin in trek_admin_to_register:
     admin.site.register(model, model_admin)
-
