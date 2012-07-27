@@ -87,18 +87,22 @@ class UserProfile(StructureRelated):
         return self.user.groups.filter(pk=g.pk).exists()
 
     def is_path_manager(self):
+        """ Returns True if the user belongs to path managers group. """
         g = Group.objects.get(name=GROUP_PATH_MANAGER)
         return self.has_group(g) or self.user.is_staff
 
     def is_comm_manager(self):
+        """ Returns True if the user belongs to comm managers group. """
         g = Group.objects.get(name=GROUP_COMM_MANAGER)
         return self.has_group(g) or self.user.is_staff
 
     def is_editor(self):
+        """ Returns True if the user belongs to editors group. """
         g = Group.objects.get(name=GROUP_EDITOR)
         return self.has_group(g) or self.user.is_staff
 
     def is_administrator(self):
+        """ Returns True if the user belongs to administrators group. """
         g = Group.objects.get(name=GROUP_ADMINISTRATOR)
         return self.has_group(g) or self.user.is_staff
 
