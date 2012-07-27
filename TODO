@@ -3,7 +3,6 @@ In this sprint
 ==============
 
 * Reset migrations
-* Bug admin script name
 * Bug supervisord not starting at boot (crontab @reboot ignored)
 
 * Check all stories are in func tests
@@ -24,6 +23,8 @@ In this sprint
 Soon...
 ==========
 
+* Bug: 404 in adminsite for uploaded content
+
 * Each URL status (200, 302,...) in tests
 * Check form non field error
 
@@ -39,6 +40,8 @@ Soon...
 ==========
 One day...
 ==========
+
+* Bug admin script name job deploy
 
 * Docstrings for each model
 * Help text for each model field
