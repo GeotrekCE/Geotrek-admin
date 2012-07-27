@@ -26,7 +26,7 @@ class Command(base.BaseCommand):
             self.stdout.write('%sImporting dataset %s...\n' % (indent, dataset_name))
 
         dataset = importlib.import_module('caminae.common.datasets.%s' % dataset_name)
-        setup = dataset.Setup(verbosity=verbosity)
+        setup = dataset.Setup(verbosity=verbosity, indent=indent)
 
         # Handle required datasets
         for required in setup.requires:
