@@ -196,3 +196,41 @@ c.f. story #84
 -----------------------------------------------------
 
 *(interne)*
+
+
+#2 - Valider le MCD
+-------------------
+
+cf. CCTP_annexe1-MCD.pdf
+
+
+#14 Maquettes admin sentiers (Anaïs)
+------------------------------------
+
+N/A
+
+
+#9 Lister et numéroter tous les triggers nécessaires
+----------------------------------------------------
+
+Cf. sentiers-triggers.rst
+
+
+#31 Éditer plusieurs langues pour un même champ texte
+-----------------------------------------------------
+
+N/A
+
+
+#12 [POC Carto] Édition Lambert93 dans Leaflet
+----------------------------------------------
+
+N/A
+
+
+#85 Implémenter le squelette du MCD
+-----------------------------------
+
+N/A
+
+
