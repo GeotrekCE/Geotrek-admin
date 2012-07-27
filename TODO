@@ -1,6 +1,9 @@
-==============
-In this sprint
-==============
+================
+In this sprint 2
+================
+
+* Each URL status (200, 302,...) in tests
+* Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 
 ==========
 Soon...
@@ -10,16 +13,11 @@ Soon...
 
 * Bug supervisord not starting at boot (crontab @reboot ignored)
 
-
-* Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
-
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
-* reset IG scores
-* grep TODO
 * Why initial SQL is loaded twice during syncdb?
 * Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
+* Remove "management" naming in core.models
 
-* Each URL status (200, 302,...) in tests
 * Check form non field error
 
 * Switch to django-bootstrapped instead of embedding it
