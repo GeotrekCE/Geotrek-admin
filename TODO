@@ -14,8 +14,6 @@ In this sprint
 * Use AutoField (serial) for code fields
 * Remove db_column for translated fields
 
-* Add command make release (git archive)
-
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * reset IG scores
 * grep TODO

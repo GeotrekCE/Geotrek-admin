@@ -1,7 +1,8 @@
 SHELL = /bin/bash
 
 baseurl=http://localhost:8000
-root = $(shell pwd)
+root=$(shell pwd)
+version=$(shell git describe --tags --abbrev=0)
 
 bin/ lib/:
 	virtualenv .
@@ -30,6 +31,8 @@ all_makemessages: bin/
 all_compilemessages: bin/
 	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
+release:
+	git archive --format=zip --prefix="caminae-$(version)/" $(version) > ../caminae-src-$(version).zip
 
 unit_tests: bin/ clean_harmless submodules
 	bin/buildout -Nvc buildout-tests.cfg
