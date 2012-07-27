@@ -141,7 +141,7 @@ msgstr "Itinérarire"
 
 #: models.py:81
 msgid "Treks"
-msgstr "Itinérarires"
+msgstr "Itinéraires"
 
 #: models.py:93
 msgid "Trek network"
