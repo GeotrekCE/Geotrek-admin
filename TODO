@@ -3,11 +3,10 @@ In this sprint
 ==============
 
 * Reset migrations
-* Why initial SQL is loaded twice during syncdb?
-* Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
 
 * Check all stories are in func tests
 * Clic everywhere !
+
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 
 * Use AutoField (serial) for code fields
@@ -18,6 +17,8 @@ In this sprint
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * reset IG scores
 * grep TODO
+* Why initial SQL is loaded twice during syncdb?
+* Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
 
 ==========
 Soon...
