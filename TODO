@@ -3,6 +3,8 @@ In this sprint
 ==============
 
 * Reset migrations
+* Bug admin script name
+* Bug supervisord not starting at boot (crontab @reboot ignored)
 
 * Check all stories are in func tests
 * Clic everywhere !
