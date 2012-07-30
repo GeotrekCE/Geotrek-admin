@@ -1,5 +1,7 @@
 import factory
 from django.contrib.auth import models as auth_models
+from django.contrib.auth.models import Group
+
 from . import models as core_models
 
 # /opt/ecrins/sentiers/geobi-ecrins-sentiers/eggs/Django-1.4-py2.7.egg/django/contrib/auth/decorators.py:1
@@ -61,6 +63,14 @@ class SuperUserFactory(UserFactory):
     is_superuser = True
 
 
+class PathManagerFactory(UserFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        pathmanager, exist = Group.objects.get_or_create(name=core_models.GROUP_PATH_MANAGER)
+        kwargs.setdefault('groups', []).append(pathmanager)
+        return super(PathManagerFactory, cls)._prepare(create, **kwargs)
+
+
 ## caminae.core models ##
 
 class StructureFactory(factory.Factory):
@@ -94,4 +104,3 @@ class UserProfileFactory(StructureRelatedDefaultFactory):
 
     user = factory.SubFactory(UserFactory)
     language = 'fr'
-
