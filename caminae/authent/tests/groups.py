@@ -4,9 +4,11 @@
 """
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
+from django.contrib.auth.models import Group
 
+from caminae.authent import models as auth_models
 from caminae.authent.factories import UserFactory, PathManagerFactory
-from caminae.authent.pyfixtures import populate_groups
+from caminae.authent.fixtures.development import populate_groups
 from caminae.core.models import Path
 
 
@@ -35,3 +37,21 @@ class GroupTest(TestCase):
         self.assertTrue(success)
         response = self.client.get(p.get_update_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_group(self):
+        groups = (Group.objects.get(name=auth_models.GROUP_ADMINISTRATOR),
+                  Group.objects.get(name=auth_models.GROUP_EDITOR),
+                  Group.objects.get(name=auth_models.GROUP_PATH_MANAGER),
+                  Group.objects.get(name=auth_models.GROUP_COMM_MANAGER),
+                 )
+        user = UserFactory()
+        self.assertFalse(user.profile.is_administrator())
+        self.assertFalse(user.profile.is_editor())
+        self.assertFalse(user.profile.is_path_manager())
+        self.assertFalse(user.profile.is_comm_manager())
+        
+        user = UserFactory(groups=groups)
+        self.assertTrue(user.profile.is_administrator())
+        self.assertTrue(user.profile.is_editor())
+        self.assertTrue(user.profile.is_path_manager())
+        self.assertTrue(user.profile.is_comm_manager())

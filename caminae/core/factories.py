@@ -1,9 +1,10 @@
 import factory
 from django.contrib.gis.geos import Point, LineString
-
-from . import models
-from caminae.utils.testdata import get_dummy_uploaded_image
 from django.conf import settings
+
+from caminae.authent.factories import StructureRelatedDefaultFactory
+from caminae.utils.testdata import get_dummy_uploaded_image
+from . import models
 
 
 class DatasourceManagementFactory(factory.Factory):
@@ -39,7 +40,7 @@ class PathManagementFactory(factory.Factory):
     comments =  factory.Sequence(lambda n: u"Comments %s" % n)
 
 
-class PathFactory(factory.Factory):
+class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
     geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
@@ -102,5 +103,3 @@ class PathAggregationFactory(factory.Factory):
 
     start_position = 1.0
     end_position = 2.0
-
-
