@@ -209,7 +209,7 @@ class Network(models.Model):
     network = models.CharField(verbose_name=_(u"Network"), max_length=50)
 
     class Meta:
-        db_table = 'reseau'
+        db_table = 'reseau_troncon'
         verbose_name = _(u"Network")
         verbose_name_plural = _(u"Networks")
 

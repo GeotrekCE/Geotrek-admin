@@ -24,27 +24,27 @@ class Migration(SchemaMigration):
             ('descent', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='denivelee_negative')),
             ('min_elevation', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='altitude_minimum')),
             ('max_elevation', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='altitude_maximum')),
-            ('path_management', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.PathManagement'])),
-            ('datasource_management', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.DatasourceManagement'])),
-            ('challenge_management', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.ChallengeManagement'])),
+            ('trail', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.Trail'])),
+            ('datasource', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.Datasource'])),
+            ('stake', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='paths', null=True, to=orm['core.Stake'])),
         ))
         db.send_create_signal('core', ['Path'])
 
-        # Adding M2M table for field usages_management on 'Path'
-        db.create_table('troncons_usages_management', (
+        # Adding M2M table for field usages on 'Path'
+        db.create_table('troncons_usages', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('path', models.ForeignKey(orm['core.path'], null=False)),
-            ('usagemanagement', models.ForeignKey(orm['core.usagemanagement'], null=False))
+            ('usage', models.ForeignKey(orm['core.usage'], null=False))
         ))
-        db.create_unique('troncons_usages_management', ['path_id', 'usagemanagement_id'])
+        db.create_unique('troncons_usages', ['path_id', 'usage_id'])
 
-        # Adding M2M table for field networks_management on 'Path'
-        db.create_table('troncons_networks_management', (
+        # Adding M2M table for field networks on 'Path'
+        db.create_table('troncons_networks', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('path', models.ForeignKey(orm['core.path'], null=False)),
-            ('networkmanagement', models.ForeignKey(orm['core.networkmanagement'], null=False))
+            ('network', models.ForeignKey(orm['core.network'], null=False))
         ))
-        db.create_unique('troncons_networks_management', ['path_id', 'networkmanagement_id'])
+        db.create_unique('troncons_networks', ['path_id', 'network_id'])
 
         # Adding model 'TopologyMixin'
         db.create_table('evenements', (
@@ -76,54 +76,54 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('core', ['PathAggregation'])
 
-        # Adding model 'DatasourceManagement'
-        db.create_table('gestion_source_donnees', (
+        # Adding model 'Datasource'
+        db.create_table('source_donnees', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('source', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal('core', ['DatasourceManagement'])
+        db.send_create_signal('core', ['Datasource'])
 
-        # Adding model 'ChallengeManagement'
-        db.create_table('gestion_enjeux', (
+        # Adding model 'Stake'
+        db.create_table('enjeu', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('challenge', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('stake', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal('core', ['ChallengeManagement'])
+        db.send_create_signal('core', ['Stake'])
 
-        # Adding model 'UsageManagement'
-        db.create_table('gestion_usages', (
+        # Adding model 'Usage'
+        db.create_table('usage', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('usage', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal('core', ['UsageManagement'])
+        db.send_create_signal('core', ['Usage'])
 
-        # Adding model 'NetworkManagement'
-        db.create_table('gestion_reseau', (
+        # Adding model 'Network'
+        db.create_table('reseau_troncon', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('network', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal('core', ['NetworkManagement'])
+        db.send_create_signal('core', ['Network'])
 
-        # Adding model 'PathManagement'
-        db.create_table('gestion_sentier', (
+        # Adding model 'Trail'
+        db.create_table('sentier', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=15)),
             ('departure', self.gf('django.db.models.fields.CharField')(max_length=15)),
             ('arrival', self.gf('django.db.models.fields.CharField')(max_length=15)),
             ('comments', self.gf('django.db.models.fields.CharField')(max_length=200)),
         ))
-        db.send_create_signal('core', ['PathManagement'])
+        db.send_create_signal('core', ['Trail'])
 
 
     def backwards(self, orm):
         # Deleting model 'Path'
         db.delete_table('troncons')
 
-        # Removing M2M table for field usages_management on 'Path'
-        db.delete_table('troncons_usages_management')
+        # Removing M2M table for field usages on 'Path'
+        db.delete_table('troncons_usages')
 
-        # Removing M2M table for field networks_management on 'Path'
-        db.delete_table('troncons_networks_management')
+        # Removing M2M table for field networks on 'Path'
+        db.delete_table('troncons_networks')
 
         # Deleting model 'TopologyMixin'
         db.delete_table('evenements')
@@ -134,20 +134,20 @@ class Migration(SchemaMigration):
         # Deleting model 'PathAggregation'
         db.delete_table('evenements_troncons')
 
-        # Deleting model 'DatasourceManagement'
-        db.delete_table('gestion_source_donnees')
+        # Deleting model 'Datasource'
+        db.delete_table('source_donnees')
 
-        # Deleting model 'ChallengeManagement'
-        db.delete_table('gestion_enjeux')
+        # Deleting model 'Stake'
+        db.delete_table('enjeu')
 
-        # Deleting model 'UsageManagement'
-        db.delete_table('gestion_usages')
+        # Deleting model 'Usage'
+        db.delete_table('usage')
 
-        # Deleting model 'NetworkManagement'
-        db.delete_table('gestion_reseau')
+        # Deleting model 'Network'
+        db.delete_table('reseau_troncon')
 
-        # Deleting model 'PathManagement'
-        db.delete_table('gestion_sentier')
+        # Deleting model 'Trail'
+        db.delete_table('sentier')
 
 
     models = {
@@ -156,27 +156,21 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
-        'core.challengemanagement': {
-            'Meta': {'object_name': 'ChallengeManagement', 'db_table': "'gestion_enjeux'"},
-            'challenge': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        'core.datasourcemanagement': {
-            'Meta': {'object_name': 'DatasourceManagement', 'db_table': "'gestion_source_donnees'"},
+        'core.datasource': {
+            'Meta': {'object_name': 'Datasource', 'db_table': "'source_donnees'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'source': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'core.networkmanagement': {
-            'Meta': {'object_name': 'NetworkManagement', 'db_table': "'gestion_reseau'"},
+        'core.network': {
+            'Meta': {'object_name': 'Network', 'db_table': "'reseau_troncon'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'network': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'core.path': {
             'Meta': {'object_name': 'Path', 'db_table': "'troncons'"},
             'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_positive'"}),
-            'challenge_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.ChallengeManagement']"}),
             'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'"}),
-            'datasource_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.DatasourceManagement']"}),
+            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Datasource']"}),
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
@@ -187,10 +181,11 @@ class Migration(SchemaMigration):
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
-            'path_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.PathManagement']"}),
+            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Network']"}),
+            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Stake']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
+            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Trail']"}),
+            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Usage']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
@@ -201,13 +196,10 @@ class Migration(SchemaMigration):
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
             'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixin']", 'db_column': "'evenement'"})
         },
-        'core.pathmanagement': {
-            'Meta': {'object_name': 'PathManagement', 'db_table': "'gestion_sentier'"},
-            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'comments': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'departure': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+        'core.stake': {
+            'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
+            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'core.topologymixin': {
             'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
@@ -226,8 +218,16 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        'core.usagemanagement': {
-            'Meta': {'object_name': 'UsageManagement', 'db_table': "'gestion_usages'"},
+        'core.trail': {
+            'Meta': {'object_name': 'Trail', 'db_table': "'sentier'"},
+            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'comments': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'departure': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
+        },
+        'core.usage': {
+            'Meta': {'object_name': 'Usage', 'db_table': "'usage'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'usage': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         }

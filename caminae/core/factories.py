@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point, LineString
 from django.conf import settings
 
 from caminae.authent.factories import StructureRelatedDefaultFactory
+from caminae.utils import dbnow
 from caminae.utils.testdata import get_dummy_uploaded_image
 from . import models
 
@@ -13,10 +14,10 @@ class DatasourceFactory(factory.Factory):
     source = factory.Sequence(lambda n: u"Datasource %s" % n)
 
 
-class ChallengeFactory(factory.Factory):
+class StakeFactory(factory.Factory):
     FACTORY_FOR = models.Stake
 
-    challenge = factory.Sequence(lambda n: u"Stake %s" % n)
+    stake = factory.Sequence(lambda n: u"Stake %s" % n)
 
 
 class UsageFactory(factory.Factory):
@@ -31,8 +32,8 @@ class NetworkFactory(factory.Factory):
     network = factory.Sequence(lambda n: u"Usage %s" % n)
 
 
-class PathFactory(factory.Factory):
-    FACTORY_FOR = models.Path
+class TrailFactory(factory.Factory):
+    FACTORY_FOR = models.Trail
 
     name =  factory.Sequence(lambda n: u"Name %s" % n)
     departure =  factory.Sequence(lambda n: u"Departure %s" % n)
@@ -49,13 +50,19 @@ class PathFactory(StructureRelatedDefaultFactory):
     name = factory.Sequence(lambda n: u"name %s" % n)
     comments = factory.Sequence(lambda n: u"comment %s" % n)
 
-    # Trigger computed values are not provided:
-    # date_insert/date_update/length/ascent/descent/min_elevation/max_elevation/
+    # Trigger will override :
+    date_insert = dbnow()
+    date_update = dbnow()
+    length = 0.0
+    ascent = 0
+    descent = 0
+    min_elevation = 0
+    max_elevation = 0
 
     # FK that could also be null
-    path_management = factory.SubFactory(PathFactory)
-    datasource_management = factory.SubFactory(DatasourceFactory)
-    challenge_management = factory.SubFactory(ChallengeFactory)
+    trail = factory.SubFactory(TrailFactory)
+    datasource = factory.SubFactory(DatasourceFactory)
+    stake = factory.SubFactory(StakeFactory)
 
 
 class TopologyMixinKindFactory(factory.Factory):
@@ -73,11 +80,12 @@ class TopologyMixinFactory(factory.Factory):
     deleted = False
     kind = factory.SubFactory(TopologyMixinKindFactory)
 
-    # Trigger computed values are not provided:
-    # date_insert/date_update/length/geom/
-
+    # Trigger will override :
+    date_insert = dbnow()
+    date_update = dbnow()
+    
     # FIXME: remove this when the trigger will be ready
-    length = 0
+    length = 0.0
     geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
 
     @classmethod
