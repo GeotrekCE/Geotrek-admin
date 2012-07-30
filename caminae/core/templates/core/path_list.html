@@ -30,7 +30,7 @@
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Modified" %}</th>
                 <th>{% trans "Length" %}</th>
-                <th>{% trans "Management" %}</th>
+                <th>{% trans "Trail" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                 <td><a href="{{ path.get_detail_url }}">{{ path }}</a></td>
                 <td>{{ path.date_update }}</td>
                 <td>{{ path.length }}</td>
-                <td>{{ path.path_management }}</td>
+                <td>{{ path.trail }}</td>
             </tr>
             {% empty %}
                 <tr>

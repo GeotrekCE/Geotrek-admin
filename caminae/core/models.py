@@ -36,21 +36,21 @@ class Path(StructureRelated):
             editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
 
-    path_management = models.ForeignKey('PathManagement',
+    trail = models.ForeignKey('Trail',
             null=True, blank=True, related_name='paths',
-            verbose_name=_("Path management"))
-    datasource_management = models.ForeignKey('DatasourceManagement',
+            verbose_name=_("Trail"))
+    datasource = models.ForeignKey('Datasource',
             null=True, blank=True, related_name='paths',
             verbose_name=_("Datasource"))
-    challenge_management = models.ForeignKey('ChallengeManagement',
+    stake = models.ForeignKey('Stake',
             null=True, blank=True, related_name='paths',
-            verbose_name=_("Challenge management"))
-    usages_management = models.ManyToManyField('UsageManagement',
+            verbose_name=_("Stake"))
+    usages = models.ManyToManyField('Usage',
             blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Usages management"))
-    networks_management = models.ManyToManyField('NetworkManagement',
+            verbose_name=_(u"Usages"))
+    networks = models.ManyToManyField('Network',
             blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Networks management"))
+            verbose_name=_(u"Networks"))
 
     def __unicode__(self):
         return self.name or 'path %d' % self.pk
@@ -164,38 +164,38 @@ class PathAggregation(models.Model):
         verbose_name_plural = _(u"Path aggregations")
 
 
-class DatasourceManagement(models.Model):
+class Datasource(models.Model):
 
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
     class Meta:
-        db_table = 'gestion_source_donnees'
-        verbose_name = _(u"Datasource management")
-        verbose_name_plural = _(u"Datasources management")
+        db_table = 'source_donnees'
+        verbose_name = _(u"Datasource")
+        verbose_name_plural = _(u"Datasources")
 
     def __unicode__(self):
         return self.source
 
 
-class ChallengeManagement(models.Model):
+class Stake(models.Model):
 
-    challenge = models.CharField(verbose_name=_(u"Challenge"), max_length=50)
+    stake = models.CharField(verbose_name=_(u"Stake"), max_length=50)
 
     class Meta:
-        db_table = 'gestion_enjeux'
-        verbose_name = _(u"Challenge management")
-        verbose_name_plural = _(u"Challenges management")
+        db_table = 'enjeu'
+        verbose_name = _(u"Stake")
+        verbose_name_plural = _(u"Stakes")
 
     def __unicode__(self):
-        return self.challenge
+        return self.stake
 
 
-class UsageManagement(models.Model):
+class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
 
     class Meta:
-        db_table = 'gestion_usages'
+        db_table = 'usage'
         verbose_name = _(u"Usage management")
         verbose_name_plural = _(u"Usages management")
 
@@ -203,20 +203,20 @@ class UsageManagement(models.Model):
         return self.usage
 
 
-class NetworkManagement(models.Model):
+class Network(models.Model):
 
     network = models.CharField(verbose_name=_(u"Network"), max_length=50)
 
     class Meta:
-        db_table = 'gestion_reseau'
-        verbose_name = _(u"Network management")
-        verbose_name_plural = _(u"Networks management")
+        db_table = 'reseau'
+        verbose_name = _(u"Network")
+        verbose_name_plural = _(u"Networks")
 
     def __unicode__(self):
         return self.network
 
 
-class PathManagement(models.Model):
+class Trail(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=15)
     departure = models.CharField(verbose_name=_(u"Name"), max_length=15)
@@ -224,9 +224,9 @@ class PathManagement(models.Model):
     comments = models.CharField(verbose_name=_(u"Comments"), max_length=200)
 
     class Meta:
-        db_table = 'gestion_sentier'
-        verbose_name = _(u"Path management")
-        verbose_name_plural = _(u"Paths management")
+        db_table = 'sentier'
+        verbose_name = _(u"Trails")
+        verbose_name_plural = _(u"Trails")
 
     def __unicode__(self):
         return u"%s (%s -> %s)" % (self.name, self.departure, self.arrival)

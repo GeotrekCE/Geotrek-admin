@@ -55,14 +55,14 @@
 
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ path|verbose:"path_management" }}</th>
-            <td>{{ path.path_management|default:_("None") }}</td>
+            <th>{{ path|verbose:"trail" }}</th>
+            <td>{{ path.trail|default:_("None") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"datasource_management" }}</th>
-            <td>{{ path.datasource_management|default:_("None") }}</td>
+            <th>{{ path|verbose:"datasource" }}</th>
+            <td>{{ path.datasource|default:_("None") }}</td>
         </tr><tr>
-            <th>{{ path|verbose:"challenge_management" }}</th>
-            <td>{{ path.challenge_management|default:_("None") }}</td>
+            <th>{{ path|verbose:"stake" }}</th>
+            <td>{{ path.stake|default:_("None") }}</td>
         </tr>
     </table>
 
@@ -70,10 +70,10 @@
 
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ path|verbose:"usages_management" }}</th>
+            <th>{{ path|verbose:"usages" }}</th>
             <td>
                 <ul>
-                {% for usage in  path.usages_management.all %}
+                {% for usage in  path.usages.all %}
                     <li> {{ usage }} </li>
                 {% empty %}
                     {% trans "None" %}
@@ -81,10 +81,10 @@
                 </ul>
             </td>
         </tr><tr>
-            <th>{{ path|verbose:"networks_management" }}</th>
+            <th>{{ path|verbose:"networks" }}</th>
             <td>
                 <ul>
-                {% for network in  path.networks_management.all %}
+                {% for network in  path.networks.all %}
                     <li> {{ network }} </li>
                 {% empty %}
                     {% trans "None" %}

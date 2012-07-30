@@ -4,21 +4,26 @@ In this sprint 2
 
 * Each URL status (200, 302,...) in tests
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
+* Check form non field error
+* Display messages "Saved.", "Deleted" after redirects
+
+==============
+Known problems
+==============
+
+* Bug: 404 in adminsite for uploaded content
+
+* Bug admin force_script_name 
+
+* Bug supervisord not starting at boot (crontab @reboot ignored)
+
 
 ==========
 Soon...
 ==========
 
-* Bug: 404 in adminsite for uploaded content
-
-* Bug supervisord not starting at boot (crontab @reboot ignored)
-
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * Why initial SQL is loaded twice during syncdb?
-* Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
-* Remove "management" naming in core.models
-
-* Check form non field error
 
 * Switch to django-bootstrapped instead of embedding it
 * Use django-tabs
@@ -28,22 +33,29 @@ Soon...
 * List TODO in Hudson
 * Generate project docs with Sphinx
 
+
 ==========
 One day...
 ==========
 
-* Bug admin script name job deploy
-
 * Docstrings for each model
 * Help text for each model field
 * Test cache (locmem + files + expires)
-* Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
-* Improve installation of GDAL
-* Clean-up buildout directory (all in one "env")
+
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
 * See how django manage an instance being a parent of two different child
   instance in the case of multi-table inheritance. Could it be troublesome?
+
+* Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
+
+* Improve installation of GDAL
+* Clean-up buildout directory (all in one "env")
+
+
+==========
+Ideas...
+==========
 
 * Idea ? Process .sql files with template engine. Provide small tags 
   like {% tablename Path %} {% fieldname Path.geom %}.

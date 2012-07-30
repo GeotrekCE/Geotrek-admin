@@ -39,8 +39,8 @@ class Intervention(StructureRelated):
             related_name="interventions",
             verbose_name=_(u"Interventions"))
 
-    challenge_management = models.ForeignKey('core.ChallengeManagement',
-            related_name='interventions', verbose_name=_("Challenge management"))
+    stake = models.ForeignKey('core.Stake',
+            related_name='interventions', verbose_name=_("Stake"))
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
 
@@ -195,4 +195,3 @@ class Funding(StructureRelated):
 
     def __unicode__(self):
         return self.amount
-

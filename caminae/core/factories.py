@@ -7,32 +7,32 @@ from caminae.utils.testdata import get_dummy_uploaded_image
 from . import models
 
 
-class DatasourceManagementFactory(factory.Factory):
-    FACTORY_FOR = models.DatasourceManagement
+class DatasourceFactory(factory.Factory):
+    FACTORY_FOR = models.Datasource
 
     source = factory.Sequence(lambda n: u"Datasource %s" % n)
 
 
-class ChallengeManagementFactory(factory.Factory):
-    FACTORY_FOR = models.ChallengeManagement
+class ChallengeFactory(factory.Factory):
+    FACTORY_FOR = models.Stake
 
-    challenge = factory.Sequence(lambda n: u"Challenge %s" % n)
+    challenge = factory.Sequence(lambda n: u"Stake %s" % n)
 
 
-class UsageManagementFactory(factory.Factory):
-    FACTORY_FOR = models.UsageManagement
+class UsageFactory(factory.Factory):
+    FACTORY_FOR = models.Usage
 
     usage = factory.Sequence(lambda n: u"Usage %s" % n)
 
 
-class NetworkManagementFactory(factory.Factory):
-    FACTORY_FOR = models.NetworkManagement
+class NetworkFactory(factory.Factory):
+    FACTORY_FOR = models.Network
 
     network = factory.Sequence(lambda n: u"Usage %s" % n)
 
 
-class PathManagementFactory(factory.Factory):
-    FACTORY_FOR = models.PathManagement
+class PathFactory(factory.Factory):
+    FACTORY_FOR = models.Path
 
     name =  factory.Sequence(lambda n: u"Name %s" % n)
     departure =  factory.Sequence(lambda n: u"Departure %s" % n)
@@ -53,9 +53,9 @@ class PathFactory(StructureRelatedDefaultFactory):
     # date_insert/date_update/length/ascent/descent/min_elevation/max_elevation/
 
     # FK that could also be null
-    path_management = factory.SubFactory(PathManagementFactory)
-    datasource_management = factory.SubFactory(DatasourceManagementFactory)
-    challenge_management = factory.SubFactory(ChallengeManagementFactory)
+    path_management = factory.SubFactory(PathFactory)
+    datasource_management = factory.SubFactory(DatasourceFactory)
+    challenge_management = factory.SubFactory(ChallengeFactory)
 
 
 class TopologyMixinKindFactory(factory.Factory):
