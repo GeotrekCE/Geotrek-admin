@@ -196,8 +196,8 @@ class Usage(models.Model):
 
     class Meta:
         db_table = 'usage'
-        verbose_name = _(u"Usage management")
-        verbose_name_plural = _(u"Usages management")
+        verbose_name = _(u"Usage")
+        verbose_name_plural = _(u"Usages")
 
     def __unicode__(self):
         return self.usage
