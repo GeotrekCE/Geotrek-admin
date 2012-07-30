@@ -3,13 +3,12 @@
     Unit tests
 """
 from django.test import TestCase
-from django.contrib.gis.geos import LineString
 from django.contrib.auth.models import Group
 
 from caminae.authent import models as auth_models
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.fixtures.development import populate_groups
-from caminae.core.models import Path
+from caminae.core.factories import PathFactory
 
 
 class GroupTest(TestCase):
@@ -17,10 +16,7 @@ class GroupTest(TestCase):
         populate_groups() # TODO not best :/
 
     def test_path_manager_restricted(self):
-        # TODO: use path factory
-        p = Path(geom=LineString((0, 0), (1, 1)))
-        p.save()
-        
+        p = PathFactory()        
         # Try to edit path as user
         user = UserFactory(password="foo")
         self.assertFalse(user.profile.is_path_manager())

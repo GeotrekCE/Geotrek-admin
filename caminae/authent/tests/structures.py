@@ -19,7 +19,6 @@ class StructureTest(TestCase):
         self.assertEqual(unicode(s), u"Mércäntour")
 
     def test_structure_restricted(self):
-        # TODO: use path factory
         p = PathFactory()
         # Login
         user = PathManagerFactory(password="foo")
