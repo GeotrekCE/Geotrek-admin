@@ -169,7 +169,7 @@ class Datasource(models.Model):
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
     class Meta:
-        db_table = 'source_donnees'
+        db_table = 'gestion_source_donnees'
         verbose_name = _(u"Datasource")
         verbose_name_plural = _(u"Datasources")
 
@@ -182,7 +182,7 @@ class Stake(models.Model):
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50)
 
     class Meta:
-        db_table = 'enjeu'
+        db_table = 'gestion_enjeux'
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
 
@@ -195,7 +195,7 @@ class Usage(models.Model):
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
 
     class Meta:
-        db_table = 'usage'
+        db_table = 'gestion_usages'
         verbose_name = _(u"Usage")
         verbose_name_plural = _(u"Usages")
 
