@@ -39,7 +39,7 @@ class Intervention(StructureRelated):
             related_name="interventions",
             verbose_name=_(u"Interventions"))
 
-    stake = models.ForeignKey('core.Stake',
+    stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"))
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
