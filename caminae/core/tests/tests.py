@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from caminae.utils import dbnow
 from caminae.authent.factories import UserFactory
 from caminae.authent.models import Structure
-from caminae.core.factories import PathFactory, TopologyMixinFactory
+from caminae.core.factories import PathFactory, TopologyMixinFactory, TopologyMixinKindFactory
 from caminae.core.models import Path
 from caminae.land.models import (City, RestrictedArea)
 
@@ -132,7 +132,7 @@ class TopologyMixinTest(TestCase):
         self.assertTrue(t2 < e.date_update < t3)
 
     def test_length(self):
-        e = TopologyMixinFactory.build()
+        e = TopologyMixinFactory.build(kind=TopologyMixinKindFactory())
         self.assertEqual(e.length, 0)
         e.save()
         self.assertNotEqual(e.length, 0)
