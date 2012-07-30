@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 
-from ..models import Structure, UserProfile
+from caminae.authent.models import UserProfile
 
 
 @override_settings(LOGIN_URL='/login/')
@@ -19,12 +19,6 @@ class LoginTestCase(TestCase):
         response = self.client.get('/')
         _next = settings.FORCE_SCRIPT_NAME + '/'
         self.assertRedirects(response, '/login/?next=' + _next)
-
-
-class StructureTest(TestCase):
-    def test_basic(self):
-        s = Structure(name=u"Mercantour")
-        self.assertEqual(unicode(s), u"Mercantour")
 
 
 class UserProfileTest(TestCase):
@@ -68,6 +62,7 @@ class UserProfileTest(TestCase):
         self.assertTrue(_("Logout") in response.content)
 
     def test_group(self):
+        # TODO: use factories, DRY for names
         groups = (Group.objects.create(name='Administrateurs'),
                   Group.objects.create(name='Rédacteurs'),
                   Group.objects.create(name='Référents sentiers'),
