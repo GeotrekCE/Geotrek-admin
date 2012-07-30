@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import available_attrs
 
 __all__ = ('path_manager_required',
-           'comm_manager_required',
+           'trekking_manager_required',
            'editor_required',
            'administrator_required',)
 
@@ -33,7 +33,7 @@ def path_manager_required(redirect_to):
     return user_passes_test_or_redirect(f, redirect_to, m)
 
 
-def comm_manager_required(redirect_to):
+def trekking_manager_required(redirect_to):
     f = lambda u: u.is_authenticated() and u.profile.is_comm_manager()
     m = _(u'Access to the requested resource is restricted to communication managers. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
