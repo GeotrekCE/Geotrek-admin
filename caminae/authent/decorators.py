@@ -49,3 +49,22 @@ def admininistrator_required(redirect_to):
     f = lambda u: u.is_authenticated() and u.profile.is_administrator()
     m = _(u'Access to the requested resource is restricted to administrator. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
+
+
+def same_structure_required(redirect_to):
+    """
+    A decorator for class-based views. It relies on ``self.get_object()``
+    method object, and assumes decorated views to handle ``StructureRelated``
+    objects.
+    """
+    def decorator(view_func):
+        @wraps(view_func, assigned=available_attrs(view_func))
+        def _wrapped_view(self, request, *args, **kwargs):
+            result = view_func(self, request, *args, **kwargs)
+            obj = self.get_object()
+            if obj.same_structure(request.user):
+                return result
+            messages.warning(request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
+            return redirect(redirect_to, *args, **kwargs)
+        return _wrapped_view
+    return decorator

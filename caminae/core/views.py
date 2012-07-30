@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.views.generic.simple import direct_to_template
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic.list import ListView
@@ -9,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 
 from djgeojson.views import GeoJSONLayerView
 
-from caminae.authent.decorators import path_manager_required
+from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.maintenance.models import Contractor
 from .models import Path
 
@@ -75,6 +74,7 @@ class PathUpdate(UpdateView):
     context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_detail'))
+    @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
@@ -88,6 +88,7 @@ class PathDelete(DeleteView):
     success_url = reverse_lazy('core:path_list')
 
     @method_decorator(path_manager_required('core:path_detail'))
+    @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 

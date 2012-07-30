@@ -209,33 +209,45 @@ c.f. story #84
 cf. CCTP_annexe1-MCD.pdf
 
 
-#14 Maquettes admin sentiers (Anaïs)
-------------------------------------
+#14 - Maquettes admin sentiers (Anaïs)
+--------------------------------------
 
 N/A
 
 
-#9 Lister et numéroter tous les triggers nécessaires
-----------------------------------------------------
+#9 - Lister et numéroter tous les triggers nécessaires
+------------------------------------------------------
 
 Cf. sentiers-triggers.rst
 
 
-#31 Éditer plusieurs langues pour un même champ texte
------------------------------------------------------
+#31 - Éditer plusieurs langues pour un même champ texte
+-------------------------------------------------------
 
 N/A
 
 
-#12 [POC Carto] Édition Lambert93 dans Leaflet
-----------------------------------------------
+#12 - [POC Carto] Édition Lambert93 dans Leaflet
+------------------------------------------------
 
 N/A
 
 
-#85 Implémenter le squelette du MCD
------------------------------------
+#85 - Implémenter le squelette du MCD
+-------------------------------------
 
 N/A
 
 
+
+========================
+Sprint 2 - Version 0.2.0
+========================
+
+#18 - Gérer les permissions d'édition des objets en fonction de la structure
+----------------------------------------------------------------------------
+
+* Se logger avec un utilisateur du groupe *Référant sentiers* de la structure PNE.
+* Vérifier que l'édition des tronçons est accessible.
+* Changer la structure d'un tronçon.
+* Vérifier qu'il n'est plus possible d'accéder au formulaire d'édition avec ce même utilisateur.
