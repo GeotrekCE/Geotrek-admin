@@ -21,7 +21,7 @@ class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
         p1 = PathFactory()
-        p2 = PathFactory(structure__name="other")
+        p2 = PathFactory(structure=Structure.objects.create(name="other"))
         
         self.assertEqual(user.profile.structure, p1.structure)
         self.assertNotEqual(user.profile.structure, p2.structure)
