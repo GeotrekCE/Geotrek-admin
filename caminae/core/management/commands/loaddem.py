@@ -140,7 +140,7 @@ class Command(BaseCommand):
 
         # Step 2: Convert to PostGISRaster format
         output = tempfile.NamedTemporaryFile()  # SQL code for raster creation
-        cmd = 'raster2pgsql -c -C -I -M %s mnt' % new_dem.name
+        cmd = 'raster2pgsql -c -C -I -M -t 100x100 %s mnt' % new_dem.name
         try:
             self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
             ret = call(cmd, stdout=output.file, shell=True)
