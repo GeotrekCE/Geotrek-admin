@@ -12,9 +12,10 @@ from caminae.authent.models import StructureRelated
 
 
 class Path(StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
+                                  dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
-                                           spatial_index=False)
+                                           spatial_index=False, dim=3)
     valid = models.BooleanField(db_column='troncon_valide', default=True, verbose_name=_(u"Validity"))
     name = models.CharField(null=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
     comments = models.TextField(null=True, db_column='remarques', verbose_name=_(u"Comments"))
@@ -110,8 +111,8 @@ class TopologyMixin(models.Model):
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
     length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.LineStringField(
-            editable=False, srid=settings.SRID, spatial_index=False)
+    geom = models.LineStringField(editable=False, srid=settings.SRID,
+                                  spatial_index=False, dim=3)
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)

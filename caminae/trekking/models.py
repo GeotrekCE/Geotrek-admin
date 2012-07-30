@@ -1,6 +1,5 @@
-from django.db import models
 from django.conf import settings
-from django.contrib.gis.db import models as gis_models
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
@@ -31,12 +30,13 @@ class Trek(models.Model):
     is_transborder = models.BooleanField(verbose_name=_(u"Is transborder"))
 
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
-    parking_location = gis_models.PointField(editable=False, srid=settings.SRID, spatial_index=False)
+    parking_location = models.PointField(editable=False, srid=settings.SRID, spatial_index=False)
 
     public_transport = models.TextField(verbose_name=_(u"Public transport"))
     advice = models.TextField(verbose_name=_(u"Advice"))
 
-    the_geom = gis_models.LineStringField(editable=False, srid=settings.SRID, spatial_index=False)
+    geom = models.LineStringField(editable=False, srid=settings.SRID,
+                                          spatial_index=False, dim=3)
 
     insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
