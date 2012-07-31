@@ -1,91 +1,6 @@
 -------------------------------------------------------------------------------
--- Date functions (will be used for many tables)
--------------------------------------------------------------------------------
-
-CREATE OR REPLACE FUNCTION ft_date_insert() RETURNS trigger AS $$
-BEGIN
-    NEW.date_insert := statement_timestamp() AT TIME ZONE 'UTC';
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION ft_date_update() RETURNS trigger AS $$
-BEGIN
-    NEW.date_update := statement_timestamp() AT TIME ZONE 'UTC';
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--------------------------------------------------------------------------------
--- Utility functions
--------------------------------------------------------------------------------
-
-CREATE OR REPLACE FUNCTION ft_longueur() RETURNS trigger AS $$
-BEGIN
-    NEW.longueur := ST_Length(NEW.geom);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--------------------------------------------------------------------------------
--- Evenements
--------------------------------------------------------------------------------
-
 -- Add spatial index (will boost spatial filters)
-
-DROP INDEX IF EXISTS evenements_geom_idx;
-CREATE INDEX evenements_geom_idx ON evenements USING gist(geom);
-
--- Keep dates up-to-date
-
-DROP TRIGGER IF EXISTS evenements_date_insert_tgr ON evenements;
-CREATE TRIGGER evenements_date_insert_tgr
-    BEFORE INSERT ON evenements
-    FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
-
-DROP TRIGGER IF EXISTS evenements_date_update_tgr ON evenements;
-CREATE TRIGGER evenements_date_update_tgr
-    BEFORE INSERT OR UPDATE ON evenements
-    FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
-
-
--- Compute attributes from geom fields
-
-DROP TRIGGER IF EXISTS evenements_longueur_tgr ON evenements;
-CREATE TRIGGER evenements_longueur_tgr
-    BEFORE INSERT ON evenements
-    FOR EACH ROW EXECUTE PROCEDURE ft_longueur();
-
-
--- Automatic link between Troncon and Commune/Zonage/Secteur
-
-DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON evenements_troncons;
-
-CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
-DECLARE
-    tab varchar;
-BEGIN
-    FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
-    LOOP
-        -- Delete related object in association tables
-        EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' WHERE evenement = $1' USING OLD.evenement;
-        -- Related evenement will be cleared by a more general trigger
-    END LOOP;
-
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER troncons_couches_sig_d_tgr
-AFTER DELETE ON evenements_troncons
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
-
-
 -------------------------------------------------------------------------------
--- Troncons
--------------------------------------------------------------------------------
-
--- Add spatial index (will boost spatial filters)
 
 DROP INDEX IF EXISTS troncons_geom_idx;
 CREATE INDEX troncons_geom_idx ON troncons USING gist(geom);
@@ -93,7 +8,10 @@ CREATE INDEX troncons_geom_idx ON troncons USING gist(geom);
 DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
 CREATE INDEX troncons_geom_cadastre_idx ON troncons USING gist(geom_cadastre);
 
+
+-------------------------------------------------------------------------------
 -- Keep dates up-to-date
+-------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS troncons_date_insert_tgr ON troncons;
 CREATE TRIGGER troncons_date_insert_tgr
@@ -105,7 +23,10 @@ CREATE TRIGGER troncons_date_update_tgr
     BEFORE INSERT OR UPDATE ON troncons
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
+
+-------------------------------------------------------------------------------
 -- Automatic link between Troncon and Commune/Zonage/Secteur
+-------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS troncons_couches_sig_iu_tgr ON troncons;
 
@@ -156,7 +77,10 @@ CREATE TRIGGER troncons_couches_sig_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON troncons
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 
+
+-------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
+-------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS troncons_elevation_iu_tgr ON troncons;
 
