@@ -251,3 +251,27 @@ Sprint 2 - Version 0.2.0
 * Vérifier que l'édition des tronçons est accessible.
 * Changer la structure d'un tronçon.
 * Vérifier qu'il n'est plus possible d'accéder au formulaire d'édition avec ce même utilisateur.
+
+
+#36 - Charger la liste des tronçons en asynchrone
+=================================================
+
+Faire un POC avec la liste des tronçons.
+
+Caractéristiques de la liste:
+
+* Tri ajax toujours server-side (car filtrage custom) (réel besoin spécial de jqGrid/datables etc. ?)
+* Réponse en JSON (tastypie, cornice ou custom ?)
+* L'url peut ne pas rester inchangée (on ne conserve pas l'historique, bookmark, etc.)
+* Possibilité de filtre étendu (Foreign Key, field Géo etc.) clientside comme serverside (django-filter, custom... ?)
+* À terme devra pouvoir supporter la pagination (voire un scroll infini) et le tri (voire le tri multi colonne <- quel lib js ?)
+* À terme devra être générique/simple (pas trop de code boiler plate)
+
+
+La validation se fera par un test casperjs:
+
+* création de quelques données pertinentes pour le filtrage
+* chargement de la page de listing
+* filtrage et vérification du résultat (notamment relatif aux permissions de l'utilisateur)
+
+
