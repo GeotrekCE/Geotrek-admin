@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.core.urlresolvers import reverse
+from django.db import connections, DEFAULT_DB_ALIAS
 
 from caminae.utils import dbnow
 from caminae.authent.factories import UserFactory
@@ -22,7 +23,7 @@ class PathTest(TestCase):
         user = UserFactory()
         p1 = PathFactory()
         p2 = PathFactory(structure=Structure.objects.create(name="other"))
-        
+
         self.assertEqual(user.profile.structure, p1.structure)
         self.assertNotEqual(user.profile.structure, p2.structure)
 
@@ -58,6 +59,31 @@ class PathTest(TestCase):
                         msg='Date interval failed: %s < %s < %s' % (
                             t2, p.date_update, t3
                        ))
+
+    def test_elevation(self):
+        # Create a simple fake DEM
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(3, 3, 0, 3, 1, -1, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        for x in range(1, 4):
+            for y in range(1, 4):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x, y, x+y])
+        conn.commit_unless_managed()
+
+        # Create a geometry and check elevation-based indicators
+        p = Path(geom=LineString((1.5,1.5,0), (2.5,1.5,0), (1.5,2.5,0)))
+        self.assertEqual(p.ascent, 0)
+        self.assertEqual(p.descent, 0)
+        self.assertEqual(p.min_elevation, 0)
+        self.assertEqual(p.max_elevation, 0)
+        p.save()
+        self.assertEqual(p.ascent, 1)
+        self.assertEqual(p.descent, -2)
+        self.assertEqual(p.min_elevation, 3)
+        self.assertEqual(p.max_elevation, 5)
+
 
     def test_length(self):
         p = PathFactory.build()
