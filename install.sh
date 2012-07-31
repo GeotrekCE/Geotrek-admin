@@ -134,6 +134,9 @@ _EOF_
         sudo rm /etc/nginx/sites-enabled/default
         sudo ln -sf etc/nginx.conf /etc/nginx/sites-enabled/default
         sudo /etc/init.d/nginx restart
+        
+        sudo ln -sf etc/init/supervisor.conf /etc/init/supervisor.conf
+        sudo start supervisor
     fi
 
     set +x
