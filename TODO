@@ -23,7 +23,8 @@ Soon...
 ==========
 
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
-* Why initial SQL is loaded twice during syncdb?
+* Something is wrong with logger configuration, messages coming from caminae
+  appear twice in the console (see syncdb output)
 
 * Switch to django-bootstrapped instead of embedding it
 * Use django-tabs
