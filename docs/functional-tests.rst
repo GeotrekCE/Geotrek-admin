@@ -256,22 +256,29 @@ Sprint 2 - Version 0.2.0
 #36 - Charger la liste des tronçons en asynchrone
 =================================================
 
-Faire un POC avec la liste des tronçons.
+* Ouvrir la page des tronçons, la liste est vide pendant une fraction de secondes.
+* Vérifier que la liste se charge correctement en asynchrone. Par exemple
+  avec l'inspecteur Firebug, vérifier que les données JSON sont reçues et la 
+  liste est raffraichie.
 
-Caractéristiques de la liste:
+:notes:
 
-* Tri ajax toujours server-side (car filtrage custom) (réel besoin spécial de jqGrid/datables etc. ?)
-* Réponse en JSON (tastypie, cornice ou custom ?)
-* L'url peut ne pas rester inchangée (on ne conserve pas l'historique, bookmark, etc.)
-* Possibilité de filtre étendu (Foreign Key, field Géo etc.) clientside comme serverside (django-filter, custom... ?)
-* À terme devra pouvoir supporter la pagination (voire un scroll infini) et le tri (voire le tri multi colonne <- quel lib js ?)
-* À terme devra être générique/simple (pas trop de code boiler plate)
-
-
-La validation se fera par un test casperjs:
-
-* création de quelques données pertinentes pour le filtrage
-* chargement de la page de listing
-* filtrage et vérification du résultat (notamment relatif aux permissions de l'utilisateur)
+    L'implémentation est validée pour la liste des tronçons (environ 2000 objets)
+    et sera appliquée aux autres modules.
 
 
+:bonus sur cette story, sinon recréer une autre:
+
+    * Si la liste n'affiche pas toutes les éléments, vérifier que des éléments 
+      qui n'étaient pas affichés apparaissent lors du tri.
+
+    * Infinite scroll ou pagination
+
+    * Tri multi-colonnes
+
+
+:details:
+
+    * Réponse en JSON avec mixin serializer simple (cf view mixin django-geojson)
+    
+    * À terme devra être générique/simple (pas trop de code boiler plate)
