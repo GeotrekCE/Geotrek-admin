@@ -12,8 +12,8 @@ class Migration(SchemaMigration):
         db.create_table('troncons', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
-            ('geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, null=True, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, dim=3, spatial_index=False)),
+            ('geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, dim=3, null=True, spatial_index=False)),
             ('valid', self.gf('django.db.models.fields.BooleanField')(default=True, db_column='troncon_valide')),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, db_column='nom_troncon')),
             ('comments', self.gf('django.db.models.fields.TextField')(null=True, db_column='remarques')),
@@ -55,7 +55,7 @@ class Migration(SchemaMigration):
             ('date_insert', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_update', self.gf('django.db.models.fields.DateTimeField')()),
             ('length', self.gf('django.db.models.fields.FloatField')(default=0, db_column='longueur')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, dim=3, spatial_index=False)),
         ))
         db.send_create_signal('core', ['TopologyMixin'])
 
@@ -174,8 +174,8 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
@@ -206,7 +206,7 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),

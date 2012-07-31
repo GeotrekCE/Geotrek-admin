@@ -55,7 +55,7 @@ class Migration(SchemaMigration):
             ('advice_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('advice_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('advice_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('the_geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, dim=3, spatial_index=False)),
             ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
@@ -222,53 +222,53 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
-        'core.challengemanagement': {
-            'Meta': {'object_name': 'ChallengeManagement', 'db_table': "'gestion_enjeux'"},
-            'challenge': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        'core.datasourcemanagement': {
-            'Meta': {'object_name': 'DatasourceManagement', 'db_table': "'gestion_source_donnees'"},
+        'core.datasource': {
+            'Meta': {'object_name': 'Datasource', 'db_table': "'source_donnees'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'source': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'core.networkmanagement': {
-            'Meta': {'object_name': 'NetworkManagement', 'db_table': "'gestion_reseau'"},
+        'core.network': {
+            'Meta': {'object_name': 'Network', 'db_table': "'reseau_troncon'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'network': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'core.path': {
             'Meta': {'object_name': 'Path', 'db_table': "'troncons'"},
             'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_positive'"}),
-            'challenge_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.ChallengeManagement']"}),
             'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'"}),
-            'datasource_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.DatasourceManagement']"}),
+            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Datasource']"}),
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
-            'path_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.PathManagement']"}),
+            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Network']"}),
+            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Stake']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
+            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Trail']"}),
+            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Usage']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
-        'core.pathmanagement': {
-            'Meta': {'object_name': 'PathManagement', 'db_table': "'gestion_sentier'"},
+        'core.stake': {
+            'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        'core.trail': {
+            'Meta': {'object_name': 'Trail', 'db_table': "'sentier'"},
             'arrival': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'comments': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'departure': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
         },
-        'core.usagemanagement': {
-            'Meta': {'object_name': 'UsageManagement', 'db_table': "'gestion_usages'"},
+        'core.usage': {
+            'Meta': {'object_name': 'Usage', 'db_table': "'usage'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'usage': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
@@ -330,6 +330,7 @@ class Migration(SchemaMigration):
             'destination': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Destination']"}),
             'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.DifficultyLevel']"}),
             'duration': ('django.db.models.fields.IntegerField', [], {}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'handicapped_infrastructure': ('django.db.models.fields.TextField', [], {}),
             'handicapped_infrastructure_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'handicapped_infrastructure_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -350,7 +351,6 @@ class Migration(SchemaMigration):
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['core.Path']"}),
             'public_transport': ('django.db.models.fields.TextField', [], {}),
             'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Route']"}),
-            'the_geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'update_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.Usage']"}),
             'validated': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
