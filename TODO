@@ -11,10 +11,6 @@ In this sprint 2
 Known problems
 ==============
 
-* Bug: 404 in adminsite for uploaded content
-
-* Bug admin force_script_name 
-
 * Bug supervisord not starting at boot (crontab @reboot ignored)
 
 
