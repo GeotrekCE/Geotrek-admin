@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from .views import (PathLayer, PathList, PathDetail, PathCreate, 
-                    PathUpdate, PathDelete)
+                    PathUpdate, PathDelete, PathAjaxList)
 
 
 urlpatterns = patterns('',
@@ -14,4 +14,6 @@ urlpatterns += patterns('',
     url(r'^path/add/$', PathCreate.as_view(), name='path_add'),
     url(r'^path/edit/(?P<pk>\d+)/$', PathUpdate.as_view(), name='path_update'),
     url(r'^path/delete/(?P<pk>\d+)$', PathDelete.as_view(), name='path_delete'),
+
+    url(r'^path/ajax_list/$', PathAjaxList.as_view(), name="path_ajax_list"),
 )

@@ -1,7 +1,6 @@
 {% extends "core/base.html" %}
 {% load i18n leaflet_tags %}
 
-
 {% block mainmap %}
     {% leaflet_map "mainmap" %}
 {% endblock mainmap %}
@@ -17,8 +16,8 @@
 
 
 {% block mainlist %}
-    <!-- Liste des résultats -->
-    <table class="table table-striped table-bordered">
+    <!-- Liste des résultats automatiquement remplis par dataTables -->
+    <table id="path-ajax-list" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>{% trans "Name" %}</th>
@@ -28,18 +27,6 @@
             </tr>
         </thead>
         <tbody>
-            {% for path in path_list %}
-            <tr>
-                <td><a href="{{ path.get_detail_url }}">{{ path }}</a></td>
-                <td>{{ path.date_update }}</td>
-                <td>{{ path.length }}</td>
-                <td>{{ path.trail }}</td>
-            </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">{% trans "Empty" %}</td>
-                </tr>
-            {% endfor %}
         </tbody>
     </table>
 {% endblock mainlist %}
@@ -47,7 +34,7 @@
 
 {% block extrabody %}
     {{ block.super }}
-    
+
     <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
 
     <h2>{% trans "Usages" %}</h2>
@@ -70,11 +57,11 @@
     {% empty %}
         {% trans "Empty" %}
     {% endfor %}
-    
+
     <script type="text/javascript">
         function mainmapInit(mainmap) {
             var spinner = new Spinner().spin(document.getElementById('mainmap'));
-            
+
             var geojsonLayer = new L.GeoJSON(null, {
                 onEachFeature: function (feature, layer) {
                     layer.on('click', function (e) {
@@ -86,13 +73,23 @@
                     }
                 }
             });
-            
-            $.getJSON("{% url core:layer_path %}", function (data) {           
+
+            $.getJSON("{% url core:layer_path %}", function (data) {
                 geojsonLayer.addData(data);
                 spinner.stop();
             });
-            
+
             mainmap.addLayer(geojsonLayer);
         }
     </script>
+
+
+{% include "dataTables_template.html" %}
+<script>
+    /* Table initialisation */
+    $(function() {
+        JQDataTable.init($('#path-ajax-list'), "{{ datatables_ajax_url }}");
+    });
+</script>
+
 {% endblock extrabody %}
