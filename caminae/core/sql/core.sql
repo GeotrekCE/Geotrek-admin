@@ -63,9 +63,7 @@ DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON evenements_troncons;
 
 CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
 DECLARE
-    rec record;
     tab varchar;
-    eid integer;
 BEGIN
     FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
     LOOP
@@ -115,9 +113,6 @@ CREATE TRIGGER troncons_longueur_tgr
     FOR EACH ROW EXECUTE PROCEDURE ft_longueur();
 
 -- Automatic link between Troncon and Commune/Zonage/Secteur
-
-DROP TRIGGER IF EXISTS troncons_couches_sig_tgr ON troncons; -- May have be created by previous version of this script
-DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig(); -- May have be created by previous version of this script
 
 DROP TRIGGER IF EXISTS troncons_couches_sig_iu_tgr ON troncons;
 
