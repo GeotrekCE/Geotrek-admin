@@ -44,8 +44,8 @@ class TrailFactory(factory.Factory):
 class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
-    geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
-    geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
+    geom = LineString(Point(1, 1, 0), Point(2, 2, 0), srid=settings.SRID)
+    geom_cadastre = LineString(Point(5, 5, 0), Point(6, 6, 0), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: u"name %s" % n)
     comments = factory.Sequence(lambda n: u"comment %s" % n)
@@ -86,7 +86,7 @@ class TopologyMixinFactory(factory.Factory):
     
     # FIXME: remove this when the trigger will be ready
     length = 0.0
-    geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
+    geom = LineString(Point(1, 1, 0), Point(2, 2, 0), srid=settings.SRID)
 
     @classmethod
     def _prepare(cls, create, **kwargs):

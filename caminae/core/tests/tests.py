@@ -81,7 +81,7 @@ class PathTest(TestCase):
         c.save()
 
         # Fake paths in these areas
-        p = PathFactory(geom=LineString((0.5,0.5), (1.5,1.5)))
+        p = PathFactory(geom=LineString((0.5,0.5,0), (1.5,1.5,0)))
         p.save()
 
         # This should results in 3 PathAggregation (2 for RA, 1 for City)
@@ -103,7 +103,7 @@ class PathTest(TestCase):
         self.assertEquals(pa2.end_position, 1.0)
 
         # Ensure everything is in order after update
-        p.geom = LineString((0.5,0.5), (1.5,0.5))
+        p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
         p.save()
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
