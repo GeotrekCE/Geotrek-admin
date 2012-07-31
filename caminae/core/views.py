@@ -56,6 +56,22 @@ class PathDetail(DetailView):
     def dispatch(self, *args, **kwargs):
         return super(PathDetail, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(PathDetail, self).get_context_data(**kwargs)
+
+        # NOTE: Quick and dirty. Should be replaced soon by a JSON view with
+        # nice graph visualization
+        import math
+        def distance3D(a, b):
+            return math.sqrt((b[0] - a[0])**2 + (b[1] - a[1])**2 + (b[2] - a[2])**2)
+        p = self.get_object()
+        profile = []
+        for i in range(1, len(p.geom.coords)):
+            profile.append((distance3D(p.geom.coords[i-1], p.geom.coords[i]), p.geom.coords[i][2]))
+        context['profile'] = profile
+
+        return context
+
 
 class PathCreate(CreateView):
     model = Path

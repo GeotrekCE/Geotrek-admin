@@ -94,4 +94,20 @@
     </script>
     </div> <!-- span4 -->
 
+    <div class="span7">
+        <h2>{% trans "Altitude profile" %}</h2>
+        <table class="table-striped table-bordered table">
+            <tr>
+                <th>{% trans "Point" %}</th>
+                {% for alt in profile %}<td>{{ forloop.counter }}</td>{% endfor %}
+            </tr><tr>
+                <th>{% trans "Distance (m)" %}</th>
+                {% for alt in profile %}<td>{{ alt.0|floatformat:1 }}</td>{% endfor %}
+            </tr><tr>
+                <th>{% trans "Elevation (m)" %}</th>
+                {% for alt in profile %}<td>{{ alt.1 }}</td>{% endfor %}
+            </tr>
+        </table>
+    </div>
+
 {% endblock mainpanel %}
