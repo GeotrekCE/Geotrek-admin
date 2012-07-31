@@ -105,13 +105,6 @@ CREATE TRIGGER troncons_date_update_tgr
     BEFORE INSERT OR UPDATE ON troncons
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
--- Compute attributes from geom fields
-
-DROP TRIGGER IF EXISTS troncons_longueur_tgr ON troncons;
-CREATE TRIGGER troncons_longueur_tgr
-    BEFORE INSERT ON troncons
-    FOR EACH ROW EXECUTE PROCEDURE ft_longueur();
-
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 
 DROP TRIGGER IF EXISTS troncons_couches_sig_iu_tgr ON troncons;
@@ -182,7 +175,8 @@ BEGIN
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF NOT FOUND THEN
-        -- NOTE: Indicators should have safe default values
+        NEW.longueur := ST_Length(NEW.geom);
+        -- NOTE: Other indicators have safe default values
         RETURN NEW;
     END IF;
 
@@ -215,6 +209,7 @@ BEGIN
     NEW.geom := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(NEW.geom));
 
     -- Update path indicators
+    NEW.longueur := ST_3DLength(NEW.geom);
     NEW.altitude_minimum := min_ele;
     NEW.altitude_maximum := max_ele;
     NEW.denivelee_positive := positive_gain;
