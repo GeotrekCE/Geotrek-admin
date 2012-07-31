@@ -11,7 +11,6 @@ In this sprint 2
 Known problems
 ==============
 
-* Bug supervisord not starting at boot (crontab @reboot ignored)
 * When changing ``dim`` parameter on a GeometryField, South does not alter nor
   drop/create the field
 * ``dumpdata`` management command will not output the Z coordinates when
