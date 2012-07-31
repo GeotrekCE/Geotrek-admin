@@ -1,24 +1,19 @@
 {% extends "core/base.html" %}
-{% load i18n field_verbose_name %}
-
-{% block extrahead %}
-<style>
-    .text-center { text-align: center; }
-</style>
-{% endblock extrahead %}
+{% load i18n leaflet_tags field_verbose_name %}
 
 {% block mainpanel %}
     <div class="span7">
 
-    <h2>Attr</h2>
+    <h2>{{ path }}
+        {% if user.profile.is_path_manager %}
+            <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
+        {% else %}
+            <span class="btn disabled">{% trans "Update" %}</span>
+        {% endif %}
+    </h2>
+    
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ path|verbose:"geom" }}</th>
-            <td>{{ path.geom }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"geom_cadastre" }}</th>
-            <td>{{ path.geom_cadastre|default:_("None") }}</td>
-        </tr><tr>
             <th>{{ path|verbose:"valid" }}</th>
             <td>{{ path.valid|yesno:_("Yes,No") }}</td>
         </tr><tr>
@@ -48,13 +43,7 @@
         </tr><tr>
             <th>{{ path|verbose:"max_elevation" }}</th>
             <td>{{ path.max_elevation }}</td>
-        </tr>
-    </table>
-
-    <h2>FK</h2>
-
-    <table class="table-striped table-bordered table">
-        <tr>
+        </tr><tr>
             <th>{{ path|verbose:"trail" }}</th>
             <td>{{ path.trail|default:_("None") }}</td>
         </tr><tr>
@@ -63,33 +52,27 @@
         </tr><tr>
             <th>{{ path|verbose:"stake" }}</th>
             <td>{{ path.stake|default:_("None") }}</td>
-        </tr>
-    </table>
-
-    <h2>M2M</h2>
-
-    <table class="table-striped table-bordered table">
-        <tr>
+        </tr><tr>
             <th>{{ path|verbose:"usages" }}</th>
             <td>
-                <ul>
                 {% for usage in  path.usages.all %}
+                    {% if forloop.first %}<ul>{% endif %}
                     <li> {{ usage }} </li>
+                    {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}
                 {% endfor %}
-                </ul>
             </td>
         </tr><tr>
             <th>{{ path|verbose:"networks" }}</th>
             <td>
-                <ul>
                 {% for network in  path.networks.all %}
+                    {% if forloop.first %}<ul>{% endif %}
                     <li> {{ network }} </li>
+                    {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}
                 {% endfor %}
-                </ul>
             </td>
         </tr>
     </table>
@@ -97,26 +80,18 @@
     </div> <!-- span7 -->
 
     <div class="span4">
-
-    <h2>Actions</h2>
-
-    <div class="row-fluid" style="400px;" >
-        <div class="span4 text-center">
-            {% if user.profile.is_path_manager %}
-            <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
-            {% else %}
-            <span class="btn disabled">{% trans "Update" %}</span>
-            {% endif %}
-        </div>
-        <div class="span4 text-center">
-            {% if user.profile.is_path_manager %}
-            <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
-            {% else %}
-            <span class="btn disabled">{% trans "Delete" %}</span>
-            {% endif %}
-        </div>
-    </div>
-
+        {% leaflet_map "pathmap" %}
+        <script type="text/javascript">
+        function pathmapInit(pathmap) {
+            var objectsLayer = new Caminae.ObjectsLayer("{% url core:layer_path %}");
+            pathmap.addLayer(objectsLayer);
+            objectsLayer.on('load', function (e) {
+                var objectBounds = objectsLayer.getLayer('{{ path.pk }}').getBounds();
+                pathmap.fitBounds(objectBounds);
+                objectsLayer.highlight('{{ path.pk }}');
+            });
+        }
+    </script>
     </div> <!-- span4 -->
 
 {% endblock mainpanel %}

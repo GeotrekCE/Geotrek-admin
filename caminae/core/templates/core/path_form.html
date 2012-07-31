@@ -23,4 +23,9 @@
             </tr>
         </table>
     </form>
+    {% if user.profile.is_path_manager %}
+        <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
+    {% else %}
+        <span class="btn disabled">{% trans "Delete" %}</span>
+    {% endif %}
 {% endblock mainpanel %}

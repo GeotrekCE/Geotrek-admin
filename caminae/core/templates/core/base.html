@@ -1,5 +1,12 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static leaflet_tags i18n %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <script type="text/javascript" src="{% static "core/caminae.js" %}"></script>
+{% endblock extrahead %}
 
 {% block content %}
 
