@@ -282,3 +282,11 @@ Sprint 2 - Version 0.2.0
     * Réponse en JSON avec mixin serializer simple (cf view mixin django-geojson)
     
     * À terme devra être générique/simple (pas trop de code boiler plate)
+
+
+#45 - Afficher la carte centrée des objets dans la fiche détails
+----------------------------------------------------------------
+
+* Afficher la fiche d'un tronçon.
+* Une carte en lecture seule se charge, centrée sur le tronçon.
+* La couche avec les autres tronçons se charge en asynchrone.
