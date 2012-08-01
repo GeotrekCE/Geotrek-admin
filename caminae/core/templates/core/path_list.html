@@ -60,26 +60,16 @@
 
     <script type="text/javascript">
         function mainmapInit(mainmap) {
-            var spinner = new Spinner().spin(document.getElementById('mainmap'));
-
-            var geojsonLayer = new L.GeoJSON(null, {
+            var objectsLayer = new Caminae.ObjectsLayer(null, {
                 onEachFeature: function (feature, layer) {
                     layer.on('click', function (e) {
                         //TODO use nice JS url rewriting
                         window.location = "{% url core:path_detail 0 %}".replace('0', feature.properties.pk);
                     });
-                    if (feature.properties && feature.properties.name) {
-                        layer.bindPopup(feature.properties.name);
-                    }
                 }
             });
-
-            $.getJSON("{% url core:layer_path %}", function (data) {
-                geojsonLayer.addData(data);
-                spinner.stop();
-            });
-
-            mainmap.addLayer(geojsonLayer);
+            mainmap.addLayer(objectsLayer);
+            objectsLayer.load("{% url core:layer_path %}");
         }
     </script>
 
