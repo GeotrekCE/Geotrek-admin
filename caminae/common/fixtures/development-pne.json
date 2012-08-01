@@ -1,0 +1,128 @@
+[
+    {
+        "pk": 1,
+        "model": "common.organism",
+        "fields": {
+            "organism": "Parc national des Ecrins"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "common.organism",
+        "fields": {
+            "organism": "Conseil g\u00e9n\u00e9ral 38"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "common.organism",
+        "fields": {
+            "organism": "Conseil g\u00e9n\u00e9ral 05"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "common.organism",
+        "fields": {
+            "organism": "R\u00e9gion PACA"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "common.organism",
+        "fields": {
+            "organism": "commune 1"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "common.organism",
+        "fields": {
+            "organism": "commune 2"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "common.organism",
+        "fields": {
+            "organism": "com com 1"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "common.organism",
+        "fields": {
+            "organism": "com com 2"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Projets travaux"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Autorisations de travaux"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Plans"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Croquis"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Fiches techniques"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Commandes mat\u00e9riaux"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Commandes sous-traitance"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "common.filetype",
+        "fields": {
+            "type": "CCTP"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "common.filetype",
+        "fields": {
+            "type": "CR de visite"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "common.filetype",
+        "fields": {
+            "type": "PV de r\u00e9ception"
+        }
+    }
+]
