@@ -1,8 +1,6 @@
 from django.forms import ModelForm
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import fromstr
-from django.conf import settings
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
@@ -10,21 +8,11 @@ from crispy_forms.layout import Layout, Field, Submit, Div
 from crispy_forms.bootstrap import FormActions
 
 from .models import Path
-
-
-class OsmLineStringWidget(forms.gis.BaseMetacartaWidget,
-                          forms.gis.LineStringWidget):
-    def value_from_datadict(self, data, files, name):
-        wkt = super(OsmLineStringWidget, self).value_from_datadict(data, files, name)
-        # TODO : transform here ?
-        geom = fromstr(wkt)
-        geom.transform(settings.SRID)
-        wkt3d = geom.wkt.replace(',', ' 0.0,')  # TODO: woot!
-        return wkt3d
+from .widgets import LineStringWidget
 
 
 class PathForm(ModelForm):
-    geom = forms.gis.LineStringField(widget=OsmLineStringWidget)
+    geom = forms.gis.LineStringField(widget=LineStringWidget)
 
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
