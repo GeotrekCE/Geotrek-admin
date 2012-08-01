@@ -13,7 +13,7 @@ from caminae.authent.decorators import path_manager_required, same_structure_req
 from caminae.common.views import JSONListView
 from caminae.maintenance.models import Contractor
 from .models import Path
-
+from .filters import PathFilter
 
 
 class PathLayer(GeoJSONLayerView):
@@ -55,9 +55,11 @@ class PathAjaxList(JSONListView):
         context = { self.context_object_name: new_queryset }
         return context
 
-    def update_queryset(self, queryset):
+    def update_queryset(self, _qs):
         # do not use given queryset for now
-        user_path_queryset = self.model.in_structure.byUser(self.request.user)
+
+        qs = self.model.in_structure.byUser(self.request.user)
+        qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
         return [(
@@ -65,7 +67,9 @@ class PathAjaxList(JSONListView):
             path.date_update,
             path.length,
             path.trail.name if path.trail else _("None")
-        ) for path in user_path_queryset ]
+        ) for path in qs ]
+
+
 
 
 class PathList(ListView):
@@ -83,7 +87,9 @@ class PathList(ListView):
             contractors=Contractor.forUser(self.request.user),
             all_contractors=Contractor.objects.all(),
             datatables_ajax_url=reverse('core:path_ajax_list'),
+            filterform = PathFilter(None, queryset=Path.objects.all())
         ))
+
         return context
 
 
