@@ -1,6 +1,6 @@
 from . import BaseSetup
 
-from caminae.authent.pyfixtures import populate_groups
+from caminae.authent.fixtures import populate_groups
 
 
 class Setup(BaseSetup):
@@ -10,6 +10,3 @@ class Setup(BaseSetup):
         if self.verbosity > 1:
             for group in groups.values():
                 self.print_indent("Get or create group: %s" % group)
-
-
-

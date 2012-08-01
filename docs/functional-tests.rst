@@ -312,3 +312,18 @@ Recette:
     * vérification que la liste est bien filtrée (test au niveau du contexte du template)
     * vérification que la carte est bien filtrée (test au niveau du contexte: bonne "PK" utilisé par la carte derrière)
 
+
+#117 - Servir le profil altimétrique d'un tronçon en JSON
+----------------------------------------------------
+
+objectif :
+
+* Avoir une vue qui sert le profil altimétrique d'un tronçon (et itineriare plus
+tard) en JSON
+
+Recette :
+
+* ouvrir la vue de détail d'un troncons
+* dans l'URL, ajouter "profile/" à la fin
+* le fichier reçu est encodé en JSON, il contient des paires distance
+  cumulée et altitude pour chaque point du chemin

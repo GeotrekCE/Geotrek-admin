@@ -3,18 +3,30 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page
-from django.views.generic.detail import DetailView
+from django.views.generic.detail import DetailView, BaseDetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
-from caminae.common.views import JSONListView
+from caminae.common.views import JSONListView, JSONResponseMixin
 from caminae.maintenance.models import Contractor
 from .models import Path
 from .forms import PathForm
+from .filters import PathFilter
 
+class ElevationProfile(JSONResponseMixin, BaseDetailView):
+    """Extract elevation profile from a path and return it as JSON"""
+
+    model = Path
+
+    def get_context_data(self, **kwargs):
+        """
+        Put elevation profile into response context.
+        """
+        p = self.get_object()
+        return {'profile': p.get_elevation_profile()}
 
 
 class PathLayer(GeoJSONLayerView):
@@ -40,7 +52,7 @@ class PathAjaxList(JSONListView):
     """
     model = Path
     # aaData is the key looked up by dataTables
-    context_object_name = 'aaData'
+    data_table_name = 'aaData'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -51,22 +63,37 @@ class PathAjaxList(JSONListView):
         override the most important part of JSONListView... (paginator)
         """
         queryset = kwargs.pop('object_list')
-        new_queryset = self.update_queryset(queryset)
+        context = self.update_queryset(queryset)
 
-        context = { self.context_object_name: new_queryset }
         return context
 
-    def update_queryset(self, queryset):
+    def update_queryset(self, _qs):
         # do not use given queryset for now
-        user_path_queryset = self.model.in_structure.byUser(self.request.user)
+
+        qs = self.model.in_structure.byUser(self.request.user)
+        qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
-        return [(
-            u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
-            path.date_update,
-            path.length,
-            path.trail.name if path.trail else _("None")
-        ) for path in user_path_queryset ]
+
+        map_path_pk = []
+        data_table_rows = []
+        for path in qs:
+            data_table_rows.append((
+                u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
+                path.date_update,
+                path.length,
+                path.trail.name if path.trail else _("None")
+            ))
+            map_path_pk.append(path.pk)
+
+        context = {
+            self.data_table_name: data_table_rows,
+            'map_path_pk': map_path_pk,
+        }
+
+        return context
+
+
 
 
 class PathList(ListView):
@@ -84,6 +111,7 @@ class PathList(ListView):
             contractors=Contractor.forUser(self.request.user),
             all_contractors=Contractor.objects.all(),
             datatables_ajax_url=reverse('core:path_ajax_list'),
+            filterform = PathFilter(None, queryset=Path.objects.all())
         ))
         return context
 
@@ -99,16 +127,8 @@ class PathDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PathDetail, self).get_context_data(**kwargs)
 
-        # NOTE: Quick and dirty. Should be replaced soon by a JSON view with
-        # nice graph visualization
-        import math
-        def distance3D(a, b):
-            return math.sqrt((b[0] - a[0])**2 + (b[1] - a[1])**2 + (b[2] - a[2])**2)
         p = self.get_object()
-        profile = []
-        for i in range(1, len(p.geom.coords)):
-            profile.append((distance3D(p.geom.coords[i-1], p.geom.coords[i]), p.geom.coords[i][2]))
-        context['profile'] = profile
+        context['profile'] = p.get_elevation_profile()
 
         return context
 

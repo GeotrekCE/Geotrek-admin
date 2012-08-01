@@ -84,6 +84,15 @@ class PathTest(TestCase):
         self.assertEqual(p.min_elevation, 3)
         self.assertEqual(p.max_elevation, 5)
 
+        # Check elevation profile
+        profile = p.get_elevation_profile()
+        self.assertEqual(len(profile), 3)
+        self.assertEqual(profile[0][0], 0.0)
+        self.assertEqual(profile[0][1], 4)
+        self.assertTrue(1.4 < profile[1][0] < 1.5)
+        self.assertEqual(profile[1][1], 5)
+        self.assertTrue(3.8 < profile[2][0] < 3.9)
+        self.assertEqual(profile[2][1], 3)
 
     def test_length(self):
         p = PathFactory.build()

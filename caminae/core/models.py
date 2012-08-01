@@ -1,3 +1,5 @@
+import math
+
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +11,16 @@ from caminae.authent.models import StructureRelated
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
+
+def distance3D(a, b):
+    """
+    Utility function computing distance between 2 points in 3D-space.
+    Will work with coordinates tuples instead of full-fledged geometries,
+    that's why is is more convenient than GEOS functions.
+    """
+    return math.sqrt((b[0] - a[0]) ** 2 +
+                     (b[1] - a[1]) ** 2 +
+                     (b[2] - a[2]) ** 2)
 
 
 class Path(StructureRelated):
@@ -73,7 +85,21 @@ class Path(StructureRelated):
         self.descent = tmp.descent
         self.min_elevation = tmp.min_elevation
         self.max_elevation = tmp.max_elevation
+        self.geom = tmp.geom
 
+    def get_elevation_profile(self):
+        """
+        Extract elevation profile from path.
+        """
+        coords = self.geom.coords
+        profile = [(0.0, coords[0][2])]
+        distance = 0
+        for i in range(1, len(coords)):
+            a = coords[i - 1]
+            b = coords[i]
+            distance += distance3D(a, b)
+            profile.append((distance, b[2],))
+        return profile
 
     # CRUD urls
 
@@ -219,10 +245,10 @@ class Network(models.Model):
 
 class Trail(models.Model):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=15)
-    departure = models.CharField(verbose_name=_(u"Name"), max_length=15)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=15)
-    comments = models.CharField(verbose_name=_(u"Comments"), max_length=200)
+    name = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64)
+    comments = models.TextField(default="", verbose_name=_(u"Comments"))
 
     class Meta:
         db_table = 'sentier'
