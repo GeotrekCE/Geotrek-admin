@@ -245,10 +245,10 @@ class Network(models.Model):
 
 class Trail(models.Model):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=15)
-    departure = models.CharField(verbose_name=_(u"Name"), max_length=15)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=15)
-    comments = models.CharField(verbose_name=_(u"Comments"), max_length=200)
+    name = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64)
+    comments = models.TextField(default="", verbose_name=_(u"Comments"))
 
     class Meta:
         db_table = 'sentier'
