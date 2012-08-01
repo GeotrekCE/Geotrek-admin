@@ -19,7 +19,7 @@ setup(
     description="Caminae",
     long_description=open(os.path.join(here, 'README.rst')).read(),
     install_requires = [
-        'django == 1.4.1',
+        'django == 1.4',
         'South == 0.7.5',
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',
