@@ -290,3 +290,25 @@ Sprint 2 - Version 0.2.0
 * Afficher la fiche d'un tronçon.
 * Une carte en lecture seule se charge, centrée sur le tronçon.
 * La couche avec les autres tronçons se charge en asynchrone.
+
+
+#118 - Ajouter un formulaire de filtres basique sur les tronçons
+----------------------------------------------------------------------------
+
+Description:
+
+    * Un formulaire simplissime (même un seul champ - champs filtré pressenti: longueur) qui filtre la liste et la carte
+    * Utilisation de django-filter
+    * integration avec listes ajax de la story #36:
+
+      - ajout d'un formulaire au dessus de la liste
+      - aller/retour sur le serveur pour le filtrage (le tri se faisant pour l'instant cf #36, tjrs côté client)
+
+Recette:
+
+    * connexion avec un utilisateur
+    * la liste est complète
+    * remplissage du formulaire: champs longueur du troncon
+    * vérification que la liste est bien filtrée (test au niveau du contexte du template)
+    * vérification que la carte est bien filtrée (test au niveau du contexte: bonne "PK" utilisé par la carte derrière)
+
