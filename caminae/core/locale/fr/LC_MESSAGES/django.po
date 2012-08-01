@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-01 20:28+0200\n"
+"POT-Creation-Date: 2012-08-01 21:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,10 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
-
-#: forms.py:34
-msgid "Save changes"
-msgstr ""
 
 #: models.py:31
 msgid "Validity"
@@ -163,7 +159,7 @@ msgstr "Arrivée"
 msgid "Trails"
 msgstr "Sentiers"
 
-#: views.py:85 templates/core/path_detail.html:21
+#: views.py:84 templates/core/path_detail.html:21
 #: templates/core/path_detail.html.py:24 templates/core/path_detail.html:48
 #: templates/core/path_detail.html.py:51 templates/core/path_detail.html:54
 #: templates/core/path_detail.html.py:63 templates/core/path_detail.html:74
@@ -188,7 +184,7 @@ msgstr "Signalétique"
 
 #: templates/core/base.html:53
 msgid "Infrastructure"
-msgstr "Ouvrage"
+msgstr "Aménagement"
 
 #: templates/core/base.html:54
 msgid "Trekking"
@@ -200,7 +196,7 @@ msgstr "POI"
 
 #: templates/core/path_confirm_delete.html:15
 #, fuzzy, python-format
-msgid "Do you really wish to delete <strong>%(path)s</strong> ?"
+msgid "Do you really wish to delete <strong>%(path)s</strong>"
 msgstr "Souhaitez vous vraiment supprimer <strong>%(path)s</strong>"
 
 #: templates/core/path_confirm_delete.html:19
@@ -209,7 +205,7 @@ msgstr "Oui, supprimer"
 
 #: templates/core/path_confirm_delete.html:20
 #, fuzzy
-msgid "No, back to edit view"
+msgid "No, back to display view"
 msgstr "Non, retour au formulaire"
 
 #: templates/core/path_detail.html:9 templates/core/path_detail.html.py:11
@@ -236,18 +232,13 @@ msgstr "Distance (m)"
 msgid "Elevation (m)"
 msgstr "Altitude (m)"
 
-#: templates/core/path_form.html:12
-msgid "Edit"
-msgstr "Édition"
+#: templates/core/path_form.html:20
+msgid "Cancel"
+msgstr "Annuler"
 
-#: templates/core/path_form.html:14 templates/core/path_form.html.py:16
+#: templates/core/path_form.html:27 templates/core/path_form.html.py:29
 msgid "Delete"
 msgstr "Supprimer"
-
-#: templates/core/path_form.html:19
-#, fuzzy
-msgid "Add a new path"
-msgstr "Ajouter un nouveau tronçon"
 
 #: templates/core/path_list.html:11 templates/core/path_list.html.py:13
 msgid "Add a path"
@@ -273,6 +264,13 @@ msgstr "Sous-traitants"
 #: templates/core/path_list.html:63
 msgid "Structure related"
 msgstr "Structure liée"
+
+#~ msgid "Edit"
+#~ msgstr "Édition"
+
+#, fuzzy
+#~ msgid "Add a new path"
+#~ msgstr "Ajouter un nouveau tronçon"
 
 #~ msgid "Path management"
 #~ msgstr "Gestion sentier"
