@@ -17,8 +17,8 @@ class Path(StructureRelated):
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
                                            spatial_index=False, dim=3)
     valid = models.BooleanField(db_column='troncon_valide', default=True, verbose_name=_(u"Validity"))
-    name = models.CharField(null=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
-    comments = models.TextField(null=True, db_column='remarques', verbose_name=_(u"Comments"))
+    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
+    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"))
 
     # Override default manager
     objects = models.GeoManager()

@@ -5,6 +5,7 @@
 <style>
     ul.errorlist li { color: red; }
 </style>
+{{ form.media }}
 {% endblock extrahead %}
 
 
@@ -17,15 +18,16 @@
         {{ form }}
             <tr>
                 <td colspan="2" style="text-align: center; padding-top: 10px;" >
+                    {% if user.profile.is_path_manager %}
+                        <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
+                    {% else %}
+                        <span class="btn disabled">{% trans "Delete" %}</span>
+                    {% endif %}
+                    
                     <a class="btn btn-inverse" href="{{ path.get_update_url }}">{% trans "Cancel" %}</a>
                     <input type="submit" class="btn btn-primary"></input>
                 </td>
             </tr>
         </table>
     </form>
-    {% if user.profile.is_path_manager %}
-        <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
-    {% else %}
-        <span class="btn disabled">{% trans "Delete" %}</span>
-    {% endif %}
 {% endblock mainpanel %}

@@ -13,6 +13,7 @@ from caminae.authent.decorators import path_manager_required, same_structure_req
 from caminae.common.views import JSONListView
 from caminae.maintenance.models import Contractor
 from .models import Path
+from .forms import PathForm
 
 
 
@@ -126,6 +127,7 @@ class PathCreate(CreateView):
 
 class PathUpdate(UpdateView):
     model = Path
+    form_class = PathForm
     context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_detail'))

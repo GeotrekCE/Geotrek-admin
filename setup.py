@@ -25,6 +25,7 @@ setup(
         'GDAL == 1.9.1',
         'django-modeltranslation == 0.3.3',
         'django-leaflet == 0.0.2',
+        'django-floppyforms == 1.0.0',
         'django-geojson',
     ] + test_requirements,
     tests_requires = test_requirements,
