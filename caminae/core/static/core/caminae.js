@@ -52,8 +52,11 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
 
     // Show all layers matching the pks
     updateFromPks: function(pks) {
-        var self = this;
-        var new_objects = {}, already_added_layer;
+        var self = this
+          , new_objects = {}
+          , already_added_layer
+          , to_add_layer
+        ;
 
         // Gather all layer to see in new objects
         // Remove them from _current_objects if they are already shown
@@ -64,7 +67,8 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
                 new_objects[to_add_pk] = already_added_layer;
                 delete self._current_objects[to_add_pk]
             } else {
-                new_objects[to_add_pk] = self._objects[to_add_pk];
+                to_add_layer = new_objects[to_add_pk] = self._objects[to_add_pk];
+                self.addLayer(to_add_layer);
             }
         });
 
