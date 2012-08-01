@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-26 13:28+0000\n"
+"POT-Creation-Date: 2012-08-01 20:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Whether the intervention is currently happening"
 msgstr "En maintenance"
 
-#: models.py:16 models.py:141
+#: models.py:16 models.py:138
 msgid "Name"
 msgstr "Nom"
 
@@ -29,7 +29,7 @@ msgstr "Nom"
 msgid "Date"
 msgstr "Date"
 
-#: models.py:18 models.py:146
+#: models.py:18 models.py:143
 msgid "Comments"
 msgstr "Commentaires"
 
@@ -65,15 +65,15 @@ msgstr "Coût héliportage"
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-#: models.py:32 models.py:148
+#: models.py:32 models.py:145
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:33 models.py:149
+#: models.py:33 models.py:146
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:35 models.py:151 models.py:172
+#: models.py:35 models.py:148 models.py:169
 msgid "Deleted"
 msgstr "Supprimé"
 
@@ -82,8 +82,8 @@ msgid "Interventions"
 msgstr "Interventions"
 
 #: models.py:43
-msgid "Challenge management"
-msgstr ""
+msgid "Stake"
+msgstr "Enjeu"
 
 #: models.py:45
 msgid "Intervention status"
@@ -101,7 +101,7 @@ msgstr "Désordres"
 msgid "Jobs"
 msgstr "Fonctions"
 
-#: models.py:57 models.py:168
+#: models.py:57 models.py:165
 msgid "Project"
 msgstr "Chantier"
 
@@ -109,111 +109,111 @@ msgstr "Chantier"
 msgid "Intervention"
 msgstr "Intervention"
 
-#: models.py:71
+#: models.py:70
 msgid "Status"
 msgstr "Suivi"
 
-#: models.py:75
+#: models.py:74
 msgid "Intervention's status"
 msgstr "Suivi"
 
-#: models.py:76
+#: models.py:75
 msgid "Intervention's statuses"
 msgstr "Suivis"
 
-#: models.py:85
+#: models.py:83
 msgid "Typology"
 msgstr "Typologie"
 
-#: models.py:89
+#: models.py:87
 msgid "Intervention's typology"
 msgstr "Typologie"
 
-#: models.py:90
+#: models.py:88
 msgid "Intervention's typologies"
 msgstr "Typologies"
 
-#: models.py:99
+#: models.py:96
 msgid "Disorder"
 msgstr "Désordre"
 
-#: models.py:103
+#: models.py:100
 msgid "Intervention's disorder"
 msgstr "Désordre"
 
-#: models.py:104
+#: models.py:101
 msgid "Intervention's disorders"
 msgstr "Désordres"
 
-#: models.py:112
+#: models.py:109
 msgid "Job"
 msgstr "Fonction"
 
-#: models.py:116
+#: models.py:113
 msgid "Intervention's job"
 msgstr "Fonction"
 
-#: models.py:117
+#: models.py:114
 msgid "Intervention's jobs"
 msgstr "Fonctions"
 
-#: models.py:125 models.py:132
+#: models.py:122 models.py:129
 msgid "Mandays"
 msgstr "Jours-Homme"
 
-#: models.py:131
+#: models.py:128
 msgid "Manday"
 msgstr "Jour-Homme"
 
-#: models.py:142
+#: models.py:139
 msgid "Begin year"
 msgstr "Année de début"
 
-#: models.py:143
+#: models.py:140
 msgid "End year"
 msgstr "Année de fin"
 
-#: models.py:144
+#: models.py:141
 msgid "Constraint"
 msgstr "Contraintes"
 
-#: models.py:145
+#: models.py:142
 msgid "Cost"
 msgstr "Coût"
 
-#: models.py:155 models.py:184
+#: models.py:152 models.py:180
 msgid "Contractors"
 msgstr "Prestataires"
 
-#: models.py:158
+#: models.py:155
 msgid "Project owner"
 msgstr "Maître d'ouvrage"
 
-#: models.py:161
+#: models.py:158
 msgid "Project manager"
 msgstr "Maître d'oeuvre"
 
-#: models.py:164
+#: models.py:161
 msgid "Founders"
 msgstr "Financeurs"
 
-#: models.py:169
+#: models.py:166
 msgid "Projects"
 msgstr "Chantiers"
 
-#: models.py:179 models.py:183
+#: models.py:175 models.py:179
 msgid "Contractor"
 msgstr "Prestataire"
 
-#: models.py:192
+#: models.py:188
 msgid "Amount"
 msgstr "Montant"
 
-#: models.py:198
+#: models.py:194
 msgid "Funding"
 msgstr "Financement"
 
-#: models.py:199
+#: models.py:195
 msgid "Fundings"
 msgstr "Financements"
 
