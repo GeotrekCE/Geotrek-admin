@@ -78,6 +78,9 @@
             });
             mainmap.addLayer(objectsLayer);
             objectsLayer.load("{% url core:layer_path %}");
+
+            // init ajax list
+            initAjaxList(objectsLayer);
         }
     </script>
 
@@ -85,18 +88,36 @@
 {% include "dataTables_template.html" %}
 <script>
     /* Table initialisation */
-    $(function() {
-        var filterform = $('#mainfilter'), submitbutton = $('#filter');
-        var dt = JQDataTable.init($('#path-ajax-list'), filterform.attr('action'));
+    function initAjaxList(objectsLayer) {
 
+        var filterform = $('#mainfilter')
+          , submitbutton = $('#filter')
+          , ajax_list = $('#path-ajax-list')
+        ;
+
+        // on JSON load, return the json used by dataTable
+        // Update also the map given the layer's pk
+        var extract_data_and_pks = function(data, type) {
+            objectsLayer.updateFromPks(data.map_path_pk)
+            return data.aaData;
+        }
+
+        // initialize data table
+        var dt = JQDataTable.init(
+              ajax_list
+            , filterform.attr('action')
+            , { "sAjaxDataProp": extract_data_and_pks }
+        });
+
+        // On submit, trigger an ajax request to the JSON view
+        // Update the ajax list and the map
         submitbutton.click(function() {
             var url = filterform.attr("action") + '?' + filterform.serialize()
-
             dt.fnReloadAjax(url);
 
             return false;
         });
-    });
+    };
 </script>
 
 {% endblock extrabody %}

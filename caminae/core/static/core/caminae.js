@@ -5,7 +5,10 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
     includes: L.Mixin.Events,
 
     initialize: function (geojson, options) {
+        // Hold the definition of all layers - immutable
         this._objects = {};
+        // Hold the currently added layers (subset of _objects)
+        this._current_objects = {};
         this.spinner = null;
 
         var onEachFeature = function (geojson, layer) {
@@ -29,7 +32,8 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
     },
 
     _onEachFeature: function (geojson, layer) {
-        this._objects[geojson.properties.pk] = layer;
+        var pk = geojson.properties.pk
+        this._objects[pk] = this._current_objects[pk] = layer;
     },
 
     load: function (url) {
@@ -44,6 +48,32 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
 
     getLayer: function (pk) {
         return this._objects[pk];
+    },
+
+    // Show all layers matching the pks
+    updateFromPks: function(pks) {
+        var self = this;
+        var new_objects = {}, already_added_layer;
+
+        // Gather all layer to see in new objects
+        // Remove them from _current_objects if they are already shown
+        // This way _current_objects will only contain layer to be removed
+        $.each(pks, function(idx, to_add_pk) {
+            already_added_layer = self._current_objects[to_add_pk];
+            if (already_added_layer) {
+                new_objects[to_add_pk] = already_added_layer;
+                delete self._current_objects[to_add_pk]
+            } else {
+                new_objects[to_add_pk] = self._objects[to_add_pk];
+            }
+        });
+
+        // Remove all remaining layer
+        $.each(self._current_objects, function(pk, layer) {
+            self.removeLayer(layer);
+        });
+
+        self._current_objects = new_objects;
     },
 
     highlight: function (pk) {

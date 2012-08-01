@@ -51,7 +51,7 @@ class PathAjaxList(JSONListView):
     """
     model = Path
     # aaData is the key looked up by dataTables
-    context_object_name = 'aaData'
+    data_table_name = 'aaData'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -62,9 +62,8 @@ class PathAjaxList(JSONListView):
         override the most important part of JSONListView... (paginator)
         """
         queryset = kwargs.pop('object_list')
-        new_queryset = self.update_queryset(queryset)
+        context = self.update_queryset(queryset)
 
-        context = { self.context_object_name: new_queryset }
         return context
 
     def update_queryset(self, _qs):
@@ -74,12 +73,24 @@ class PathAjaxList(JSONListView):
         qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
-        return [(
-            u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
-            path.date_update,
-            path.length,
-            path.trail.name if path.trail else _("None")
-        ) for path in qs ]
+
+        map_path_pk = []
+        data_table_rows = []
+        for path in qs:
+            data_table_rows.append((
+                u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
+                path.date_update,
+                path.length,
+                path.trail.name if path.trail else _("None")
+            ))
+            map_path_pk.append(path.pk)
+
+        context = {
+            self.data_table_name: data_table_rows,
+            'map_path_pk': map_path_pk,
+        }
+
+        return context
 
 
 
