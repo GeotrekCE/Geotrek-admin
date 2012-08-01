@@ -26,6 +26,7 @@ setup(
         'django-modeltranslation == 0.3.3',
         'django-leaflet == 0.0.2',
         'django-floppyforms == 1.0.0',
+        'django-crispy-forms == 1.1.4',
         'django-geojson',
     ] + test_requirements,
     tests_requires = test_requirements,

@@ -1,33 +1,24 @@
 {% extends "core/base.html" %}
-{% load i18n %}
+{% load i18n crispy_forms_tags %}
 
 {% block extrahead %}
-<style>
-    ul.errorlist li { color: red; }
-</style>
 {{ form.media }}
 {% endblock extrahead %}
 
 
 {% block mainpanel %}
-    <form method="POST"
-        action="{% if path %}{{ path.get_update_url }}{% else %}{{ path.get_add_url }}{% endif %}">
-
-        <table class="table-striped table-bordered" style="margin: 0 auto;">
-        {% csrf_token %}
-        {{ form }}
-            <tr>
-                <td colspan="2" style="text-align: center; padding-top: 10px;" >
-                    {% if user.profile.is_path_manager %}
-                        <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
-                    {% else %}
-                        <span class="btn disabled">{% trans "Delete" %}</span>
-                    {% endif %}
-                    
-                    <a class="btn btn-inverse" href="{{ path.get_update_url }}">{% trans "Cancel" %}</a>
-                    <input type="submit" class="btn btn-primary"></input>
-                </td>
-            </tr>
-        </table>
-    </form>
+    <div class="span11">
+        <h1>{% if path %}
+            {% trans "Edit" %} {{ path }}
+            {% if user.profile.is_path_manager %}
+                <a class="btn btn-danger" href="{{ path.get_delete_url }}">{% trans "Delete" %}</a>
+            {% else %}
+                <span class="btn disabled">{% trans "Delete" %}</span>
+            {% endif %}
+        {% else %}
+            {% trans "Add a new path" %}
+        {% endif %}</h1>
+    </div>
+    <div class="span11">&nbsp;</div>
+    {% crispy form %}
 {% endblock mainpanel %}

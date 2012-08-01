@@ -167,6 +167,7 @@ PROJECT_APPS = (
     'modeltranslation',
     'leaflet',
     'floppyforms',
+    'crispy_forms',
 
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )

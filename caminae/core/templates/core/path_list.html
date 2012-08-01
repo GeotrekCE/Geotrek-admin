@@ -8,9 +8,9 @@
 
 {% block mainactions %}
     {% if user.profile.is_path_manager %}
-    <a class="btn" href="{{ path.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    <a class="btn" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
     {% else %}
-    <a class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
     {% endif %}
 {% endblock mainactions %}
 

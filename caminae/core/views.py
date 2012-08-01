@@ -115,6 +115,7 @@ class PathDetail(DetailView):
 
 class PathCreate(CreateView):
     model = Path
+    form_class = PathForm
     context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_list'))
