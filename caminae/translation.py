@@ -1,7 +1,18 @@
 from modeltranslation.translator import translator, TranslationOptions
 
+from caminae.common import models as common_models
 from caminae.land import models as land_models
 from caminae.trekking import models as trekking_models
+
+
+# Common app
+
+class FileTypeTO(TranslationOptions):
+    fields = ('type', )
+
+translator.register(common_models.FileType, FileTypeTO)
+
+
 
 # Land app
 
@@ -55,4 +66,3 @@ trek_translation_to_register = [
 
 for model, model_to in trek_translation_to_register:
     translator.register(model, model_to)
-
