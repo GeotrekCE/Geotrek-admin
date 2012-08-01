@@ -108,6 +108,7 @@ AUTHORS
     * Sylvain Beorchia
     * Mathieu Leplatre
     * Anaïs Peyrucq
+    * Satya Azemar
     * Simon Thépot
 
 |makinacom|_
