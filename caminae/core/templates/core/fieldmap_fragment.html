@@ -1,0 +1,33 @@
+{% load leaflet_tags %}
+
+{% leaflet_map mapname %}
+<script type="text/javascript">
+function {{ mapname }}Init(map) {
+    // Set map readonly
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.removeControl(map.zoomControl);
+    map.removeControl(map.attributionControl);
+    
+    // Add layers
+    var geojson = {{ geojson|safe }};
+    var objectLayer = new Caminae.ObjectsLayer(geojson, {
+        style: {weight: 5, opacity: 1, clickable: false}
+    });
+    map.addLayer(objectLayer);
+    var objectBounds = objectLayer.getBounds();
+    map.fitBounds(objectBounds);
+    
+    var objectsLayer = new Caminae.ObjectsLayer(null, {
+        style: {weight: 2, clickable: false},
+        onEachFeature: function (feature, layer) {
+            layer.setStyle();
+        }
+    });
+    map.addLayer(objectsLayer);
+    objectsLayer.load("{% url core:layer_path %}");
+}
+</script>

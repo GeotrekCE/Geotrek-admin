@@ -4,7 +4,7 @@ if (!Caminae) var Caminae = {};
 Caminae.ObjectsLayer = L.GeoJSON.extend({
     includes: L.Mixin.Events,
     
-    initialize: function (url, options) {
+    initialize: function (geojson, options) {
         this._objects = {};
         this.spinner = null;
         
@@ -16,18 +16,18 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this._onEachFeatureExtra = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onEachFeature, this);
         
-        L.GeoJSON.prototype.initialize.call(this, null, options);
+        var url = null;
+        if (typeof(geojson) == 'string') {
+            url = geojson;
+            geojson = null;
+        }
+        L.GeoJSON.prototype.initialize.call(this, geojson, options);
         
         if (url) {
             this.load(url);
         }
     },
-
-    onAdd: function (map) {
-        this.spinner = new Spinner().spin(map._container);
-        L.GeoJSON.prototype.onAdd.call(this, map);
-    },
-
+    
     _onEachFeature: function (geojson, layer) {
         this._objects[geojson.properties.pk] = layer;
     },
@@ -36,8 +36,9 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         var jsonLoad = function (data) {
             this.addData(data);
             this.fire('load');
-            this.spinner.stop();
+            if (this.spinner) this.spinner.stop();
         };
+        if (this._map) this.spinner = new Spinner().spin(this._map._container);
         $.getJSON(url, L.Util.bind(jsonLoad, this));
     },
 
