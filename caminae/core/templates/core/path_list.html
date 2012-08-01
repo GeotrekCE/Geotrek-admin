@@ -43,6 +43,7 @@
 {% block extrabody %}
     {{ block.super }}
 
+
     <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
 
     <h2>{% trans "Usages" %}</h2>
@@ -66,7 +67,9 @@
         {% trans "Empty" %}
     {% endfor %}
 
-    <script type="text/javascript">
+    {% include "dataTables_template.html" %}
+
+    <script>
         function mainmapInit(mainmap) {
             var objectsLayer = new Caminae.ObjectsLayer(null, {
                 onEachFeature: function (feature, layer) {
@@ -82,42 +85,38 @@
             // init ajax list
             initAjaxList(objectsLayer);
         }
+
+        /* Table initialisation */
+        function initAjaxList(objectsLayer) {
+
+            var filterform = $('#mainfilter')
+              , submitbutton = $('#filter')
+              , ajax_list = $('#path-ajax-list')
+            ;
+
+            // on JSON load, return the json used by dataTable
+            // Update also the map given the layer's pk
+            var extract_data_and_pks = function(data, type) {
+                objectsLayer.updateFromPks(data.map_path_pk)
+                return data.aaData;
+            }
+
+            // initialize data table
+            var dt = JQDataTable.init(
+                  ajax_list
+                , filterform.attr('action')
+                , { "sAjaxDataProp": extract_data_and_pks }
+            );
+
+            // On submit, trigger an ajax request to the JSON view
+            // Update the ajax list and the map
+            submitbutton.click(function() {
+                var url = filterform.attr("action") + '?' + filterform.serialize()
+                dt.fnReloadAjax(url);
+
+                return false;
+            });
+        };
     </script>
-
-
-{% include "dataTables_template.html" %}
-<script>
-    /* Table initialisation */
-    function initAjaxList(objectsLayer) {
-
-        var filterform = $('#mainfilter')
-          , submitbutton = $('#filter')
-          , ajax_list = $('#path-ajax-list')
-        ;
-
-        // on JSON load, return the json used by dataTable
-        // Update also the map given the layer's pk
-        var extract_data_and_pks = function(data, type) {
-            objectsLayer.updateFromPks(data.map_path_pk)
-            return data.aaData;
-        }
-
-        // initialize data table
-        var dt = JQDataTable.init(
-              ajax_list
-            , filterform.attr('action')
-            , { "sAjaxDataProp": extract_data_and_pks }
-        });
-
-        // On submit, trigger an ajax request to the JSON view
-        // Update the ajax list and the map
-        submitbutton.click(function() {
-            var url = filterform.attr("action") + '?' + filterform.serialize()
-            dt.fnReloadAjax(url);
-
-            return false;
-        });
-    };
-</script>
 
 {% endblock extrabody %}
