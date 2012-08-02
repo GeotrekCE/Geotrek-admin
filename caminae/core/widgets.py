@@ -5,11 +5,13 @@ import floppyforms as forms
 
 
 class BaseMapWidget(forms.gis.BaseGeometryWidget):
-    map_srid = 4326
+    map_srid = settings.MAP_SRID
     template_name = 'core/formfieldmap_fragment.html'
 
     def value_from_datadict(self, data, files, name):
         wkt = super(BaseMapWidget, self).value_from_datadict(data, files, name)
+        if not wkt:
+            return None
         try:
             geom = fromstr(wkt, srid=self.map_srid)
             geom.transform(settings.SRID)

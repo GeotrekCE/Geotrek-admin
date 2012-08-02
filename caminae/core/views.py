@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -35,7 +36,7 @@ class ElevationProfile(JSONResponseMixin, BaseDetailView):
 class PathLayer(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
-    srid = 4326  #TODO: remove and serve in L93
+    srid = settings.MAP_SRID
     # precision = 4
     # simplify = 0.5
 

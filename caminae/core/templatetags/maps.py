@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.template import Context
 from django.utils import simplejson
 from django.contrib.gis.geos import GEOSGeometry
@@ -34,9 +35,10 @@ def geojsonfeature(obj):
         return 'null'
     geojsonvalue = ''
     if isinstance(obj, GEOSGeometry):
+        obj.transform(settings.MAP_SRID)
         feature = geojson.Feature(geometry=simplejson.loads(obj.geojson))
         geojsonvalue = geojson.dumps(feature)
     else:
         serializer = Serializer()
-        geojsonvalue = serializer.serialize([obj], fields=[], srid=4326)
+        geojsonvalue = serializer.serialize([obj], fields=[], srid=settings.MAP_SRID)
     return geojsonvalue
