@@ -17,7 +17,8 @@ class BaseMapWidget(forms.gis.BaseGeometryWidget):
 
     def get_context(self, name, value, attrs=None, extra_context={}):
         context = super(BaseMapWidget, self).get_context(name, value, attrs, extra_context)
-        value.transform(self.map_srid)
+        if value:
+            value.transform(self.map_srid)
         context['field'] = value
         return context
 
