@@ -254,7 +254,7 @@ Sprint 2 - Version 0.2.0
 
 
 #36 - Charger la liste des tronçons en asynchrone
-=================================================
+-------------------------------------------------
 
 * Ouvrir la page des tronçons, la liste est vide pendant une fraction de secondes.
 * Vérifier que la liste se charge correctement en asynchrone. Par exemple
@@ -316,7 +316,7 @@ Recette:
 #117 - Servir le profil altimétrique d'un tronçon en JSON
 ----------------------------------------------------
 
-objectif :
+Description :
 
 * Avoir une vue qui sert le profil altimétrique d'un tronçon (et itineriare plus
 tard) en JSON
@@ -327,3 +327,14 @@ Recette :
 * dans l'URL, ajouter "profile/" à la fin
 * le fichier reçu est encodé en JSON, il contient des paires distance
   cumulée et altitude pour chaque point du chemin
+
+#21, #108 - Modifier la géométrie d'un tronçon
+--------------------------------------------
+
+** recette **
+
+* Afficher la fiche d'un tronçon, passer en mode édition.
+* Le champ géometry dans le formulaire a été remplacé par une carte.
+* Il est possible de modifier la géométrie en cliquant sur la carte et en ajustant les points.
+* La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
+* Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
