@@ -33,7 +33,7 @@ class PathForm(ModelForm):
         FormActions(
             Submit('save_changes', _('Save changes'), css_class="btn-primary"),
             Submit('cancel', 'Cancel'),
-            css_class="form-actions span11 ",
+            css_class="form-actions span11",
         )
     )
 

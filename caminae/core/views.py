@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic.detail import DetailView, BaseDetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from django.contrib import messages
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -141,6 +142,10 @@ class PathCreate(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(PathCreate, self).dispatch(*args, **kwargs)
 
+    def form_valid(self, form):
+        messages.success(self.request, _("Created"))
+        return super(PathCreate, self).form_valid(form)
+
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
@@ -154,6 +159,10 @@ class PathUpdate(UpdateView):
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Saved"))
+        return super(PathUpdate, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
