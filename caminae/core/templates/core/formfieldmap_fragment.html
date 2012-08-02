@@ -30,8 +30,10 @@ function {{ module }}Init(map) {
     });
     
     map.addLayer(objectLayer);
-    var objectBounds = objectLayer.getBounds();
-    map.fitBounds(new L.LatLngBounds({{ field|latlngbounds }}));
+    var objectBounds = {{ field|latlngbounds }};
+    if (objectBounds) {
+        map.fitBounds(new L.LatLngBounds(objectBounds));
+    }
     
     var objectsLayer = new Caminae.ObjectsLayer(null, {
         style: {weight: 2, clickable: false}

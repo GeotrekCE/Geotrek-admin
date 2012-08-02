@@ -31,8 +31,8 @@ class PathForm(ModelForm):
         Div('geom',
             css_class="span7",),
         FormActions(
-            Submit('save_changes', _('Save changes'), css_class="btn-primary"),
             Submit('cancel', 'Cancel'),
+            Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
             css_class="form-actions span11",
         )
     )

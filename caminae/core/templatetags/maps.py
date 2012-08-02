@@ -19,7 +19,7 @@ def fieldmap(obj, fieldname):
 
 @register.filter
 def latlngbounds(obj, fieldname='geom'):
-    if obj is None:
+    if obj is None or isinstance(obj, basestring):
         return 'null'
     if isinstance(obj, GEOSGeometry):
         extent = list(obj.extent)
@@ -30,7 +30,7 @@ def latlngbounds(obj, fieldname='geom'):
 
 @register.filter
 def geojsonfeature(obj):
-    if obj is None:
+    if obj is None or isinstance(obj, basestring):
         return 'null'
     geojsonvalue = ''
     if isinstance(obj, GEOSGeometry):
