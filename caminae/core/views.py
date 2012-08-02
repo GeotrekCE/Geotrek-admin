@@ -148,6 +148,10 @@ class PathCreate(CreateView):
         messages.success(self.request, _("Created"))
         return super(PathCreate, self).form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, _("You form contains errors"))
+        return super(PathCreate, self).form_invalid(form)
+
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
@@ -165,6 +169,10 @@ class PathUpdate(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
         return super(PathUpdate, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _("You form contains errors"))
+        return super(PathUpdate, self).form_invalid(form)
 
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
