@@ -36,8 +36,8 @@ class ElevationProfile(JSONResponseMixin, BaseDetailView):
 class PathLayer(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
-    precision = 4
     srid = 4326  #TODO: remove and serve in L93
+    # precision = 4
     # simplify = 0.5
 
     @method_decorator(cache_page(60, cache="fat"))  #TODO: use settings
