@@ -1,4 +1,5 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 
 from caminae.common.models import Organism, FileType
 
@@ -8,7 +9,7 @@ class OrganismAdmin(admin.ModelAdmin):
     search_fields = ('organism',)
 
 
-class FileTypeAdmin(admin.ModelAdmin):
+class FileTypeAdmin(TranslationAdmin):
     list_display = ('type',)
     search_fields = ('type',)
 
