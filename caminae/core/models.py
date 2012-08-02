@@ -191,7 +191,7 @@ class PathAggregation(models.Model):
         verbose_name_plural = _(u"Path aggregations")
 
 
-class Datasource(models.Model):
+class Datasource(StructureRelated):
 
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
@@ -204,7 +204,7 @@ class Datasource(models.Model):
         return self.source
 
 
-class Stake(models.Model):
+class Stake(StructureRelated):
 
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50)
 
@@ -217,7 +217,7 @@ class Stake(models.Model):
         return self.stake
 
 
-class Usage(models.Model):
+class Usage(StructureRelated):
 
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
 
@@ -230,7 +230,7 @@ class Usage(models.Model):
         return self.usage
 
 
-class Network(models.Model):
+class Network(StructureRelated):
 
     network = models.CharField(verbose_name=_(u"Network"), max_length=50)
 
@@ -243,7 +243,7 @@ class Network(models.Model):
         return self.network
 
 
-class Trail(models.Model):
+class Trail(StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64)
     departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
