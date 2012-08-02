@@ -338,3 +338,14 @@ Recette :
 * Il est possible de modifier la géométrie en cliquant sur la carte et en ajustant les points.
 * La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
 * Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
+
+
+#119 - Servir le graphe du réseau de sentiers
+---------------------------------------------
+
+** recette **
+
+* Test verifiant qu'à partir des tronçons, un graph est correctement construit
+* Url permettant de récupérer ce graph encodé en json
+
+
