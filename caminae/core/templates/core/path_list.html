@@ -43,30 +43,6 @@
 {% block extrabody %}
     {{ block.super }}
 
-
-    <h1>Listes temporaires (recette stories #10, 15, #31)</h1>
-
-    <h2>{% trans "Usages" %}</h2>
-    {% for usage in all_usages %}
-        <li>{{ usage }}</li>
-    {% empty %}
-        {% trans "Empty" %}
-    {% endfor %}
-
-    <h2>{% trans "Contractors" %}</h2>
-    {% for contractor in all_contractors %}
-        <li>{{ contractor }}</li>
-    {% empty %}
-        {% trans "Empty" %}
-    {% endfor %}
-
-    <h2>{% trans "Structure related" %}</h2>
-    {% for contractor in contractors %}
-        <li>{{ contractor }}</li>
-    {% empty %}
-        {% trans "Empty" %}
-    {% endfor %}
-
     {% include "dataTables_template.html" %}
 
     <script>
