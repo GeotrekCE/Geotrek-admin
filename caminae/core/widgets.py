@@ -13,7 +13,7 @@ class BaseMapWidget(forms.gis.BaseGeometryWidget):
         geom = fromstr(wkt, srid=self.map_srid)
         geom.transform(settings.SRID)
         dim = 3
-        extracoords = '0.0' * (dim - 2)  # add missing dimensions
+        extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
         wkt3d = geom.wkt.replace(',', extracoords + ',')
         return wkt3d
 
