@@ -12,9 +12,6 @@ bin/ lib/:
 
 install: bin/
 
-submodules:
-	git submodule update --init
-
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;
 
@@ -34,7 +31,7 @@ all_compilemessages: bin/
 release:
 	git archive --format=zip --prefix="caminae-$(version)/" $(version) > ../caminae-src-$(version).zip
 
-unit_tests: bin/ clean_harmless submodules
+unit_tests: bin/ clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
 
@@ -43,8 +40,7 @@ functional_tests:
 
 tests: unit_tests functional_tests
 
-serve: bin/ clean_harmless submodules all_compilemessages
-	git submodule update
+serve: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django runserver
@@ -53,7 +49,7 @@ load_data:
 	# /!\ will delete existing data
 	bin/django loaddata development-pne
 
-deploy: bin/ clean_harmless submodules all_compilemessages
+deploy: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --noinput
