@@ -12,7 +12,6 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.common.views import JSONListView, JSONResponseMixin, json_django_dumps, HttpJSONResponse
-from caminae.maintenance.models import Contractor
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter

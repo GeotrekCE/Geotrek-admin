@@ -1,5 +1,3 @@
-import json
-
 from django.core.serializers import serialize
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.db.models.query import QuerySet

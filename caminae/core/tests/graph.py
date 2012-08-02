@@ -14,7 +14,6 @@ class SimpleGraph(TestCase):
         p_3_3 = (3., 3., 0.)
         p_4_4 = (4., 4., 0.)
         p_5_5 = (5., 5., 0.)
-        p_6_6 = (6., 6., 0.)
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""

@@ -4,7 +4,6 @@ from django.conf import settings
 
 from caminae.authent.factories import StructureRelatedDefaultFactory
 from caminae.utils import dbnow
-from caminae.utils.testdata import get_dummy_uploaded_image
 from . import models
 
 
