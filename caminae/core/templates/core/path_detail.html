@@ -5,7 +5,7 @@
     <div class="span7">
 
     <h2>{{ path }}
-        {% if user.profile.is_path_manager %}
+        {% if can_edit %}
             <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
         {% else %}
             <span class="btn disabled">{% trans "Update" %}</span>

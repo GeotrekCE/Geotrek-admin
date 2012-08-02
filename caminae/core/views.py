@@ -16,6 +16,7 @@ from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
 
+
 class ElevationProfile(JSONResponseMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
 
@@ -94,8 +95,6 @@ class PathAjaxList(JSONListView):
         return context
 
 
-
-
 class PathList(ListView):
     model = Path
     context_object_name = 'path_list'
@@ -126,10 +125,10 @@ class PathDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PathDetail, self).get_context_data(**kwargs)
-
         p = self.get_object()
         context['profile'] = p.get_elevation_profile()
-
+        context['can_edit'] = self.request.user.profile.is_path_manager and \
+                              p.same_structure(self.request.user)
         return context
 
 
