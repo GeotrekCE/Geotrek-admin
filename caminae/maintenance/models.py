@@ -103,6 +103,7 @@ class InterventionDisorder(StructureRelated):
     def __unicode__(self):
         return self.disorder
 
+
 class InterventionJob(StructureRelated):
 
     job = models.CharField(max_length=128, verbose_name=_(u"Job"))

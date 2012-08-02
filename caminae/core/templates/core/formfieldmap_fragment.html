@@ -1,0 +1,42 @@
+{% load maps leaflet_tags %}
+
+{% leaflet_map module %}
+<style type="text/css">
+    {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
+</style>
+
+{% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
+{% include "floppyforms/textarea.html" %}
+
+<script type="text/javascript">
+function {{ module }}Init(map) {
+    map.removeControl(map.attributionControl);
+    map.dragging.disable();  // Due to https://github.com/CloudMade/Leaflet/issues/865
+    
+    // Add layers
+    var geojson = {{ field|geojsonfeature|safe }};
+    var objectLayer = new Caminae.ObjectsLayer(geojson, {
+        style: {weight: 5, opacity: 1, clickable: false},
+        onEachFeature: function (feature, layer) {
+            layer.on('edit', L.Util.bind(function (e) {
+                $('#{{ attrs.id }}').val(objectLayer.getWKT());
+            }));
+        }
+    });
+    map.on('focus', function (e) {  // Due to https://github.com/CloudMade/Leaflet/issues/509
+        objectLayer.eachLayer(function (layer) {
+            layer.editing.enable();
+        });
+    });
+    
+    map.addLayer(objectLayer);
+    var objectBounds = objectLayer.getBounds();
+    map.fitBounds(new L.LatLngBounds({{ field|latlngbounds }}));
+    
+    var objectsLayer = new Caminae.ObjectsLayer(null, {
+        style: {weight: 2, clickable: false}
+    });
+    map.addLayer(objectsLayer);
+    objectsLayer.load("{% url core:layer_path %}");
+}
+</script>

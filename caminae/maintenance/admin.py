@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.contrib import admin
 
 from caminae.maintenance.models import (
@@ -26,4 +23,3 @@ admin.site.register(Contractor)
 admin.site.register(InterventionStatus, InterventionStatusAdmin)
 admin.site.register(InterventionTypology, InterventionTypologyAdmin)
 admin.site.register(InterventionDisorder, InterventionDisorderAdmin)
-

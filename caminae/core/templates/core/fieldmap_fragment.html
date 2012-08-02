@@ -1,4 +1,4 @@
-{% load leaflet_tags %}
+{% load maps leaflet_tags %}
 
 {% leaflet_map mapname %}
 <script type="text/javascript">
@@ -13,19 +13,15 @@ function {{ mapname }}Init(map) {
     map.removeControl(map.attributionControl);
     
     // Add layers
-    var geojson = {{ geojson|safe }};
+    var geojson = {{ object|geojsonfeature|safe }};
     var objectLayer = new Caminae.ObjectsLayer(geojson, {
         style: {weight: 5, opacity: 1, clickable: false}
     });
     map.addLayer(objectLayer);
-    var objectBounds = objectLayer.getBounds();
-    map.fitBounds(objectBounds);
+    map.fitBounds(new L.LatLngBounds({{ object|latlngbounds }}));
     
     var objectsLayer = new Caminae.ObjectsLayer(null, {
-        style: {weight: 2, clickable: false},
-        onEachFeature: function (feature, layer) {
-            layer.setStyle();
-        }
+        style: {weight: 2, clickable: false}
     });
     map.addLayer(objectsLayer);
     objectsLayer.load("{% url core:layer_path %}");

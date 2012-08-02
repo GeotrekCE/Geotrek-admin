@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-26 13:28+0000\n"
+"POT-Creation-Date: 2012-08-01 21:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,80 +18,80 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:12 models.py:89 models.py:102 models.py:112 models.py:138
+#: models.py:11 models.py:89 models.py:102 models.py:112 models.py:138
 #: models.py:152 models.py:153
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:13
+#: models.py:12
 msgid "Departure"
 msgstr "Départ"
 
-#: models.py:14
+#: models.py:13
 msgid "Arrival"
 msgstr "Arrivée"
 
-#: models.py:15
+#: models.py:14
 msgid "Validated"
 msgstr "Validée"
 
-#: models.py:18
+#: models.py:17
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:19
+#: models.py:18
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:20
+#: models.py:19
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:21
+#: models.py:20
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:22
+#: models.py:21
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:24
+#: models.py:23
 msgid "Description teaser"
 msgstr "Résumé"
 
-#: models.py:25
+#: models.py:24
 msgid "Description"
 msgstr "Description"
 
-#: models.py:26
+#: models.py:25
 msgid "Ambiance"
 msgstr "Ambiance"
 
-#: models.py:27
+#: models.py:26
 msgid "Handicapped's infrastructure"
 msgstr "Aménagement handicapés"
 
-#: models.py:28
+#: models.py:27
 msgid "duration"
 msgstr "durée"
 
-#: models.py:30
+#: models.py:29
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
 
-#: models.py:31
+#: models.py:30
 msgid "Is transborder"
 msgstr "Transfrontalier"
 
-#: models.py:33
+#: models.py:32
 msgid "Advised parking"
 msgstr "Parking conseillé"
 
-#: models.py:36
+#: models.py:35
 msgid "Public transport"
 msgstr "Transport en commun"
 
-#: models.py:37
+#: models.py:36
 msgid "Advice"
 msgstr "Recommandations"
 

@@ -58,7 +58,7 @@ class Serializer(JsonSerializer):
             geomfield = geomfield.simplify(tolerance=simplify, preserve_topology=True)
         # Optional geometry reprojection
         srid = self.options.get('srid')
-        if srid is not None:
+        if srid is not None and srid != geomfield.srid:
             geomfield.transform(srid)
         # Load Django geojson representation as dict
         geometry = simplejson.loads(geomfield.geojson)

@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic.detail import DetailView, BaseDetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from django.contrib import messages
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -13,7 +14,9 @@ from caminae.authent.decorators import path_manager_required, same_structure_req
 from caminae.common.views import JSONListView, JSONResponseMixin
 from caminae.maintenance.models import Contractor
 from .models import Path
+from .forms import PathForm
 from .filters import PathFilter
+
 
 class ElevationProfile(JSONResponseMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
@@ -51,7 +54,7 @@ class PathAjaxList(JSONListView):
     """
     model = Path
     # aaData is the key looked up by dataTables
-    context_object_name = 'aaData'
+    data_table_name = 'aaData'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -62,9 +65,8 @@ class PathAjaxList(JSONListView):
         override the most important part of JSONListView... (paginator)
         """
         queryset = kwargs.pop('object_list')
-        new_queryset = self.update_queryset(queryset)
+        context = self.update_queryset(queryset)
 
-        context = { self.context_object_name: new_queryset }
         return context
 
     def update_queryset(self, _qs):
@@ -74,14 +76,24 @@ class PathAjaxList(JSONListView):
         qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
-        return [(
-            u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
-            path.date_update,
-            path.length,
-            path.trail.name if path.trail else _("None")
-        ) for path in qs ]
 
+        map_path_pk = []
+        data_table_rows = []
+        for path in qs:
+            data_table_rows.append((
+                u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
+                path.date_update,
+                path.length,
+                path.trail.name if path.trail else _("None")
+            ))
+            map_path_pk.append(path.pk)
 
+        context = {
+            self.data_table_name: data_table_rows,
+            'map_path_pk': map_path_pk,
+        }
+
+        return context
 
 
 class PathList(ListView):
@@ -101,7 +113,6 @@ class PathList(ListView):
             datatables_ajax_url=reverse('core:path_ajax_list'),
             filterform = PathFilter(None, queryset=Path.objects.all())
         ))
-
         return context
 
 
@@ -115,20 +126,25 @@ class PathDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PathDetail, self).get_context_data(**kwargs)
-
         p = self.get_object()
         context['profile'] = p.get_elevation_profile()
-
+        context['can_edit'] = self.request.user.profile.is_path_manager and \
+                              p.same_structure(self.request.user)
         return context
 
 
 class PathCreate(CreateView):
     model = Path
+    form_class = PathForm
     context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_list'))
     def dispatch(self, *args, **kwargs):
         return super(PathCreate, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Created"))
+        return super(PathCreate, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
@@ -136,12 +152,17 @@ class PathCreate(CreateView):
 
 class PathUpdate(UpdateView):
     model = Path
+    form_class = PathForm
     context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Saved"))
+        return super(PathUpdate, self).form_valid(form)
 
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})

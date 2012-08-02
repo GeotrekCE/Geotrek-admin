@@ -166,6 +166,8 @@ PROJECT_APPS = (
     'south',
     'modeltranslation',
     'leaflet',
+    'floppyforms',
+    'crispy_forms',
 
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
@@ -177,6 +179,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.maintenance',
     'caminae.land',
     'caminae.trekking',
+    'caminae.infrastructure',
 )
 
 SERIALIZATION_MODULES = {
@@ -250,7 +253,7 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
-    messages.DEBUG: '',
-    messages.WARNING: '',
+    messages.DEBUG: 'alert-info',
+    messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }

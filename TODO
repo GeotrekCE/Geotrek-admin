@@ -5,7 +5,6 @@ In this sprint 2
 * Each URL status (200, 302,...) in tests
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 * Check form non field error
-* Display messages "Saved.", "Deleted" after redirects
 
 ==============
 Known problems

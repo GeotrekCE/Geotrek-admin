@@ -36,7 +36,7 @@ release:
 
 unit_tests: bin/ clean_harmless submodules
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common
+	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
 
 functional_tests:
 	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js

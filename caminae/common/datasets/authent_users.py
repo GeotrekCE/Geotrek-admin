@@ -1,5 +1,5 @@
 from . import BaseSetup
-from caminae.authent.pyfixtures import populate_users
+from caminae.authent.fixtures.development import populate_users
 
 class Setup(BaseSetup):
 
@@ -13,6 +13,3 @@ class Setup(BaseSetup):
                     "Created user %s (lang: %s) with groups: %s)" % (
                        up.user.username, up.language, up.user.groups.all()
                 ))
-
-
-

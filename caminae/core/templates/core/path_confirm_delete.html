@@ -12,12 +12,12 @@
     <div class="div-center">
         <div class="alert alert-block">
             <h4 class="alert-heading">Warning!</h4>
-            {% blocktrans %}Do you really wish to delete <strong>{{ path }}</strong>{% endblocktrans %}
+            {% blocktrans %}Do you really wish to delete <strong>{{ path }}</strong> ?{% endblocktrans %}
         </div>
         <form method="POST" action="{{ path.get_delete_url }}">
             {% csrf_token %}
             <input type="submit" class="btn btn-danger" value="{% trans "Yes, delete" %}"></input>
-            <a class="btn btn-inverse" href="{{ path.get_detail_url }}">{% trans "No, back to display view" %}</a>
+            <a class="btn btn-inverse" href="{{ path.get_update_url }}">{% trans "No, back to edit view" %}</a>
         </form>
     </div>
 {% endblock mainpanel %}
