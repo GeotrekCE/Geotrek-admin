@@ -33,29 +33,29 @@ class ViewsTest(TestCase):
         response = self.client.get(p1.get_update_url())
         self.assertEqual(response.status_code, 200)
         
-        # no data
-        response = self.client.post(p1.get_update_url())
-        self.assertEqual(response.status_code, 200)
-        
-        bad_data = {'geom': 'doh!'}
-        response = self.client.post(p1.get_update_url(), bad_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'geom', u'Acune valeur g\xe9om\xe9trique fournie.')
-        
-        good_data = {
-            'name': '',
-            'structure': p1.structure.pk,
-            'stake': '',
-            'trail': '',
-            'comments': '',
-            'datasource': '',
-            'valid': 'on',
-            'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
-        }
-        response = self.client.post(p1.get_update_url(), good_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(p1.get_detail_url()))
-        
+        for url in [reverse('core:path_add'), p1.get_update_url()]:
+            # no data
+            response = self.client.post(url)
+            self.assertEqual(response.status_code, 200)
+            
+            bad_data = {'geom': 'doh!'}
+            response = self.client.post(url, bad_data)
+            self.assertEqual(response.status_code, 200)
+            self.assertFormError(response, 'form', 'geom', u'Acune valeur g\xe9om\xe9trique fournie.')
+            
+            good_data = {
+                'name': '',
+                'structure': p1.structure.pk,
+                'stake': '',
+                'trail': '',
+                'comments': '',
+                'datasource': '',
+                'valid': 'on',
+                'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
+            }
+            response = self.client.post(url, good_data)
+            self.assertEqual(response.status_code, 302)
+
         response = self.client.get(p1.get_delete_url())
         self.assertEqual(response.status_code, 200)
 
