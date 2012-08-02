@@ -11,13 +11,13 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this._current_objects = {};
         this.spinner = null;
 
-        var onEachFeature = function (geojson, layer) {
-            this._onEachFeature(geojson, layer);
-            if (this._onEachFeatureExtra) this._onEachFeatureExtra(geojson, layer);
+        var onFeatureParse = function (geojson, layer) {
+            this._mapObjects(geojson, layer);
+            if (this._onEachFeature) this._onEachFeature(geojson, layer);
         };
         if (!options) options = {};
-        this._onEachFeatureExtra = options.onEachFeature;
-        options.onEachFeature = L.Util.bind(onEachFeature, this);
+        this._onEachFeature = options.onEachFeature;
+        options.onEachFeature = L.Util.bind(onFeatureParse, this);
 
         var url = null;
         if (typeof(geojson) == 'string') {
@@ -31,7 +31,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         }
     },
 
-    _onEachFeature: function (geojson, layer) {
+    _mapObjects: function (geojson, layer) {
         var pk = geojson.properties.pk
         this._objects[pk] = this._current_objects[pk] = layer;
     },
@@ -84,34 +84,29 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         var l = this.getLayer(pk);
         l.setStyle({'color': 'red'});
     },
-
-    layerToWKT: function(layer) {
-        coord2str = function (obj) {
-            if(obj.lng) return obj.lng + ' ' + obj.lat + ' 0.0';
-            var n, wkt = [];
-            for (n in obj) {
-                wkt.push(coord2str(obj[n]));
-            }
-            return ("(" + String(wkt) + ")");
-        };
-        var wkt = '';
-        if(layer.getLatLng) wkt += 'POINT'+coord2str(layer.getLatLng());
-        if(layer.getLatLngs) {
-            var coords = coord2str(layer.getLatLngs());
-            if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
-            else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
-            else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
-            else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
-            else {
-                wkt += 'LINESTRING'+coords;
-            }
-        }
-        return wkt;
-    },
-    
-    getWKT: function () {
-        var wkt = [];
-        this.eachLayer(function(layer) {wkt.push(this.layerToWKT(layer));}, this);
-        return String(wkt);
-    }
 });
+
+
+Caminae.getWKT = function(layer) {
+    coord2str = function (obj) {
+        if(obj.lng) return obj.lng + ' ' + obj.lat + ' 0.0';
+        var n, wkt = [];
+        for (n in obj) {
+            wkt.push(coord2str(obj[n]));
+        }
+        return ("(" + String(wkt) + ")");
+    };
+    var wkt = '';
+    if(layer.getLatLng) wkt += 'POINT'+coord2str(layer.getLatLng());
+    if(layer.getLatLngs) {
+        var coords = coord2str(layer.getLatLngs());
+        if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
+        else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
+        else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
+        else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
+        else {
+            wkt += 'LINESTRING'+coords;
+        }
+    }
+    return wkt;
+};

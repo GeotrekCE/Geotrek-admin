@@ -15,12 +15,12 @@ function {{ module }}Init(map) {
     
     // Add layers
     var geojson = {{ field|geojsonfeature|safe }};
-    var objectLayer = new Caminae.ObjectsLayer(geojson, {
+    var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
         onEachFeature: function (feature, layer) {
-            layer.on('edit', L.Util.bind(function (e) {
-                $('#{{ attrs.id }}').val(objectLayer.getWKT());
-            }));
+            layer.on('edit', function (e) {
+                $('#{{ attrs.id }}').val(Caminae.getWKT(e.target));
+            });
         }
     });
     map.on('focus', function (e) {  // Due to https://github.com/CloudMade/Leaflet/issues/509
