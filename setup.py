@@ -27,7 +27,9 @@ setup(
         'django-leaflet == 0.0.2',
         'django-floppyforms == 1.0.0',
         'django-crispy-forms == 1.1.4',
-        'django-geojson',
+        'django-filter',   # pinned by buildout
+        'django-extended-choices',  # pinned by buildout
+        'django-geojson',   # TODO: release !
     ] + test_requirements,
     tests_requires = test_requirements,
     packages=find_packages(),
