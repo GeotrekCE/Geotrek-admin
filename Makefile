@@ -39,7 +39,7 @@ unit_tests: bin/ clean_harmless submodules
 	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
 
 functional_tests:
-	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/*.js
 
 tests: unit_tests functional_tests
 
