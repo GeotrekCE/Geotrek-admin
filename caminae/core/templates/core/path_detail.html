@@ -1,6 +1,13 @@
 {% extends "core/base.html" %}
 {% load i18n leaflet_tags field_verbose_name maps %}
 
+
+{% block extrahead %}
+    {{ block.super }}
+    <!-- extra-js-css -->
+{% endblock extrahead %}
+
+
 {% block mainpanel %}
     <div class="span7">
 
