@@ -11,11 +11,13 @@ from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
-from caminae.common.views import JSONListView, JSONResponseMixin
+from caminae.common.views import JSONListView, JSONResponseMixin, json_django_dumps, HttpJSONResponse
 from caminae.maintenance.models import Contractor
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
+from . import graph
+
 
 
 class ElevationProfile(JSONResponseMixin, BaseDetailView):
@@ -178,5 +180,15 @@ class PathDelete(DeleteView):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
+
+@login_required
+def get_graph_json():
+    def path_modifier(path):
+        return { "pk": path.pk, "length": path.length }
+
+    graph = graph.graph_of_qs_optimize(Path.objects.all(), value_modifier=path_modifier)
+    json_graph = json_django_dumps(graph)
+
+    return HttpJSONResponse(json_graph)
 
 home = PathList.as_view()
