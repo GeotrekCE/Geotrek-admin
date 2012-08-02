@@ -32,7 +32,6 @@ class PathFilterTest(TestCase):
             """Return range form parameter as used in caminae.core.filters.PathFilter"""
             return { 'length_0': range_end, 'length_1': range_start }
 
-
         # Simulate ajax call to populate the list
         # The path returned as json should be all paths that share the user's structure
         # We check the 'map_path_pk' json attribute that should contain the paths' pk (used by map)

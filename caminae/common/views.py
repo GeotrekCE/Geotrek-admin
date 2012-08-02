@@ -53,7 +53,7 @@ class JSONResponseMixin(object):
 
     def convert_context_to_json(self, context):
         "Convert the context dictionary into a JSON object"
-        json_django_dumps(context)
+        return json_django_dumps(context)
 
 
 class JSONListView(JSONResponseMixin, ListView):
