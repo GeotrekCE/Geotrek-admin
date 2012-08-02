@@ -108,10 +108,7 @@ class PathList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PathList, self).get_context_data(**kwargs)
-        # Temporary during Sprint1
         context.update(**dict(
-            contractors=Contractor.forUser(self.request.user),
-            all_contractors=Contractor.objects.all(),
             datatables_ajax_url=reverse('core:path_ajax_list'),
             filterform = PathFilter(None, queryset=Path.objects.all())
         ))

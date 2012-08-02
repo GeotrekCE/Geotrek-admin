@@ -4,6 +4,7 @@
 *.mo
 
 # buildout stuff
+.mr.developer.cfg
 .installed.cfg
 bin/
 etc/
