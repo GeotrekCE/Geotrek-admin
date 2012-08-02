@@ -16,7 +16,7 @@ from caminae.maintenance.models import Contractor
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
-from . import graph
+from . import graph as graph_lib
 
 
 
@@ -182,11 +182,11 @@ class PathDelete(DeleteView):
 
 
 @login_required
-def get_graph_json():
+def get_graph_json(request):
     def path_modifier(path):
         return { "pk": path.pk, "length": path.length }
 
-    graph = graph.graph_of_qs_optimize(Path.objects.all(), value_modifier=path_modifier)
+    graph = graph_lib.graph_of_qs_optimize(Path.objects.all(), value_modifier=path_modifier)
     json_graph = json_django_dumps(graph)
 
     return HttpJSONResponse(json_graph)
