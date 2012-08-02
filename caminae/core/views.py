@@ -73,8 +73,7 @@ class PathAjaxList(JSONListView):
 
     def update_queryset(self, _qs):
         # do not use given queryset for now
-
-        qs = self.model.in_structure.byUser(self.request.user)
+        qs = self.model.objects.all()
         qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
