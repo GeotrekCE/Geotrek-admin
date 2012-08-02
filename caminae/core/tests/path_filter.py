@@ -60,4 +60,3 @@ class PathFilterTest(TestCase):
                 """The JSON should only contain path filtered according to the
                 range and the structure of the user"""
         )
-

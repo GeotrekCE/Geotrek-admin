@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from caminae.utils import dbnow
-from caminae.authent.factories import UserFactory
+from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure
 from caminae.core.factories import PathFactory, TopologyMixinFactory, TopologyMixinKindFactory
 from caminae.core.models import Path
@@ -14,7 +14,49 @@ from caminae.land.models import (City, RestrictedArea)
 
 class ViewsTest(TestCase):
     def test_status(self):
+        # JSON layers do not require authent
         response = self.client.get(reverse("core:layer_path"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_crud_status(self):
+        user = PathManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+        
+        response = self.client.get(reverse('core:path_detail', args=[1234]))
+        self.assertEqual(response.status_code, 404)
+        
+        p1 = PathFactory()
+        response = self.client.get(p1.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+        
+        response = self.client.get(p1.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        
+        # no data
+        response = self.client.post(p1.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        
+        bad_data = {'geom': 'doh!'}
+        response = self.client.post(p1.get_update_url(), bad_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'geom', u'Acune valeur g\xe9om\xe9trique fournie.')
+        
+        good_data = {
+            'name': '',
+            'structure': p1.structure.pk,
+            'stake': '',
+            'trail': '',
+            'comments': '',
+            'datasource': '',
+            'valid': 'on',
+            'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
+        }
+        response = self.client.post(p1.get_update_url(), good_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(p1.get_detail_url()))
+        
+        response = self.client.get(p1.get_delete_url())
         self.assertEqual(response.status_code, 200)
 
 
