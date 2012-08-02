@@ -6,22 +6,20 @@ import floppyforms as forms
 
 class BaseMapWidget(forms.gis.BaseGeometryWidget):
     map_srid = 4326
-    template_name = 'floppyforms/gis/openlayers.html'
-    display_wkt = True
+    template_name = 'core/formfieldmap_fragment.html'
 
     def value_from_datadict(self, data, files, name):
         wkt = super(BaseMapWidget, self).value_from_datadict(data, files, name)
-        # TODO : map is 4326, data is 2154 - Remove this when leaflet ready for proj
-        geom = fromstr(wkt)
+        geom = fromstr(wkt, srid=self.map_srid)
         geom.transform(settings.SRID)
         wkt3d = geom.wkt.replace(',', ' 0.0,')  # TODO: woot!
         return wkt3d
 
-    class Media:
-        js = (
-            'http://openlayers.org/api/2.10/OpenLayers.js',
-            'floppyforms/js/MapWidget.js',
-        )
+    def get_context(self, name, value, attrs=None, extra_context={}):
+        context = super(BaseMapWidget, self).get_context(name, value, attrs, extra_context)
+        value.transform(self.map_srid)
+        context['field'] = value
+        return context
 
 
 class LineStringWidget(BaseMapWidget,

@@ -83,5 +83,35 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
     highlight: function (pk) {
         var l = this.getLayer(pk);
         l.setStyle({'color': 'red'});
+    },
+
+    layerToWKT: function(layer) {
+        coord2str = function (obj) {
+            if(obj.lng) return obj.lng + ' ' + obj.lat + ' 0.0';
+            var n, wkt = [];
+            for (n in obj) {
+                wkt.push(coord2str(obj[n]));
+            }
+            return ("(" + String(wkt) + ")");
+        };
+        var wkt = '';
+        if(layer.getLatLng) wkt += 'POINT'+coord2str(layer.getLatLng());
+        if(layer.getLatLngs) {
+            var coords = coord2str(layer.getLatLngs());
+            if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
+            else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
+            else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
+            else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
+            else {
+                wkt += 'LINESTRING'+coords;
+            }
+        }
+        return wkt;
+    },
+    
+    getWKT: function () {
+        var wkt = [];
+        this.eachLayer(function(layer) {wkt.push(this.layerToWKT(layer));}, this);
+        return String(wkt);
     }
 });
