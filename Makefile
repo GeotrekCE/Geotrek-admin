@@ -1,6 +1,7 @@
 SHELL = /bin/bash
 
-baseurl=http://localhost:8000
+listen=localhost:8000
+baseurl=http://$(listen)
 root=$(shell pwd)
 version=$(shell git describe --tags --abbrev=0)
 
@@ -43,7 +44,7 @@ tests: unit_tests functional_tests
 serve: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
-	bin/django runserver
+	bin/django runserver $(listen)
 
 load_data:
 	# /!\ will delete existing data
