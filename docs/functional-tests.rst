@@ -325,3 +325,11 @@ Sprint 2 - Version 0.2.0
 
 * Test verifiant qu'à partir des tronçons, un graph est correctement construit
 * Url permettant de récupérer ce graph encodé en json
+
+
+#107 - Ajouter un tronçon
+-----------------------
+
+* Lors de l'ajout d'un tronçon, l'utilisateur peut le dessiner sur la carte
+* Seul le mode linéaire est autorisé
+
