@@ -25,9 +25,11 @@ setup(
         'GDAL == 1.9.1',
         'django-modeltranslation == 0.3.3',
         'django-leaflet == 0.0.2',
-        'django-floppyforms == 1.0.0',
+        'django-floppyforms == 1.0',
         'django-crispy-forms == 1.1.4',
-        'django-geojson',
+        'django-geojson == 1.0.0',
+        'django-filter',   # pinned by buildout
+        'django-extended-choices',  # pinned by buildout
     ] + test_requirements,
     tests_requires = test_requirements,
     packages=find_packages(),

@@ -203,7 +203,7 @@ CACHES = {
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -224,11 +224,11 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': False,
         },
-        '': {
+        'caminae': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
@@ -239,10 +239,12 @@ DEFAULT_STRUCTURE_NAME = None
 SRID = None
 SPATIAL_EXTENT = None
 
-# TODO : Temporary : override extent in 4326, until POC Leaflet L93
+# Maps projection (client-side), can differ from SRID (database)
+MAP_SRID = 4326
+
 LEAFLET_CONFIG = {
     "TILES_URL" : "http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg",
-    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46),
+    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46), # TODO : Temporary : override extent in 4326, until POC Leaflet L93
 }
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'

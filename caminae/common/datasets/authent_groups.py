@@ -1,6 +1,6 @@
 from . import BaseSetup
 
-from caminae.authent.fixtures import populate_groups
+from caminae.authent.fixtures.development import populate_groups
 
 
 class Setup(BaseSetup):

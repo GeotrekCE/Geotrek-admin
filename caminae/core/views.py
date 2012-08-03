@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -11,11 +12,12 @@ from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
-from caminae.common.views import JSONListView, JSONResponseMixin
-from caminae.maintenance.models import Contractor
+from caminae.common.views import JSONListView, JSONResponseMixin, json_django_dumps, HttpJSONResponse
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
+from . import graph as graph_lib
+
 
 
 class ElevationProfile(JSONResponseMixin, BaseDetailView):
@@ -34,8 +36,8 @@ class ElevationProfile(JSONResponseMixin, BaseDetailView):
 class PathLayer(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
-    precision = 4
-    srid = 4326  #TODO: remove and serve in L93
+    srid = settings.MAP_SRID
+    # precision = 4
     # simplify = 0.5
 
     @method_decorator(cache_page(60, cache="fat"))  #TODO: use settings
@@ -71,8 +73,7 @@ class PathAjaxList(JSONListView):
 
     def update_queryset(self, _qs):
         # do not use given queryset for now
-
-        qs = self.model.in_structure.byUser(self.request.user)
+        qs = self.model.objects.all()
         qs = PathFilter(self.request.GET or None, queryset=qs)
 
         # This must match columns defined in core/path_list.html template
@@ -106,10 +107,7 @@ class PathList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PathList, self).get_context_data(**kwargs)
-        # Temporary during Sprint1
         context.update(**dict(
-            contractors=Contractor.forUser(self.request.user),
-            all_contractors=Contractor.objects.all(),
             datatables_ajax_url=reverse('core:path_ajax_list'),
             filterform = PathFilter(None, queryset=Path.objects.all())
         ))
@@ -146,6 +144,10 @@ class PathCreate(CreateView):
         messages.success(self.request, _("Created"))
         return super(PathCreate, self).form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, _("You form contains errors"))
+        return super(PathCreate, self).form_invalid(form)
+
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
@@ -164,6 +166,10 @@ class PathUpdate(UpdateView):
         messages.success(self.request, _("Saved"))
         return super(PathUpdate, self).form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, _("You form contains errors"))
+        return super(PathUpdate, self).form_invalid(form)
+
     def get_success_url(self):
         return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
@@ -178,5 +184,15 @@ class PathDelete(DeleteView):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
+
+@login_required
+def get_graph_json(request):
+    def path_modifier(path):
+        return { "pk": path.pk, "length": path.length }
+
+    graph = graph_lib.graph_of_qs_optimize(Path.objects.all(), value_modifier=path_modifier)
+    json_graph = json_django_dumps(graph)
+
+    return HttpJSONResponse(json_graph)
 
 home = PathList.as_view()

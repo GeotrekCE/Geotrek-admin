@@ -1,4 +1,4 @@
-{% load maps leaflet_tags %}
+{% load maps leaflet_tags geojson_tags %}
 
 {% leaflet_map module %}
 <style type="text/css">
@@ -11,32 +11,30 @@
 <script type="text/javascript">
 function {{ module }}Init(map) {
     map.removeControl(map.attributionControl);
-    map.dragging.disable();  // Due to https://github.com/CloudMade/Leaflet/issues/865
     
-    // Add layers
-    var geojson = {{ field|geojsonfeature|safe }};
-    var objectLayer = new Caminae.ObjectsLayer(geojson, {
-        style: {weight: 5, opacity: 1, clickable: false},
-        onEachFeature: function (feature, layer) {
-            layer.on('edit', L.Util.bind(function (e) {
-                $('#{{ attrs.id }}').val(objectLayer.getWKT());
-            }));
-        }
-    });
-    map.on('focus', function (e) {  // Due to https://github.com/CloudMade/Leaflet/issues/509
-        objectLayer.eachLayer(function (layer) {
-            layer.editing.enable();
-        });
-    });
+    var objectBounds = {{ field|latlngbounds }};
+    if (objectBounds) {
+        map.fitBounds(new L.LatLngBounds(objectBounds));
+    }
     
-    map.addLayer(objectLayer);
-    var objectBounds = objectLayer.getBounds();
-    map.fitBounds(new L.LatLngBounds({{ field|latlngbounds }}));
-    
+    // Start loading all objects, readonly
     var objectsLayer = new Caminae.ObjectsLayer(null, {
         style: {weight: 2, clickable: false}
     });
     map.addLayer(objectsLayer);
     objectsLayer.load("{% url core:layer_path %}");
+    
+    var geojson = {{ field|geojsonfeature|safe }};
+    var objectLayer = new L.GeoJSON(geojson, {
+        style: {weight: 5, opacity: 1, clickable: false},
+        onEachFeature: function (feature, layer) {
+            // Wait for view load. Due to https://github.com/CloudMade/Leaflet/issues/509
+            setTimeout(layer.editing.enable.bind(layer.editing), 1000);
+            layer.on('edit', function (e) {
+                $('#{{ attrs.id }}').val(Caminae.getWKT(e.target));
+            });
+        }
+    });
+    map.addLayer(objectLayer);
 }
 </script>

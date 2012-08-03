@@ -1,11 +1,9 @@
-import json
-
 from django.core.serializers import serialize
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.utils.encoding import force_unicode
-from django.utils.functional import Promise
+from django.utils.functional import Promise, curry
 from django.utils import simplejson
 from django.views.generic.list import ListView
 
@@ -32,6 +30,9 @@ class DjangoJSONEncoder(DateTimeAwareJSONEncoder):
             return simplejson.loads(serialize('json', obj))
         return super(DjangoJSONEncoder, self).default(obj)
 
+# partial function, we can now use dumps(my_dict) instead
+# of dumps(my_dict, cls=DjangoJSONEncoder)
+json_django_dumps = curry(simplejson.dumps, cls=DjangoJSONEncoder)
 
 class JSONResponseMixin(object):
     """
@@ -50,7 +51,7 @@ class JSONResponseMixin(object):
 
     def convert_context_to_json(self, context):
         "Convert the context dictionary into a JSON object"
-        return simplejson.dumps(context, cls=DjangoJSONEncoder)
+        return json_django_dumps(context)
 
 
 class JSONListView(JSONResponseMixin, ListView):

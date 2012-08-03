@@ -1,6 +1,0 @@
-[submodule "django-leaflet"]
-	path = django-leaflet
-	url = https://github.com/makinacorpus/django-leaflet.git
-[submodule "django-floppyforms"]
-	path = django-floppyforms
-	url = git://github.com/brutasse/django-floppyforms.git

@@ -166,7 +166,7 @@ class Project(StructureRelated):
         verbose_name_plural = _(u"Projects")
 
     def __unicode__(self):
-        deleted_txt = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
+        deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
 
 

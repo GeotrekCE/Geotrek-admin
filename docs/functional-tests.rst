@@ -295,33 +295,15 @@ Sprint 2 - Version 0.2.0
 #118 - Ajouter un formulaire de filtres basique sur les tronçons
 ----------------------------------------------------------------------------
 
-Description:
-
-    * Un formulaire simplissime (même un seul champ - champs filtré pressenti: longueur) qui filtre la liste et la carte
-    * Utilisation de django-filter
-    * integration avec listes ajax de la story #36:
-
-      - ajout d'un formulaire au dessus de la liste
-      - aller/retour sur le serveur pour le filtrage (le tri se faisant pour l'instant cf #36, tjrs côté client)
-
-Recette:
-
-    * connexion avec un utilisateur
-    * la liste est complète
-    * remplissage du formulaire: champs longueur du troncon
-    * vérification que la liste est bien filtrée (test au niveau du contexte du template)
-    * vérification que la carte est bien filtrée (test au niveau du contexte: bonne "PK" utilisé par la carte derrière)
+* connexion avec un utilisateur
+* la liste est complète
+* remplissage du formulaire: filtre sur longueur des troncons
+* vérification que la liste est bien filtrée
+* vérification que la carte est bien filtrée
 
 
 #117 - Servir le profil altimétrique d'un tronçon en JSON
 ----------------------------------------------------
-
-Description :
-
-* Avoir une vue qui sert le profil altimétrique d'un tronçon (et itineriare plus
-tard) en JSON
-
-Recette :
 
 * ouvrir la vue de détail d'un troncons
 * dans l'URL, ajouter "profile/" à la fin
@@ -331,10 +313,15 @@ Recette :
 #21, #108 - Modifier la géométrie d'un tronçon
 --------------------------------------------
 
-** recette **
-
 * Afficher la fiche d'un tronçon, passer en mode édition.
 * Le champ géometry dans le formulaire a été remplacé par une carte.
 * Il est possible de modifier la géométrie en cliquant sur la carte et en ajustant les points.
 * La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
 * Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
+
+
+#119 - Servir le graphe du réseau de sentiers
+---------------------------------------------
+
+* Test verifiant qu'à partir des tronçons, un graph est correctement construit
+* Url permettant de récupérer ce graph encodé en json

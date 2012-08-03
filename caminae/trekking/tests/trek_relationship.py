@@ -6,7 +6,7 @@ from ..factories import TrekFactory, TrekRelationshipFactory
 
 # Helpers to extract pk from objects
 get_pk = attrgetter('pk')
-get_pks = lambda l: map(get_pk, l)
+get_pks = lambda l: [get_pk(i) for i in l]
 
 
 class TrekTestCase(TestCase):
