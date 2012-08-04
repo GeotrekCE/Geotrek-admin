@@ -19,8 +19,8 @@ class PathForm(ModelForm):
 
     reverse_geom = forms.BooleanField(
            required=False,
-           label = _("Reverse geometry"),
-           help_text = _("The geometry will be reversed once saved"),
+           label = _("Reverse path"),
+           help_text = _("The path will be reversed once saved"),
        )
 
     helper = FormHelper()
@@ -35,10 +35,11 @@ class PathForm(ModelForm):
             'networks',
             'usages',
             'valid',
-            'reverse_geom',
+            
             css_class="span4",
         ),
         Div('geom',
+            'reverse_geom',
             css_class="span7",),
         FormActions(
             Submit('cancel', 'Cancel'),
