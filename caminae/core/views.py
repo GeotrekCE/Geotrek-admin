@@ -82,7 +82,7 @@ class PathAjaxList(JSONListView):
         data_table_rows = []
         for path in qs:
             data_table_rows.append((
-                u'<a href="%s" >%s</a>' % (path.get_detail_url(), path),
+                u'<a data-pk="%s" href="%s" >%s</a>' % (path.pk, path.get_detail_url(), path),
                 path.date_update,
                 path.length,
                 path.trail.name if path.trail else _("None")
