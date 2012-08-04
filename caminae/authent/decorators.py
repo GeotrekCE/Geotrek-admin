@@ -61,6 +61,9 @@ def same_structure_required(redirect_to):
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(self, request, *args, **kwargs):
             result = view_func(self, request, *args, **kwargs)
+            # Staff is always allowed
+            if request.user.is_staff:
+                return result
             obj = self.get_object()
             if obj.same_structure(request.user):
                 return result
