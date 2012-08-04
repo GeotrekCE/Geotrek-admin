@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, Div
+from crispy_forms.layout import Layout, Field, Submit, Div, Button
 from crispy_forms.bootstrap import FormActions
 
 from .models import Path
@@ -42,7 +42,7 @@ class PathForm(ModelForm):
             'reverse_geom',
             css_class="span7",),
         FormActions(
-            Submit('cancel', 'Cancel'),
+            Button('cancel', _('Cancel'), ),
             Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
             css_class="form-actions span11",
         )

@@ -14,7 +14,9 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this._objects = {};
         // Hold the currently added layers (subset of _objects)
         this._current_objects = {};
+
         this.spinner = null;
+        this.rtree = new RTree();
 
         var onFeatureParse = function (geojson, layer) {
             this._mapObjects(geojson, layer);
@@ -48,10 +50,22 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         }
     },
 
+    _rtbounds: function (bounds) {
+        return {x: bounds.getSouthWest().lng,
+                y: bounds.getSouthWest().lat,
+                w: bounds.getSouthEast().lng - bounds.getSouthWest().lng,
+                h: bounds.getNorthWest().lat - bounds.getSouthWest().lat};
+    },
+
     _mapObjects: function (geojson, layer) {
         var pk = geojson.properties.pk
         this._objects[pk] = this._current_objects[pk] = layer;
+        
+        // Spatial indexing
+        var bounds = layer.getBounds();
+        this.rtree.insert(this._rtbounds(bounds), layer);
 
+        // Highlight on mouse over
         layer.on('mouseover', L.Util.bind(function (e) {
             this.highlight(pk);
         }, this));
@@ -81,6 +95,11 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         return this._objects[pk];
     },
 
+    search: function (bounds) {
+        var rtbounds = this._rtbounds(bounds);
+        return this.rtree.search(rtbounds);
+    },
+    
     // Show all layers matching the pks
     updateFromPks: function(pks) {
         var self = this
@@ -153,3 +172,114 @@ Caminae.getWKT = function(layer) {
     }
     return wkt;
 };
+
+
+L.Control.Information = L.Control.extend({
+    options: {
+        position: 'bottomright',
+    },
+
+    onAdd: function (map) {
+        this._container = L.DomUtil.create('div', 'leaflet-control-attribution');
+        L.DomEvent.disableClickPropagation(this._container);
+
+        map.on('layeradd', this._onLayerAdd, this)
+           .on('layerremove', this._onLayerRemove, this);
+
+        return this._container;
+    },
+
+    onRemove: function (map) {
+        map.off('layeradd', this._onLayerAdd)
+           .off('layerremove', this._onLayerRemove);
+
+    },
+
+    _onLayerAdd: function (e) {
+        e.layer.on('info', L.Util.bind(function (ei) {
+            this._container.innerHTML = ei.info;
+        }, this));
+    },
+
+    _onLayerRemove: function (e) {
+        e.layer.off('info');
+    }
+});
+
+
+L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
+    SNAP_DISTANCE: 15,
+    
+    initialize: function (poly, options) {
+        L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
+        this._snaplist = [];
+    },
+
+    setSnapList: function (l) {
+        this._snaplist = l;
+        this._markerGroup.eachLayer(L.Util.bind(function (marker) {
+            var closest = this._closest(marker),
+                chosen = closest[0],
+                point = closest[1];
+            if (point &&
+                point.lat == marker.getLatLng().lat &&
+                point.lng == marker.getLatLng().lng) {
+                $(marker._icon).addClass('marker-snapped');
+            }
+        }, this));
+    },
+
+    distance: function (latlng1, latlng2) {
+        return this._poly._map.latLngToLayerPoint(latlng1).distanceTo(this._poly._map.latLngToLayerPoint(latlng2));
+    },
+
+    _closest: function (marker) {
+        var mindist = Number.MAX_VALUE,
+             chosen = null,
+             point = null;
+        // TODO: snap also between two points
+        for (var i = 0; i < this._snaplist.length; i++) {
+            var object = this._snaplist[i],
+                lls = object.getLatLngs();
+            
+            for (var j = 0; j < lls.length; j++) {
+                var ll = lls[j];
+                var distance = this.distance(ll, marker.getLatLng());
+                if (distance < this.SNAP_DISTANCE && distance < mindist) {
+                    mindist = distance;
+                    chosen = object;
+                    point = ll;
+                }
+            }
+        }
+        return [chosen, point];
+    },
+
+    _snapMarker: function (e) {
+        var marker = e.target
+        var closest = this._closest(marker),
+            chosen = closest[0],
+            point = closest[1];
+        if (chosen) {
+            marker.setLatLng(point);
+            if (marker.snap != chosen) {
+                marker.snap = chosen;
+                $(marker._icon).addClass('marker-snapped');
+                this._poly.fire('snap', {object:chosen, marker: marker, location: point});
+            }
+        }
+        else {
+            if (marker.snap) {
+                $(marker._icon).removeClass('marker-snapped');
+                this._poly.fire('unsnap', {object:marker.snap, marker: marker});
+            }
+            marker.snap = null;
+        }
+    },
+
+    _createMarker: function (latlng, index) {
+        var marker = L.Handler.PolyEdit.prototype._createMarker.call(this, latlng, index);
+        marker.on('move', this._snapMarker, this);
+        return marker;
+    },
+});

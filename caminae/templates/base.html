@@ -7,18 +7,10 @@
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "style.css" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
-    <script src="{% static "js/jquery.js" %}"></script>
     
     {% block extrahead %}
     {% endblock extrahead %}
-
-    <script type="text/javascript">
-        var hideMessages = function () {
-            // Fade out success/infos messages
-            $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
-        }
-        window.addEventListener("load", hideMessages);
-    </script>
+    
     {% endblock head %}
 </head>
 <body>
@@ -60,6 +52,15 @@
     {% endblock body %}
 
     {% block extrabody %}
+    <script src="{% static "js/jquery.js" %}"></script>
+    
+    <script type="text/javascript">
+        var hideMessages = function () {
+            // Fade out success/infos messages
+            $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
+        }
+        $().load(hideMessages);
+    </script>
     {% endblock extrabody %}
 </body>
 </html>

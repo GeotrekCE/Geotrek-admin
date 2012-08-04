@@ -32,5 +32,7 @@
     {{ block.super }}
     <script type="text/javascript">
         var object_pk = '{{ path.pk }}';
+        
+        $('#button-id-cancel').click(function (){ window.location = '{% url core:path_list %}';});
     </script>
 {% endblock extrabody %}

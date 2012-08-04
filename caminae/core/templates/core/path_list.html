@@ -47,6 +47,16 @@
 
     <script>
         function mainmapInit(mainmap) {
+            mainmap.removeControl(mainmap.attributionControl);
+            
+            {% if DEBUG %}
+            mainmap.on('viewreset moveend', function () {
+                var n = objectsLayer.search(mainmap.getBounds()).length;
+                objectsLayer.fire('info', {info : n + ' objects shown'});
+            });
+            mainmap.addControl(new L.Control.Information());
+            {% endif %}
+            
             var getUrl = function (geojson, layer) {
                 //TODO use nice JS url rewriting
                 return "{% url core:path_detail 0 %}".replace('0', geojson.properties.pk);

@@ -35,6 +35,7 @@ function {{ module }}Init(map) {
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
         onEachFeature: function (feature, layer) {
+            layer.editing = new L.Handler.SnappedEdit(layer);
             layer.editing.enable();
             layer.on('edit', function (e) {
                 $('#{{ attrs.id }}').val(Caminae.getWKT(e.target));
@@ -42,5 +43,16 @@ function {{ module }}Init(map) {
         }
     });
     map.addLayer(objectLayer);
+    
+    var refreshSnapList = function () {
+        if (map.getZoom() > 12) {
+            var guides = objectsLayer.search(map.getBounds());
+            objectLayer.eachLayer(function (l) {
+                l.editing.setSnapList(guides);
+            });
+        }
+    };
+    objectsLayer.on('load', refreshSnapList);
+    map.on('viewreset moveend', refreshSnapList);
 }
 </script>
