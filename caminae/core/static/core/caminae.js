@@ -2,6 +2,11 @@ if (!Caminae) var Caminae = {};
 
 
 Caminae.ObjectsLayer = L.GeoJSON.extend({
+    COLOR: 'blue',
+    HIGHLIGHT: 'red',
+    WEIGHT: 2,
+    OPACITY: 0.8,
+    
     includes: L.Mixin.Events,
 
     initialize: function (geojson, options) {
@@ -18,22 +23,48 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         if (!options) options = {};
         this._onEachFeature = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
+        
+        if (!options.style) {
+            options.style = function (geojson) {
+                return { 
+                    // TODO: fucking JS
+                    //'color': Caminae.ObjectsLayer.COLOR,
+                    //'opacity': Caminae.ObjectsLayer.OPACITY,
+                    //'weight': Caminae.ObjectsLayer.WEIGHT,
+                    'weight': 2
+                }
+            };
+        }
 
-        var url = null;
+        var dataurl = null;
         if (typeof(geojson) == 'string') {
-            url = geojson;
+            dataurl = geojson;
             geojson = null;
         }
         L.GeoJSON.prototype.initialize.call(this, geojson, options);
 
-        if (url) {
-            this.load(url);
+        if (dataurl) {
+            this.load(dataurl);
         }
     },
 
     _mapObjects: function (geojson, layer) {
         var pk = geojson.properties.pk
         this._objects[pk] = this._current_objects[pk] = layer;
+
+        layer.on('mouseover', L.Util.bind(function (e) {
+            this.highlight(pk);
+        }, this));
+        layer.on('mouseout', L.Util.bind(function (e) {
+            this.highlight(pk, false);
+        }, this));
+        
+        // Optionnaly make them clickable
+        if (this.options.objectUrl) {
+            layer.on('click', L.Util.bind(function (e) {
+                window.location = this.options.objectUrl(geojson, layer);
+            }, this));
+        }
     },
 
     load: function (url) {
@@ -68,7 +99,8 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
                 delete self._current_objects[to_add_pk]
             } else {
                 to_add_layer = new_objects[to_add_pk] = self._objects[to_add_pk];
-                self.addLayer(to_add_layer);
+                // list can be ready before map, on first load
+                if (to_add_layer) self.addLayer(to_add_layer);
             }
         });
 
@@ -80,9 +112,16 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         self._current_objects = new_objects;
     },
 
-    highlight: function (pk) {
+    highlight: function (pk, on) {
+        var off = false;
+        if (arguments.length == 2)
+            off = !on;
         var l = this.getLayer(pk);
-        l.setStyle({'color': 'red'});
+        if (l) l.setStyle({
+            'opacity': off ? 0.8 : 1.0,
+            'color': off ? 'blue' : 'red',
+            'weight': off ? 2 : 5,
+        });
     },
 });
 
@@ -96,17 +135,21 @@ Caminae.getWKT = function(layer) {
         }
         return ("(" + String(wkt) + ")");
     };
+    var coords = '()';
+    if(layer.getLatLng) {
+        coords = coord2str(layer.getLatLng());
+    }
+    else if (layer.getLatLngs) {
+        coords = coord2str(layer.getLatLngs());
+    }
     var wkt = '';
-    if(layer.getLatLng) wkt += 'POINT'+coord2str(layer.getLatLng());
-    if(layer.getLatLngs) {
-        var coords = coord2str(layer.getLatLngs());
-        if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
-        else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
-        else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
-        else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
-        else {
-            wkt += 'LINESTRING'+coords;
-        }
+    if (layer instanceof L.Marker) wkt += 'POINT'+coords;
+    else if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
+    else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
+    else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
+    else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
+    else {
+        wkt += 'GEOMETRY'+coords;
     }
     return wkt;
 };

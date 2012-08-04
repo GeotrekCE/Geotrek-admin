@@ -1,6 +1,6 @@
 {% load maps leaflet_tags geojson_tags %}
 
-{% leaflet_map mapname %}
+{% leaflet_map mapname  fitextent=False %}
 <script type="text/javascript">
 function {{ mapname }}Init(map) {
     // Set map readonly
@@ -19,6 +19,7 @@ function {{ mapname }}Init(map) {
     });
     map.addLayer(objectLayer);
     map.fitBounds(new L.LatLngBounds({{ object|latlngbounds }}));
+    map.addControl(new L.Control.Scale());
     
     var objectsLayer = new Caminae.ObjectsLayer(null, {
         style: {weight: 2, clickable: false}

@@ -1,6 +1,6 @@
 {% load maps leaflet_tags geojson_tags %}
 
-{% leaflet_map module %}
+{% leaflet_map module fitextent=False %}
 <style type="text/css">
     {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>
@@ -15,11 +15,18 @@ function {{ module }}Init(map) {
     var objectBounds = {{ field|latlngbounds }};
     if (objectBounds) {
         map.fitBounds(new L.LatLngBounds(objectBounds));
+        map.addControl(new L.Control.ResetView(objectBounds));
+        map.addControl(new L.Control.Scale());
     }
     
     // Start loading all objects, readonly
     var objectsLayer = new Caminae.ObjectsLayer(null, {
-        style: {weight: 2, clickable: false}
+        style: {weight: 2, clickable: false},
+        filter: function (geojson) {
+            if (object_pk && geojson.properties && geojson.properties.pk) {
+                return geojson.properties.pk != object_pk;
+            }
+        }
     });
     map.addLayer(objectsLayer);
     objectsLayer.load("{% url core:layer_path %}");
@@ -28,8 +35,7 @@ function {{ module }}Init(map) {
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
         onEachFeature: function (feature, layer) {
-            // Wait for view load. Due to https://github.com/CloudMade/Leaflet/issues/509
-            setTimeout(layer.editing.enable.bind(layer.editing), 1000);
+            layer.editing.enable();
             layer.on('edit', function (e) {
                 $('#{{ attrs.id }}').val(Caminae.getWKT(e.target));
             });

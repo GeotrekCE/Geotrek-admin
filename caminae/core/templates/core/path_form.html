@@ -9,7 +9,7 @@
 {% endblock extrahead %}
 
 
-{% block mainpanel %}
+{% block mainpanel %}    
     <div class="span11">
         <h1>{% if path %}
             {% trans "Edit" %} {{ path }}
@@ -27,3 +27,10 @@
         {% crispy form %}
     </div>
 {% endblock mainpanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var object_pk = '{{ path.pk }}';
+    </script>
+{% endblock extrabody %}

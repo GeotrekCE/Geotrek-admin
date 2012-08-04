@@ -47,14 +47,15 @@
 
     <script>
         function mainmapInit(mainmap) {
+            var getUrl = function (geojson, layer) {
+                //TODO use nice JS url rewriting
+                return "{% url core:path_detail 0 %}".replace('0', geojson.properties.pk);
+            };
+            
             var objectsLayer = new Caminae.ObjectsLayer(null, {
-                onEachFeature: function (feature, layer) {
-                    layer.on('click', function (e) {
-                        //TODO use nice JS url rewriting
-                        window.location = "{% url core:path_detail 0 %}".replace('0', feature.properties.pk);
-                    });
-                }
+                objectUrl: getUrl
             });
+            
             mainmap.addLayer(objectsLayer);
             objectsLayer.load("{% url core:layer_path %}");
 
@@ -81,8 +82,23 @@
             var dt = JQDataTable.init(
                   ajax_list
                 , filterform.attr('action')
-                , { "sAjaxDataProp": extract_data_and_pks }
+                , { "sAjaxDataProp": extract_data_and_pks
+                ,   "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                        $(nRow).hover(function(){
+                            var pk = $(aData[0]).attr('data-pk');
+                            objectsLayer.highlight(pk);
+                        },
+                        function (){
+                            var pk = $(aData[0]).attr('data-pk');
+                            objectsLayer.highlight(pk, false);
+                        });
+                    }
+                }
             );
+            
+            // Hardcore customizations
+            $('li.next a').html($('li.next a').html().replace('Next', ''));
+            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
             // On submit, trigger an ajax request to the JSON view
             // Update the ajax list and the map
