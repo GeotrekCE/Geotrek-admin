@@ -1,10 +1,11 @@
 {% extends "core/base.html" %}
-{% load i18n leaflet_tags field_verbose_name maps %}
+{% load i18n static leaflet_tags field_verbose_name maps %}
 
 
 {% block extrahead %}
     {{ block.super }}
     <!-- extra-js-css -->
+	<script type="text/javascript" src="{% static "js/jquery.sparkline.js" %}" />
 {% endblock extrahead %}
 
 
@@ -92,18 +93,19 @@
 
     <div class="span7">
         <h2>{% trans "Altitude profile" %}</h2>
-        <table class="table-striped table-bordered table">
-            <tr>
-                <th>{% trans "Point" %}</th>
-                {% for alt in profile %}<td>{{ forloop.counter }}</td>{% endfor %}
-            </tr><tr>
-                <th>{% trans "Distance (m)" %}</th>
-                {% for alt in profile %}<td>{{ alt.0|floatformat:1 }}</td>{% endfor %}
-            </tr><tr>
-                <th>{% trans "Elevation (m)" %}</th>
-                {% for alt in profile %}<td>{{ alt.1 }}</td>{% endfor %}
-            </tr>
-        </table>
-    </div>
+        <script> type="text/javascript">
+			$(function() {
+				$.getJSON("{% url core:path_profile path.pk %}", function(data) {
+					$('.dynamicsparkline').sparkline(data.profile, {width: 400, height: 200});
+				});
+			});
+		</script>
+		<p>Altitude (m)</p>
+		<div class="dynamicsparkline">Loading..</div>
+	</div>
+
+	
 
 {% endblock mainpanel %}
+
+
