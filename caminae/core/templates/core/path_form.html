@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% load i18n crispy_forms_tags leaflet_tags %}
+{% load i18n crispy_forms_tags leaflet_tags static %}
 
 {% block extrahead %}
     {{ block.super }}
@@ -29,8 +29,6 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-        var object_pk = '{{ path.pk }}';
-        
         $('#button-id-cancel').click(function (){ window.location = '{% url core:path_list %}';});
     </script>
 {% endblock extrabody %}
