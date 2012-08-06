@@ -48,11 +48,13 @@ class PathLayer(GeoJSONLayerView):
 
 class ModuleList(ListView):
     """
+    
+    A generic view list web page.
+    
     model = None
     filterform = None
     fields = []
     """
-
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ModuleList, self).dispatch(*args, **kwargs)
@@ -104,6 +106,20 @@ class ModuleJsonList(JSONResponseMixin, ModuleList):
         return context
 
 
+class ModuleDetail(DetailView):
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ModuleDetail, self).dispatch(*args, **kwargs)
+
+    def can_edit(self):
+        return False
+
+    def get_context_data(self, **kwargs):
+        context = super(ModuleDetail, self).get_context_data(**kwargs)
+        context['can_edit'] = self.can_edit()
+        return context
+
+
 class PathList(ModuleList):
     model = Path
     filterform = PathFilter
@@ -114,21 +130,16 @@ class PathJsonList(ModuleJsonList, PathList):
     pass
 
 
-
-class PathDetail(DetailView):
+class PathDetail(ModuleDetail):
     model = Path
-    context_object_name = 'path'
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(PathDetail, self).dispatch(*args, **kwargs)
+    def can_edit(self):
+        return self.request.user.profile.is_path_manager and \
+               self.get_object().same_structure(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(PathDetail, self).get_context_data(**kwargs)
-        p = self.get_object()
-        context['profile'] = p.get_elevation_profile()
-        context['can_edit'] = self.request.user.profile.is_path_manager and \
-                              p.same_structure(self.request.user)
+        context['profile'] = self.get_object().get_elevation_profile()
         return context
 
 
@@ -195,5 +206,6 @@ def get_graph_json(request):
     json_graph = json_django_dumps(graph)
 
     return HttpJSONResponse(json_graph)
+
 
 home = PathList.as_view()

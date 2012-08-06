@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load i18n static field_verbose_name maps %}
+
+{% block mainpanel %}
+    <div class="span7">
+    {% block detailspanel %}
+        <h2>{{ object }}
+            {% if can_edit %}
+                <a class="btn btn-primary" href="{{ object.get_update_url }}">{% trans "Update" %}</a>
+            {% else %}
+                <span class="btn disabled">{% trans "Update" %}</span>
+            {% endif %}
+        </h2>
+    {% endblock detailspanel %}
+    </div><!-- span7 -->
+
+    <div class="span4">
+        {% block mappanel %}
+        {{ path|fieldmap:"geom" }}
+        {% endblock mappanel %}
+    </div><!-- span4 -->
+{% endblock mainpanel %}

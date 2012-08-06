@@ -1,24 +1,15 @@
-{% extends "core/base.html" %}
-{% load i18n static leaflet_tags field_verbose_name maps %}
+{% extends "core/module_detail.html" %}
+{% load i18n static field_verbose_name %}
 
 
 {% block extrahead %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static "js/jquery.sparkline.js" %}" />
+    <script type="text/javascript" src="{% static "js/jquery.sparkline.js" %}"></script>
 {% endblock extrahead %}
 
 
-{% block mainpanel %}
-    <div class="span7">
-
-    <h2>{{ path }}
-        {% if can_edit %}
-            <a class="btn btn-primary" href="{{ path.get_update_url }}">{% trans "Update" %}</a>
-        {% else %}
-            <span class="btn disabled">{% trans "Update" %}</span>
-        {% endif %}
-    </h2>
-    
+{% block detailspanel %}
+    {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ path|verbose:"valid" }}</th>
@@ -37,7 +28,7 @@
             <td>{{ path.date_update }}</td>
         </tr><tr>
             <th>{{ path|verbose:"length" }}</th>
-            <td>{{ path.length }}</td>
+            <td>{{ path.length|stringformat:".2f" }} {% trans "meters" %}</td>
         </tr><tr>
             <th>{{ path|verbose:"ascent" }}</th>
             <td>{{ path.ascent }}</td>
@@ -83,23 +74,19 @@
             </td>
         </tr>
     </table>
+{% endblock detailspanel %}
 
-    </div> <!-- span7 -->
 
-    <div class="span4">
-        {{ path|fieldmap:"geom" }}
-    </div> <!-- span4 -->
-
-    <div class="span7">
-        <h2>{% trans "Altitude profile" %}</h2>
-        <script> type="text/javascript">
-            $(function() {
-                $.getJSON("{% url core:path_profile path.pk %}", function(data) {
-                    $('.dynamicsparkline').sparkline(data.profile, {width: 400, height: 200});
-                });
+{% block mappanel %}
+    {{ block.super }}
+    <h2>{% trans "Altitude profile" %}</h2>
+    <script> type="text/javascript">
+        $(function() {
+            $.getJSON("{% url core:path_profile path.pk %}", function(data) {
+                $('.dynamicsparkline').sparkline(data.profile, {width: 400, height: 200});
             });
-        </script>
-        <p>Altitude (m)</p>
-        <div class="dynamicsparkline">Loading..</div>
-    </div>
-{% endblock mainpanel %}
+        });
+    </script>
+    <p>Altitude (m)</p>
+    <div class="dynamicsparkline">{% trans "Loading..." %}</div>
+{% endblock mappanel %}
