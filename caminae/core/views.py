@@ -120,6 +120,29 @@ class ModuleDetail(DetailView):
         return context
 
 
+class ModuleCreate(CreateView):
+    def form_valid(self, form):
+        messages.success(self.request, _("Created"))
+        return super(ModuleCreate, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _("Your form contains errors"))
+        return super(ModuleCreate, self).form_invalid(form)
+
+    def get_success_url(self):
+        return self.get_object().get_detail_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(ModuleCreate, self).get_context_data(**kwargs)
+        name = self.model._meta.verbose_name
+        if hasattr(name, '_proxy____args'):
+            name = name._proxy____args[0]  # untranslated
+        context['object_type'] = name.lower()
+        # Whole "add" phrase translatable, but not catched  by makemessages
+        context['add_msg'] = _("Add a new %s" % context['object_type'])
+        return context
+
+
 class PathList(ModuleList):
     model = Path
     filterform = PathFilter
@@ -143,25 +166,13 @@ class PathDetail(ModuleDetail):
         return context
 
 
-class PathCreate(CreateView):
+class PathCreate(ModuleCreate):
     model = Path
     form_class = PathForm
-    context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_list'))
     def dispatch(self, *args, **kwargs):
         return super(PathCreate, self).dispatch(*args, **kwargs)
-
-    def form_valid(self, form):
-        messages.success(self.request, _("Created"))
-        return super(PathCreate, self).form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, _("You form contains errors"))
-        return super(PathCreate, self).form_invalid(form)
-
-    def get_success_url(self):
-        return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
 
 class PathUpdate(UpdateView):

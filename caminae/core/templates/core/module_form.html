@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+{% load i18n crispy_forms_tags leaflet_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ form.media }}
+{% endblock extrahead %}
+
+
+{% block mainpanel %}    
+    <div class="span11">
+        <h1>{% if object %}
+            {% trans "Edit" %} {{ object }}
+            <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
+        {% else %}
+            {{ add_msg }}
+        {% endif %}</h1>
+        
+        <div>&nbsp;</div>
+        
+        {% crispy form %}
+    </div>
+{% endblock mainpanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var object_pk = '{{ object.pk }}';
+        
+        $('#button-id-cancel').click(function (){ window.location = '{{ object.get_list_url }}';});
+    </script>
+{% endblock extrabody %}
