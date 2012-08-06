@@ -333,3 +333,20 @@ Sprint 2 - Version 0.2.0
 * Lors de l'ajout d'un tronçon, l'utilisateur peut le dessiner sur la carte
 * Seul le mode linéaire est autorisé
 
+#56 - Snapper les tronçons lors de la saisie
+--------------------------------------------
+
+* Ouvrir l'édition d'une géomtrie
+* Bouger les point d'accroche, noter qu'ils s'attachent aux tronçons au deça
+  d'une certaine distance. Leur couleur change quand ils sont attachés.
+* À l'ouverture d'une géométrie existante, les point d'accroche attachés aux
+  tronçons sont colorés.
+
+:notes:
+
+    Le snap n'est disponible qu'à un certain niveau de zoom afin de garantir
+    une fluidité sur l'accroche. En effet, à chaque mouvement des point d'accroche,
+    les objets présents à l'écran doivent être itérés pour calculer les distances 
+    d'accroche. Un niveau de zoom élevé garanti un nombre restreint d'objets
+    affichés (<1000).
+

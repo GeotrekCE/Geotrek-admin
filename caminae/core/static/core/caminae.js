@@ -208,7 +208,8 @@ L.Control.Information = L.Control.extend({
 
 
 L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
-    SNAP_DISTANCE: 15,
+    SNAP_DISTANCE: 15,  // snap on marker move
+    TOLERANCE: 0.00005, // snap existing object
     
     initialize: function (poly, options) {
         L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
@@ -218,12 +219,13 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
     setSnapList: function (l) {
         this._snaplist = l;
         this._markerGroup.eachLayer(L.Util.bind(function (marker) {
+            // Mark as snap if any object of snaplist is already snapped !
             var closest = this._closest(marker),
                 chosen = closest[0],
                 point = closest[1];
             if (point &&
-                point.lat == marker.getLatLng().lat &&
-                point.lng == marker.getLatLng().lng) {
+                (Math.abs(point.lat - marker.getLatLng().lat) < this.TOLERANCE)  &&
+                (Math.abs(point.lng - marker.getLatLng().lng) < this.TOLERANCE)) {
                 $(marker._icon).addClass('marker-snapped');
             }
         }, this));
@@ -233,23 +235,60 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
         return this._poly._map.latLngToLayerPoint(latlng1).distanceTo(this._poly._map.latLngToLayerPoint(latlng2));
     },
 
+    distanceSegment: function (latlng, latlngA, latlngB) {
+        var p = this._poly._map.latLngToLayerPoint(latlng),
+           p1 = this._poly._map.latLngToLayerPoint(latlngA),
+           p2 = this._poly._map.latLngToLayerPoint(latlngB);
+        return L.LineUtil.pointToSegmentDistance(p, p1, p2);
+    },
+
+    latlngOnSegment: function (latlng, latlngA, latlngB) {
+        var p = this._poly._map.latLngToLayerPoint(latlng),
+           p1 = this._poly._map.latLngToLayerPoint(latlngA),
+           p2 = this._poly._map.latLngToLayerPoint(latlngB);
+           closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
+        return this._poly._map.layerPointToLatLng(closest);
+    },
+
     _closest: function (marker) {
         var mindist = Number.MAX_VALUE,
              chosen = null,
              point = null;
-        // TODO: snap also between two points
+        var n = this._snaplist.length;
+        // /!\ Careful with size of this list, iterated at every marker move!
+        if (n>1000) console.warn("Snap list is very big : " + n + " objects!");
+        
+        // Iterate the whole snaplist
         for (var i = 0; i < this._snaplist.length; i++) {
             var object = this._snaplist[i],
-                lls = object.getLatLngs();
-            
-            for (var j = 0; j < lls.length; j++) {
-                var ll = lls[j];
-                var distance = this.distance(ll, marker.getLatLng());
-                if (distance < this.SNAP_DISTANCE && distance < mindist) {
-                    mindist = distance;
-                    chosen = object;
-                    point = ll;
+                ll = null,
+                distance = Number.MAX_VALUE;
+            if (object.getLatLng) {
+                // Single dimension, snap on points
+                ll = object.getLatLng();
+                distance = this.distance(marker.getLatLng(), ll);
+            }
+            else {
+                // Iterate on line segments
+                var lls = object.getLatLngs(),
+                    segmentmindist = Number.MAX_VALUE;
+                // Keep the closest point of all segments
+                for (var j = 0; j < lls.length - 1; j++) {
+                    var p1 = lls[j],
+                        p2 = lls[j+1],
+                        d = this.distanceSegment(marker.getLatLng(), p1, p2);
+                    if (d < segmentmindist) {
+                        segmentmindist = d;
+                        ll = this.latlngOnSegment(marker.getLatLng(), p1, p2);
+                        distance = d;
+                    }
                 }
+            }
+            // Keep the closest point of all objects
+            if (distance < this.SNAP_DISTANCE && distance < mindist) {
+                mindist = distance;
+                chosen = object;
+                point = ll;
             }
         }
         return [chosen, point];
