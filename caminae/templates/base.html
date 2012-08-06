@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "style.css" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+    <script src="{% static "js/jquery.js" %}"></script>
     
     {% block extrahead %}
     {% endblock extrahead %}
@@ -52,8 +53,6 @@
     {% endblock body %}
 
     {% block extrabody %}
-    <script src="{% static "js/jquery.js" %}"></script>
-    
     <script type="text/javascript">
         var hideMessages = function () {
             // Fade out success/infos messages

@@ -4,6 +4,24 @@
 {% block extrahead %}
     {% leaflet_css %}
     {{ block.super }}
+
+    {% leaflet_js %}
+    <script src="{% static "js/spin.js" %}"></script>
+    <script src="{% static "js/rtree.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-dropdown.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-scrollspy.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tab.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tooltip.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-popover.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-button.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-collapse.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-carousel.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-typeahead.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "core/caminae.js" %}"></script>
 {% endblock extrahead %}
 
 {% block content %}
@@ -109,24 +127,3 @@
 
 {% endblock content %}
 
-
-{% block extrabody %}
-    {{ block.super }}
-    {% leaflet_js %}
-    <script src="{% static "js/spin.js" %}"></script>
-    <script src="{% static "js/rtree.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-dropdown.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-scrollspy.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-tab.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-tooltip.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-popover.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-button.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-collapse.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-carousel.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-typeahead.js" %}"></script>
-    
-    <script type="text/javascript" src="{% static "core/caminae.js" %}"></script>
-{% endblock extrabody %}

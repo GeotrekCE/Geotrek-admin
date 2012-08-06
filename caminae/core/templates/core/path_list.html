@@ -1,6 +1,12 @@
 {% extends "core/base.html" %}
 {% load i18n leaflet_tags %}
 
+{% block extrahead %}
+    {{ block.super }}
+
+    {% include "dataTables_template.html" %}
+{% endblock extrahead %}
+
 {% block mainmap %}
     {% leaflet_map "mainmap" %}
 {% endblock mainmap %}
@@ -42,8 +48,6 @@
 
 {% block extrabody %}
     {{ block.super }}
-
-    {% include "dataTables_template.html" %}
 
     <script>
         function mainmapInit(mainmap) {

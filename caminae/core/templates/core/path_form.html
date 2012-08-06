@@ -2,10 +2,8 @@
 {% load i18n crispy_forms_tags leaflet_tags %}
 
 {% block extrahead %}
-{{ block.super }}
-{{ form.media }}
-{% leaflet_js %}
-{% leaflet_css %}
+    {{ block.super }}
+    {{ form.media }}
 {% endblock extrahead %}
 
 
