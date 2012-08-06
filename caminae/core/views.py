@@ -175,26 +175,27 @@ class PathCreate(ModuleCreate):
         return super(PathCreate, self).dispatch(*args, **kwargs)
 
 
-class PathUpdate(UpdateView):
+class ModuleUpdate(UpdateView):
+    def form_valid(self, form):
+        messages.success(self.request, _("Saved"))
+        return super(ModuleUpdate, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _("Your form contains errors"))
+        return super(ModuleUpdate, self).form_invalid(form)
+
+    def get_success_url(self):
+        return self.get_object().get_detail_url()
+
+
+class PathUpdate(ModuleUpdate):
     model = Path
     form_class = PathForm
-    context_object_name = 'path'
 
     @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
-
-    def form_valid(self, form):
-        messages.success(self.request, _("Saved"))
-        return super(PathUpdate, self).form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, _("You form contains errors"))
-        return super(PathUpdate, self).form_invalid(form)
-
-    def get_success_url(self):
-        return reverse('core:path_detail', kwargs={'pk': self.object.pk})
 
 
 class PathDelete(DeleteView):
