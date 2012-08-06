@@ -143,6 +143,24 @@ class ModuleCreate(CreateView):
         return context
 
 
+class ModuleUpdate(UpdateView):
+    def form_valid(self, form):
+        messages.success(self.request, _("Saved"))
+        return super(ModuleUpdate, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _("Your form contains errors"))
+        return super(ModuleUpdate, self).form_invalid(form)
+
+    def get_success_url(self):
+        return self.get_object().get_detail_url()
+
+
+class ModuleDelete(DeleteView):
+    def get_success_url(self):
+        return self.model.get_list_url()
+
+
 class PathList(ModuleList):
     model = Path
     filterform = PathFilter
@@ -175,19 +193,6 @@ class PathCreate(ModuleCreate):
         return super(PathCreate, self).dispatch(*args, **kwargs)
 
 
-class ModuleUpdate(UpdateView):
-    def form_valid(self, form):
-        messages.success(self.request, _("Saved"))
-        return super(ModuleUpdate, self).form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, _("Your form contains errors"))
-        return super(ModuleUpdate, self).form_invalid(form)
-
-    def get_success_url(self):
-        return self.get_object().get_detail_url()
-
-
 class PathUpdate(ModuleUpdate):
     model = Path
     form_class = PathForm
@@ -198,10 +203,8 @@ class PathUpdate(ModuleUpdate):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
 
-class PathDelete(DeleteView):
+class PathDelete(ModuleDelete):
     model = Path
-    context_object_name = 'path'
-    success_url = reverse_lazy('core:path_list')
 
     @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
