@@ -34,6 +34,7 @@ release:
 
 unit_tests: bin/ clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
+	bin/develop update -f
 	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
 
 functional_tests:
