@@ -1,6 +1,6 @@
 {% load maps leaflet_tags geojson_tags %}
 
-{% leaflet_map module fitextent=False %}
+{% leaflet_map module fitextent=fitextent %}
 <style type="text/css">
     {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>

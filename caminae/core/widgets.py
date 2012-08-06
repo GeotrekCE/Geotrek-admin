@@ -29,6 +29,7 @@ class BaseMapWidget(forms.gis.BaseGeometryWidget):
         if value and not isinstance(value, basestring):
             value.transform(self.map_srid)
         context['field'] = value
+        context['fitextent'] = value is None
         return context
 
 
