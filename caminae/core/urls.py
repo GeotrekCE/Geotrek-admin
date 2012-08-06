@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 
 from .views import (
     PathLayer, PathList, PathDetail, PathCreate,
-    PathUpdate, PathDelete, PathAjaxList, ElevationProfile,
+    PathUpdate, PathDelete, PathJsonList, ElevationProfile,
     get_graph_json,
 )
 
@@ -20,6 +20,6 @@ urlpatterns += patterns('',
     url(r'^path/edit/(?P<pk>\d+)/$', PathUpdate.as_view(), name='path_update'),
     url(r'^path/delete/(?P<pk>\d+)$', PathDelete.as_view(), name='path_delete'),
 
-    url(r'^path/ajax_list/$', PathAjaxList.as_view(), name="path_ajax_list"),
+    url(r'^path/ajax_list/$', PathJsonList.as_view(), name="path_json_list"),
     url(r'^path/json_graph/$', get_graph_json, name="path_json_graph"),
 )

@@ -103,17 +103,29 @@ class Path(StructureRelated):
 
     # CRUD urls
 
+    @classmethod
     @models.permalink
-    def get_list_url(self):
+    def get_list_url(cls):
         return ('core:path_list',)
+
+    @classmethod
+    @models.permalink
+    def get_jsonlist_url(cls):
+        return ('core:path_json_list', )
+
+    @classmethod
+    @models.permalink
+    def get_add_url(cls):
+        return ('core:path_add', )
+
+    @classmethod
+    @models.permalink
+    def get_generic_detail_url(self):
+        return ('core:path_detail', [str(0)])
 
     @models.permalink
     def get_detail_url(self):
         return ('core:path_detail', [str(self.pk)])
-
-    @models.permalink
-    def get_add_url(self):
-        return ('core:path_add', )
 
     @models.permalink
     def get_update_url(self):
@@ -122,6 +134,16 @@ class Path(StructureRelated):
     @models.permalink
     def get_delete_url(self):
         return ('core:path_delete', [str(self.pk)])
+
+    # List view columns
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)
+
+    @property
+    def trail_display(self):
+        return self.trail.name if self.trail else _("None")
 
 
 class TopologyMixin(models.Model):

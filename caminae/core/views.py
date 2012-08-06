@@ -12,7 +12,7 @@ from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
-from caminae.common.views import JSONListView, JSONResponseMixin, json_django_dumps, HttpJSONResponse
+from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
@@ -46,7 +46,30 @@ class PathLayer(GeoJSONLayerView):
         return super(PathLayer, self).dispatch(*args, **kwargs)
 
 
-class PathAjaxList(JSONListView):
+class ModuleList(ListView):
+    """
+    model = None
+    filterform = None
+    fields = []
+    """
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ModuleList, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ModuleList, self).get_context_data(**kwargs)
+        context.update(**dict(
+            model=self.model,
+            datatables_ajax_url=self.model.get_jsonlist_url(),
+            filterform=self.filterform(None, queryset=self.get_queryset()),
+            fields=self.fields,
+            generic_detail_url=self.model.get_generic_detail_url(),
+        ))
+        return context
+
+
+class ModuleJsonList(JSONResponseMixin, ModuleList):
     """
     Return path related datas (belonging to the current user) as a JSON
     that will populate a dataTable.
@@ -54,64 +77,42 @@ class PathAjaxList(JSONListView):
     TODO: provide filters, pagination, sorting etc.
           At the moment everything (except the first listing) is done client side
     """
-    model = Path
     # aaData is the key looked up by dataTables
     data_table_name = 'aaData'
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(PathAjaxList, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
         override the most important part of JSONListView... (paginator)
         """
         queryset = kwargs.pop('object_list')
-        context = self.update_queryset(queryset)
-
-        return context
-
-    def update_queryset(self, _qs):
-        # do not use given queryset for now
-        qs = self.model.objects.all()
-        qs = PathFilter(self.request.GET or None, queryset=qs)
-
-        # This must match columns defined in core/path_list.html template
-
-        map_path_pk = []
+        # Filter queryset from possible serialized form
+        queryset = self.filterform(self.request.GET or None, queryset=queryset)
+        # Build list with fields
+        map_obj_pk = []
         data_table_rows = []
-        for path in qs:
-            data_table_rows.append((
-                u'<a data-pk="%s" href="%s" >%s</a>' % (path.pk, path.get_detail_url(), path),
-                path.date_update,
-                path.length,
-                path.trail.name if path.trail else _("None")
-            ))
-            map_path_pk.append(path.pk)
+        for obj in queryset:
+            columns = []
+            for field in self.fields:
+                columns.append(getattr(obj, field + '_display', getattr(obj, field)))
+            data_table_rows.append(columns)
+            map_obj_pk.append(obj.pk)
 
         context = {
             self.data_table_name: data_table_rows,
-            'map_path_pk': map_path_pk,
+            'map_obj_pk': map_obj_pk,
         }
-
         return context
 
 
-class PathList(ListView):
+class PathList(ModuleList):
     model = Path
-    context_object_name = 'path_list'
+    filterform = PathFilter
+    fields = ['name', 'date_update', 'length', 'trail']
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(PathList, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(PathList, self).get_context_data(**kwargs)
-        context.update(**dict(
-            datatables_ajax_url=reverse('core:path_ajax_list'),
-            filterform = PathFilter(None, queryset=Path.objects.all())
-        ))
-        return context
+class PathJsonList(ModuleJsonList, PathList):
+    pass
+
 
 
 class PathDetail(DetailView):
