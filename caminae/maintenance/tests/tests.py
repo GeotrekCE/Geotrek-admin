@@ -34,19 +34,29 @@ class ViewsTest(TestCase):
             response = self.client.post(url, bad_data)
             self.assertEqual(response.status_code, 200)
             self.assertFormError(response, 'form', 'geom', u'Acune valeur g\xe9om\xe9trique fournie.')
-            
+
             good_data = {
-                'name': '',
+                'name': 'test',
                 'structure': i1.structure.pk,
                 'stake': '',
-                'trail': '',
+                'disorders': 1,
                 'comments': '',
-                'datasource': '',
-                'valid': 'on',
+                'slope': 0,
+                'area': 0,
+                'subcontract_cost': 0.0,
+                'stake': i1.stake.pk,
+                'height': 0.0,
+                'project': '',
+                'width': 0.0,
+                'length': 0.0,
+                'status': i1.status.pk,
+                'heliport_cost': 0.0,
+                'material_cost': 0.0,
+                'typology': i1.typology.pk,
                 'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
             }
             response = self.client.post(url, good_data)
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 302)  # success, redirects to detail view
 
         response = self.client.get(i1.get_delete_url())
         self.assertEqual(response.status_code, 200)
