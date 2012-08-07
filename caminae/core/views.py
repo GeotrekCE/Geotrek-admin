@@ -25,7 +25,7 @@ from . import graph as graph_lib
 def latest_updated_path_date(*args, **kwargs):
     # TODO : generic for all models
     try:
-        return Path.objects.latest("date_update")
+        return Path.objects.latest("date_update").date_update
     except Path.DoesNotExist:
         dt = datetime.datetime(datetime.MAXYEAR, 12, 31)
         return dt.replace(tzinfo=utc)
