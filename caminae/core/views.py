@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib import messages
 from django.views.decorators.http import condition
-from django.core.cache import cache
+from django.core.cache import get_cache
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -23,12 +23,10 @@ from . import graph as graph_lib
 
 
 def latest_updated_path_date(*args, **kwargs):
-    # TODO : generic for all models
     try:
         return Path.objects.latest("date_update").date_update
     except Path.DoesNotExist:
-        dt = datetime.datetime(datetime.MAXYEAR, 12, 31)
-        return dt.replace(tzinfo=utc)
+        return None
 
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -39,12 +37,14 @@ class MapEntityLayer(GeoJSONLayerView):
         return super(MapEntityLayer, self).dispatch(*args, **kwargs)
  
     def render_to_response(self, context, **response_kwargs):
+        cache = get_cache('fat')
         key = 'path_layer_json'
+
         result = cache.get(key)
 
         latest = latest_updated_path_date()
 
-        if result:
+        if result and latest:
             cache_latest, content = result
             # still valid
             if cache_latest >= latest:
