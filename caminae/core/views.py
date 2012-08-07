@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic.detail import DetailView, BaseDetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib import messages
+from django.views.decorators.http import condition
+from django.core.cache import cache
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -33,6 +34,9 @@ class ElevationProfile(JSONResponseMixin, BaseDetailView):
         return {'profile': p.get_elevation_profile()}
 
 
+def latest_updated_path_date(*args, **kwargs):
+    return Path.objects.latest("date_update").date_update
+
 class PathLayer(GeoJSONLayerView):
     model = Path
     fields = ('name', 'valid',)
@@ -40,10 +44,25 @@ class PathLayer(GeoJSONLayerView):
     # precision = 4
     # simplify = 0.5
 
-    @method_decorator(cache_page(60, cache="fat"))  #TODO: use settings
-    @method_decorator(cache_control(max_age=3600*24))   #TODO: use settings
+    @method_decorator(condition(last_modified_func=latest_updated_path_date))
     def dispatch(self, *args, **kwargs):
         return super(PathLayer, self).dispatch(*args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        key = 'path_layer_json'
+        result = cache.get(key)
+
+        latest = latest_updated_path_date()
+
+        if result:
+            cache_latest, content = result
+            # still valid
+            if cache_latest >= latest:
+                return self.response_class(content=content, **response_kwargs)
+
+        response = super(PathLayer, self).render_to_response(context, **response_kwargs)
+        cache.set(key, (latest, response.content))
+        return response
 
 
 class PathAjaxList(JSONListView):
