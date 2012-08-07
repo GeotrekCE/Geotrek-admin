@@ -26,13 +26,13 @@ class PathFilterTest(TestCase):
             return { 'length_0': range_end, 'length_1': range_start }
 
         def test_response_content(length_range, queryset):
-            response = self.client.get(reverse('core:path_ajax_list'), data=create_form_params(*length_range))
+            response = self.client.get(reverse('core:path_json_list'), data=create_form_params(*length_range))
             self.assertEquals(response.status_code, 200)
-            # We check the 'map_path_pk' json attribute that should contain the paths' pk (used by map)
+            # We check the 'map_obj_pk' json attribute that should contain the paths' pk (used by map)
             json = simplejson.loads(response.content)
             # The JSON should only contain filtered paths
             self.assertListEqual(
-                    json['map_path_pk'],
+                    json['map_obj_pk'],
                     list(queryset.values_list('pk', flat=True)),
             )
 
