@@ -80,27 +80,25 @@
                     <h2>Module 1</h2> -->
             
                     <!-- Zone des boutons -->
-                    <div class="row-fluid">
+                    <div class="btn-toolbar">
                         {% block mainactions %}
                         {% endblock mainactions %}
-                        
-                        <div class="pull-right">
-                            <p>
-                                <i class="icon-download-alt"></i> 
-                                Exporter la liste
-                            </p>
-                            <p>
-                                <button class="btn">Type1</button>    
-                                <button class="btn">Type2</button>    
-                                <button class="btn">Type3</button>    
-                            </p>
-                        </div>
-                    
                     </div> <!--/row-->
                     
                     {% block mainlist %}
                     {% endblock mainlist %}
-                    
+
+                    <div class="pull-right">
+                        <p>
+                            <i class="icon-download-alt"></i> 
+                            Exporter la liste
+                        </p>
+                        <p>
+                            <button class="btn">Type1</button>    
+                            <button class="btn">Type2</button>    
+                            <button class="btn">Type3</button>    
+                        </p>
+                    </div>
                 </div><!--/span-->
 
                 <!-- Zone de carte -->
@@ -126,4 +124,3 @@
         </div><!--/container-->
 
 {% endblock content %}
-

@@ -3,8 +3,19 @@
 
 {% block mainactions %}
     {% if user.profile.is_path_manager %}
-    <a class="btn" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    <a class="btn btn-success" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
     {% else %}
     <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
     {% endif %}
+    <div class="btn-group">
+      <button class="btn">{% trans "Manage land" %}</button>
+      <button class="btn dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="disabled" href="#">{% trans "Competence zones" %}</a></li>
+        <li><a class="disabled" href="#">{% trans "Signage management" %}</a></li>
+      </ul>
+    </div>
+    
 {% endblock mainactions %}
