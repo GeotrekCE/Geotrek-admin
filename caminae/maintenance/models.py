@@ -8,24 +8,22 @@ from caminae.common.models import Organism
 
 
 class Intervention(ModuleModelMixin, StructureRelated):
-
-    intervention_id = models.IntegerField(primary_key=True)
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(verbose_name=_(u"Date"))
-    comment = models.TextField(verbose_name=_(u"Comments"))
+    date = models.DateField(auto_now_add=True, verbose_name=_(u"Date"))
+    comment = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
-    length = models.FloatField(verbose_name=_(u"Length"))
-    width = models.FloatField(verbose_name=_(u"Width"))
-    height = models.FloatField(verbose_name=_(u"Height"))
-    area = models.IntegerField(verbose_name=_(u"Area"))
-    slope = models.IntegerField(verbose_name=_(u"Slope"))
+    length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
+    width = models.FloatField(default=0.0, verbose_name=_(u"Width"))
+    height = models.FloatField(default=0.0, verbose_name=_(u"Height"))
+    area = models.IntegerField(default=0, verbose_name=_(u"Area"))
+    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"))
 
     ## Costs ##
-    material_cost = models.FloatField(verbose_name=_(u"Material cost"))
-    heliport_cost = models.FloatField(verbose_name=_(u"Heliport cost"))
-    subcontract_cost = models.FloatField(verbose_name=_(u"Subcontract cost"))
+    material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"))
+    heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"))
+    subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"))
 
     #TODO: remove this --> abstract class
     insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)

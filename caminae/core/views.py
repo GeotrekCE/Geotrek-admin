@@ -2,7 +2,6 @@ import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse_lazy, reverse
 from django.utils.timezone import utc
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
