@@ -138,9 +138,6 @@ class MapEntityCreate(CreateView):
         messages.error(self.request, _("Your form contains errors"))
         return super(MapEntityCreate, self).form_invalid(form)
 
-    def get_success_url(self):
-        return self.get_object().get_detail_url()
-
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
         name = self.model._meta.verbose_name

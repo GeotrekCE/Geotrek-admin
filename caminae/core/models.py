@@ -27,6 +27,9 @@ class MapEntityMixin(object):
     def get_add_url(cls):
         return ('%s:%s_add' % (cls._meta.app_label, cls._meta.module_name), )
 
+    def get_absolute_url(self):
+        return self.get_detail_url()
+
     @classmethod
     @models.permalink
     def get_generic_detail_url(self):
