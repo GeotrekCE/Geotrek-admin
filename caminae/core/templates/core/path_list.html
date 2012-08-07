@@ -3,7 +3,7 @@
 
 {% block mainactions %}
     {% if user.profile.is_path_manager %}
-    <a class="btn btn-success" href="{% url core:path_add %}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
     {% else %}
     <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
     {% endif %}

@@ -15,7 +15,7 @@ from caminae.land.models import (City, RestrictedArea)
 class ViewsTest(TestCase):
     def test_status(self):
         # JSON layers do not require authent
-        response = self.client.get(reverse("core:layer_path"))
+        response = self.client.get(reverse("core:path_layer"))
         self.assertEqual(response.status_code, 200)
 
     def test_crud_status(self):

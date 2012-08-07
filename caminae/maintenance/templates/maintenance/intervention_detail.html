@@ -1,0 +1,12 @@
+{% extends "core/module_detail.html" %}
+{% load i18n field_verbose_name %}
+
+{% block detailspanel %}
+    {{ block.super }}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ intervention|verbose:"status" }}</th>
+            <td>{{ intervention.status }}</td>
+        </tr>
+    </table>
+{% endblock detailspanel %}

@@ -37,3 +37,9 @@ class BaseMapWidget(forms.gis.BaseGeometryWidget):
 class LineStringWidget(BaseMapWidget,
                        forms.gis.LineStringWidget):
     pass
+
+
+class PointOrLineStringWidget(BaseMapWidget,
+                             forms.gis.PointWidget,
+                             forms.gis.LineStringWidget):
+    pass

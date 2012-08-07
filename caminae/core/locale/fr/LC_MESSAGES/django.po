@@ -171,8 +171,8 @@ msgid "Modules"
 msgstr "Modules"
 
 #: templates/core/base.html:50
-msgid "Work"
-msgstr "Intervention"
+msgid "Interventions"
+msgstr "Interventions"
 
 #: templates/core/base.html:51
 msgid "Project"

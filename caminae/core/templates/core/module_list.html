@@ -22,7 +22,7 @@
     <table id="path-ajax-list" class="table table-striped table-bordered">
         <thead>
             <tr>
-                {% for field in fields %}
+                {% for field in columns %}
                 <th>{{ model|verbose:field }}</th>
                 {% endfor %}
             </tr>
@@ -50,7 +50,7 @@
             
             var getUrl = function (geojson, layer) {
                 //TODO use nice JS url rewriting
-                return "{% url core:path_detail 0 %}".replace('0', geojson.properties.pk);
+                return "{{ model.get_generic_detail_url }}".replace('0', geojson.properties.pk);
             };
             
             var objectsLayer = new Caminae.ObjectsLayer(null, {
@@ -58,7 +58,7 @@
             });
             
             mainmap.addLayer(objectsLayer);
-            objectsLayer.load("{% url core:layer_path %}");
+            objectsLayer.load("{{ model.get_layer_url }}");
 
             // init ajax list
             initAjaxList(objectsLayer);

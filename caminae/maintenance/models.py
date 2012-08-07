@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import TopologyMixin
+from caminae.core.models import ModuleModelMixin, TopologyMixin
 from caminae.common.models import Organism
 
 
-class Intervention(StructureRelated):
+class Intervention(ModuleModelMixin, StructureRelated):
 
     intervention_id = models.IntegerField(primary_key=True)
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
@@ -29,9 +27,9 @@ class Intervention(StructureRelated):
     heliport_cost = models.FloatField(verbose_name=_(u"Heliport cost"))
     subcontract_cost = models.FloatField(verbose_name=_(u"Subcontract cost"))
 
+    #TODO: remove this --> abstract class
     insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##

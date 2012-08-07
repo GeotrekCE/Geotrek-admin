@@ -25,6 +25,6 @@ function {{ mapname }}Init(map) {
         style: {weight: 2, clickable: false}
     });
     map.addLayer(objectsLayer);
-    objectsLayer.load("{% url core:layer_path %}");
+    objectsLayer.load("{% url core:path_layer %}");
 }
 </script>

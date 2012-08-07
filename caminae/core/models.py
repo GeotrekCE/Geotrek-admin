@@ -1,10 +1,49 @@
-import math
-
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
+from caminae.utils import distance3D
+
+
+class ModuleModelMixin(object):
+    @classmethod
+    @models.permalink
+    def get_layer_url(cls):
+        return ('%s:%s_layer' % (cls._meta.app_label, cls._meta.module_name),)
+
+    @classmethod
+    @models.permalink
+    def get_list_url(cls):
+        return ('%s:%s_list' % (cls._meta.app_label, cls._meta.module_name),)
+
+    @classmethod
+    @models.permalink
+    def get_jsonlist_url(cls):
+        return ('%s:%s_json_list' % (cls._meta.app_label, cls._meta.module_name), )
+
+    @classmethod
+    @models.permalink
+    def get_add_url(cls):
+        return ('%s:%s_add' % (cls._meta.app_label, cls._meta.module_name), )
+
+    @classmethod
+    @models.permalink
+    def get_generic_detail_url(self):
+        return ('%s:%s_detail' % (self._meta.app_label, self._meta.module_name), [str(0)])
+
+    @models.permalink
+    def get_detail_url(self):
+        return ('%s:%s_detail' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+
+    @models.permalink
+    def get_update_url(self):
+        return ('%s:%s_update' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+
+    @models.permalink
+    def get_delete_url(self):
+        return ('%s:%s_delete' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+
 
 
 # GeoDjango note:
@@ -12,18 +51,7 @@ from caminae.authent.models import StructureRelated
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-def distance3D(a, b):
-    """
-    Utility function computing distance between 2 points in 3D-space.
-    Will work with coordinates tuples instead of full-fledged geometries,
-    that's why is is more convenient than GEOS functions.
-    """
-    return math.sqrt((b[0] - a[0]) ** 2 +
-                     (b[1] - a[1]) ** 2 +
-                     (b[2] - a[2]) ** 2)
-
-
-class Path(StructureRelated):
+class Path(ModuleModelMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
@@ -100,42 +128,6 @@ class Path(StructureRelated):
             distance += distance3D(a, b)
             profile.append((distance, b[2],))
         return profile
-
-    # CRUD urls
-
-    @classmethod
-    @models.permalink
-    def get_list_url(cls):
-        return ('core:path_list',)
-
-    @classmethod
-    @models.permalink
-    def get_jsonlist_url(cls):
-        return ('core:path_json_list', )
-
-    @classmethod
-    @models.permalink
-    def get_add_url(cls):
-        return ('core:path_add', )
-
-    @classmethod
-    @models.permalink
-    def get_generic_detail_url(self):
-        return ('core:path_detail', [str(0)])
-
-    @models.permalink
-    def get_detail_url(self):
-        return ('core:path_detail', [str(self.pk)])
-
-    @models.permalink
-    def get_update_url(self):
-        return ('core:path_update', [str(self.pk)])
-
-    @models.permalink
-    def get_delete_url(self):
-        return ('core:path_delete', [str(self.pk)])
-
-    # List view columns
 
     @property
     def name_display(self):

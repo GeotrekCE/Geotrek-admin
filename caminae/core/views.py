@@ -19,31 +19,13 @@ from .filters import PathFilter
 from . import graph as graph_lib
 
 
-
-class ElevationProfile(JSONResponseMixin, BaseDetailView):
-    """Extract elevation profile from a path and return it as JSON"""
-
-    model = Path
-
-    def get_context_data(self, **kwargs):
-        """
-        Put elevation profile into response context.
-        """
-        p = self.get_object()
-        return {'profile': p.get_elevation_profile()}
-
-
-class PathLayer(GeoJSONLayerView):
-    model = Path
-    fields = ('name', 'valid',)
+class ModuleLayer(GeoJSONLayerView):
     srid = settings.MAP_SRID
-    # precision = 4
-    # simplify = 0.5
 
     @method_decorator(cache_page(60, cache="fat"))  #TODO: use settings
     @method_decorator(cache_control(max_age=3600*24))   #TODO: use settings
     def dispatch(self, *args, **kwargs):
-        return super(PathLayer, self).dispatch(*args, **kwargs)
+        return super(ModuleLayer, self).dispatch(*args, **kwargs)
 
 
 class ModuleList(ListView):
@@ -53,7 +35,7 @@ class ModuleList(ListView):
     
     model = None
     filterform = None
-    fields = []
+    columns = []
     """
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -65,7 +47,7 @@ class ModuleList(ListView):
             model=self.model,
             datatables_ajax_url=self.model.get_jsonlist_url(),
             filterform=self.filterform(None, queryset=self.get_queryset()),
-            fields=self.fields,
+            columns=self.columns,
             generic_detail_url=self.model.get_generic_detail_url(),
         ))
         return context
@@ -94,7 +76,7 @@ class ModuleJsonList(JSONResponseMixin, ModuleList):
         data_table_rows = []
         for obj in queryset:
             columns = []
-            for field in self.fields:
+            for field in self.columns:
                 columns.append(getattr(obj, field + '_display', getattr(obj, field)))
             data_table_rows.append(columns)
             map_obj_pk.append(obj.pk)
@@ -161,10 +143,14 @@ class ModuleDelete(DeleteView):
         return self.model.get_list_url()
 
 
+class PathLayer(ModuleLayer):
+    model = Path
+
+
 class PathList(ModuleList):
     model = Path
     filterform = PathFilter
-    fields = ['name', 'date_update', 'length', 'trail']
+    columns = ['name', 'date_update', 'length', 'trail']
 
 
 class PathJsonList(ModuleJsonList, PathList):
@@ -210,6 +196,19 @@ class PathDelete(ModuleDelete):
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
+
+
+class ElevationProfile(JSONResponseMixin, BaseDetailView):
+    """Extract elevation profile from a path and return it as JSON"""
+
+    model = Path
+
+    def get_context_data(self, **kwargs):
+        """
+        Put elevation profile into response context.
+        """
+        p = self.get_object()
+        return {'profile': p.get_elevation_profile()}
 
 
 @login_required

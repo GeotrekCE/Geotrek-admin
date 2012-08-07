@@ -32,6 +32,8 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="{% url core:path_list %}">{% trans "Modules" %}</a></li>
                 <li><a href="#">[nom fiche]</a></li>
+                <li><a href="#">{% trans "Reporting" %}</a></li>
+                <li><a href="#">{% trans "Logbook" %}</a></li>
                 <li class="dropdown t"> <!-- Onglet Histo (avec dropdown) -->    
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         Dernières fiches consultées
@@ -63,7 +65,7 @@
                 <div class="span1">    
                     <ul id="listeModules" class="nav nav-pills nav-stacked">
                         <li class="active"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/work.png" %}"/>{% trans "Work" %}</a></li>
+                        <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/work.png" %}"/>{% trans "Interventions" %}</a></li>
                         <li><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
                         <li><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
                         <li><a href="#"><img src="{% static "images/infrastructure.png" %}"/>{% trans "Infrastructure" %}</a></li>
