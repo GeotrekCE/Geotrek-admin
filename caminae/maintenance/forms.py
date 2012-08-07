@@ -1,17 +1,18 @@
 import floppyforms as forms
 from crispy_forms.layout import Field
 
-from caminae.core.forms import ModuleForm
+from caminae.core.forms import MapEntityForm
 from caminae.core.widgets import PointOrLineStringWidget
 
 from .models import Intervention
 
 
-class InterventionForm(ModuleForm):
+class InterventionForm(MapEntityForm):
     geom = forms.gis.GeometryField(widget=PointOrLineStringWidget)
 
-    fields = (
+    modelfields = (
             'name',
+            'structure',
             'date',
             'status',
             'typology',
@@ -19,6 +20,7 @@ class InterventionForm(ModuleForm):
             Field('comments', css_class='input-xlarge'),
             'in_maintenance',
             'length',
+            'height',
             'width',
             'area',
             'slope',

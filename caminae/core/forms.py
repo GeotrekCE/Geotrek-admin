@@ -12,7 +12,7 @@ from .models import Path
 from .widgets import LineStringWidget
 
 
-class ModuleForm(forms.ModelForm):
+class MapEntityForm(forms.ModelForm):
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
 
     helper = FormHelper()
@@ -27,7 +27,7 @@ class ModuleForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(ModuleForm, self).__init__(*args, **kwargs)
+        super(MapEntityForm, self).__init__(*args, **kwargs)
         # Generic behaviour
         if self.instance.pk:
             self.helper.form_action = self.instance.get_update_url()
@@ -55,7 +55,7 @@ class ModuleForm(forms.ModelForm):
         )
 
 
-class PathForm(ModuleForm):
+class PathForm(MapEntityForm):
     geom = forms.gis.LineStringField(widget=LineStringWidget)
 
     reverse_geom = forms.BooleanField(

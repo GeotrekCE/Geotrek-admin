@@ -11,7 +11,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     date = models.DateField(auto_now_add=True, verbose_name=_(u"Date"))
-    comment = models.TextField(blank=True, verbose_name=_(u"Comments"))
+    comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
     length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
