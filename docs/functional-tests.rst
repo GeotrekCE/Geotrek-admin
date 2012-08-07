@@ -332,6 +332,11 @@ Sprint 2 - Version 0.2.0
 
 * Lors de l'ajout d'un tronçon, l'utilisateur peut le dessiner sur la carte
 * Seul le mode linéaire est autorisé
+* L'utilisateur peut supprimer son précédent tronçon pour en recréer un
+* La suppression d'un tronçon intervient lorsque l'utilisateur dessine le
+  premier point d'un nouveau tronçon
+* Le tronçon doit pouvoir être édité
+
 
 #56 - Snapper les tronçons lors de la saisie
 --------------------------------------------
