@@ -6,7 +6,7 @@ from caminae.authent.models import StructureRelated
 from caminae.utils import distance3D
 
 
-class ModuleModelMixin(object):
+class MapEntityMixin(object):
     @classmethod
     @models.permalink
     def get_layer_url(cls):
@@ -51,7 +51,7 @@ class ModuleModelMixin(object):
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(ModuleModelMixin, StructureRelated):
+class Path(MapEntityMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,

@@ -3,11 +3,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import ModuleModelMixin, TopologyMixin
+from caminae.core.models import MapEntityMixin, TopologyMixin
 from caminae.common.models import Organism
 
 
-class Intervention(ModuleModelMixin, StructureRelated):
+class Intervention(MapEntityMixin, StructureRelated):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     date = models.DateField(auto_now_add=True, verbose_name=_(u"Date"))
