@@ -1,6 +1,9 @@
+import datetime
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.utils.timezone import utc
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.detail import DetailView, BaseDetailView
@@ -21,7 +24,12 @@ from . import graph as graph_lib
 
 
 def latest_updated_path_date(*args, **kwargs):
-    return Path.objects.latest("date_update").date_update
+    # TODO : generic for all models
+    try:
+        return Path.objects.latest("date_update")
+    except Path.DoesNotExist:
+        dt = datetime.datetime(datetime.MAXYEAR, 12, 31)
+        return dt.replace(tzinfo=utc)
 
 
 class ModuleLayer(GeoJSONLayerView):
@@ -43,7 +51,7 @@ class ModuleLayer(GeoJSONLayerView):
             if cache_latest >= latest:
                 return self.response_class(content=content, **response_kwargs)
 
-        response = super(PathLayer, self).render_to_response(context, **response_kwargs)
+        response = super(ModuleLayer, self).render_to_response(context, **response_kwargs)
         cache.set(key, (latest, response.content))
         return response
 
