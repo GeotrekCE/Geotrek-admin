@@ -26,10 +26,9 @@ class InterventionForm(ModuleForm):
             'heliport_cost',
             'subcontract_cost',
             'stake',
-            'jobs',
             'project',)
     geomfields = ('geom',)
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', ) # TODO
+        exclude = ('deleted', 'topologies', 'jobs') # TODO
