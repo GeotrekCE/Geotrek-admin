@@ -15,6 +15,8 @@ from .widgets import LineStringWidget
 
 
 class PathForm(ModelForm):
+    pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
+
     geom = forms.gis.LineStringField(widget=LineStringWidget)
 
     reverse_geom = forms.BooleanField(
@@ -26,7 +28,8 @@ class PathForm(ModelForm):
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
     helper.layout = Layout(
-        Div('name',
+        Div('pk',
+            'name',
             'structure',
             'stake',
             'trail',
@@ -55,6 +58,8 @@ class PathForm(ModelForm):
             self.helper.form_action = self.instance.get_update_url()
         else:
             self.helper.form_action = reverse("core:path_add")
+
+        self.fields['pk'].initial = self.instance.pk
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)

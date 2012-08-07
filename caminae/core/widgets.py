@@ -28,6 +28,7 @@ class BaseMapWidget(forms.gis.BaseGeometryWidget):
         # Be careful, on form error, value is not a GEOSGeometry
         if value and not isinstance(value, basestring):
             value.transform(self.map_srid)
+        context['update'] = bool(value)
         context['field'] = value
         context['fitextent'] = value is None
         return context

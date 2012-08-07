@@ -322,3 +322,25 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
         return marker;
     },
 });
+
+
+Caminae.makeGeoFieldProxy = function($field, layer) {
+    // Proxy to field storing WKT. It also stores the matching layer.
+    var _current_layer = layer || null;
+
+    return {
+        storeLayerGeomInField: function(layer) {
+            var old_layer = _current_layer;
+            _current_layer = layer;
+
+            var wkt = layer ? Caminae.getWKT(layer) : '';
+            $field.val(wkt);
+
+            return old_layer;
+        },
+        getLayer: function () {
+            return _current_layer;
+        }
+    };
+};
+
