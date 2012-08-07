@@ -28,10 +28,6 @@ class InterventionCreate(MapEntityCreate):
     model = Intervention
     form_class = InterventionForm
 
-    @same_structure_required('maintenance:intervention_list')
-    def dispatch(self, *args, **kwargs):
-        return super(InterventionCreate, self).dispatch(*args, **kwargs)
-
 
 class InterventionUpdate(MapEntityUpdate):
     model = Intervention
