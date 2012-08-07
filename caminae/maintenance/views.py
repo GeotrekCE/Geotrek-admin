@@ -1,30 +1,30 @@
 from caminae.authent.decorators import same_structure_required
-from caminae.core.views import (ModuleLayer, ModuleList, ModuleJsonList, 
-                                ModuleDetail, ModuleCreate, ModuleUpdate, ModuleDelete)
+from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
+                                MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Intervention
 from .filters import InterventionFilter
 from .forms import InterventionForm
 
 
-class InterventionLayer(ModuleLayer):
+class InterventionLayer(MapEntityLayer):
     model = Intervention
 
 
-class InterventionList(ModuleList):
+class InterventionList(MapEntityList):
     model = Intervention
     filterform = InterventionFilter
     columns = ['name', 'stake', 'typology', 'material_cost']
 
 
-class InterventionJsonList(ModuleJsonList, InterventionList):
+class InterventionJsonList(MapEntityJsonList, InterventionList):
     pass
 
 
-class InterventionDetail(ModuleDetail):
+class InterventionDetail(MapEntityDetail):
     model = Intervention
 
 
-class InterventionCreate(ModuleCreate):
+class InterventionCreate(MapEntityCreate):
     model = Intervention
     form_class = InterventionForm
 
@@ -33,7 +33,7 @@ class InterventionCreate(ModuleCreate):
         return super(InterventionCreate, self).dispatch(*args, **kwargs)
 
 
-class InterventionUpdate(ModuleUpdate):
+class InterventionUpdate(MapEntityUpdate):
     model = Intervention
     form_class = InterventionForm
 
@@ -42,7 +42,7 @@ class InterventionUpdate(ModuleUpdate):
         return super(InterventionUpdate, self).dispatch(*args, **kwargs)
 
 
-class InterventionDelete(ModuleDelete):
+class InterventionDelete(MapEntityDelete):
     model = Intervention
 
     @same_structure_required('maintenance:intervention_detail')

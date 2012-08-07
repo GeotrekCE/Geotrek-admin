@@ -31,12 +31,12 @@ def latest_updated_path_date(*args, **kwargs):
         return dt.replace(tzinfo=utc)
 
 
-class ModuleLayer(GeoJSONLayerView):
+class MapEntityLayer(GeoJSONLayerView):
     srid = settings.MAP_SRID
 
     @method_decorator(condition(last_modified_func=latest_updated_path_date))
     def dispatch(self, *args, **kwargs):
-        return super(ModuleLayer, self).dispatch(*args, **kwargs)
+        return super(MapEntityLayer, self).dispatch(*args, **kwargs)
  
     def render_to_response(self, context, **response_kwargs):
         key = 'path_layer_json'
@@ -50,12 +50,12 @@ class ModuleLayer(GeoJSONLayerView):
             if cache_latest >= latest:
                 return self.response_class(content=content, **response_kwargs)
 
-        response = super(ModuleLayer, self).render_to_response(context, **response_kwargs)
+        response = super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
         cache.set(key, (latest, response.content))
         return response
 
 
-class ModuleList(ListView):
+class MapEntityList(ListView):
     """
     
     A generic view list web page.
@@ -66,10 +66,10 @@ class ModuleList(ListView):
     """
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ModuleList, self).dispatch(*args, **kwargs)
+        return super(MapEntityList, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ModuleList, self).get_context_data(**kwargs)
+        context = super(MapEntityList, self).get_context_data(**kwargs)
         context.update(**dict(
             model=self.model,
             datatables_ajax_url=self.model.get_jsonlist_url(),
@@ -80,7 +80,7 @@ class ModuleList(ListView):
         return context
 
 
-class ModuleJsonList(JSONResponseMixin, ModuleList):
+class MapEntityJsonList(JSONResponseMixin, MapEntityList):
     """
     Return path related datas (belonging to the current user) as a JSON
     that will populate a dataTable.
@@ -115,34 +115,34 @@ class ModuleJsonList(JSONResponseMixin, ModuleList):
         return context
 
 
-class ModuleDetail(DetailView):
+class MapEntityDetail(DetailView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ModuleDetail, self).dispatch(*args, **kwargs)
+        return super(MapEntityDetail, self).dispatch(*args, **kwargs)
 
     def can_edit(self):
         return False
 
     def get_context_data(self, **kwargs):
-        context = super(ModuleDetail, self).get_context_data(**kwargs)
+        context = super(MapEntityDetail, self).get_context_data(**kwargs)
         context['can_edit'] = self.can_edit()
         return context
 
 
-class ModuleCreate(CreateView):
+class MapEntityCreate(CreateView):
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
-        return super(ModuleCreate, self).form_valid(form)
+        return super(MapEntityCreate, self).form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, _("Your form contains errors"))
-        return super(ModuleCreate, self).form_invalid(form)
+        return super(MapEntityCreate, self).form_invalid(form)
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
 
     def get_context_data(self, **kwargs):
-        context = super(ModuleCreate, self).get_context_data(**kwargs)
+        context = super(MapEntityCreate, self).get_context_data(**kwargs)
         name = self.model._meta.verbose_name
         if hasattr(name, '_proxy____args'):
             name = name._proxy____args[0]  # untranslated
@@ -152,39 +152,45 @@ class ModuleCreate(CreateView):
         return context
 
 
-class ModuleUpdate(UpdateView):
+class MapEntityUpdate(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
-        return super(ModuleUpdate, self).form_valid(form)
+        return super(MapEntityUpdate, self).form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, _("Your form contains errors"))
-        return super(ModuleUpdate, self).form_invalid(form)
+        return super(MapEntityUpdate, self).form_invalid(form)
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
 
 
-class ModuleDelete(DeleteView):
+class MapEntityDelete(DeleteView):
     def get_success_url(self):
         return self.model.get_list_url()
 
 
-class PathLayer(ModuleLayer):
+"""
+
+    Concrete MapEntity views
+
+"""
+
+class PathLayer(MapEntityLayer):
     model = Path
 
 
-class PathList(ModuleList):
+class PathList(MapEntityList):
     model = Path
     filterform = PathFilter
     columns = ['name', 'date_update', 'length', 'trail']
 
 
-class PathJsonList(ModuleJsonList, PathList):
+class PathJsonList(MapEntityJsonList, PathList):
     pass
 
 
-class PathDetail(ModuleDetail):
+class PathDetail(MapEntityDetail):
     model = Path
 
     def can_edit(self):
@@ -197,7 +203,7 @@ class PathDetail(ModuleDetail):
         return context
 
 
-class PathCreate(ModuleCreate):
+class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
@@ -206,7 +212,7 @@ class PathCreate(ModuleCreate):
         return super(PathCreate, self).dispatch(*args, **kwargs)
 
 
-class PathUpdate(ModuleUpdate):
+class PathUpdate(MapEntityUpdate):
     model = Path
     form_class = PathForm
 
@@ -216,7 +222,7 @@ class PathUpdate(ModuleUpdate):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
 
-class PathDelete(ModuleDelete):
+class PathDelete(MapEntityDelete):
     model = Path
 
     @method_decorator(path_manager_required('core:path_detail'))
