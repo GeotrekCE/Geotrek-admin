@@ -4,7 +4,7 @@ import floppyforms as forms
 from crispy_forms.layout import Field
 
 from caminae.core.models import Path
-from caminae.core.factories import TopologyMixinFactory, PathAggregationFactory
+from caminae.core.factories import PathFactory, TopologyMixinFactory, PathAggregationFactory
 from caminae.core.forms import MapEntityForm
 from caminae.core.widgets import PointOrLineStringWidget
 
@@ -41,15 +41,20 @@ class InterventionForm(MapEntityForm):
             return intervention
         
         geom = self.cleaned_data.get('geom')
-        if geom and isinstance(geom, Point):
+        if not geom:
+            pass # raise ValueError !
+
+        if isinstance(geom, Point):
             closest_paths = Path.objects.distance(geom).order_by('-distance')
             if not closest_paths:
+                closest_paths = [PathFactory.create()]
                 # TODO: raise not possible without path !
-                pass
+
             # TODO
             path = closest_paths[0]
             distance = 0
-            position = position = 0.5 
+            position = position = 0.5
+            
             topology = TopologyMixinFactory.create(offset=distance)
             PathAggregationFactory.create(topo_object=topology,
                                           path=path,

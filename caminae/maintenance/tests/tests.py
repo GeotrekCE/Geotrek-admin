@@ -53,7 +53,7 @@ class ViewsTest(TestCase):
                 'heliport_cost': 0.0,
                 'material_cost': 0.0,
                 'typology': i1.typology.pk,
-                'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
+                'geom': 'POINT (0.0 0.0 0.0)',
             }
             response = self.client.post(url, good_data)
             self.assertEqual(response.status_code, 302)  # success, redirects to detail view

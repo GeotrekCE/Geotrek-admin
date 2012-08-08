@@ -152,7 +152,7 @@ class Path(MapEntityMixin, StructureRelated):
 class TopologyMixin(models.Model):
     troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
-    deleted = models.BooleanField(db_column='supprime', verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
 
     # Override default manager
