@@ -271,14 +271,31 @@ class ElevationProfile(JSONResponseMixin, BaseDetailView):
         return {'profile': p.get_elevation_profile()}
 
 
-@login_required
+@cache_last_modified(lambda x: Path.latest_updated())
 def get_graph_json(request):
-    def path_modifier(path):
-        return { "pk": path.pk, "length": path.length }
+    cache = get_cache('fat')
+    key = 'path_graph_json'
 
-    graph = graph_lib.graph_of_qs_optimize(Path.objects.all(), value_modifier=path_modifier)
+    result = cache.get(key)
+    latest = Path.latest_updated()
+
+    if result and latest:
+        cache_latest, json_graph = result
+        if cache_latest >= latest:
+            return HttpJSONResponse(json_graph)
+
+    # cache does not exist or is not up to date
+    # rebuild the graph and cache the json
+    def path_modifier(path):
+        return { "id": path.pk, "length": path.length }
+
+    graph = graph_lib.graph_edges_nodes_of_qs(
+                Path.objects.all(),
+                value_modifier=path_modifier,
+                key_modifier=graph_lib.get_key_optimizer())
     json_graph = json_django_dumps(graph)
 
+    cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)
 
 
