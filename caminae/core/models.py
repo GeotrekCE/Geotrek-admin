@@ -8,6 +8,13 @@ from caminae.utils import distance3D
 
 class MapEntityMixin(object):
     @classmethod
+    def latest_updated(cls):
+        try:
+            return cls.objects.latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
+
+    @classmethod
     @models.permalink
     def get_layer_url(cls):
         return ('%s:%s_layer' % (cls._meta.app_label, cls._meta.module_name),)

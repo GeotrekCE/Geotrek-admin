@@ -22,27 +22,19 @@ from .filters import PathFilter
 from . import graph as graph_lib
 
 
-def latest_updated_path_date(*args, **kwargs):
-    try:
-        return Path.objects.latest("date_update").date_update
-    except Path.DoesNotExist:
-        return None
-
-
 class MapEntityLayer(GeoJSONLayerView):
     srid = settings.MAP_SRID
 
-    @method_decorator(condition(last_modified_func=latest_updated_path_date))
+    #@method_decorator(condition(last_modified_func=latest_updated_path_date))
     def dispatch(self, *args, **kwargs):
         return super(MapEntityLayer, self).dispatch(*args, **kwargs)
  
     def render_to_response(self, context, **response_kwargs):
         cache = get_cache('fat')
-        key = 'path_layer_json'
+        key = '%s_layer_json' % self.model._meta.module_name
 
         result = cache.get(key)
-
-        latest = latest_updated_path_date()
+        latest = self.model.latest_updated()
 
         if result and latest:
             cache_latest, content = result

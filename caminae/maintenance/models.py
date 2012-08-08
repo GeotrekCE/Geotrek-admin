@@ -26,8 +26,8 @@ class Intervention(MapEntityMixin, StructureRelated):
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"))
 
     #TODO: remove this --> abstract class
-    insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##
