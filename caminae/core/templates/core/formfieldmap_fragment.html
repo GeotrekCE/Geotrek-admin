@@ -120,6 +120,17 @@ function {{ module }}Init(map, bounds) {
     map.addControl(new L.Control.ResetView(getBounds));
     map.fitBounds(currentBounds);
     map.addControl(new L.Control.Scale());
+    
+    // Enable snapping ?
+    var path_snapping = {{ path_snapping|yesno:"true,false" }},
+         edit_handler = L.Handler.PolyEdit;
+
+    if (path_snapping) {
+        {{ module }}EnablePathSnapping();
+        edit_handler = L.Handler.SnappedEdit;
+    }
+
+    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
 
     /*** <objectLayer> ***/
  
@@ -132,17 +143,6 @@ function {{ module }}Init(map, bounds) {
     });
     map.addLayer(objectLayer);
     
-    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
-    
-    // Enable snapping ?
-    var path_snapping = {{ path_snapping|yesno:"true,false" }},
-         edit_handler = L.Handler.PolyEdit;
-
-    if (path_snapping) {
-        {{ module }}EnablePathSnapping();
-        edit_handler = L.Handler.SnappedEdit;
-    }
-
     function onNewLayer(new_layer) {
         var update_wkt = function (e) {
             layerStore.storeLayerGeomInField(e.target);
