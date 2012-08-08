@@ -36,6 +36,11 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
 
 class MapEntityWidget(LeafletMapWidget):
     path_snapping = True
+    
+    def get_context(self, name, value, attrs=None, extra_context={}):
+        context = super(MapEntityWidget, self).get_context(name, value, attrs, extra_context)
+        context['path_snapping'] = self.path_snapping
+        return context
 
 
 class LineStringWidget(MapEntityWidget,
