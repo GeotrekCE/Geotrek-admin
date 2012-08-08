@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import Point
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import MapEntityMixin, TopologyMixin
+from caminae.core.models import Path, MapEntityMixin, TopologyMixin
+from caminae.core.factories import PathFactory, TopologyMixinFactory, PathAggregationFactory
 from caminae.common.models import Organism
 
 
@@ -51,6 +53,43 @@ class Intervention(MapEntityMixin, StructureRelated):
 
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
+
+    def initFromPathsList(self, pathlist, constraints):
+        raise NotImplementedError
+
+    def initFromInfrastructure(self, infrastructure):
+        raise NotImplementedError
+
+    def initFromPoint(self, point):
+        """
+        Initialize the intervention topology from a Point.
+        """
+        closest_paths = Path.objects.distance(point).order_by('-distance')
+        if not closest_paths:
+            closest_paths = [PathFactory.create()]
+            # TODO: raise not possible without path !
+
+        # TODO: compute this from point position
+        path = closest_paths[0]
+        distance = 0
+        position = position = 0.5
+        
+        # Create topologies objects
+        topology = TopologyMixinFactory.create(offset=distance)
+        PathAggregationFactory.create(topo_object=topology,
+                                      path=path,
+                                      start_position=position,
+                                      end_position=position)
+        self.topologies.add(topology)
+
+    @property
+    def geom(self):
+        # TODO: geometry of intervention is either : 
+        # the one from its infrastructure.Facility or the one
+        # from its topology
+        #print "HEEEEEEEEEEEEEEEEEEEEEEEEE", self.topologies.first.geom, "\n"
+        #return self.topologies.first.geom
+        return Point(0.0, 1.0)
 
     class Meta:
         db_table = 'interventions'
