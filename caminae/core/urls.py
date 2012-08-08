@@ -15,8 +15,8 @@ urlpatterns = patterns('',
     url(r'^path/(?P<pk>\d+)/profile/$', ElevationProfile.as_view(), name='path_profile'),
 )
 
-view_classes = (
+urlpatterns += patterns('', *view_classes_to_url(
     PathList, PathCreate, PathDetail, PathUpdate,
     PathDelete, PathLayer, PathJsonList
-)
-urlpatterns += patterns('', *view_classes_to_url(*view_classes))
+))
+

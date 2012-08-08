@@ -6,10 +6,6 @@ from caminae.core.models import (
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
-def view_class_to_entity_kind(view_class):
-    """Detect the kind associated with the ClassBasedView"""
-    return view_class.get_entity_kind()
-
 frommodel = lambda model: model.__name__.lower()
 
 def url_layer(kind, model):
@@ -48,7 +44,9 @@ kind_to_urlpath = {
 
 
 def view_class_to_url(view_class):
-    kind = view_class_to_entity_kind(view_class)
+    kind = view_class.get_entity_kind()
+
+    # Should raise an error
     if not kind:
         return None
 
