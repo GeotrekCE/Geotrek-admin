@@ -58,30 +58,32 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
 };
 
 
-function {{ module }}EnablePathSnapping(map) {
-    var pathsLayer = new Caminae.ObjectsLayer(null, {
-        style: {weight: 2, clickable: false},
-        filter: exclude_current_object
-    });
-    map.addLayer(pathsLayer);
-    pathsLayer.load("{% url core:path_layer %}");
+function {{ module }}EnablePathSnapping(map, snappedLayer, guidesLayer) {
+    if (!guidesLayer) {
+        // If not provided, add a new path layer
+        guidesLayer =  new Caminae.ObjectsLayer(null, {
+            style: {weight: 2, clickable: false},
+        });
+        map.addLayer(guidesLayer);
+        guidesLayer.load("{% url core:path_layer %}");
+    }
 
     var refreshSnapList = function () {
         if (map.getZoom() > 12) {
-            var guides = pathsLayer.search(map.getBounds());
-            objectLayer.eachLayer(function (l) {
+            var guides = guidesLayer.search(map.getBounds());
+            snappedLayer.eachLayer(function (l) {
                 l.editing.setSnapList(guides);
             });
         }
     };
 
-    pathsLayer.on('load', function() {
+    guidesLayer.on('load', function() {
         refreshSnapList()
         map.on('viewreset moveend', refreshSnapList);
     });
 };
 
-function {{ module }}AddObjectsLayer(map) {
+function {{ module }}AddObjectsLayer(map, modelname) {
     // On creation, this should be null
     var object_pk = $('form input[name="pk"]').val() || null;
 
@@ -99,7 +101,6 @@ function {{ module }}AddObjectsLayer(map) {
             style: {weight: 2, clickable: false},
             filter: exclude_current_object
         }),
-        modelname = $('form input[name="model"]').val(),
         url = '{% url core:path_layer %}'.replace('path', modelname); 
     map.addLayer(objectsLayer);
     objectsLayer.load(url);
@@ -121,8 +122,12 @@ function {{ module }}Init(map, bounds) {
     map.fitBounds(currentBounds);
     map.addControl(new L.Control.Scale());
 
+    // Show other objects of same type
+    var modelname = $('form input[name="model"]').val(),
+        objectsLayer = {{ module }}AddObjectsLayer(map, modelname);
+    
     /*** <objectLayer> ***/
- 
+
     var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
@@ -139,7 +144,8 @@ function {{ module }}Init(map, bounds) {
          edit_handler = L.Handler.PolyEdit;
 
     if (path_snapping) {
-        {{ module }}EnablePathSnapping();
+        var guidesLayers = (modelname == 'path') ? objectsLayers : null;
+        {{ module }}EnablePathSnapping(map, objectLayer, guidesLayers);
         edit_handler = L.Handler.SnappedEdit;
     }
 
@@ -148,15 +154,18 @@ function {{ module }}Init(map, bounds) {
             layerStore.storeLayerGeomInField(e.target);
         };
         if (new_layer instanceof L.Marker) {
-            currentBounds = map.getBounds();
-            new_layer.on('move', update_wkt);
+            currentBounds = map.getBounds(); // take current bounds
+            edit_handler = Caminae.MarkerSnapping;
+            new_layer.dragging = new L.Handler.MarkerDrag(new_layer);
+            new_layer.dragging.enable();
+            L.Util.setOptions(new_layer, {draggable: true});
         }
         else {
             currentBounds = new_layer.getBounds();
-            new_layer.editing = new edit_handler(new_layer);
-            new_layer.editing.enable();
-            new_layer.on('edit', update_wkt);
         }
+        new_layer.editing = new edit_handler(new_layer);
+        new_layer.editing.enable();
+        new_layer.on('edit', update_wkt);
         layerStore.storeLayerGeomInField(new_layer);
     }
 
@@ -178,8 +187,5 @@ function {{ module }}Init(map, bounds) {
             }
         }
     );
-    
-    // Show other objects of same type
-    {{ module }}AddObjectsLayer(map);
 }
 </script>
