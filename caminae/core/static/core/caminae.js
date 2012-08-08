@@ -355,7 +355,7 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
 
     initialize: function (poly, options) {
         L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
-        this._snapper = new Caminae.MarkerSnapping(this._poly._map);
+        this._snapper = new Caminae.MarkerSnapping();
     },
 
     setSnapList: function (l) {
