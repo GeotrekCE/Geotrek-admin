@@ -227,6 +227,7 @@ Caminae.MarkerSnapping = L.Handler.extend({
     },
 
     enable: function () {
+        this.disable();
         for (var i=0; i<this._markers.length; i++) {
             this.snapMarker(this._markers[i]);
         }
@@ -240,7 +241,11 @@ Caminae.MarkerSnapping = L.Handler.extend({
 
     snapMarker: function (marker) {
         if (!this._map) this._map = marker._map;
-        this._markers.push(marker);
+        var i=0;
+        for (; i<this._markers.length; i++) {
+            if (this._markers[i] == marker) break;
+        }
+        if (i==this._markers.length) this._markers.push(marker);
         marker.on('move', this._snapMarker, this);
     },
 
@@ -290,9 +295,10 @@ Caminae.MarkerSnapping = L.Handler.extend({
         var n = this._snaplist.length;
         // /!\ Careful with size of this list, iterated at every marker move!
         if (n>1000) console.warn("Snap list is very big : " + n + " objects!");
+        else if (n==0) console.warn("Snap list is empty !");
         
         // Iterate the whole snaplist
-        for (var i = 0; i < this._snaplist.length; i++) {
+        for (var i = 0; i < n ; i++) {
             var object = this._snaplist[i],
                 ll = null,
                 distance = Number.MAX_VALUE;

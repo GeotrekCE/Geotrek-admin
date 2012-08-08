@@ -58,6 +58,25 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
     }
 };
 
+function refreshSnapList(map, snappedLayer, guidesLayer) {
+    console.log('refreshSnapList');
+    console.log(arguments);
+    
+    var resetList = function (map, snappedLayer, guidesLayer) {
+            if (map.getZoom() > 12) {
+            var guides = guidesLayer.search(map.getBounds());
+            snappedLayer.eachLayer(function (l) {
+                l.editing.setSnapList(guides);
+            });
+        }
+    };
+    guidesLayer.on('load', function() {
+        resetList(map, snappedLayer, guidesLayer);
+        map.on('viewreset moveend', function () {
+            resetList(map, snappedLayer, guidesLayer);
+        });
+    });
+};
 
 function {{ module }}EnablePathSnapping(map, snappedLayer, guidesLayer) {
     if (!guidesLayer) {
@@ -68,20 +87,8 @@ function {{ module }}EnablePathSnapping(map, snappedLayer, guidesLayer) {
         map.addLayer(guidesLayer);
         guidesLayer.load("{% url core:path_layer %}");
     }
-
-    var refreshSnapList = function () {
-        if (map.getZoom() > 12) {
-            var guides = guidesLayer.search(map.getBounds());
-            snappedLayer.eachLayer(function (l) {
-                l.editing.setSnapList(guides);
-            });
-        }
-    };
-
-    guidesLayer.on('load', function() {
-        refreshSnapList()
-        map.on('viewreset moveend', refreshSnapList);
-    });
+    refreshSnapList(map, snappedLayer, guidesLayer);
+    return guidesLayer;
 };
 
 function {{ module }}AddObjectsLayer(map, modelname) {
@@ -127,46 +134,49 @@ function {{ module }}Init(map, bounds) {
     var modelname = $('form input[name="model"]').val(),
         objectsLayer = {{ module }}AddObjectsLayer(map, modelname);
     
+    // Enable snapping ?
+    var path_snapping = {{ path_snapping|yesno:"true,false" }},
+         guidesLayer = (modelname == 'path') ? objectsLayers : null;
+
     /*** <objectLayer> ***/
 
     var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
         onEachFeature: function (feature, layer) {
-            onNewLayer(layer);
+            onNewLayer(layer, guidesLayer);
         }
     });
     map.addLayer(objectLayer);
     
     var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
-    
-    // Enable snapping ?
-    var path_snapping = {{ path_snapping|yesno:"true,false" }},
-         edit_handler = L.Handler.PolyEdit;
 
     if (path_snapping) {
-        var guidesLayers = (modelname == 'path') ? objectsLayers : null;
-        {{ module }}EnablePathSnapping(map, objectLayer, guidesLayers);
-        edit_handler = L.Handler.SnappedEdit;
+        guidesLayer = {{ module }}EnablePathSnapping(map, objectLayer, guidesLayer);
     }
 
-    function onNewLayer(new_layer) {
-        var update_wkt = function (e) {
-            layerStore.storeLayerGeomInField(e.target);
-        };
+    function onNewLayer(new_layer, guidesLayer) {
+        var edit_handler = L.Handler.PolyEdit;
+        if (path_snapping) {
+            refreshSnapList(map, new_layer, guidesLayer)
+            edit_handler = L.Handler.SnappedEdit;
+        }
+        
         if (new_layer instanceof L.Marker) {
             currentBounds = map.getBounds(); // take current bounds
             edit_handler = Caminae.MarkerSnapping;
             // TODO: New markers should be draggable !
-            //new_layer.dragging = new L.Handler.MarkerDrag(new_layer);
-            //new_layer.dragging.enable();
+            new_layer.dragging = new L.Handler.MarkerDrag(new_layer);
+            new_layer.dragging.enable();
         }
         else {
             currentBounds = new_layer.getBounds();
         }
         new_layer.editing = new edit_handler(new_layer);
         new_layer.editing.enable();
-        new_layer.on('edit', update_wkt);
+        new_layer.on('edit', function (e) {
+            layerStore.storeLayerGeomInField(e.target);
+        });
         layerStore.storeLayerGeomInField(new_layer);
     }
 
@@ -176,8 +186,8 @@ function {{ module }}Init(map, bounds) {
 
     {{ module }}EnableDrawing(map,
         function (drawn_layer) {
-            objectLayer.addLayer(drawn_layer);
-            onNewLayer(drawn_layer);
+            map.addLayer(drawn_layer);
+            onNewLayer(drawn_layer, guidesLayer);
         },
         function () {
             var old_layer = layerStore.getLayer();
