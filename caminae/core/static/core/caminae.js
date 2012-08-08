@@ -62,7 +62,13 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this._objects[pk] = this._current_objects[pk] = layer;
         
         // Spatial indexing
-        var bounds = layer.getBounds();
+        var bounds = null;
+        if (layer.getBounds) {
+            bounds = layer.getBounds();
+        }
+        else {
+            bounds = new L.LatLngBounds(layer.getLatLng(), layer.getLatLng());
+        }
         this.rtree.insert(this._rtbounds(bounds), layer);
 
         // Highlight on mouse over
@@ -207,18 +213,45 @@ L.Control.Information = L.Control.extend({
 });
 
 
-L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
+Caminae.MarkerSnapping = L.Handler.extend({
     SNAP_DISTANCE: 15,  // snap on marker move
     TOLERANCE: 0.00005, // snap existing object
-    
-    initialize: function (poly, options) {
-        L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
+
+    initialize: function (marker) {
+        this._map = null;
         this._snaplist = [];
+        this._markers = []
+        if (marker) {
+            this.snapMarker(marker);
+        }
+    },
+
+    enable: function () {
+        for (var i=0; i<this._markers.length; i++) {
+            this.snapMarker(this._markers[i]);
+        }
+    },
+
+    disable: function () { 
+        for (var i=0; i<this._markers.length; i++) {
+            this.unsnapMarker(this._markers[i]);
+        }
+    },
+
+    snapMarker: function (marker) {
+        if (!this._map) this._map = marker._map;
+        this._markers.push(marker);
+        marker.on('move', this._snapMarker, this);
+    },
+
+    unsnapMarker: function (marker) {
+        marker.off('move', this._snapMarker);
     },
 
     setSnapList: function (l) {
         this._snaplist = l;
-        this._markerGroup.eachLayer(L.Util.bind(function (marker) {
+        for (var i=0; i<this._markers.length; i++) {
+            var marker = this._markers[i];
             // Mark as snap if any object of snaplist is already snapped !
             var closest = this._closest(marker),
                 chosen = closest[0],
@@ -228,26 +261,26 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
                 (Math.abs(point.lng - marker.getLatLng().lng) < this.TOLERANCE)) {
                 $(marker._icon).addClass('marker-snapped');
             }
-        }, this));
+        }
     },
 
     distance: function (latlng1, latlng2) {
-        return this._poly._map.latLngToLayerPoint(latlng1).distanceTo(this._poly._map.latLngToLayerPoint(latlng2));
+        return this._map.latLngToLayerPoint(latlng1).distanceTo(this._map.latLngToLayerPoint(latlng2));
     },
 
     distanceSegment: function (latlng, latlngA, latlngB) {
-        var p = this._poly._map.latLngToLayerPoint(latlng),
-           p1 = this._poly._map.latLngToLayerPoint(latlngA),
-           p2 = this._poly._map.latLngToLayerPoint(latlngB);
+        var p = this._map.latLngToLayerPoint(latlng),
+           p1 = this._map.latLngToLayerPoint(latlngA),
+           p2 = this._map.latLngToLayerPoint(latlngB);
         return L.LineUtil.pointToSegmentDistance(p, p1, p2);
     },
 
     latlngOnSegment: function (latlng, latlngA, latlngB) {
-        var p = this._poly._map.latLngToLayerPoint(latlng),
-           p1 = this._poly._map.latLngToLayerPoint(latlngA),
-           p2 = this._poly._map.latLngToLayerPoint(latlngB);
+        var p = this._map.latLngToLayerPoint(latlng),
+           p1 = this._map.latLngToLayerPoint(latlngA),
+           p2 = this._map.latLngToLayerPoint(latlngB);
            closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
-        return this._poly._map.layerPointToLatLng(closest);
+        return this._map.layerPointToLatLng(closest);
     },
 
     _closest: function (marker) {
@@ -304,21 +337,34 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
             if (marker.snap != chosen) {
                 marker.snap = chosen;
                 $(marker._icon).addClass('marker-snapped');
-                this._poly.fire('snap', {object:chosen, marker: marker, location: point});
+                marker.fire('snap', {object:chosen, location: point});
             }
         }
         else {
             if (marker.snap) {
                 $(marker._icon).removeClass('marker-snapped');
-                this._poly.fire('unsnap', {object:marker.snap, marker: marker});
+                marker.fire('unsnap', {object:marker.snap});
             }
             marker.snap = null;
         }
     },
+});
+
+
+L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
+
+    initialize: function (poly, options) {
+        L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
+        this._snapper = new Caminae.MarkerSnapping(this._poly._map);
+    },
+
+    setSnapList: function (l) {
+        this._snapper.setSnapList(l);
+    },
 
     _createMarker: function (latlng, index) {
         var marker = L.Handler.PolyEdit.prototype._createMarker.call(this, latlng, index);
-        marker.on('move', this._snapMarker, this);
+        this._snapper.snapMarker(marker);
         return marker;
     },
 });
