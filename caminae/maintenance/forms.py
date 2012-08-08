@@ -1,6 +1,10 @@
+from django.contrib.gis.geos import Point
+
 import floppyforms as forms
 from crispy_forms.layout import Field
 
+from caminae.core.models import Path
+from caminae.core.factories import TopologyMixinFactory, PathAggregationFactory
 from caminae.core.forms import MapEntityForm
 from caminae.core.widgets import PointOrLineStringWidget
 
@@ -30,6 +34,33 @@ class InterventionForm(MapEntityForm):
             'stake',
             'project',)
     geomfields = ('geom',)
+
+    def save(self, commit=True):
+        intervention = super(InterventionForm, self).save(commit=False)
+        if not commit:
+            return intervention
+        
+        geom = self.cleaned_data.get('geom')
+        if geom and isinstance(geom, Point):
+            closest_paths = Path.objects.distance(geom).order_by('-distance')
+            if not closest_paths:
+                # TODO: raise not possible without path !
+                pass
+            # TODO
+            path = closest_paths[0]
+            distance = 0
+            position = position = 0.5 
+            topology = TopologyMixinFactory.create(offset=distance)
+            PathAggregationFactory.create(topo_object=topology,
+                                          path=path,
+                                          start_position=position,
+                                          end_position=position)
+            intervention.save()
+            intervention.topologies.add(topology)
+        else:
+            # TODO: transform list of paths to TopologyMixin
+            pass
+        return intervention
 
     class Meta:
         model = Intervention
