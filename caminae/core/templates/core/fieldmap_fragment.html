@@ -2,7 +2,7 @@
 
 {% leaflet_map mapname  fitextent=False %}
 <script type="text/javascript">
-function {{ mapname }}Init(map) {
+function {{ mapname }}Init(map, bounds) {
     // Set map readonly
     map.dragging.disable();
     map.touchZoom.disable();
@@ -18,13 +18,16 @@ function {{ mapname }}Init(map) {
         style: {weight: 5, opacity: 1, clickable: false}
     });
     map.addLayer(objectLayer);
-    map.fitBounds(new L.LatLngBounds({{ object|latlngbounds }}));
+    var objectBounds = {{ object|latlngbounds }},
+        mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
+    map.fitBounds(mapBounds);
     map.addControl(new L.Control.Scale());
     
-    var objectsLayer = new Caminae.ObjectsLayer(null, {
+    // Paths layer (TODO: should we show objectsLayers ?)
+    var pathsLayer = new Caminae.ObjectsLayer(null, {
         style: {weight: 2, clickable: false}
     });
-    map.addLayer(objectsLayer);
-    objectsLayer.load("{% url core:path_layer %}");
+    map.addLayer(pathsLayer);
+    pathsLayer.load("{% url core:path_layer %}");
 }
 </script>
