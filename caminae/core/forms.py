@@ -14,6 +14,7 @@ from .widgets import LineStringWidget
 
 class MapEntityForm(forms.ModelForm):
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
+    model = forms.Field(required=False, widget=forms.Field.hidden_widget)
 
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
@@ -34,9 +35,10 @@ class MapEntityForm(forms.ModelForm):
         else:
             self.helper.form_action = self.instance.get_add_url()
         self.fields['pk'].initial = self.instance.pk
+        self.fields['model'].initial = self.instance._meta.module_name
         
         # Get fields from subclasses
-        fields = ('pk',) + self.modelfields
+        fields = ('pk','model') + self.modelfields
         leftpanel = Div(
             *fields,
             css_class="span4"

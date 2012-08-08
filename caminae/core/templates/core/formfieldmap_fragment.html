@@ -13,11 +13,75 @@
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
-function {{ module }}Init(map) {
-    var map_json_config = {% leaflet_json_config %};
-    map.removeControl(map.attributionControl);
+function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
+    var drawControl = new L.Control.Draw({
+        position: 'topright',
+        polygon: {{ is_polygone|yesno:"true,false" }},
+        rectangle: false,
+        circle: false,
+        marker: {{ is_point|yesno:"true,false" }},
+        polyline: {{ is_linestring|yesno:"true,false" }} && {
+            shapeOptions: {
+                color: '#35FF00',
+                opacity: 0.8,
+                weight: 3
+            }
+        }
+    });
+    map.addControl(drawControl);
+    map.drawControl = drawControl;
+
+    // Delete current on first clic (start drawing)
+    map.on('click', function (e) {
+        // Delete current on clic if drawing
+        for (var handlertype in map.drawControl.handlers) {
+            if (map.drawControl.handlers[handlertype].enabled()) {
+                startovercallback();
+                return;
+            }
+        }
+    });
+
+    // Listen to all events of creation
+    var draw_types = {
+        'polyline': 'poly',
+        'point': 'marker',
+        'polygon': 'polygon',
+    };
+    for (var geomtype in draw_types) {
+        var draw_type = draw_types[geomtype];
+        map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
+            var new_layer = e[this.type];
+            drawncallback(new_layer);
+        }, {type: draw_type}));
+    }
+};
 
 
+function {{ module }}EnablePathSnapping(map) {
+    var pathsLayer = new Caminae.ObjectsLayer(null, {
+        style: {weight: 2, clickable: false},
+        filter: exclude_current_object
+    });
+    map.addLayer(pathsLayer);
+    pathsLayer.load("{% url core:path_layer %}");
+
+    var refreshSnapList = function () {
+        if (map.getZoom() > 12) {
+            var guides = pathsLayer.search(map.getBounds());
+            objectLayer.eachLayer(function (l) {
+                l.editing.setSnapList(guides);
+            });
+        }
+    };
+
+    pathsLayer.on('load', function() {
+        refreshSnapList()
+        map.on('viewreset moveend', refreshSnapList);
+    });
+};
+
+function {{ module }}AddObjectsLayer(map) {
     // On creation, this should be null
     var object_pk = $('form input[name="pk"]').val() || null;
 
@@ -30,130 +94,92 @@ function {{ module }}Init(map) {
     }
 
     // Start loading all objects, readonly
+    // Build URL like an animal, please don't tell my mother.
     var objectsLayer = new Caminae.ObjectsLayer(null, {
-        style: {weight: 2, clickable: false},
-        filter: exclude_current_object
-    });
-
+            style: {weight: 2, clickable: false},
+            filter: exclude_current_object
+        }),
+        modelname = $('form input[name="model"]').val(),
+        url = '{% url core:path_layer %}'.replace('path', modelname); 
     map.addLayer(objectsLayer);
+    objectsLayer.load(url);
+    return objectsLayer;
+};
 
-    // TODO: this should be all model objects
-    // and there should be an option (or always true if model != Path?) to show a snapping layer
-    // with with all paths
-    objectsLayer.load("{% url core:path_layer %}");
-
-    var refreshSnapList = function () {
-        if (map.getZoom() > 12) {
-            var guides = objectsLayer.search(map.getBounds());
-            objectLayer.eachLayer(function (l) {
-                l.editing.setSnapList(guides);
-            });
-        }
+function {{ module }}Init(map, bounds) {
+    map.removeControl(map.attributionControl);
+    
+    /*** <Map bounds and reset> ***/
+    
+    var initialBounds = bounds,
+         objectBounds = {{ field|latlngbounds }},
+         currentBounds = objectBounds || initialBounds;
+    getBounds = function () {
+        return currentBounds;
     };
-
-    objectsLayer.on('load', function() {
-        refreshSnapList()
-        map.on('viewreset moveend', refreshSnapList);
-    });
-
-    // ref to map_json_config
-    var extent = map_json_config.SPATIAL_EXTENT;
-    var southWest = new L.LatLng(extent.ymin, extent.xmin),
-        northEast = new L.LatLng(extent.ymax, extent.xmax),
-        map_bounds = new L.LatLngBounds(southWest, northEast);
-    var _getBounds = null;
-
-    function getBounds() {
-        return _getBounds();
-    };
-    function updateGetBounds(getBoundsFn) {
-        _getBounds = getBoundsFn
-    };
-
-    function getMapBounds() {
-        return map_bounds;
-    };
-    function fitBounds() {
-        map.fitBounds(getBounds())
-    }
-
-    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
-
-    var geojson = {% if field %} {{ field|geojsonfeature|safe }} {% else %} null {% endif %};
-    {% if update %}
-        var objectBounds = {{ field|latlngbounds }};
-        updateGetBounds(function() { return new L.LatLngBounds(objectBounds); });
-    {% else %}
-        updateGetBounds(getMapBounds)
-    {% endif %}
+    map.addControl(new L.Control.ResetView(getBounds));
+    map.fitBounds(currentBounds);
+    map.addControl(new L.Control.Scale());
 
     /*** <objectLayer> ***/
-
+ 
+    var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: false},
         onEachFeature: function (feature, layer) {
             onNewLayer(layer);
         }
     });
+    map.addLayer(objectLayer);
+    
+    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
+    
+    // Enable snapping ?
+    var path_snapping = {{ path_snapping|yesno:"true,false" }},
+         edit_handler = L.Handler.PolyEdit;
 
-    function onNewLayer(new_layer) {
-        updateGetBounds(function() {
-            return new_layer.getBounds();
-        });
-        new_layer.editing = new L.Handler.SnappedEdit(new_layer);
-        new_layer.editing.enable();
-        new_layer.on('edit', function (e) {
-            layerStore.storeLayerGeomInField(e.target);
-        });
-
-        layerStore.storeLayerGeomInField(new_layer);
+    if (path_snapping) {
+        {{ module }}EnablePathSnapping();
+        edit_handler = L.Handler.SnappedEdit;
     }
 
-    map.addLayer(objectLayer);
+    function onNewLayer(new_layer) {
+        var update_wkt = function (e) {
+            layerStore.storeLayerGeomInField(e.target);
+        };
+        if (new_layer instanceof L.Marker) {
+            currentBounds = map.getBounds();
+            new_layer.on('move', update_wkt);
+        }
+        else {
+            currentBounds = new_layer.getBounds();
+            new_layer.editing = new edit_handler(new_layer);
+            new_layer.editing.enable();
+            new_layer.on('edit', update_wkt);
+        }
+        layerStore.storeLayerGeomInField(new_layer);
+    }
 
     /*** </objectLayer> ***/
 
     /*** <drawing> ***/
-    var drawControl = new L.Control.Draw({
-        position: 'topright',
-        polygon: false,
-        rectangle: false,
-        circle: false,
-        marker: false,
-        polyline: {
-            shapeOptions: {
-                color: '#f357a1',
-                weight: 5
+
+    {{ module }}EnableDrawing(map,
+        function (drawn_layer) {
+            objectLayer.addLayer(drawn_layer);
+            onNewLayer(drawn_layer);
+        },
+        function () {
+            var old_layer = layerStore.getLayer();
+            if (old_layer) {
+                map.removeLayer(old_layer);
+                currentBounds = initialBounds;
+                layerStore.storeLayerGeomInField(null);
             }
         }
-    });
-    map.addControl(drawControl);
-
-    var polyline_handler = drawControl.handlers.polyline;
-    map.on('draw:poly-created', function (e) {
-        var new_layer = e.poly;
-        objectLayer.addLayer(new_layer);
-        onNewLayer(new_layer);
-    });
-
-    // Delete previous layer
-    map.on('click', deleteStoredLayer, polyline_handler);
-
-    function deleteStoredLayer() {
-        if (! polyline_handler.enabled())
-            return;
-
-        var old_layer = layerStore.getLayer();
-        if (old_layer) {
-            objectLayer.removeLayer(old_layer);
-            updateGetBounds(getMapBounds);
-            layerStore.storeLayerGeomInField(null);
-        }
-    }
-
-    fitBounds();
-    map.setMaxBounds(getMapBounds());
-    map.addControl(new L.Control.ResetView(getBounds));
-    map.addControl(new L.Control.Scale());
+    );
+    
+    // Show other objects of same type
+    {{ module }}AddObjectsLayer(map);
 }
 </script>
