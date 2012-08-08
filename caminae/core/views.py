@@ -9,7 +9,7 @@ from django.views.generic.detail import DetailView, BaseDetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib import messages
-from django.views.decorators.http import condition
+from django.views.decorators.http import last_modified as cache_last_modified
 from django.core.cache import get_cache
 
 from djgeojson.views import GeoJSONLayerView
@@ -23,12 +23,20 @@ from . import graph as graph_lib
 
 
 class MapEntityLayer(GeoJSONLayerView):
+    """
+    Take a class attribute `model` with a `latest_updated` method used for caching.
+    """
+
     srid = settings.MAP_SRID
 
-    #@method_decorator(condition(last_modified_func=latest_updated_path_date))
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityLayer, self).dispatch(*args, **kwargs)
- 
+        # Use lambda to bound self and to avoid passing request, *args, **kwargs as the decorator would do
+        # TODO: we should be storing cache_latest and cache_latest_dispatch for reuse
+        # but it triggers other problems (self.cache_latest() - will pass self as an unwanted arg)
+        cache_latest = cache_last_modified(lambda x: self.model.latest_updated())
+        cache_latest_dispatch = cache_latest(super(MapEntityLayer, self).dispatch)
+        return cache_latest_dispatch(*args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
         cache = get_cache('fat')
         key = '%s_layer_json' % self.model._meta.module_name

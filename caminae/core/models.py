@@ -7,6 +7,7 @@ from caminae.utils import distance3D
 
 
 class MapEntityMixin(object):
+
     @classmethod
     def latest_updated(cls):
         try:
