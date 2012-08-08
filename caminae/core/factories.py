@@ -108,5 +108,5 @@ class PathAggregationFactory(factory.Factory):
     path = factory.SubFactory(PathFactory)
     topo_object = factory.SubFactory(TopologyMixinFactory)
 
-    start_position = 1.0
-    end_position = 2.0
+    start_position = 0.0
+    end_position = 1.0
