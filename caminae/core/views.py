@@ -20,6 +20,7 @@ from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
 from . import graph as graph_lib
+from . import models
 
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -28,6 +29,10 @@ class MapEntityLayer(GeoJSONLayerView):
     """
 
     srid = settings.MAP_SRID
+
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_LAYER
 
     def dispatch(self, *args, **kwargs):
         # Use lambda to bound self and to avoid passing request, *args, **kwargs as the decorator would do
@@ -64,6 +69,11 @@ class MapEntityList(ListView):
     filterform = None
     columns = []
     """
+
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_LIST
+
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(MapEntityList, self).dispatch(*args, **kwargs)
@@ -91,6 +101,10 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
     # aaData is the key looked up by dataTables
     data_table_name = 'aaData'
 
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_JSON_LIST
+
     def get_context_data(self, **kwargs):
         """
         override the most important part of JSONListView... (paginator)
@@ -116,6 +130,10 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
 
 
 class MapEntityDetail(DetailView):
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_DETAIL
+
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(MapEntityDetail, self).dispatch(*args, **kwargs)
@@ -130,6 +148,10 @@ class MapEntityDetail(DetailView):
 
 
 class MapEntityCreate(CreateView):
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_CREATE
+
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
         return super(MapEntityCreate, self).form_valid(form)
@@ -150,6 +172,10 @@ class MapEntityCreate(CreateView):
 
 
 class MapEntityUpdate(UpdateView):
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_UPDATE
+
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
         return super(MapEntityUpdate, self).form_valid(form)
@@ -163,6 +189,10 @@ class MapEntityUpdate(UpdateView):
 
 
 class MapEntityDelete(DeleteView):
+    @classmethod
+    def get_entity_kind(cls):
+        return models.ENTITY_DELETE
+
     def get_success_url(self):
         return self.model.get_list_url()
 
