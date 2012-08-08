@@ -51,6 +51,7 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
     for (var geomtype in draw_types) {
         var draw_type = draw_types[geomtype];
         map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
+            console.log('Drawn ' + this.type);
             var new_layer = e[this.type];
             drawncallback(new_layer);
         }, {type: draw_type}));
@@ -156,9 +157,9 @@ function {{ module }}Init(map, bounds) {
         if (new_layer instanceof L.Marker) {
             currentBounds = map.getBounds(); // take current bounds
             edit_handler = Caminae.MarkerSnapping;
-            new_layer.dragging = new L.Handler.MarkerDrag(new_layer);
-            new_layer.dragging.enable();
-            L.Util.setOptions(new_layer, {draggable: true});
+            // TODO: New markers should be draggable !
+            //new_layer.dragging = new L.Handler.MarkerDrag(new_layer);
+            //new_layer.dragging.enable();
         }
         else {
             currentBounds = new_layer.getBounds();
