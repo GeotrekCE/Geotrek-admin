@@ -67,6 +67,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
     _mapObjects: function (geojson, layer) {
         var pk = geojson.properties.pk
         this._objects[pk] = this._current_objects[pk] = layer;
+        layer.properties = geojson.properties;
         
         // Spatial indexing
         var bounds = null;
@@ -106,6 +107,10 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
 
     getLayer: function (pk) {
         return this._objects[pk];
+    },
+
+    getPk: function(layer) {
+        return layer.properties && layer.properties.pk;
     },
 
     search: function (bounds) {
