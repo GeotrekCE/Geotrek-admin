@@ -160,7 +160,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
 
 Caminae.getWKT = function(layer) {
     coord2str = function (obj) {
-        if(obj.lng) return '(' + obj.lng + ' ' + obj.lat + ' 0.0)';
+        if(obj.lng) return obj.lng + ' ' + obj.lat + ' 0.0';
         var n, wkt = [];
         for (n in obj) {
             wkt.push(coord2str(obj[n]));
@@ -169,7 +169,7 @@ Caminae.getWKT = function(layer) {
     };
     var coords = '()';
     if(layer.getLatLng) {
-        coords = coord2str(layer.getLatLng());
+        coords = '(' + coord2str(layer.getLatLng()) + ')';
     }
     else if (layer.getLatLngs) {
         coords = coord2str(layer.getLatLngs());
