@@ -104,8 +104,6 @@ function {{ module }}AddObjectsLayer(map, modelname) {
     return objectsLayer;
 };
 
-var {{ module }}layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
-
 function {{ module }}Init(map, bounds) {
     map.removeControl(map.attributionControl);
     
@@ -131,7 +129,9 @@ function {{ module }}Init(map, bounds) {
     if (path_snapping) {
         snapObserver = {{ module }}EnablePathSnapping(map, modelname, objectsLayer);
     }
-    
+
+    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
+
     /*** <objectLayer> ***/
 
     var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
@@ -164,9 +164,9 @@ function {{ module }}Init(map, bounds) {
         new_layer.editing = _edit_handler(map, new_layer);
         new_layer.editing.enable();
         new_layer.on('edit', function (e) {
-            {{ module }}layerStore.storeLayerGeomInField(e.target);
+            layerStore.storeLayerGeomInField(e.target);
         });
-        {{ module }}layerStore.storeLayerGeomInField(new_layer);
+        layerStore.storeLayerGeomInField(new_layer);
         if (snapObserver) snapObserver.add(new_layer);
     }
 
@@ -180,12 +180,12 @@ function {{ module }}Init(map, bounds) {
             onNewLayer(drawn_layer);
         },
         function () {
-            var old_layer = {{ module }}layerStore.getLayer();
+            var old_layer = layerStore.getLayer();
             if (old_layer) {
                 map.removeLayer(old_layer);
                 if (snapObserver) snapObserver.remove(old_layer);
                 currentBounds = initialBounds;
-                {{ module }}layerStore.storeLayerGeomInField(null);
+                layerStore.storeLayerGeomInField(null);
             }
         }
     );
