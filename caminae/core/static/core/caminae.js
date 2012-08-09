@@ -22,18 +22,26 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
             this._mapObjects(geojson, layer);
             if (this._onEachFeature) this._onEachFeature(geojson, layer);
         };
+        var pointToLayer = function (geojson, latlng) {
+            if (this._pointToLayer) return this._pointToLayer(geojson, latlng);
+            return new L.CircleMarker(latlng, {color: this.COLOR,
+                                               weight: this.WEIGHT,
+                                               opacity: 1,
+                                               fillOpacity: this.OPACITY});
+        };
+        
         if (!options) options = {};
         this._onEachFeature = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
+        this._pointToLayer = options.pointToLayer;
+        options.pointToLayer = L.Util.bind(pointToLayer, this);
         
         if (!options.style) {
             options.style = function (geojson) {
                 return { 
-                    // TODO: fucking JS
-                    //'color': Caminae.ObjectsLayer.COLOR,
-                    //'opacity': Caminae.ObjectsLayer.OPACITY,
-                    //'weight': Caminae.ObjectsLayer.WEIGHT,
-                    'weight': 2
+                    color: this.COLOR,
+                    opacity: this.OPACITY,
+                    weight: this.WEIGHT
                 }
             };
         }
@@ -63,7 +71,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         
         // Spatial indexing
         var bounds = null;
-        if (layer.getBounds) {
+        if (layer.getLatLngs) {
             bounds = layer.getBounds();
         }
         else {
