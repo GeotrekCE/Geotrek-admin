@@ -98,7 +98,7 @@ function {{ module }}AddObjectsLayer(map, modelname) {
             style: {weight: 2, clickable: false},
             filter: exclude_current_object
         }),
-        url = '{% url core:path_layer %}'.replace('path', modelname); // OMG, another way for JS url rewriting
+        url = '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname); // OMG, another way for JS url rewriting
     map.addLayer(objectsLayer);
     objectsLayer.load(url);
     return objectsLayer;
@@ -157,6 +157,16 @@ function {{ module }}Init(map, bounds) {
     function onNewLayer(new_layer) {
         if (new_layer instanceof L.Marker) {
             currentBounds = map.getBounds(); // A point has no bounds, take map bounds
+            // Set custom icon, using CSS instead of JS
+            new_layer.setIcon(new L.Icon({
+                iconUrl:'{% static "images/marker-trans.png" %}',
+                shadowUrl:'{% static "leaflet/images/marker-shadow.png" %}',
+                iconSize: new L.Point(25, 41),
+                iconAnchor: new L.Point(13, 41),
+                popupAnchor: new L.Point(1, -34),
+                shadowSize: new L.Point(41, 41)
+            }));
+            $(new_layer._icon).addClass('marker-add');
         }
         else {
             currentBounds = new_layer.getBounds();

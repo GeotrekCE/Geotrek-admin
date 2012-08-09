@@ -355,3 +355,14 @@ Sprint 2 - Version 0.2.0
     d'accroche. Un niveau de zoom élevé garanti un nombre restreint d'objets
     affichés (<1000).
 
+
+#109 - Ajouter une intervention ponctuelle
+------------------------------------------
+
+Lors de l'ajout d'une intervention, l'utilisateur peut choisir entre un point
+et une ligne. 
+Les deux types sont snappés sur le réseau des tronçons.
+
+:notes:
+
+    Les boutons actuels pour choisir point ou ligne sont trop petits.

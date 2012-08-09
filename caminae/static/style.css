@@ -110,4 +110,8 @@ h2 {
 #alert-box li.alert {list-style-type: none; margin-bottom: 3px;}
 
 /* Maps */
-.marker-snapped { background: yellow !important; }
+div.marker-snapped { background: yellow !important; }
+img.marker-add { background-image: url('images/marker-add.png') }
+img.marker-snapped { background-image: url('images/marker-snap.png') }
+
+ { BACKGROUND-IMAGE: url(/images/titleAdvaSearchFR.gif);width:150px; height:24px; } 
