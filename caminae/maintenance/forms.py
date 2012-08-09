@@ -51,4 +51,4 @@ class InterventionForm(MapEntityForm):
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topologies', 'jobs') # TODO
+        exclude = ('deleted', 'topology', 'jobs') # TODO

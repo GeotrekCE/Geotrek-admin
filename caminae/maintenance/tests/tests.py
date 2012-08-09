@@ -52,7 +52,6 @@ class ViewsTest(TestCase):
                 'status': i1.status.pk,
                 'heliport_cost': 0.0,
                 'material_cost': 0.0,
-                'typology': i1.typology.pk,
                 'geom': 'POINT (0.0 0.0 0.0)',
             }
             response = self.client.post(url, good_data)
