@@ -103,7 +103,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
 
     search: function (bounds) {
         var rtbounds = this._rtbounds(bounds);
-        return this.rtree.search(rtbounds);
+        return this.rtree.search(rtbounds) || [];
     },
     
     // Show all layers matching the pks
@@ -217,11 +217,14 @@ Caminae.MarkerSnapping = L.Handler.extend({
     SNAP_DISTANCE: 15,  // snap on marker move
     TOLERANCE: 0.00005, // snap existing object
 
-    initialize: function (marker) {
-        this._map = null;
+    initialize: function (map, marker) {
+        L.Handler.prototype.initialize.call(this, map);
         this._snaplist = [];
         this._markers = []
         if (marker) {
+            // new markers should be draggable !
+            if (!marker.dragging) marker.dragging = new L.Handler.MarkerDrag(marker);
+            marker.dragging.enable();
             this.snapMarker(marker);
         }
     },
@@ -240,7 +243,6 @@ Caminae.MarkerSnapping = L.Handler.extend({
     },
 
     snapMarker: function (marker) {
-        if (!this._map) this._map = marker._map;
         var i=0;
         for (; i<this._markers.length; i++) {
             if (this._markers[i] == marker) break;
@@ -254,6 +256,7 @@ Caminae.MarkerSnapping = L.Handler.extend({
     },
 
     setSnapList: function (l) {
+        l = l || [];
         this._snaplist = l;
         for (var i=0; i<this._markers.length; i++) {
             var marker = this._markers[i];
@@ -295,7 +298,6 @@ Caminae.MarkerSnapping = L.Handler.extend({
         var n = this._snaplist.length;
         // /!\ Careful with size of this list, iterated at every marker move!
         if (n>1000) console.warn("Snap list is very big : " + n + " objects!");
-        else if (n==0) console.warn("Snap list is empty !");
         
         // Iterate the whole snaplist
         for (var i = 0; i < n ; i++) {
@@ -359,9 +361,9 @@ Caminae.MarkerSnapping = L.Handler.extend({
 
 L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
 
-    initialize: function (poly, options) {
+    initialize: function (map, poly, options) {
         L.Handler.PolyEdit.prototype.initialize.call(this, poly, options);
-        this._snapper = new Caminae.MarkerSnapping();
+        this._snapper = new Caminae.MarkerSnapping(map);
     },
 
     setSnapList: function (l) {
@@ -373,6 +375,48 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
         this._snapper.snapMarker(marker);
         return marker;
     },
+});
+
+
+Caminae.SnapObserver = L.Class.extend({
+    MIN_SNAP_ZOOM: 12,
+    
+    initialize: function (map, guidesLayer) {
+        this._map = map;
+        this._guidesLayer = guidesLayer;
+        this._editionLayers = [];
+        
+        guidesLayer.on('load', this._refresh, this);
+        map.on('viewreset moveend', this._refresh, this);
+    },
+    add: function (editionLayer) {
+        if (editionLayer.eachLayer) {
+            editionLayer.eachLayer(function (l) {
+                this.add(l);
+            }, this);
+        }
+        else {
+            this._editionLayers.push(editionLayer);
+            editionLayer.editing.setSnapList(this.snapList());
+            
+        }
+    },
+    remove: function (editionLayer) {
+        //TODO
+    },
+    snapList: function () {
+        if (this._map.getZoom() > this.MIN_SNAP_ZOOM) {
+            return this._guidesLayer.search(this._map.getBounds());
+        }
+        console.log('No snapping at zoom level ' + this._map.getZoom());
+        return [];
+    },
+    _refresh: function () {
+        for (var i=0; i < this._editionLayers.length; i++) {
+            var editionLayer = this._editionLayers[i];
+            editionLayer.editing.setSnapList(this.snapList());
+        }
+    }
 });
 
 
