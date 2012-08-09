@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-01 21:01+0200\n"
+"POT-Creation-Date: 2012-08-09 11:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,22 +18,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:9 models.py:35 models.py:36
-msgid "Infrastructure"
-msgstr "Aménagement"
+#: models.py:12
+msgid "Building"
+msgstr ""
 
-#: models.py:10
+#: models.py:13
 msgid "Facility"
 msgstr "Équipement"
 
-#: models.py:11
+#: models.py:14
 msgid "Signage"
 msgstr "Signalétique"
 
-#: models.py:21
+#: models.py:25
 msgid "Infrastructure Type"
 msgstr "Type d'aménagement"
 
-#: models.py:22
+#: models.py:26
 msgid "Infrastructure Types"
 msgstr "Types d'aménagement"
+
+#: models.py:40 models.py:41
+msgid "Infrastructure"
+msgstr "Aménagement"

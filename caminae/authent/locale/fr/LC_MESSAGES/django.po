@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-01 21:00+0200\n"
+"POT-Creation-Date: 2012-08-09 11:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 "L'accès à cette ressource est restreinte aux administrateurs.Vous avez été "
 "redirigé."
 
-#: decorators.py:67
+#: decorators.py:70
 #, fuzzy
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
