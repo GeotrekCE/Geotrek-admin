@@ -24,10 +24,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         };
         var pointToLayer = function (geojson, latlng) {
             if (this._pointToLayer) return this._pointToLayer(geojson, latlng);
-            return new L.CircleMarker(latlng, {color: this.COLOR,
-                                               weight: this.WEIGHT,
-                                               opacity: 1,
-                                               fillOpacity: this.OPACITY});
+            return new L.CircleMarker(latlng);
         };
         
         if (!options) options = {};
@@ -36,12 +33,14 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this._pointToLayer = options.pointToLayer;
         options.pointToLayer = L.Util.bind(pointToLayer, this);
         
+        var self = this;
         if (!options.style) {
             options.style = function (geojson) {
                 return { 
-                    color: this.COLOR,
-                    opacity: this.OPACITY,
-                    weight: this.WEIGHT
+                    color: self.COLOR,
+                    opacity: self.OPACITY,
+                    fillOpacity: self.OPACITY * 0.9,
+                    weight: self.WEIGHT
                 }
             };
         }
