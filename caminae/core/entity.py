@@ -46,7 +46,7 @@ kind_to_urlpath = {
 def view_class_to_url(view_class):
     kind = view_class.get_entity_kind()
 
-    # Should raise an error
+    # TODO: Should raise an error
     if not kind:
         return None
 
@@ -59,5 +59,3 @@ def view_class_to_url(view_class):
 
 def view_classes_to_url(*view_classes):
     return [ view_class_to_url(view_class) for view_class in view_classes ]
-
-
