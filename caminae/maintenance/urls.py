@@ -5,16 +5,11 @@ from .views import (
     InterventionUpdate, InterventionDelete, InterventionJsonList
 )
 
+from caminae.core.entity import view_classes_to_url
 
-urlpatterns = patterns('',
-    url(r'^data/interventions.geojson$', InterventionLayer.as_view(), name="intervention_layer"),
-    url(r'^data/interventions.json$', InterventionJsonList.as_view(), name="intervention_json_list"),
-)
 
-urlpatterns += patterns('',
-    url(r'^intervention/list/$', InterventionList.as_view(), name="intervention_list"),
-    url(r'^intervention/add/$', InterventionCreate.as_view(), name='intervention_add'),
-    url(r'^intervention/(?P<pk>\d+)/$', InterventionDetail.as_view(), name='intervention_detail'),
-    url(r'^intervention/edit/(?P<pk>\d+)/$', InterventionUpdate.as_view(), name='intervention_update'),
-    url(r'^intervention/delete/(?P<pk>\d+)$', InterventionDelete.as_view(), name='intervention_delete'),
-)
+urlpatterns = patterns('', *view_classes_to_url(
+    InterventionLayer, InterventionList, InterventionDetail, InterventionCreate,
+    InterventionUpdate, InterventionDelete, InterventionJsonList
+))
+
