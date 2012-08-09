@@ -30,10 +30,10 @@
         <!-- Onglets Recherche/Fiche/Histo -->
         <div class="row-fluid">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="{% url core:path_list %}">{% trans "Modules" %}</a></li>
-                <li><a href="#">[nom fiche]</a></li>
-                <li><a href="#">{% trans "Reporting" %}</a></li>
-                <li><a href="#">{% trans "Logbook" %}</a></li>
+                <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url core:path_list %}">{% trans "Search" %}</a></li>
+                <li class="{% block nav-detail %}disabled{% endblock nav-detail %}"><a href="#">{% block objectname %}{% trans "Detail" %}{% endblock objectname %}</a></li>
+                <li class="{% block nav-report %}disabled{% endblock nav-report %}"><a href="#">{% trans "Reporting" %}</a></li>
+                <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
                 <li class="dropdown t"> <!-- Onglet Histo (avec dropdown) -->    
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         Dernières fiches consultées

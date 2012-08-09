@@ -1,6 +1,9 @@
 {% extends "core/base.html" %}
 {% load i18n static field_verbose_name maps %}
 
+{% block nav-detail %}active{% endblock nav-detail %}
+{% block objectname %}{{ object }}{% endblock objectname %}
+
 {% block mainpanel %}
     <div class="span7">
     {% block detailspanel %}
