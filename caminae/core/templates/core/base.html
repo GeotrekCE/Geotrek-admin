@@ -64,13 +64,13 @@
                 <!-- Liste des modules -->
                 <div class="span1">    
                     <ul id="listeModules" class="nav nav-pills nav-stacked">
-                        <li class="active"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
-                        <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/work.png" %}"/>{% trans "Interventions" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/infrastructure.png" %}"/>{% trans "Infrastructure" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/trekking.png" %}"/>{% trans "Trekking" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/poi.png" %}"/>{% trans "POI" %}</a></li>
+                        <li class="{% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
+                        <li class="{% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/work.png" %}"/>{% trans "Interventions" %}</a></li>
+                        <li class="{% block nav-project %}{% endblock nav-project %}"><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
+                        <li class="{% block nav-signage %}{% endblock nav-signage %}"><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
+                        <li class="{% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="#"><img src="{% static "images/infrastructure.png" %}"/>{% trans "Infrastructure" %}</a></li>
+                        <li class="{% block nav-trekking %}{% endblock nav-trekking %}"><a href="#"><img src="{% static "images/trekking.png" %}"/>{% trans "Trekking" %}</a></li>
+                        <li class="{% block nav-poi %}{% endblock nav-poi %}"><a href="#"><img src="{% static "images/poi.png" %}"/>{% trans "POI" %}</a></li>
                     </ul>
                 </div> <!--/span-->
 
