@@ -13,7 +13,7 @@ class InterventionLayer(MapEntityLayer):
 class InterventionList(MapEntityList):
     model = Intervention
     filterform = InterventionFilter
-    columns = ['name', 'stake', 'typology', 'material_cost']
+    columns = ['name', 'date', 'material_cost']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
