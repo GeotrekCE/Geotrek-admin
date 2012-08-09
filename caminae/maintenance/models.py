@@ -91,13 +91,17 @@ class Intervention(MapEntityMixin, StructureRelated):
         #return self.topologies.first.geom
         return Point(0.0, 1.0)
 
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
     class Meta:
         db_table = 'interventions'
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
 
     def __unicode__(self):
-        return u"%s (%s)" % (self.name , self.date)
+        return u"%s (%s)" % (self.name, self.date)
 
 
 class InterventionStatus(StructureRelated):
