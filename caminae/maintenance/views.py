@@ -23,6 +23,10 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 class InterventionDetail(MapEntityDetail):
     model = Intervention
 
+    def can_edit(self):
+        return self.request.user.profile.is_path_manager and \
+               self.get_object().same_structure(self.request.user)
+
 
 class InterventionCreate(MapEntityCreate):
     model = Intervention
