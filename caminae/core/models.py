@@ -6,6 +6,21 @@ from caminae.authent.models import StructureRelated
 from caminae.utils import distance3D
 
 
+# Used to create the matching url name
+ENTITY_LAYER = "layer"
+ENTITY_LIST = "list"
+ENTITY_JSON_LIST = "json_list"
+ENTITY_DETAIL = "detail"
+ENTITY_CREATE = "add"
+ENTITY_UPDATE = "update"
+ENTITY_DELETE = "delete"
+
+ENTITY_KINDS = (
+    ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
+    ENTITY_DETAIL, ENTITY_CREATE,
+    ENTITY_UPDATE, ENTITY_DELETE,
+)
+
 class MapEntityMixin(object):
 
     @classmethod
@@ -15,25 +30,38 @@ class MapEntityMixin(object):
         except cls.DoesNotExist:
             return None
 
+    # List all different kind of views
+    @classmethod
+    def get_url_name(cls, kind):
+        if not kind in ENTITY_KINDS:
+            return None
+        return '%s:%s_%s' % (cls._meta.app_label, cls._meta.module_name, kind)
+
+    @classmethod
+    def get_url_name_for_registration(cls, kind):
+        if not kind in ENTITY_KINDS:
+            return None
+        return '%s_%s' % (cls._meta.module_name, kind)
+
     @classmethod
     @models.permalink
     def get_layer_url(cls):
-        return ('%s:%s_layer' % (cls._meta.app_label, cls._meta.module_name),)
+        return (cls.get_url_name(ENTITY_LAYER), )
 
     @classmethod
     @models.permalink
     def get_list_url(cls):
-        return ('%s:%s_list' % (cls._meta.app_label, cls._meta.module_name),)
+        return (cls.get_url_name(ENTITY_LIST), )
 
     @classmethod
     @models.permalink
     def get_jsonlist_url(cls):
-        return ('%s:%s_json_list' % (cls._meta.app_label, cls._meta.module_name), )
+        return (cls.get_url_name(ENTITY_JSON_LIST), )
 
     @classmethod
     @models.permalink
     def get_add_url(cls):
-        return ('%s:%s_add' % (cls._meta.app_label, cls._meta.module_name), )
+        return (cls.get_url_name(ENTITY_CREATE), )
 
     def get_absolute_url(self):
         return self.get_detail_url()
@@ -41,19 +69,20 @@ class MapEntityMixin(object):
     @classmethod
     @models.permalink
     def get_generic_detail_url(self):
-        return ('%s:%s_detail' % (self._meta.app_label, self._meta.module_name), [str(0)])
+        return (self.get_url_name(ENTITY_DETAIL), [str(0)])
 
     @models.permalink
     def get_detail_url(self):
-        return ('%s:%s_detail' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+        return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
 
     @models.permalink
     def get_update_url(self):
-        return ('%s:%s_update' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+        return (self.get_url_name(ENTITY_UPDATE), [str(self.pk)])
 
     @models.permalink
     def get_delete_url(self):
-        return ('%s:%s_delete' % (self._meta.app_label, self._meta.module_name), [str(self.pk)])
+        return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
+
 
 
 
