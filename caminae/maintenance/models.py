@@ -33,9 +33,9 @@ class Intervention(MapEntityMixin, StructureRelated):
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##
-    topologies = models.ManyToManyField(TopologyMixin,
-            related_name="interventions",
-            verbose_name=_(u"Interventions"))
+    topology = models.ForeignKey(TopologyMixin, null=True,
+                related_name="interventions",
+                verbose_name=_(u"Interventions"))
 
     stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"))
@@ -80,7 +80,7 @@ class Intervention(MapEntityMixin, StructureRelated):
                                       path=path,
                                       start_position=position,
                                       end_position=position)
-        self.topologies.add(topology)
+        self.topology = topology
 
     @property
     def geom(self):
