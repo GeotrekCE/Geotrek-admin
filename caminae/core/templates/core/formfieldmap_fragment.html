@@ -111,28 +111,28 @@ function {{ module }}EnableMultipath(map, objectsLayer, layerStore) {
     objectsLayer.on('load', function() {
         $.getJSON('{% url core:path_json_graph %}', function(graph) {
 
-        var dijkstra = {
-            'compute_path': Caminae.compute_path,
-            'graph': graph
-        };
+            var dijkstra = {
+                'compute_path': Caminae.compute_path,
+                'graph': graph
+            };
 
-        var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra);
-        multipath_control.multipath_handler.on('computed_paths', function(data) {
-            var new_edges = data['new_edges'];
+            var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra);
+            multipath_control.multipath_handler.on('computed_paths', function(data) {
+                var new_edges = data['new_edges'];
 
-            // Gather all LatLngs - $.map autoconcatenate
-            var lls = $.map(new_edges, function(edge) {
-                return objectsLayer.getLayer(edge.id).getLatLngs(); 
+                // Gather all LatLngs - $.map autoconcatenate
+                var lls = $.map(new_edges, function(edge) {
+                    return objectsLayer.getLayer(edge.id).getLatLngs(); 
+                });
+
+                // This is just used to get the WKT
+                // TODO: later we should pass list of pks instead of resulting geom
+                var layer = new L.Polyline(lls);
+
+                layerStore.storeLayerGeomInField(layer);
             });
 
-            // Polyline or MultiPolyline ?
-            // This is just used to get the WKT
-            var layer = new L.Polyline(lls);
-
-            layerStore.storeLayerGeomInField(layer);
-        });
-
-        map.addControl(multipath_control);
+            map.addControl(multipath_control);
 
         });
     });
@@ -234,7 +234,7 @@ function {{ module }}Init(map, bounds) {
         }
     );
 
-    // FIXME: I NEED paths.geojson ; have a function to get it
+    // TODO: I NEED paths.geojson ; have a function to get it
     var path_layer = snapObserver._guidesLayer; // objectsLayer,
 
     // {{ module }}EnableMultipath(map, objectsLayer, layerStore)

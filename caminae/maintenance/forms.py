@@ -1,4 +1,4 @@
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString
 
 import floppyforms as forms
 from crispy_forms.layout import Field
@@ -40,18 +40,15 @@ class InterventionForm(MapEntityForm):
         
         geom = self.cleaned_data.get('geom')
         if not geom:
-            pass # raise ValueError !
+            pass  # raise ValueError !
 
         if isinstance(geom, Point):
             intervention.initFromPoint(geom)
-        else:
-            # Must be LineString
-            # we do not handle constraint
-            intervention.initFromPathsList(geom, constraint=())
-
-
+        elif isinstance(geom, LineString):
+            # TODO: later it should be list of Path objects (from list of pks in form)
+            intervention.initFromPathsList(geom)
         return intervention
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topology', 'jobs') # TODO
+        exclude = ('deleted', 'topology', 'jobs')  # TODO
