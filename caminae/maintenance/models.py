@@ -54,8 +54,11 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
-    def initFromPathsList(self, pathlist, constraints):
-        raise NotImplementedError
+    def initFromPathsList(self, pathlist, constraints=None):
+        # TODO: pathlist is now a geom
+        topology = TopologyMixinFactory.create(geom=pathlist)
+        self.topology = topology
+        self.save()
 
     def initFromInfrastructure(self, infrastructure):
         raise NotImplementedError

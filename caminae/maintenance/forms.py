@@ -1,16 +1,16 @@
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString
 
 import floppyforms as forms
 from crispy_forms.layout import Field
 
 from caminae.core.forms import MapEntityForm
-from caminae.core.widgets import PointOrLineStringWidget
+from caminae.core.widgets import PointOrMultipathWidget
 
 from .models import Intervention
 
 
 class InterventionForm(MapEntityForm):
-    geom = forms.gis.GeometryField(widget=PointOrLineStringWidget)
+    geom = forms.gis.GeometryField(widget=PointOrMultipathWidget)
 
     modelfields = (
             'name',
@@ -40,15 +40,15 @@ class InterventionForm(MapEntityForm):
         
         geom = self.cleaned_data.get('geom')
         if not geom:
-            pass # raise ValueError !
+            pass  # raise ValueError !
 
         if isinstance(geom, Point):
             intervention.initFromPoint(geom)
-        else:
-            # TODO: list of paths + constraints
-            pass
+        elif isinstance(geom, LineString):
+            # TODO: later it should be list of Path objects (from list of pks in form)
+            intervention.initFromPathsList(geom)
         return intervention
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topology', 'jobs') # TODO
+        exclude = ('deleted', 'topology', 'jobs')  # TODO
