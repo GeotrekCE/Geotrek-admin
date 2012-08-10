@@ -162,18 +162,18 @@ class PathTest(TestCase):
         p.save()
 
         # This should results in 3 PathAggregation (2 for RA, 1 for City)
-        self.assertEquals(p.pathaggregation_set.count(), 3)
+        self.assertEquals(p.aggregations.count(), 3)
 
         # PathAgg is plain for City
-        pa = c.cityedge_set.get().pathaggregation_set.get()
+        pa = c.cityedge_set.get().aggregations.get()
         self.assertEquals(pa.start_position, 0.0)
         self.assertEquals(pa.end_position, 1.0)
 
         # PathAgg is splitted in 2 parts for RA
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
-        pa1 = ra1.restrictedareaedge_set.get().pathaggregation_set.get()
-        pa2 = ra2.restrictedareaedge_set.get().pathaggregation_set.get()
+        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
+        pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
         self.assertEquals(pa1.start_position, 0.0)
         self.assertEquals(pa1.end_position, 0.5)
         self.assertEquals(pa2.start_position, 0.5)
@@ -184,7 +184,7 @@ class PathTest(TestCase):
         p.save()
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
-        pa1 = ra1.restrictedareaedge_set.get().pathaggregation_set.get()
+        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
         self.assertEquals(pa1.start_position, 0.0)
         self.assertEquals(pa1.end_position, 1.0)
 

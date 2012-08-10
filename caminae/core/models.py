@@ -227,8 +227,8 @@ class TopologyMixinKind(models.Model):
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False, db_column='troncon', verbose_name=_(u"Path"))
-    topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="paths",
+    path = models.ForeignKey(Path, null=False, db_column='troncon', verbose_name=_(u"Path"), related_name="aggregations")
+    topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
     end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
