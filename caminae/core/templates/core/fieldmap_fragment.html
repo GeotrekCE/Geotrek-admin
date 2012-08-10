@@ -21,12 +21,11 @@ function {{ mapname }}Init(map, bounds) {
     var objectBounds = {{ object|latlngbounds }},
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
-    map.zoomOut();
     map.addControl(new L.Control.Scale());
     
     // Paths layer (TODO: should we show objectsLayers ?)
     var pathsLayer = new Caminae.ObjectsLayer(null, {
-        style: {weight: 2, clickable: false}
+        style: {weight: 2, opacity: 0.7, clickable: false}
     });
     map.addLayer(pathsLayer);
     pathsLayer.load("{% url core:path_layer %}");
