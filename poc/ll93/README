@@ -1,9 +1,0 @@
-virtualenv .
-source bin/activate
-
-pip install Paste TileCache
-
-tilecache_http_server.py  # 8080
-
-python -mSimpleHTTPServer  # 8000
-

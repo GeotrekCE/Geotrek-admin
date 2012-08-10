@@ -243,8 +243,13 @@ SPATIAL_EXTENT = None
 API_SRID = 4326
 
 LEAFLET_CONFIG = {
-    "TILES_URL" : "http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg",
-    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46), # TODO : Temporary : override extent in 4326, until POC Leaflet L93
+    "TILES_URL" : [
+        ("IGN", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),
+        ("Ortho", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.png'),
+    ],
+    "MAX_RESOLUTION" : 1142.7383,
+    "TILES_EXTENT" : [700000,6325197,1060000,6617738],
+    "SPATIAL_EXTENT" : [5.0, 43.8, 7.5, 45.8],
 }
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
