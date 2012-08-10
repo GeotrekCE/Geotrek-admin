@@ -217,19 +217,19 @@ Caminae.compute_path = (function() {
 Caminae.Cameleon = (function() {
 
     var styleWrapper = function(layer) {
-        var initial_color = layer.options.color;
+        var initial_style = $.extend({}, layer.options);
 
-        var changeColor = function(color) {
+        var changeStyle = function(style) {
             return function() {
-                layer.setStyle({'color': color});
+                layer.setStyle($.extend({}, initial_style, style));
             };
         };
         return {
-              fromNodeStyle: changeColor('green')
-            , toNodeStyle: changeColor('red')
-            , stepNodeStyle: changeColor('purple')
-            , computedNodeStyle: changeColor('black')
-            , restoreStyle: changeColor(initial_color)
+              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
+            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
+            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
+            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
+            , restoreStyle: changeStyle(initial_style)
         };
     };
 
