@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import Path, MapEntityMixin, TopologyMixin
-from caminae.core.factories import PathFactory, TopologyMixinFactory, PathAggregationFactory
+from caminae.core.models import MapEntityMixin, TopologyMixin
+from caminae.core.factories import TopologyMixinFactory
 from caminae.common.models import Organism
 
 
@@ -54,8 +55,11 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
-    def initFromPathsList(self, pathlist, constraints):
-        raise NotImplementedError
+    def initFromPathsList(self, pathlist, constraints=None):
+        # TODO: pathlist is now a geom
+        topology = TopologyMixinFactory.create(geom=pathlist)
+        self.topology = topology
+        self.save()
 
     def initFromInfrastructure(self, infrastructure):
         raise NotImplementedError
@@ -64,32 +68,21 @@ class Intervention(MapEntityMixin, StructureRelated):
         """
         Initialize the intervention topology from a Point.
         """
-        closest_paths = Path.objects.distance(point).order_by('-distance')
-        if not closest_paths:
-            closest_paths = [PathFactory.create()]
-            # TODO: raise not possible without path !
-
-        # TODO: compute this from point position
-        path = closest_paths[0]
-        distance = 0
-        position = position = 0.5
-        
-        # Create topologies objects
-        topology = TopologyMixinFactory.create(offset=distance)
-        PathAggregationFactory.create(topo_object=topology,
-                                      path=path,
-                                      start_position=position,
-                                      end_position=position)
+        # TODO : compute offset etc.
+        fakeline = LineString(Point(point.x, point.y, 0), Point(point.x+0.1, point.y+0.1, 0))
+        topology = TopologyMixinFactory.create(geom=fakeline)
         self.topology = topology
+        self.save()
 
     @property
     def geom(self):
-        # TODO: geometry of intervention is either : 
-        # the one from its infrastructure.Facility or the one
-        # from its topology
-        #print "HEEEEEEEEEEEEEEEEEEEEEEEEE", self.topologies.first.geom, "\n"
-        #return self.topologies.first.geom
-        return Point(0.0, 1.0)
+        if self.topology:
+            if len(list(self.topology.geom.coords)) == 2:
+                fakepoint = Point(*self.topology.geom.coords[0], srid=settings.SRID)  # return Point from fakeline
+                return fakepoint
+            else:
+                return self.topology.geom
+        return Point(0,0,0)
 
     @property
     def name_display(self):

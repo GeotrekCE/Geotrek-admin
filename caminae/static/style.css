@@ -140,3 +140,7 @@ img.marker-snapped { background-image: url('images/marker-snap.png') }
     margin-top: 4px;
     padding-bottom: 4px;
 }
+
+.multipath-control {
+    background-image: url(images/multipath-control.png);
+}
