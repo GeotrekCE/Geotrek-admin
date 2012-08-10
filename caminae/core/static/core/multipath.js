@@ -1,0 +1,260 @@
+
+L.Control.Multipath = L.Control.extend({
+    options: {
+        position: 'topright',
+    },
+
+    /* dijkstra */
+    initialize: function (graph_layer, dijkstra, options) {
+        L.Control.prototype.initialize.call(this, options);
+        this.dijkstra = dijkstra;
+        this.multipath_handler = new L.Handler.MultiPath(graph_layer, dijkstra, this.options.handler);
+    },
+
+    onAdd: function (map) {
+        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-in', this._container);
+        link.href = '#';
+        link.title = 'Multipath';
+
+        var self = this;
+        L.DomEvent
+                .addListener(link, 'click', L.DomEvent.stopPropagation)
+                .addListener(link, 'click', L.DomEvent.preventDefault)
+                .addListener(link, 'click', function() {
+                     self.multipath_handler.enable();
+                });
+
+        return this._container;
+    },
+
+    onRemove: function (map) {
+    }
+
+});
+
+L.Handler.MultiPath = L.Handler.extend({
+    includes: L.Mixin.Events,
+
+    initialize: function (graph_layer, dijkstra, options) {
+        this.graph_layer = graph_layer;
+        // .graph .algo ?
+        this.dijkstra = dijkstra;
+        this.graph = dijkstra.graph;
+
+        this.layerToId = function layerToId(layer) {
+            return graph_layer.getPk(layer);
+        };
+
+        this.idToLayer = function(id) {
+            return graph_layer.getLayer(id);
+        };
+    },
+
+    // TODO: when to remove/update links..? what's the behaviour ?
+    addHooks: function () {
+        // steps could be given
+        // computed_paths
+        this.steps = [];
+        this.computed_paths = []
+
+        this.cameleon = new Caminae.Cameleon(this.layerToId);
+        this.graph_layer.on('click', this._onClick, this);
+    },
+
+    removeHooks: function () {
+        var self = this;
+
+        this.graph_layer.off('click', this._onClick, this);
+        this.steps.forEach(function(edge_id) {
+            self.cameleon.pop(self.idToLayer(edge_id)).restoreStyle();
+        });
+    },
+
+    // On click on a layer with the graph
+    _onClick: function(e) {
+        var layer = e.layer;
+
+        if (this.steps.length >= 2) {
+            return; // should not happen
+        }
+        // don't accept twice a step
+        if (this.steps.indexOf(e.layer) != -1) {
+            return;
+        }
+
+        var edge_id = this.layerToId(layer);
+        var edge = this.graph.edges[edge_id];
+
+        this.steps.push(edge_id);
+        var can_compute = (this.steps.length == 2);
+
+        // mark
+        if (can_compute) {
+            this.cameleon.create(layer).toNodeStyle();
+        } else {
+            this.cameleon.create(layer).fromNodeStyle();
+        }
+
+        if (can_compute) {
+            this._onComputedPaths(
+                this.dijkstra.compute_path(this.graph, this.steps)
+            );
+        }
+    },
+
+
+    // Extract the complete edges list from the first to the last one
+    _eachInnerComputedPathsEdges: function(computed_paths, f) {
+        if (computed_paths) {
+            computed_paths.forEach(function(cpath) {
+                cpath.path.forEach(function(path_component) {
+                    f(path_component.edge);
+                });
+            });
+        }
+    },
+
+    // Extract the complete edges list from the first to the last one
+    _extractAllEdges: function(computed_paths) {
+        var all_edges = [];
+        if (computed_paths) {
+            computed_paths.forEach(function(cpath) {
+                all_edges.push(cpath.from_edge);
+                cpath.path.forEach(function(path_component) {
+                    all_edges.push(path_component.edge);
+                });
+            })
+            all_edges.push(
+                computed_paths[computed_paths.length - 1].to_edge
+            );
+        }
+        return all_edges;
+    },
+
+    _onComputedPaths: function(new_computed_paths) {
+        var self = this;
+        var old_computed_path = this.computed_paths;
+        this.computed_paths = new_computed_paths;
+
+        // restore previous style
+        this._eachInnerComputedPathsEdges(old_computed_path, function(edge_id) {
+            self.cameleon.pop(self.idToLayer(edge_id)).restoreStyle();
+        });
+
+        // compute and store all edges of the new paths (usefull for further computation)
+        var all_edges = this._extractAllEdges(new_computed_paths);
+
+        // set inner style
+        this._eachInnerComputedPathsEdges(new_computed_paths, function(edge) {
+            self.cameleon.create(self.idToLayer(edge.id)).computedNodeStyle();
+        });
+
+        this.fire('computed_paths', {
+            'new': new_computed_paths,
+            'new_edges': all_edges,
+            'old': old_computed_path
+        });
+
+        this.disable();
+    }
+
+});
+
+
+// Computed_paths:
+//
+// Returns:
+//   Array of {
+//        'from_edge': Edge
+//      , 'to_edge': Edge
+//      , 'weight': Int
+//      , 'path': DisjktraPath as returned by dijkstra_from_nodes.path
+//                Array of { start: Node, end: Node, edge: { id, length }, weigh: int }
+//   }
+//
+Caminae.compute_path = (function() {
+
+    function computeTwoStepsPath(graph, steps) {
+        if (steps.length > 2) {
+            return null; // should raise
+        }
+
+        var from_edge_id = steps[0]
+          , to_edge_id = steps[1]
+          , from_edge = graph.edges[from_edge_id]
+          , to_edge = graph.edges[to_edge_id]
+          , from_nodes = from_edge.nodes_id
+          , to_nodes = to_edge.nodes_id
+        ;
+
+        // path: {
+        //   weight: ... ,
+        //   path : list of { start, end, edge } ids
+        var path = Caminae.Dijkstra.get_shortest_path_from_graph(graph, from_nodes, to_nodes);
+
+        if(! path)
+            return null;
+
+        // return an array as we may compute more than two steps path
+        var computed_paths = [{
+              'from_edge': from_edge
+            , 'to_edge': to_edge
+            , 'path': path.path
+            , 'weight': path.weight
+        }];
+
+        return computed_paths;
+    }
+
+    // TODO: compute more than two steps
+    return computeTwoStepsPath;
+
+})();
+
+
+// Simply store a layer, apply a color and restore the previous color
+Caminae.Cameleon = (function() {
+
+    var styleWrapper = function(layer) {
+        var initial_color = layer.options.color;
+
+        var changeColor = function(color) {
+            return function() {
+                layer.setStyle({'color': color});
+            };
+        };
+        return {
+              fromNodeStyle: changeColor('green')
+            , toNodeStyle: changeColor('red')
+            , stepNodeStyle: changeColor('purple')
+            , computedNodeStyle: changeColor('black')
+            , restoreStyle: changeColor(initial_color)
+        };
+    };
+
+    // Camleon wrap a layer in a style
+    // layerToId is used to convert a layer to a key
+    function Cameleon(layerToHashable) {
+        var self = this;
+        var wrappedLayer = {};
+        this.create = function(layer) {
+            return wrappedLayer[layerToHashable(layer)] = styleWrapper(layer);
+        };
+        this.get = function(layer) {
+            return wrappedLayer[layerToHashable(layer)]
+        };
+        this.getOrCreate = function(layer) {
+            return self.get(layer) || this.create(layer);
+        };
+        this.pop = function(layer) {
+            var ret = self.get(layer)
+            if (ret)
+                delete wrappedLayer[layerToHashable(layer)];
+            return ret;
+        };
+    }
+
+    return Cameleon;
+})();
+
