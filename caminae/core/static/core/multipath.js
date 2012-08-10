@@ -53,22 +53,30 @@ L.Handler.MultiPath = L.Handler.extend({
 
     // TODO: when to remove/update links..? what's the behaviour ?
     addHooks: function () {
-        // steps could be given
-        // computed_paths
+        var self = this;
+
+        // Clean all previous edges if they exist
+        var old_edges = this.all_edges || [];
+        $.each(old_edges, function(idx, edge) {
+            // You may find several times the same edge in a path
+            // so test for it (as pop removes it)
+            var layer = self.cameleon.pop(self.idToLayer(edge.id));
+            layer && layer.restoreStyle();
+        });
+
         this.steps = [];
         this.computed_paths = []
+        this.all_edges = [];
 
         this.cameleon = new Caminae.Cameleon(this.layerToId);
         this.graph_layer.on('click', this._onClick, this);
+
     },
 
     removeHooks: function () {
         var self = this;
 
         this.graph_layer.off('click', this._onClick, this);
-        this.steps.forEach(function(edge_id) {
-            self.cameleon.pop(self.idToLayer(edge_id)).restoreStyle();
-        });
     },
 
     // On click on a layer with the graph
@@ -129,21 +137,17 @@ L.Handler.MultiPath = L.Handler.extend({
                 computed_paths[computed_paths.length - 1].to_edge
             );
         }
+        // fixme: seems to return more than once the first edge ? :<
         return all_edges;
     },
 
     _onComputedPaths: function(new_computed_paths) {
         var self = this;
-        var old_computed_path = this.computed_paths;
+        var old_computed_paths = this.computed_paths;
         this.computed_paths = new_computed_paths;
 
-        // restore previous style
-        this._eachInnerComputedPathsEdges(old_computed_path, function(edge_id) {
-            self.cameleon.pop(self.idToLayer(edge_id)).restoreStyle();
-        });
-
         // compute and store all edges of the new paths (usefull for further computation)
-        var all_edges = this._extractAllEdges(new_computed_paths);
+        this.all_edges = this._extractAllEdges(new_computed_paths);
 
         // set inner style
         this._eachInnerComputedPathsEdges(new_computed_paths, function(edge) {
@@ -152,8 +156,8 @@ L.Handler.MultiPath = L.Handler.extend({
 
         this.fire('computed_paths', {
             'new': new_computed_paths,
-            'new_edges': all_edges,
-            'old': old_computed_path
+            'new_edges': this.all_edges,
+            'old': old_computed_paths
         });
 
         this.disable();
