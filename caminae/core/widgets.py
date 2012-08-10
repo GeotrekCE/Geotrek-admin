@@ -38,6 +38,7 @@ class MapEntityWidget(LeafletMapWidget):
     
     def get_context(self, name, value, attrs=None, extra_context={}):
         context = super(MapEntityWidget, self).get_context(name, value, attrs, extra_context)
+        context['min_snap_zoom'] = settings.MIN_SNAP_ZOOM
         context['path_snapping'] = self.path_snapping
         return context
 

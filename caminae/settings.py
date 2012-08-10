@@ -242,6 +242,8 @@ SPATIAL_EXTENT = None
 # API projection (client-side), can differ from SRID (database)
 API_SRID = 4326
 
+MIN_SNAP_ZOOM = 7
+
 LEAFLET_CONFIG = {
     "TILES_URL" : [
         ("IGN", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),

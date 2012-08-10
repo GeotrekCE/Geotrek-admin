@@ -61,6 +61,7 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
 
 function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
     var snapObserver = null;
+    Caminae.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
     // Snapping is always on paths layer. But only if model is not path,
     // since snapping will then be on objects layer. 
     // Allows to save loading twice the same layer.
