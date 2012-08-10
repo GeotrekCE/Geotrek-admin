@@ -244,6 +244,18 @@ N/A
 Sprint 2 - Version 0.2.0
 ========================
 
+#95 - Draper les tronçons sur le MNT
+------------------------------------
+
+* Visualiser le profil altimétrique d'un tronçon.
+* Modifier sa géométrie.
+* Vérifier que le profil a changé.
+
+:notes:
+
+    Toutes les informations pour charger le DEM sont dans le fichier README.
+
+
 #18 - Gérer les permissions d'édition des objets en fonction de la structure
 ----------------------------------------------------------------------------
 
@@ -305,6 +317,15 @@ dessin de courbes.
 * La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
 * Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
 
+#87 - Découper l'application en modules
+---------------------------------------
+
+Seuls Tronçons et Interventions ne sont activés pour l'instant.
+
+:notes:
+
+    Cette story consistat à écrire tout le code source pour activer facilement les modules
+    de manière générique.
 
 #119 - Servir le graphe du réseau de sentiers
 ---------------------------------------------
@@ -343,17 +364,22 @@ Il est accessible en JSON à l'url ``/data/graph.json``.
     d'accroche. Un niveau de zoom élevé garanti un nombre restreint d'objets
     affichés (<1000).
 
+#34 - Inverser un tronçon
+-------------------------
+
+Aller sur le formulaire d'un tronçon. Cocher "inverser". Sauvegarder.
+Noter que le profil altimétrique est inversé.
+
 
 #109 - Ajouter une intervention ponctuelle
 ------------------------------------------
 
 Lors de l'ajout d'une intervention, l'utilisateur peut choisir entre un point
-et une ligne. 
-Les deux types sont snappés sur le réseau des tronçons.
+et une saisie multi-tronçons.
 
 :notes:
 
-    Les boutons actuels pour choisir point ou ligne sont trop petits.
+    Les boutons actuels des controles sont trop petits.
 
 
 #113 - Passer les cartes en tuiles L93
@@ -366,6 +392,17 @@ par défaut.
 
     L'orthophoto ne fonctionne pas.
     Le cache de tuiles n'est pas déployé avec le projet. C.f. story #112.
+
+
+#124 - Ajouter un cache intelligent
+-----------------------------------
+
+* Visualiser la couche des tronçons une 1ère fois. Cela prend plusieurs secondes.
+* Visualiser la couche des tronçons une 2ème fois, c'est instantané.
+* Modifier un tronçon.
+* Visualiser la couche des tronçons. Cela prend à nouveau plusieurs secondes.
+
+On peut forcer le raffraichissement en vidant le cache (Ctrl+F5 du navigateur).
 
 
 #130 - Intégrer les onglets
