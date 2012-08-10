@@ -5,10 +5,10 @@ L.Control.Multipath = L.Control.extend({
     },
 
     /* dijkstra */
-    initialize: function (graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, options) {
         L.Control.prototype.initialize.call(this, options);
         this.dijkstra = dijkstra;
-        this.multipath_handler = new L.Handler.MultiPath(graph_layer, dijkstra, this.options.handler);
+        this.multipath_handler = new L.Handler.MultiPath(map, graph_layer, dijkstra, this.options.handler);
     },
 
     onAdd: function (map) {
@@ -36,7 +36,8 @@ L.Control.Multipath = L.Control.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, options) {
+        this._container = map._container;
         this.graph_layer = graph_layer;
         // .graph .algo ?
         this.dijkstra = dijkstra;
@@ -67,15 +68,15 @@ L.Handler.MultiPath = L.Handler.extend({
         this.steps = [];
         this.computed_paths = []
         this.all_edges = [];
+		this._container.style.cursor = 'w-resize';
 
         this.cameleon = new Caminae.Cameleon(this.layerToId);
         this.graph_layer.on('click', this._onClick, this);
-
     },
 
     removeHooks: function () {
         var self = this;
-
+        this._container.style.cursor = '';
         this.graph_layer.off('click', this._onClick, this);
     },
 
@@ -100,8 +101,10 @@ L.Handler.MultiPath = L.Handler.extend({
         // mark
         if (can_compute) {
             this.cameleon.create(layer).toNodeStyle();
+            this._container.style.cursor = '';
         } else {
             this.cameleon.create(layer).fromNodeStyle();
+            this._container.style.cursor = 'e-resize';
         }
 
         if (can_compute) {

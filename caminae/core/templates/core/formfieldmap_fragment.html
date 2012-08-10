@@ -116,7 +116,7 @@ function {{ module }}EnableMultipath(map, objectsLayer, layerStore) {
             'graph': graph
         };
 
-        var multipath_control = new L.Control.Multipath(objectsLayer, dijkstra);
+        var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra);
         multipath_control.multipath_handler.on('computed_paths', function(data) {
             var new_edges = data['new_edges'];
 
