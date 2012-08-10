@@ -39,7 +39,7 @@ class ViewsTest(TestCase):
                 'name': 'test',
                 'structure': i1.structure.pk,
                 'stake': '',
-                'disorders': 1,
+                'disorders': i1.disorders.all()[0].pk,
                 'comments': '',
                 'slope': 0,
                 'area': 0,
