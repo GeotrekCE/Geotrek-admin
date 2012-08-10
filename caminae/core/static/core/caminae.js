@@ -391,7 +391,7 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
 
 
 Caminae.SnapObserver = L.Class.extend({
-    MIN_SNAP_ZOOM: 12,
+    MIN_SNAP_ZOOM: 7,
     
     initialize: function (map, guidesLayer) {
         this._map = map;

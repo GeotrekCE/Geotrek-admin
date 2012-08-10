@@ -14,7 +14,7 @@ Known problems
   drop/create the field
 * ``dumpdata`` management command will not output the Z coordinates when
   present. Chaining dumpdata and loaddata will therefore not work.
-
+* ``MIN_SNAP_ZOOM`` not taken into account.
 
 ==========
 Soon...
