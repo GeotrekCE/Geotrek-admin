@@ -21,6 +21,7 @@ function {{ mapname }}Init(map, bounds) {
     var objectBounds = {{ object|latlngbounds }},
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
+    map.zoomOut();
     map.addControl(new L.Control.Scale());
     
     // Paths layer (TODO: should we show objectsLayers ?)

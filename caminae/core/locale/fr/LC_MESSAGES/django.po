@@ -275,7 +275,7 @@ msgstr "mètres"
 
 #: templates/core/path_detail.html:82
 msgid "Altitude profile"
-msgstr "Profile altimétrique"
+msgstr "Profil altimétrique"
 
 #: templates/core/path_detail.html:91
 msgid "Loading..."

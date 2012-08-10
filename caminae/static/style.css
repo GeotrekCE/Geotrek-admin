@@ -117,6 +117,10 @@ div.marker-snapped { background: yellow !important; }
 img.marker-add { background-image: url('images/marker-add.png') }
 img.marker-snapped { background-image: url('images/marker-snap.png') }
 
+.axislabel {
+	color: blue;
+	font-size: 10px;
+}
 
 /* Bootstrap quick and dirty */
 .navbar {

@@ -80,14 +80,28 @@
 
 {% block mappanel %}
     {{ block.super }}
-    <h2>{% trans "Altitude profile" %}</h2>
-    <script> type="text/javascript">
-        $(function() {
-            $.getJSON("{% url core:path_profile path.pk %}", function(data) {
-                $('.dynamicsparkline').sparkline(data.profile, {width: 400, height: 200});
-            });
-        });
-    </script>
-    <p>Altitude (m)</p>
-    <div class="dynamicsparkline">{% trans "Loading..." %}</div>
+	<div id="altitudegraph">
+		<h2>{% trans "Altitude profile" %}</h2>
+		<p class="axislabel">{% trans "Altitude (m)" %}</p>
+		<span id="profilealtitude"></span> <span class="axislabel" style="position:relative; top:85px">{% trans "Distance (m)" %}</span>
+		<p id="mouseoverprofil" class="axislabel" >&nbsp;</p>
+	</div>
+
+	<div class="span11"></div><!-- clear -->
+
+    <script type="text/javascript">
+		$(function() {
+			$.getJSON("{% url core:path_profile path.pk %}", function(data) {
+				$('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
+				$('#profilealtitude').bind('sparklineRegionChange', function(ev) {
+					var sparkline = ev.sparklines[0],
+						region = sparkline.getCurrentRegionFields();
+						value = region.y;
+					$('#mouseoverprofil').text(Math.round(region.x) +" m");
+				}).bind('mouseleave', function() {
+					$('#mouseoverprofil').text('');
+				});
+			});
+		});
+	</script>
 {% endblock mappanel %}
