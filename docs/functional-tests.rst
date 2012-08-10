@@ -372,3 +372,24 @@ par défaut.
 ---------------------------
 
 Les onglets s'activent en fonction du module et de la page visitée.
+
+
+#114 - Ajouter une intervention liée à X tronçons
+-------------------------------------------------
+
+Depuis le formulaire d'édition d'intervention.
+
+Choisir le controle "Multipaths", au dessous du controle d'ajout de point.
+
+* Cliquer un premier tronçon, puis un deuxième.
+* Les tronçons intermédiaires se sélectionnent (plus court chemin). 
+  La géométrie stockée est l'union des tronçons sélectionnés.
+
+Si je reclique sur le controle, l'ancien tracé s'efface et je peux à nouveau refaire faire un calcul d'itinéraire
+
+:notes:
+
+    Problème connu: le tracé d'une intervention existante n'est pas chargée à l'ouverture
+    du formulaire.
+
+    À l'avenir, nous aurons un sélecteur d'itinéraires à-la Google Maps.
