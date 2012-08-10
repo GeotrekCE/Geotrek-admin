@@ -1,6 +1,7 @@
 from django import template
+from django.conf import settings
 from django.template import Context
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Point
 
 register = template.Library()
 
@@ -17,8 +18,12 @@ def fieldmap(obj, fieldname):
 def latlngbounds(obj, fieldname='geom'):
     if obj is None or isinstance(obj, basestring):
         return 'null'
-    if isinstance(obj, GEOSGeometry):
-        extent = list(obj.extent)
+    if not isinstance(obj, GEOSGeometry):
+        obj = getattr(obj, fieldname)
+    if isinstance(obj, Point):
+        # TODO: OMG why?
+        obj.transform(settings.API_SRID)
+        extent = [obj.x-0.005, obj.y-0.005, obj.x+0.005, obj.y+0.005]
     else:
-        extent = list(getattr(obj, fieldname).extent)
+        extent = list(obj.extent)
     return [[extent[1], extent[0]], [extent[3], extent[2]]]
