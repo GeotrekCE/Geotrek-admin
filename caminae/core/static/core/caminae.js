@@ -28,6 +28,7 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         };
         
         if (!options) options = {};
+        options.highlight = options.highlight || typeof(options.objectUrl) != 'undefined';
         this._onEachFeature = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
         this._pointToLayer = options.pointToLayer;
@@ -80,13 +81,15 @@ Caminae.ObjectsLayer = L.GeoJSON.extend({
         this.rtree.insert(this._rtbounds(bounds), layer);
 
         // Highlight on mouse over
-        layer.on('mouseover', L.Util.bind(function (e) {
-            this.highlight(pk);
-        }, this));
-        layer.on('mouseout', L.Util.bind(function (e) {
-            this.highlight(pk, false);
-        }, this));
-        
+        if (this.options.highlight) {
+            layer.on('mouseover', L.Util.bind(function (e) {
+                this.highlight(pk);
+            }, this));
+            layer.on('mouseout', L.Util.bind(function (e) {
+                this.highlight(pk, false);
+            }, this));
+        }
+
         // Optionnaly make them clickable
         if (this.options.objectUrl) {
             layer.on('click', L.Util.bind(function (e) {
