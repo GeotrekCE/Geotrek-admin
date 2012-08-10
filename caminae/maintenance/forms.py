@@ -4,13 +4,13 @@ import floppyforms as forms
 from crispy_forms.layout import Field
 
 from caminae.core.forms import MapEntityForm
-from caminae.core.widgets import PointOrLineStringWidget
+from caminae.core.widgets import PointOrMultipathWidget
 
 from .models import Intervention
 
 
 class InterventionForm(MapEntityForm):
-    geom = forms.gis.GeometryField(widget=PointOrLineStringWidget)
+    geom = forms.gis.GeometryField(widget=PointOrMultipathWidget)
 
     modelfields = (
             'name',
@@ -45,8 +45,11 @@ class InterventionForm(MapEntityForm):
         if isinstance(geom, Point):
             intervention.initFromPoint(geom)
         else:
-            # TODO: list of paths + constraints
-            pass
+            # Must be LineString
+            # we do not handle constraint
+            intervention.initFromPathsList(geom, constraint=())
+
+
         return intervention
 
     class Meta:

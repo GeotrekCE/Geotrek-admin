@@ -55,7 +55,7 @@ class Intervention(MapEntityMixin, StructureRelated):
             verbose_name=_(u"Project"))
 
     def initFromPathsList(self, pathlist, constraints):
-        raise NotImplementedError
+        print pathlist
 
     def initFromInfrastructure(self, infrastructure):
         raise NotImplementedError
