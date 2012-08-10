@@ -232,10 +232,10 @@ Caminae.Cameleon = (function() {
             };
         };
         return {
-              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
-            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
-            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
-            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5})
+              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
+            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
+            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
+            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
             , restoreStyle: changeStyle(initial_style)
         };
     };
