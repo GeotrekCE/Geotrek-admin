@@ -13,7 +13,7 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
         if not wkt:
             return None
         try:
-            geom = fromstr(wkt, srid=self.settings.API_SRID)
+            geom = fromstr(wkt, srid=settings.API_SRID)
             geom.transform(settings.SRID)
             dim = 3
             extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
