@@ -13,7 +13,7 @@ L.Control.Multipath = L.Control.extend({
 
     onAdd: function (map) {
         this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
-        var link = L.DomUtil.create('a', 'leaflet-control-zoom-in', this._container);
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out multipath-control', this._container);
         link.href = '#';
         link.title = 'Multipath';
 
@@ -257,4 +257,3 @@ Caminae.Cameleon = (function() {
 
     return Cameleon;
 })();
-

@@ -114,4 +114,6 @@ div.marker-snapped { background: yellow !important; }
 img.marker-add { background-image: url('images/marker-add.png') }
 img.marker-snapped { background-image: url('images/marker-snap.png') }
 
- { BACKGROUND-IMAGE: url(/images/titleAdvaSearchFR.gif);width:150px; height:24px; } 
+.multipath-control {
+    background-image: url(images/multipath-control.png);
+}
