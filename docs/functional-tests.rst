@@ -252,6 +252,11 @@ Sprint 2 - Version 0.2.0
 * Changer la structure d'un tronçon.
 * Vérifier qu'il n'est plus possible d'accéder au formulaire d'édition avec ce même utilisateur.
 
+:question:
+
+    Doit-on permettre le changement de structure depuis le formulaire au risque
+    que l'utilisateur perde accès à l'objet ?
+
 
 #36 - Charger la liste des tronçons en asynchrone
 -------------------------------------------------
@@ -260,28 +265,6 @@ Sprint 2 - Version 0.2.0
 * Vérifier que la liste se charge correctement en asynchrone. Par exemple
   avec l'inspecteur Firebug, vérifier que les données JSON sont reçues et la 
   liste est raffraichie.
-
-:notes:
-
-    L'implémentation est validée pour la liste des tronçons (environ 2000 objets)
-    et sera appliquée aux autres modules.
-
-
-:bonus sur cette story, sinon recréer une autre:
-
-    * Si la liste n'affiche pas toutes les éléments, vérifier que des éléments 
-      qui n'étaient pas affichés apparaissent lors du tri.
-
-    * Infinite scroll ou pagination
-
-    * Tri multi-colonnes
-
-
-:details:
-
-    * Réponse en JSON avec mixin serializer simple (cf view mixin django-geojson)
-    
-    * À terme devra être générique/simple (pas trop de code boiler plate)
 
 
 #45 - Afficher la carte centrée des objets dans la fiche détails
@@ -303,19 +286,22 @@ Sprint 2 - Version 0.2.0
 
 
 #117 - Servir le profil altimétrique d'un tronçon en JSON
-----------------------------------------------------
+---------------------------------------------------------
 
 * ouvrir la vue de détail d'un troncons
 * dans l'URL, ajouter "profile/" à la fin
-* le fichier reçu est encodé en JSON, il contient des paires distance
-  cumulée et altitude pour chaque point du chemin
+* le fichier reçu est encodé en JSON, il contient des paires (distance
+  cumulée, altitude) pour chaque point du chemin
+
+Cela sert à tracer le profil altimétrique à l'aide d'une bibliothèque de
+dessin de courbes.
 
 #21, #108 - Modifier la géométrie d'un tronçon
---------------------------------------------
+----------------------------------------------
 
 * Afficher la fiche d'un tronçon, passer en mode édition.
 * Le champ géometry dans le formulaire a été remplacé par une carte.
-* Il est possible de modifier la géométrie en cliquant sur la carte et en ajustant les points.
+* Il est possible de modifier la géométrie en ajustant les points.
 * La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
 * Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
 
@@ -323,19 +309,21 @@ Sprint 2 - Version 0.2.0
 #119 - Servir le graphe du réseau de sentiers
 ---------------------------------------------
 
-* Test verifiant qu'à partir des tronçons, un graph est correctement construit
-* Url permettant de récupérer ce graph encodé en json
+Ce graphe représente toutes les connexions entre les tronçons du sentier.
+Il servira à calculer les itinéraires au sain du parc, notamment pour la saisie
+multi-tronçons à-la Google Maps.
 
+Il est accessible en JSON à l'url ``/data/graph.json``.
 
 #107 - Ajouter un tronçon
------------------------
+-------------------------
 
 * Lors de l'ajout d'un tronçon, l'utilisateur peut le dessiner sur la carte
 * Seul le mode linéaire est autorisé
 * L'utilisateur peut supprimer son précédent tronçon pour en recréer un
 * La suppression d'un tronçon intervient lorsque l'utilisateur dessine le
   premier point d'un nouveau tronçon
-* Le tronçon doit pouvoir être édité
+* Le tronçon créé doit pouvoir être édité.
 
 
 #56 - Snapper les tronçons lors de la saisie
@@ -366,3 +354,21 @@ Les deux types sont snappés sur le réseau des tronçons.
 :notes:
 
     Les boutons actuels pour choisir point ou ligne sont trop petits.
+
+
+#113 - Passer les cartes en tuiles L93
+--------------------------------------
+
+Les cartes de l'application sont désormais en Lambert-93, avec les Scan
+par défaut.
+
+:notes:
+
+    L'orthophoto ne fonctionne pas.
+    Le cache de tuiles n'est pas déployé avec le projet. C.f. story #112.
+
+
+#130 - Intégrer les onglets
+---------------------------
+
+Les onglets s'activent en fonction du module et de la page visitée.
