@@ -28,7 +28,7 @@ class MapEntityLayer(GeoJSONLayerView):
     Take a class attribute `model` with a `latest_updated` method used for caching.
     """
 
-    srid = settings.MAP_SRID
+    srid = settings.API_SRID
 
     @classmethod
     def get_entity_kind(cls):

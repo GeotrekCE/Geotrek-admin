@@ -239,8 +239,8 @@ DEFAULT_STRUCTURE_NAME = None
 SRID = None
 SPATIAL_EXTENT = None
 
-# Maps projection (client-side), can differ from SRID (database)
-MAP_SRID = 4326
+# API projection (client-side), can differ from SRID (database)
+API_SRID = 4326
 
 LEAFLET_CONFIG = {
     "TILES_URL" : "http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg",

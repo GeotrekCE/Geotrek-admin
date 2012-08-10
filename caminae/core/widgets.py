@@ -5,7 +5,6 @@ import floppyforms as forms
 
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
-    map_srid = settings.MAP_SRID
     template_name = 'core/formfieldmap_fragment.html'
     display_wkt = settings.DEBUG
 
@@ -14,7 +13,7 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
         if not wkt:
             return None
         try:
-            geom = fromstr(wkt, srid=self.map_srid)
+            geom = fromstr(wkt, srid=self.settings.API_SRID)
             geom.transform(settings.SRID)
             dim = 3
             extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
@@ -27,7 +26,7 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
         context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context)
         # Be careful, on form error, value is not a GEOSGeometry
         if value and not isinstance(value, basestring):
-            value.transform(self.map_srid)
+            value.transform(settings.API_SRID)
         context['update'] = bool(value)
         context['field'] = value
         context['fitextent'] = value is None
