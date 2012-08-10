@@ -23,17 +23,16 @@ class CoreFactoriesTest(TestCase):
         factories.PathAggregationFactory()
 
     def test_datasource_management_factory(self):
-        factories.DatasourceManagementFactory()
+        factories.DatasourceFactory()
 
     def test_challenge_management_factory(self):
-        factories.ChallengeManagementFactory()
+        factories.StakeFactory()
 
     def test_usage_management_factory(self):
-        factories.UsageManagementFactory()
+        factories.UsageFactory()
 
     def test_network_management_factory(self):
-        factories.NetworkManagementFactory()
+        factories.NetworkFactory()
 
     def test_path_management_factory(self):
-        factories.PathManagementFactory()
-
+        factories.TrailFactory()

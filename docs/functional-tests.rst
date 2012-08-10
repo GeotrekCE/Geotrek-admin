@@ -23,6 +23,11 @@ Le processus d'installation demande la saisie des paramètres nécessaires.
 
 Le projet est ensuite accessible à l'URL du serveur.
 
+:Problèmes connus:
+
+    ``supervisord`` ne démarre pas tout seul au reboot.
+    Le paramètre ``rooturl`` non vide pose problème (404) dans la partie *admin*.
+
 
 #90 - Fournir spécifications serveur
 ------------------------------------
@@ -172,3 +177,198 @@ Les utilisateurs de tests sont :
 
     Les droits ne sont gérés que pour les sentiers pour le moment. La
     gestion module par module arrivera plus tard.
+
+
+#16 - Gérer la projection de l'application dans un settings
+-----------------------------------------------------------
+
+c.f. procédure d'installation.
+
+
+#97 - Pouvoir éditer les structures associées des modèles dans l'AdminSite Django
+---------------------------------------------------------------------------------
+
+c.f. story #10
+
+
+#98 - Marquer pour traduction (et traduire) chaque champs et méthode unicode
+----------------------------------------------------------------------------
+
+c.f. story #84
+
+
+#105 - Créer certains helpers de tests indispensables
+-----------------------------------------------------
+
+*(interne)*
+
+
+#2 - Valider le MCD
+-------------------
+
+cf. CCTP_annexe1-MCD.pdf
+
+
+#14 - Maquettes admin sentiers (Anaïs)
+--------------------------------------
+
+N/A
+
+
+#9 - Lister et numéroter tous les triggers nécessaires
+------------------------------------------------------
+
+Cf. sentiers-triggers.rst
+
+
+#31 - Éditer plusieurs langues pour un même champ texte
+-------------------------------------------------------
+
+N/A
+
+
+#12 - [POC Carto] Édition Lambert93 dans Leaflet
+------------------------------------------------
+
+N/A
+
+
+#85 - Implémenter le squelette du MCD
+-------------------------------------
+
+N/A
+
+
+
+========================
+Sprint 2 - Version 0.2.0
+========================
+
+#18 - Gérer les permissions d'édition des objets en fonction de la structure
+----------------------------------------------------------------------------
+
+* Se logger avec un utilisateur du groupe *Référant sentiers* de la structure PNE.
+* Vérifier que l'édition des tronçons est accessible.
+* Changer la structure d'un tronçon.
+* Vérifier qu'il n'est plus possible d'accéder au formulaire d'édition avec ce même utilisateur.
+
+:question:
+
+    Doit-on permettre le changement de structure depuis le formulaire au risque
+    que l'utilisateur perde accès à l'objet ?
+
+
+#36 - Charger la liste des tronçons en asynchrone
+-------------------------------------------------
+
+* Ouvrir la page des tronçons, la liste est vide pendant une fraction de secondes.
+* Vérifier que la liste se charge correctement en asynchrone. Par exemple
+  avec l'inspecteur Firebug, vérifier que les données JSON sont reçues et la 
+  liste est raffraichie.
+
+
+#45 - Afficher la carte centrée des objets dans la fiche détails
+----------------------------------------------------------------
+
+* Afficher la fiche d'un tronçon.
+* Une carte en lecture seule se charge, centrée sur le tronçon.
+* La couche avec les autres tronçons se charge en asynchrone.
+
+
+#118 - Ajouter un formulaire de filtres basique sur les tronçons
+----------------------------------------------------------------------------
+
+* connexion avec un utilisateur
+* la liste est complète
+* remplissage du formulaire: filtre sur longueur des troncons
+* vérification que la liste est bien filtrée
+* vérification que la carte est bien filtrée
+
+
+#117 - Servir le profil altimétrique d'un tronçon en JSON
+---------------------------------------------------------
+
+* ouvrir la vue de détail d'un troncons
+* dans l'URL, ajouter "profile/" à la fin
+* le fichier reçu est encodé en JSON, il contient des paires (distance
+  cumulée, altitude) pour chaque point du chemin
+
+Cela sert à tracer le profil altimétrique à l'aide d'une bibliothèque de
+dessin de courbes.
+
+#21, #108 - Modifier la géométrie d'un tronçon
+----------------------------------------------
+
+* Afficher la fiche d'un tronçon, passer en mode édition.
+* Le champ géometry dans le formulaire a été remplacé par une carte.
+* Il est possible de modifier la géométrie en ajustant les points.
+* La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
+* Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
+
+
+#119 - Servir le graphe du réseau de sentiers
+---------------------------------------------
+
+Ce graphe représente toutes les connexions entre les tronçons du sentier.
+Il servira à calculer les itinéraires au sain du parc, notamment pour la saisie
+multi-tronçons à-la Google Maps.
+
+Il est accessible en JSON à l'url ``/data/graph.json``.
+
+#107 - Ajouter un tronçon
+-------------------------
+
+* Lors de l'ajout d'un tronçon, l'utilisateur peut le dessiner sur la carte
+* Seul le mode linéaire est autorisé
+* L'utilisateur peut supprimer son précédent tronçon pour en recréer un
+* La suppression d'un tronçon intervient lorsque l'utilisateur dessine le
+  premier point d'un nouveau tronçon
+* Le tronçon créé doit pouvoir être édité.
+
+
+#56 - Snapper les tronçons lors de la saisie
+--------------------------------------------
+
+* Ouvrir l'édition d'une géomtrie
+* Bouger les point d'accroche, noter qu'ils s'attachent aux tronçons au deça
+  d'une certaine distance. Leur couleur change quand ils sont attachés.
+* À l'ouverture d'une géométrie existante, les point d'accroche attachés aux
+  tronçons sont colorés.
+
+:notes:
+
+    Le snap n'est disponible qu'à un certain niveau de zoom afin de garantir
+    une fluidité sur l'accroche. En effet, à chaque mouvement des point d'accroche,
+    les objets présents à l'écran doivent être itérés pour calculer les distances 
+    d'accroche. Un niveau de zoom élevé garanti un nombre restreint d'objets
+    affichés (<1000).
+
+
+#109 - Ajouter une intervention ponctuelle
+------------------------------------------
+
+Lors de l'ajout d'une intervention, l'utilisateur peut choisir entre un point
+et une ligne. 
+Les deux types sont snappés sur le réseau des tronçons.
+
+:notes:
+
+    Les boutons actuels pour choisir point ou ligne sont trop petits.
+
+
+#113 - Passer les cartes en tuiles L93
+--------------------------------------
+
+Les cartes de l'application sont désormais en Lambert-93, avec les Scan
+par défaut.
+
+:notes:
+
+    L'orthophoto ne fonctionne pas.
+    Le cache de tuiles n'est pas déployé avec le projet. C.f. story #112.
+
+
+#130 - Intégrer les onglets
+---------------------------
+
+Les onglets s'activent en fonction du module et de la page visitée.

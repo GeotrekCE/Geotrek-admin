@@ -10,10 +10,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 
-GROUP_PATH_MANAGER = 'Référents sentiers'
-GROUP_COMM_MANAGER = 'Référents communication'
-GROUP_EDITOR = 'Rédacteurs'
-GROUP_ADMINISTRATOR = 'Administrateurs'
+
+GROUP_PATH_MANAGER = u'Référents sentiers'
+GROUP_COMM_MANAGER = u'Référents communication'
+GROUP_EDITOR = u'Rédacteurs'
+GROUP_ADMINISTRATOR = u'Administrateurs'
 
 
 class Structure(models.Model):

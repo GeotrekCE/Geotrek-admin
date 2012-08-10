@@ -10,8 +10,8 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Intervention'
         db.create_table('interventions', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('intervention_id', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('in_maintenance', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('date', self.gf('django.db.models.fields.DateField')()),
@@ -27,7 +27,7 @@ class Migration(SchemaMigration):
             ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('challenge_management', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', to=orm['core.ChallengeManagement'])),
+            ('stake', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', null=True, to=orm['core.Stake'])),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionStatus'])),
             ('typology', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionTypology'], null=True, blank=True)),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Project'], null=True, blank=True)),
@@ -185,41 +185,38 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'organism': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        'core.challengemanagement': {
-            'Meta': {'object_name': 'ChallengeManagement', 'db_table': "'gestion_enjeux'"},
-            'challenge': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        'core.datasourcemanagement': {
-            'Meta': {'object_name': 'DatasourceManagement', 'db_table': "'gestion_source_donnees'"},
+        'core.datasource': {
+            'Meta': {'object_name': 'Datasource', 'db_table': "'source_donnees'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+            'source': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'core.networkmanagement': {
-            'Meta': {'object_name': 'NetworkManagement', 'db_table': "'gestion_reseau'"},
+        'core.network': {
+            'Meta': {'object_name': 'Network', 'db_table': "'reseau_troncon'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'network': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+            'network': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'core.path': {
             'Meta': {'object_name': 'Path', 'db_table': "'troncons'"},
             'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_positive'"}),
-            'challenge_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.ChallengeManagement']"}),
-            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'"}),
-            'datasource_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.DatasourceManagement']"}),
+            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'", 'blank': 'True'}),
+            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Datasource']"}),
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
             'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.NetworkManagement']"}),
-            'path_management': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.PathManagement']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'", 'blank': 'True'}),
+            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Network']"}),
+            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Stake']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'usages_management': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.UsageManagement']"}),
+            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Trail']"}),
+            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Usage']"}),
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
@@ -230,20 +227,18 @@ class Migration(SchemaMigration):
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
             'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixin']", 'db_column': "'evenement'"})
         },
-        'core.pathmanagement': {
-            'Meta': {'object_name': 'PathManagement', 'db_table': "'gestion_sentier'"},
-            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'comments': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'departure': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+        'core.stake': {
+            'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
+            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'core.topologymixin': {
             'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
@@ -255,9 +250,19 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
-        'core.usagemanagement': {
-            'Meta': {'object_name': 'UsageManagement', 'db_table': "'gestion_usages'"},
+        'core.trail': {
+            'Meta': {'object_name': 'Trail', 'db_table': "'sentier'"},
+            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'comments': ('django.db.models.fields.TextField', [], {'default': "''"}),
+            'departure': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
+        },
+        'core.usage': {
+            'Meta': {'object_name': 'Usage', 'db_table': "'usage'"},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'usage': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'maintenance.contractor': {
@@ -277,22 +282,22 @@ class Migration(SchemaMigration):
         'maintenance.intervention': {
             'Meta': {'object_name': 'Intervention', 'db_table': "'interventions'"},
             'area': ('django.db.models.fields.IntegerField', [], {}),
-            'challenge_management': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interventions'", 'to': "orm['core.ChallengeManagement']"}),
             'comment': ('django.db.models.fields.TextField', [], {}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'disorders': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'interventions'", 'symmetrical': 'False', 'to': "orm['maintenance.InterventionDisorder']"}),
             'height': ('django.db.models.fields.FloatField', [], {}),
             'heliport_cost': ('django.db.models.fields.FloatField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'in_maintenance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'insert_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'intervention_id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'jobs': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['maintenance.InterventionJob']", 'through': "orm['maintenance.ManDay']", 'symmetrical': 'False'}),
             'length': ('django.db.models.fields.FloatField', [], {}),
             'material_cost': ('django.db.models.fields.FloatField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.Project']", 'null': 'True', 'blank': 'True'}),
             'slope': ('django.db.models.fields.IntegerField', [], {}),
+            'stake': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interventions'", 'null': 'True', 'to': "orm['core.Stake']"}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionStatus']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'subcontract_cost': ('django.db.models.fields.FloatField', [], {}),

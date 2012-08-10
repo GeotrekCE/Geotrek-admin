@@ -1,33 +1,28 @@
-==============
-In this sprint
-==============
+================
+In this sprint 2
+================
 
-* Reset migrations
-* Bug admin script name
-* Bug supervisord not starting at boot (crontab @reboot ignored)
-
-* Check all stories are in func tests
-* Clic everywhere !
-
+* Each URL status (200, 302,...) in tests
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
+* Check form non field error
 
-* Use AutoField (serial) for code fields
-* Remove db_column for translated fields
+==============
+Known problems
+==============
 
-* Add command make release (git archive)
-
-* Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
-* reset IG scores
-* grep TODO
-* Why initial SQL is loaded twice during syncdb?
-* Check vocabulary in abstracts doc and in code (ex. trekking~comm, challenge~stake)
+* When changing ``dim`` parameter on a GeometryField, South does not alter nor
+  drop/create the field
+* ``dumpdata`` management command will not output the Z coordinates when
+  present. Chaining dumpdata and loaddata will therefore not work.
+* ``MIN_SNAP_ZOOM`` not taken into account.
 
 ==========
 Soon...
 ==========
 
-* Each URL status (200, 302,...) in tests
-* Check form non field error
+* Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
+* Something is wrong with logger configuration, messages coming from caminae
+  appear twice in the console (see syncdb output)
 
 * Switch to django-bootstrapped instead of embedding it
 * Use django-tabs
@@ -45,13 +40,21 @@ One day...
 * Docstrings for each model
 * Help text for each model field
 * Test cache (locmem + files + expires)
-* Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
-* Improve installation of GDAL
-* Clean-up buildout directory (all in one "env")
+
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
 * See how django manage an instance being a parent of two different child
   instance in the case of multi-table inheritance. Could it be troublesome?
+
+* Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
+
+* Improve installation of GDAL
+* Clean-up buildout directory (all in one "env")
+
+
+==========
+Ideas...
+==========
 
 * Idea ? Process .sql files with template engine. Provide small tags 
   like {% tablename Path %} {% fieldname Path.geom %}.

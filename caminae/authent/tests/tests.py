@@ -3,14 +3,13 @@
     Unit tests
 """
 from django.test import TestCase
-from django.test.client import Client
 from django.test.utils import override_settings
-from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext as _
 
-from ..models import Structure, UserProfile
+from caminae.authent.models import UserProfile
+from caminae.authent.factories import UserFactory
 
 
 @override_settings(LOGIN_URL='/login/')
@@ -21,17 +20,9 @@ class LoginTestCase(TestCase):
         self.assertRedirects(response, '/login/?next=' + _next)
 
 
-class StructureTest(TestCase):
-    def test_basic(self):
-        s = Structure(name=u"Mercantour")
-        self.assertEqual(unicode(s), u"Mercantour")
-
-
 class UserProfileTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user('Joe', email='temporary@yopmail.com', password='Bar')
-        self.user.set_password('Bar')
-        self.user.save()
+        self.user = UserFactory(password=u"Bar")
 
     def test_profile(self):
         self.assertTrue(isinstance(self.user.profile, UserProfile))
@@ -41,10 +32,9 @@ class UserProfileTest(TestCase):
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
 
     def test_language(self):
-        c = Client()
-        success = c.login(username=u"Joe", password=u"Bar")
+        success = self.client.login(username=self.user.username, password=u"Bar")
         self.assertTrue(success)
-        response = c.get(reverse('home'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(200, response.status_code)
         self.assertTrue(_("Logout") in response.content)
 
@@ -55,45 +45,26 @@ class UserProfileTest(TestCase):
         userprofile.save()
         self.assertEqual(self.user.profile.language, u"en")
         # No effect if no logout
-        response = c.get(reverse('home'))
+        response = self.client.get(reverse('home'))
         self.assertTrue(_("Logout") in response.content)
 
-        c.logout()
-        response = c.get(reverse('home'))
+        self.client.logout()
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 302)
-        c.login(username=u"Joe", password=u"Bar")
-        response = c.get(reverse('home'))
+        self.client.login(username=self.user.username, password=u"Bar")
+        response = self.client.get(reverse('home'))
 
-        self.assertEqual(c.session['django_language'], u"en")
+        self.assertEqual(self.client.session['django_language'], u"en")
         self.assertTrue(_("Logout") in response.content)
-
-    def test_group(self):
-        groups = (Group.objects.create(name='Administrateurs'),
-                  Group.objects.create(name='Rédacteurs'),
-                  Group.objects.create(name='Référents sentiers'),
-                  Group.objects.create(name='Référents communication'),
-                 )
-        self.assertFalse(self.user.profile.is_administrator())
-        self.assertFalse(self.user.profile.is_editor())
-        self.assertFalse(self.user.profile.is_path_manager())
-        self.assertFalse(self.user.profile.is_comm_manager())
-        self.user.groups.add(*groups)
-        self.assertTrue(self.user.profile.is_administrator())
-        self.assertTrue(self.user.profile.is_editor())
-        self.assertTrue(self.user.profile.is_path_manager())
-        self.assertTrue(self.user.profile.is_comm_manager())
 
     def test_admin(self):
         self.assertFalse(self.user.is_staff)
-        c = Client()
-        success = c.login(username=u"Joe", password=u"Bar")
+        success = self.client.login(username=self.user.username, password=u"Bar")
         self.assertTrue(success)
-
-        response = c.get(reverse('home'))
-
+        response = self.client.get(reverse('home'))
         self.assertFalse(_("Admin") in response.content)
 
         self.user.is_staff = True
         self.user.save()
-        response = c.get(reverse('home'))
+        response = self.client.get(reverse('home'))
         self.assertTrue(_("Admin") in response.content)

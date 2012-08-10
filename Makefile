@@ -1,7 +1,9 @@
 SHELL = /bin/bash
 
-baseurl=http://localhost:8000
-root = $(shell pwd)
+listen=localhost:8000
+baseurl=http://$(listen)
+root=$(shell pwd)
+version=$(shell git describe --tags --abbrev=0)
 
 bin/ lib/:
 	virtualenv .
@@ -10,9 +12,6 @@ bin/ lib/:
 	rm bootstrap.py
 
 install: bin/
-
-submodules:
-	git submodule update --init
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;
@@ -30,27 +29,29 @@ all_makemessages: bin/
 all_compilemessages: bin/
 	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
+release:
+	git archive --format=zip --prefix="caminae-$(version)/" $(version) > ../caminae-src-$(version).zip
 
-unit_tests: bin/ clean_harmless submodules
+unit_tests: bin/ clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
-	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common
+	bin/develop update -f
+	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
 
 functional_tests:
-	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/*.js
 
 tests: unit_tests functional_tests
 
-serve: bin/ clean_harmless submodules all_compilemessages
-	git submodule update
+serve: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
-	bin/django runserver
+	bin/django runserver $(listen)
 
 load_data:
 	# /!\ will delete existing data
 	bin/django loaddata development-pne
 
-deploy: bin/ clean_harmless submodules all_compilemessages
+deploy: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --noinput

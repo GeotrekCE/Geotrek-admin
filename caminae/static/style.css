@@ -1,6 +1,17 @@
+body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    padding: 0; margin: 0;
+}
+
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
+}
+
+.leaflet-container {
+    min-height: 600px;
 }
 
 
@@ -64,9 +75,6 @@ margin-top: 5px;
 	/*margin-right: -2.5641%;*/
 }
 
-
-
-
 /***** SPAN 6 *****/
 .row-fluid > .span6 > .pull-right {
 	margin-top: 5px;
@@ -74,11 +82,6 @@ margin-top: 5px;
 	padding-right: 12px;
 
 }
-
-.row-fluid > .span6, .leaflet-container {
-	height: 500px;	/* A REVOIR -> fonction de l'écran */
-}
-
 
 h2 {
 	text-align: center;
@@ -108,3 +111,32 @@ h2 {
 /* Alert messages */
 #alert-box {position: absolute; top: 3px; left: 50%; width: 50%; margin: 0 0 0 -25%;}
 #alert-box li.alert {list-style-type: none; margin-bottom: 3px;}
+
+/* Maps */
+div.marker-snapped { background: yellow !important; }
+img.marker-add { background-image: url('images/marker-add.png') }
+img.marker-snapped { background-image: url('images/marker-snap.png') }
+
+.axislabel {
+	color: blue;
+	font-size: 10px;
+}
+
+/* Bootstrap quick and dirty */
+.navbar {
+    margin-bottom: 4px;
+}
+
+.nav {
+    margin-bottom: 4px;
+}
+
+.navbar .nav > li > a.btn {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.navbar .brand {
+    margin-top: 4px;
+    padding-bottom: 4px;
+}

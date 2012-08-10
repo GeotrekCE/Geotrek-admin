@@ -1,5 +1,28 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static leaflet_tags i18n %}
+
+{% block extrahead %}
+    {% leaflet_css %}
+    {{ block.super }}
+
+    {% leaflet_js %}
+    <script src="{% static "js/spin.js" %}"></script>
+    <script src="{% static "js/rtree.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-dropdown.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-scrollspy.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tab.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-tooltip.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-popover.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-button.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-collapse.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-carousel.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-typeahead.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "core/caminae.js" %}"></script>
+{% endblock extrahead %}
 
 {% block content %}
 
@@ -7,8 +30,10 @@
         <!-- Onglets Recherche/Fiche/Histo -->
         <div class="row-fluid">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="{% url core:path_list %}">{% trans "Modules" %}</a></li>
-                <li><a href="#">[nom fiche]</a></li>
+                <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url core:path_list %}">{% trans "Search" %}</a></li>
+                <li class="{% block nav-detail %}disabled{% endblock nav-detail %}"><a href="#">{% block objectname %}{% trans "Detail" %}{% endblock objectname %}</a></li>
+                <li class="{% block nav-report %}disabled{% endblock nav-report %}"><a href="#">{% trans "Reporting" %}</a></li>
+                <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
                 <li class="dropdown t"> <!-- Onglet Histo (avec dropdown) -->    
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         Dernières fiches consultées
@@ -39,13 +64,13 @@
                 <!-- Liste des modules -->
                 <div class="span1">    
                     <ul id="listeModules" class="nav nav-pills nav-stacked">
-                        <li class="active"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/work.png" %}"/>{% trans "Work" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/infrastructure.png" %}"/>{% trans "Infrastructure" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/trekking.png" %}"/>{% trans "Trekking" %}</a></li>
-                        <li><a href="#"><img src="{% static "images/poi.png" %}"/>{% trans "POI" %}</a></li>
+                        <li class="{% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img>{% trans "Path" %}</a></li>
+                        <li class="{% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/work.png" %}"/>{% trans "Interventions" %}</a></li>
+                        <li class="{% block nav-project %}{% endblock nav-project %}"><a href="#"><img src="{% static "images/project.png" %}"/>{% trans "Project" %}</a></li>
+                        <li class="{% block nav-signage %}{% endblock nav-signage %}"><a href="#"><img src="{% static "images/signage.png" %}"/>{% trans "Signage" %}</a></li>
+                        <li class="{% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="#"><img src="{% static "images/infrastructure.png" %}"/>{% trans "Infrastructure" %}</a></li>
+                        <li class="{% block nav-trekking %}{% endblock nav-trekking %}"><a href="#"><img src="{% static "images/trekking.png" %}"/>{% trans "Trekking" %}</a></li>
+                        <li class="{% block nav-poi %}{% endblock nav-poi %}"><a href="#"><img src="{% static "images/poi.png" %}"/>{% trans "POI" %}</a></li>
                     </ul>
                 </div> <!--/span-->
 
@@ -57,27 +82,25 @@
                     <h2>Module 1</h2> -->
             
                     <!-- Zone des boutons -->
-                    <div class="row-fluid">
+                    <div class="btn-toolbar">
                         {% block mainactions %}
                         {% endblock mainactions %}
-                        
-                        <div class="pull-right">
-                            <p>
-                                <i class="icon-download-alt"></i> 
-                                Exporter la liste
-                            </p>
-                            <p>
-                                <button class="btn">Type1</button>    
-                                <button class="btn">Type2</button>    
-                                <button class="btn">Type3</button>    
-                            </p>
-                        </div>
-                    
                     </div> <!--/row-->
                     
                     {% block mainlist %}
                     {% endblock mainlist %}
-                    
+
+                    <div class="pull-right">
+                        <p>
+                            <i class="icon-download-alt"></i> 
+                            Exporter la liste
+                        </p>
+                        <p>
+                            <button class="btn">Type1</button>    
+                            <button class="btn">Type2</button>    
+                            <button class="btn">Type3</button>    
+                        </p>
+                    </div>
                 </div><!--/span-->
 
                 <!-- Zone de carte -->
@@ -103,22 +126,3 @@
         </div><!--/container-->
 
 {% endblock content %}
-
-
-{% block extrabody %}
-    <script src="{% static "js/spin.js" %}"></script>
-    
-    <script src="{% static "bootstrap/js/jquery.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-transition.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-alert.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-modal.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-dropdown.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-scrollspy.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-tab.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-tooltip.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-popover.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-button.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-collapse.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-carousel.js" %}"></script>
-    <script src="{% static "bootstrap/js/bootstrap-typeahead.js" %}"></script>
-{% endblock extrabody %}

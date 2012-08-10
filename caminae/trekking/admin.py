@@ -5,14 +5,8 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    Trek, TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
+    TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
 )
-
-
-
-class TrekAdmin(TranslationAdmin):
-    list_display = ('name', 'departure', 'arrival', )
-    search_fields = ('name', 'departure', 'arrival', )
 
 
 class TrekNetworkAdmin(TranslationAdmin):

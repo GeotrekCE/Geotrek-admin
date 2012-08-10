@@ -1,26 +1,3 @@
-{% extends "core/base.html" %}
-{% load i18n %}
+{% extends "core/module_form.html" %}
 
-{% block extrahead %}
-<style>
-    ul.errorlist li { color: red; }
-</style>
-{% endblock extrahead %}
-
-
-{% block mainpanel %}
-    <form method="POST"
-        action="{% if path %}{{ path.get_update_url }}{% else %}{{ path.get_add_url }}{% endif %}">
-
-        <table class="table-striped table-bordered" style="margin: 0 auto;">
-        {% csrf_token %}
-        {{ form }}
-            <tr>
-                <td colspan="2" style="text-align: center; padding-top: 10px;" >
-                    <a class="btn btn-inverse" href="{{ path.get_update_url }}">{% trans "Cancel" %}</a>
-                    <input type="submit" class="btn btn-primary"></input>
-                </td>
-            </tr>
-        </table>
-    </form>
-{% endblock mainpanel %}
+{% block nav-path %}active{% endblock nav-path %}

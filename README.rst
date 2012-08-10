@@ -72,8 +72,15 @@ or change its password :
 
 ::
 
-    pbin/django changepassword --username admin <password>
+    bin/django changepassword --username admin <password>
 
+
+Load MNT raster
+---------------
+
+::
+
+    bin/django loaddem <PATH>/mnt_0_ecrins/w001001.adf
 
 
 ===========
@@ -108,6 +115,7 @@ AUTHORS
     * Sylvain Beorchia
     * Mathieu Leplatre
     * Anaïs Peyrucq
+    * Satya Azemar
     * Simon Thépot
 
 |makinacom|_

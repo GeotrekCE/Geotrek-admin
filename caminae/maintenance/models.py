@@ -1,46 +1,44 @@
 # -*- coding: utf-8 -*-
-
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import Point
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Path, MapEntityMixin, TopologyMixin
+from caminae.core.factories import PathFactory, TopologyMixinFactory, PathAggregationFactory
 from caminae.common.models import Organism
 
 
-class Intervention(StructureRelated):
-
-    intervention_id = models.IntegerField(primary_key=True)
+class Intervention(MapEntityMixin, StructureRelated):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(verbose_name=_(u"Date"))
-    comment = models.TextField(verbose_name=_(u"Comments"))
+    date = models.DateField(auto_now_add=True, verbose_name=_(u"Date"))
+    comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
-    length = models.FloatField(verbose_name=_(u"Length"))
-    width = models.FloatField(verbose_name=_(u"Width"))
-    height = models.FloatField(verbose_name=_(u"Height"))
-    area = models.IntegerField(verbose_name=_(u"Area"))
-    slope = models.IntegerField(verbose_name=_(u"Slope"))
+    length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
+    width = models.FloatField(default=0.0, verbose_name=_(u"Width"))
+    height = models.FloatField(default=0.0, verbose_name=_(u"Height"))
+    area = models.IntegerField(default=0, verbose_name=_(u"Area"))
+    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"))
 
     ## Costs ##
-    material_cost = models.FloatField(verbose_name=_(u"Material cost"))
-    heliport_cost = models.FloatField(verbose_name=_(u"Heliport cost"))
-    subcontract_cost = models.FloatField(verbose_name=_(u"Subcontract cost"))
+    material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"))
+    heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"))
+    subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"))
 
-    insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-
+    #TODO: remove this --> abstract class
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##
-    topologies = models.ManyToManyField(TopologyMixin,
-            related_name="interventions",
-            verbose_name=_(u"Interventions"))
+    topology = models.ForeignKey(TopologyMixin, null=True,
+                related_name="interventions",
+                verbose_name=_(u"Interventions"))
 
-    challenge_management = models.ForeignKey('core.ChallengeManagement',
-            related_name='interventions', verbose_name=_("Challenge management"))
+    stake = models.ForeignKey('core.Stake', null=True,
+            related_name='interventions', verbose_name=_("Stake"))
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
 
@@ -56,13 +54,54 @@ class Intervention(StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
+    def initFromPathsList(self, pathlist, constraints):
+        raise NotImplementedError
+
+    def initFromInfrastructure(self, infrastructure):
+        raise NotImplementedError
+
+    def initFromPoint(self, point):
+        """
+        Initialize the intervention topology from a Point.
+        """
+        closest_paths = Path.objects.distance(point).order_by('-distance')
+        if not closest_paths:
+            closest_paths = [PathFactory.create()]
+            # TODO: raise not possible without path !
+
+        # TODO: compute this from point position
+        path = closest_paths[0]
+        distance = 0
+        position = position = 0.5
+        
+        # Create topologies objects
+        topology = TopologyMixinFactory.create(offset=distance)
+        PathAggregationFactory.create(topo_object=topology,
+                                      path=path,
+                                      start_position=position,
+                                      end_position=position)
+        self.topology = topology
+
+    @property
+    def geom(self):
+        # TODO: geometry of intervention is either : 
+        # the one from its infrastructure.Facility or the one
+        # from its topology
+        #print "HEEEEEEEEEEEEEEEEEEEEEEEEE", self.topologies.first.geom, "\n"
+        #return self.topologies.first.geom
+        return Point(0.0, 1.0)
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
     class Meta:
         db_table = 'interventions'
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
 
     def __unicode__(self):
-        return u"%s (%s)" % (self.name , self.date)
+        return u"%s (%s)" % (self.name, self.date)
 
 
 class InterventionStatus(StructureRelated):
@@ -102,6 +141,7 @@ class InterventionDisorder(StructureRelated):
 
     def __unicode__(self):
         return self.disorder
+
 
 class InterventionJob(StructureRelated):
 
@@ -165,7 +205,7 @@ class Project(StructureRelated):
         verbose_name_plural = _(u"Projects")
 
     def __unicode__(self):
-        deleted_txt = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
+        deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
 
 
@@ -195,4 +235,3 @@ class Funding(StructureRelated):
 
     def __unicode__(self):
         return self.amount
-

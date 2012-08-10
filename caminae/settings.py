@@ -166,6 +166,8 @@ PROJECT_APPS = (
     'south',
     'modeltranslation',
     'leaflet',
+    'floppyforms',
+    'crispy_forms',
 
     'djgeojson',  # temporary, remove when released on pypi, required for testing only.
 )
@@ -177,6 +179,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.maintenance',
     'caminae.land',
     'caminae.trekking',
+    'caminae.infrastructure',
 )
 
 SERIALIZATION_MODULES = {
@@ -200,7 +203,7 @@ CACHES = {
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -211,12 +214,21 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': False,
+        },
+        'caminae': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
@@ -227,11 +239,19 @@ DEFAULT_STRUCTURE_NAME = None
 SRID = None
 SPATIAL_EXTENT = None
 
-# TODO : Temporary : override extent in 4326, until POC Leaflet L93
+# API projection (client-side), can differ from SRID (database)
+API_SRID = 4326
+
+MIN_SNAP_ZOOM = 7
+
 LEAFLET_CONFIG = {
-    "LEAFLET_VERSION" :'unstable',
-    "TILES_URL" : "http://{s}.tiles.mapbox.com/v3/examples.map-4l7djmvo/{z}/{x}/{y}.jpg",
-    "SPATIAL_EXTENT" : (5.0, 44.0, 7.5, 46),
+    "TILES_URL" : [
+        ("IGN", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),
+        ("Ortho", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.png'),
+    ],
+    "MAX_RESOLUTION" : 1142.7383,
+    "TILES_EXTENT" : [700000,6325197,1060000,6617738],
+    "SPATIAL_EXTENT" : [5.0, 43.8, 7.5, 45.8],
 }
 
 MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
@@ -242,7 +262,7 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
-    messages.DEBUG: '',
-    messages.WARNING: '',
+    messages.DEBUG: 'alert-info',
+    messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }

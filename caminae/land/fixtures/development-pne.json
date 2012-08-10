@@ -1,49 +1,170 @@
 [
     {
-        "pk": 1, 
-        "model": "land.physicaltype", 
+        "pk": 4,
+        "model": "land.physicaltype",
         "fields": {
-            "name_en": "road", 
-            "name_fr": "route", 
-            "name_it": "ruta", 
-            "name": "road"
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Sans trace"
         }
-    }, 
+    },
     {
-        "pk": 2, 
-        "model": "land.physicaltype", 
+        "pk": 5,
+        "model": "land.physicaltype",
         "fields": {
-            "name_en": "track", 
-            "name_fr": "piste", 
-            "name_it": "pista", 
-            "name": "track"
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Draille"
         }
-    }, 
+    },
     {
-        "pk": 3, 
-        "model": "land.physicaltype", 
+        "pk": 6,
+        "model": "land.physicaltype",
         "fields": {
-            "name_en": "path", 
-            "name_fr": "sentier", 
-            "name_it": "sendero", 
-            "name": "path"
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Sente 40 cm"
         }
-    }, 
+    },
     {
-        "pk": 1, 
-        "model": "land.landtype", 
+        "pk": 7,
+        "model": "land.physicaltype",
         "fields": {
-            "right_of_way": true, 
-            "name": "Particulier", 
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Sentier 80cm"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "land.physicaltype",
+        "fields": {
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Piste 1.2 m"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "land.physicaltype",
+        "fields": {
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Piste 2.5 m"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "land.physicaltype",
+        "fields": {
+            "name_en": null,
+            "name_fr": null,
+            "name_it": null,
+            "name": "Route goudronn\u00e9e"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Route nationale",
             "structure": 1
         }
-    }, 
+    },
     {
-        "pk": 2, 
-        "model": "land.landtype", 
+        "pk": 4,
+        "model": "land.landtype",
         "fields": {
-            "right_of_way": false, 
-            "name": "No man's land", 
+            "right_of_way": false,
+            "name": "Route d\u00e9partementale",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Voie communale",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 6,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin rural",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 7,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin domanial",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 8,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin d'exploitation foresti\u00e8re",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 9,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin priv\u00e9 ",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 10,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin priv\u00e9 servitude",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 11,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin priv\u00e9 convention PDIPR",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 12,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Chemin d'exploitation",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 13,
+        "model": "land.landtype",
+        "fields": {
+            "right_of_way": false,
+            "name": "Servitude DFCI",
             "structure": 1
         }
     }

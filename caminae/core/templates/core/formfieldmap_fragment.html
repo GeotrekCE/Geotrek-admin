@@ -1,0 +1,204 @@
+{% load maps leaflet_tags geojson_tags static %}
+
+{% leaflet_map module fitextent=False %}
+<style type="text/css">
+    {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
+</style>
+
+<link rel="stylesheet" href="{% static "Leaflet.draw/leaflet.draw.css" %}"></link>
+<script type="text/javascript" src="{% static "Leaflet.draw/leaflet.draw.js" %}"></script>
+
+
+{% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
+{% include "floppyforms/textarea.html" %}
+
+<script type="text/javascript">
+function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
+    var drawControl = new L.Control.Draw({
+        position: 'topright',
+        polygon: {{ is_polygone|yesno:"true,false" }},
+        rectangle: false,
+        circle: false,
+        marker: {{ is_point|yesno:"true,false" }},
+        polyline: {{ is_linestring|yesno:"true,false" }} && {
+            shapeOptions: {
+                color: '#35FF00',
+                opacity: 0.8,
+                weight: 3
+            }
+        }
+    });
+    map.addControl(drawControl);
+    map.drawControl = drawControl;
+
+    // Delete current on first clic (start drawing)
+    map.on('click', function (e) {
+        // Delete current on clic if drawing
+        for (var handlertype in map.drawControl.handlers) {
+            if (map.drawControl.handlers[handlertype].enabled()) {
+                startovercallback();
+                return;
+            }
+        }
+    });
+
+    // Listen to all events of creation, Leaflet.Draw naming inconsistency
+    var draw_types = {
+        'polyline': 'poly',
+        'point': 'marker',
+        'polygon': 'polygon',
+    };
+    for (var geomtype in draw_types) {
+        var draw_type = draw_types[geomtype];
+        map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
+            console.log('Drawn ' + this.type);
+            var drawn = e[this.type];  // Leaflet.Draw naming inconsistency
+            drawncallback(drawn);
+        }, {type: draw_type}));
+    }
+};
+
+
+function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
+    var snapObserver = null;
+    Caminae.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
+    // Snapping is always on paths layer. But only if model is not path,
+    // since snapping will then be on objects layer. 
+    // Allows to save loading twice the same layer.
+    if (modelname != 'path') {
+        var pathsLayer = new Caminae.ObjectsLayer(null, {
+            style: {weight: 2, clickable: false},
+        });
+        map.addLayer(pathsLayer);
+        snapObserver = new Caminae.SnapObserver(map, pathsLayer);
+        // Start ajax loading at last
+        pathsLayer.load("{% url core:path_layer %}");
+    }
+    else {
+        snapObserver = new Caminae.SnapObserver(map, objectsLayer);
+    }
+    return snapObserver;
+};
+
+
+function {{ module }}AddObjectsLayer(map, modelname) {
+    // On creation, this should be null
+    var object_pk = $('form input[name="pk"]').val() || null;
+
+    var exclude_current_object = null;
+    if (object_pk) {
+        exclude_current_object = function (geojson) {
+            if (geojson.properties && geojson.properties.pk)
+                return geojson.properties.pk != object_pk;
+        }
+    }
+
+    // Start loading all objects, readonly
+    // Build URL like an animal, please don't tell my mother.
+    var objectsLayer = new Caminae.ObjectsLayer(null, {
+            style: {weight: 2, clickable: false},
+            filter: exclude_current_object
+        }),
+        url = '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname); // OMG, another way for JS url rewriting
+    map.addLayer(objectsLayer);
+    objectsLayer.load(url);
+    return objectsLayer;
+};
+
+function {{ module }}Init(map, bounds) {
+    map.removeControl(map.attributionControl);
+    
+    /*** <Map bounds and reset> ***/
+    
+    var initialBounds = bounds,
+         objectBounds = {{ field|latlngbounds }},
+         currentBounds = objectBounds || initialBounds;
+    getBounds = function () {
+        return currentBounds;
+    };
+    map.addControl(new L.Control.ResetView(getBounds));
+    map.fitBounds(currentBounds);
+    map.addControl(new L.Control.Scale());
+
+    // Show other objects of same type
+    var modelname = $('form input[name="model"]').val(),
+        objectsLayer = {{ module }}AddObjectsLayer(map, modelname);
+    
+    // Enable snapping ?
+    var path_snapping = {{ path_snapping|yesno:"true,false" }};
+    var snapObserver = null;
+    if (path_snapping) {
+        snapObserver = {{ module }}EnablePathSnapping(map, modelname, objectsLayer);
+    }
+
+    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
+
+    /*** <objectLayer> ***/
+
+    var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
+    var objectLayer = new L.GeoJSON(geojson, {
+        style: {weight: 5, opacity: 1, clickable: false},
+        onEachFeature: function (feature, layer) {
+            onNewLayer(layer);
+        }
+    });
+    map.addLayer(objectLayer);
+
+    function _edit_handler(map, layer) {
+        var edit_handler = L.Handler.PolyEdit;
+        if (path_snapping) {
+            edit_handler = L.Handler.SnappedEdit;
+            if (layer instanceof L.Marker) {
+                edit_handler =  Caminae.MarkerSnapping;
+            }
+        }
+        return new edit_handler(map, layer);
+    };
+    
+    function onNewLayer(new_layer) {
+        if (new_layer instanceof L.Marker) {
+            currentBounds = map.getBounds(); // A point has no bounds, take map bounds
+            // Set custom icon, using CSS instead of JS
+            new_layer.setIcon(new L.Icon({
+                iconUrl:'{% static "images/marker-trans.png" %}',
+                shadowUrl:'{% static "leaflet/images/marker-shadow.png" %}',
+                iconSize: new L.Point(25, 41),
+                iconAnchor: new L.Point(13, 41),
+                popupAnchor: new L.Point(1, -34),
+                shadowSize: new L.Point(41, 41)
+            }));
+            $(new_layer._icon).addClass('marker-add');
+        }
+        else {
+            currentBounds = new_layer.getBounds();
+        }
+        new_layer.editing = _edit_handler(map, new_layer);
+        new_layer.editing.enable();
+        new_layer.on('edit', function (e) {
+            layerStore.storeLayerGeomInField(e.target);
+        });
+        layerStore.storeLayerGeomInField(new_layer);
+        if (snapObserver) snapObserver.add(new_layer);
+    }
+
+    /*** </objectLayer> ***/
+
+    /*** <drawing> ***/
+
+    {{ module }}EnableDrawing(map,
+        function (drawn_layer) {
+            map.addLayer(drawn_layer);
+            onNewLayer(drawn_layer);
+        },
+        function () {
+            var old_layer = layerStore.getLayer();
+            if (old_layer) {
+                map.removeLayer(old_layer);
+                if (snapObserver) snapObserver.remove(old_layer);
+                currentBounds = initialBounds;
+                layerStore.storeLayerGeomInField(null);
+            }
+        }
+    );
+}
+</script>

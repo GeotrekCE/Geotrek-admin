@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 #
+# Redirect whole output to log file
+#----------------------------------
+exec > >(tee install.log)
+exec 2>&1
+
+#
 #  Install system dependencies
 #.............................
 
@@ -24,7 +30,7 @@ database_exists () {
         return 0
     else
         # Grep db name in the list of database
-        psql -tAl | grep -q "^$1|"
+        sudo -n -u postgres -s -- psql -tAl | grep -q "^$1|"
         return $?
     fi
 }
@@ -46,13 +52,14 @@ done
 function ubuntu_precise {
     set -x
 
-    sudo apt-get install python-software-properties
+    sudo apt-get install -y python-software-properties
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
     sudo apt-add-repository -y ppa:sharpie/postgis-stable 
     sudo apt-get update > /dev/null
-    sudo apt-get install python-virtualenv build-essential python-dev unzip
-    sudo apt-get install libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
-    sudo apt-get install gettext
+    sudo apt-get install -y python-virtualenv build-essential python-dev unzip
+    sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
+    sudo apt-get install -y postgis-bin gdal-bin
+    sudo apt-get install -y gettext
 
     # Default settings if not any
     mkdir -p etc/
@@ -124,6 +131,15 @@ _EOF_
             sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
             sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
             sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
+            
+            # In development installation (i.e. VM from scratch), we set explicit password
+            sudo -n -u postgres -s -- psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
+            # Use password authent (Django compliant)
+            sudo sed -i 's/^\(local.*postgres.*\)peer$/\1md5/' /etc/postgresql/9.1/main/pg_hba.conf
+            # Listen to all network interfaces
+            listen="'*'"
+            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
+            sudo /etc/init.d/postgresql restart
         fi
 
     else
@@ -141,6 +157,7 @@ _EOF_
 
     set +x
 
+    echo "Output is available in 'install.log'"
     echo "Done."
 }
 

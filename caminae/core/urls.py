@@ -1,17 +1,22 @@
 from django.conf.urls import patterns, url
 
-from .views import (PathLayer, PathList, PathDetail, PathCreate, 
-                    PathUpdate, PathDelete)
+from .views import (
+    PathLayer, PathList, PathDetail, PathCreate,
+    PathUpdate, PathDelete, PathJsonList, ElevationProfile,
+    get_graph_json,
+)
+
+from caminae.core.entity import view_classes_to_url
 
 
 urlpatterns = patterns('',
-    url(r'^data/paths.geojson$', PathLayer.as_view(), name="layer_path"),
+    url(r'^data/graph.json$', get_graph_json, name="path_json_graph"),
+    # Specific
+    url(r'^path/(?P<pk>\d+)/profile/$', ElevationProfile.as_view(), name='path_profile'),
 )
 
-urlpatterns += patterns('',
-    url(r'^path/list/$', PathList.as_view(), name="path_list"),
-    url(r'^path/(?P<pk>\d+)/$', PathDetail.as_view(), name='path_detail'),
-    url(r'^path/add/$', PathCreate.as_view(), name='path_add'),
-    url(r'^path/edit/(?P<pk>\d+)/$', PathUpdate.as_view(), name='path_update'),
-    url(r'^path/delete/(?P<pk>\d+)$', PathDelete.as_view(), name='path_delete'),
-)
+urlpatterns += patterns('', *view_classes_to_url(
+    PathList, PathCreate, PathDetail, PathUpdate,
+    PathDelete, PathLayer, PathJsonList
+))
+

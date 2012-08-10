@@ -82,7 +82,7 @@ class TrekFactory(factory.Factory):
     public_transport = factory.Sequence(lambda n: u"Public transport %s" % n)
     advice = factory.Sequence(lambda n: u"Advice %s" % n)
 
-    the_geom = LineString(Point(1, 1), Point(2, 2))
+    geom = LineString(Point(1, 1, 0), Point(2, 2, 0))
 
     # do not populate insert_date / update_date
 
