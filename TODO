@@ -2,16 +2,15 @@
 In this sprint 2
 ================
 
-* Each URL status (200, 302,...) in tests
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 * Check form non field error
+* Improve color of objects
+* Improve fit map vertical height
 
 ==============
 Known problems
 ==============
 
-* When changing ``dim`` parameter on a GeometryField, South does not alter nor
-  drop/create the field
 * ``dumpdata`` management command will not output the Z coordinates when
   present. Chaining dumpdata and loaddata will therefore not work.
 * ``MIN_SNAP_ZOOM`` not taken into account.
@@ -20,14 +19,14 @@ Known problems
 Soon...
 ==========
 
+* Split django-mapentity
+* Split django-floppyforms-leaflet
+
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * Something is wrong with logger configuration, messages coming from caminae
   appear twice in the console (see syncdb output)
 
 * Switch to django-bootstrapped instead of embedding it
-* Use django-tabs
-* Add models test in django-geojson
-* Release django-geojson
 
 * List TODO in Hudson
 * Generate project docs with Sphinx
@@ -50,6 +49,8 @@ One day...
 
 * Improve installation of GDAL
 * Clean-up buildout directory (all in one "env")
+* When changing ``dim`` parameter on a GeometryField, South does not alter nor
+  drop/create the field
 
 
 ==========
