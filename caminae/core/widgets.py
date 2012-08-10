@@ -48,20 +48,21 @@ class LineStringWidget(MapEntityWidget,
     pass
 
 
+class MultiPathWidget(MapEntityWidget):
+    is_multipath = True
+    
+    def get_context(self, *args, **kwargs):
+            context = super(MultiPathWidget, self).get_context(*args, **kwargs)
+            context['is_multipath'] = self.is_multipath
+            return context
+
+
 class PointOrLineStringWidget(MapEntityWidget,
                              forms.gis.PointWidget,
                              forms.gis.LineStringWidget):
     geom_type = 'GEOMETRY'
 
 
-class PointOrMultipathWidget(MapEntityWidget,
-                             forms.gis.PointWidget,
-                             forms.gis.LineStringWidget):
+class PointOrMultipathWidget(MultiPathWidget,
+                             forms.gis.PointWidget):
     geom_type = 'GEOMETRY'
-    is_multipath = True
-
-    def get_context(self, name, value, attrs=None, extra_context={}):
-        context = super(PointOrMultipathWidget, self).get_context(name, value, attrs, extra_context)
-        context['is_multipath'] = self.is_multipath
-        return context
-
