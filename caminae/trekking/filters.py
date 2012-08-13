@@ -1,6 +1,6 @@
 from django_filters import FilterSet
 
-from .models import Trek
+from .models import Trek, POI
 
 
 class TrekFilter(FilterSet):
@@ -11,5 +11,5 @@ class TrekFilter(FilterSet):
 
 class POIFilter(FilterSet):
     class Meta:
-        model = Trek
+        model = POI
         fields = ['type']

@@ -3,7 +3,7 @@ import floppyforms as forms
 from caminae.core.forms import MapEntityForm
 from caminae.core.widgets import PointWidget, MultiPathWidget
 
-from .models import Trek
+from .models import Trek, POI
 
 
 class TrekForm(MapEntityForm):
