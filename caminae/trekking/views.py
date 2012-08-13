@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -31,7 +33,7 @@ class TrekCreate(MapEntityCreate):
     model = Trek
     form_class = TrekForm
 
-    @trekking_manager_required('trekking:trek_list')
+    @method_decorator(trekking_manager_required('trekking:trek_list'))
     def dispatch(self, *args, **kwargs):
         return super(TrekCreate, self).dispatch(*args, **kwargs)
 
@@ -40,7 +42,7 @@ class TrekUpdate(MapEntityUpdate):
     model = Trek
     form_class = TrekForm
 
-    @trekking_manager_required('trekking:trek_detail')
+    @method_decorator(trekking_manager_required('trekking:trek_detail'))
     def dispatch(self, *args, **kwargs):
         return super(TrekUpdate, self).dispatch(*args, **kwargs)
 
@@ -48,7 +50,7 @@ class TrekUpdate(MapEntityUpdate):
 class TrekDelete(MapEntityDelete):
     model = Trek
 
-    @trekking_manager_required('trekking:trek_detail')
+    @method_decorator(trekking_manager_required('trekking:trek_detail'))
     def dispatch(self, *args, **kwargs):
         return super(TrekDelete, self).dispatch(*args, **kwargs)
 
@@ -78,16 +80,16 @@ class POICreate(MapEntityCreate):
     model = POI
     form_class = POIForm
 
-    @trekking_manager_required('trekking:poi_list')
+    @method_decorator(trekking_manager_required('trekking:poi_list'))
     def dispatch(self, *args, **kwargs):
-        return super(TrekCreate, self).dispatch(*args, **kwargs)
+        return super(POICreate, self).dispatch(*args, **kwargs)
 
 
 class POIUpdate(MapEntityUpdate):
     model = POI
     form_class = POIForm
 
-    @trekking_manager_required('trekking:poi_detail')
+    @method_decorator(trekking_manager_required('trekking:poi_detail'))
     def dispatch(self, *args, **kwargs):
         return super(POIUpdate, self).dispatch(*args, **kwargs)
 
@@ -95,6 +97,6 @@ class POIUpdate(MapEntityUpdate):
 class POIDelete(MapEntityDelete):
     model = POI
 
-    @trekking_manager_required('trekking:poi_detail')
+    @method_decorator(trekking_manager_required('trekking:poi_detail'))
     def dispatch(self, *args, **kwargs):
         return super(POIDelete, self).dispatch(*args, **kwargs)
