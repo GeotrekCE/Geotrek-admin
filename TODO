@@ -1,5 +1,5 @@
 ================
-In this sprint 2
+In this sprint 3
 ================
 
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
@@ -14,6 +14,10 @@ Known problems
 * ``dumpdata`` management command will not output the Z coordinates when
   present. Chaining dumpdata and loaddata will therefore not work.
 * ``MIN_SNAP_ZOOM`` not taken into account.
+* If map view is to wide, no background layer is displayed (c.f. WMS écrins)
+* No orthophoto
+* Existing interventions cannot be edited
+* CSS Fluid rows ignore offset (cf. future bootstrap 2.1.0)
 
 ==========
 Soon...
@@ -21,6 +25,9 @@ Soon...
 
 * Split django-mapentity
 * Split django-floppyforms-leaflet
+
+* Django model translations : default language to avoid excluding form fields ? Auto-add all fields
+  for all declared languages ?
 
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
 * Something is wrong with logger configuration, messages coming from caminae

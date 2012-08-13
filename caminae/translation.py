@@ -26,7 +26,7 @@ translator.register(land_models.PhysicalType, PhysicalTypeTO)
 
 class TrekTO(TranslationOptions):
     fields = ('name', 'departure', 'arrival', 'description_teaser',
-        'description', 'ambiance', 'handicapped_infrastructure', 'advice', )
+        'description', 'ambiance', 'disabled_infrastructure', 'advice', )
 
 
 class POITO(TranslationOptions):
