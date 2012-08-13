@@ -17,7 +17,10 @@
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
-function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
+if (! {{ module }}); var {{ module }} = {};
+
+
+{{ module }}.enableDrawing = function(map, drawncallback, startovercallback) {
     var drawControl = new L.Control.Draw({
         position: 'topright',
         polygon: {{ is_polygone|yesno:"true,false" }},
@@ -63,7 +66,7 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
 };
 
 
-function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
+{{ module }}.enablePathSnapping = function(map, modelname, objectsLayer) {
     var snapObserver = null;
     MapEntity.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
     // Snapping is always on paths layer. But only if model is not path,
@@ -85,7 +88,7 @@ function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
 };
 
 
-function {{ module }}AddObjectsLayer(map, modelname) {
+{{ module }}.addObjectsLayer = function(map, modelname) {
     // On creation, this should be null
     var object_pk = $('form input[name="pk"]').val() || null;
 
@@ -109,7 +112,7 @@ function {{ module }}AddObjectsLayer(map, modelname) {
     return objectsLayer;
 };
 
-function {{ module }}EnableMultipath(map, objectsLayer, layerStore) {
+{{ module }}.enableMultipath = function(map, objectsLayer, layerStore) {
     objectsLayer.on('load', function() {
         $.getJSON('{% url core:path_json_graph %}', function(graph) {
 
@@ -138,9 +141,9 @@ function {{ module }}EnableMultipath(map, objectsLayer, layerStore) {
 
         });
     });
-}
+};
 
-function {{ module }}Init(map, bounds) {
+{{ module }}.init = function(map, bounds) {
     map.removeControl(map.attributionControl);
     
     /*** <Map bounds and reset> ***/
@@ -157,13 +160,13 @@ function {{ module }}Init(map, bounds) {
 
     // Show other objects of same type
     var modelname = $('form input[name="model"]').val(),
-        objectsLayer = {{ module }}AddObjectsLayer(map, modelname);
+        objectsLayer = {{ module }}.addObjectsLayer(map, modelname);
     
     // Enable snapping ?
     var path_snapping = {{ path_snapping|yesno:"true,false" }};
     var snapObserver = null;
     if (path_snapping) {
-        snapObserver = {{ module }}EnablePathSnapping(map, modelname, objectsLayer);
+        snapObserver = {{ module }}.enablePathSnapping(map, modelname, objectsLayer);
     }
 
     var layerStore = MapEntity.makeGeoFieldProxy($('#{{ attrs.id }}'));
@@ -220,7 +223,7 @@ function {{ module }}Init(map, bounds) {
 
     /*** <drawing> ***/
 
-    {{ module }}EnableDrawing(map,
+    {{ module }}.enableDrawing(map,
         function (drawn_layer) {
             map.addLayer(drawn_layer);
             onNewLayer(drawn_layer);
@@ -240,10 +243,14 @@ function {{ module }}Init(map, bounds) {
     var path_layer = snapObserver._guidesLayer; // objectsLayer,
 
     // {{ module }}EnableMultipath(map, objectsLayer, layerStore)
-    {{ module }}EnableMultipath(map,
+    {{ module }}.enableMultipath(map,
         path_layer,
         layerStore
     );
 
-}
+};
+
+// Callback
+{{ module }}Init =  {{ module }}.init.bind({{ module }});
+
 </script>
