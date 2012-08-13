@@ -175,9 +175,8 @@ class Project(StructureRelated):
     cost = models.FloatField(verbose_name=_(u"Cost"))
     comment = models.TextField(verbose_name=_(u"Comments"))
 
-    insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
     ## Relations ##
