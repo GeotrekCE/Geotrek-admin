@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load i18n leaflet_tags field_verbose_name %}
+
+{% block nav-list %}active{% endblock nav-list %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% include "dataTables_template.html" %}
+{% endblock extrahead %}
+
+{% block mainmap %}
+    {% leaflet_map "mainmap" %}
+{% endblock mainmap %}
+
+{% block mainlist %}
+    <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
+        {{ filterform.form.as_p }}
+        <input id="reset" type="reset" class="btn" />
+        <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+    </form>
+
+    <table id="path-ajax-list" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                {% for field in columns %}
+                <th>{{ model|verbose:field }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock mainlist %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+
+    <script>
+        function mainmapInit(mainmap) {
+            mainmap.removeControl(mainmap.attributionControl);
+            
+            {% if DEBUG %}
+            mainmap.on('viewreset moveend', function () {
+                var n = objectsLayer.search(mainmap.getBounds()).length;
+                objectsLayer.fire('info', {info : n + ' objects shown'});
+            });
+            mainmap.addControl(new L.Control.Information());
+            {% endif %}
+            
+            var getUrl = function (geojson, layer) {
+                //TODO use nice JS url rewriting
+                return "{{ model.get_generic_detail_url }}".replace('0', geojson.properties.pk);
+            };
+            
+            var objectsLayer = new Caminae.ObjectsLayer(null, {
+                objectUrl: getUrl
+            });
+            
+            mainmap.addLayer(objectsLayer);
+            objectsLayer.load("{{ model.get_layer_url }}");
+
+            // init ajax list
+            initAjaxList(objectsLayer);
+        }
+
+        /* Table initialisation */
+        function initAjaxList(objectsLayer) {
+
+            var filterform = $('#mainfilter')
+              , submitbutton = $('#filter')
+              , ajax_list = $('#path-ajax-list')
+            ;
+
+            // on JSON load, return the json used by dataTable
+            // Update also the map given the layer's pk
+            var extract_data_and_pks = function(data, type) {
+                objectsLayer.updateFromPks(data.map_obj_pk)
+                return data.aaData;
+            }
+
+            // initialize data table
+            var dt = JQDataTable.init(
+                  ajax_list
+                , filterform.attr('action')
+                , { "sAjaxDataProp": extract_data_and_pks
+                ,   "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                        $(nRow).hover(function(){
+                            var pk = $(aData[0]).attr('data-pk');
+                            objectsLayer.highlight(pk);
+                        },
+                        function (){
+                            var pk = $(aData[0]).attr('data-pk');
+                            objectsLayer.highlight(pk, false);
+                        });
+                    },
+                    "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>"
+                }
+            );
+            
+            // Hardcore customizations
+            $('li.next a').html($('li.next a').html().replace('Next', ''));
+            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
+
+            // On submit, trigger an ajax request to the JSON view
+            // Update the ajax list and the map
+            submitbutton.click(function() {
+                var url = filterform.attr("action") + '?' + filterform.serialize()
+                dt.fnReloadAjax(url);
+
+                return false;
+            });
+        };
+    </script>
+
+{% endblock extrabody %}
