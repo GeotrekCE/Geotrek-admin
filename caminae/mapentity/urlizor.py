@@ -11,14 +11,14 @@ frommodel = lambda model: model.__name__.lower()
 
 def url_layer(kind, model):
     model_str = frommodel(model)
-    return r'^{0}/{1}.geojson$'.format(model_str, model_str)
+    return r'^api/{0}/{1}.geojson$'.format(model_str, model_str)
 
 def url_list(kind, model):
     return r'^{0}/list/$'.format(frommodel(model))
 
 def url_json_list(kind, model):
     model_str = frommodel(model)
-    return r'^{0}/{1}s.json$'.format(model_str, model_str)
+    return r'^api/{0}/{1}s.json$'.format(model_str, model_str)
 
 def url_detail(kind, model):
     return r'^{0}/(?P<pk>\d+)/$'.format(frommodel(model))
