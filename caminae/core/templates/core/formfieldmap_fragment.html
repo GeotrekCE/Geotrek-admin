@@ -10,6 +10,7 @@
 
 <script type="text/javascript" src="{% static "js/dijkstra.js" %}"></script>
 <script type="text/javascript" src="{% static "core/multipath.js" %}"></script>
+<script type="text/javascript" src="{% static "mapentity/mapentity.js" %}"></script>
 
 
 {% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
@@ -64,7 +65,7 @@ function {{ module }}EnableDrawing(map, drawncallback, startovercallback) {
 
 function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
     var snapObserver = null;
-    Caminae.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
+    MapEntity.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
     // Snapping is always on paths layer. But only if model is not path,
     // since snapping will then be on objects layer. 
     // Allows to save loading twice the same layer.
@@ -73,12 +74,12 @@ function {{ module }}EnablePathSnapping(map, modelname, objectsLayer) {
             style: {weight: 2, clickable: true},
         });
         map.addLayer(pathsLayer);
-        snapObserver = new Caminae.SnapObserver(map, pathsLayer);
+        snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
         // Start ajax loading at last
         pathsLayer.load("{% url core:path_layer %}");
     }
     else {
-        snapObserver = new Caminae.SnapObserver(map, objectsLayer);
+        snapObserver = new MapEntity.SnapObserver(map, objectsLayer);
     }
     return snapObserver;
 };
@@ -165,7 +166,7 @@ function {{ module }}Init(map, bounds) {
         snapObserver = {{ module }}EnablePathSnapping(map, modelname, objectsLayer);
     }
 
-    var layerStore = Caminae.makeGeoFieldProxy($('#{{ attrs.id }}'));
+    var layerStore = MapEntity.makeGeoFieldProxy($('#{{ attrs.id }}'));
 
     /*** <objectLayer> ***/
 
@@ -183,7 +184,7 @@ function {{ module }}Init(map, bounds) {
         if (path_snapping) {
             edit_handler = L.Handler.SnappedEdit;
             if (layer instanceof L.Marker) {
-                edit_handler =  Caminae.MarkerSnapping;
+                edit_handler =  MapEntity.MarkerSnapping;
             }
         }
         return new edit_handler(map, layer);
