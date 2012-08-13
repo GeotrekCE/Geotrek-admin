@@ -225,6 +225,7 @@ class POI(MapEntityMixin, models.Model):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+    # TODO: add date_update, date_insert, delete
 
 
 class POIType(models.Model):

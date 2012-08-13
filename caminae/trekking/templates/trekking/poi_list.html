@@ -1,0 +1,8 @@
+{% extends "core/module_list.html" %}
+{% load i18n %}
+
+{% block nav-poi %}active{% endblock nav-poi %}
+
+{% block mainactions %}
+    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add POI" %}</a>
+{% endblock mainactions %}

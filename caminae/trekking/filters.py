@@ -7,3 +7,9 @@ class TrekFilter(FilterSet):
     class Meta:
         model = Trek
         fields = ['difficulty']
+
+
+class POIFilter(FilterSet):
+    class Meta:
+        model = Trek
+        fields = ['type']

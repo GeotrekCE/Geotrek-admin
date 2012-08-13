@@ -56,3 +56,22 @@ class TrekForm(MapEntityForm):
         exclude = ('deleted', 'paths', 'length') + ('name', 'departure', 'arrival', 
                    'description', 'description_teaser', 'ambiance', 'advice',
                    'disabled_infrastructure',)  # TODO
+
+
+class POIForm(MapEntityForm):
+    geom = forms.gis.GeometryField(widget=PointWidget)
+
+    modelfields = (
+            'name_fr',
+            'name_it',
+            'name_en',
+            'description_fr',
+            'description_it',
+            'description_en',
+            'type',
+            )
+    geomfields = ('geom', )
+
+    class Meta:
+        model = POI
+        exclude = ('name', 'description',)

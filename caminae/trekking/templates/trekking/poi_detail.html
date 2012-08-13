@@ -1,0 +1,20 @@
+{% extends "core/module_detail.html" %}
+{% load i18n field_verbose_name %}
+
+{% block detailspanel %}
+    {{ block.super }}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ poi|verbose:"type" }}</th>
+            <td>{{ poi.type }}</td>
+        </tr>
+        <tr>
+            <th>{{ poi|verbose:"name" }}</th>
+            <td>{{ poi.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ poi|verbose:"description" }}</th>
+            <td>{{ poi.description }}</td>
+        </tr>
+    </table>
+{% endblock detailspanel %}
