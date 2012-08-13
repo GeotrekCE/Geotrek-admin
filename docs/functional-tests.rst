@@ -440,3 +440,18 @@ Sprint 3 - Version 0.3.0
 ------------------------------
 
 Désormais, la liste des modules n'est présente que dans l'onglet recherche.
+
+
+#127 - Séparer le code d'un futur django-mapentity
+--------------------------------------------------
+
+Story purement technique (pour réutilisabiliter notamment).
+
+Création d'une app dans caminae, mapentity (pas de repo git à part pour l'instant)
+contenant les différents aspects génériques (MapEntityMixin et création d'url principalement).
+
+Le code JS présent dans formfieldmap.html fera aussi l'objet d'une extraction dans un JS à part
+pour pouvoir être réutilisable.
+
+Les Widgets ne sont pas concernés (ils seront intégrés éventuellement plus tard comme contrib à floppyforms)
+
