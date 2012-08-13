@@ -430,3 +430,13 @@ Si je reclique sur le controle, l'ancien tracé s'efface et je peux à nouveau r
     du formulaire.
 
     À l'avenir, nous aurons un sélecteur d'itinéraires à-la Google Maps.
+
+
+========================
+Sprint 3 - Version 0.3.0
+========================
+
+#137 - Améliorer la navigation
+------------------------------
+
+Désormais, la liste des modules n'est présente que dans l'onglet recherche.
