@@ -12,6 +12,10 @@ def dummy_filefield_as_sequence(toformat_name):
     return factory.Sequence(lambda n: get_dummy_uploaded_image(toformat_name % n))
 
 
+class TrekFactory(factory.Factory):
+    FACTORY_FOR = models.Trek
+
+
 class TrekNetworkFactory(factory.Factory):
     FACTORY_FOR = models.TrekNetwork
 
@@ -102,5 +106,3 @@ class TrekRelationshipFactory(factory.Factory):
 
     trek_a = factory.SubFactory(TrekFactory)
     trek_b = factory.SubFactory(TrekFactory)
-
-

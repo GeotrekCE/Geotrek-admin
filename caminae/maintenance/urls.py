@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns
 
 from .views import (
     InterventionLayer, InterventionList, InterventionDetail, InterventionCreate,
@@ -12,4 +12,3 @@ urlpatterns = patterns('', *view_classes_to_url(
     InterventionLayer, InterventionList, InterventionDetail, InterventionCreate,
     InterventionUpdate, InterventionDelete, InterventionJsonList
 ))
-

@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 
     url(r'', include('caminae.core.urls', namespace='core', app_name='core')),
     url(r'', include('caminae.maintenance.urls', namespace='maintenance', app_name='maintenance')),
+    url(r'', include('caminae.trekking.urls', namespace='trekking', app_name='trekking')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

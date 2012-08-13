@@ -43,6 +43,11 @@ class MapEntityWidget(LeafletMapWidget):
         return context
 
 
+class PointWidget(MapEntityWidget,
+                       forms.gis.PointWidget):
+    pass
+
+
 class LineStringWidget(MapEntityWidget,
                        forms.gis.LineStringWidget):
     pass

@@ -92,7 +92,7 @@ class UserProfile(StructureRelated):
         g = Group.objects.get(name=GROUP_PATH_MANAGER)
         return self.has_group(g) or self.user.is_staff
 
-    def is_comm_manager(self):
+    def is_trekking_manager(self):
         """ Returns True if the user belongs to comm managers group. """
         g = Group.objects.get(name=GROUP_COMM_MANAGER)
         return self.has_group(g) or self.user.is_staff

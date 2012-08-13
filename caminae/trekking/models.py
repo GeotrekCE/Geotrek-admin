@@ -3,10 +3,11 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from caminae.core.models import MapEntityMixin
 from caminae.core.models import Path
 
 
-class Trek(models.Model):
+class Trek(MapEntityMixin, models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
@@ -217,5 +218,3 @@ class TrekRelationship(models.Model):
 #
 #     class Meta:
 #         db_table = 'photos'
-
-
