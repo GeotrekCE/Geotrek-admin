@@ -239,11 +239,12 @@ function {{ module }}Init(map, bounds) {
     // TODO: I NEED paths.geojson ; have a function to get it
     var path_layer = snapObserver._guidesLayer; // objectsLayer,
 
+    {% if is_multipath %}
     // {{ module }}EnableMultipath(map, objectsLayer, layerStore)
     {{ module }}EnableMultipath(map,
         path_layer,
         layerStore
     );
-
+    {% endif %}
 }
 </script>
