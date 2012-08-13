@@ -55,7 +55,7 @@ FormField.makeModule = function(module, module_settings) {
         // since snapping will then be on objects layer.
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
-            var pathsLayer = new Caminae.ObjectsLayer(null, {
+            var pathsLayer = new MapEntity.ObjectsLayer(null, {
                 style: {weight: 2, clickable: true},
             });
             map.addLayer(pathsLayer);
@@ -83,7 +83,7 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         // Start loading all objects, readonly
-        var objectsLayer = new Caminae.ObjectsLayer(null, {
+        var objectsLayer = new MapEntity.ObjectsLayer(null, {
                 style: {weight: 2, clickable: true},
                 filter: exclude_current_object
             }),

@@ -14,7 +14,7 @@ function {{ mapname }}Init(map, bounds) {
     
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
-    var objectLayer = new Caminae.ObjectsLayer(geojson, {
+    var objectLayer = new MapEntity.ObjectsLayer(geojson, {
         style: {weight: 5, opacity: 1, clickable: false}
     });
     map.addLayer(objectLayer);
@@ -24,7 +24,7 @@ function {{ mapname }}Init(map, bounds) {
     map.addControl(new L.Control.Scale());
     
     // Paths layer (TODO: should we show objectsLayers ?)
-    var pathsLayer = new Caminae.ObjectsLayer(null, {
+    var pathsLayer = new MapEntity.ObjectsLayer(null, {
         style: {weight: 2, opacity: 0.7, clickable: false}
     });
     map.addLayer(pathsLayer);
