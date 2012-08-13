@@ -4,7 +4,7 @@ from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.core.urlresolvers import reverse
 from django.db import connections, DEFAULT_DB_ALIAS
 
-from caminae.utils import dbnow
+from caminae.common.utils import dbnow
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure
 from caminae.core.factories import PathFactory, TopologyMixinFactory, TopologyMixinKindFactory

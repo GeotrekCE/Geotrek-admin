@@ -1,6 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-IMG_FILE = ''
+# Produce a small red dot
+IMG_FILE = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
 def get_dummy_img():
     return IMG_FILE.decode('base64')

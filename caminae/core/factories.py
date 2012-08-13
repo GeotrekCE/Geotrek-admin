@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point, LineString
 from django.conf import settings
 
 from caminae.authent.factories import StructureRelatedDefaultFactory
-from caminae.utils import dbnow
+from caminae.common.utils import dbnow
 from . import models
 
 

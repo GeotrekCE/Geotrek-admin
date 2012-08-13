@@ -4,7 +4,7 @@ import factory
 from django.contrib.gis.geos import Point, LineString
 
 from . import models
-from caminae.utils.testdata import get_dummy_uploaded_image
+from caminae.common.utils.testdata import get_dummy_uploaded_image
 
 
 def dummy_filefield_as_sequence(toformat_name):

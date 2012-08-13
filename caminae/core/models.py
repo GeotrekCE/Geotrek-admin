@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from caminae.authent.models import StructureRelated
-from caminae.utils import distance3D
+from caminae.common.utils import distance3D
 
 
 # Used to create the matching url name
