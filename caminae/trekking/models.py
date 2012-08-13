@@ -3,7 +3,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
-from caminae.core.models import MapEntityMixin
+from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path
 
 
@@ -218,3 +218,15 @@ class TrekRelationship(models.Model):
 #
 #     class Meta:
 #         db_table = 'photos'
+
+
+
+class POI(MapEntityMixin, models.Model):
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    description = models.TextField(verbose_name=_(u"Description"))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+
+
+class POIType(models.Model):
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
