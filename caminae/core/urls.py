@@ -6,7 +6,7 @@ from .views import (
     get_graph_json,
 )
 
-from caminae.core.entity import view_classes_to_url
+from caminae.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',

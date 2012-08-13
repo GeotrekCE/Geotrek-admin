@@ -5,7 +5,7 @@ from .views import (
     InterventionUpdate, InterventionDelete, InterventionJsonList
 )
 
-from caminae.core.entity import view_classes_to_url
+from caminae.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('', *view_classes_to_url(

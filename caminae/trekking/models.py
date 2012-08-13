@@ -39,8 +39,8 @@ class Trek(MapEntityMixin, models.Model):
     geom = models.LineStringField(editable=False, srid=settings.SRID,
                                           spatial_index=False, dim=3)
 
-    insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
     deleted = models.BooleanField(verbose_name=_(u"Deleted"))
 
 

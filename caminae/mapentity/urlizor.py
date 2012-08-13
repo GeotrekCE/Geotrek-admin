@@ -1,10 +1,11 @@
 from django.conf.urls.defaults import url
 
-from caminae.core.models import (
+from .models import (
     ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
     ENTITY_DETAIL, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
+
 
 frommodel = lambda model: model.__name__.lower()
 
