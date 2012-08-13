@@ -225,7 +225,10 @@ class POI(MapEntityMixin, models.Model):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
-    # TODO: add date_update, date_insert, delete
+
+    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
 
 class POIType(models.Model):
