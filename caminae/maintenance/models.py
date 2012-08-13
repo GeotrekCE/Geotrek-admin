@@ -5,7 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import Point, LineString
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import MapEntityMixin, TopologyMixin
+from caminae.core.models import TopologyMixin
+from caminae.mapentity.models import MapEntityMixin
 from caminae.core.factories import TopologyMixinFactory
 from caminae.common.models import Organism
 

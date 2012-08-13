@@ -16,11 +16,11 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
+from caminae.mapentity import models as mapentity_models
 from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
 from . import graph as graph_lib
-from . import models
 
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -32,7 +32,7 @@ class MapEntityLayer(GeoJSONLayerView):
 
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_LAYER
+        return mapentity_models.ENTITY_LAYER
 
     def dispatch(self, *args, **kwargs):
         # Use lambda to bound self and to avoid passing request, *args, **kwargs as the decorator would do
@@ -72,7 +72,7 @@ class MapEntityList(ListView):
 
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_LIST
+        return mapentity_models.ENTITY_LIST
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -103,7 +103,7 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
 
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_JSON_LIST
+        return mapentity_models.ENTITY_JSON_LIST
 
     def get_context_data(self, **kwargs):
         """
@@ -132,7 +132,7 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
 class MapEntityDetail(DetailView):
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_DETAIL
+        return mapentity_models.ENTITY_DETAIL
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class MapEntityDetail(DetailView):
 class MapEntityCreate(CreateView):
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_CREATE
+        return mapentity_models.ENTITY_CREATE
 
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
@@ -174,7 +174,7 @@ class MapEntityCreate(CreateView):
 class MapEntityUpdate(UpdateView):
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_UPDATE
+        return mapentity_models.ENTITY_UPDATE
 
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
@@ -191,7 +191,7 @@ class MapEntityUpdate(UpdateView):
 class MapEntityDelete(DeleteView):
     @classmethod
     def get_entity_kind(cls):
-        return models.ENTITY_DELETE
+        return mapentity_models.ENTITY_DELETE
 
     def get_success_url(self):
         return self.model.get_list_url()
