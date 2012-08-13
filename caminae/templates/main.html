@@ -1,0 +1,65 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+    <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+    <script src="{% static "js/jquery.js" %}"></script>
+    
+    {% block extrahead %}
+    {% endblock extrahead %}
+    
+    <link rel="stylesheet" href="{% static "style.css" %}" />
+    {% endblock head %}
+</head>
+<body>
+    {% if messages %}
+    <ul id="alert-box">
+        {% for message in messages %}
+        <li class="alert {{ message.tags }}">
+            {{ message }}
+            {% if 'warning' in message.tags or 'error' in message.tags %}<button class="close" data-dismiss="alert">×</button>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="{% url home %}">{{ TITLE }}</a>
+          <ul class="nav pull-right">
+            {% block toolbar %}
+            {% endblock toolbar %}
+            <li class="divider-vertical"></li>
+            {% if request.user.is_authenticated %}
+                <li><a href="#"><img src="{% static "images/icon-user-white.png" %}"/>
+                    {{ request.user }} ({{ request.user.profile.structure }})</a></li>
+                {% if request.user.is_staff %}
+                    <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+                {% endif %}
+                <li><a class="btn" href="{% url logout %}">{% trans "Logout" %}</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% block body %}
+        <div class="content">
+          {% block content %}
+          {% endblock content %}
+        </div>
+    {% endblock body %}
+
+    {% block extrabody %}
+    <script type="text/javascript">
+        var hideMessages = function () {
+            // Fade out success/infos messages
+            $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
+        }
+        $().load(hideMessages);
+    </script>
+    {% endblock extrabody %}
+</body>
+</html>
