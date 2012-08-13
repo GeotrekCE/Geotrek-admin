@@ -180,6 +180,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.land',
     'caminae.trekking',
     'caminae.infrastructure',
+    'caminae.mapentity',
 )
 
 SERIALIZATION_MODULES = {
