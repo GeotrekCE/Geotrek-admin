@@ -24,7 +24,7 @@ class Trek(MapEntityMixin, models.Model):
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
     description = models.TextField(verbose_name=_(u"Description"))
     ambiance = models.TextField(verbose_name=_(u"Ambiance"))
-    handicapped_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
+    disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
     duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
