@@ -41,7 +41,8 @@ var {{ module }}_settings = {
     },
     'init': {
         'objectBounds': {{ field|latlngbounds }},
-        'path_snapping': {{ path_snapping|yesno:"true,false" }},
+        'pathsnapping': {{ path_snapping|yesno:"true,false" }},
+        'multipath': {{ is_multipath|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
         'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
         'iconUrl': '{% static "images/marker-trans.png" %}',
