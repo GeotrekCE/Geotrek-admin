@@ -13,7 +13,7 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 
-import .models
+from . import models as mapentity_models
 
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -145,6 +145,10 @@ class MapEntityCreate(CreateView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_CREATE
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
         return super(MapEntityCreate, self).form_valid(form)
@@ -169,6 +173,10 @@ class MapEntityUpdate(UpdateView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_UPDATE
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
         return super(MapEntityUpdate, self).form_valid(form)
@@ -185,6 +193,10 @@ class MapEntityDelete(DeleteView):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_DELETE
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return self.model.get_list_url()
