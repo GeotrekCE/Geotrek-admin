@@ -19,15 +19,44 @@
 <script type="text/javascript">
 if (! {{ module }}); var {{ module }} = {};
 
+var {{ module }}_settings = {
+    'enableDrawing': {
+        'is_polygon': {{ is_polygone|yesno:"true,false" }},
+        'is_marker': {{ is_point|yesno:"true,false" }},
+        'is_polyline': {{ is_linestring|yesno:"true,false" }}
+    },
+    'enablePathSnapping': {
+        'MIN_SNAP_ZOOM': {{ min_snap_zoom }},
+        'pathsLayer_url': "{% url core:path_layer %}"
+    },
+    'addObjectsLayer': {
+        // OMG, another way for JS url rewriting
+        'getUrl': function(modelname) {
+            return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
+        }
+    },
+    'enableMultipath': {
+        'path_json_graph_url': '{% url core:path_json_graph %}'
+    },
+    'init': {
+        'objectBounds': {{ field|latlngbounds }},
+        'path_snapping': {{ path_snapping|yesno:"true,false" }},
+        'layerStoreElemSelector': '#{{ attrs.id }}',
+        'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
+        'iconUrl': '{% static "images/marker-trans.png" %}',
+        'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}'
+    }
+};
+
 
 {{ module }}.enableDrawing = function(map, drawncallback, startovercallback) {
     var drawControl = new L.Control.Draw({
         position: 'topright',
-        polygon: {{ is_polygone|yesno:"true,false" }},
+        polygon: {{ module }}_settings.enableDrawing.is_polygon,
         rectangle: false,
         circle: false,
-        marker: {{ is_point|yesno:"true,false" }},
-        polyline: {{ is_linestring|yesno:"true,false" }} && {
+        marker: {{ module }}_settings.enableDrawing.is_marker,
+        polyline: {{ module }}_settings.enableDrawing.is_polyline && {
             shapeOptions: {
                 color: '#35FF00',
                 opacity: 0.8,
@@ -68,7 +97,7 @@ if (! {{ module }}); var {{ module }} = {};
 
 {{ module }}.enablePathSnapping = function(map, modelname, objectsLayer) {
     var snapObserver = null;
-    MapEntity.SnapObserver.MIN_SNAP_ZOOM = {{ min_snap_zoom }};
+    MapEntity.SnapObserver.MIN_SNAP_ZOOM = {{ module }}_settings.enablePathSnapping.MIN_SNAP_ZOOM;
     // Snapping is always on paths layer. But only if model is not path,
     // since snapping will then be on objects layer. 
     // Allows to save loading twice the same layer.
@@ -79,7 +108,7 @@ if (! {{ module }}); var {{ module }} = {};
         map.addLayer(pathsLayer);
         snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
         // Start ajax loading at last
-        pathsLayer.load("{% url core:path_layer %}");
+        pathsLayer.load({{ module }}_settings.enablePathSnapping.pathsLayer_url);
     }
     else {
         snapObserver = new MapEntity.SnapObserver(map, objectsLayer);
@@ -106,7 +135,7 @@ if (! {{ module }}); var {{ module }} = {};
             style: {weight: 2, clickable: true},
             filter: exclude_current_object
         }),
-        url = '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname); // OMG, another way for JS url rewriting
+        url = {{ module }}_settings.addObjectsLayer.getUrl(modelname);
     map.addLayer(objectsLayer);
     objectsLayer.load(url);
     return objectsLayer;
@@ -114,7 +143,7 @@ if (! {{ module }}); var {{ module }} = {};
 
 {{ module }}.enableMultipath = function(map, objectsLayer, layerStore) {
     objectsLayer.on('load', function() {
-        $.getJSON('{% url core:path_json_graph %}', function(graph) {
+        $.getJSON({{ module }}_settings.enableMultipath.path_json_graph_url, function(graph) {
 
             var dijkstra = {
                 'compute_path': Caminae.compute_path,
@@ -149,7 +178,7 @@ if (! {{ module }}); var {{ module }} = {};
     /*** <Map bounds and reset> ***/
     
     var initialBounds = bounds,
-         objectBounds = {{ field|latlngbounds }},
+        objectBounds = {{ module }}_settings.init.objectsBounds,
          currentBounds = objectBounds || initialBounds;
     getBounds = function () {
         return currentBounds;
@@ -163,17 +192,17 @@ if (! {{ module }}); var {{ module }} = {};
         objectsLayer = {{ module }}.addObjectsLayer(map, modelname);
     
     // Enable snapping ?
-    var path_snapping = {{ path_snapping|yesno:"true,false" }};
+    var path_snapping = {{ module }}_settings.init.path_snapping;
     var snapObserver = null;
     if (path_snapping) {
         snapObserver = {{ module }}.enablePathSnapping(map, modelname, objectsLayer);
     }
 
-    var layerStore = MapEntity.makeGeoFieldProxy($('#{{ attrs.id }}'));
+    var layerStore = MapEntity.makeGeoFieldProxy($({{ module }}_settings.init.layerStoreElemSelector));
 
     /*** <objectLayer> ***/
 
-    var geojson = {{ field|geojsonfeature|safe }};  // If no field, will be null.
+    var geojson = {{ module }}_settings.init.geojson;  // If no field, will be null.
     var objectLayer = new L.GeoJSON(geojson, {
         style: {weight: 5, opacity: 1, clickable: true},
         onEachFeature: function (feature, layer) {
@@ -198,8 +227,8 @@ if (! {{ module }}); var {{ module }} = {};
             currentBounds = map.getBounds(); // A point has no bounds, take map bounds
             // Set custom icon, using CSS instead of JS
             new_layer.setIcon(new L.Icon({
-                iconUrl:'{% static "images/marker-trans.png" %}',
-                shadowUrl:'{% static "leaflet/images/marker-shadow.png" %}',
+                iconUrl: {{ module }}_settings.init.iconUrl,
+                shadowUrl: {{ module }}_settings.init.shadowUrl,
                 iconSize: new L.Point(25, 41),
                 iconAnchor: new L.Point(13, 41),
                 popupAnchor: new L.Point(1, -34),
