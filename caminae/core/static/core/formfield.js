@@ -52,7 +52,7 @@ FormField.makeModule = function(module, module_settings) {
         var snapObserver = null;
         MapEntity.SnapObserver.MIN_SNAP_ZOOM = module_settings.enablePathSnapping.MIN_SNAP_ZOOM;
         // Snapping is always on paths layer. But only if model is not path,
-        // since snapping will then be on objects layer. 
+        // since snapping will then be on objects layer.
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
             var pathsLayer = new Caminae.ObjectsLayer(null, {
@@ -109,7 +109,7 @@ FormField.makeModule = function(module, module_settings) {
 
                     // Gather all LatLngs - $.map autoconcatenate
                     var lls = $.map(new_edges, function(edge) {
-                        return objectsLayer.getLayer(edge.id).getLatLngs(); 
+                        return objectsLayer.getLayer(edge.id).getLatLngs();
                     });
 
                     // This is just used to get the WKT
@@ -127,9 +127,9 @@ FormField.makeModule = function(module, module_settings) {
 
     module.init = function(map, bounds) {
         map.removeControl(map.attributionControl);
-        
+
         /*** <Map bounds and reset> ***/
-        
+
         var initialBounds = bounds,
             objectBounds = module_settings.init.objectsBounds,
              currentBounds = objectBounds || initialBounds;
@@ -143,7 +143,7 @@ FormField.makeModule = function(module, module_settings) {
         // Show other objects of same type
         var modelname = $('form input[name="model"]').val(),
             objectsLayer = module.addObjectsLayer(map, modelname);
-        
+
         // Enable snapping ?
         var path_snapping = module_settings.init.path_snapping;
         var snapObserver = null;
@@ -174,7 +174,7 @@ FormField.makeModule = function(module, module_settings) {
             }
             return new edit_handler(map, layer);
         };
-        
+
         function onNewLayer(new_layer) {
             if (new_layer instanceof L.Marker) {
                 currentBounds = map.getBounds(); // A point has no bounds, take map bounds
