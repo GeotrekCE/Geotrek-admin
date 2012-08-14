@@ -18,9 +18,8 @@ def wkt_to_geom(wkt):
         return None
 
 
-class GeomWidget(django_widgets.TextInput):
+class GeomWidget(django_widgets.HiddenInput):
     # hidden by default
-    is_hidden = True
 
     def value_from_datadict(self, data, files, name):
         wkt = super(GeomWidget, self).value_from_datadict(data, files, name)
