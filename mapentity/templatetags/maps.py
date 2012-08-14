@@ -20,6 +20,8 @@ def latlngbounds(obj, fieldname='geom'):
         return 'null'
     if not isinstance(obj, GEOSGeometry):
         obj = getattr(obj, fieldname)
+    if obj is None:
+        return 'null'
     if isinstance(obj, Point):
         # TODO: OMG why?
         obj.transform(settings.API_SRID)
