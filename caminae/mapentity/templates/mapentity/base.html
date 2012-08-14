@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %} 
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static "mapentity/mapentity.js" %}"></script>
+    <script src="{% static "mapentity/spin.js" %}"></script>
+    <script src="{% static "mapentity/rtree.js" %}"></script>
+{% endblock extrahead %}
+
+{% block nav-list %}{{ block.super }}{% endblock nav-list %}
+{% block nav-detail %}{{ block.super }}{% endblock nav-detail %}
+{% block objectname %}{{ block.super }}{% endblock objectname %}
+
+{% block mainpanel %}
+    {{ block.super }}
+{% endblock mainpanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+{% endblock extrabody %}
