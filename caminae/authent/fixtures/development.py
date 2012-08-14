@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 
 from caminae.authent.factories import UserProfileFactory
 from caminae.authent.models import (
-    GROUP_PATH_MANAGER, GROUP_COMM_MANAGER, GROUP_EDITOR, GROUP_ADMINISTRATOR
+    GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR, GROUP_ADMINISTRATOR
 )
 
 
@@ -12,7 +12,7 @@ def populate_groups():
     """
     Create (or get) each group. Returns dict: group_name -> Group
     """
-    groups = (GROUP_PATH_MANAGER, GROUP_COMM_MANAGER, GROUP_EDITOR, GROUP_ADMINISTRATOR)
+    groups = (GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR, GROUP_ADMINISTRATOR)
 
     return dict((group, Group.objects.get_or_create(name=group)[0]) for group in groups)
 
@@ -25,7 +25,7 @@ def populate_users():
 
     users_to_create = [
         { 'username': 'path_manager_user' , 'groups': [GROUP_PATH_MANAGER] },
-        { 'username': 'comm_manager_user' , 'groups': [GROUP_COMM_MANAGER] },
+        { 'username': 'comm_manager_user' , 'groups': [GROUP_TREKKING_MANAGER] },
         { 'username': 'editor_user'       , 'groups': [GROUP_EDITOR] },
         { 'username': 'administrator_user', 'groups': [GROUP_ADMINISTRATOR] },
     ]
@@ -43,5 +43,3 @@ def populate_users():
         ))
 
     return created_user_profiles
-
-

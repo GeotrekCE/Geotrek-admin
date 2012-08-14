@@ -73,7 +73,7 @@ class TrekFactory(factory.Factory):
     description_teaser = factory.Sequence(lambda n: u"description_teaser %s" % n)
     description = factory.Sequence(lambda n: u"description %s" % n)
     ambiance = factory.Sequence(lambda n: u"ambiance %s" % n)
-    handicapped_infrastructure = factory.Sequence(lambda n: u"handicapped_infrastructure %s" % n)
+    disabled_infrastructure = factory.Sequence(lambda n: u"disabled_infrastructure %s" % n)
     # 60 minutes (1 hour)
     duration = 60
 

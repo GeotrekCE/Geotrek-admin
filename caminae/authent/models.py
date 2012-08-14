@@ -12,7 +12,7 @@ from django.contrib.auth.signals import user_logged_in
 
 
 GROUP_PATH_MANAGER = u'Référents sentiers'
-GROUP_COMM_MANAGER = u'Référents communication'
+GROUP_TREKKING_MANAGER = u'Référents communication'
 GROUP_EDITOR = u'Rédacteurs'
 GROUP_ADMINISTRATOR = u'Administrateurs'
 
@@ -94,7 +94,7 @@ class UserProfile(StructureRelated):
 
     def is_trekking_manager(self):
         """ Returns True if the user belongs to comm managers group. """
-        g = Group.objects.get(name=GROUP_COMM_MANAGER)
+        g = Group.objects.get(name=GROUP_TREKKING_MANAGER)
         return self.has_group(g) or self.user.is_staff
 
     def is_editor(self):
