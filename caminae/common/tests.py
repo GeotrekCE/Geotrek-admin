@@ -1,16 +1,70 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from caminae.mapentity.tests import MapEntityTest
+from caminae.authent.factories import PathManagerFactory
 
-Replace this with more appropriate tests for your application.
-"""
+from caminae.common.factories import OrganismFactory
+from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
+    WorkManagementEdge, SignageManagementEdge)
+from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, 
+    CompetenceEdgeFactory, WorkManagementEdgeFactory, SignageManagementEdgeFactory, 
+    PhysicalTypeFactory, LandTypeFactory)
 
-from django.test import TestCase
+
+class PhysicalEdgeViewsTest(MapEntityTest):
+    model = PhysicalEdge
+    modelfactory = PhysicalEdgeFactory
+    userfactory = PathManagerFactory
+
+    def get_good_data(self):
+        return {
+            'physical_type': PhysicalTypeFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class LandEdgeViewsTest(MapEntityTest):
+    model = LandEdge
+    modelfactory = LandEdgeFactory
+    userfactory = PathManagerFactory
+
+    def get_good_data(self):
+        return {
+            'land_type': LandTypeFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }
+
+
+class CompetenceEdgeViewsTest(MapEntityTest):
+    model = CompetenceEdge
+    modelfactory = CompetenceEdgeFactory
+    userfactory = PathManagerFactory
+
+    def get_good_data(self):
+        return {
+            'organization': OrganismFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }
+
+
+class WorkManagementEdgeViewsTest(MapEntityTest):
+    model = WorkManagementEdge
+    modelfactory = WorkManagementEdgeFactory
+    userfactory = PathManagerFactory
+
+    def get_good_data(self):
+        return {
+            'organization': OrganismFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }
+
+
+
+class SignageManagementEdgeViewsTest(MapEntityTest):
+    model = SignageManagementEdge
+    modelfactory = SignageManagementEdgeFactory
+    userfactory = PathManagerFactory
+
+    def get_good_data(self):
+        return {
+            'organization': OrganismFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }

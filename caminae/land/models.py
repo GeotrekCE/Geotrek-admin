@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.common.models import Organism
@@ -26,7 +27,7 @@ class PhysicalType(models.Model):
         return self.name
 
 
-class PhysicalEdge(TopologyMixin):
+class PhysicalEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"))
@@ -52,7 +53,7 @@ class LandType(StructureRelated):
         return self.name
 
 
-class LandEdge(TopologyMixin):
+class LandEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"))
@@ -65,7 +66,7 @@ class LandEdge(TopologyMixin):
 
 # Interaction with external structures
 
-class CompetenceEdge(TopologyMixin):
+class CompetenceEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
@@ -76,7 +77,7 @@ class CompetenceEdge(TopologyMixin):
         verbose_name_plural = _(u"Competence edges")
 
 
-class WorkManagementEdge(TopologyMixin):
+class WorkManagementEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
@@ -87,7 +88,7 @@ class WorkManagementEdge(TopologyMixin):
         verbose_name_plural = _(u"Work management edges")
 
 
-class SignageManagementEdge(TopologyMixin):
+class SignageManagementEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
