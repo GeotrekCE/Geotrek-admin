@@ -133,15 +133,15 @@
             var dt = JQDataTable.init(
                   ajax_list
                 , null // no load at startup
-                , { // "sAjaxDataProp": function() { },
+                , {
+                    // Hide pk
+                    "aoColumnDefs": [ { "bVisible": false, "aTargets": [ 0 ] } ],
                     "fnCreatedRow": function( nRow, aData, iDataIndex ) {
                         $(nRow).hover(function(){
-                            var pk = $(aData[0]).attr('data-pk');
-                            objectsLayer.highlight(pk);
+                            objectsLayer.highlight(aData[0]);
                         },
-                        function (){
-                            var pk = $(aData[0]).attr('data-pk');
-                            objectsLayer.highlight(pk, false);
+                        function(){
+                            objectsLayer.highlight(aData[0], false);
                         });
                     },
                     "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
