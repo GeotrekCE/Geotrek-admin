@@ -150,6 +150,48 @@
                 }
             );
 
+            objectsLayer.on('click', function(e) {
+                var search_pk = e.layer.properties.pk;
+
+                // This may also be used
+                // dt.fnGetPosition(dt.$('tr').find('td:first-child a[data-pk=19]').closest('tr').get(0))
+
+                var dt_settings = dt.fnSettings();
+                var pagingInfo = dt_settings.oInstance.fnPagingInfo()
+                var aiRows = dt_settings.aiDisplay;
+                var pk_column = 0;
+                for (var position = 0, c = aiRows.length; position < c; position++) {
+                    var iRow = aiRows[position];
+                    var aData = dt.fnGetData(iRow);
+                    if(aData[pk_column] === search_pk) {
+                        var page_idx = Math.floor(position / pagingInfo.iLength);
+                        if (page_idx != pagingInfo.iTabIndex) {
+                            dt_settings._iDisplayStart =  page_idx * pagingInfo.iLength;
+
+                            // There is currently no api to unregister cleanly a callback (but it's just an array...)
+                            var first = true;
+                            dt_settings.oApi._fnCallbackReg(dt_settings, 'aoDrawCallback',
+                                function(oSettings) {
+                                    if(first) {
+                                        first = false;
+                                        // once the page is loaded make the matched record blink
+                                        $(dt.fnGetNodes(iRow)).hide().show('slow').hide('fast').show('slow');
+                                    }
+                                },
+                                'objectLayerClick_' + new Date().getTime() // ~random unique name
+                            );
+
+                            dt.oApi._fnCalculateEnd(dt_settings);
+                            dt.oApi._fnDraw(dt_settings);
+                        }
+
+                        break;
+                    }
+                }
+            });
+
+
+
             // Hardcore customizations
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
