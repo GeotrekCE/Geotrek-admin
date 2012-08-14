@@ -27,7 +27,7 @@
         "pk": 1,
         "model": "maintenance.interventiontype",
         "fields": {
-            "typology": "Entretien ",
+            "type": "Entretien ",
             "structure": 1
         }
     },
@@ -35,7 +35,7 @@
         "pk": 2,
         "model": "maintenance.interventiontype",
         "fields": {
-            "typology": "Travaux d'ouvrages",
+            "type": "Travaux d'ouvrages",
             "structure": 1
         }
     },
@@ -43,7 +43,7 @@
         "pk": 3,
         "model": "maintenance.interventiontype",
         "fields": {
-            "typology": "Travaux d'urgence",
+            "type": "Travaux d'urgence",
             "structure": 1
         }
     },
@@ -51,7 +51,7 @@
         "pk": 4,
         "model": "maintenance.interventiontype",
         "fields": {
-            "typology": "Suppression",
+            "type": "Suppression",
             "structure": 1
         }
     },
@@ -59,7 +59,7 @@
         "pk": 5,
         "model": "maintenance.interventiontype",
         "fields": {
-            "typology": "Cr\u00e9ation",
+            "type": "Cr\u00e9ation",
             "structure": 1
         }
     },
