@@ -7,8 +7,8 @@ from caminae.common.factories import OrganismFactory
 from . import models
 
 
-class WorkManagementEdgeFactory(factory.Factory):
+class WorkManagementEdgeFactory(TopologyMixinFactory):
     FACTORY_FOR = models.WorkManagementEdge
 
-    topo_object = factory.SubFactory(TopologyMixinFactory)
-    organization = factory.SubFactory(OrganismFactory())
+    # topo_object = factory.SubFactory(TopologyMixinFactory)
+    organization = factory.SubFactory(OrganismFactory)
