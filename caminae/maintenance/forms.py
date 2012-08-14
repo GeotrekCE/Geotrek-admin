@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point, LineString
 import floppyforms as forms
 from crispy_forms.layout import Field
 
-from caminae.core.forms import MapEntityForm
+from caminae.mapentity.forms import MapEntityForm
 from caminae.core.widgets import PointOrMultipathWidget
 
 from .models import Intervention
@@ -52,3 +52,6 @@ class InterventionForm(MapEntityForm):
     class Meta:
         model = Intervention
         exclude = ('deleted', 'topology', 'jobs')  # TODO
+
+
+class ProjectForm(MapEntityForm):

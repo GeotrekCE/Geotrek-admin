@@ -1,6 +1,6 @@
 import floppyforms as forms
 
-from caminae.core.forms import MapEntityForm
+from caminae.mapentity.forms import MapEntityForm
 from caminae.core.widgets import PointWidget, MultiPathWidget
 
 from .models import Trek, POI
