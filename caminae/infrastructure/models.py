@@ -33,6 +33,9 @@ class InfrastructureType(StructureRelated):
 
 class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
     """ A generic infrastructure in the park """
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                      db_column='evenement')
+    
     name = models.CharField(db_column="nom", max_length=128)
     description = models.TextField(blank=True)
     type = models.ForeignKey(InfrastructureType)
@@ -49,13 +52,13 @@ class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
 class InfrastructureGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
     def get_query_set(self):
-        return super(InfrastructureGISManager, self).get_query_set().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+        return super(InfrastructureGISManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class InfrastructureStructureManager(StructureRelatedManager):
     """ Overide default structure related manager, and filter by type. """
     def get_query_set(self):
-        return super(InfrastructureStructureManager, self).get_query_set().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+        return super(InfrastructureStructureManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class Infrastructure(BaseInfrastructure):
