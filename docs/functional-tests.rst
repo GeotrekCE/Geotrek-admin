@@ -455,3 +455,28 @@ pour pouvoir être réutilisable.
 
 Les Widgets ne sont pas concernés (ils seront intégrés éventuellement plus tard comme contrib à floppyforms)
 
+
+#40 - Filtrer les objets de la liste en fonction de l'étendue de la carte affichée
+----------------------------------------------------------------------------------
+
+** recette **
+
+En plus des filtres déjà présents, je peux filtrer géographiquement par l'étendue courante visible de carte.
+Lors de chaque déplacement, la liste est mise à jour pour n'afficher que les objets visibles sur la carte.
+La réinitialisation du formulaire réinitialise de plus la carte à son étendue de départ.
+Un 'spinner' sur la carte représentera l'avancement du filtrage.
+
+:notes:
+
+    Détail d'implémentation 1: la bbox n'est pas fournie conventionnellement selon ?bbox=minx,miny,maxx,maxy mais comme un WKT.
+    C'est un choix plus pratique car les fonctions de conversion (côté js et django) existent déjà
+    qui peuvent éviter de potentiels problèmes  (ex: gestion de la coordonnée Z, de la projection, etc.).
+    La gestion du filtrage via une géométrie quelconque est de plus réutilisable.
+    Les inconvénients qui pourront être corrigés: paramêtre GET plus gros, moins explicite, moins classique (?).
+
+    Détail d'implémentation 2: lorsque le tri est purement géographique (mouvement de carte uniquement),
+    les objets présents sur la carte (contrairement à la liste des résultats) ne sont pas retirés
+    (mais ne sont pas visibles bien sûr) pour des raisons de performance.
+
+
+
