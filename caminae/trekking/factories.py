@@ -4,6 +4,7 @@ import factory
 from django.contrib.gis.geos import Point, LineString
 
 from . import models
+from caminae.core.factories import TopologyMixinFactory
 from caminae.common.utils.testdata import get_dummy_uploaded_image
 
 
@@ -106,3 +107,17 @@ class TrekRelationshipFactory(factory.Factory):
 
     trek_a = factory.SubFactory(TrekFactory)
     trek_b = factory.SubFactory(TrekFactory)
+
+
+class POITypeFactory(factory.Factory):
+    FACTORY_FOR = models.POIType
+    
+    label = factory.Sequence(lambda n: u"POIType %s" % n)
+    pictogram =  dummy_filefield_as_sequence('pictogram %s')
+
+
+class POIFactory(TopologyMixinFactory):
+    FACTORY_FOR = models.POI
+
+    name = factory.Sequence(lambda n: u"POI %s" % n)
+    type = factory.SubFactory(POITypeFactory)

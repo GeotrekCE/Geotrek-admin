@@ -1,46 +1,72 @@
-from django.test import TestCase
-from django.core.urlresolvers import reverse
+from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
-from caminae.trekking.factories import TrekFactory
+
+from caminae.trekking.models import POI, Trek
+from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
+    TrekNetworkFactory, UsageFactory, WebLinkFactory)
 
 
-class ViewsTest(TestCase):
-    def test_status(self):
-        response = self.client.get(reverse("trekking:trek_layer"))
-        self.assertEqual(response.status_code, 200)
+class POIViewsTest(MapEntityTest):
+    model = POI
+    modelfactory = POIFactory
+    userfactory = TrekkingManagerFactory
 
-    def test_crud_status(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-        
-        response = self.client.get(reverse('trekking:trek_detail', args=[1234]))
-        self.assertEqual(response.status_code, 404)
-        
-        t = TrekFactory()
-        response = self.client.get(t.get_detail_url())
-        self.assertEqual(response.status_code, 200)
-        
-        response = self.client.get(t.get_update_url())
-        self.assertEqual(response.status_code, 200)
-        
-        for url in [reverse('trekking:trek_add'), t.get_update_url()]:
-            response = self.client.post(url)
-            self.assertEqual(response.status_code, 200)
-            
-            bad_data = {'geom': 'doh!'}
-            response = self.client.post(url, bad_data)
-            self.assertEqual(response.status_code, 200)
-            self.assertFormError(response, 'form', 'geom', u'Acune valeur g\xe9om\xe9trique fournie.')
+    def get_good_data(self):
+        return {
+            'name_fr': 'test',
+            'name_en': 'test',
+            'name_it': 'testo',
+            'description_fr': 'ici',
+            'description_en': 'here',
+            'description_it': 'aca',
+            'type': POITypeFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }
 
-            good_data = {
-                'name': 'test',
-                'geom': 'POINT (0.0 0.0 0.0)',
-            }
-            response = self.client.post(url, good_data)
-            # TODO
-            # Factory is not ready
-            # self.assertEqual(response.status_code, 302)  # success, redirects to detail view
 
-        response = self.client.get(t.get_delete_url())
-        self.assertEqual(response.status_code, 200)
+class TrekViewsTest(MapEntityTest):
+    model = Trek
+    modelfactory = TrekFactory
+    userfactory = TrekkingManagerFactory
+
+    def get_good_data(self):
+        return {
+            'name_fr': '',
+            'name_it': '',
+            'name_en': '',
+            'departure_fr': '',
+            'departure_it': '',
+            'departure_en': '',
+            'arrival_fr': '',
+            'arrival_en': '',
+            'arrival_it': '',
+            'validated': '',
+            'difficulty': '',
+            'route': '',
+            'destination': '',
+            'description_teaser_fr': '',
+            'description_teaser_it': '',
+            'description_teaser_en': '',
+            'description_fr': '',
+            'description_it': '',
+            'description_en': '',
+            'ambiance_fr': '',
+            'ambiance_it': '',
+            'ambiance_en': '',
+            'disabled_infrastructure_fr': '',
+            'disabled_infrastructure_it': '',
+            'disabled_infrastructure_en': '',
+            'duration': '0',
+            'is_park_centered': '',
+            'is_transborder': '',
+            'advised_parking': 'Very close',
+            'parking_location': 'POINT (1.0 1.0 0.0)',
+            'public_transport': 'huhu',
+            'advice_fr': '',
+            'advice_it': '',
+            'advice_en': '',
+            'networks': TrekNetworkFactory.create().pk,
+            'usages': UsageFactory.create().pk,
+            'web_links': WebLinkFactory.create().pk,
+            'geom': 'POINT (0.0 0.0 0.0)',
+        }

@@ -15,7 +15,7 @@ class Trek(MapEntityMixin, models.Model):
     validated = models.BooleanField(verbose_name=_(u"Validated"))
 
     # same fields and core.models.path
-    length = models.FloatField(verbose_name=_(u"Length"))
+    length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
     min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
@@ -31,7 +31,7 @@ class Trek(MapEntityMixin, models.Model):
     is_transborder = models.BooleanField(verbose_name=_(u"Is transborder"))
 
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
-    parking_location = models.PointField(editable=False, srid=settings.SRID, spatial_index=False)
+    parking_location = models.PointField(srid=settings.SRID, spatial_index=False)
 
     public_transport = models.TextField(verbose_name=_(u"Public transport"))
     advice = models.TextField(verbose_name=_(u"Advice"))
