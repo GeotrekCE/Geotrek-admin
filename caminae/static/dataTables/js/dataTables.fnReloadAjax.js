@@ -1,4 +1,4 @@
-$.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+$.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, sAjaxDataPropWithCbArg, fnCallback, bStandingRedraw )
 {
     if ( typeof sNewSource != 'undefined' && sNewSource != null )
     {
@@ -16,8 +16,18 @@ $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallba
         that.oApi._fnClearTable( oSettings );
 
         /* Got the data - add it to the table */
-        var aData =  (oSettings.sAjaxDataProp !== "") ?
-            that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+        var callback_args = {};
+        var getObjectDataFn = null;
+
+        if (sAjaxDataPropWithCbArg !== undefined) {
+            getObjectDataFn = function(data, type) {
+                return sAjaxDataPropWithCbArg(data, type, callback_args);
+            };
+        } else if (oSettings.sAjaxDataProp !== "") {
+            getObjectDataFn = oSettings.sAjaxDataProp;
+        }
+
+        var aData = getObjectDataFn ? that.oApi._fnGetObjectDataFn(getObjectDataFn)( json ) : json;
 
         for ( var i=0 ; i<aData.length ; i++ )
         {
@@ -38,7 +48,7 @@ $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallba
         /* Callback user function - for event handlers etc */
         if ( typeof fnCallback == 'function' && fnCallback != null )
         {
-            fnCallback( oSettings );
+            fnCallback( oSettings, callback_args );
         }
     }, oSettings );
 };
