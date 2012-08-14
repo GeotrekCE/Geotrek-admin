@@ -2,6 +2,34 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSException, fromstr
 
 import floppyforms as forms
+from django.forms import widgets as django_widgets
+
+
+
+def wkt_to_geom(wkt):
+    try:
+        geom = fromstr(wkt, srid=settings.API_SRID)
+        geom.transform(settings.SRID)
+        dim = 3
+        extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
+        wkt3d = geom.wkt.replace(',', extracoords + ',')
+        return wkt3d
+    except (GEOSException, TypeError, ValueError):
+        return None
+
+
+class GeomWidget(django_widgets.TextInput):
+    # hidden by default
+    is_hidden = True
+
+    def value_from_datadict(self, data, files, name):
+        wkt = super(GeomWidget, self).value_from_datadict(data, files, name)
+        return None if not wkt else wkt_to_geom(wkt)
+
+    def _format_value(self, value):
+        if value and not isinstance(value, basestring):
+            value.transform(settings.API_SRID)
+        return value
 
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
@@ -10,17 +38,7 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
 
     def value_from_datadict(self, data, files, name):
         wkt = super(LeafletMapWidget, self).value_from_datadict(data, files, name)
-        if not wkt:
-            return None
-        try:
-            geom = fromstr(wkt, srid=settings.API_SRID)
-            geom.transform(settings.SRID)
-            dim = 3
-            extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
-            wkt3d = geom.wkt.replace(',', extracoords + ',')
-            return wkt3d
-        except (GEOSException, TypeError, ValueError):
-            return None
+        return None if not wkt else wkt_to_geom(wkt)
 
     def get_context(self, name, value, attrs=None, extra_context={}):
         context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context)

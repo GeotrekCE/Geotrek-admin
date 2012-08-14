@@ -103,9 +103,18 @@
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
+
+            // Store the map bounds as WKT in the bbox field
+            function mapBoundsToField() {
+                var bounds = map.getBounds();
+                var rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
+                $('#id_bbox').val(MapEntity.getWKT(rect));
+            }
+
             // On submit, trigger an ajax request to the JSON view
             // Update the ajax list and the map
             submitbutton.click(function() {
+                mapBoundsToField();
                 var url = filterform.attr("action") + '?' + filterform.serialize()
                 dt.fnReloadAjax(url);
 

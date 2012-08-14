@@ -1,8 +1,11 @@
 import sys
-from django_filters import FilterSet, RangeFilter
+from django_filters import FilterSet, RangeFilter, Filter
 from decimal import Decimal
 
+import floppyforms as forms
+
 from .models import Path
+from .widgets import GeomWidget
 
 
 class OptionalRangeFilter(RangeFilter):
@@ -15,9 +18,14 @@ class OptionalRangeFilter(RangeFilter):
         return super(OptionalRangeFilter, self).filter(qs, value)
 
 
+class PolygonFilter(Filter):
+    field_class = forms.gis.PolygonField
+
+
 class PathFilter(FilterSet):
     length = OptionalRangeFilter()
+    bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=GeomWidget)
 
     class Meta:
         model = Path
-        fields = ['length']
+        fields = ['length', 'bbox']
