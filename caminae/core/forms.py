@@ -1,6 +1,6 @@
 from math import isnan
 
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
 from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms
@@ -10,6 +10,25 @@ from caminae.mapentity.forms import MapEntityForm
 
 from .models import Path
 from .widgets import LineStringWidget
+from .factories import TopologyMixinFactory, PathAggregationFactory
+
+
+class TopologyMixinForm(MapEntityForm):
+    def save(self, commit=True, **kwargs):
+        obj = super(TopologyMixinForm, self).save(commit=False, **kwargs)
+        # TODO: this is completely wrong, but we have no topology editor yet
+        topo_object = TopologyMixinFactory.create()
+        obj.topo_object = topo_object
+        obj.date_insert = topo_object.date_insert
+        obj.date_update = topo_object.date_update
+        obj.delete = topo_object.delete
+        obj.kind = topo_object.kind
+        obj.geom = LineString(Point(0,0,0), Point(1,1,0))
+        obj.offset = topo_object.offset
+        if commit:
+            obj.save()
+        PathAggregationFactory.create(topo_object=obj)
+        return obj
 
 
 class PathForm(MapEntityForm):

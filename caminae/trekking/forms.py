@@ -1,6 +1,9 @@
+from django.contrib.gis.geos import Point, LineString
+
 import floppyforms as forms
 
 from caminae.mapentity.forms import MapEntityForm
+from caminae.core.forms import TopologyMixinForm
 from caminae.core.widgets import PointWidget, MultiPathWidget
 
 from .models import Trek, POI
@@ -51,6 +54,13 @@ class TrekForm(MapEntityForm):
             )
     geomfields = ('geom', )
 
+    def save(self, commit=True, **kwargs):
+        obj = super(TrekForm, self).save(commit=False, **kwargs)
+        obj.geom = LineString(Point(0, 0, 0), Point(1, 1, 0))  # TODO: list of paths
+        if commit:
+            obj.save()
+        return obj
+
     class Meta:
         model = Trek
         exclude = ('deleted', 'paths', 'length') + ('name', 'departure', 'arrival', 
@@ -58,7 +68,7 @@ class TrekForm(MapEntityForm):
                    'disabled_infrastructure',)  # TODO
 
 
-class POIForm(MapEntityForm):
+class POIForm(TopologyMixinForm):
     geom = forms.gis.GeometryField(widget=PointWidget)
 
     modelfields = (
@@ -74,4 +84,4 @@ class POIForm(MapEntityForm):
 
     class Meta:
         model = POI
-        exclude = ('name', 'description',)
+        exclude = ('deleted', 'kind', 'troncons', 'offset') + ('name', 'description')  # TODO: topology editor
