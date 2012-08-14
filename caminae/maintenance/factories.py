@@ -1,6 +1,7 @@
 import factory
 
 from caminae.core.factories import StakeFactory
+from caminae.common.factories import OrganismFactory
 from . import models
 
 
@@ -49,3 +50,34 @@ class InterventionFactory(factory.Factory):
             intervention.disorders.add(InterventionDisorderFactory.create())
             ManDayFactory.create(intervention=intervention)
         return intervention
+
+
+class ContractorFactory(factory.Factory):
+    FACTORY_FOR = models.Contractor
+
+    contractor = factory.Sequence(lambda n: u"Contractor %s" % n)
+
+
+class ProjectFactory(factory.Factory):
+    FACTORY_FOR = models.Project
+
+    name = factory.Sequence(lambda n: u"Project %s" % n)
+    begin_year = 2010
+    end_year = 2012
+    project_owner = factory.SubFactory(OrganismFactory)
+    project_manager = factory.SubFactory(OrganismFactory)
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        project = super(ProjectFactory, cls)._prepare(create, **kwargs)
+        if project.pk:
+            project.contractors.add(ContractorFactory.create())
+            FundingFactory.create(project=project)
+        return project
+
+
+class FundingFactory(factory.Factory):
+    FACTORY_FOR = models.Funding
+
+    project = factory.SubFactory(ProjectFactory)
+    organism = factory.SubFactory(OrganismFactory)

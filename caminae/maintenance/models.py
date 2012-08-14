@@ -2,7 +2,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import Point, LineString, GeometryCollection
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
@@ -32,7 +32,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     #TODO: remove this --> abstract class
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
     ## Relations ##
     topology = models.ForeignKey(TopologyMixin, null=True,
@@ -170,13 +170,13 @@ class Project(MapEntityMixin, StructureRelated):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
     end_year = models.IntegerField(verbose_name=_(u"End year"))
-    constraint = models.TextField(verbose_name=_(u"Constraint"))
-    cost = models.FloatField(verbose_name=_(u"Cost"))
-    comments = models.TextField(verbose_name=_(u"Comments"))
+    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True)
+    cost = models.FloatField(verbose_name=_(u"Cost"), default=0)
+    comments = models.TextField(verbose_name=_(u"Comments"), blank=True)
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
     ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",
@@ -195,6 +195,16 @@ class Project(MapEntityMixin, StructureRelated):
         db_table = 'chantiers'
         verbose_name = _(u"Project")
         verbose_name_plural = _(u"Projects")
+
+    @property
+    def geom(self):
+        """ Merge all interventions geometry into a collection
+        """
+        interventions = Intervention.objects.filter(project=self)
+        geoms = [i.geom for i in interventions]
+        if geoms:
+            return GeometryCollection(*geoms)
+        return None
 
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
@@ -216,7 +226,7 @@ class Contractor(StructureRelated):
 
 class Funding(StructureRelated):
 
-    amount = models.FloatField(verbose_name=_(u"Amount"))
+    amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"))
     project = models.ForeignKey(Project)
     organism = models.ForeignKey(Organism)
 

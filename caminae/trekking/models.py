@@ -41,7 +41,7 @@ class Trek(MapEntityMixin, models.Model):
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",

@@ -71,4 +71,4 @@ class ProjectForm(MapEntityForm):
 
     class Meta:
         model = Project
-        exclude = ('deleted',)
+        exclude = ('deleted', 'founders',)  #TODO founders (inline form)

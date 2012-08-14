@@ -1,14 +1,16 @@
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.models import default_structure
 from caminae.authent.factories import PathManagerFactory
-from caminae.maintenance.factories import InterventionFactory
-
 from caminae.core.factories import StakeFactory
-from caminae.maintenance.models import Intervention
-from caminae.maintenance.factories import InterventionDisorderFactory, InterventionStatusFactory
+from caminae.common.factories import OrganismFactory
+
+from caminae.maintenance.models import Intervention, Project
+from caminae.maintenance.factories import (InterventionFactory, 
+    InterventionDisorderFactory, InterventionStatusFactory,
+    ProjectFactory, ContractorFactory)
 
 
-class ViewsTest(MapEntityTest):
+class InterventionViewsTest(MapEntityTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
@@ -32,4 +34,29 @@ class ViewsTest(MapEntityTest):
             'heliport_cost': 0.0,
             'material_cost': 0.0,
             'geom': 'POINT (0.0 0.0 0.0)',
+        }
+
+
+class ProjectViewsTest(MapEntityTest):
+    model = Project
+    modelfactory = ProjectFactory
+    userfactory = PathManagerFactory
+
+
+    def get_bad_data(self):
+        return {'begin_year':''}, u'Ce champ est obligatoire.'
+
+    def get_good_data(self):
+        return {
+            'name': 'test',
+            'structure': default_structure().pk,
+            'stake': '',
+            'begin_year': '2010',
+            'end_year': '2012',
+            'constraints': '',
+            'cost': '12',
+            'comments': '',
+            'contractors':  ContractorFactory.create().pk,
+            'project_owner': OrganismFactory.create().pk,
+            'project_manager': OrganismFactory.create().pk,
         }
