@@ -86,6 +86,7 @@
 
         function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
+            mainmap.doubleClickZoom.disable();
             
             {% if DEBUG %}
             mainmap.on('viewreset moveend', function () {
