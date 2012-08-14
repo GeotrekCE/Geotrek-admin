@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mapentity/base.html" %}
 {% load i18n crispy_forms_tags %}
 
 {% block extrahead %}
@@ -6,6 +6,8 @@
     {{ form.media }}
 {% endblock extrahead %}
 
+{% block nav-detail %}active{% endblock nav-detail %}
+{% block objectname %}{{ object }}{% endblock objectname %}
 
 {% block mainpanel %}
     <div class="span12">

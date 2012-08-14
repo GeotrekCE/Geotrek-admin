@@ -196,7 +196,7 @@ class MapEntityDelete(DeleteView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
+        return super(MapEntityDelete, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return self.model.get_list_url()
