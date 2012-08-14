@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.models import Path
+from caminae.core.models import Path, TopologyMixin
 
 
 class Trek(MapEntityMixin, models.Model):
@@ -221,14 +221,12 @@ class TrekRelationship(models.Model):
 
 
 
-class POI(MapEntityMixin, models.Model):
+class POI(MapEntityMixin, TopologyMixin):
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
-
-    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
 
 class POIType(models.Model):
