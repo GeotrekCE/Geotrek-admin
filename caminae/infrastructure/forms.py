@@ -15,15 +15,14 @@ class BaseInfrastructureForm(MapEntityForm):
             'type',)
     geomfields = ('geom',)
 
-    class Meta:
-        exclude = ('deleted',)  # TODO
-
 
 class InfrastructureForm(BaseInfrastructureForm):
     class Meta:
         model = Infrastructure
+        exclude = ('deleted',)
 
 
 class SignageForm(BaseInfrastructureForm):
     class Meta:
         model = Signage
+        exclude = ('deleted',)
