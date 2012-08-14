@@ -15,7 +15,7 @@ class InterventionLayer(MapEntityLayer):
 class InterventionList(MapEntityList):
     model = Intervention
     filterform = InterventionFilter
-    columns = ['name', 'date', 'material_cost']
+    columns = ['id', 'name', 'date', 'material_cost']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -62,7 +62,7 @@ class ProjectLayer(MapEntityLayer):
 class ProjectList(MapEntityList):
     model = Project
     filterform = ProjectFilter
-    columns = ['name', 'begin_year', 'begin_year', 'cost']
+    columns = ['id', 'name', 'begin_year', 'begin_year', 'cost']
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):

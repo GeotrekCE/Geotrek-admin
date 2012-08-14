@@ -15,7 +15,7 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     model = Infrastructure
     filterform = InfrastructureFilter
-    columns = ['name', 'type']
+    columns = ['id', 'name', 'type']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -65,7 +65,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     model = Signage
     filterform = SignageFilter
-    columns = ['name', 'type']
+    columns = ['id', 'name', 'type']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):

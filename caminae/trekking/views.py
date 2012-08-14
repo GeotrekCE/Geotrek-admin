@@ -15,7 +15,7 @@ class TrekLayer(MapEntityLayer):
 class TrekList(MapEntityList):
     model = Trek
     filterform = TrekFilter
-    columns = ['name', 'departure', 'arrival']
+    columns = ['id', 'name', 'departure', 'arrival']
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -62,7 +62,7 @@ class POILayer(MapEntityLayer):
 class POIList(MapEntityList):
     model = POI
     filterform = POIFilter
-    columns = ['name', 'type']
+    columns = ['id', 'name', 'type']
 
 
 class POIJsonList(MapEntityJsonList, POIList):

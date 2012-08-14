@@ -34,7 +34,7 @@ class PathLayer(MapEntityLayer):
 class PathList(MapEntityList):
     model = Path
     filterform = PathFilter
-    columns = ['name', 'date_update', 'length', 'trail']
+    columns = ['id', 'name', 'date_update', 'length', 'trail']
 
 
 class PathJsonList(MapEntityJsonList, PathList):
