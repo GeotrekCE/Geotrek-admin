@@ -167,13 +167,12 @@ class ManDay(models.Model):
 
 class Project(MapEntityMixin, StructureRelated):
 
-    project_id = models.IntegerField(primary_key=True)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
     end_year = models.IntegerField(verbose_name=_(u"End year"))
     constraint = models.TextField(verbose_name=_(u"Constraint"))
     cost = models.FloatField(verbose_name=_(u"Cost"))
-    comment = models.TextField(verbose_name=_(u"Comments"))
+    comments = models.TextField(verbose_name=_(u"Comments"))
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)

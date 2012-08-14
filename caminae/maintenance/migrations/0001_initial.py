@@ -14,33 +14,26 @@ class Migration(SchemaMigration):
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
             ('in_maintenance', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('comment', self.gf('django.db.models.fields.TextField')()),
-            ('length', self.gf('django.db.models.fields.FloatField')()),
-            ('width', self.gf('django.db.models.fields.FloatField')()),
-            ('height', self.gf('django.db.models.fields.FloatField')()),
-            ('area', self.gf('django.db.models.fields.IntegerField')()),
-            ('slope', self.gf('django.db.models.fields.IntegerField')()),
-            ('material_cost', self.gf('django.db.models.fields.FloatField')()),
-            ('heliport_cost', self.gf('django.db.models.fields.FloatField')()),
-            ('subcontract_cost', self.gf('django.db.models.fields.FloatField')()),
-            ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('date', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
+            ('comments', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('length', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('width', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('height', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('area', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('slope', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('material_cost', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('heliport_cost', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('subcontract_cost', self.gf('django.db.models.fields.FloatField')(default=0.0)),
+            ('date_insert', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('date_update', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('topology', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', null=True, to=orm['core.TopologyMixin'])),
             ('stake', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', null=True, to=orm['core.Stake'])),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionStatus'])),
             ('typology', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionTypology'], null=True, blank=True)),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Project'], null=True, blank=True)),
         ))
         db.send_create_signal('maintenance', ['Intervention'])
-
-        # Adding M2M table for field topologies on 'Intervention'
-        db.create_table('interventions_topologies', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('intervention', models.ForeignKey(orm['maintenance.intervention'], null=False)),
-            ('topologymixin', models.ForeignKey(orm['core.topologymixin'], null=False))
-        ))
-        db.create_unique('interventions_topologies', ['intervention_id', 'topologymixin_id'])
 
         # Adding M2M table for field disorders on 'Intervention'
         db.create_table('interventions_disorders', (
@@ -93,16 +86,16 @@ class Migration(SchemaMigration):
 
         # Adding model 'Project'
         db.create_table('chantiers', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('project_id', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('begin_year', self.gf('django.db.models.fields.IntegerField')()),
             ('end_year', self.gf('django.db.models.fields.IntegerField')()),
             ('constraint', self.gf('django.db.models.fields.TextField')()),
             ('cost', self.gf('django.db.models.fields.FloatField')()),
-            ('comment', self.gf('django.db.models.fields.TextField')()),
-            ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('comments', self.gf('django.db.models.fields.TextField')()),
+            ('date_insert', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('date_update', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('project_owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='own', to=orm['common.Organism'])),
             ('project_manager', self.gf('django.db.models.fields.related.ForeignKey')(related_name='manage', to=orm['common.Organism'])),
@@ -139,9 +132,6 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         # Deleting model 'Intervention'
         db.delete_table('interventions')
-
-        # Removing M2M table for field topologies on 'Intervention'
-        db.delete_table('interventions_topologies')
 
         # Removing M2M table for field disorders on 'Intervention'
         db.delete_table('interventions_disorders')
@@ -223,9 +213,9 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'PathAggregation', 'db_table': "'evenements_troncons'"},
             'end_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_fin'"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'path': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.Path']", 'db_column': "'troncon'"}),
+            'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixin']", 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.TopologyMixin']"})
         },
         'core.stake': {
             'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
@@ -281,30 +271,30 @@ class Migration(SchemaMigration):
         },
         'maintenance.intervention': {
             'Meta': {'object_name': 'Intervention', 'db_table': "'interventions'"},
-            'area': ('django.db.models.fields.IntegerField', [], {}),
-            'comment': ('django.db.models.fields.TextField', [], {}),
-            'date': ('django.db.models.fields.DateField', [], {}),
+            'area': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'date': ('django.db.models.fields.DateField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'disorders': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'interventions'", 'symmetrical': 'False', 'to': "orm['maintenance.InterventionDisorder']"}),
-            'height': ('django.db.models.fields.FloatField', [], {}),
-            'heliport_cost': ('django.db.models.fields.FloatField', [], {}),
+            'height': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
+            'heliport_cost': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'in_maintenance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'insert_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'jobs': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['maintenance.InterventionJob']", 'through': "orm['maintenance.ManDay']", 'symmetrical': 'False'}),
-            'length': ('django.db.models.fields.FloatField', [], {}),
-            'material_cost': ('django.db.models.fields.FloatField', [], {}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
+            'material_cost': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.Project']", 'null': 'True', 'blank': 'True'}),
-            'slope': ('django.db.models.fields.IntegerField', [], {}),
+            'slope': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'stake': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interventions'", 'null': 'True', 'to': "orm['core.Stake']"}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionStatus']"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'subcontract_cost': ('django.db.models.fields.FloatField', [], {}),
-            'topologies': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'interventions'", 'symmetrical': 'False', 'to': "orm['core.TopologyMixin']"}),
+            'subcontract_cost': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
+            'topology': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interventions'", 'null': 'True', 'to': "orm['core.TopologyMixin']"}),
             'typology': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionTypology']", 'null': 'True', 'blank': 'True'}),
-            'update_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'width': ('django.db.models.fields.FloatField', [], {})
+            'width': ('django.db.models.fields.FloatField', [], {'default': '0.0'})
         },
         'maintenance.interventiondisorder': {
             'Meta': {'object_name': 'InterventionDisorder', 'db_table': "'desordres'"},
@@ -340,20 +330,20 @@ class Migration(SchemaMigration):
         'maintenance.project': {
             'Meta': {'object_name': 'Project', 'db_table': "'chantiers'"},
             'begin_year': ('django.db.models.fields.IntegerField', [], {}),
-            'comment': ('django.db.models.fields.TextField', [], {}),
+            'comments': ('django.db.models.fields.TextField', [], {}),
             'constraint': ('django.db.models.fields.TextField', [], {}),
             'contractors': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'projects'", 'symmetrical': 'False', 'to': "orm['maintenance.Contractor']"}),
             'cost': ('django.db.models.fields.FloatField', [], {}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'end_year': ('django.db.models.fields.IntegerField', [], {}),
             'founders': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['common.Organism']", 'through': "orm['maintenance.Funding']", 'symmetrical': 'False'}),
-            'insert_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'project_id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'project_manager': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'manage'", 'to': "orm['common.Organism']"}),
             'project_owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'own'", 'to': "orm['common.Organism']"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'update_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         }
     }
 
