@@ -6,7 +6,7 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow
 from caminae.authent.factories import UserFactory, PathManagerFactory
-from caminae.authent.models import Structure
+from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import PathFactory, TopologyMixinFactory, TopologyMixinKindFactory
 from caminae.core.models import Path
 from caminae.land.models import (City, RestrictedArea)
@@ -20,7 +20,7 @@ class ViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'name': '',
-            'structure': Structure.objects.all()[0].pk,
+            'structure': default_structure().pk,
             'stake': '',
             'trail': '',
             'comments': '',
