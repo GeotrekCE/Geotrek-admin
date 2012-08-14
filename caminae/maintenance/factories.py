@@ -16,10 +16,10 @@ class InterventionDisorderFactory(factory.Factory):
     disorder = factory.Sequence(lambda n: u"Disorder %s" % n)
 
 
-class InterventionTypologyFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionTypology
+class InterventionTypeFactory(factory.Factory):
+    FACTORY_FOR = models.InterventionType
 
-    typology = factory.Sequence(lambda n: u"Type %s" % n)
+    type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
 class InterventionJobFactory(factory.Factory):
@@ -40,7 +40,7 @@ class InterventionFactory(factory.Factory):
 
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
-    typology = factory.SubFactory(InterventionTypologyFactory)
+    type = factory.SubFactory(InterventionTypeFactory)
 
     @classmethod
     def _prepare(cls, create, **kwargs):

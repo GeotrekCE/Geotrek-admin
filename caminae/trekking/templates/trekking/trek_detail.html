@@ -1,0 +1,12 @@
+{% extends "mapentity/entity_detail.html" %}
+{% load i18n field_verbose_name %}
+
+{% block detailspanel %}
+    {{ block.super }}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ trek|verbose:"name" }}</th>
+            <td>{{ trek.name }}</td>
+        </tr>
+    </table>
+{% endblock detailspanel %}

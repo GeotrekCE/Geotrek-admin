@@ -12,6 +12,10 @@ def dummy_filefield_as_sequence(toformat_name):
     return factory.Sequence(lambda n: get_dummy_uploaded_image(toformat_name % n))
 
 
+class TrekFactory(factory.Factory):
+    FACTORY_FOR = models.Trek
+
+
 class TrekNetworkFactory(factory.Factory):
     FACTORY_FOR = models.TrekNetwork
 
@@ -69,7 +73,7 @@ class TrekFactory(factory.Factory):
     description_teaser = factory.Sequence(lambda n: u"description_teaser %s" % n)
     description = factory.Sequence(lambda n: u"description %s" % n)
     ambiance = factory.Sequence(lambda n: u"ambiance %s" % n)
-    handicapped_infrastructure = factory.Sequence(lambda n: u"handicapped_infrastructure %s" % n)
+    disabled_infrastructure = factory.Sequence(lambda n: u"disabled_infrastructure %s" % n)
     # 60 minutes (1 hour)
     duration = 60
 
@@ -102,5 +106,3 @@ class TrekRelationshipFactory(factory.Factory):
 
     trek_a = factory.SubFactory(TrekFactory)
     trek_b = factory.SubFactory(TrekFactory)
-
-

@@ -68,7 +68,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.steps = [];
         this.computed_paths = []
         this.all_edges = [];
-		this._container.style.cursor = 'w-resize';
+        this._container.style.cursor = 'w-resize';
 
         this.cameleon = new Caminae.Cameleon(this.layerToId);
         this.graph_layer.on('click', this._onClick, this);

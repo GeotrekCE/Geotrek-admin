@@ -3,10 +3,11 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path
 
 
-class Trek(models.Model):
+class Trek(MapEntityMixin, models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
@@ -23,7 +24,7 @@ class Trek(models.Model):
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
     description = models.TextField(verbose_name=_(u"Description"))
     ambiance = models.TextField(verbose_name=_(u"Ambiance"))
-    handicapped_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
+    disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
     duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
@@ -217,3 +218,19 @@ class TrekRelationship(models.Model):
 #
 #     class Meta:
 #         db_table = 'photos'
+
+
+
+class POI(MapEntityMixin, models.Model):
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    description = models.TextField(verbose_name=_(u"Description"))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+
+    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
+
+
+class POIType(models.Model):
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)

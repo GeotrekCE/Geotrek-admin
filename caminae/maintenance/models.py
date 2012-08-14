@@ -44,8 +44,8 @@ class Intervention(MapEntityMixin, StructureRelated):
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
 
-    typology = models.ForeignKey('InterventionTypology', null=True, blank=True,
-            verbose_name=_(u"Intervention typology"))
+    type = models.ForeignKey('InterventionType', null=True, blank=True,
+            verbose_name=_(u"Intervention type"))
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
             verbose_name=_(u"Disorders"))
@@ -111,17 +111,17 @@ class InterventionStatus(StructureRelated):
         return self.status
 
 
-class InterventionTypology(StructureRelated):
+class InterventionType(StructureRelated):
 
-    typology = models.CharField(max_length=128, verbose_name=_(u"Typology"))
+    type = models.CharField(max_length=128, verbose_name=_(u"Type"))
 
     class Meta:
         db_table = 'typologie_des_interventions'
-        verbose_name = _(u"Intervention's typology")
-        verbose_name_plural = _(u"Intervention's typologies")
+        verbose_name = _(u"Intervention's type")
+        verbose_name_plural = _(u"Intervention's types")
 
     def __unicode__(self):
-        return self.typology
+        return self.type
 
 
 class InterventionDisorder(StructureRelated):
@@ -165,15 +165,14 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(StructureRelated):
+class Project(MapEntityMixin, StructureRelated):
 
-    project_id = models.IntegerField(primary_key=True)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
     end_year = models.IntegerField(verbose_name=_(u"End year"))
     constraint = models.TextField(verbose_name=_(u"Constraint"))
     cost = models.FloatField(verbose_name=_(u"Cost"))
-    comment = models.TextField(verbose_name=_(u"Comments"))
+    comments = models.TextField(verbose_name=_(u"Comments"))
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)

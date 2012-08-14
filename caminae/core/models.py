@@ -102,15 +102,17 @@ class Path(MapEntityMixin, StructureRelated):
 class TopologyMixin(models.Model):
     troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
-    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
 
     # Override default manager
     objects = models.GeoManager()
 
-    # Computed values (managed at DB-level with triggers)
+	# Computed values (managed at DB-level with triggers)
+
+    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
+
     length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
     geom = models.LineStringField(editable=False, srid=settings.SRID,
                                   spatial_index=False, dim=3)

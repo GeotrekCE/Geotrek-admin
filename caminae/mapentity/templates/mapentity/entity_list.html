@@ -1,12 +1,11 @@
-{% extends "core/base.html" %}
-{% load i18n leaflet_tags field_verbose_name static %}
+{% extends "mapentity/base.html" %}
+{% load i18n leaflet_tags field_verbose_name %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
 {% block extrahead %}
     {{ block.super }}
     {% include "dataTables_template.html" %}
-    <script type="text/javascript" src="{% static "mapentity/mapentity.js" %}"></script>
 {% endblock extrahead %}
 
 {% block mainmap %}
@@ -54,7 +53,7 @@
                 return "{{ model.get_generic_detail_url }}".replace('0', geojson.properties.pk);
             };
             
-            var objectsLayer = new Caminae.ObjectsLayer(null, {
+            var objectsLayer = new MapEntity.ObjectsLayer(null, {
                 objectUrl: getUrl
             });
             

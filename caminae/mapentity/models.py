@@ -77,6 +77,3 @@ class MapEntityMixin(object):
     @models.permalink
     def get_delete_url(self):
         return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
-
-
-

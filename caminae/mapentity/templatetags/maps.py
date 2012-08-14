@@ -10,7 +10,7 @@ register = template.Library()
 def fieldmap(obj, fieldname):
     """Usage: {{ object|fieldmap:"geom" }}"""
     name = "map%s%s" % (obj.__class__.__name__, fieldname)
-    t = template.loader.get_template("core/fieldmap_fragment.html")
+    t = template.loader.get_template("mapentity/fieldmap_fragment.html")
     return t.render(Context(dict(object=obj, mapname=name)))
 
 

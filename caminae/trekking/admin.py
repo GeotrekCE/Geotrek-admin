@@ -5,8 +5,13 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
+    POIType, TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
 )
+
+
+class POITypeAdmin(TranslationAdmin):
+    list_display = ('label',)
+    search_fields = ('label',)
 
 
 class TrekNetworkAdmin(TranslationAdmin):
@@ -41,6 +46,7 @@ class WebLinkAdmin(TranslationAdmin):
 
 # Register previously defined modeladmins
 trek_admin_to_register = [
+    (POIType, POITypeAdmin),
     (TrekNetwork, TrekNetworkAdmin),
     (Usage, UsageAdmin),
     (Route, RouteAdmin),
