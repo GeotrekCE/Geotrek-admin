@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mapentity/base.html" %}
 {% load i18n leaflet_tags field_verbose_name %}
 
 {% block nav-list %}active{% endblock nav-list %}
@@ -53,7 +53,7 @@
                 return "{{ model.get_generic_detail_url }}".replace('0', geojson.properties.pk);
             };
             
-            var objectsLayer = new Caminae.ObjectsLayer(null, {
+            var objectsLayer = new MapEntity.ObjectsLayer(null, {
                 objectUrl: getUrl
             });
             
