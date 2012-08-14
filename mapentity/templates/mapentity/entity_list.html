@@ -61,30 +61,24 @@
             objectsLayer.load("{{ model.get_layer_url }}");
 
             // init ajax list
-            initAjaxList(objectsLayer);
+            initAjaxList(mainmap, objectsLayer);
         }
 
         /* Table initialisation */
-        function initAjaxList(objectsLayer) {
+        function initAjaxList(map, objectsLayer) {
 
             var filterform = $('#mainfilter')
               , submitbutton = $('#filter')
+              , resetbutton = $('#reset')
               , ajax_list = $('#path-ajax-list')
             ;
-
-            // on JSON load, return the json used by dataTable
-            // Update also the map given the layer's pk
-            var extract_data_and_pks = function(data, type) {
-                objectsLayer.updateFromPks(data.map_obj_pk)
-                return data.aaData;
-            }
 
             // initialize data table
             var dt = JQDataTable.init(
                   ajax_list
                 , filterform.attr('action')
-                , { "sAjaxDataProp": extract_data_and_pks
-                ,   "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                , { // "sAjaxDataProp": function() { },
+                    "fnCreatedRow": function( nRow, aData, iDataIndex ) {
                         $(nRow).hover(function(){
                             var pk = $(aData[0]).attr('data-pk');
                             objectsLayer.highlight(pk);
@@ -94,31 +88,87 @@
                             objectsLayer.highlight(pk, false);
                         });
                     },
-                    "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>"
+                    "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
+                    aaData: [],
+                    iDeferLoading: 0
                 }
             );
-            
+
             // Hardcore customizations
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
-
-            // Store the map bounds as WKT in the bbox field
-            function mapBoundsToField() {
-                var bounds = map.getBounds();
-                var rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-                $('#id_bbox').val(MapEntity.getWKT(rect));
+            // on JSON load, return the json used by dataTable
+            // Update also the map given the layer's pk
+            var extract_data_and_pks = function(data, type, callback_args) {
+                callback_args.map_obj_pk = data.map_obj_pk;
+                return data.aaData;
             }
 
-            // On submit, trigger an ajax request to the JSON view
-            // Update the ajax list and the map
-            submitbutton.click(function() {
-                mapBoundsToField();
+            function ajaxTrigger(cb) {
+                var spinner = new Spinner().spin(map._container);
+
                 var url = filterform.attr("action") + '?' + filterform.serialize()
-                dt.fnReloadAjax(url);
+
+                dt.fnReloadAjax(url, extract_data_and_pks, function() {
+                    spinner.stop();
+                    cb.apply(cb, arguments);
+                });
 
                 return false;
+            }
+
+            // Store the map bounds as WKT in the bbox field
+            function storeBoundsToField($field, bounds) {
+                var rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
+                $field.val(MapEntity.getWKT(rect));
+            }
+
+            var initial_map_bounds = map.getBounds();
+            var bbox_field = $('#id_bbox');
+            var storeCurrentMapBoundsToField = function() { storeBoundsToField(bbox_field, map.getBounds()); };
+
+            // Restore initial map bounds on trigger
+            submitbutton.click(ajaxMapObjectsUpdateOnly);
+            resetbutton.click(function() {
+                MapEntity.resetForm(filterform);
+                mapBoundsUpdateNoListen(initial_map_bounds, listenMapBoundsUpdate);
+                ajaxMapObjectsUpdateOnly();
+                return false;
             });
+
+            // Updates map bounds if necessary (return a boolean if bounds were updated)
+            // Unregistering specific callback to avoid triggering ajax request
+            function mapBoundsUpdateNoListen(new_bounds, cb) {
+                // no need to update if bounds are equals
+                if (map.getBounds().equals(new_bounds))
+                    return false;
+
+                // deactivate/reactivate listener to trigger our own callback
+                cb(false);
+                map.fitBounds(new_bounds);
+                cb(true);
+                return true;
+            }
+
+            function ajaxMapObjectsUpdateOnly() {
+                storeCurrentMapBoundsToField();
+                ajaxTrigger(function(oSettings, callback_args) {
+                    objectsLayer.updateFromPks(callback_args.map_obj_pk)
+                });
+            }
+
+            function ajaxMapBoundsUpdateOnly() {
+                storeCurrentMapBoundsToField();
+                ajaxTrigger(function(){});
+            };
+
+            function listenMapBoundsUpdate(on) {
+                on = on === undefined ? true: on;
+                map[on ? 'on': 'off']('moveend', ajaxMapBoundsUpdateOnly);
+            }
+
+            listenMapBoundsUpdate(true);
         };
     </script>
 
