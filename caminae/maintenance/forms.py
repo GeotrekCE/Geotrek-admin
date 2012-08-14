@@ -57,6 +57,7 @@ class InterventionForm(MapEntityForm):
 class ProjectForm(MapEntityForm):
     modelfields = (
             'name',
+            'structure',
             'begin_year',
             'end_year',
             'constraint',
