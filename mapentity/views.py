@@ -98,6 +98,9 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_JSON_LIST
 
+    def dispatch(self, *args, **kwargs):
+        return super(ListView, self).dispatch(*args, **kwargs)  # Bypass login_required
+
     def get_context_data(self, **kwargs):
         """
         override the most important part of JSONListView... (paginator)
