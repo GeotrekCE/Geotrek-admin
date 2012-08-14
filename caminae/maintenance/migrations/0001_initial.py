@@ -30,7 +30,7 @@ class Migration(SchemaMigration):
             ('topology', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', null=True, to=orm['core.TopologyMixin'])),
             ('stake', self.gf('django.db.models.fields.related.ForeignKey')(related_name='interventions', null=True, to=orm['core.Stake'])),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionStatus'])),
-            ('typology', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionTypology'], null=True, blank=True)),
+            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.InterventionType'], null=True, blank=True)),
             ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['maintenance.Project'], null=True, blank=True)),
         ))
         db.send_create_signal('maintenance', ['Intervention'])
@@ -51,13 +51,13 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('maintenance', ['InterventionStatus'])
 
-        # Adding model 'InterventionTypology'
+        # Adding model 'InterventionType'
         db.create_table('typologie_des_interventions', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'])),
-            ('typology', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
-        db.send_create_signal('maintenance', ['InterventionTypology'])
+        db.send_create_signal('maintenance', ['InterventionType'])
 
         # Adding model 'InterventionDisorder'
         db.create_table('desordres', (
@@ -139,7 +139,7 @@ class Migration(SchemaMigration):
         # Deleting model 'InterventionStatus'
         db.delete_table('bib_de_suivi')
 
-        # Deleting model 'InterventionTypology'
+        # Deleting model 'InterventionType'
         db.delete_table('typologie_des_interventions')
 
         # Deleting model 'InterventionDisorder'
@@ -293,7 +293,7 @@ class Migration(SchemaMigration):
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
             'subcontract_cost': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
             'topology': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interventions'", 'null': 'True', 'to': "orm['core.TopologyMixin']"}),
-            'typology': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionTypology']", 'null': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.InterventionType']", 'null': 'True', 'blank': 'True'}),
             'width': ('django.db.models.fields.FloatField', [], {'default': '0.0'})
         },
         'maintenance.interventiondisorder': {
@@ -314,11 +314,11 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'maintenance.interventiontypology': {
-            'Meta': {'object_name': 'InterventionTypology', 'db_table': "'typologie_des_interventions'"},
+        'maintenance.interventiontype': {
+            'Meta': {'object_name': 'InterventionType', 'db_table': "'typologie_des_interventions'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'typology': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'maintenance.manday': {
             'Meta': {'object_name': 'ManDay', 'db_table': "'journeeshomme'"},
