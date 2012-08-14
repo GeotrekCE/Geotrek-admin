@@ -95,9 +95,9 @@
             mainmap.addControl(new L.Control.Information());
             {% endif %}
             
-            var getUrl = function (geojson, layer) {
+            var getUrl = function (properties, layer) {
                 //TODO use nice JS url rewriting
-                return "{{ model.get_generic_detail_url }}".replace('0', geojson.properties.pk);
+                return "{{ model.get_generic_detail_url }}".replace('0', properties.pk);
             };
             
             var objectsLayer = new MapEntity.ObjectsLayer(null, {

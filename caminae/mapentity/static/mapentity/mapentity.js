@@ -10,6 +10,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
     includes: L.Mixin.Events,
 
     initialize: function (geojson, options) {
+        var self = this;
+
         // Hold the definition of all layers - immutable
         this._objects = {};
         // Hold the currently added layers (subset of _objects)
@@ -33,7 +35,31 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
         this._pointToLayer = options.pointToLayer;
         options.pointToLayer = L.Util.bind(pointToLayer, this);
-        
+
+        this.layer_events = {
+            'highlight_mouseover': function(e) {
+                self.highlight(e.layer.properties.pk);
+            },
+            'highlight_mouseout': function(e) {
+                self.highlight(e.layer.properties.pk, false);
+            },
+            'detail_dblclick': function(e) {
+                window.location = self.options.objectUrl(e.layer.properties, e.layer);
+            }
+        };
+
+
+        // Highlight on mouse over
+        if (options.highlight) {
+            this.on('mouseover', this.layer_events.highlight_mouseover);
+            this.on('mouseout', this.layer_events.highlight_mouseout);
+        }
+
+        // Optionnaly make them clickable
+        if (options.objectUrl) {
+            this.on('dblclick', this.layer_events.detail_dblclick);
+        }
+
         var self = this;
         if (!options.style) {
             options.style = function (geojson) {
@@ -85,23 +111,6 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             bounds = new L.LatLngBounds(layer.getLatLng(), layer.getLatLng());
         }
         this.rtree.insert(this._rtbounds(bounds), layer);
-
-        // Highlight on mouse over
-        if (this.options.highlight) {
-            layer.on('mouseover', L.Util.bind(function (e) {
-                this.highlight(pk);
-            }, this));
-            layer.on('mouseout', L.Util.bind(function (e) {
-                this.highlight(pk, false);
-            }, this));
-        }
-
-        // Optionnaly make them clickable
-        if (this.options.objectUrl) {
-            layer.on('click', L.Util.bind(function (e) {
-                window.location = this.options.objectUrl(geojson, layer);
-            }, this));
-        }
     },
 
     load: function (url) {
