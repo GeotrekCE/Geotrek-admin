@@ -5,8 +5,8 @@
     {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ intervention|verbose:"status" }}</th>
-            <td>{{ intervention.status }}</td>
+            <th>{{ signage|verbose:"name" }}</th>
+            <td>{{ signage.name }}</td>
         </tr>
     </table>
 {% endblock detailspanel %}
