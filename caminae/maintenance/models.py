@@ -165,7 +165,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(StructureRelated):
+class Project(MapEntityMixin, StructureRelated):
 
     project_id = models.IntegerField(primary_key=True)
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
