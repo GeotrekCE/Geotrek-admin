@@ -79,7 +79,7 @@ class TopologyWidget(MapEntityWidget):
     def deserialize(self, objstr):
         objdict = simplejson.loads(objstr)
         kind = objdict.get('kind')
-        kind = TopologyMixinKind.objects.get(kind) if kind else TopologyMixin.get_kind()
+        kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else TopologyMixin.get_kind()
         topology = TopologyMixinFactory.create(kind=kind)
         topology.offset = objdict.get('offset', 0.0)
         for path in objdict['paths']:
