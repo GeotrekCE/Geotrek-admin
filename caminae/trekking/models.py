@@ -4,18 +4,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.models import Path, TopologyMixin
+from caminae.core.models import TopologyMixin
 
 
-class Trek(MapEntityMixin, models.Model):
+class Trek(MapEntityMixin, TopologyMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
     validated = models.BooleanField(verbose_name=_(u"Validated"))
 
-    # same fields and core.models.path
-    length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
     min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
@@ -36,19 +34,8 @@ class Trek(MapEntityMixin, models.Model):
     public_transport = models.TextField(verbose_name=_(u"Public transport"))
     advice = models.TextField(verbose_name=_(u"Advice"))
 
-    geom = models.LineStringField(editable=False, srid=settings.SRID,
-                                          spatial_index=False, dim=3)
-
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
-
-
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))
-
-    paths = models.ManyToManyField(Path, related_name="treks",
-            verbose_name=_(u"Paths composition"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
             verbose_name=_(u"Usages"))
@@ -64,8 +51,6 @@ class Trek(MapEntityMixin, models.Model):
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             verbose_name=_(u"Web links"))
-
-    # missing: photo
 
     ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
@@ -107,6 +92,7 @@ class Usage(models.Model):
 
     def __unicode__(self):
         return self.usage
+
 
 class Route(models.Model):
 
@@ -210,14 +196,6 @@ class TrekRelationship(models.Model):
         unique_together = (('trek_a', 'trek_b'), )
 
     objects = TrekRelationshipManager()
-
-
-# TODO: need to define "attached files" in the MCD to complete this model
-# class Photos(models.Model):
-#     pass
-#
-#     class Meta:
-#         db_table = 'photos'
 
 
 

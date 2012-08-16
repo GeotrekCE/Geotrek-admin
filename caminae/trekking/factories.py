@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import factory
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import Point
 
 from . import models
 from caminae.core.factories import TopologyMixinFactory
@@ -11,10 +11,6 @@ from caminae.common.utils.testdata import get_dummy_uploaded_image
 def dummy_filefield_as_sequence(toformat_name):
     """Simple helper method to fill a models.FileField"""
     return factory.Sequence(lambda n: get_dummy_uploaded_image(toformat_name % n))
-
-
-class TrekFactory(factory.Factory):
-    FACTORY_FOR = models.Trek
 
 
 class TrekNetworkFactory(factory.Factory):
@@ -57,7 +53,7 @@ class WebLinkFactory(factory.Factory):
     thumbnail = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TrekFactory(factory.Factory):
+class TrekFactory(TopologyMixinFactory):
     FACTORY_FOR = models.Trek
 
     name = factory.Sequence(lambda n: u"name %s" % n)
@@ -86,12 +82,6 @@ class TrekFactory(factory.Factory):
 
     public_transport = factory.Sequence(lambda n: u"Public transport %s" % n)
     advice = factory.Sequence(lambda n: u"Advice %s" % n)
-
-    geom = LineString(Point(1, 1, 0), Point(2, 2, 0))
-
-    # do not populate insert_date / update_date
-
-    deleted = False
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)

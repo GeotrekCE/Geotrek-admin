@@ -1,17 +1,13 @@
-from django.contrib.gis.geos import Point, LineString
-
 import floppyforms as forms
 
-from caminae.mapentity.forms import MapEntityForm
 from caminae.core.forms import TopologyMixinForm
-from caminae.core.widgets import PointWidget, MultiPathWidget
+from caminae.core.widgets import PointWidget
 
 from .models import Trek, POI
 
 
-class TrekForm(MapEntityForm):
+class TrekForm(TopologyMixinForm):
     parking_location = forms.gis.GeometryField(widget=PointWidget)
-    geom = forms.gis.GeometryField(widget=MultiPathWidget)
 
     modelfields = (
             'name_fr',
@@ -52,20 +48,12 @@ class TrekForm(MapEntityForm):
             'usages',
             'web_links',
             )
-    geomfields = ('geom', )
 
-    def save(self, commit=True, **kwargs):
-        obj = super(TrekForm, self).save(commit=False, **kwargs)
-        obj.geom = LineString(Point(0, 0, 0), Point(1, 1, 0))  # TODO: list of paths
-        if commit:
-            obj.save()
-        return obj
-
-    class Meta:
+    class Meta(TopologyMixinForm.Meta):
         model = Trek
-        exclude = ('deleted', 'paths', 'length') + ('name', 'departure', 'arrival', 
+        exclude = TopologyMixinForm.Meta.exclude + ('name', 'departure', 'arrival', 
                    'description', 'description_teaser', 'ambiance', 'advice',
-                   'disabled_infrastructure',)  # TODO
+                   'disabled_infrastructure',)  # TODO, fix modeltranslations
 
 
 class POIForm(TopologyMixinForm):
