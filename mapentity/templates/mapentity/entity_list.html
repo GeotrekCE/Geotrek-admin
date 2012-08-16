@@ -39,14 +39,20 @@
     <script>
         function saveFullContext(map) {
             localStorage.setItem('list-map-bounds', map.getBounds().toBBoxString());
+            localStorage.setItem('list-filter', $('#mainfilter').serialize());
         };
         
         function restoreFullContext(map) {
             var mapBounds = localStorage.getItem('list-map-bounds');
-            if (!mapBounds) return;
-            mapBounds = mapBounds.split(',');
-            map.fitBounds(L.latLngBounds(L.latLng(mapBounds[1], mapBounds[0]),
-                                         L.latLng(mapBounds[3], mapBounds[2])));
+            if (mapBounds) {
+                mapBounds = mapBounds.split(',');
+                map.fitBounds(L.latLngBounds(L.latLng(mapBounds[1], mapBounds[0]),
+                                             L.latLng(mapBounds[3], mapBounds[2])));
+            }
+            var filter = localStorage.getItem('list-filter');
+            if (filter) {
+                $('#mainfilter').deserialize(filter);
+            }
         };
 
         function mainmapInit(mainmap, bounds) {
@@ -72,12 +78,15 @@
             mainmap.addLayer(objectsLayer);
             objectsLayer.load("{{ model.get_layer_url }}");
 
+            // init ajax list
+            initAjaxList(mainmap, objectsLayer);
+
+            restoreFullContext(mainmap);
             $(window).unload(function () {
                 saveFullContext(mainmap);
             });
-            restoreFullContext(mainmap);
-            // init ajax list
-            initAjaxList(mainmap, objectsLayer);
+            
+            $('#filter').click();
         }
 
         /* Table initialisation */
@@ -87,12 +96,13 @@
               , submitbutton = $('#filter')
               , resetbutton = $('#reset')
               , ajax_list = $('#path-ajax-list')
+              , results_panel = document.getElementById('results-panel')
             ;
 
             // initialize data table
             var dt = JQDataTable.init(
                   ajax_list
-                , filterform.attr('action')
+                , null // no load at startup
                 , { // "sAjaxDataProp": function() { },
                     "fnCreatedRow": function( nRow, aData, iDataIndex ) {
                         $(nRow).hover(function(){
@@ -122,7 +132,7 @@
             }
 
             function ajaxTrigger(cb) {
-                var spinner = new Spinner().spin(map._container);
+                var spinner = new Spinner().spin(results_panel);
 
                 var url = filterform.attr("action") + '?' + filterform.serialize()
 
