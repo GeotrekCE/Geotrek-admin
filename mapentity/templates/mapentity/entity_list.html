@@ -37,7 +37,19 @@
     {{ block.super }}
 
     <script>
-        function mainmapInit(mainmap) {
+        function saveFullContext(map) {
+            localStorage.setItem('list-map-bounds', map.getBounds().toBBoxString());
+        };
+        
+        function restoreFullContext(map) {
+            var mapBounds = localStorage.getItem('list-map-bounds');
+            if (!mapBounds) return;
+            mapBounds = mapBounds.split(',');
+            map.fitBounds(L.latLngBounds(L.latLng(mapBounds[1], mapBounds[0]),
+                                         L.latLng(mapBounds[3], mapBounds[2])));
+        };
+
+        function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
             
             {% if DEBUG %}
@@ -60,6 +72,10 @@
             mainmap.addLayer(objectsLayer);
             objectsLayer.load("{{ model.get_layer_url }}");
 
+            $(window).unload(function () {
+                saveFullContext(mainmap);
+            });
+            restoreFullContext(mainmap);
             // init ajax list
             initAjaxList(mainmap, objectsLayer);
         }
