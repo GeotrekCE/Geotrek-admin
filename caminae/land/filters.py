@@ -30,6 +30,6 @@ class WorkManagementEdgeFilter(OrganismFilter):
         model = WorkManagementEdge
 
 
-class SignageManagementEdgeEdgeFilter(OrganismFilter):
+class SignageManagementEdgeFilter(OrganismFilter):
     class Meta(OrganismFilter.Meta):
         model = SignageManagementEdge
