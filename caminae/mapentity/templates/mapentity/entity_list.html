@@ -19,7 +19,7 @@
         <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
     </form>
 
-    <table id="path-ajax-list" class="table table-striped table-bordered">
+    <table id="objects-list" class="table table-striped table-bordered">
         <thead>
             <tr>
                 {% for field in columns %}
@@ -36,8 +36,55 @@
 {% block extrabody %}
     {{ block.super }}
 
-    <script>
-        function mainmapInit(mainmap) {
+    <script type="text/javascript">
+        function saveFullContext(map, datatable) {
+            localStorage.setItem('list-map-view', 
+                                 map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
+            localStorage.setItem('list-filter', $('#mainfilter').serialize());
+            var sortcol = datatable.fnSettings().aaSorting;
+            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
+            // layers shown by name
+            var layers = [];
+            $('form.leaflet-control-layers-list input:checked').each(function () {
+                layers.push($(this).parent().text());
+            });
+            localStorage.setItem('list-layers', JSON.stringify(layers));
+        };
+        
+        function restoreFullContext(map, datatable) {
+            var mapView = localStorage.getItem('list-map-view');
+            if (mapView) {
+                mapView = mapView.split(',');
+                map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
+            }
+            var filter = localStorage.getItem('list-filter');
+            if (filter) {
+                $('#mainfilter').deserialize(filter);
+            }
+            var sortcol = localStorage.getItem('list-sortcolumns');
+            if (sortcol) {
+                datatable.fnSort(JSON.parse(sortcol));
+            }
+            // Show layers by their name
+            var layers = localStorage.getItem('list-layers');
+            if (layers) {
+                layers = JSON.parse(layers);
+                $('form.leaflet-control-layers-list input').each(function () {
+                    $(this).removeAttr('checked');
+                });
+                for(var i=0; i<layers.length; i++) {
+                    var layer = layers[i];
+                    $('form.leaflet-control-layers-list input').each(function () {
+                        if ($(this).parent().text() == layer) {
+                            $(this).attr('checked', 'checked');
+                        }
+                    });
+                }
+                map.layerscontrol._onInputClick();
+            }
+        };
+
+        function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
             
             {% if DEBUG %}
@@ -61,7 +108,14 @@
             objectsLayer.load("{{ model.get_layer_url }}");
 
             // init ajax list
-            initAjaxList(mainmap, objectsLayer);
+            var dt = initAjaxList(mainmap, objectsLayer);
+
+            restoreFullContext(mainmap, dt);
+            $(window).unload(function () {
+                saveFullContext(mainmap, dt);
+            });
+            
+            $('#filter').click();
         }
 
         /* Table initialisation */
@@ -70,13 +124,14 @@
             var filterform = $('#mainfilter')
               , submitbutton = $('#filter')
               , resetbutton = $('#reset')
-              , ajax_list = $('#path-ajax-list')
+              , ajax_list = $('#objects-list')
+              , results_panel = document.getElementById('results-panel')
             ;
 
             // initialize data table
             var dt = JQDataTable.init(
                   ajax_list
-                , filterform.attr('action')
+                , null // no load at startup
                 , { // "sAjaxDataProp": function() { },
                     "fnCreatedRow": function( nRow, aData, iDataIndex ) {
                         $(nRow).hover(function(){
@@ -106,12 +161,14 @@
             }
 
             function ajaxTrigger(cb) {
-                var spinner = new Spinner().spin(map._container);
+                var spinner = new Spinner().spin(results_panel);
 
                 var url = filterform.attr("action") + '?' + filterform.serialize()
 
                 dt.fnReloadAjax(url, extract_data_and_pks, function() {
                     spinner.stop();
+                    // Show and save number of results
+                    MapEntity.showNumberSearchResults(dt.fnSettings().fnRecordsTotal());
                     cb.apply(cb, arguments);
                 });
 
@@ -154,7 +211,7 @@
             function ajaxMapObjectsUpdateOnly() {
                 storeCurrentMapBoundsToField();
                 ajaxTrigger(function(oSettings, callback_args) {
-                    objectsLayer.updateFromPks(callback_args.map_obj_pk)
+                    objectsLayer.updateFromPks(callback_args.map_obj_pk);
                 });
             }
 
@@ -169,6 +226,8 @@
             }
 
             listenMapBoundsUpdate(true);
+            
+            return dt;
         };
     </script>
 

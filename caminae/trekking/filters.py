@@ -1,15 +1,15 @@
-from django_filters import FilterSet
+from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import Trek, POI
 
 
-class TrekFilter(FilterSet):
-    class Meta:
+class TrekFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = Trek
-        fields = ['difficulty']
+        fields = MapEntityFilterSet.Meta.fields + ['difficulty']
 
 
-class POIFilter(FilterSet):
-    class Meta:
+class POIFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = POI
-        fields = ['type']
+        fields = MapEntityFilterSet.Meta.fields + ['type']

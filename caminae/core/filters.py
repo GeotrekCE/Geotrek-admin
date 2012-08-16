@@ -1,31 +1,12 @@
-import sys
-from django_filters import FilterSet, RangeFilter, Filter
-from decimal import Decimal
-
-import floppyforms as forms
-
 from .models import Path
-from .widgets import GeomWidget
+
+from caminae.mapentity.filters import MapEntityFilterSet
+from caminae.common.filters import OptionalRangeFilter
 
 
-class OptionalRangeFilter(RangeFilter):
-    def filter(self, qs, value):
-        if value:
-            if value.start and not value.stop:
-                value = slice(value.start, Decimal(sys.maxint), value.step)
-            if not value.start and value.stop:
-                value = slice(Decimal(-(sys.maxint +1)), value.stop, value.step)
-        return super(OptionalRangeFilter, self).filter(qs, value)
-
-
-class PolygonFilter(Filter):
-    field_class = forms.gis.PolygonField
-
-
-class PathFilter(FilterSet):
+class PathFilter(MapEntityFilterSet):
     length = OptionalRangeFilter()
-    bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=GeomWidget)
 
-    class Meta:
+    class Meta(MapEntityFilterSet.Meta):
         model = Path
-        fields = ['length', 'bbox']
+        fields = MapEntityFilterSet.Meta.fields + ['length',]

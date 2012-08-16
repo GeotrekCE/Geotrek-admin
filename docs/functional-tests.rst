@@ -471,12 +471,33 @@ Un 'spinner' sur la carte représentera l'avancement du filtrage.
     Détail d'implémentation 1: la bbox n'est pas fournie conventionnellement selon ?bbox=minx,miny,maxx,maxy mais comme un WKT.
     C'est un choix plus pratique car les fonctions de conversion (côté js et django) existent déjà
     qui peuvent éviter de potentiels problèmes  (ex: gestion de la coordonnée Z, de la projection, etc.).
-    La gestion du filtrage via une géométrie quelconque est de plus réutilisable.
-    Les inconvénients qui pourront être corrigés: paramêtre GET plus gros, moins explicite, moins classique (?).
+    La gestion du filtrage via une géométrie quelconque est de plus réutilisable (ex. secteurs, communes, etc.)
 
     Détail d'implémentation 2: lorsque le tri est purement géographique (mouvement de carte uniquement),
     les objets présents sur la carte (contrairement à la liste des résultats) ne sont pas retirés
     (mais ne sont pas visibles bien sûr) pour des raisons de performance.
 
 
+#138 - Lister les dernières fiches consultées
+---------------------------------------------
 
+Les onglets listent les dernières fiches consultées dans la session de l'utilisateur.
+
+Une fiche n'apparait toujours qu'une seule fois. L'onglet le plus à gauche est
+celui de la fiche en cours, puis suivent les fiches consultées précedemment,
+s'il y en a.
+
+Un setting détermine le nombre maximal à afficher (``HISTORY_ITEMS_MAX``).
+
+
+#139 - Conserver la dernière recherche effectuée
+------------------------------------------------
+
+* Effectuer une recherche en choisissant un module
+* Le nombre de résultats s'affiche dans l'onglet
+* Consulter une fiche, retourner à la recherche. Le module sélectionné précédement est actif.
+
+* Appliquer des filtres.
+* Consulter une fiche et revenir à la recherche. Les filtres saisis sont restaurés.
+
+* Vérifier que l'étendue de la carte et les couches affichées sont également restaurées.

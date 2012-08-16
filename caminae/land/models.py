@@ -7,16 +7,11 @@ from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.common.models import Organism
 
-# GeoDjango note:
-# Django automatically creates indexes on geometry fields but it uses a
-# syntax which is not compatible with PostGIS 2.0. That's why index creation
-# is explicitly disbaled here (see manual index creation in custom SQL files).
 
 # Physcal nature of paths
 
-
 class PhysicalType(models.Model):
-    name = models.CharField(max_length=128, verbose_name=_(u"Name"))  # TODO: fix db_column="physique"
+    name = models.CharField(max_length=128, verbose_name=_(u"Name"))
 
     class Meta:
         db_table = 'nature_sentier'

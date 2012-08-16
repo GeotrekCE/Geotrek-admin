@@ -13,16 +13,13 @@ class BaseInfrastructureForm(TopologyMixinForm):
             'name',
             'description',
             'type',)
-    geomfields = ('geom',)
 
 
 class InfrastructureForm(BaseInfrastructureForm):
-    class Meta:
+    class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
-        exclude = ('deleted', 'kind', 'troncons', 'offset')  # TODO: topology editor
 
 
 class SignageForm(BaseInfrastructureForm):
-    class Meta:
+    class Meta(BaseInfrastructureForm.Meta):
         model = Signage
-        exclude = ('deleted', 'kind', 'troncons', 'offset')

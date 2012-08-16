@@ -1,7 +1,9 @@
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.generic.edit import BaseDetailView
 from django.core.cache import get_cache
+from django.shortcuts import redirect
 
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                                      MapEntityDetail, MapEntityCreate, MapEntityUpdate, 
@@ -13,6 +15,16 @@ from .models import Path
 from .forms import PathForm
 from .filters import PathFilter
 from . import graph as graph_lib
+
+
+@login_required
+def last_list(request):
+    last = request.session.get('last_list')  # set in MapEntityList
+    if not last:
+        return redirect('core:path_list')
+    return redirect(last)
+
+home = last_list
 
 
 class PathLayer(MapEntityLayer):
@@ -109,6 +121,3 @@ def get_graph_json(request):
 
     cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)
-
-
-home = PathList.as_view()

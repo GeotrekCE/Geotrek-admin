@@ -1,33 +1,35 @@
-from django_filters import FilterSet
+from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
 
 
-class PhysicalEdgeFilter(FilterSet):
-    class Meta:
+class PhysicalEdgeFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
-        fields = ['physical_type']
+        fields = MapEntityFilterSet.Meta.fields + ['physical_type']
 
 
-class LandEdgeFilter(FilterSet):
-    class Meta:
+class LandEdgeFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
-        fields = ['land_type']
+        fields = MapEntityFilterSet.Meta.fields + ['land_type']
 
 
-class CompetenceEdgeFilter(FilterSet):
-    class Meta:
+class OrganismFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        fields = MapEntityFilterSet.Meta.fields + ['organization']
+
+
+class CompetenceEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
         model = CompetenceEdge
-        fields = ['organization']
 
 
-class WorkManagementEdgeFilter(FilterSet):
-    class Meta:
+class WorkManagementEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
         model = WorkManagementEdge
-        fields = ['organization']
 
 
-class SignageManagementEdgeFilter(FilterSet):
-    class Meta:
+class SignageManagementEdgeEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
         model = SignageManagementEdge
-        fields = ['organization']

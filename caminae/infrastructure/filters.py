@@ -1,15 +1,15 @@
-from django_filters import FilterSet
+from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import Infrastructure, Signage
 
 
-class InfrastructureFilter(FilterSet):
-    class Meta:
+class InfrastructureFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = Infrastructure
-        fields = ['type']
+        fields = MapEntityFilterSet.Meta.fields + ['type']
 
 
-class SignageFilter(FilterSet):
-    class Meta:
+class SignageFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = Signage
-        fields = ['type']
+        fields = MapEntityFilterSet.Meta.fields + ['type']
