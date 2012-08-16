@@ -488,3 +488,16 @@ celui de la fiche en cours, puis suivent les fiches consultées précedemment,
 s'il y en a.
 
 Un setting détermine le nombre maximal à afficher (``HISTORY_ITEMS_MAX``).
+
+
+#139 - Conserver la dernière recherche effectuée
+------------------------------------------------
+
+* Effectuer une recherche en choisissant un module
+* Le nombre de résultats s'affiche dans l'onglet
+* Consulter une fiche, retourner à la recherche. Le module sélectionné précédement est actif.
+
+* Appliquer des filtres.
+* Consulter une fiche et revenir à la recherche. Les filtres saisis sont restaurés.
+
+* Vérifier que l'étendue de la carte et les couches affichées sont également restaurées.
