@@ -19,4 +19,10 @@
 
 {% block extrabody %}
     {{ block.super }}
+    <script type="text/javascript">
+        // Show number of results
+        $(document).ready(function (e) {
+            MapEntity.showNumberSearchResults();
+        });
+    </script>
 {% endblock extrabody %}
