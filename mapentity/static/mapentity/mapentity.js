@@ -451,7 +451,15 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
         },
         getLayer: function () {
             return _current_layer;
-        }
+        },
+        storeTopologyInField: function (topology) {
+            var old_layer = _current_layer;
+            _current_layer = topology;
+
+            $field.val(JSON.stringify(topology));
+
+            return old_layer;
+        },
     };
 };
 
