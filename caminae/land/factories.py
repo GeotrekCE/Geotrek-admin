@@ -7,7 +7,7 @@ from caminae.common.factories import OrganismFactory
 from . import models
 
 
-class PhysicalTypeFactory(factory.Factory):
+class PhysicalTypeFactory(TopologyMixinFactory):
     FACTORY_FOR = models.PhysicalType
 
     name = factory.Sequence(lambda n: u"PhysicalType %s" % n)
@@ -27,13 +27,13 @@ class LandTypeFactory(TopologyMixinFactory):
 
 
 class LandEdgeFactory(TopologyMixinFactory):
-    FACTORY_FOR = models.PhysicalEdge
+    FACTORY_FOR = models.LandEdge
 
     land_type = factory.SubFactory(LandTypeFactory)
 
 
 class CompetenceEdgeFactory(TopologyMixinFactory):
-    FACTORY_FOR = models.WorkManagementEdge
+    FACTORY_FOR = models.CompetenceEdge
 
     organization = factory.SubFactory(OrganismFactory)
 

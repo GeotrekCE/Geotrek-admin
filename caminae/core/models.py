@@ -107,7 +107,7 @@ class TopologyMixin(models.Model):
     # Override default manager
     objects = models.GeoManager()
 
-	# Computed values (managed at DB-level with triggers)
+    # Computed values (managed at DB-level with triggers)
 
     deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
