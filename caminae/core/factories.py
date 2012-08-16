@@ -28,7 +28,7 @@ class UsageFactory(factory.Factory):
 class NetworkFactory(factory.Factory):
     FACTORY_FOR = models.Network
 
-    network = factory.Sequence(lambda n: u"Usage %s" % n)
+    network = factory.Sequence(lambda n: u"Network %s" % n)
 
 
 class TrailFactory(factory.Factory):
