@@ -1,7 +1,9 @@
 import math
 
 from django.db import connection
+from django.conf import settings
 from django.utils.timezone import utc
+from django.contrib.gis.geos import GEOSException, fromstr
 
 
 def dbnow():
@@ -20,3 +22,15 @@ def distance3D(a, b):
     return math.sqrt((b[0] - a[0]) ** 2 +
                      (b[1] - a[1]) ** 2 +
                      (b[2] - a[2]) ** 2)
+
+
+def wkt_to_geom(wkt):
+    try:
+        geom = fromstr(wkt, srid=settings.API_SRID)
+        geom.transform(settings.SRID)
+        dim = 3
+        extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
+        wkt3d = geom.wkt.replace(',', extracoords + ',')
+        return wkt3d
+    except (GEOSException, TypeError, ValueError):
+        return None

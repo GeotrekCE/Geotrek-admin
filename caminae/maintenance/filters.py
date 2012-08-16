@@ -1,15 +1,15 @@
-from django_filters import FilterSet
+from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import Intervention, Project
 
 
-class InterventionFilter(FilterSet):
-    class Meta:
+class InterventionFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = Intervention
-        fields = ['status']
+        fields = MapEntityFilterSet.Meta.fields + ['status']
 
 
-class ProjectFilter(FilterSet):
-    class Meta:
+class ProjectFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = Project
-        fields = ['begin_year', 'end_year']
+        fields = MapEntityFilterSet.Meta.fields + ['begin_year', 'end_year']
