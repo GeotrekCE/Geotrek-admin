@@ -14,6 +14,7 @@ from djgeojson.views import GeoJSONLayerView
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 
 from . import models as mapentity_models
+from .decorators import save_history
 
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -130,7 +131,11 @@ class MapEntityDetail(DetailView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_DETAIL
 
+    def get_title(self):
+        return unicode(self.get_object())
+
     @method_decorator(login_required)
+    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityDetail, self).dispatch(*args, **kwargs)
 
@@ -148,7 +153,16 @@ class MapEntityCreate(CreateView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_CREATE
 
+    @classmethod
+    def get_title(cls):
+        name = cls.model._meta.verbose_name
+        if hasattr(name, '_proxy____args'):
+            name = name._proxy____args[0]  # untranslated
+        # Whole "add" phrase translatable, but not catched  by makemessages
+        return _("Add a new %s" % name.lower())
+
     @method_decorator(login_required)
+    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityCreate, self).dispatch(*args, **kwargs)
 
@@ -162,12 +176,7 @@ class MapEntityCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
-        name = self.model._meta.verbose_name
-        if hasattr(name, '_proxy____args'):
-            name = name._proxy____args[0]  # untranslated
-        context['object_type'] = name.lower()
-        # Whole "add" phrase translatable, but not catched  by makemessages
-        context['add_msg'] = _("Add a new %s" % context['object_type'])
+        context['title'] = self.get_title()
         return context
 
 
@@ -176,7 +185,11 @@ class MapEntityUpdate(UpdateView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_UPDATE
 
+    def get_title(self):
+        return _("Edit %s") % self.get_object()
+
     @method_decorator(login_required)
+    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
 
@@ -190,6 +203,11 @@ class MapEntityUpdate(UpdateView):
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
+
+    def get_context_data(self, **kwargs):
+        context = super(MapEntityUpdate, self).get_context_data(**kwargs)
+        context['title'] = self.get_title()
+        return context
 
 
 class MapEntityDelete(DeleteView):

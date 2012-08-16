@@ -7,15 +7,12 @@
 {% endblock extrahead %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
-{% block objectname %}{{ object }}{% endblock objectname %}
 
 {% block mainpanel %}
     <div class="span12">
-        <h1>{% if object %}
-            {% trans "Edit" %} {{ object }}
+        <h1>{{ title }}
+        {% if object %}
             <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
-        {% else %}
-            {{ add_msg }}
         {% endif %}</h1>
         
         <div>&nbsp;</div>
