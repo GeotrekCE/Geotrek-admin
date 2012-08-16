@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 
-from caminae.authent.decorators import same_structure_required, path_manager_required
+from caminae.authent.decorators import path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -70,8 +70,7 @@ class LandEdgeDetail(MapEntityDetail):
     model = LandEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager  and \
-               self.get_object().same_structure(self.request.user)
+        return self.request.user.profile.is_path_manager
 
 
 class LandEdgeCreate(MapEntityCreate):
@@ -83,7 +82,6 @@ class LandEdgeUpdate(MapEntityUpdate):
     model = LandEdge
     form_class = LandEdgeForm
 
-    @same_structure_required('land:landedge_detail')
     @method_decorator(path_manager_required('land:landedge_detail'))
     def dispatch(self, *args, **kwargs):
         return super(LandEdgeUpdate, self).dispatch(*args, **kwargs)
@@ -92,7 +90,6 @@ class LandEdgeUpdate(MapEntityUpdate):
 class LandEdgeDelete(MapEntityDelete):
     model = LandEdge
 
-    @same_structure_required('land:landedge_detail')
     @method_decorator(path_manager_required('land:landedge_detail'))
     def dispatch(self, *args, **kwargs):
         return super(LandEdgeDelete, self).dispatch(*args, **kwargs)
