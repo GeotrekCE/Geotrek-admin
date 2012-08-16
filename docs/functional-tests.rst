@@ -501,3 +501,14 @@ Un setting détermine le nombre maximal à afficher (``HISTORY_ITEMS_MAX``).
 * Consulter une fiche et revenir à la recherche. Les filtres saisis sont restaurés.
 
 * Vérifier que l'étendue de la carte et les couches affichées sont également restaurées.
+
+
+#141 - Implémenter l'ensemble des modules
+-----------------------------------------
+
+L'ensemble des entités manipulées dans l'application sont disponibles.
+
+:notes: 
+
+    Bien entendu, tout n'est pas fonctionnel. Mais cette étape permet de
+    valider la navigation dans l'application.
