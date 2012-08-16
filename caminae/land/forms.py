@@ -5,55 +5,35 @@ from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge,
 
 
 class PhysicalEdgeForm(TopologyMixinForm):
-    modelfields = (
-            'physical_type',
-            )
-    geomfields = ('geom', )
-    
-    class Meta:
+    modelfields = ('physical_type',)
+
+    class Meta(TopologyMixinForm.Meta):
         model = PhysicalEdge
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
 
 
 class LandEdgeForm(TopologyMixinForm):
-    modelfields = (
-            'land_type',
-            )
-    geomfields = ('geom', )
-    
-    class Meta:
+    modelfields = ('land_type',)
+
+    class Meta(TopologyMixinForm.Meta):
         model = LandEdge
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
 
     
 class CompetenceEdgeForm(TopologyMixinForm):
-    modelfields = (
-            'organization',
-            )
-    geomfields = ('geom', )
-    
-    class Meta:
+    modelfields = ('organization',)
+
+    class Meta(TopologyMixinForm.Meta):
         model = CompetenceEdge
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
 
 
 class WorkManagementEdgeForm(TopologyMixinForm):
-    modelfields = (
-            'organization',
-            )
-    geomfields = ('geom', )
-    
-    class Meta:
+    modelfields = ('organization',)
+
+    class Meta(TopologyMixinForm.Meta):
         model = WorkManagementEdge
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
 
 
 class SignageManagementEdgeForm(TopologyMixinForm):
-    modelfields = (
-            'organization',
-            )
-    geomfields = ('geom', )
-    
-    class Meta:
+    modelfields = ('organization',)
+
+    class Meta(TopologyMixinForm.Meta):
         model = SignageManagementEdge
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
