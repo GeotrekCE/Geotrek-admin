@@ -80,8 +80,7 @@ class POIForm(TopologyMixinForm):
             'description_en',
             'type',
             )
-    geomfields = ('geom', )
 
-    class Meta:
+    class Meta(TopologyMixinForm.Meta):
         model = POI
-        exclude = ('deleted', 'kind', 'troncons', 'offset') + ('name', 'description')  # TODO: topology editor
+        exclude = TopologyMixinForm.Meta.exclude + ('name', 'description')  # TODO: topology editor

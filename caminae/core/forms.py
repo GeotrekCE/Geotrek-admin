@@ -9,11 +9,14 @@ from crispy_forms.layout import Field
 from caminae.mapentity.forms import MapEntityForm
 
 from .models import Path
-from .widgets import LineStringWidget
+from .widgets import MultiPathWidget, LineStringWidget
 from .factories import TopologyMixinFactory, PathAggregationFactory
 
 
 class TopologyMixinForm(MapEntityForm):
+    geom = forms.gis.GeometryField(widget=MultiPathWidget)
+    geomfields = ('geom', )
+
     def save(self, commit=True, **kwargs):
         obj = super(TopologyMixinForm, self).save(commit=False, **kwargs)
         # TODO: this is completely wrong, but we have no topology editor yet
@@ -29,6 +32,9 @@ class TopologyMixinForm(MapEntityForm):
             obj.save()
         PathAggregationFactory.create(topo_object=obj)
         return obj
+
+    class Meta:
+        exclude = ('deleted', 'kind', 'troncons', 'offset')
 
 
 class PathForm(MapEntityForm):
