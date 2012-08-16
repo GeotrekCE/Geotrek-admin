@@ -5,21 +5,24 @@
 
 {% block mainactions %}
     {% if user.profile.is_path_manager %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
-    {% else %}
-    <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
-    {% endif %}
     <div class="btn-group">
-      <button class="btn">{% trans "Manage land" %}</button>
-      <button class="btn dropdown-toggle" data-toggle="dropdown">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="disabled" href="{% url land:physicaledge_list %}">{% trans "Physical types" %}</a></li>
-        <li><a class="disabled" href="{% url land:landedge_list %}">{% trans "Land types" %}</a></li>
-        <li><a class="disabled" href="{% url land:competenceedge_list %}">{% trans "Competence zones" %}</a></li>
-        <li><a class="disabled" href="{% url land:signagemanagementedge_list %}">{% trans "Signage management" %}</a></li>
-        <li><a class="disabled" href="{% url land:workmanagementedge_list %}">{% trans "Work management" %}</a></li>
-      </ul>
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+        {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
+        {% endif %}
+    </div>
+
+    <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            {% trans "Manage land" %}
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a class="disabled" href="{% url land:physicaledge_list %}">{% trans "Physical types" %}</a></li>
+            <li><a class="disabled" href="{% url land:landedge_list %}">{% trans "Land types" %}</a></li>
+            <li><a class="disabled" href="{% url land:competenceedge_list %}">{% trans "Competence zones" %}</a></li>
+            <li><a class="disabled" href="{% url land:signagemanagementedge_list %}">{% trans "Signage management" %}</a></li>
+            <li><a class="disabled" href="{% url land:workmanagementedge_list %}">{% trans "Work management" %}</a></li>
+        </ul>
     </div>
 {% endblock mainactions %}
