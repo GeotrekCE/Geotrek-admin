@@ -38,7 +38,8 @@
 
     <script type="text/javascript">
         function saveFullContext(map, datatable) {
-            localStorage.setItem('list-map-bounds', map.getBounds().toBBoxString());
+            localStorage.setItem('list-map-view', 
+                                 map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
             localStorage.setItem('list-filter', $('#mainfilter').serialize());
             var sortcol = datatable.fnSettings().aaSorting;
             localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
@@ -51,11 +52,10 @@
         };
         
         function restoreFullContext(map, datatable) {
-            var mapBounds = localStorage.getItem('list-map-bounds');
-            if (mapBounds) {
-                mapBounds = mapBounds.split(',');
-                map.fitBounds(L.latLngBounds(L.latLng(mapBounds[1], mapBounds[0]),
-                                             L.latLng(mapBounds[3], mapBounds[2])));
+            var mapView = localStorage.getItem('list-map-view');
+            if (mapView) {
+                mapView = mapView.split(',');
+                map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
             }
             var filter = localStorage.getItem('list-filter');
             if (filter) {
