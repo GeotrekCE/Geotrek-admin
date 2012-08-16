@@ -1,5 +1,8 @@
 import os
 
+from django.contrib.messages import constants as messages
+
+
 gettext_noop = lambda s: s
 
 PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -259,7 +262,9 @@ MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'
 
-from django.contrib.messages import constants as messages
+# Navigation history tabs
+HISTORY_ITEMS_MAX = 7
+
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
