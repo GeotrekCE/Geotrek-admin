@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.utils import simplejson
 import floppyforms as forms
 
 from caminae.common.utils import wkt_to_geom
+from .models import Path, TopologyMixin, TopologyMixinKind, PathAggregation
+from .factories import TopologyMixinFactory
 
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
@@ -34,7 +37,7 @@ class MapEntityWidget(LeafletMapWidget):
 
 
 class PointWidget(MapEntityWidget,
-                       forms.gis.PointWidget):
+                  forms.gis.PointWidget):
     pass
 
 
@@ -43,21 +46,69 @@ class LineStringWidget(MapEntityWidget,
     pass
 
 
-class MultiPathWidget(MapEntityWidget):
+class TopologyWidget(MapEntityWidget):
+    """ A widget allowing to select a list of paths with start and end markers.
+    Instead of building a Line geometry, this widget builds a Topology.
+    """
     is_multipath = True
     
-    def get_context(self, *args, **kwargs):
-            context = super(MultiPathWidget, self).get_context(*args, **kwargs)
-            context['is_multipath'] = self.is_multipath
-            return context
+    def get_context(self, name, value, *args, **kwargs):
+        if isinstance(value, basestring):
+            try:
+                value = self.deserialize(value)
+            except ValueError:
+                value = None
+        topologyjson = ''
+        if value:
+            topologyjson = self.serialize(value)
+        context = forms.Textarea.get_context(self, name, topologyjson, *args, **kwargs)
+        context['module'] = 'map_%s' % name.replace('-', '_')
+        context['is_multipath'] = self.is_multipath
+        context['update'] = bool(value)
+        context['field'] = value
+        context['fitextent'] = value is None
+        context['min_snap_zoom'] = settings.MIN_SNAP_ZOOM
+        context['path_snapping'] = self.path_snapping
+        return context
+
+    def value_from_datadict(self, data, files, name):
+        value = forms.Textarea.value_from_datadict(self, data, files, name)
+        # TODO catch validation error ?
+        return self.deserialize(value)
+
+    def deserialize(self, objstr):
+        objdict = simplejson.loads(objstr)
+        kind = objdict.get('kind')
+        kind = TopologyMixinKind.objects.get(kind) if kind else TopologyMixin.get_kind()
+        topology = TopologyMixinFactory.create(kind=kind)
+        topology.offset = objdict.get('offset', 0.0)
+        for path in objdict['paths']:
+            aggr = PathAggregation(topo_object=topology,
+                                   start_position=path.get('start', 0.0),
+                                   end_position=path.get('end', 1.0),
+                                   path=Path.objects.get(pk=path['path']))
+            aggr.save()
+        return topology
+
+    def serialize(self, topology):
+        paths = []
+        for aggregation in topology.aggregations.all():
+            paths.append(dict(start=aggregation.start_position,
+                              end=aggregation.end_position,
+                              path=aggregation.path.pk))
+        objdict = dict(kind=topology.kind.pk,
+                       offset=topology.offset,
+                       paths=paths)
+        return simplejson.dumps(objdict)
 
 
-class PointOrLineStringWidget(MapEntityWidget,
-                             forms.gis.PointWidget,
-                             forms.gis.LineStringWidget):
-    geom_type = 'GEOMETRY'
+class PointTopologyWidget(TopologyWidget, PointWidget):
+    """ A widget allowing to point a position with a marker. 
+    Instead of building a Point geometry, this widget builds a Topology.
+    """
+    # TODO: test if point is returned, then compute topology from point
+    pass
 
 
-class PointOrMultipathWidget(MultiPathWidget,
-                             forms.gis.PointWidget):
-    geom_type = 'GEOMETRY'
+class PointLineTopologyWidget(PointTopologyWidget, TopologyWidget):
+    pass

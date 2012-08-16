@@ -104,18 +104,20 @@ FormField.makeModule = function(module, module_settings) {
 
                 var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra);
                 multipath_control.multipath_handler.on('computed_paths', function(data) {
-                    var new_edges = data['new_edges'];
-
-                    // Gather all LatLngs - $.map autoconcatenate
-                    var lls = $.map(new_edges, function(edge) {
-                        return objectsLayer.getLayer(edge.id).getLatLngs();
-                    });
-
-                    // This is just used to get the WKT
-                    // TODO: later we should pass list of pks instead of resulting geom
-                    var layer = new L.Polyline(lls);
-
-                    layerStore.storeLayerGeomInField(layer);
+                    var new_edges = data['new_edges'],
+                        paths = [];
+                    for (var i=0; i<new_edges.length; i++) {
+                        paths.push({
+                            start: 0.0,  // TODO: until now, always start at 0
+                            end: 1.0,
+                            path: new_edges[i].id
+                        });
+                    }
+                    var topology = {
+                        offset: 0,  // TODO: input for offset
+                        paths: paths,
+                    };
+                    layerStore.storeTopologyInField(topology);
                 });
 
                 map.addControl(multipath_control);

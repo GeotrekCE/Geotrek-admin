@@ -34,10 +34,10 @@ class Intervention(MapEntityMixin, StructureRelated):
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
     deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
-    ## Relations ##
+    """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(TopologyMixin, null=True,
-                related_name="interventions",
-                verbose_name=_(u"Interventions"))
+                                 related_name="interventions",
+                                 verbose_name=_(u"Interventions"))
 
     stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"))
@@ -56,34 +56,9 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
-    def initFromPathsList(self, pathlist, constraints=None):
-        # TODO: pathlist is now a geom
-        topology = TopologyMixinFactory.create(geom=pathlist)
-        self.topology = topology
-        self.save()
-
-    def initFromInfrastructure(self, infrastructure):
-        raise NotImplementedError
-
-    def initFromPoint(self, point):
-        """
-        Initialize the intervention topology from a Point.
-        """
-        # TODO : compute offset etc.
-        fakeline = LineString(Point(point.x, point.y, 0), Point(point.x+0.1, point.y+0.1, 0))
-        topology = TopologyMixinFactory.create(geom=fakeline)
-        self.topology = topology
-        self.save()
-
     @property
     def geom(self):
-        if self.topology:
-            if len(list(self.topology.geom.coords)) == 2:
-                fakepoint = Point(*self.topology.geom.coords[0], srid=settings.SRID)  # return Point from fakeline
-                return fakepoint
-            else:
-                return self.topology.geom
-        return Point(0,0,0)
+        return self.topology.geom
 
     @property
     def name_display(self):

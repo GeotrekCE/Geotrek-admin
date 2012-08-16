@@ -17,23 +17,23 @@ class LandEdgeForm(TopologyMixinForm):
     class Meta(TopologyMixinForm.Meta):
         model = LandEdge
 
-    
-class CompetenceEdgeForm(TopologyMixinForm):
-    modelfields = ('organization',)
 
+class OrganismForm(TopologyMixinForm):
+    modelfields = ('organization',)
     class Meta(TopologyMixinForm.Meta):
+        pass
+
+
+class CompetenceEdgeForm(OrganismForm):
+    class Meta(OrganismForm.Meta):
         model = CompetenceEdge
 
 
-class WorkManagementEdgeForm(TopologyMixinForm):
-    modelfields = ('organization',)
-
-    class Meta(TopologyMixinForm.Meta):
+class WorkManagementEdgeForm(OrganismForm):
+    class Meta(OrganismForm.Meta):
         model = WorkManagementEdge
 
 
-class SignageManagementEdgeForm(TopologyMixinForm):
-    modelfields = ('organization',)
-
-    class Meta(TopologyMixinForm.Meta):
+class SignageManagementEdgeForm(OrganismForm):
+    class Meta(OrganismForm.Meta):
         model = SignageManagementEdge

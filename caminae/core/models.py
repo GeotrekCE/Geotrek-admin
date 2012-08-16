@@ -100,21 +100,21 @@ class Path(MapEntityMixin, StructureRelated):
 
 
 class TopologyMixin(models.Model):
-    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
+    paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
-    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
+    kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
 
     # Override default manager
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
 
-    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
 
-    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.LineStringField(editable=False, srid=settings.SRID,
+    length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
+    geom = models.LineStringField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
                                   spatial_index=False, dim=3)
 
     def __unicode__(self):
@@ -124,6 +124,12 @@ class TopologyMixin(models.Model):
         db_table = 'evenements'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
+
+    @classmethod
+    def get_kind(cls):
+        # TODO : raise not implemented!
+        from .factories import TopologyMixinKindFactory
+        return TopologyMixinKindFactory.create()
 
     def save(self, *args, **kwargs):
         super(TopologyMixin, self).save(*args, **kwargs)
