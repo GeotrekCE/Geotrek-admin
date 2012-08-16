@@ -36,13 +36,21 @@
 {% block extrabody %}
     {{ block.super }}
 
-    <script>
-        function saveFullContext(map) {
+    <script type="text/javascript">
+        function saveFullContext(map, datatable) {
             localStorage.setItem('list-map-bounds', map.getBounds().toBBoxString());
             localStorage.setItem('list-filter', $('#mainfilter').serialize());
+            var sortcol = datatable.fnSettings().aaSorting;
+            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
+            // layers shown by name
+            var layers = [];
+            $('form.leaflet-control-layers-list input:checked').each(function () {
+                layers.push($(this).parent().text());
+            });
+            localStorage.setItem('list-layers', JSON.stringify(layers));
         };
         
-        function restoreFullContext(map) {
+        function restoreFullContext(map, datatable) {
             var mapBounds = localStorage.getItem('list-map-bounds');
             if (mapBounds) {
                 mapBounds = mapBounds.split(',');
@@ -52,6 +60,27 @@
             var filter = localStorage.getItem('list-filter');
             if (filter) {
                 $('#mainfilter').deserialize(filter);
+            }
+            var sortcol = localStorage.getItem('list-sortcolumns');
+            if (sortcol) {
+                datatable.fnSort(JSON.parse(sortcol));
+            }
+            // Show layers by their name
+            var layers = localStorage.getItem('list-layers');
+            if (layers) {
+                layers = JSON.parse(layers);
+                $('form.leaflet-control-layers-list input').each(function () {
+                    $(this).removeAttr('checked');
+                });
+                for(var i=0; i<layers.length; i++) {
+                    var layer = layers[i];
+                    $('form.leaflet-control-layers-list input').each(function () {
+                        if ($(this).parent().text() == layer) {
+                            $(this).attr('checked', 'checked');
+                        }
+                    });
+                }
+                map.layerscontrol._onInputClick();
             }
         };
 
@@ -79,11 +108,11 @@
             objectsLayer.load("{{ model.get_layer_url }}");
 
             // init ajax list
-            initAjaxList(mainmap, objectsLayer);
+            var dt = initAjaxList(mainmap, objectsLayer);
 
-            restoreFullContext(mainmap);
+            restoreFullContext(mainmap, dt);
             $(window).unload(function () {
-                saveFullContext(mainmap);
+                saveFullContext(mainmap, dt);
             });
             
             $('#filter').click();
@@ -180,7 +209,7 @@
             function ajaxMapObjectsUpdateOnly() {
                 storeCurrentMapBoundsToField();
                 ajaxTrigger(function(oSettings, callback_args) {
-                    objectsLayer.updateFromPks(callback_args.map_obj_pk)
+                    objectsLayer.updateFromPks(callback_args.map_obj_pk);
                 });
             }
 
@@ -195,6 +224,8 @@
             }
 
             listenMapBoundsUpdate(true);
+            
+            return dt;
         };
     </script>
 
