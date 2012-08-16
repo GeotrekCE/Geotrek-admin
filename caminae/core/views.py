@@ -1,4 +1,5 @@
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.generic.edit import BaseDetailView
 from django.core.cache import get_cache
@@ -16,6 +17,7 @@ from .filters import PathFilter
 from . import graph as graph_lib
 
 
+@login_required
 def last_list(request):
     last = request.session.get('last_list')  # set in MapEntityList
     if not last:
