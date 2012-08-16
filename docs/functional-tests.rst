@@ -512,3 +512,10 @@ L'ensemble des entités manipulées dans l'application sont disponibles.
 
     Bien entendu, tout n'est pas fonctionnel. Mais cette étape permet de
     valider la navigation dans l'application.
+
+
+#142 - Distinguer les formulaires d'ajout et de modification des interventions
+------------------------------------------------------------------------------
+
+À la création, le formulaire de demande d'intervention contient un minimum
+de champ, et seul le status "souhaitée" est disponible.

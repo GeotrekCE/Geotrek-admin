@@ -5,7 +5,7 @@ from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
-from .forms import InterventionForm, ProjectForm
+from .forms import InterventionForm, InterventionCreateForm, ProjectForm
 
 
 class InterventionLayer(MapEntityLayer):
@@ -32,7 +32,7 @@ class InterventionDetail(MapEntityDetail):
 
 class InterventionCreate(MapEntityCreate):
     model = Intervention
-    form_class = InterventionForm
+    form_class = InterventionCreateForm
 
 
 class InterventionUpdate(MapEntityUpdate):

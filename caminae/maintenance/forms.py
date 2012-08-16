@@ -6,7 +6,7 @@ from crispy_forms.layout import Field
 from caminae.mapentity.forms import MapEntityForm
 from caminae.core.widgets import PointOrMultipathWidget
 
-from .models import Intervention, Project
+from .models import Intervention, InterventionStatus, Project
 
 
 class InterventionForm(MapEntityForm):
@@ -17,7 +17,7 @@ class InterventionForm(MapEntityForm):
             'structure',
             'date',
             'status',
-            'typology',
+            'type',
             'disorders',
             Field('comments', css_class='input-xlarge'),
             'in_maintenance',
@@ -51,7 +51,27 @@ class InterventionForm(MapEntityForm):
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topology', 'jobs')  # TODO
+        exclude = ('deleted', 'topology', 'jobs')  # TODO: inline formset for jobs
+
+
+class InterventionCreateForm(InterventionForm):
+    def __init__(self, *args, **kwargs):
+        super(InterventionCreateForm, self).__init__(*args, **kwargs)
+        requestedstatus = InterventionStatus.objects.all()[0]
+        self.fields['status'] = forms.ChoiceField(choices=[(requestedstatus.pk, unicode(requestedstatus))])
+
+    class Meta(InterventionForm.Meta):
+        exclude = InterventionForm.Meta.exclude + (
+            'length',
+            'height',
+            'width',
+            'area',
+            'slope',
+            'material_cost',
+            'heliport_cost',
+            'subcontract_cost',
+            'stake',
+            'project', )
 
 
 class ProjectForm(MapEntityForm):
