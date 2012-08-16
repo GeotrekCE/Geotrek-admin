@@ -69,8 +69,10 @@ class MapEntityList(ListView):
         return mapentity_models.ENTITY_LIST
 
     @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(MapEntityList, self).dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        # Save last list visited in session
+        request.session['last_list'] = request.path
+        return super(MapEntityList, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityList, self).get_context_data(**kwargs)
