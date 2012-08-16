@@ -26,7 +26,7 @@
         <!-- Onglets Recherche/Fiche/Histo -->
         <div class="row-fluid">
             <ul class="nav nav-tabs">
-                <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url home %}">{% trans "Search" %}<span id="nbresults"></span></a></li>
+                <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url home %}">{% trans "Search" %} <span id="nbresults" class="badge">?</span></a></li>
                 {% for item in request.session.history %}
                     <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %}"><a href="{{ item.1 }}">{{ item.0 }}</a></li>
                 {% endfor %}

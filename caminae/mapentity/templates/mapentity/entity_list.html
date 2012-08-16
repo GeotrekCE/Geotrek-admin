@@ -167,6 +167,8 @@
 
                 dt.fnReloadAjax(url, extract_data_and_pks, function() {
                     spinner.stop();
+                    // Show and save number of results
+                    MapEntity.showNumberSearchResults(dt.fnSettings().fnRecordsTotal());
                     cb.apply(cb, arguments);
                 });
 
