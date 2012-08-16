@@ -100,7 +100,7 @@ class Path(MapEntityMixin, StructureRelated):
 
 
 class TopologyMixin(models.Model):
-    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
+    paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
     kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
 
