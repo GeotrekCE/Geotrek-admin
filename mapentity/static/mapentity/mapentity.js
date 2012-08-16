@@ -461,3 +461,12 @@ MapEntity.resetForm = function resetForm($form) {
          .removeAttr('checked').removeAttr('selected');
 }
 
+MapEntity.showNumberSearchResults = function (nb) {
+    if (arguments.length > 0) {
+        localStorage.setItem('list-search-results', nb);
+    }
+    else {
+        nb = localStorage.getItem('list-search-results') || '?';
+    }
+    $('#nbresults').text(nb);
+}
