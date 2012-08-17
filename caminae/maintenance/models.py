@@ -31,7 +31,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     #TODO: remove this --> abstract class
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, verbose_name=_(u"Deleted"))
 
     """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
@@ -55,6 +55,11 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
+    class Meta:
+        db_table = 'interventions'
+        verbose_name = _(u"Intervention")
+        verbose_name_plural = _(u"Interventions")
+
     def set_infrastructure(self, baseinfra):
         if not isinstance(baseinfra, (Infrastructure, Signage)):
             raise ValueError("Expecting an infrastructure or signage")
@@ -76,11 +81,6 @@ class Intervention(MapEntityMixin, StructureRelated):
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
-
-    class Meta:
-        db_table = 'interventions'
-        verbose_name = _(u"Intervention")
-        verbose_name_plural = _(u"Interventions")
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.date)

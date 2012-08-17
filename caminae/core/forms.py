@@ -19,8 +19,8 @@ class TopologyMixinForm(MapEntityForm):
 
     def clean(self):
         cleaned_data = super(TopologyMixinForm, self).clean()
-        geom = cleaned_data.pop("geom")
         # TODO remove geom, assign topology
+        #geom = cleaned_data.pop("geom")
         return cleaned_data
 
     class Meta:

@@ -20,6 +20,10 @@ class ViewsTest(MapEntityTest):
     modelfactory = PathFactory
     userfactory = PathManagerFactory
 
+    def get_bad_data(self):
+        baddata, msg = super(ViewsTest, self).get_bad_data()
+        return baddata, u'Acune valeur g\xe9om\xe9trique fournie.'
+
     def get_good_data(self):
         return {
             'name': '',

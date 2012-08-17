@@ -73,8 +73,13 @@ class TopologyWidget(MapEntityWidget):
 
     def value_from_datadict(self, data, files, name):
         value = forms.Textarea.value_from_datadict(self, data, files, name)
-        # TODO catch validation error ?
-        return self.deserialize(value)
+        if not value:  # Empty value submitted
+            return None
+        try:
+            return self.deserialize(value)
+        except (ValueError, simplejson.JSONDecodeError):
+            # TODO: raise validation error
+            return None
 
     def deserialize(self, objstr):
         objdict = simplejson.loads(objstr)
@@ -82,12 +87,18 @@ class TopologyWidget(MapEntityWidget):
         kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else TopologyMixin.get_kind()
         topology = TopologyMixinFactory.create(kind=kind)
         topology.offset = objdict.get('offset', 0.0)
-        for path in objdict['paths']:
-            aggr = PathAggregation(topo_object=topology,
-                                   start_position=path.get('start', 0.0),
-                                   end_position=path.get('end', 1.0),
-                                   path=Path.objects.get(pk=path['path']))
-            aggr.save()
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        for aggrdict in objdict['paths']:
+            try:
+                path = Path.objects.get(pk=aggrdict['path'])
+            except Path.DoesNotExist:
+                # TODO raise ValueError(str(e))
+                path = Path.objects.all()[0]
+            aggrobj = PathAggregation(topo_object=topology,
+                                   start_position=aggrdict.get('start', 0.0),
+                                   end_position=aggrdict.get('end', 1.0),
+                                   path=path)
+            aggrobj.save()
         return topology
 
     def serialize(self, topology):
