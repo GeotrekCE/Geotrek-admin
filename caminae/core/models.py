@@ -118,13 +118,17 @@ class TopologyMixin(models.Model):
     geom = models.LineStringField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
                                   spatial_index=False, dim=3)
 
-    def __unicode__(self):
-        return u"%s (%s)" % (_(u"Topology"), self.pk)
-
     class Meta:
         db_table = 'evenements'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
+
+    def __init__(self, *args, **kwargs):
+        super(TopologyMixin, self).__init__(*args, **kwargs)
+        self.kind = self.get_kind()
+
+    def __unicode__(self):
+        return u"%s (%s)" % (_(u"Topology"), self.pk)
 
     @classmethod
     def get_kind(cls):

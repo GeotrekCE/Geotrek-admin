@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import Point, LineString, GeometryCollection
+from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.factories import TopologyMixinFactory
 from caminae.common.models import Organism
+from caminae.infrastructure.models import Infrastructure, Signage
 
 
 class Intervention(MapEntityMixin, StructureRelated):
@@ -35,7 +34,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
     """ Topology can be of type Infrastructure or of own type Intervention """
-    topology = models.ForeignKey(TopologyMixin, null=True,
+    topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
 
@@ -56,9 +55,23 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
+    def set_infrastructure(self, baseinfra):
+        if not isinstance(baseinfra, (Infrastructure, Signage)):
+            raise ValueError("Expecting an infrastructure or signage")
+        self.topology = baseinfra
+
+    @property
+    def on_infrastructure(self):
+        if self.topology:
+            return self.topology.kind.pk == Infrastructure.get_kind().pk or \
+                   self.topology.kind.pk == Signage.get_kind().pk
+        return False
+
     @property
     def geom(self):
-        return self.topology.geom
+        if self.topology:
+            return self.topology.geom
+        return None
 
     @property
     def name_display(self):
