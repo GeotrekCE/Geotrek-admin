@@ -1,9 +1,10 @@
+from django import forms
 from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
 from caminae.core.fields import PointLineTopologyField
 
-from .models import Intervention, Project
+from .models import Intervention, InterventionStatus, Project
 
 
 class InterventionForm(MapEntityForm):
@@ -39,8 +40,9 @@ class InterventionForm(MapEntityForm):
 class InterventionCreateForm(InterventionForm):
     def __init__(self, *args, **kwargs):
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
-        requestedstatus = InterventionStatus.objects.all()[0]
-        self.fields['status'] = forms.ChoiceField(choices=[(requestedstatus.pk, unicode(requestedstatus))])
+        # Limit status choices to first one only ("requested")
+        first = InterventionStatus.objects.all()[0]
+        self.fields['status'] = forms.ModelChoiceField(queryset=InterventionStatus.objects.filter(pk=first.pk))
 
     class Meta(InterventionForm.Meta):
         exclude = InterventionForm.Meta.exclude + (

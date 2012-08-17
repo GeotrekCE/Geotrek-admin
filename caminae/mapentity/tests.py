@@ -52,7 +52,9 @@ class MapEntityTest(TestCase):
 
             response = self.client.post(url, self.get_good_data())
             if response.status_code != 302:
+                print response.content
                 self.assertEqual(response.context['form'].errors, [])  # this will show form errors
+                
             self.assertEqual(response.status_code, 302)  # success, redirects to detail view
 
         response = self.client.get(obj.get_delete_url())

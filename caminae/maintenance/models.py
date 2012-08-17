@@ -94,6 +94,7 @@ class InterventionStatus(StructureRelated):
         db_table = 'bib_de_suivi'
         verbose_name = _(u"Intervention's status")
         verbose_name_plural = _(u"Intervention's statuses")
+        ordering = ['id']
 
     def __unicode__(self):
         return self.status
