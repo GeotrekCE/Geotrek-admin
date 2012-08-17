@@ -7,7 +7,7 @@ class MapEntityTest(TestCase):
     userfactory = None
 
     def get_bad_data(self):
-        return {'geom': 'doh!'}, u'Acune valeur g\xe9om\xe9trique fournie.'
+        return {'geom': 'doh!'}, u'Ce champ est obligatoire.'
 
     def get_good_data(self):
         raise NotImplementedError()
