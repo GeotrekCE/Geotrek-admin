@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.utils import simplejson
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
@@ -148,6 +149,44 @@ class TopologyMixin(models.Model):
         self.length = tmp.length
         self.geom = tmp.geom
 
+    @classmethod
+    def deserialize(cls, serialized):
+        from .factories import TopologyMixinFactory
+        objdict = serialized
+        if isinstance(serialized, basestring):
+            try:
+                objdict = simplejson.loads(serialized)
+            except simplejson.JSONDecodeError, e:
+                raise ValueError(_("Invalid serialized topology: %s") % e)
+
+        kind = objdict.get('kind')
+        kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else cls.get_kind()
+        topology = TopologyMixinFactory.create(kind=kind)
+        topology.offset = objdict.get('offset', 0.0)
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        for aggrdict in objdict['paths']:
+            try:
+                path = Path.objects.get(pk=aggrdict['path'])
+            except Path.DoesNotExist, e:
+                # TODO raise ValueError(str(e)), fix tests before uncommenting
+                path = Path.objects.all()[0]
+            aggrobj = PathAggregation(topo_object=topology,
+                                      start_position=aggrdict.get('start', 0.0),
+                                      end_position=aggrdict.get('end', 1.0),
+                                      path=path)
+            aggrobj.save()
+        return topology
+
+    def serialize(self):
+        paths = []
+        for aggregation in self.aggregations.all():
+            paths.append(dict(start=aggregation.start_position,
+                              end=aggregation.end_position,
+                              path=aggregation.path.pk))
+        objdict = dict(kind=self.kind.pk,
+                       offset=self.offset,
+                       paths=paths)
+        return simplejson.dumps(objdict)
 
 class TopologyMixinKind(models.Model):
 

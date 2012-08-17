@@ -1,11 +1,9 @@
 from django.conf import settings
-from django.utils import simplejson
+
 import floppyforms as forms
 
 from caminae.common.utils import wkt_to_geom
-from .models import Path, TopologyMixin, TopologyMixinKind, PathAggregation
-from .factories import TopologyMixinFactory
-
+from .models import TopologyMixin
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
     template_name = 'core/formfieldmap_fragment.html'
@@ -55,12 +53,12 @@ class TopologyWidget(MapEntityWidget):
     def get_context(self, name, value, *args, **kwargs):
         if isinstance(value, basestring):
             try:
-                value = self.deserialize(value)
+                value = TopologyMixin.deserialize(value)
             except ValueError:
                 value = None
         topologyjson = ''
         if value:
-            topologyjson = self.serialize(value)
+            topologyjson = value.serialize()
         context = forms.Textarea.get_context(self, name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')
         context['is_multipath'] = self.is_multipath
@@ -73,44 +71,7 @@ class TopologyWidget(MapEntityWidget):
 
     def value_from_datadict(self, data, files, name):
         value = forms.Textarea.value_from_datadict(self, data, files, name)
-        if not value:  # Empty value submitted
-            return None
-        try:
-            return self.deserialize(value)
-        except (ValueError, simplejson.JSONDecodeError):
-            # TODO: raise validation error
-            return None
-
-    def deserialize(self, objstr):
-        objdict = simplejson.loads(objstr)
-        kind = objdict.get('kind')
-        kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else TopologyMixin.get_kind()
-        topology = TopologyMixinFactory.create(kind=kind)
-        topology.offset = objdict.get('offset', 0.0)
-        PathAggregation.objects.filter(topo_object=topology).delete()
-        for aggrdict in objdict['paths']:
-            try:
-                path = Path.objects.get(pk=aggrdict['path'])
-            except Path.DoesNotExist:
-                # TODO raise ValueError(str(e))
-                path = Path.objects.all()[0]
-            aggrobj = PathAggregation(topo_object=topology,
-                                   start_position=aggrdict.get('start', 0.0),
-                                   end_position=aggrdict.get('end', 1.0),
-                                   path=path)
-            aggrobj.save()
-        return topology
-
-    def serialize(self, topology):
-        paths = []
-        for aggregation in topology.aggregations.all():
-            paths.append(dict(start=aggregation.start_position,
-                              end=aggregation.end_position,
-                              path=aggregation.path.pk))
-        objdict = dict(kind=topology.kind.pk,
-                       offset=topology.offset,
-                       paths=paths)
-        return simplejson.dumps(objdict)
+        return value
 
 
 class PointTopologyWidget(TopologyWidget, PointWidget):
