@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
 from caminae.common.utils import distance3D
@@ -127,11 +128,13 @@ class TopologyMixin(models.Model):
 
     @classmethod
     def get_kind(cls):
-        # TODO : raise not implemented!
-        from .factories import TopologyMixinKindFactory
-        return TopologyMixinKindFactory.create()
+        name = cls._meta.object_name
+        return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
     def save(self, *args, **kwargs):
+        self.kind = self.get_kind()
+        # TODO: do this in triggers
+        self.geom = LineString([Point(0,0,0), Point(1,1,0)])
         super(TopologyMixin, self).save(*args, **kwargs)
 
         # Update computed values
