@@ -7,7 +7,7 @@ class MapEntityTest(TestCase):
     userfactory = None
 
     def get_bad_data(self):
-        return {'geom': 'doh!'}, u'Ce champ est obligatoire.'
+        return {'geom': 'doh!'}, u'Topology is not valid.'
 
     def get_good_data(self):
         raise NotImplementedError()
