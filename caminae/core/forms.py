@@ -1,40 +1,30 @@
 from math import isnan
 
-from django.contrib.gis.geos import LineString, Point
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString
 
 import floppyforms as forms
 from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
-
 from .models import Path
-from .widgets import MultiPathWidget, LineStringWidget
-from .factories import TopologyMixinFactory, PathAggregationFactory
+from .fields import TopologyField
+from .widgets import LineStringWidget
 
 
 class TopologyMixinForm(MapEntityForm):
-    geom = forms.gis.GeometryField(widget=MultiPathWidget)
+    """ We use the geom field to build the topology instead of adding a dedicated field """
+    geom = TopologyField()
     geomfields = ('geom', )
 
-    def save(self, commit=True, **kwargs):
-        obj = super(TopologyMixinForm, self).save(commit=False, **kwargs)
-        # TODO: this is completely wrong, but we have no topology editor yet
-        topo_object = TopologyMixinFactory.create()
-        obj.topo_object = topo_object
-        obj.date_insert = topo_object.date_insert
-        obj.date_update = topo_object.date_update
-        obj.delete = topo_object.delete
-        obj.kind = topo_object.kind
-        obj.geom = LineString(Point(0,0,0), Point(1,1,0))
-        obj.offset = topo_object.offset
-        if commit:
-            obj.save()
-        PathAggregationFactory.create(topo_object=obj)
-        return obj
+    def clean(self):
+        cleaned_data = super(TopologyMixinForm, self).clean()
+        # TODO remove geom, assign topology
+        #geom = cleaned_data.pop("geom")
+        return cleaned_data
 
     class Meta:
-        exclude = ('deleted', 'kind', 'troncons', 'offset')
+        exclude = ('offset',)
 
 
 class PathForm(MapEntityForm):

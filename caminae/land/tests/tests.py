@@ -17,7 +17,7 @@ class PhysicalEdgeViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'physical_type': PhysicalTypeFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }
 
 
@@ -29,7 +29,7 @@ class LandEdgeViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'land_type': LandTypeFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }
 
 
@@ -41,7 +41,7 @@ class CompetenceEdgeViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }
 
 
@@ -53,7 +53,7 @@ class WorkManagementEdgeViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }
 
 
@@ -66,5 +66,5 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
     def get_good_data(self):
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }

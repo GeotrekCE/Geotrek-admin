@@ -15,6 +15,10 @@ class InterventionViewsTest(MapEntityTest):
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
 
+    def get_bad_data(self):
+        baddata, msg = super(InterventionViewsTest, self).get_bad_data()
+        return {'topology': 'doh!'}, msg
+
     def get_good_data(self):
         return {
             'name': 'test',
@@ -33,7 +37,7 @@ class InterventionViewsTest(MapEntityTest):
             'status': InterventionStatusFactory.create().pk,
             'heliport_cost': 0.0,
             'material_cost': 0.0,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'topology': '{"paths": [{"path": 1}]}',
         }
 
 

@@ -18,7 +18,7 @@ class InfrastructureViewsTest(MapEntityTest):
             'description': 'oh',
             'structure': default_structure().pk,
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'geom': '{"paths": [{"path": 1}]}',
         }
 
 

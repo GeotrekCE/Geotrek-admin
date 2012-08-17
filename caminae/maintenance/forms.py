@@ -1,16 +1,14 @@
-from django.contrib.gis.geos import Point, LineString
-
-import floppyforms as forms
 from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
-from caminae.core.widgets import PointOrMultipathWidget
+from caminae.core.fields import PointLineTopologyField
 
-from .models import Intervention, InterventionStatus, Project
+from .models import Intervention, Project
 
 
 class InterventionForm(MapEntityForm):
-    geom = forms.gis.GeometryField(widget=PointOrMultipathWidget)
+    """ An intervention can be a Point or a Line """
+    topology = PointLineTopologyField()
 
     modelfields = (
             'name',
@@ -31,27 +29,11 @@ class InterventionForm(MapEntityForm):
             'subcontract_cost',
             'stake',
             'project',)
-    geomfields = ('geom',)
-
-    def save(self, commit=True):
-        intervention = super(InterventionForm, self).save(commit)
-        if not commit:
-            return intervention
-        
-        geom = self.cleaned_data.get('geom')
-        if not geom:
-            pass  # raise ValueError !
-
-        if isinstance(geom, Point):
-            intervention.initFromPoint(geom)
-        elif isinstance(geom, LineString):
-            # TODO: later it should be list of Path objects (from list of pks in form)
-            intervention.initFromPathsList(geom)
-        return intervention
+    geomfields = ('topology',)
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topology', 'jobs')  # TODO: inline formset for jobs
+        exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
 
 
 class InterventionCreateForm(InterventionForm):

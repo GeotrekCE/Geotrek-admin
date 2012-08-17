@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import Point, LineString, GeometryCollection
+from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.factories import TopologyMixinFactory
 from caminae.common.models import Organism
+from caminae.infrastructure.models import Infrastructure, Signage
 
 
 class Intervention(MapEntityMixin, StructureRelated):
@@ -32,12 +31,12 @@ class Intervention(MapEntityMixin, StructureRelated):
     #TODO: remove this --> abstract class
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, verbose_name=_(u"Deleted"))
 
-    ## Relations ##
-    topology = models.ForeignKey(TopologyMixin, null=True,
-                related_name="interventions",
-                verbose_name=_(u"Interventions"))
+    """ Topology can be of type Infrastructure or of own type Intervention """
+    topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
+                                 related_name="interventions",
+                                 verbose_name=_(u"Interventions"))
 
     stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"))
@@ -56,43 +55,32 @@ class Intervention(MapEntityMixin, StructureRelated):
     project = models.ForeignKey('Project', null=True, blank=True,
             verbose_name=_(u"Project"))
 
-    def initFromPathsList(self, pathlist, constraints=None):
-        # TODO: pathlist is now a geom
-        topology = TopologyMixinFactory.create(geom=pathlist)
-        self.topology = topology
-        self.save()
-
-    def initFromInfrastructure(self, infrastructure):
-        raise NotImplementedError
-
-    def initFromPoint(self, point):
-        """
-        Initialize the intervention topology from a Point.
-        """
-        # TODO : compute offset etc.
-        fakeline = LineString(Point(point.x, point.y, 0), Point(point.x+0.1, point.y+0.1, 0))
-        topology = TopologyMixinFactory.create(geom=fakeline)
-        self.topology = topology
-        self.save()
-
-    @property
-    def geom(self):
-        if self.topology:
-            if len(list(self.topology.geom.coords)) == 2:
-                fakepoint = Point(*self.topology.geom.coords[0], srid=settings.SRID)  # return Point from fakeline
-                return fakepoint
-            else:
-                return self.topology.geom
-        return Point(0,0,0)
-
-    @property
-    def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
-
     class Meta:
         db_table = 'interventions'
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
+
+    def set_infrastructure(self, baseinfra):
+        if not isinstance(baseinfra, (Infrastructure, Signage)):
+            raise ValueError("Expecting an infrastructure or signage")
+        self.topology = baseinfra
+
+    @property
+    def on_infrastructure(self):
+        if self.topology:
+            return self.topology.kind.pk == Infrastructure.get_kind().pk or \
+                   self.topology.kind.pk == Signage.get_kind().pk
+        return False
+
+    @property
+    def geom(self):
+        if self.topology:
+            return self.topology.geom
+        return None
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.date)

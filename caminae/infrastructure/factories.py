@@ -20,7 +20,6 @@ class InfrastructureFactory(TopologyMixinFactory):
     type = factory.SubFactory(InfrastructureTypeFactory)
 
 
-
 class SignageFactory(TopologyMixinFactory):
     FACTORY_FOR = models.Signage
 

@@ -7,15 +7,22 @@ from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
-from caminae.core.factories import PathFactory, TopologyMixinFactory, TopologyMixinKindFactory
-from caminae.core.models import Path
-from caminae.land.models import (City, RestrictedArea)
+from caminae.core.factories import PathFactory, TopologyMixinFactory
+from caminae.core.models import Path, TopologyMixin, TopologyMixinKind
+
+# TODO caminae.core should be self sufficient
+from caminae.land.models import (City, RestrictedArea, LandEdge)
+from caminae.land.factories import LandEdgeFactory
 
 
 class ViewsTest(MapEntityTest):
     model = Path
     modelfactory = PathFactory
     userfactory = PathManagerFactory
+
+    def get_bad_data(self):
+        baddata, msg = super(ViewsTest, self).get_bad_data()
+        return baddata, u'Acune valeur g\xe9om\xe9trique fournie.'
 
     def get_good_data(self):
         return {
@@ -168,7 +175,7 @@ class PathTest(TestCase):
 class TopologyMixinTest(TestCase):
     def test_dates(self):
         t1 = dbnow()
-        e = TopologyMixinFactory()
+        e = TopologyMixinFactory.build()
         e.save()
         t2 = dbnow()
         self.assertTrue(t1 < e.date_insert < t2)
@@ -179,7 +186,36 @@ class TopologyMixinTest(TestCase):
         self.assertTrue(t2 < e.date_update < t3)
 
     def test_length(self):
-        e = TopologyMixinFactory.build(kind=TopologyMixinKindFactory())
+        e = TopologyMixinFactory.build()
         self.assertEqual(e.length, 0)
         e.save()
         self.assertNotEqual(e.length, 0)
+
+    def test_kind(self):
+        self.assertEqual('TopologyMixin', TopologyMixin.get_kind().kind)
+        self.assertEqual(0, len(TopologyMixinKind.objects.filter(kind='LandEdge')))
+        self.assertEqual('LandEdge', LandEdge.get_kind().kind)
+        self.assertEqual(1, len(TopologyMixinKind.objects.filter(kind='LandEdge')))
+        pk = LandEdge.get_kind().pk
+        # Kind of instances
+        e = LandEdgeFactory.create()
+        self.assertEqual(e.kind, LandEdge.get_kind())
+        self.assertEqual(pk, e.get_kind().pk)
+
+    def test_serialize(self):
+        topology = TopologyMixinFactory.create()
+        self.assertEqual(len(topology.paths.all()), 1)
+        pathpk = topology.paths.all()[0].pk
+        kindpk = topology.kind.pk
+        fieldvalue = topology.serialize()
+        self.assertEqual(fieldvalue, '{"paths": [{"path": %s, "end": 1.0, "start": 0.0}], "kind": %s, "offset": 1}' % (pathpk, kindpk))
+
+    def test_deserialize(self):
+        path = PathFactory.create()
+        topology = TopologyMixin.deserialize('{"paths": [{"path": %s, "end": 1.0, "start": 0.0}], "offset": 1}' % (path.pk))
+        self.assertEqual(topology.offset, 1)
+        self.assertEqual(topology.kind, TopologyMixin.get_kind())
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.aggregations.all()[0].path, path)
+        self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)

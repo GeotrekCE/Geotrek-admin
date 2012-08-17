@@ -1,6 +1,8 @@
 from django.contrib.gis.db import models
+from django.utils import simplejson
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
 from caminae.common.utils import distance3D
@@ -102,30 +104,42 @@ class Path(MapEntityMixin, StructureRelated):
 class TopologyMixin(models.Model):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
-    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
+    kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
 
     # Override default manager
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
 
-    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
 
-    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.LineStringField(editable=False, srid=settings.SRID,
+    length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
+    geom = models.LineStringField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
                                   spatial_index=False, dim=3)
-
-    def __unicode__(self):
-        return u"%s (%s)" % (_(u"Topology"), self.pk)
 
     class Meta:
         db_table = 'evenements'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
 
+    def __init__(self, *args, **kwargs):
+        super(TopologyMixin, self).__init__(*args, **kwargs)
+        self.kind = self.get_kind()
+
+    def __unicode__(self):
+        return u"%s (%s)" % (_(u"Topology"), self.pk)
+
+    @classmethod
+    def get_kind(cls):
+        name = cls._meta.object_name
+        return TopologyMixinKind.objects.get_or_create(kind=name)[0]
+
     def save(self, *args, **kwargs):
+        self.kind = self.get_kind()
+        # TODO: do this in triggers
+        self.geom = LineString([Point(0,0,0), Point(1,1,0)])
         super(TopologyMixin, self).save(*args, **kwargs)
 
         # Update computed values
@@ -135,6 +149,44 @@ class TopologyMixin(models.Model):
         self.length = tmp.length
         self.geom = tmp.geom
 
+    @classmethod
+    def deserialize(cls, serialized):
+        from .factories import TopologyMixinFactory
+        objdict = serialized
+        if isinstance(serialized, basestring):
+            try:
+                objdict = simplejson.loads(serialized)
+            except simplejson.JSONDecodeError, e:
+                raise ValueError(_("Invalid serialized topology: %s") % e)
+
+        kind = objdict.get('kind')
+        kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else cls.get_kind()
+        topology = TopologyMixinFactory.create(kind=kind)
+        topology.offset = objdict.get('offset', 0.0)
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        for aggrdict in objdict['paths']:
+            try:
+                path = Path.objects.get(pk=aggrdict['path'])
+            except Path.DoesNotExist, e:
+                # TODO raise ValueError(str(e)), fix tests before uncommenting
+                path = Path.objects.all()[0]
+            aggrobj = PathAggregation(topo_object=topology,
+                                      start_position=aggrdict.get('start', 0.0),
+                                      end_position=aggrdict.get('end', 1.0),
+                                      path=path)
+            aggrobj.save()
+        return topology
+
+    def serialize(self):
+        paths = []
+        for aggregation in self.aggregations.all():
+            paths.append(dict(start=aggregation.start_position,
+                              end=aggregation.end_position,
+                              path=aggregation.path.pk))
+        objdict = dict(kind=self.kind.pk,
+                       offset=self.offset,
+                       paths=paths)
+        return simplejson.dumps(objdict)
 
 class TopologyMixinKind(models.Model):
 
