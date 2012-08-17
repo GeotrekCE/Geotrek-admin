@@ -54,8 +54,6 @@ def view_class_to_url(view_class):
     model = view_class.model
     url_name = model.get_url_name_for_registration(kind)
     url_path = kind_to_urlpath[kind](kind, model)
-
-    print url_name
     return url(url_path, view_class.as_view(), name=url_name)
 
 def view_classes_to_url(*view_classes):
