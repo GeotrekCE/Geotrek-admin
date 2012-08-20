@@ -72,5 +72,5 @@ class TrekViewsTest(MapEntityTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'geom': '{"paths": [{"path": 1}]}',
+            'geom': '{"paths": [1]}',
         }

@@ -37,7 +37,6 @@ class GeometryWidget(LeafletMapWidget):
 
     def value_from_datadict(self, data, files, name):
         wkt = super(GeometryWidget, self).value_from_datadict(data, files, name)
-        print wkt
         return None if not wkt else wkt_to_geom(wkt)
 
     def get_context(self, name, value, attrs=None, extra_context={}):
@@ -67,7 +66,10 @@ class TopologyWidget(forms.Textarea):
     display_json = settings.DEBUG
     is_multipath = True
     is_point = False
-    
+
+    def value_from_datadict(self, data, files, name):
+        return data.get(name)
+
     def get_context(self, name, value, *args, **kwargs):
         if isinstance(value, basestring):
             try:

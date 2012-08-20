@@ -38,7 +38,7 @@ class InterventionViewsTest(MapEntityTest):
             'status': InterventionStatus.objects.all()[0].pk,
             'heliport_cost': 0.0,
             'material_cost': 0.0,
-            'topology': '{"paths": [{"path": 1}]}',
+            'topology': '{"paths": [1]}',
         }
 
 

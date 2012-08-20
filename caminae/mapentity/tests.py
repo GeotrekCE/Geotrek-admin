@@ -50,7 +50,7 @@ class MapEntityTest(TestCase):
         
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 200)
-        
+
         for url in [self.model.get_add_url(), obj.get_update_url()]:
             # no data
             response = self.client.post(url)
@@ -63,7 +63,6 @@ class MapEntityTest(TestCase):
 
             response = self.client.post(url, self.get_good_data())
             if response.status_code != 302:
-                print response.content
                 self.assertEqual(response.context['form'].errors, [])  # this will show form errors
                 
             self.assertEqual(response.status_code, 302)  # success, redirects to detail view

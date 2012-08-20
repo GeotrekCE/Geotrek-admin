@@ -208,7 +208,7 @@ class TopologyMixinTest(TestCase):
         pathpk = topology.paths.all()[0].pk
         kindpk = topology.kind.pk
         fieldvalue = topology.serialize()
-        self.assertEqual(fieldvalue, '{"paths": [%s], "start": 0.0, "end": 1.0, "kind": %s, "offset": 1}' % (pathpk, kindpk))
+        self.assertEqual(fieldvalue, '{"paths": [%s], "kind": %s, "end": 1.0, "start": 0.0, "offset": 1}' % (pathpk, kindpk))
 
     def test_deserialize(self):
         path = PathFactory.create()

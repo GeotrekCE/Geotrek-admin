@@ -170,17 +170,17 @@ class TopologyMixin(models.Model):
         topology.offset = objdict.get('offset', 0.0)
         PathAggregation.objects.filter(topo_object=topology).delete()
         
-        for i, aggrdict in enumerate(paths):
+        for i, path in enumerate(paths):
             try:
-                path = Path.objects.get(pk=aggrdict['path'])
+                path = Path.objects.get(pk=path)
             except Path.DoesNotExist, e:
                 # TODO raise ValueError(str(e)), fix tests before uncommenting
                 path = Path.objects.all()[0]
             start_position = start if i==0 else 0.0
             end_position = end if i==len(paths)-1 else 1.0
             aggrobj = PathAggregation(topo_object=topology,
-                                      start_position=start_position
-                                      end_position=end_position
+                                      start_position=start_position,
+                                      end_position=end_position,
                                       path=path)
             aggrobj.save()
         return topology
@@ -190,10 +190,10 @@ class TopologyMixin(models.Model):
         start = 1.0
         end = 0.0
         for aggregation in self.aggregations.all():
-            if aggregation.start < start:
-                start = aggregation.start
-            if aggregation.end > end:
-                end = aggregation.end
+            if aggregation.start_position < start:
+                start = aggregation.start_position
+            if aggregation.end_position > end:
+                end = aggregation.end_position
             paths.append(aggregation.path.pk)
         objdict = dict(kind=self.kind.pk,
                        offset=self.offset,
