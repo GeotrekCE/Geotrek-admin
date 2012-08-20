@@ -107,14 +107,12 @@ FormField.makeModule = function(module, module_settings) {
                     var new_edges = data['new_edges'],
                         paths = [];
                     for (var i=0; i<new_edges.length; i++) {
-                        paths.push({
-                            start: 0.0,  // TODO: until now, always start at 0
-                            end: 1.0,
-                            path: new_edges[i].id
-                        });
+                        paths.push(new_edges[i].id);
                     }
                     var topology = {
                         offset: 0,  // TODO: input for offset
+                        start: 0.0,  // TODO: until now, always start at 0
+                        end: 1.0,
                         paths: paths,
                     };
                     layerStore.storeTopologyInField(topology);

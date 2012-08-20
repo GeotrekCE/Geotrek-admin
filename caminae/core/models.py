@@ -161,32 +161,44 @@ class TopologyMixin(models.Model):
             except simplejson.JSONDecodeError, e:
                 raise ValueError(_("Invalid serialized topology: %s") % e)
 
+        start = objdict.get('start', 0.0)
+        end = objdict.get('end', 1.0)
+        paths = objdict['paths']
         kind = objdict.get('kind')
         kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else cls.get_kind()
         topology = TopologyMixinFactory.create(kind=kind)
         topology.offset = objdict.get('offset', 0.0)
         PathAggregation.objects.filter(topo_object=topology).delete()
-        for aggrdict in objdict['paths']:
+        
+        for i, aggrdict in enumerate(paths):
             try:
                 path = Path.objects.get(pk=aggrdict['path'])
             except Path.DoesNotExist, e:
                 # TODO raise ValueError(str(e)), fix tests before uncommenting
                 path = Path.objects.all()[0]
+            start_position = start if i==0 else 0.0
+            end_position = end if i==len(paths)-1 else 1.0
             aggrobj = PathAggregation(topo_object=topology,
-                                      start_position=aggrdict.get('start', 0.0),
-                                      end_position=aggrdict.get('end', 1.0),
+                                      start_position=start_position
+                                      end_position=end_position
                                       path=path)
             aggrobj.save()
         return topology
 
     def serialize(self):
         paths = []
+        start = 1.0
+        end = 0.0
         for aggregation in self.aggregations.all():
-            paths.append(dict(start=aggregation.start_position,
-                              end=aggregation.end_position,
-                              path=aggregation.path.pk))
+            if aggregation.start < start:
+                start = aggregation.start
+            if aggregation.end > end:
+                end = aggregation.end
+            paths.append(aggregation.path.pk)
         objdict = dict(kind=self.kind.pk,
                        offset=self.offset,
+                       start=start,
+                       end=end,
                        paths=paths)
         return simplejson.dumps(objdict)
 
