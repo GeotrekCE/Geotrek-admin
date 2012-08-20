@@ -2,35 +2,26 @@
 
 {% leaflet_map module fitextent=False %}
 <style type="text/css">
-    {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
+    {% if not display_json %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>
-
-<link rel="stylesheet" href="{% static "Leaflet.draw/leaflet.draw.css" %}"></link>
-<script type="text/javascript" src="{% static "Leaflet.draw/leaflet.draw.js" %}"></script>
 
 <script type="text/javascript" src="{% static "js/dijkstra.js" %}"></script>
 <script type="text/javascript" src="{% static "core/multipath.js" %}"></script>
 <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
 
 
-{% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
+{% if display_json %}<p> JSON debugging window:</p>{% endif %}
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
 if (! {{ module }}); var {{ module }} = {};
 
 var {{ module }}_settings = {
-    'enableDrawing': {
-        'is_polygon': {{ is_polygone|yesno:"true,false" }},
-        'is_marker': {{ is_point|yesno:"true,false" }},
-        'is_polyline': {{ is_linestring|yesno:"true,false" }}
-    },
     'enablePathSnapping': {
         'MIN_SNAP_ZOOM': {{ min_snap_zoom }},
         'pathsLayer_url': "{% url core:path_layer %}"
     },
     'addObjectsLayer': {
-        // OMG, another way for JS url rewriting
         'getUrl': function(modelname) {
             return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
         }
@@ -39,13 +30,14 @@ var {{ module }}_settings = {
         'path_json_graph_url': '{% url core:path_json_graph %}'
     },
     'init': {
-        'objectBounds': {{ field|latlngbounds }},
-        'pathsnapping': {{ path_snapping|yesno:"true,false" }},
+        'pathsnapping': true,
         'multipath': {{ is_multipath|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
-        'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
         'iconUrl': '{% static "images/marker-trans.png" %}',
-        'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}'
+        'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}',
+        
+        'json': '{{ topologyjson|safe }}',  // If creation, will be empty.
+        'objectBounds': {{ topology|latlngbounds }}
     }
 };
 

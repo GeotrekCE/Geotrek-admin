@@ -9,6 +9,9 @@ from .widgets import TopologyWidget, PointLineTopologyWidget
 
 
 class TopologyField(forms.CharField):
+    """
+    Instead of building a Point geometry, this field builds a Topology.
+    """
     widget = TopologyWidget
 
     default_error_messages = {

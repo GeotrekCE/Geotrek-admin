@@ -132,7 +132,7 @@ FormField.makeModule = function(module, module_settings) {
         /*** <Map bounds and reset> ***/
 
         var initialBounds = bounds,
-            objectBounds = module_settings.init.objectsBounds,
+            objectBounds = module_settings.init.objectBounds,
             currentBounds = objectBounds || initialBounds;
         getBounds = function () {
             return currentBounds;
@@ -206,21 +206,23 @@ FormField.makeModule = function(module, module_settings) {
 
         /*** <drawing> ***/
 
-        module.enableDrawing(map,
-            function (drawn_layer) {
-                map.addLayer(drawn_layer);
-                onNewLayer(drawn_layer);
-            },
-            function () {
-                var old_layer = layerStore.getLayer();
-                if (old_layer) {
-                    map.removeLayer(old_layer);
-                    if (snapObserver) snapObserver.remove(old_layer);
-                    currentBounds = initialBounds;
-                    layerStore.storeLayerGeomInField(null);
+        if (module_settings.init.enableDrawing) {
+            module.enableDrawing(map,
+                function (drawn_layer) {
+                    map.addLayer(drawn_layer);
+                    onNewLayer(drawn_layer);
+                },
+                function () {
+                    var old_layer = layerStore.getLayer();
+                    if (old_layer) {
+                        map.removeLayer(old_layer);
+                        if (snapObserver) snapObserver.remove(old_layer);
+                        currentBounds = initialBounds;
+                        layerStore.storeLayerGeomInField(null);
+                    }
                 }
-            }
-        );
+            );
+        }
 
         // TODO: I NEED paths.geojson ; have a function to get it
         var path_layer = snapObserver._guidesLayer; // objectsLayer,

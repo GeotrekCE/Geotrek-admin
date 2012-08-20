@@ -31,10 +31,6 @@ class MapEntityForm(forms.ModelForm):
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
         
-        # Hide label for geom :
-        for geomfield in self.geomfields:
-            self.fields[geomfield].label = False
-        
         # Get fields from subclasses
         fields = ('pk','model') + self.modelfields
         leftpanel = Div(
