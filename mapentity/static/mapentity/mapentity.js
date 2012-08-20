@@ -77,7 +77,6 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             for (var i in layer._layers) {
                 bounds.extend(layer._layers[i].getBounds());
             }
-            console.log(bounds);
         }
         else if (layer.getBounds) {
             bounds = layer.getBounds();
