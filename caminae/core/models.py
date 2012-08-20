@@ -118,7 +118,7 @@ class TopologyMixin(models.Model):
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
 
     length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.LineStringField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
+    geom = models.GeometryField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
                                   spatial_index=False, dim=3)
 
     class Meta:
