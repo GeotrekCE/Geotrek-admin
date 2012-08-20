@@ -38,6 +38,7 @@ Soon...
 * List TODO in Hudson
 * Generate project docs with Sphinx
 
+* Use localstorage instead of Django sessions for navigation history and last search
 
 ==========
 One day...

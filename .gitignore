@@ -3,20 +3,22 @@
 *.tar.gz
 *.mo
 
+/upload/
+/reports/
+/var/
+/etc/
+
 # buildout stuff
 .mr.developer.cfg
 src/
 .installed.cfg
 bin/
-etc/
 downloads/
 develop-eggs/
 eggs/
 parts/
 docs/_build/
-var/
 include/
-reports/
 lib/
 local/
 *.egg-info/
