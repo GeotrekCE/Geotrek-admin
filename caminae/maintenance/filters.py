@@ -8,6 +8,8 @@ from .models import Intervention, Project
 
 class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
+        if not value:
+            return qs
         lookup = self.lookup_type
         inner_qs = TopologyMixin.objects.filter(**{'geom__%s' % lookup: value})
         return qs.filter(**{'%s__in' % self.name: inner_qs})
