@@ -27,6 +27,9 @@ class PhysicalEdge(MapEntityMixin, TopologyMixin):
                                        db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'nature'
         verbose_name = _(u"Physical edge")
@@ -57,6 +60,9 @@ class LandEdge(MapEntityMixin, TopologyMixin):
                                        db_column='evenement')
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'foncier'
         verbose_name = _(u"Land edge")
@@ -74,6 +80,9 @@ class CompetenceEdge(MapEntityMixin, TopologyMixin):
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'competence'
         verbose_name = _(u"Competence edge")
@@ -89,6 +98,9 @@ class WorkManagementEdge(MapEntityMixin, TopologyMixin):
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'gestion_travaux'
         verbose_name = _(u"Work management edge")
@@ -103,6 +115,9 @@ class SignageManagementEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
+
+    # Override default manager
+    objects = models.GeoManager()
 
     class Meta:
         db_table = 'gestion_signaletique'
@@ -121,6 +136,9 @@ class RestrictedArea(models.Model):
     order = models.IntegerField(db_column='order', verbose_name=_(u"Order"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'couche_zonage_reglementaire'
         verbose_name = _(u"Restricted area")
@@ -135,6 +153,9 @@ class RestrictedAreaEdge(TopologyMixin):
                                        db_column='evenement')
     restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'zonage'
         verbose_name = _(u"Restricted area edge")
@@ -145,6 +166,9 @@ class City(models.Model):
     code = models.CharField(primary_key=True, max_length=6, db_column='insee')
     name = models.CharField(max_length=128, db_column='commune', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+
+    # Override default manager
+    objects = models.GeoManager()
 
     class Meta:
         db_table = 'couche_communes'
@@ -161,6 +185,9 @@ class CityEdge(TopologyMixin):
 
     city = models.ForeignKey(City, verbose_name=_(u"City"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 'commune'
         verbose_name = _(u"City edge")
@@ -170,6 +197,9 @@ class CityEdge(TopologyMixin):
 class District(models.Model):
     name = models.CharField(max_length=128, db_column='secteur', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+
+    # Override default manager
+    objects = models.GeoManager()
 
     class Meta:
         db_table = 'couche_secteurs'
@@ -184,6 +214,9 @@ class DistrictEdge(TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
                                        db_column='evenement')
     district = models.ForeignKey(District, verbose_name=_(u"District"))
+
+    # Override default manager
+    objects = models.GeoManager()
 
     class Meta:
         db_table = 'secteur'

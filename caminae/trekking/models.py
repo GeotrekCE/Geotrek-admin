@@ -52,6 +52,9 @@ class Trek(MapEntityMixin, TopologyMixin):
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             verbose_name=_(u"Web links"))
 
+    # Override default manager
+    objects = models.GeoManager()
+
     ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
     # trek_relationships = models.ManyToManyField("self", through="TrekRelationship", symmetrical=True)
@@ -205,6 +208,9 @@ class POI(MapEntityMixin, TopologyMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+
+    # Override default manager
+    objects = models.GeoManager()
 
     @property
     def type_display(self):

@@ -35,7 +35,8 @@
             <li class="divider-vertical"></li>
             {% if request.user.is_authenticated %}
                 <li><a href="#"><img src="{% static "images/icon-user-white.png" %}"/>
-                    {{ request.user }} ({{ request.user.profile.structure }})</a></li>
+                    {{ request.user }}&nbsp;<span class="badge badge-info">{{ request.user.profile.structure }}</span></a>
+                </li>
                 {% if request.user.is_staff %}
                     <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
                 {% endif %}
