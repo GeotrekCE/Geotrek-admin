@@ -70,7 +70,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.all_edges = [];
         this._container.style.cursor = 'w-resize';
 
-        this.cameleon = new Caminae.Cameleon(this.layerToId);
+        this.cameleon = new MapEntity.Cameleon(this.layerToId);
         this.graph_layer.on('click', this._onClick, this);
     },
 
@@ -217,50 +217,4 @@ Caminae.compute_path = (function() {
     // TODO: compute more than two steps
     return computeTwoStepsPath;
 
-})();
-
-
-// Simply store a layer, apply a color and restore the previous color
-Caminae.Cameleon = (function() {
-
-    var styleWrapper = function(layer) {
-        var initial_style = $.extend({}, layer.options);
-
-        var changeStyle = function(style) {
-            return function() {
-                layer.setStyle($.extend({}, initial_style, style));
-            };
-        };
-        return {
-              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , restoreStyle: changeStyle(initial_style)
-        };
-    };
-
-    // Camleon wrap a layer in a style
-    // layerToId is used to convert a layer to a key
-    function Cameleon(layerToHashable) {
-        var self = this;
-        var wrappedLayer = {};
-        this.create = function(layer) {
-            return wrappedLayer[layerToHashable(layer)] = styleWrapper(layer);
-        };
-        this.get = function(layer) {
-            return wrappedLayer[layerToHashable(layer)]
-        };
-        this.getOrCreate = function(layer) {
-            return self.get(layer) || this.create(layer);
-        };
-        this.pop = function(layer) {
-            var ret = self.get(layer)
-            if (ret)
-                delete wrappedLayer[layerToHashable(layer)];
-            return ret;
-        };
-    }
-
-    return Cameleon;
 })();
