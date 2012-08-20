@@ -1,6 +1,6 @@
 from caminae.core.models import TopologyMixin
 from caminae.common.filters import StructureRelatedFilterSet
-from caminae.mapentity.filters import PolygonFilter
+from caminae.mapentity.filters import PolygonFilter, PythonPolygonFilter
 from caminae.mapentity.widgets import GeomWidget
 
 from .models import Intervention, Project
@@ -23,7 +23,7 @@ class InterventionFilter(StructureRelatedFilterSet):
 
 
 class ProjectFilter(StructureRelatedFilterSet):
+    bbox = PythonPolygonFilter(name='geom', widget=GeomWidget)
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
         fields = StructureRelatedFilterSet.Meta.fields + ['begin_year', 'end_year']
-        exclude = ('bbox',)  # Project has no geom db field
