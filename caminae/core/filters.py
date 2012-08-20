@@ -1,12 +1,11 @@
 from .models import Path
 
-from caminae.mapentity.filters import MapEntityFilterSet
-from caminae.common.filters import OptionalRangeFilter
+from caminae.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
 
 
-class PathFilter(MapEntityFilterSet):
+class PathFilter(StructureRelatedFilterSet):
     length = OptionalRangeFilter()
 
-    class Meta(MapEntityFilterSet.Meta):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Path
-        fields = MapEntityFilterSet.Meta.fields + ['length',]
+        fields = StructureRelatedFilterSet.Meta.fields + ['length',]

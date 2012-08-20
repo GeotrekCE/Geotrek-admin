@@ -1,15 +1,15 @@
-from caminae.mapentity.filters import MapEntityFilterSet
+from caminae.common.filters import StructureRelatedFilterSet
 
 from .models import Intervention, Project
 
 
-class InterventionFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class InterventionFilter(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
-        fields = MapEntityFilterSet.Meta.fields + ['status']
+        fields = StructureRelatedFilterSet.Meta.fields + ['status']
 
 
-class ProjectFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class ProjectFilter(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Project
-        fields = MapEntityFilterSet.Meta.fields + ['begin_year', 'end_year']
+        fields = StructureRelatedFilterSet.Meta.fields + ['begin_year', 'end_year']

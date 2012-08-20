@@ -1,3 +1,4 @@
+from caminae.common.filters import StructureRelatedFilterSet
 from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
@@ -9,7 +10,7 @@ class PhysicalEdgeFilter(MapEntityFilterSet):
         fields = MapEntityFilterSet.Meta.fields + ['physical_type']
 
 
-class LandEdgeFilter(MapEntityFilterSet):
+class LandEdgeFilter(StructureRelatedFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
         fields = MapEntityFilterSet.Meta.fields + ['land_type']

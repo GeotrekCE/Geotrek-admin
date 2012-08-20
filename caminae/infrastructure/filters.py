@@ -1,15 +1,15 @@
-from caminae.mapentity.filters import MapEntityFilterSet
+from caminae.common.filters import StructureRelatedFilterSet
 
 from .models import Infrastructure, Signage
 
 
-class InfrastructureFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class InfrastructureFilter(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = MapEntityFilterSet.Meta.fields + ['type']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type']
 
 
-class SignageFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class SignageFilter(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = MapEntityFilterSet.Meta.fields + ['type']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type']
