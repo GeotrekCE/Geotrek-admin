@@ -4,6 +4,7 @@ from .views import (
     PathLayer, PathList, PathDetail, PathCreate,
     PathUpdate, PathDelete, PathJsonList, ElevationProfile,
     get_graph_json,
+    TrailDetail,
 )
 
 from caminae.mapentity.urlizor import view_classes_to_url
@@ -17,5 +18,5 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('', *view_classes_to_url(
     PathList, PathCreate, PathDetail, PathUpdate,
-    PathDelete, PathLayer, PathJsonList
+    PathDelete, PathLayer, PathJsonList, TrailDetail
 ))

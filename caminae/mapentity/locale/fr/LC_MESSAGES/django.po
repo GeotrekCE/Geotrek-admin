@@ -64,7 +64,7 @@ msgstr "Non, retour à la vue d'édition"
 #: templates/mapentity/entity_detail.html:11
 #: templates/mapentity/entity_detail.html:13
 msgid "Update"
-msgstr "Rafraîchir"
+msgstr "Éditer"
 
 #: templates/mapentity/entity_form.html:15
 msgid "Delete"

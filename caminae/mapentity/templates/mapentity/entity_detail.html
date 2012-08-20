@@ -6,11 +6,13 @@
 {% block mainpanel %}
     <div class="span7">
     {% block detailspanel %}
-        <h2>{{ object }}
+        <h2>
+            {% if object.structure %}
+                <span class="badge badge-info">{{ object.structure }}</span>
+            {% endif %}
+            {{ object }}
             {% if can_edit %}
                 <a class="btn btn-primary" href="{{ object.get_update_url }}">{% trans "Update" %}</a>
-            {% else %}
-                <span class="btn disabled">{% trans "Update" %}</span>
             {% endif %}
         </h2>
     {% endblock detailspanel %}

@@ -42,7 +42,7 @@
             <td>{{ path.max_elevation }}</td>
         </tr><tr>
             <th>{{ path|verbose:"trail" }}</th>
-            <td>{{ path.trail|default:_("None") }}</td>
+            <td>{{ path.trail_display|safe }}</td>
         </tr><tr>
             <th>{{ path|verbose:"datasource" }}</th>
             <td>{{ path.datasource|default:_("None") }}</td>

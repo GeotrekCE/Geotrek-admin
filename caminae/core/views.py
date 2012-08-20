@@ -11,7 +11,7 @@ from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJso
 from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
 
-from .models import Path
+from .models import Path, Trail
 from .forms import PathForm
 from .filters import PathFilter
 from . import graph as graph_lib
@@ -121,3 +121,10 @@ def get_graph_json(request):
 
     cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)
+
+
+class TrailDetail(MapEntityDetail):
+    model = Trail
+
+    def can_edit(self):
+        return False

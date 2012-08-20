@@ -519,3 +519,10 @@ L'ensemble des entités manipulées dans l'application sont disponibles.
 
 À la création, le formulaire de demande d'intervention contient un minimum
 de champ, et seul le status "souhaitée" est disponible.
+
+
+Afficher les fiches sentiers
+----------------------------
+
+Il est désormais possible d'accéder à la fiche d'un sentier. Ces objets
+ne sont cependant pas éditables.

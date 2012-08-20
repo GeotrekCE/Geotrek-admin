@@ -72,7 +72,14 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         
         // Spatial indexing
         var bounds = null;
-        if (layer.getLatLngs) {
+        if (layer instanceof L.MultiPolyline) {
+            bounds = new L.LatLngBounds();
+            for (var i in layer._layers) {
+                bounds.extend(layer._layers[i].getBounds());
+            }
+            console.log(bounds);
+        }
+        else if (layer.getBounds) {
             bounds = layer.getBounds();
         }
         else {

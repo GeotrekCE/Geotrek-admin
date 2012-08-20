@@ -98,7 +98,9 @@ class Path(MapEntityMixin, StructureRelated):
 
     @property
     def trail_display(self):
-        return self.trail.name if self.trail else _("None")
+        if self.trail:
+            return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
+        return _("None")
 
 
 class TopologyMixin(models.Model):
@@ -272,7 +274,7 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(StructureRelated):
+class Trail(MapEntityMixin, StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64)
     departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
@@ -285,4 +287,15 @@ class Trail(StructureRelated):
         verbose_name_plural = _(u"Trails")
 
     def __unicode__(self):
-        return u"%s (%s -> %s)" % (self.name, self.departure, self.arrival)
+        return self.name
+
+    @property
+    def geom(self):
+        paths = Path.objects.filter(trail=self)
+        geom = None
+        for p in paths:
+            if geom is None:
+                geom = LineString(p.geom.coords, srid=settings.SRID)
+            else:
+                geom = geom.union(p.geom)
+        return geom

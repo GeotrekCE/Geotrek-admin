@@ -22,9 +22,8 @@ def latlngbounds(obj, fieldname='geom'):
         obj = getattr(obj, fieldname)
     if obj is None:
         return 'null'
+    obj.transform(settings.API_SRID)
     if isinstance(obj, Point):
-        # TODO: OMG why?
-        obj.transform(settings.API_SRID)
         extent = [obj.x-0.005, obj.y-0.005, obj.x+0.005, obj.y+0.005]
     else:
         extent = list(obj.extent)
