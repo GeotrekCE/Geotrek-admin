@@ -144,3 +144,9 @@ img.marker-snapped { background-image: url('images/marker-snap.png') }
 .multipath-control {
     background-image: url(images/multipath-control.png);
 }
+
+tr.selected-row td {
+    /* Button green color #5BB75B */
+    background-color: #DF8 !important;
+    opacity: 1 !important;
+}

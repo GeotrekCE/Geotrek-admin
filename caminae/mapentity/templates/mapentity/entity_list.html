@@ -129,6 +129,47 @@
               , results_panel = document.getElementById('results-panel')
             ;
 
+            var selectorOnce = (function() {
+                var current = { 'pk': null, 'row': null };
+
+                // var unselect = function(pk) {};
+
+                function toggleSelectRow($row, on) {
+                    on = on === undefined ? true : on;
+
+                    if (on) {
+                        $row.hide()
+                           .show('slow').hide('fast')
+                           .show('slow', function() { $row.addClass('selected-row'); });
+                    } else {
+                        $row.removeClass('selected-row');
+                    }
+                }
+
+                function toggleSelectObject(pk, on) {
+                    on = on === undefined ? true : on;
+                    objectsLayer.select(pk, on);
+                };
+
+                return {
+                    'select': function(pk, row) {
+                        if (pk == current.pk) return;
+
+                        var prev = current;
+                        current = {'pk': pk, 'row': row}
+
+                        if (prev.pk) {
+                            toggleSelectRow(prev.row, false);
+                            toggleSelectObject(prev.pk, false);
+                        }
+
+                        toggleSelectRow(row, true);
+                        toggleSelectObject(pk, true);
+                    }
+                };
+            })();
+
+
             // initialize data table
             var dt = JQDataTable.init(
                   ajax_list
@@ -136,12 +177,18 @@
                 , {
                     // Hide pk
                     "aoColumnDefs": [ { "bVisible": false, "aTargets": [ 0 ] } ],
-                    "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+                    "fnCreatedRow": function(nRow, aData, iDataIndex ) {
+                        var pk = aData[0];
                         $(nRow).hover(function(){
-                            objectsLayer.highlight(aData[0]);
+                            objectsLayer.highlight(pk);
                         },
                         function(){
-                            objectsLayer.highlight(aData[0], false);
+                            objectsLayer.highlight(pk, false);
+                        });
+
+                        // select from row
+                        $(nRow).click(function() {
+                            selectorOnce.select(pk, $(nRow));
                         });
                     },
                     "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
@@ -152,44 +199,12 @@
 
             objectsLayer.on('click', function(e) {
                 var search_pk = e.layer.properties.pk;
-
-                // This may also be used
-                // dt.fnGetPosition(dt.$('tr').find('td:first-child a[data-pk=19]').closest('tr').get(0))
-
-                var dt_settings = dt.fnSettings();
-                var pagingInfo = dt_settings.oInstance.fnPagingInfo()
-                var aiRows = dt_settings.aiDisplay;
-                var pk_column = 0;
-                for (var position = 0, c = aiRows.length; position < c; position++) {
-                    var iRow = aiRows[position];
-                    var aData = dt.fnGetData(iRow);
-                    if(aData[pk_column] === search_pk) {
-                        var page_idx = Math.floor(position / pagingInfo.iLength);
-                        if (page_idx != pagingInfo.iTabIndex) {
-                            dt_settings._iDisplayStart =  page_idx * pagingInfo.iLength;
-
-                            // There is currently no api to unregister cleanly a callback (but it's just an array...)
-                            var first = true;
-                            dt_settings.oApi._fnCallbackReg(dt_settings, 'aoDrawCallback',
-                                function(oSettings) {
-                                    if(first) {
-                                        first = false;
-                                        // once the page is loaded make the matched record blink
-                                        $(dt.fnGetNodes(iRow)).hide().show('slow').hide('fast').show('slow');
-                                    }
-                                },
-                                'objectLayerClick_' + new Date().getTime() // ~random unique name
-                            );
-
-                            dt.oApi._fnCalculateEnd(dt_settings);
-                            dt.oApi._fnDraw(dt_settings);
-                        }
-
-                        break;
-                    }
-                }
+                JQDataTable.goToPage(dt, function pk_equals(row) {
+                    return row[0] === search_pk;
+                }, function($row) {
+                    selectorOnce.select(search_pk, $row);
+                });
             });
-
 
 
             // Hardcore customizations

@@ -178,6 +178,9 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             'weight': off ? 2 : 5,
         });
     },
+    select: function(pk, on) {
+        return this.highlight(pk, on);
+    }
 });
 
 
