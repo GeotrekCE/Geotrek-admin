@@ -16,7 +16,7 @@ class PhysicalEdgeLayer(MapEntityLayer):
 class PhysicalEdgeList(MapEntityList):
     model = PhysicalEdge
     filterform = PhysicalEdgeFilter
-    columns = ['physical_type']
+    columns = ['id', 'physical_type']
 
 
 class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
@@ -59,7 +59,7 @@ class LandEdgeLayer(MapEntityLayer):
 class LandEdgeList(MapEntityList):
     model = LandEdge
     filterform = LandEdgeFilter
-    columns = ['land_type']
+    columns = ['id', 'land_type']
 
 
 class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
@@ -102,7 +102,7 @@ class CompetenceEdgeLayer(MapEntityLayer):
 class CompetenceEdgeList(MapEntityList):
     model = CompetenceEdge
     filterform = CompetenceEdgeFilter
-    columns = ['organization']
+    columns = ['id', 'organization']
 
 
 class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
@@ -145,7 +145,7 @@ class WorkManagementEdgeLayer(MapEntityLayer):
 class WorkManagementEdgeList(MapEntityList):
     model = WorkManagementEdge
     filterform = WorkManagementEdgeFilter
-    columns = ['organization']
+    columns = ['id', 'organization']
 
 
 class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
@@ -188,7 +188,7 @@ class SignageManagementEdgeLayer(MapEntityLayer):
 class SignageManagementEdgeList(MapEntityList):
     model = SignageManagementEdge
     filterform = SignageManagementEdgeFilter
-    columns = ['organization']
+    columns = ['id', 'organization']
 
 
 class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList):
