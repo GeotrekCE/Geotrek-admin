@@ -198,7 +198,7 @@ MapEntity.getWKT = function(layer) {
         coords = '(' + coord2str(layer.getLatLng()) + ')';
     }
     else if (layer.getLatLngs) {
-        coords = '(' + coord2str(layer.getLatLngs()) + ')';
+        coords = coord2str(layer.getLatLngs());
     }
     var wkt = '';
     if (layer instanceof L.Marker) wkt += 'POINT'+coords;
