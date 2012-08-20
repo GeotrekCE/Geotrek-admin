@@ -206,6 +206,10 @@ class POI(MapEntityMixin, TopologyMixin):
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
 
+    @property
+    def type_display(self):
+        return unicode(self.type)
+
 
 class POIType(models.Model):
     label = models.CharField(verbose_name=_(u"Label"), max_length=128)

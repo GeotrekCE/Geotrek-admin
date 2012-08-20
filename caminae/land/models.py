@@ -32,6 +32,10 @@ class PhysicalEdge(MapEntityMixin, TopologyMixin):
         verbose_name = _(u"Physical edge")
         verbose_name_plural = _(u"Physical edges")
 
+    @property
+    def physical_type_display(self):
+        return unicode(self.physical_type)
+
 
 # Type of land under paths
 
@@ -58,6 +62,10 @@ class LandEdge(MapEntityMixin, TopologyMixin):
         verbose_name = _(u"Land edge")
         verbose_name_plural = _(u"Land edges")
 
+    @property
+    def land_type_display(self):
+        return unicode(self.land_type)
+
 
 # Interaction with external structures
 
@@ -71,6 +79,10 @@ class CompetenceEdge(MapEntityMixin, TopologyMixin):
         verbose_name = _(u"Competence edge")
         verbose_name_plural = _(u"Competence edges")
 
+    @property
+    def organization_display(self):
+        return unicode(self.organization)
+
 
 class WorkManagementEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
@@ -82,6 +94,10 @@ class WorkManagementEdge(MapEntityMixin, TopologyMixin):
         verbose_name = _(u"Work management edge")
         verbose_name_plural = _(u"Work management edges")
 
+    @property
+    def organization_display(self):
+        return unicode(self.organization)
+
 
 class SignageManagementEdge(MapEntityMixin, TopologyMixin):
     topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
@@ -92,6 +108,10 @@ class SignageManagementEdge(MapEntityMixin, TopologyMixin):
         db_table = 'gestion_signaletique'
         verbose_name = _(u"Signage management edge")
         verbose_name_plural = _(u"Signage management edges")
+
+    @property
+    def organization_display(self):
+        return unicode(self.organization)
 
 
 # Zoning

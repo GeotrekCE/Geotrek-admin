@@ -48,6 +48,10 @@ class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
     def __unicode__(self):
         return self.name
 
+    @property
+    def type_display(self):
+        return unicode(self.type)
+
 
 class InfrastructureGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
