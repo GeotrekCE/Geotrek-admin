@@ -49,6 +49,10 @@ class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
         return self.name
 
     @property
+    def name_display(self):
+        return '<a href="%s">%s</a>' % (self.get_detail_url(), self)
+
+    @property
     def type_display(self):
         return unicode(self.type)
 
