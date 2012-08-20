@@ -379,6 +379,16 @@
          }
     },
     {
+        "pk": 2,
+        "model": "infrastructure.baseinfrastructure",
+        "fields": {
+            "type": 37,
+            "name": "Petite pancarte",
+            "structure": 1,
+            "description": ""
+        }
+    },
+    {
         "pk": 1,
         "model": "core.topologymixin",
         "fields": {
@@ -392,10 +402,30 @@
         }
     },
     {
+        "pk": 2,
+        "model": "core.topologymixin",
+        "fields": {
+            "kind": 2,
+            "deleted": false,
+            "date_update": "2012-08-20T11:39:31.631Z",
+            "date_insert": "2012-08-20T11:39:31.631Z",
+            "length": 0,
+            "geom": "LINESTRING (935221.3986610012361780 6420697.6511146035045385 0.0, 935235.7189538053935394 6420743.7347681140527129 0.0)",
+            "offset": 20
+        }
+    },
+    {
         "pk": 1,
         "model": "core.topologymixinkind",
         "fields": {
             "kind": "Infrastructure"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.topologymixinkind",
+        "fields": {
+            "kind": "Signage"
         }
     },
     {
@@ -416,6 +446,16 @@
             "end_position": 1.0,
             "start_position": 0.0,
             "topo_object": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.pathaggregation",
+        "fields": {
+            "path": 941,
+            "end_position": 0.5,
+            "start_position": 0.5,
+            "topo_object": 2
         }
     }
 ]
