@@ -1,12 +1,1 @@
-{% extends "mapentity/entity_detail.html" %}
-{% load i18n field_verbose_name %}
-
-{% block detailspanel %}
-    {{ block.super }}
-    <table class="table-striped table-bordered table">
-        <tr>
-            <th>{{ infrastructure|verbose:"name" }}</th>
-            <td>{{ infrastructure.name }}</td>
-        </tr>
-    </table>
-{% endblock detailspanel %}
+{% extends "infrastructure/baseinfrastructure_detail.html" %}

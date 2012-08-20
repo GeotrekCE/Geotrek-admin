@@ -1,0 +1,19 @@
+{% extends "mapentity/entity_detail.html" %}
+{% load i18n field_verbose_name %}
+
+{% block detailspanel %}
+    {{ block.super }}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+    </table>
+    <h2>{% trans "Interventions" %}</h2>
+    <a class="btn btn-success" href="{% url maintenance:intervention_add %}?infrastructure={{ object.pk }}"><i class="icon-plus"></i> {% trans "Add intervention" %}</a>
+    <ul>
+        {% for intervention in object.interventions.all %}
+        <li><a href="{{ intervention.get_detail_url }}">{{ intervention }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock detailspanel %}
