@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.db.models.fields import FieldDoesNotExist
 
 
 class MapEntityTest(TestCase):
@@ -25,6 +26,18 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_bbox_filter(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            self.model._meta.get_field_by_name('geom')
+            params = '?bbox=POLYGON((5+44+0%2C5+45+0%2C6+45+0%2C6+44+0%2C5+44+0))'
+            response = self.client.get(self.model.get_jsonlist_url()+params)
+            self.assertEqual(response.status_code, 200)
+        except FieldDoesNotExist:
+            # Do not run test if object has no geom db field
+            pass
 
     def test_crud_status(self):
         if self.model is None:
