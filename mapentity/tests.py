@@ -16,6 +16,10 @@ class MapEntityTest(TestCase):
         if self.model is None:
             return  # Abstract test should not run
 
+        # Make sure database is not empty for this model
+        for i in range(30):
+            self.modelfactory.create()
+
         # JSON layers do not require authent
         response = self.client.get(self.model.get_layer_url())
         self.assertEqual(response.status_code, 200)
