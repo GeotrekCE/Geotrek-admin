@@ -99,6 +99,16 @@
             mainmap.addControl(new L.Control.Information());
             {% endif %}
             
+            // Always show the path layer, except if model is path
+            if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
+                var paths = new MapEntity.ObjectsLayer(null, {
+                    style: { clickable:false, weight:2 }
+                });
+                paths.addTo(mainmap)
+                paths.load('{% url core:path_layer %}');
+                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+            }
+            
             var getUrl = function (properties, layer) {
                 //TODO use nice JS url rewriting
                 return "{{ model.get_generic_detail_url }}".replace('0', properties.pk);
@@ -110,16 +120,6 @@
             mainmap.addLayer(objectsLayer);
             mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
             objectsLayer.load("{{ model.get_layer_url }}");
-            
-            // Always show the path layer, except if model is path
-            if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
-                var paths = new MapEntity.ObjectsLayer(null, {
-                    style: { clickable:false, weight:2 }
-                });
-                paths.addTo(mainmap)
-                paths.load('{% url core:path_layer %}');
-                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
-            }
 
             // init ajax list
             var dt = initAjaxList(mainmap, objectsLayer);
