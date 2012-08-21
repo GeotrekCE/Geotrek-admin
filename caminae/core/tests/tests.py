@@ -1,13 +1,13 @@
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
+from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
-from caminae.core.factories import PathFactory, TopologyMixinFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory, TopologyMixinFactory
 from caminae.core.models import Path, TopologyMixin, TopologyMixinKind
 
 # TODO caminae.core should be self sufficient
@@ -219,3 +219,27 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(topology.aggregations.all()[0].path, path)
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
+
+    def test_topology_geom(self):
+        p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
+        p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
+        p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
+
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p1,
+                                      start_position=0.5, end_position=0.5)
+        t = TopologyMixin.objects.get(pk=t.pk)
+        self.assertEqual(t.geom, Point((1,1,1)))
+
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p1,
+                                      start_position=0.5)
+        PathAggregationFactory.create(topo_object=t, path=p2)
+        t = TopologyMixin.objects.get(pk=t.pk)
+        self.assertEqual(t.geom, LineString((1,1,1), (2,2,2), (2,0,0)))
+
+        t = TopologyMixinFactory.create(no_path=True, offset=1)
+        PathAggregationFactory.create(topo_object=t, path=p2)
+        PathAggregationFactory.create(topo_object=t, path=p3)
+        t = TopologyMixin.objects.get(pk=t.pk)
+        self.assertEqual(t.geom, LineString((3,2,2), (3,1,0), (4,1,0)))
