@@ -526,3 +526,22 @@ Afficher les fiches sentiers
 
 Il est désormais possible d'accéder à la fiche d'un sentier. Ces objets
 ne sont cependant pas éditables.
+
+
+#37 - Sélectionner un objet sur la carte le sélectionne dans la liste. Et vice-versa
+------------------------------------------------------------------------------------
+
+Dans la vue de liste de chaque entité:
+- un clic de l'entité sur la carte sélectionne dans la liste ajax (avec changement de page)
+- vice-versa, un clic sur une ligne dans la liste ajax sélectionne l'entité sur la carte
+
+Une seule entité peut être sélectionnée à la fois, une nouvelle sélection (clic carte ou liste)
+entraine la déselection de la précédente entité selectionnée.
+
+Un clic carte ou liste sur une entité déjà sélectionnée entraine sa déselection.
+
+Une sélection se traduit dans le tableau et dans la carte par un style spécifique.
+
+Un double clic de l'entité sur la carte affiche la fiche détail.
+Un clic sur le lien de la 1ere colonne (ex. nom) affiche la fiche détail.
+
