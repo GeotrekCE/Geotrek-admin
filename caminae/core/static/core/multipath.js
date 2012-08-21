@@ -60,9 +60,12 @@ L.Handler.MultiPath = L.Handler.extend({
         var old_edges = this.all_edges || [];
         $.each(old_edges, function(idx, edge) {
             // You may find several times the same edge in a path
-            // so test for it (as pop removes it)
-            var layer = self.cameleon.pop(self.idToLayer(edge.id));
-            layer && layer.restoreStyle();
+            var layer = self.idToLayer(edge.id);
+
+            // deactivate lazily except for last
+            self.cameleon.deactivate('dijkstra_to', layer, true);
+            self.cameleon.deactivate('dijkstra_from', layer, true);
+            self.cameleon.deactivate('dijkstra_computed', layer);
         });
 
         this.steps = [];
@@ -70,7 +73,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.all_edges = [];
         this._container.style.cursor = 'w-resize';
 
-        this.cameleon = new MapEntity.Cameleon(this.layerToId);
+        this.cameleon = this.graph_layer._cameleon;
         this.graph_layer.on('click', this._onClick, this);
     },
 
@@ -100,10 +103,10 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // mark
         if (can_compute) {
-            this.cameleon.create(layer).toNodeStyle();
+            this.cameleon.activate('dijkstra_to', layer);
             this._container.style.cursor = '';
         } else {
-            this.cameleon.create(layer).fromNodeStyle();
+            this.cameleon.activate('dijkstra_from', layer);
             this._container.style.cursor = 'e-resize';
         }
 
@@ -154,7 +157,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // set inner style
         this._eachInnerComputedPathsEdges(new_computed_paths, function(edge) {
-            self.cameleon.create(self.idToLayer(edge.id)).computedNodeStyle();
+            self.cameleon.activate('dijkstra_computed', self.idToLayer(edge.id));
         });
 
         this.fire('computed_paths', {

@@ -17,6 +17,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         // Hold the currently added layers (subset of _objects)
         this._current_objects = {};
 
+        this._cameleon = MapEntity.Cameleon.createDefaultCameleon();
+
         this.spinner = null;
         this.rtree = new RTree();
 
@@ -168,18 +170,12 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
     },
 
     highlight: function (pk, on) {
-        var off = false;
-        if (arguments.length == 2)
-            off = !on;
-        var l = this.getLayer(pk);
-        if (l) l.setStyle({
-            'opacity': off ? 0.8 : 1.0,
-            'color': off ? 'blue' : 'red',
-            'weight': off ? 2 : 5,
-        });
+        var on = on === undefined ? true : on;
+        this._cameleon[on ? 'activate': 'deactivate']('highlight', this.getLayer(pk));
     },
     select: function(pk, on) {
-        return this.highlight(pk, on);
+        var on = on === undefined ? true : on;
+        this._cameleon[on ? 'activate': 'deactivate']('select', this.getLayer(pk));
     }
 });
 
@@ -497,39 +493,22 @@ MapEntity.showNumberSearchResults = function (nb) {
     $('#nbresults').text(nb);
 }
 
+
 // Simply store a layer, apply a color and restore the previous color
 MapEntity.Cameleon = (function() {
-
-    var styleWrapper = function(layer) {
-        var initial_style = $.extend({}, layer.options);
-
-        var changeStyle = function(style) {
-            return function() {
-                layer.setStyle($.extend({}, initial_style, style));
-            };
-        };
-        return {
-              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , restoreStyle: changeStyle(initial_style)
-        };
-    };
-
-    // Camleon wrap a layer in a style
+    // Cameleon wrap a layer in a style
     // layerToId is used to convert a layer to a key
-    function Cameleon(layerToHashable) {
+    function HashStore(layerToHashable) {
         var self = this;
         var wrappedLayer = {};
-        this.create = function(layer) {
-            return wrappedLayer[layerToHashable(layer)] = styleWrapper(layer);
+        function create(layer, fn_creation) {
+            return wrappedLayer[layerToHashable(layer)] = fn_creation(layer);
         };
         this.get = function(layer) {
             return wrappedLayer[layerToHashable(layer)]
         };
-        this.getOrCreate = function(layer) {
-            return self.get(layer) || this.create(layer);
+        this.getOrCreate = function(layer, fn_creation) {
+            return self.get(layer) || create(layer, fn_creation);
         };
         this.pop = function(layer) {
             var ret = self.get(layer)
@@ -538,6 +517,137 @@ MapEntity.Cameleon = (function() {
             return ret;
         };
     }
+    function InLayerStore() {
+        // property: _skin
+        var self = this;
+        function create(layer, fn_creation) {
+            return layer._skin = fn_creation(layer);
+        };
+        this.get = function(layer) {
+            return layer._skin;
+        };
+        this.getOrCreate = function(layer, fn_creation) {
+            return self.get(layer) || create(layer, fn_creation);
+        };
+        this.pop = function(layer) {
+            var ret = self.get(layer)
+            if (ret)
+                delete layer._skin;
+            return ret;
+        };
+    }
 
-    return Cameleon;
+    var createCameleon = function(layerToSkin) {
+        var available_styles = {};
+        var hasStyle = function(applied_styles, style_name) {
+            return style_name in applied_styles;
+        };
+        var addStyle = function(applied_styles, style) {
+            var has_style = hasStyle(applied_styles, style.name)
+            if (! has_style)
+                applied_styles[style.name] = style;
+            return !has_style;
+        };
+        var removeStyle = function(applied_styles, style) {
+            var has_style = hasStyle(applied_styles, style.name)
+            if (has_style)
+                delete applied_styles[style.name]
+            return has_style;
+        };
+
+        // var applied_styles = {};
+        function initLayerSkin(layer) {
+            return {
+                'applied_styles': {},
+                'initial_style': $.extend({}, layer.options)
+            };
+        };
+
+        var computeStyle = function(skin) {
+            var initial_style = skin.initial_style
+              , applied_styles = skin.applied_styles;
+
+            var styles = [initial_style].concat(getAscendingStyles(applied_styles));
+            return $.extend.apply($.extend, [{}].concat(styles));
+        }
+
+        var setNewStyle = function(layer, skin) {
+            var style = computeStyle(skin);
+            layer.setStyle(style);
+        };
+
+        var getAscendingStyles = function(applied_styles) {
+            var l = [];
+            $.each(applied_styles, function(k, v) { l[v.weight] = v.style });
+            return l;
+            // applied_styles.sort(function(a, b) { return a.weight > b.weight });
+        };
+
+        return {
+            'registerStyle': function(name, weight, style) {
+                if (! (name in available_styles))
+                    available_styles[name] = {'name': name, 'weight': weight, 'style': style};
+
+                return this;
+            },
+            // How do activate/deactivate multiple style (bulk) efficiently?
+            // Here we use a lazy parameter that does not compute new style.
+            // Yet look for the layer multiple time
+            'activate': function(style_name, layer, lazy) {
+                var style = available_styles[style_name];
+                if (!style) return false;
+
+                var skin = layerToSkin.getOrCreate(layer, initLayerSkin)
+                var added = addStyle(skin.applied_styles, style);
+                if (! added) return false;
+
+                if (!lazy)
+                    setNewStyle(layer, skin);
+            },
+            'deactivate': function(style_name, layer, lazy) {
+                var style = available_styles[style_name];
+                if (!style) return false;
+
+                var skin = layerToSkin.get(layer);
+                if (!skin) return false;
+
+                var removed = removeStyle(skin.applied_styles, style);
+                if (!removed) return false;
+
+                if (!lazy)
+                    setNewStyle(layer, skin);
+            },
+            'hasStyle': function(style_name, layer) {
+                var skin = layerToCameleon.get(layer)
+                if (!skin) return false;
+
+                return hasStyle(skin.applied_styles, style_name);
+            },
+            'restoreStyle': function(layer) {
+                var skin = layerToCameleon.get(layer)
+                if (!skin) return false;
+
+                skin.applied_styles = []
+                setNewStyle(layer, skin);
+            }
+        };
+    };
+
+    // Ahem... to have consistent result we should have unique weight or check on the name also
+    function createDefaultCameleon() {
+        return createCameleon(new InLayerStore())
+            .registerStyle('normal', 0, {'color': 'blue', 'weight': 2, 'opacity': 0.8})
+            .registerStyle('highlight', 30, {'color': 'red', 'weight': 5, 'opacity': 1})
+            .registerStyle('select', 20, {'color': 'red', 'weight': 5, 'opacity': 1})
+            //
+            .registerStyle('dijkstra_from', 10, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+            .registerStyle('dijkstra_to', 11, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+            .registerStyle('dijkstra_step', 9, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+            .registerStyle('dijkstra_computed', 8, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+        ;
+    }
+
+    return {
+        'createDefaultCameleon': createDefaultCameleon
+    };
 })();

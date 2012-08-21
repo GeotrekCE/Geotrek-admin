@@ -132,17 +132,19 @@
             var selectorOnce = (function() {
                 var current = { 'pk': null, 'row': null };
 
-                // var unselect = function(pk) {};
+                function toggleSelectRow($prevRow, $nextRow) {
+                    function nextRowAnim() {
+                        if ($nextRow) {
+                            $nextRow.hide('fast')
+                                    .show('fast', function() { $nextRow.addClass('selected-row'); });
+                        }
+                    }
 
-                function toggleSelectRow($row, on) {
-                    on = on === undefined ? true : on;
-
-                    if (on) {
-                        $row.hide()
-                           .show('slow').hide('fast')
-                           .show('slow', function() { $row.addClass('selected-row'); });
+                    if ($prevRow) {
+                        $prevRow.hide('fast', function() { $prevRow.removeClass('selected-row'); })
+                                .show('fast', nextRowAnim);
                     } else {
-                        $row.removeClass('selected-row');
+                        nextRowAnim();
                     }
                 }
 
@@ -153,18 +155,22 @@
 
                 return {
                     'select': function(pk, row) {
-                        if (pk == current.pk) return;
+                        // Click on already selected => unselect
+                        if (pk == current.pk) {
+                            pk = null, row = null;
+                        }
 
                         var prev = current;
                         current = {'pk': pk, 'row': row}
 
-                        if (prev.pk) {
-                            toggleSelectRow(prev.row, false);
+                        toggleSelectRow(prev.row, row);
+
+                        if (prev.pk && prev.row) {
                             toggleSelectObject(prev.pk, false);
                         }
-
-                        toggleSelectRow(row, true);
-                        toggleSelectObject(pk, true);
+                        if (row && pk) {
+                            toggleSelectObject(pk, true);
+                        }
                     }
                 };
             })();
