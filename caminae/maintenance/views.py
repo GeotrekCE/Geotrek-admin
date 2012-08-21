@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from caminae.infrastructure.models import Infrastructure
+from caminae.infrastructure.models import BaseInfrastructure
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
 from .forms import InterventionForm, InterventionCreateForm, ProjectForm
@@ -44,8 +44,8 @@ class InterventionCreate(MapEntityCreate):
         try:
             pk = self.request.GET.get('infrastructure')
             if pk:
-                return Infrastructure.objects.get(pk=pk)
-        except Infrastructure.DoesNotExist:
+                return BaseInfrastructure.objects.get(pk=pk)
+        except BaseInfrastructure.DoesNotExist:
             logger.warning("Intervention on unknown infrastructure %s" % pk)
         return None
 
