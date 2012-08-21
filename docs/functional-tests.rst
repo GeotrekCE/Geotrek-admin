@@ -545,3 +545,27 @@ Une sélection se traduit dans le tableau et dans la carte par un style spécifi
 Un double clic de l'entité sur la carte affiche la fiche détail.
 Un clic sur le lien de la 1ere colonne (ex. nom) affiche la fiche détail.
 
+
+#159 - Afficher la couche des tronçons sur tous les modules
+-----------------------------------------------------------
+
+Dans le sélecteur de couches, il est désormais possible d'afficher la couche des tronçons. 
+Les objets de celle-ci ne sont pas clickables.
+
+Décocher la couche. Elle disparait. Raffraichir la page. La couche n'est toujours pas affichée.
+
+Aller sur la page des tronçons. La couche apparait. Revenir sur un autre module, la 
+couche est redevenue visible.
+
+#127 - Ajouter une intervention sur un aménagement
+--------------------------------------------------
+
+Aller sur la fiche d'un aménagement (ou signalétique).
+
+La liste des interventions est vide. Ajouter une intervention.
+
+La géométrie de l'aménagement est affichée, en lecture seule.
+
+Sauvegarder le formulaire.
+
+Retourner sur la fiche de l'aménagement, l'intervention apparait.
