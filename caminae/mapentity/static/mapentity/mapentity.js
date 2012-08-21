@@ -198,10 +198,10 @@ MapEntity.getWKT = function(layer) {
     }
     var wkt = '';
     if (layer instanceof L.Marker) wkt += 'POINT'+coords;
-    else if (layer instanceof L.Polygon) wkt += 'POLYGON'+coords;
-    else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON'+coords;
+    else if (layer instanceof L.Polygon) wkt += 'POLYGON('+coords+')';
+    else if (layer instanceof L.MultiPolygon) wkt += 'MULTIPOLYGON('+coords+')';
     else if (layer instanceof L.Polyline) wkt += 'LINESTRING'+coords;
-    else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING'+coords;
+    else if (layer instanceof L.MultiPolyline) wkt += 'MULTILINESTRING('+coords+')';
     else {
         wkt += 'GEOMETRY'+coords;
     }

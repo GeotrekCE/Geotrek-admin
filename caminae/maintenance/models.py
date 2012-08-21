@@ -7,7 +7,7 @@ from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
-from caminae.infrastructure.models import BaseInfrastructure, Infrastructure, Signage
+from caminae.infrastructure.models import Infrastructure, Signage
 
 
 class Intervention(MapEntityMixin, StructureRelated):

@@ -87,7 +87,7 @@ class ProjectLayer(MapEntityLayer):
 class ProjectList(MapEntityList):
     model = Project
     filterform = ProjectFilter
-    columns = ['id', 'name', 'begin_year', 'begin_year', 'cost']
+    columns = ['id', 'name', 'begin_year', 'end_year', 'cost']
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
