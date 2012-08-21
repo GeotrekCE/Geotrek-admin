@@ -3,12 +3,14 @@
 {% leaflet_map mapname  fitextent=False %}
 <script type="text/javascript">
 function {{ mapname }}Init(map, bounds) {
-    // Set map readonly
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
+    {% if readonly %}
+        // Set map readonly
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+    {% endif %}
     map.removeControl(map.zoomControl);
     map.removeControl(map.attributionControl);
     
