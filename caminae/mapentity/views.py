@@ -78,6 +78,7 @@ class MapEntityList(ListView):
         context = super(MapEntityList, self).get_context_data(**kwargs)
         context.update(**dict(
             model=self.model,
+            objectsname=self.model._meta.verbose_name_plural,
             datatables_ajax_url=self.model.get_jsonlist_url(),
             filterform=self.filterform(None, queryset=self.get_queryset()),
             columns=self.columns,

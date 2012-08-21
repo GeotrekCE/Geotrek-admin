@@ -46,7 +46,7 @@
             // layers shown by name
             var layers = [];
             $('form.leaflet-control-layers-list input:checked').each(function () {
-                layers.push($(this).parent().text());
+                layers.push($.trim($(this).parent().text()));
             });
             localStorage.setItem('list-layers', JSON.stringify(layers));
         };
@@ -69,13 +69,16 @@
             var layers = localStorage.getItem('list-layers');
             if (layers) {
                 layers = JSON.parse(layers);
+                layers.push('{{ objectsname }}');
                 $('form.leaflet-control-layers-list input').each(function () {
-                    $(this).removeAttr('checked');
+                    if ($.trim($(this).parent().text()) != '{{ objectsname }}' ) {
+                        $(this).removeAttr('checked');
+                    }
                 });
                 for(var i=0; i<layers.length; i++) {
                     var layer = layers[i];
                     $('form.leaflet-control-layers-list input').each(function () {
-                        if ($(this).parent().text() == layer) {
+                        if ($.trim($(this).parent().text()) == layer) {
                             $(this).attr('checked', 'checked');
                         }
                     });
@@ -104,9 +107,19 @@
             var objectsLayer = new MapEntity.ObjectsLayer(null, {
                 objectUrl: getUrl
             });
-            
             mainmap.addLayer(objectsLayer);
+            mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
             objectsLayer.load("{{ model.get_layer_url }}");
+            
+            // Always show the path layer, except if model is path
+            if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
+                var paths = new MapEntity.ObjectsLayer(null, {
+                    style: { clickable:false, weight:2 }
+                });
+                paths.addTo(mainmap)
+                paths.load('{% url core:path_layer %}');
+                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+            }
 
             // init ajax list
             var dt = initAjaxList(mainmap, objectsLayer);
