@@ -7,7 +7,7 @@ from caminae.authent.models import StructureRelated
 from caminae.core.models import TopologyMixin
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
-from caminae.infrastructure.models import Infrastructure, Signage
+from caminae.infrastructure.models import BaseInfrastructure, Infrastructure, Signage
 
 
 class Intervention(MapEntityMixin, StructureRelated):
@@ -64,6 +64,8 @@ class Intervention(MapEntityMixin, StructureRelated):
         if not isinstance(baseinfra, (Infrastructure, Signage)):
             raise ValueError("Expecting an infrastructure or signage")
         self.topology = baseinfra
+        if not self.on_infrastructure:
+            raise ValueError("Infrastructure has wrong TopologyMixin kind.")
 
     @property
     def on_infrastructure(self):

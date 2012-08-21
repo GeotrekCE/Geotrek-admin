@@ -134,12 +134,16 @@ class TopologyMixin(models.Model):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
     @classmethod
-    def get_kind(cls):
-        name = cls._meta.object_name
+    def get_kind(cls, name=None):
+        name = name or cls._meta.object_name
         return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
     def save(self, *args, **kwargs):
-        self.kind = self.get_kind()
+        if self.kind is None:
+            if self._meta.object_name == "TopologyMixin":
+                raise Exception("Cannot save abstract topologies")
+            self.kind = self.get_kind()
+
         # TODO: do this in triggers
         self.geom = LineString([Point(0,0,0), Point(1,1,0)])
         super(TopologyMixin, self).save(*args, **kwargs)
@@ -160,16 +164,14 @@ class TopologyMixin(models.Model):
                 objdict = simplejson.loads(serialized)
             except simplejson.JSONDecodeError, e:
                 raise ValueError(_("Invalid serialized topology: %s") % e)
-
+        kind = objdict.get('kind')
+        topology = TopologyMixinFactory.create(kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
+        # Delete all existing aggregrations (like those created by Factory)
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        # Start repopulating from serialized data
         start = objdict.get('start', 0.0)
         end = objdict.get('end', 1.0)
         paths = objdict['paths']
-        kind = objdict.get('kind')
-        kind = TopologyMixinKind.objects.get(pk=int(kind)) if kind else cls.get_kind()
-        topology = TopologyMixinFactory.create(kind=kind)
-        topology.offset = objdict.get('offset', 0.0)
-        PathAggregation.objects.filter(topo_object=topology).delete()
-        
         for i, path in enumerate(paths):
             try:
                 path = Path.objects.get(pk=path)
@@ -195,7 +197,7 @@ class TopologyMixin(models.Model):
             if aggregation.end_position > end:
                 end = aggregation.end_position
             paths.append(aggregation.path.pk)
-        objdict = dict(kind=self.kind.pk,
+        objdict = dict(kind=self.kind.kind,
                        offset=self.offset,
                        start=start,
                        end=end,

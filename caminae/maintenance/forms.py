@@ -4,7 +4,7 @@ from crispy_forms.layout import Field
 from caminae.mapentity.forms import MapEntityForm
 from caminae.core.fields import PointLineTopologyField
 from caminae.core.widgets import TopologyReadonlyWidget
-from caminae.infrastructure.models import Infrastructure
+from caminae.infrastructure.models import BaseInfrastructure
 
 from .models import Intervention, InterventionStatus, Project
 
@@ -13,7 +13,7 @@ class InterventionForm(MapEntityForm):
     """ An intervention can be a Point or a Line """
     topology = PointLineTopologyField()
     infrastructure = forms.ModelChoiceField(required=False,
-                                            queryset=Infrastructure.objects.all(),
+                                            queryset=BaseInfrastructure.objects.all(),
                                             widget=forms.HiddenInput())
     modelfields = (
             'name',
@@ -42,14 +42,23 @@ class InterventionForm(MapEntityForm):
         exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
 
     def __init__(self, *args, **kwargs):
-        initial = kwargs.get('initial', {})
-        infrastructure = initial.get('infrastructure')
-        if infrastructure:
-            initial['topology'] = infrastructure
-        kwargs['initial'] = initial
         super(InterventionForm, self).__init__(*args, **kwargs)
+        # If we create or edit an intervention on infrastructure, set
+        # topology field as read-only
+        infrastructure = kwargs.get('initial', {}).get('infrastructure')
+        if self.instance.on_infrastructure:
+            infrastructure = self.instance.topology
         if infrastructure:
+            self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
+
+    def clean(self, *args, **kwargs):
+        # If topology was read-only, topology field is empty, get it from infra.
+        cleaned_data = super(InterventionForm, self).clean()
+        if 'infrastructure' in self.cleaned_data and \
+           'topology' not in self.cleaned_data:
+            self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
+        return cleaned_data
 
     def save(self, *args, **kwargs):
         infrastructure = self.cleaned_data.get('infrastructure')
@@ -60,6 +69,12 @@ class InterventionForm(MapEntityForm):
 
 class InterventionCreateForm(InterventionForm):
     def __init__(self, *args, **kwargs):
+        # If we create an intervention on infrastructure, get its topology
+        initial = kwargs.get('initial', {})
+        infrastructure = initial.get('infrastructure')
+        if infrastructure:
+            initial['topology'] = infrastructure
+        kwargs['initial'] = initial
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
         # Limit status choices to first one only ("requested")
         first = InterventionStatus.objects.all()[0]

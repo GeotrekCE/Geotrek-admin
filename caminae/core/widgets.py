@@ -78,6 +78,8 @@ class TopologyWidget(forms.Textarea):
                 value = None
         topologyjson = ''
         if value:
+            if not isinstance(value, TopologyMixin):
+                value = TopologyMixin.objects.get(pk=value)
             topologyjson = value.serialize()
         context = super(TopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')
@@ -91,7 +93,7 @@ class TopologyWidget(forms.Textarea):
         return context
 
 
-class PointTopologyWidget(TopologyWidget, PointWidget):
+class PointTopologyWidget(TopologyWidget):
     """ A widget allowing to point a position with a marker. 
     """
     is_point = True
@@ -104,10 +106,12 @@ class PointLineTopologyWidget(PointTopologyWidget, TopologyWidget):
 
 
 class TopologyReadonlyWidget(TopologyWidget):
-    template_name = 'mapentity/fieldmap_fragment.html'
+    template_name = 'core/fieldtopologyreadonly_fragment.html'
     
     def get_context(self, *args, **kwargs):
         context = super(TopologyReadonlyWidget, self).get_context(*args, **kwargs)
-        context['object'] = context['topology'].geom
+        topology =  context['topology']
+        if topology:
+            context['object'] = topology.geom
         context['mapname'] = context['module']
         return context
