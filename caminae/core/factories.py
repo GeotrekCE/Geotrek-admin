@@ -94,11 +94,14 @@ class TopologyMixinFactory(factory.Factory):
         PathAggregation).
         """
 
+        no_path = kwargs.pop('no_path', False)
         topo_mixin = super(TopologyMixinFactory, cls)._prepare(create, **kwargs)
-        if create:
-            PathAggregationFactory.create(topo_object=topo_mixin)
-        else:
-            PathAggregationFactory.build(topo_object=topo_mixin)
+
+        if not no_path:
+            if create:
+                PathAggregationFactory.create(topo_object=topo_mixin)
+            else:
+                PathAggregationFactory.build(topo_object=topo_mixin)
         return topo_mixin
 
 

@@ -175,7 +175,7 @@ class PathTest(TestCase):
 class TopologyMixinTest(TestCase):
     def test_dates(self):
         t1 = dbnow()
-        e = TopologyMixinFactory.build()
+        e = TopologyMixinFactory.build(no_path=True)
         e.save()
         t2 = dbnow()
         self.assertTrue(t1 < e.date_insert < t2)
