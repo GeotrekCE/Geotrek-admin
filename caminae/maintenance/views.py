@@ -1,11 +1,17 @@
+import logging
+
 from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from caminae.infrastructure.models import Infrastructure
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
 from .forms import InterventionForm, InterventionCreateForm, ProjectForm
+
+
+logger = logging.getLogger(__name__)
 
 
 class InterventionLayer(MapEntityLayer):
@@ -33,6 +39,25 @@ class InterventionDetail(MapEntityDetail):
 class InterventionCreate(MapEntityCreate):
     model = Intervention
     form_class = InterventionCreateForm
+
+    def on_infrastucture(self):
+        try:
+            pk = self.request.GET.get('infrastructure')
+            if pk:
+                return Infrastructure.objects.get(pk=pk)
+        except Infrastructure.DoesNotExist:
+            logger.warning("Intervention on unknown infrastructure %s" % pk)
+        return None
+
+    def get_initial(self):
+        """
+        Returns the initial data to use for forms on this view.
+        """
+        initial = self.initial.copy()
+        infrastructure = self.on_infrastucture()
+        if infrastructure:
+            initial['infrastructure'] = infrastructure
+        return initial
 
 
 class InterventionUpdate(MapEntityUpdate):

@@ -101,3 +101,13 @@ class PointLineTopologyWidget(PointTopologyWidget, TopologyWidget):
     """ A widget allowing to point a position with a marker or a list of paths.
     """
     pass
+
+
+class TopologyReadonlyWidget(TopologyWidget):
+    template_name = 'mapentity/fieldmap_fragment.html'
+    
+    def get_context(self, *args, **kwargs):
+        context = super(TopologyReadonlyWidget, self).get_context(*args, **kwargs)
+        context['object'] = context['topology'].geom
+        context['mapname'] = context['module']
+        return context

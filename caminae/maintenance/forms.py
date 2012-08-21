@@ -3,6 +3,8 @@ from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
 from caminae.core.fields import PointLineTopologyField
+from caminae.core.widgets import TopologyReadonlyWidget
+from caminae.infrastructure.models import Infrastructure
 
 from .models import Intervention, InterventionStatus, Project
 
@@ -10,7 +12,9 @@ from .models import Intervention, InterventionStatus, Project
 class InterventionForm(MapEntityForm):
     """ An intervention can be a Point or a Line """
     topology = PointLineTopologyField()
-
+    infrastructure = forms.ModelChoiceField(required=False,
+                                            queryset=Infrastructure.objects.all(),
+                                            widget=forms.HiddenInput())
     modelfields = (
             'name',
             'structure',
@@ -29,12 +33,29 @@ class InterventionForm(MapEntityForm):
             'heliport_cost',
             'subcontract_cost',
             'stake',
-            'project',)
+            'project',
+            'infrastructure',)
     geomfields = ('topology',)
 
     class Meta:
         model = Intervention
         exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.get('initial', {})
+        infrastructure = initial.get('infrastructure')
+        if infrastructure:
+            initial['topology'] = infrastructure
+        kwargs['initial'] = initial
+        super(InterventionForm, self).__init__(*args, **kwargs)
+        if infrastructure:
+            self.fields['topology'].widget = TopologyReadonlyWidget()
+
+    def save(self, *args, **kwargs):
+        infrastructure = self.cleaned_data.get('infrastructure')
+        if infrastructure:
+            self.instance.set_infrastructure(infrastructure)
+        return super(InterventionForm, self).save(*args, **kwargs)
 
 
 class InterventionCreateForm(InterventionForm):
