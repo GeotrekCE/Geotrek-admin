@@ -61,11 +61,9 @@ class Intervention(MapEntityMixin, StructureRelated):
         verbose_name_plural = _(u"Interventions")
 
     def set_infrastructure(self, baseinfra):
-        if not isinstance(baseinfra, (Infrastructure, Signage)):
-            raise ValueError("Expecting an infrastructure or signage")
         self.topology = baseinfra
         if not self.on_infrastructure:
-            raise ValueError("Infrastructure has wrong TopologyMixin kind.")
+            raise ValueError("Expecting an infrastructure or signage")
 
     @property
     def on_infrastructure(self):
