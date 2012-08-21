@@ -75,7 +75,7 @@ class TopologyMixinFactory(factory.Factory):
 
     # Factory
     # troncons (M2M)
-    offset = 1
+    offset = 0
     deleted = False
     kind = factory.SubFactory(TopologyMixinKindFactory)
 

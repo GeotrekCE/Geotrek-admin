@@ -203,7 +203,7 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(pk, e.get_kind().pk)
 
     def test_serialize(self):
-        topology = TopologyMixinFactory.create()
+        topology = TopologyMixinFactory.create(offset=1)
         self.assertEqual(len(topology.paths.all()), 1)
         pathpk = topology.paths.all()[0].pk
         kind = topology.kind.kind
