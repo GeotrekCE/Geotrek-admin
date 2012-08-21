@@ -118,8 +118,8 @@ class TopologyMixin(models.Model):
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
 
     length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
-                                blank=True, spatial_index=False, dim=3)
+    geom = models.GeometryField(editable=False, srid=settings.SRID,   #TODO: can be a Point too
+                                  spatial_index=False, dim=3)
 
     class Meta:
         db_table = 'evenements'
@@ -128,7 +128,8 @@ class TopologyMixin(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(TopologyMixin, self).__init__(*args, **kwargs)
-        self.kind = self.get_kind()
+        if not self.pk:
+            self.kind = self.get_kind()
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
@@ -139,7 +140,7 @@ class TopologyMixin(models.Model):
         return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
     def save(self, *args, **kwargs):
-        if self.kind is None:
+        if not self.kind:
             if self._meta.object_name == "TopologyMixin":
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.get_kind()
