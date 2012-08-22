@@ -143,7 +143,7 @@ FormField.makeModule = function(module, module_settings) {
         return markerFactory;
     };
 
-    module.enableMultipath = function(map, objectsLayer, layerStore, startovercallback, snapObserver) {
+    module.enableMultipath = function(map, objectsLayer, layerStore, onStartOver, snapObserver) {
         var markersFactory = module.getMarkers(map, snapObserver);
 
         objectsLayer.on('load', function() {
@@ -195,10 +195,14 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 })();
 
+                onStartOver.on('startover', function() {
+                    markPath.updateGeom(null);
+                    multipath_handler.unmarkAll();
+                });
+
                 // Delete previous geom
-                multipath_handler.on('enabled', function() { 
-                    markPath.updateGeom(null); 
-                    startovercallback();
+                multipath_handler.on('enabled', function() {
+                    onStartOver.fire('startover');
                 });
 
                 multipath_handler.on('computed_paths', function(data) {
@@ -222,7 +226,7 @@ FormField.makeModule = function(module, module_settings) {
         });
     };
 
-    module.enableTopologyPoint = function (map, drawncallback, startovercallback) {
+    module.enableTopologyPoint = function (map, drawncallback, onStartOver) {
         var control = new L.Control.TopologyPoint(map);
             handler = control.topologyhandler;
         map.addControl(control);
@@ -230,7 +234,7 @@ FormField.makeModule = function(module, module_settings) {
         // Delete current on first clic (start drawing)
         map.on('click', function (e) {
             if (handler.enabled()) {
-                startovercallback();
+                onStartOver.fire('startover');
                 return;
             }
         });
@@ -329,8 +333,12 @@ FormField.makeModule = function(module, module_settings) {
         var onDrawn = function (drawn_layer) {
             map.addLayer(drawn_layer);
             onNewLayer(drawn_layer);
-        },
-        onStartOver = function () {
+        };
+
+        var onStartOver = L.Util.extend({}, L.Mixin.Events);
+        onStartOver.on('startover', removeLayerFromLayerStore);
+
+        function removeLayerFromLayerStore() {
             var old_layer = layerStore.getLayer();
             if (old_layer) {
                 map.removeLayer(old_layer);

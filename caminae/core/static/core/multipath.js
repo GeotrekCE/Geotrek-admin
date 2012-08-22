@@ -108,11 +108,10 @@ L.Handler.MultiPath = L.Handler.extend({
         var self = this;
 
         // Clean all previous edges if they exist
-        var old_edges = this.all_edges || [];
-        this.unmarkEdges(old_edges);
+        this.unmarkAll();
+
         this.marker_source && this.map.removeLayer(this.marker_source);
         this.marker_dest && this.map.removeLayer(this.marker_dest);
-
 
         this.steps = [];
         this.computed_paths = [];
@@ -122,6 +121,12 @@ L.Handler.MultiPath = L.Handler.extend({
         this.graph_layer.on('click', this._onClick, this);
 
         this.fire('enabled');
+    },
+
+    unmarkAll: function() {
+        this.unmarkEdges(this.all_edges || []);
+        this.marker_source && this.map.removeLayer(this.marker_source);
+        this.marker_dest && this.map.removeLayer(this.marker_dest);
     },
 
     // Provide a way to unmark everything
