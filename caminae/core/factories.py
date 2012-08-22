@@ -97,11 +97,10 @@ class TopologyMixinFactory(factory.Factory):
         no_path = kwargs.pop('no_path', False)
         topo_mixin = super(TopologyMixinFactory, cls)._prepare(create, **kwargs)
 
-        if not no_path:
-            if create:
-                PathAggregationFactory.create(topo_object=topo_mixin)
-            else:
-                PathAggregationFactory.build(topo_object=topo_mixin)
+        if not no_path and create:
+            PathAggregationFactory.create(topo_object=topo_mixin)
+            # Note that it is not possible to attach a related object before the
+            # topo_mixin has an ID.
         return topo_mixin
 
 
