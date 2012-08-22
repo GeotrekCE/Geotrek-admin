@@ -88,7 +88,6 @@ BEGIN
             UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom), supprime = FALSE WHERE id = eid;
         END IF;
 
-        -- TODO: Remove length trigger on evenements
         -- TODO: DELETE evenements_troncons ON DELETE OR UPDATE supprime ON evenements (disable this trigger)
         -- TODO: UPDATE evenements ON UPDATE decallage ON evenement
         -- TODO: UPDATE evenements ON UPDATE geom ON troncons

@@ -20,9 +20,4 @@ $$ LANGUAGE plpgsql;
 -- Length trigger function
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION ft_longueur() RETURNS trigger AS $$
-BEGIN
-    NEW.longueur := ST_Length(NEW.geom);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+DROP FUNCTION IF EXISTS ft_longueur() CASCADE;

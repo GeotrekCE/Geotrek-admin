@@ -82,10 +82,6 @@ class TopologyMixinFactory(factory.Factory):
     # Trigger will override :
     date_insert = dbnow()
     date_update = dbnow()
-    
-    # FIXME: remove this when the trigger will be ready
-    length = 0.0
-    geom = LineString(Point(1, 1, 0), Point(2, 2, 0), srid=settings.SRID)
 
     @classmethod
     def _prepare(cls, create, **kwargs):

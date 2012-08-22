@@ -186,8 +186,11 @@ class TopologyMixinTest(TestCase):
         self.assertTrue(t2 < e.date_update < t3)
 
     def test_length(self):
-        e = TopologyMixinFactory.build()
+        e = TopologyMixinFactory.build(no_path=True)
         self.assertEqual(e.length, 0)
+        e.save()
+        self.assertEqual(e.length, 0)
+        p = PathAggregationFactory.create(topo_object=e)
         e.save()
         self.assertNotEqual(e.length, 0)
 
@@ -284,5 +287,5 @@ class TopologyMixinTest(TestCase):
         t = TopologyMixinFactory.create(no_path=True, offset=1)
         PathAggregationFactory.create(topo_object=t, path=p2)
         PathAggregationFactory.create(topo_object=t, path=p3)
-        t = TopologyMixin.objects.get(pk=t.pk)
+        t.save()
         self.assertEqual(t.geom, LineString((3,2,2), (3,1,0), (4,1,0)))

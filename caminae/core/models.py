@@ -185,13 +185,19 @@ class TopologyMixin(models.Model):
         return aggr
 
     def save(self, *args, **kwargs):
+        # HACK: these fields are readonly from the Django point of view
+        # but they can be changed at DB level. Since Django write all fields
+        # to DB anyway, it is important to update it before writting
+        if self.pk:
+            tmp = self.__class__.objects.get(pk=self.pk)
+            self.length = tmp.length
+            self.geom = tmp.geom
+
         if not self.kind:
             if self._meta.object_name == "TopologyMixin":
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.get_kind()
 
-        # TODO: do this in triggers
-        self.geom = LineString([Point(0,0,0), Point(1,1,0)])
         super(TopologyMixin, self).save(*args, **kwargs)
 
         # Update computed values
