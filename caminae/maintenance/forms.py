@@ -1,4 +1,6 @@
 from django import forms
+from django.utils.translation import ugettext_lazy as _
+
 from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
@@ -51,6 +53,7 @@ class InterventionForm(MapEntityForm):
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
+            self.fields['topology'].label = _(self.instance.topology.kind.kind)
 
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
