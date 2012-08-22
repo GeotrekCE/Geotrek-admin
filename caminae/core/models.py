@@ -184,6 +184,16 @@ class TopologyMixin(models.Model):
                                              end_position=end)
         return aggr
 
+    def reload(self):
+        if self.pk:
+            # Update computed values
+            tmp = self.__class__.objects.get(pk=self.pk)
+            self.date_insert = tmp.date_insert
+            self.date_update = tmp.date_update
+            self.length = tmp.length
+            self.geom = tmp.geom
+        return self
+
     def save(self, *args, **kwargs):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
@@ -199,13 +209,7 @@ class TopologyMixin(models.Model):
             self.kind = self.get_kind()
 
         super(TopologyMixin, self).save(*args, **kwargs)
-
-        # Update computed values
-        tmp = self.__class__.objects.get(pk=self.pk)
-        self.date_insert = tmp.date_insert
-        self.date_update = tmp.date_update
-        self.length = tmp.length
-        self.geom = tmp.geom
+        self.reload()
 
     @classmethod
     def deserialize(cls, serialized):

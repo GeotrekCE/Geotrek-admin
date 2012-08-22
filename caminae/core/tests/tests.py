@@ -218,8 +218,8 @@ class TopologyMixinTest(TestCase):
         topology = TopologyMixinFactory.create(offset=1, no_path=True)
         PathAggregationFactory.create(topo_object=topology, path=path, 
                                       start_position=0.5, end_position=0.5)
-        fieldvalue = topology.serialize()
-        self.assertEqual(fieldvalue, '{"lat": -5.983856309208769, "lng": -1.3630812101179004, "kind": "TopologyMixin"}')
+        fieldvalue = topology.reload().serialize()
+        self.assertEqual(fieldvalue, '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TopologyMixin"}')
 
     def test_deserialize(self):
         path = PathFactory.create()
