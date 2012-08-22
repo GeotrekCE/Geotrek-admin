@@ -416,20 +416,6 @@
     },
     {
         "pk": 1,
-        "model": "core.topologymixinkind",
-        "fields": {
-            "kind": "Infrastructure"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "core.topologymixinkind",
-        "fields": {
-            "kind": "Signage"
-        }
-    },
-    {
-        "pk": 1,
         "model": "core.pathaggregation",
         "fields": {
             "path": 896,
