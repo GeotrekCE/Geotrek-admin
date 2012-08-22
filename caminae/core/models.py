@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.gis.db import models
 from django.utils import simplejson
 from django.conf import settings
@@ -8,6 +10,8 @@ from caminae.authent.models import StructureRelated
 from caminae.common.utils import distance3D
 from caminae.mapentity.models import MapEntityMixin
 
+
+logger = logging.getLogger(__name__)
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -64,6 +68,39 @@ class Path(MapEntityMixin, StructureRelated):
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
 
+    @classmethod
+    def closest(cls, point):
+        # TODO: move to custom manager
+        if point.srid != settings.SRID:
+            point = point.transform(settings.SRID, clone=True)
+        return cls.objects.all().distance(point).order_by('distance')[0]
+
+    def interpolate(self, point):
+        from django.db import connection
+        from string import Template
+        if not self.pk:
+            raise ValueError("Cannot compute interpolation on unsaved path")
+        if point.srid != settings.SRID:
+            point.transform(settings.SRID)
+        cursor = connection.cursor()
+        sql = Template("""
+        SELECT ST_Line_Locate_Point(the_line, point) AS position, 
+               ST_Distance(point, ST_Line_Interpolate_Point(the_line, ST_Line_Locate_Point(the_line, point))) AS offset
+        FROM (SELECT geom AS the_line, 
+                     ST_GeomFromText('POINT($x $y $z)',$srid) AS point
+              FROM troncons WHERE id='$pk') AS foo;
+        """)
+        cursor.execute(sql.substitute({
+            'pk': self.pk,
+            'x': point.x,
+            'y': point.y,
+            'z': 0,  # TODO: does it matter ?
+            'srid': settings.SRID,
+            'table': self._meta.db_table
+        }))
+        result = cursor.fetchall()
+        return result[0]
+
     def save(self, *args, **kwargs):
         super(Path, self).save(*args, **kwargs)
 
@@ -105,7 +142,7 @@ class Path(MapEntityMixin, StructureRelated):
 
 class TopologyMixin(models.Model):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
-    offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
+    offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
 
     # Override default manager
@@ -166,13 +203,18 @@ class TopologyMixin(models.Model):
             except simplejson.JSONDecodeError, e:
                 raise ValueError(_("Invalid serialized topology: %s") % e)
         kind = objdict.get('kind')
-        topology = TopologyMixinFactory.create(kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
-        # Delete all existing aggregrations (like those created by Factory)
-        PathAggregation.objects.filter(topo_object=topology).delete()
+        lat = objdict.get('lat')
+        lng = objdict.get('lng')
+        # Point topology ?
+        if lat and lng:
+            return cls._topologypoint(lng, lat, kind)
+        # Path aggregation
+        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
         # Start repopulating from serialized data
         start = objdict.get('start', 0.0)
         end = objdict.get('end', 1.0)
         paths = objdict['paths']
+        # Create path aggregations
         for i, path in enumerate(paths):
             try:
                 path = Path.objects.get(pk=path)
@@ -188,6 +230,27 @@ class TopologyMixin(models.Model):
             aggrobj.save()
         return topology
 
+    @classmethod
+    def _topologypoint(cls, lng, lat, kind=None):
+        """
+        Receives a point (lng, lat) with API_SRID, and returns
+        a topology objects with a computed path aggregation.
+        """
+        from .factories import TopologyMixinFactory
+        # Find closest path
+        point = Point((lng, lat), srid=settings.API_SRID)
+        point.transform(settings.SRID)
+        closest = Path.closest(point)
+        position, offset = closest.interpolate(point)
+        # We can now instantiante a Topology object
+        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=offset)
+        aggrobj = PathAggregation(topo_object=topology,
+                                  start_position=position,
+                                  end_position=position,
+                                  path=closest)
+        aggrobj.save()
+        return topology
+
     def serialize(self):
         paths = []
         start = 1.0
@@ -198,11 +261,21 @@ class TopologyMixin(models.Model):
             if aggregation.end_position > end:
                 end = aggregation.end_position
             paths.append(aggregation.path.pk)
-        objdict = dict(kind=self.kind.kind,
-                       offset=self.offset,
-                       start=start,
-                       end=end,
-                       paths=paths)
+        # Point topology
+        if start == end and len(paths) == 1:
+            geom = self.geom
+            if geom.geom_type != 'Point':
+                logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
+                geom = Point(geom.coords[0], srid=settings.SRID)
+            point = geom.transform(settings.API_SRID, clone=True)
+            objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
+        else:
+            # Line topology
+            objdict = dict(kind=self.kind.kind,
+                           offset=self.offset,
+                           start=start,
+                           end=end,
+                           paths=paths)
         return simplejson.dumps(objdict)
 
 class TopologyMixinKind(models.Model):
