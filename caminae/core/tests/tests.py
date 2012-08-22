@@ -243,6 +243,26 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(topology.aggregations.all()[0].start_position, 7.34463799778595e-07)
         self.assertEqual(topology.aggregations.all()[0].end_position, 7.34463799778595e-07)
 
+    def test_deserialize_serialize(self):
+        path = PathFactory.create(geom=LineString((1,1,1), (2,2,2), (2,0,0)))
+        before = TopologyMixinFactory.create(offset=1, no_path=True)
+        before.add_path(path, start=0.5, end=0.5)
+        # Reload from DB
+        before = TopologyMixin.objects.get(pk=before.pk)
+        
+        # Deserialize it serialized version !
+        after = TopologyMixin.deserialize(before.serialize())
+        # Reload from DB
+        after = TopologyMixin.objects.get(pk=after.pk)
+        
+        def assertAlmostEqual(v1, v2):
+            self.assertTrue(abs(v1 - v2) < 0.01)
+        self.assertEqual(len(before.paths.all()), len(after.paths.all()))
+        assertAlmostEqual(before.aggregations.all()[0].start_position,
+                          after.aggregations.all()[0].start_position)
+        assertAlmostEqual(before.aggregations.all()[0].end_position,
+                          after.aggregations.all()[0].end_position)
+
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
         p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))

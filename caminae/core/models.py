@@ -176,6 +176,14 @@ class TopologyMixin(models.Model):
         name = name or cls._meta.object_name
         return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
+    def add_path(self, path, start=0.0, end=1.0):
+        from .factories import PathAggregationFactory
+        aggr = PathAggregationFactory.create(topo_object=self, 
+                                             path=path, 
+                                             start_position=start, 
+                                             end_position=end)
+        return aggr
+
     def save(self, *args, **kwargs):
         if not self.kind:
             if self._meta.object_name == "TopologyMixin":
@@ -276,6 +284,7 @@ class TopologyMixin(models.Model):
                            end=end,
                            paths=paths)
         return simplejson.dumps(objdict)
+
 
 class TopologyMixinKind(models.Model):
 
