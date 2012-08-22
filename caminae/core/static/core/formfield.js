@@ -102,13 +102,56 @@ FormField.makeModule = function(module, module_settings) {
                     'graph': graph
                 };
 
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra);
-                multipath_control.multipath_handler.on('computed_paths', function(data) {
-                    var new_edges = data['new_edges'],
-                        paths = [];
-                    for (var i=0; i<new_edges.length; i++) {
-                        paths.push(new_edges[i].id);
+                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra)
+                  , multipath_handler = multipath_control.multipath_handler
+                  , cameleon = multipath_handler.cameleon
+                ;
+
+                var markPath = (function() {
+                    var current_path_layer = null;
+                    return {
+                        'updateGeom': function(new_edges) {
+                            var prev_path_layer = current_path_layer;
+
+                            if (prev_path_layer) {
+                                // This is just used to get the WKT
+                                map.removeLayer(prev_path_layer);
+                                cameleon.deactivate('dijkstra_computed', prev_path_layer);
+                            }
+
+                            if (! new_edges) {
+                                current_path_layer = null;
+                            } else {
+                                // Gather all LatLngs - $.map autoconcatenate
+                                var layers = $.map(new_edges, function(edge) {
+                                    return objectsLayer.getLayer(edge.id);
+                                });
+
+                                // unmark edges that were highlighted in multipath control
+                                // FIXME: Rather than undoing we should prevent this... or trigger event
+                                multipath_handler.unmarkLayers(layers);
+
+                                // Create a new layer from the union of all latlngs
+                                var cloned_layers = $.map(layers, function(l) { return [ l.getLatLngs() ]; });
+
+                                current_path_layer = new L.MultiPolyline(cloned_layers);
+                                map.addLayer(current_path_layer);
+                                cameleon.activate('dijkstra_computed', current_path_layer);
+
+                            }
+                        }
                     }
+                })();
+
+                // Delete previous geom
+                multipath_handler.on('enabled', function() { markPath.updateGeom(null); });
+
+                multipath_handler.on('computed_paths', function(data) {
+                    var new_edges = data['new_edges'];
+
+                    var paths = $.map(new_edges, function(edge) { return edge.id; });
+                    markPath.updateGeom(new_edges);
+
                     var topology = {
                         offset: 0,  // TODO: input for offset
                         start: 0.0,  // TODO: until now, always start at 0
