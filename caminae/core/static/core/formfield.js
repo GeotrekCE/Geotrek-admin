@@ -61,6 +61,7 @@ FormField.makeModule = function(module, module_settings) {
 
     module.enablePathSnapping = function(map, modelname, objectsLayer) {
         var snapObserver = null;
+        MapEntity.MarkerSnapping.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
         MapEntity.SnapObserver.MIN_SNAP_ZOOM = module_settings.enablePathSnapping.MIN_SNAP_ZOOM;
         // Snapping is always on paths layer. But only if model is not path,
         // since snapping will then be on objects layer.

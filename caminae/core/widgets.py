@@ -44,8 +44,10 @@ class GeometryWidget(LeafletMapWidget):
         # Be careful, on form error, value is not a GEOSGeometry
         if value and not isinstance(value, basestring):
             value.transform(settings.API_SRID)
-        context['min_snap_zoom'] = settings.MIN_SNAP_ZOOM
         context['path_snapping'] = self.path_snapping
+        # TODO: this should come from context processor !
+        context['MIN_SNAP_ZOOM'] = settings.MIN_SNAP_ZOOM
+        context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
 
@@ -87,8 +89,10 @@ class TopologyWidget(forms.Textarea):
         context['update'] = bool(value)
         context['topology'] = value
         context['topologyjson'] = topologyjson
-        context['min_snap_zoom'] = settings.MIN_SNAP_ZOOM
         context['path_snapping'] = True
+        # TODO: this should come from context processor !
+        context['MIN_SNAP_ZOOM'] = settings.MIN_SNAP_ZOOM
+        context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
 
