@@ -71,16 +71,14 @@ class TopologyWidget(forms.Textarea):
         return data.get(name)
 
     def get_context(self, name, value, *args, **kwargs):
-        if isinstance(value, basestring):
-            try:
-                value = TopologyMixin.deserialize(value)
-            except ValueError:
-                value = None
         topologyjson = ''
         if value:
-            if not isinstance(value, TopologyMixin):
-                value = TopologyMixin.objects.get(pk=value)
-            topologyjson = value.serialize()
+            if isinstance(value, basestring):
+                topologyjson = value
+            else:
+                if isinstance(value, int):
+                    value = TopologyMixin.objects.get(pk=value)
+                topologyjson = value.serialize()
         context = super(TopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')
         context['display_json'] = self.display_json

@@ -253,7 +253,7 @@ class TopologyMixinTest(TestCase):
         # Reload from DB
         before = TopologyMixin.objects.get(pk=before.pk)
         
-        # Deserialize it serialized version !
+        # Deserialize its serialized version !
         after = TopologyMixin.deserialize(before.serialize())
         # Reload from DB
         after = TopologyMixin.objects.get(pk=after.pk)
