@@ -216,7 +216,7 @@ class TopologyMixinTest(TestCase):
         PathAggregationFactory.create(topo_object=topology, path=path, 
                                       start_position=0.5, end_position=0.5)
         fieldvalue = topology.serialize()
-        self.assertEqual(fieldvalue, "{'lat': -5.983856309208769, 'lng': -1.3630812101179004, 'kind': 'TopologyMixin'}")
+        self.assertEqual(fieldvalue, '{"lat": -5.983856309208769, "lng": -1.3630812101179004, "kind": "TopologyMixin"}')
 
     def test_deserialize(self):
         path = PathFactory.create()
@@ -231,17 +231,17 @@ class TopologyMixinTest(TestCase):
     def test_deserialize_point(self):
         PathFactory.create()
         # Take a point
-        p = Point(0, 1.0, 0, srid=settings.SRID)
+        p = Point(0, 2.0, 0, srid=settings.SRID)
         p.transform(settings.API_SRID)
-        # Check closest path
         closest = Path.closest(p)
+        # Check closest path
         self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
         # The point has same x as first point of path, and y to 0 :
         topology = TopologyMixin.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertEqual(topology.offset, 1)  # TODO: should be 1 right ?
+        self.assertEqual(topology.offset, 1.41421347067011)
         self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(topology.aggregations.all()[0].start_position, 0)
-        self.assertEqual(topology.aggregations.all()[0].end_position, 0)
+        self.assertEqual(topology.aggregations.all()[0].start_position, 7.34463799778595e-07)
+        self.assertEqual(topology.aggregations.all()[0].end_position, 7.34463799778595e-07)
 
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))

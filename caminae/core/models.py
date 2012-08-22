@@ -72,7 +72,7 @@ class Path(MapEntityMixin, StructureRelated):
     def closest(cls, point):
         # TODO: move to custom manager
         if point.srid != settings.SRID:
-            point.transform(settings.SRID)
+            point = point.transform(settings.SRID, clone=True)
         return cls.objects.all().distance(point).order_by('distance')[0]
 
     def interpolate(self, point):
@@ -268,13 +268,14 @@ class TopologyMixin(models.Model):
                 logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
                 geom = Point(geom.coords[0], srid=settings.SRID)
             point = geom.transform(settings.API_SRID, clone=True)
-            return dict(kind=self.kind.kind, lng=point.x, lat=point.y)
-        # Line topology
-        objdict = dict(kind=self.kind.kind,
-                       offset=self.offset,
-                       start=start,
-                       end=end,
-                       paths=paths)
+            objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
+        else:
+            # Line topology
+            objdict = dict(kind=self.kind.kind,
+                           offset=self.offset,
+                           start=start,
+                           end=end,
+                           paths=paths)
         return simplejson.dumps(objdict)
 
 class TopologyMixinKind(models.Model):
