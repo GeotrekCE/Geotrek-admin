@@ -68,6 +68,10 @@ class MapEntityList(ListView):
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_LIST
 
+    def get_queryset(self):
+        qs = super(MapEntityList, self).get_queryset()
+        return qs.select_related(depth=1)
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         # Save last list visited in session
