@@ -33,6 +33,7 @@ var {{ module }}_settings = {
         }
     },
     'init': {
+        'enableDrawing': true,
         'objectBounds': {{ field|latlngbounds }},
         'pathsnapping': {{ path_snapping|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
