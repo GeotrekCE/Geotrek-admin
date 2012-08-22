@@ -617,6 +617,11 @@ MapEntity.Cameleon = (function() {
                 if (!lazy)
                     setNewStyle(layer, skin);
             },
+            'applyCurrentStyle': function(layer) {
+                var skin = layerToSkin.get(layer);
+                if (!skin) return false;
+                setNewStyle(layer, skin);
+            },
             'hasStyle': function(style_name, layer) {
                 var skin = layerToCameleon.get(layer)
                 if (!skin) return false;
