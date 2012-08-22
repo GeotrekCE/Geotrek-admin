@@ -213,17 +213,9 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         var layerStore = MapEntity.makeGeoFieldProxy($(module_settings.init.layerStoreElemSelector));
+        layerStore.setTopologyMode(module_settings.init.multipath || module_settings.init.topologypoint);
 
         /*** <objectLayer> ***/
-
-        var geojson = module_settings.init.geojson;  // If no field, will be null.
-        var objectLayer = new L.GeoJSON(geojson, {
-            style: {weight: 5, opacity: 1, clickable: true},
-            onEachFeature: function (feature, layer) {
-                onNewLayer(layer);
-            }
-        });
-        map.addLayer(objectLayer);
 
         function _edit_handler(map, layer) {
             var edit_handler = L.Handler.PolyEdit;
@@ -263,6 +255,26 @@ FormField.makeModule = function(module, module_settings) {
             if (snapObserver) snapObserver.add(new_layer);
         }
 
+        var geojson = module_settings.init.geojson;  // If no field, will be null.
+        if (geojson) {
+            var objectLayer = new L.GeoJSON(geojson, {
+                style: {weight: 5, opacity: 1, clickable: true},
+                onEachFeature: function (feature, layer) {
+                    onNewLayer(layer);
+                }
+            });
+            map.addLayer(objectLayer);
+        }
+        else {
+            // If no geojson is provided, we may be editing a topology
+            var topology = $(module_settings.init.layerStoreElemSelector).val();
+            if (topology) {
+                var point = JSON.parse(topology),
+                    existing = new L.Marker(new L.LatLng(point.lat, point.lng)).addTo(map)
+                onNewLayer(existing);
+            }
+        }
+
         /*** </objectLayer> ***/
 
         /*** <drawing> ***/
@@ -286,12 +298,10 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         if (module_settings.init.multipath) {
-            layerStore.setTopologyMode(true);
             module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver);
         }
         
         if (module_settings.init.topologypoint) {
-            layerStore.setTopologyMode(true);
             module.enableTopologyPoint(map, onDrawn, onStartOver);
         }
     };
