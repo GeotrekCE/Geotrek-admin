@@ -93,7 +93,7 @@ FormField.makeModule = function(module, module_settings) {
         return objectsLayer;
     };
 
-    module.enableMultipath = function(map, objectsLayer, layerStore) {
+    module.enableMultipath = function(map, objectsLayer, layerStore, startovercallback) {
         objectsLayer.on('load', function() {
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, function(graph) {
 
@@ -144,7 +144,10 @@ FormField.makeModule = function(module, module_settings) {
                 })();
 
                 // Delete previous geom
-                multipath_handler.on('enabled', function() { markPath.updateGeom(null); });
+                multipath_handler.on('enabled', function() { 
+                    markPath.updateGeom(null); 
+                    startovercallback();
+                });
 
                 multipath_handler.on('computed_paths', function(data) {
                     var new_edges = data['new_edges'];
@@ -158,7 +161,7 @@ FormField.makeModule = function(module, module_settings) {
                         end: 1.0,
                         paths: paths,
                     };
-                    layerStore.storeTopologyInField(topology);
+                    layerStore.storeLayerGeomInField(topology);
                 });
 
                 map.addControl(multipath_control);
@@ -167,6 +170,22 @@ FormField.makeModule = function(module, module_settings) {
         });
     };
 
+    module.enableTopologyPoint = function (map, drawncallback, startovercallback) {
+        var control = new L.Control.TopologyPoint(map);
+            handler = control.topologyhandler;
+        map.addControl(control);
+        
+        // Delete current on first clic (start drawing)
+        map.on('click', function (e) {
+            if (handler.enabled()) {
+                startovercallback();
+                return;
+            }
+        });
+
+        handler.on('added', function (e) { drawncallback(e.marker) });
+    };
+    
     module.init = function(map, bounds) {
         map.removeControl(map.attributionControl);
 
@@ -230,13 +249,14 @@ FormField.makeModule = function(module, module_settings) {
                     shadowSize: new L.Point(41, 41)
                 }));
                 $(new_layer._icon).addClass('marker-add');
+                
             }
             else {
                 currentBounds = new_layer.getBounds();
             }
             new_layer.editing = _edit_handler(map, new_layer);
             new_layer.editing.enable();
-            new_layer.on('edit', function (e) {
+            new_layer.on('move edit', function (e) {
                 layerStore.storeLayerGeomInField(e.target);
             });
             layerStore.storeLayerGeomInField(new_layer);
@@ -247,33 +267,32 @@ FormField.makeModule = function(module, module_settings) {
 
         /*** <drawing> ***/
 
+        var onDrawn = function (drawn_layer) {
+            map.addLayer(drawn_layer);
+            onNewLayer(drawn_layer);
+        },
+        onStartOver = function () {
+            var old_layer = layerStore.getLayer();
+            if (old_layer) {
+                map.removeLayer(old_layer);
+                if (snapObserver) snapObserver.remove(old_layer);
+                currentBounds = initialBounds;
+                layerStore.storeLayerGeomInField(null);
+            }
+        };
+        
         if (module_settings.init.enableDrawing) {
-            module.enableDrawing(map,
-                function (drawn_layer) {
-                    map.addLayer(drawn_layer);
-                    onNewLayer(drawn_layer);
-                },
-                function () {
-                    var old_layer = layerStore.getLayer();
-                    if (old_layer) {
-                        map.removeLayer(old_layer);
-                        if (snapObserver) snapObserver.remove(old_layer);
-                        currentBounds = initialBounds;
-                        layerStore.storeLayerGeomInField(null);
-                    }
-                }
-            );
+            module.enableDrawing(map, onDrawn, onStartOver);
         }
 
-        // TODO: I NEED paths.geojson ; have a function to get it
-        var path_layer = snapObserver._guidesLayer; // objectsLayer,
-
         if (module_settings.init.multipath) {
-            // {{ module }}EnableMultipath(map, objectsLayer, layerStore)
-            module.enableMultipath(map,
-                path_layer,
-                layerStore
-            );
+            layerStore.setTopologyMode(true);
+            module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver);
+        }
+        
+        if (module_settings.init.topologypoint) {
+            layerStore.setTopologyMode(true);
+            module.enableTopologyPoint(map, onDrawn, onStartOver);
         }
     };
 

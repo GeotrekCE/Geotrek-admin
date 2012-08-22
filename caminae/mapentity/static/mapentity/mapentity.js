@@ -418,6 +418,9 @@ MapEntity.SnapObserver = L.Class.extend({
         guidesLayer.on('load', this._refresh, this);
         map.on('viewreset moveend', this._refresh, this);
     },
+    guidesLayer: function () {
+        return this._guidesLayer;
+    },
     add: function (editionLayer) {
         if (editionLayer.eachLayer) {
             editionLayer.eachLayer(function (l) {
@@ -451,29 +454,35 @@ MapEntity.SnapObserver = L.Class.extend({
 
 MapEntity.makeGeoFieldProxy = function($field, layer) {
     // Proxy to field storing WKT. It also stores the matching layer.
-    var _current_layer = layer || null;
+    var _current_layer = layer || null,
+        topologyMode = false;
 
     return {
+        setTopologyMode: function(state) {
+            topologyMode = state;
+        },
         storeLayerGeomInField: function(layer) {
             var old_layer = _current_layer;
             _current_layer = layer;
 
-            var wkt = layer ? MapEntity.getWKT(layer) : '';
-            $field.val(wkt);
-
+            var serialized = '';
+            if (topologyMode) {
+                if (layer instanceof L.Marker) {
+                    var p = layer.getLatLng();
+                    serialized = JSON.stringify({lat: p.lat, lng: p.lng});
+                }
+                else
+                    serialized = JSON.stringify(layer);
+            }
+            else {
+                if (layer) serialized = MapEntity.getWKT(layer);
+            }
+            $field.val(serialized);
             return old_layer;
         },
         getLayer: function () {
             return _current_layer;
-        },
-        storeTopologyInField: function (topology) {
-            var old_layer = _current_layer;
-            _current_layer = topology;
-
-            $field.val(JSON.stringify(topology));
-
-            return old_layer;
-        },
+        }
     };
 };
 

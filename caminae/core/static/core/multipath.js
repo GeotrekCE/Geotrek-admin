@@ -1,3 +1,44 @@
+L.Control.TopologyPoint = L.Control.extend({
+    options: {
+        position: 'topright',
+    },
+
+    initialize: function (map, options) {
+        L.Control.prototype.initialize.call(this, options);
+        this.topologyhandler = new L.Handler.TopologyPoint(map);
+    },
+
+    onAdd: function (map) {
+        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+        var link = L.DomUtil.create('a', 'leaflet-control-draw-marker', this._container);
+        link.href = '#';
+        link.title = 'Point';
+        var self = this;
+        L.DomEvent
+                .addListener(link, 'click', L.DomEvent.stopPropagation)
+                .addListener(link, 'click', L.DomEvent.preventDefault)
+                .addListener(link, 'click', function() {
+                     self.topologyhandler.enable();
+                });
+        return this._container;
+    },
+
+    onRemove: function (map) {
+    }
+});
+
+
+
+L.Handler.TopologyPoint = L.Marker.Draw.extend({
+    initialize: function (map, options) {
+        L.Marker.Draw.prototype.initialize.call(this, map, options);
+        map.on('draw:marker-created', function (e) {
+            this.fire('added', {marker:e.marker});
+        }, this);
+    },
+});
+
+
 
 L.Control.Multipath = L.Control.extend({
     options: {

@@ -85,6 +85,7 @@ class TopologyWidget(forms.Textarea):
         context['module'] = 'map_%s' % name.replace('-', '_')
         context['display_json'] = self.display_json
         context['is_multipath'] = self.is_multipath
+        context['is_point'] = self.is_point
         context['update'] = bool(value)
         context['topology'] = value
         context['topologyjson'] = topologyjson
