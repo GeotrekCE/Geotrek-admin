@@ -32,7 +32,11 @@ var {{ module }}_settings = {
         }
     },
     'enableMultipath': {
-        'path_json_graph_url': '{% url core:path_json_graph %}'
+        'path_json_graph_url': '{% url core:path_json_graph %}',
+        'iconsUrl': {
+            'source': '{% static "images/osrm_markers/marker-source.png" %}',
+            'dest':  '{% static "images/osrm_markers/marker-target.png" %}',
+        }
     },
     'init': {
         'pathsnapping': true,

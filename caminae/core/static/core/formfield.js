@@ -1,6 +1,17 @@
 if (! FormField); var FormField = {};
 
 FormField.makeModule = function(module, module_settings) {
+    function getDefaultIconOpts() {
+        return {
+            iconUrl: module_settings.init.iconUrl,
+            shadowUrl: module_settings.init.shadowUrl,
+            iconSize: new L.Point(25, 41),
+            iconAnchor: new L.Point(13, 41),
+            popupAnchor: new L.Point(1, -34),
+            shadowSize: new L.Point(41, 41)
+        };
+    };
+
 
     module.enableDrawing = function(map, drawncallback, startovercallback) {
         var drawControl = new L.Control.Draw({
@@ -93,7 +104,48 @@ FormField.makeModule = function(module, module_settings) {
         return objectsLayer;
     };
 
-    module.enableMultipath = function(map, objectsLayer, layerStore, startovercallback) {
+    module.getMarkers = function(map, snapObserver) {
+        var marker_src = new L.Marker();
+        // setLatLng setIcon
+        var makeMarker = function() {};
+
+        var iconsUrl = module_settings.enableMultipath.iconsUrl;
+
+        var icon_source = $.extend(getDefaultIconOpts(), {'iconUrl': iconsUrl.source });
+        var icon_dest = $.extend(getDefaultIconOpts(), {'iconUrl': iconsUrl.dest });
+
+        // snapObserver and map are required to setup snappable markers
+        function markerAsSnappable(marker) {
+            marker.editing = new MapEntity.MarkerSnapping(map, marker);
+            marker.editing.enable();
+            snapObserver.add(marker);
+            return marker;
+        }
+
+        // returns marker with an on('snap' possibility ?
+        var markerFactory = {
+            source: function(latlng, layer) {
+                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(icon_source)});
+                map.addLayer(marker);
+                markerAsSnappable(marker);
+                // marker.on('snap', function() {});
+                return marker;
+            },
+            dest: function(latlng, layer) {
+                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(icon_dest)});
+                map.addLayer(marker);
+                markerAsSnappable(marker);
+                // marker.on('snap', function() {});
+                return marker;
+            }
+        };
+
+        return markerFactory;
+    };
+
+    module.enableMultipath = function(map, objectsLayer, layerStore, startovercallback, snapObserver) {
+        var markersFactory = module.getMarkers(map, snapObserver);
+
         objectsLayer.on('load', function() {
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, function(graph) {
 
@@ -102,7 +154,7 @@ FormField.makeModule = function(module, module_settings) {
                     'graph': graph
                 };
 
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra)
+                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra, markersFactory)
                   , multipath_handler = multipath_control.multipath_handler
                   , cameleon = multipath_handler.cameleon
                 ;
@@ -208,7 +260,9 @@ FormField.makeModule = function(module, module_settings) {
         // Enable snapping ?
         var path_snapping = module_settings.init.pathsnapping;
         var snapObserver = null;
-        if (path_snapping) {
+
+        // Multipath need path snapping too !
+        if (path_snapping || module_settings.init.multipath) {
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
@@ -232,14 +286,7 @@ FormField.makeModule = function(module, module_settings) {
             if (new_layer instanceof L.Marker) {
                 currentBounds = map.getBounds(); // A point has no bounds, take map bounds
                 // Set custom icon, using CSS instead of JS
-                new_layer.setIcon(new L.Icon({
-                    iconUrl: module_settings.init.iconUrl,
-                    shadowUrl: module_settings.init.shadowUrl,
-                    iconSize: new L.Point(25, 41),
-                    iconAnchor: new L.Point(13, 41),
-                    popupAnchor: new L.Point(1, -34),
-                    shadowSize: new L.Point(41, 41)
-                }));
+                new_layer.setIcon(new L.Icon(getDefaultIconOpts()));
                 $(new_layer._icon).addClass('marker-add');
                 
             }
@@ -298,7 +345,7 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         if (module_settings.init.multipath) {
-            module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver);
+            module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver, snapObserver);
         }
         
         if (module_settings.init.topologypoint) {

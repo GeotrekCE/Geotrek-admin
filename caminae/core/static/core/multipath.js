@@ -46,10 +46,12 @@ L.Control.Multipath = L.Control.extend({
     },
 
     /* dijkstra */
-    initialize: function (map, graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
         L.Control.prototype.initialize.call(this, options);
         this.dijkstra = dijkstra;
-        this.multipath_handler = new L.Handler.MultiPath(map, graph_layer, dijkstra, this.options.handler);
+        this.multipath_handler = new L.Handler.MultiPath(
+            map, graph_layer, dijkstra, markersFactory, this.options.handler
+        );
     },
 
     onAdd: function (map) {
@@ -77,7 +79,8 @@ L.Control.Multipath = L.Control.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+        this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
         this.cameleon = this.graph_layer._cameleon;
@@ -85,6 +88,11 @@ L.Handler.MultiPath = L.Handler.extend({
         // .graph .algo ?
         this.dijkstra = dijkstra;
         this.graph = dijkstra.graph;
+
+        // markers
+        this.markersFactory = markersFactory;
+        this.marker_source = null;
+        this.marker_dest = null;
 
         this.layerToId = function layerToId(layer) {
             return graph_layer.getPk(layer);
@@ -102,6 +110,9 @@ L.Handler.MultiPath = L.Handler.extend({
         // Clean all previous edges if they exist
         var old_edges = this.all_edges || [];
         this.unmarkEdges(old_edges);
+        this.marker_source && this.map.removeLayer(this.marker_source);
+        this.marker_dest && this.map.removeLayer(this.marker_dest);
+
 
         this.steps = [];
         this.computed_paths = [];
@@ -158,13 +169,17 @@ L.Handler.MultiPath = L.Handler.extend({
         this.steps.push(edge_id);
         var can_compute = (this.steps.length == 2);
 
+
+        var marker;
         // mark
         if (can_compute) {
-            this.cameleon.activate('dijkstra_to', layer);
             this._container.style.cursor = '';
+            marker = this.marker_dest = this.markersFactory.dest(e.latlng)
+            this.cameleon.activate('dijkstra_to', layer);
         } else {
-            this.cameleon.activate('dijkstra_from', layer);
             this._container.style.cursor = 'e-resize';
+            marker = this.marker_source = this.markersFactory.source(e.latlng)
+            this.cameleon.activate('dijkstra_from', layer);
         }
 
         if (can_compute) {
