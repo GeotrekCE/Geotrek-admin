@@ -39,6 +39,8 @@ L.Handler.MultiPath = L.Handler.extend({
     initialize: function (map, graph_layer, dijkstra, options) {
         this._container = map._container;
         this.graph_layer = graph_layer;
+        this.cameleon = this.graph_layer._cameleon;
+
         // .graph .algo ?
         this.dijkstra = dijkstra;
         this.graph = dijkstra.graph;
@@ -58,24 +60,38 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // Clean all previous edges if they exist
         var old_edges = this.all_edges || [];
-        $.each(old_edges, function(idx, edge) {
-            // You may find several times the same edge in a path
-            var layer = self.idToLayer(edge.id);
-
-            // deactivate lazily except for last
-            self.cameleon.deactivate('dijkstra_to', layer, true);
-            self.cameleon.deactivate('dijkstra_from', layer, true);
-            self.cameleon.deactivate('dijkstra_computed', layer);
-        });
+        this.unmarkEdges(old_edges);
 
         this.steps = [];
-        this.computed_paths = []
+        this.computed_paths = [];
         this.all_edges = [];
         this._container.style.cursor = 'w-resize';
 
-        this.cameleon = this.graph_layer._cameleon;
         this.graph_layer.on('click', this._onClick, this);
+
+        this.fire('enabled');
     },
+
+    // Provide a way to unmark everything
+    unmarkEdges: function(edges) {
+        var self = this;
+        this.unmarkLayers(
+            $.map(edges, function(edge) { return self.idToLayer(edge.id); })
+        );
+    },
+
+    // Try to deactivate all styles related to dijkstra
+    unmarkLayers: function(layers) {
+        var self = this;
+        $.each(layers, function(idx, layer) {
+            // deactivate lazily and then compute resulting style
+            self.cameleon.deactivate('dijkstra_to', layer, true);
+            self.cameleon.deactivate('dijkstra_from', layer, true);
+            self.cameleon.deactivate('dijkstra_computed', layer, true);
+            self.cameleon.applyCurrentStyle(layer);
+        });
+    },
+
 
     removeHooks: function () {
         var self = this;
@@ -111,9 +127,8 @@ L.Handler.MultiPath = L.Handler.extend({
         }
 
         if (can_compute) {
-            this._onComputedPaths(
-                this.dijkstra.compute_path(this.graph, this.steps)
-            );
+            var computed_paths = this.dijkstra.compute_path(this.graph, this.steps)
+            this._onComputedPaths(computed_paths);
         }
     },
 
