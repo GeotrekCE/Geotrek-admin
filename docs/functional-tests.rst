@@ -521,8 +521,8 @@ L'ensemble des entités manipulées dans l'application sont disponibles.
 de champ, et seul le status "souhaitée" est disponible.
 
 
-Afficher les fiches sentiers
-----------------------------
+#148, #149 - Afficher les fiches sentiers
+-----------------------------------------
 
 Il est désormais possible d'accéder à la fiche d'un sentier. Ces objets
 ne sont cependant pas éditables.
@@ -569,3 +569,18 @@ La géométrie de l'aménagement est affichée, en lecture seule.
 Sauvegarder le formulaire.
 
 Retourner sur la fiche de l'aménagement, l'intervention apparait.
+
+
+#135, #161, #162, #135, #160 - Saisie des topologies
+----------------------------------------------------
+
+Ajouter une nouvelle intervention. 
+
+Il y a deux contrôles disponibles : ligne et point. 
+
+Saisir un point revient à poser un marqueur. Saisir une line revient à placer
+deux marqueurs.
+
+Sauvegarder.
+
+Éditer l'intervention précedemment crée. Le(s) marqueur(s) est présent à l'endroit saisi.
