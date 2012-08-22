@@ -1,6 +1,7 @@
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import PathManagerFactory
 
+from caminae.core.factories import PathFactory
 from caminae.common.factories import OrganismFactory
 from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
     WorkManagementEdge, SignageManagementEdge)
@@ -15,9 +16,10 @@ class PhysicalEdgeViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'physical_type': PhysicalTypeFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -27,9 +29,10 @@ class LandEdgeViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'land_type': LandTypeFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -39,9 +42,10 @@ class CompetenceEdgeViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -51,9 +55,10 @@ class WorkManagementEdgeViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -64,7 +69,8 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }

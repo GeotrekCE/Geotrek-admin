@@ -1,6 +1,7 @@
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
 
+from caminae.core.factories import PathFactory
 from caminae.trekking.models import POI, Trek
 from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
     TrekNetworkFactory, UsageFactory, WebLinkFactory)
@@ -34,6 +35,7 @@ class TrekViewsTest(MapEntityTest):
     userfactory = TrekkingManagerFactory
 
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'name_fr': '',
             'name_it': '',
@@ -72,5 +74,5 @@ class TrekViewsTest(MapEntityTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'geom': '{"paths": [1]}',
+            'geom': '{"paths": [%s]}' % path.pk,
         }

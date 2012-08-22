@@ -219,8 +219,7 @@ class TopologyMixin(models.Model):
             try:
                 path = Path.objects.get(pk=path)
             except Path.DoesNotExist, e:
-                # TODO raise ValueError(str(e)), fix tests before uncommenting
-                path = Path.objects.all()[0]
+                raise ValueError(str(e))
             start_position = start if i==0 else 0.0
             end_position = end if i==len(paths)-1 else 1.0
             aggrobj = PathAggregation(topo_object=topology,

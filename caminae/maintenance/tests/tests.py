@@ -5,6 +5,7 @@ from caminae.core.factories import StakeFactory
 from caminae.common.factories import OrganismFactory
 
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
+from caminae.core.factories import PathFactory
 from caminae.maintenance.factories import (InterventionFactory, 
     InterventionDisorderFactory, InterventionStatusFactory,
     ProjectFactory, ContractorFactory)
@@ -21,6 +22,7 @@ class InterventionViewsTest(MapEntityTest):
 
     def get_good_data(self):
         InterventionStatusFactory.create()  # in case not any in db
+        path = PathFactory.create()
         return {
             'name': 'test',
             'structure': default_structure().pk,
@@ -38,7 +40,7 @@ class InterventionViewsTest(MapEntityTest):
             'status': InterventionStatus.objects.all()[0].pk,
             'heliport_cost': 0.0,
             'material_cost': 0.0,
-            'topology': '{"paths": [1]}',
+            'topology': '{"paths": [%s]}' % path.pk,
         }
 
 
