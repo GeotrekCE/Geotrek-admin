@@ -216,18 +216,31 @@ FormField.makeModule = function(module, module_settings) {
                     var polyline_start = objectsLayer.getLayer(new_edges[0].id)
                     var polyline_end = objectsLayer.getLayer(new_edges[new_edges.length-1].id)
 
-                    var p_start = map.latLngToLayerPoint(marker_source.getLatLng());
-                    var p_end = map.latLngToLayerPoint(marker_dest.getLatLng());
+                    var ll_start = marker_source.getLatLng();
+                    var ll_end = marker_dest.getLatLng();
 
                     var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
 
-                    var start = percentageDistance(p_start, polyline_start)
-                    var end = percentageDistance(p_end, polyline_end);
+                    var start = percentageDistance(ll_start, polyline_start)
+                    var end = percentageDistance(ll_end, polyline_end);
+
+                    // visual check
+                    if (false) {
+                        // Highlight segments to clearly see start and end
+                        cameleon.activate('highlight', polyline_start);
+                        cameleon.activate('highlight', polyline_end);
+                        // Highligh the start point to see the order of points in the polyline
+                        new L.Marker(polyline_start.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
+                        new L.Marker(polyline_end.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
+                        // Check the chosen point from which the distance was calculated
+                        new L.Marker(start.closest).addTo(map);
+                        new L.Marker(end.closest).addTo(map);
+                    }
 
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        start: start,
-                        end: end,
+                        start: start.distance,
+                        end: end.distance,
                         paths: paths,
                     };
                     layerStore.storeLayerGeomInField(topology);

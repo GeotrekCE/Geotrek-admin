@@ -20,26 +20,29 @@ casper.waitForSelector("form",
 // Testing getPercentageDistanceFromPoints
 // Used to calculate start_position and end_position for topology
 casper.thenOpen(baseurl + '/intervention/add/', function() {
-    var distance = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistanceFromPoints(
+    var p = this.evaluate(function() {
+        return MapEntity.Utils.getPercentageDistance(
             L.point(2, 2), [ L.point(1, 1), L.point(3, 3) ]
         );
     });
-    this.test.assert(distance == 1/2);
+    this.test.assert(p.distance == 1/2);
+    this.test.assert(p.closest.x == 1 && p.closest.y == 1);
 
-    var distance = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistanceFromPoints(
+    var p = this.evaluate(function() {
+        return MapEntity.Utils.getPercentageDistance(
             L.point(2, 2), [ L.point(1, 1), L.point(3, 3), L.point(4, 4) ]
         );
     });
-    this.test.assert(distance == 1/3);
+    this.test.assert(p.distance == 1/3);
+    this.test.assert(p.closest.x == 1 && p.closest.y == 1);
 
-    var distance = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistanceFromPoints(
+    var p = this.evaluate(function() {
+        return MapEntity.Utils.getPercentageDistance(
             L.point(2, 2), [ L.point(4, 4), L.point(3, 3), L.point(1, 1) ]
         );
     });
-    this.test.assert(distance == 2/3);
+    this.test.assert(p.distance == 2/3);
+    this.test.assert(p.closest.x == 3 && p.closest.y == 3);
 });
 
 casper.run(function() {this.test.renderResults(true);});

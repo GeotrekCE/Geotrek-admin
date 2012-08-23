@@ -174,7 +174,6 @@ L.Handler.MultiPath = L.Handler.extend({
         this.steps.push(edge_id);
         var can_compute = (this.steps.length == 2);
 
-
         var marker;
         // mark
         if (can_compute) {
