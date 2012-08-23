@@ -32,7 +32,8 @@ class TopologyMixinForm(MapEntityForm):
 
     def clean(self, *args, **kwargs):
         data = super(TopologyMixinForm, self).clean()
-        del self.errors['geom']
+        if 'geom' in self.errors:
+            del self.errors['geom']
         return data
 
     def save(self, *args, **kwargs):
