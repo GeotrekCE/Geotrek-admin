@@ -172,12 +172,12 @@ L.Handler.MultiPath = L.Handler.extend({
             marker = this.markersFactory.dest(latlng)
         }
 
-        marker.on('snap', function(chosen) {
-            var chosen_obj = chosen['object']
-            self.updateStep(next_step_idx, marker, chosen_obj);
+        marker.on('snap', function(e) {
+            self.updateStep(next_step_idx, marker, e.object);
         });
         marker.on('unsnap', function() {
             self.steps.splice(next_step_idx, 1, null);
+            self.fire('unsnap');
         });
 
         // Restrict snaplist to layer and snapdistance to max_value

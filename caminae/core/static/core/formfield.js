@@ -167,7 +167,9 @@ FormField.makeModule = function(module, module_settings) {
                     markPath.updateGeom(null);
                     multipath_handler.unmarkAll();
                 });
-
+                multipath_handler.on('unsnap', function () {
+                    markPath.updateGeom(null);
+                });
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
                     onStartOver.fire('startover');
@@ -178,6 +180,7 @@ FormField.makeModule = function(module, module_settings) {
                 // is shared with one of the edge of the polyline
                 function getOrder(polyline, next_polyline) {
                     var ll_p = polyline.getLatLngs()[0];
+                    if (!next_polyline) return false;
 
                     var lls = next_polyline.getLatLngs()
                       , ll_a = lls[0]
@@ -237,14 +240,20 @@ FormField.makeModule = function(module, module_settings) {
                     var paths = $.map(new_edges, function(edge) { return edge.id; });
                     var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
 
+                    if (layers.length == 0)
+                        return;  // TODO: clean-up before give-up ?
+
                     var polyline_start = layers[0];
                     var polyline_end = layers[layers.length -1];
 
                     var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
 
                     var start = percentageDistance(ll_start, polyline_start)
-                      , end = percentageDistance(ll_end, polyline_end)
-                      , start_closest_idx = start.closest
+                      , end = percentageDistance(ll_end, polyline_end);
+                    if (!start || !end)
+                        return;  // TODO: clean-up before give-up ?
+                    
+                    var start_closest_idx = start.closest
                       , end_closest_idx = end.closest
                     ;
 
