@@ -4,5 +4,10 @@
 {% block nav-path %}active{% endblock nav-path %}
 
 {% block mainactions %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add physical edge" %}</a>
+	<div class="btn-group">
+	    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add physical edge" %}</a>
+	</div>
+
+    {% include "core/manageland_fragment.html" %}
+
 {% endblock mainactions %}

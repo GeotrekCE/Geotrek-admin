@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        {% trans "Manage land" %}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a class="disabled" href="{% url land:physicaledge_list %}">{% trans "Physical types" %}</a></li>
+        <li><a class="disabled" href="{% url land:landedge_list %}">{% trans "Land types" %}</a></li>
+        <li><a class="disabled" href="{% url land:competenceedge_list %}">{% trans "Competence zones" %}</a></li>
+        <li><a class="disabled" href="{% url land:signagemanagementedge_list %}">{% trans "Signage management" %}</a></li>
+        <li><a class="disabled" href="{% url land:workmanagementedge_list %}">{% trans "Work management" %}</a></li>
+    </ul>
+</div>
