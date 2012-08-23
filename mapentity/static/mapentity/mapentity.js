@@ -360,7 +360,7 @@ MapEntity.Utils = (function() {
         getPercentageDistance: function(x, xs, epsilon, only_first) {
             var xs_len = 0
               , distance_found = false
-              , closest_point = null
+              , closest_idx = null
               , distance = Number.MAX_VALUE;
 
             for (var i = 0; i < xs.length - 1; i++) {
@@ -374,7 +374,7 @@ MapEntity.Utils = (function() {
 
                         if (only_first || xdistance < distance) {
                             distance = xdistance;
-                            closest_point = x1;
+                            closest_idx = i;
                         }
                     }
                 }
@@ -382,7 +382,7 @@ MapEntity.Utils = (function() {
                 xs_len += x1.distanceTo(x2);
             }
 
-            return distance_found ? { 'distance': distance / xs_len, 'closest': closest_point } : null;
+            return distance_found ? { 'distance': distance / xs_len, 'closest': closest_idx } : null;
         },
 
         // Calculate length (works for either points or latlngs)
