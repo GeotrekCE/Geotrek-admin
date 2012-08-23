@@ -23,8 +23,8 @@ class TopologyField(forms.CharField):
             return None
         try:
             return TopologyMixin.deserialize(value)
-        except ValueError, e:
-            raise ValidationError(self.error_messages['invalid_topology'] + unicode(e))
+        except ValueError:
+            raise ValidationError(self.error_messages['invalid_topology'])
 
 
 
