@@ -81,6 +81,29 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 
 
 -------------------------------------------------------------------------------
+-- Update geometry of related topologies
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS troncons_evenements_geom_u_tgr ON troncons;
+
+CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
+DECLARE
+    eid integer;
+BEGIN
+    FOR eid IN SELECT DISTINCT evenement FROM evenements_troncons WHERE troncon = NEW.id LOOP
+        PERFORM update_geometry_of_evenement(eid);
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER troncons_evenements_geom_u_tgr
+AFTER UPDATE OF geom ON troncons
+FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
+
+
+-------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 

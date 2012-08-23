@@ -292,3 +292,14 @@ class TopologyMixinTest(TestCase):
         PathAggregationFactory.create(topo_object=t, path=p3)
         t.save()
         self.assertEqual(t.geom, LineString((3,2,2), (3,1,0), (4,1,0)))
+
+    def test_troncon_geom_update(self):
+        p = PathFactory.create(geom=LineString((0,0,0), (2,2,0)))
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p, start_position=0.5)
+        t.reload()
+        self.assertEqual(t.geom, LineString((1,1,0), (2,2,0)))
+        p.geom = LineString((0,0,0), (0,2,0), (2,2,0))
+        p.save()
+        t.reload()
+        self.assertEqual(t.geom, LineString((0,2,0), (2,2,0)))
