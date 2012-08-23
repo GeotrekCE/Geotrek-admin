@@ -9,7 +9,7 @@ from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import PathFactory, PathAggregationFactory, TopologyMixinFactory
-from caminae.core.models import Path, TopologyMixin, TopologyMixinKind
+from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
 
 # TODO caminae.core should be self sufficient
 from caminae.land.models import (City, RestrictedArea, LandEdge)
@@ -205,6 +205,30 @@ class TopologyMixinTest(TestCase):
         e = LandEdgeFactory.create()
         self.assertEqual(e.kind, LandEdge.get_kind())
         self.assertEqual(pk, e.get_kind().pk)
+
+    def test_delete(self):
+        # Make sure it deletes in cascade
+        topology = TopologyMixinFactory.create(offset=1)
+        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
+        topology.delete()
+        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 0)
+
+    def test_mutate(self):
+        topology1 = TopologyMixinFactory.create(no_path=True)
+        self.assertEqual(len(topology1.paths.all()), 0)
+        topology2 = TopologyMixinFactory.create(offset=14.5)
+        self.assertEqual(len(topology2.paths.all()), 1)
+        # Normal usecase
+        topology1.mutate(topology2)
+        self.assertEqual(topology1.offset, 14.5)
+        self.assertEqual(len(topology1.paths.all()), 1)
+        # topology2 does not exist anymore
+        self.assertEqual(len(TopologyMixin.objects.filter(pk=topology2.pk)), 0)
+        # Without deletion
+        topology3 = TopologyMixinFactory.create()
+        topology1.mutate(topology3, delete=False)
+        # topology3 still exists
+        self.assertEqual(len(TopologyMixin.objects.filter(pk=topology3.pk)), 1)
 
     def test_serialize(self):
         topology = TopologyMixinFactory.create(offset=1)
