@@ -239,7 +239,9 @@ L.Handler.MultiPath = L.Handler.extend({
         this.fire('computed_paths', {
             'new': new_computed_paths,
             'new_edges': this.all_edges,
-            'old': old_computed_paths
+            'old': old_computed_paths,
+            'marker_source': this.marker_source,
+            'marker_dest': this.marker_dest
         });
 
         this.disable();

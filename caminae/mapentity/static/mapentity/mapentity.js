@@ -387,6 +387,39 @@ MapEntity.MarkerSnapping = L.Handler.extend({
     },
 });
 
+MapEntity.Utils = (function() {
+    var self;
+    return self = {
+        isBetween: function(p, a, b, epsilon) {
+            epsilon = epsilon || 0.5;
+            var d = p.distanceTo(a) + p.distanceTo(b) - a.distanceTo(b);
+            return d < epsilon;
+        },
+
+        getPercentageDistanceFromPolyline: function(point, polyline) {
+            return self.getPercentageDistanceFromPoints(point, polyline._parts[0]);
+        },
+
+        getPercentageDistanceFromPoints: function(point, points) {
+            var line_len = 0
+              , distance = null;
+
+            for (var j = 0; j < points.length - 1; j++) {
+                var p1 = points[j], p2 = points[j+1];
+
+                // As we iterate in the order of the segment we keep the first result
+                if (distance == null && self.isBetween(point, p1, p2)) {
+                    distance = line_len + point.distanceTo(p1);
+                }
+
+                line_len += p1.distanceTo(p2);
+            }
+
+            return distance / line_len;
+        }
+    };
+})();
+
 
 L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
 

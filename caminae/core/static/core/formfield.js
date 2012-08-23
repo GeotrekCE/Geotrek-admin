@@ -12,7 +12,6 @@ FormField.makeModule = function(module, module_settings) {
         };
     };
 
-
     module.enableDrawing = function(map, drawncallback, startovercallback) {
         var drawControl = new L.Control.Draw({
             position: 'topright',
@@ -207,15 +206,28 @@ FormField.makeModule = function(module, module_settings) {
                 });
 
                 multipath_handler.on('computed_paths', function(data) {
-                    var new_edges = data['new_edges'];
+                    var new_edges = data['new_edges']
+                      , marker_source = data['marker_source']
+                      , marker_dest = data['marker_dest'];
 
                     var paths = $.map(new_edges, function(edge) { return edge.id; });
                     markPath.updateGeom(new_edges);
 
+                    var polyline_start = objectsLayer.getLayer(new_edges[0].id)
+                    var polyline_end = objectsLayer.getLayer(new_edges[new_edges.length-1].id)
+
+                    var p_start = map.latLngToLayerPoint(marker_source.getLatLng());
+                    var p_end = map.latLngToLayerPoint(marker_dest.getLatLng());
+
+                    var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
+
+                    var start = percentageDistance(p_start, polyline_start)
+                    var end = percentageDistance(p_end, polyline_end);
+
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        start: 0.0,  // TODO: until now, always start at 0
-                        end: 1.0,
+                        start: start,
+                        end: end,
                         paths: paths,
                     };
                     layerStore.storeLayerGeomInField(topology);
