@@ -584,3 +584,32 @@ deux marqueurs.
 Sauvegarder.
 
 Éditer l'intervention précedemment crée. Le(s) marqueur(s) est présent à l'endroit saisi.
+
+
+#122 - Mettre à jour la géométrie des évènements
+------------------------------------------------
+
+L'interface ne permet pas pour le moment d'éditer des évènements, mais on
+pourra en créer en SQL via PgAdmin3. Pour cela, ajoutez d'abord un
+enregistrement dans la table ``evenements`` puis ajoutez un ou plusieurs
+enregistrements dans la table de jointure ``evenements_troncons``, les
+tronçons existent déjà quant à eux.
+
+Après chaque insertioni, modification ou suppression dans la table
+troncons_evenements, on pourra constater avec QGIS ou PgAdmin3 que l'évènement
+lié porte bien une géométrie reflétant sa description (liste de tronçon avec PK
+début et PK fin + décallage).
+
+Après modification ou suppression d'un tronçon, on peut également vérifier que
+l'évènement lié porte bien une géométrie reflétant sa description.
+
+Après modification du décallage d'un évènement, on peut également vérifier que
+l'évènement lié porte bien une géométrie reflétant sa description.
+
+
+Évènements invalides :
+
+* Lorsque les tronçons forme une ligne discontinue, seul le
+  premier morceau apparait dans la géométrie de l'évènement.
+* Lorsqu'un évènement ponctuel est associé à plusieurs tronçons, la
+  géométrie est laissée en l'état.
