@@ -182,6 +182,8 @@ class TopologyMixin(models.Model):
                                              path=path, 
                                              start_position=start, 
                                              end_position=end)
+        # Since a trigger modifies geom, we reload the object
+        self.reload()
         return aggr
 
     def reload(self):

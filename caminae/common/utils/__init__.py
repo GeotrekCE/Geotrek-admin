@@ -34,3 +34,7 @@ def wkt_to_geom(wkt):
         return wkt3d
     except (GEOSException, TypeError, ValueError):
         return None
+
+
+def almostequal(v1, v2, precision=2):
+    return abs(v1 - v2) < 10**-precision

@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.conf import settings
+from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from caminae.mapentity.tests import MapEntityTest
-from caminae.common.utils import dbnow
+from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import PathFactory, PathAggregationFactory, TopologyMixinFactory
@@ -216,10 +217,13 @@ class TopologyMixinTest(TestCase):
     def test_serialize_point(self):
         path = PathFactory.create()
         topology = TopologyMixinFactory.create(offset=1, no_path=True)
-        PathAggregationFactory.create(topo_object=topology, path=path, 
-                                      start_position=0.5, end_position=0.5)
-        fieldvalue = topology.reload().serialize()
-        self.assertEqual(fieldvalue, '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TopologyMixin"}')
+        topology.add_path(path, start=0.5, end=0.5)
+        fieldvalue = topology.serialize()
+        # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TopologyMixin"}'
+        field = simplejson.loads(fieldvalue)
+        self.assertTrue(almostequal(field['lat'],  -5.983))
+        self.assertTrue(almostequal(field['lng'],  -1.363))
+        self.assertEqual(field['kind'],  "TopologyMixin")
 
     def test_deserialize(self):
         path = PathFactory.create()
@@ -241,10 +245,10 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
         # The point has same x as first point of path, and y to 0 :
         topology = TopologyMixin.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertEqual(topology.offset, 1.41421347067011)
+        self.assertTrue(almostequal(topology.offset, 1.414))
         self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(topology.aggregations.all()[0].start_position, 7.34463799778595e-07)
-        self.assertEqual(topology.aggregations.all()[0].end_position, 7.34463799778595e-07)
+        self.assertTrue(almostequal(topology.aggregations.all()[0].start_position, 7.34463799778595e-07))
+        self.assertTrue(almostequal(topology.aggregations.all()[0].end_position, 7.34463799778595e-07))
 
     def test_deserialize_serialize(self):
         path = PathFactory.create(geom=LineString((1,1,1), (2,2,2), (2,0,0)))
@@ -258,13 +262,12 @@ class TopologyMixinTest(TestCase):
         # Reload from DB
         after = TopologyMixin.objects.get(pk=after.pk)
         
-        def assertAlmostEqual(v1, v2):
-            self.assertTrue(abs(v1 - v2) < 0.01)
+
         self.assertEqual(len(before.paths.all()), len(after.paths.all()))
-        assertAlmostEqual(before.aggregations.all()[0].start_position,
-                          after.aggregations.all()[0].start_position)
-        assertAlmostEqual(before.aggregations.all()[0].end_position,
-                          after.aggregations.all()[0].end_position)
+        self.assertTrue(almostequal(before.aggregations.all()[0].start_position,
+                                    after.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
+                                    after.aggregations.all()[0].end_position))
 
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
