@@ -84,11 +84,9 @@ class Path(MapEntityMixin, StructureRelated):
             point.transform(settings.SRID)
         cursor = connection.cursor()
         sql = Template("""
-        SELECT ST_Line_Locate_Point(the_line, point) AS position, 
-               ST_Distance(point, ST_Line_Interpolate_Point(the_line, ST_Line_Locate_Point(the_line, point))) AS offset
-        FROM (SELECT geom AS the_line, 
-                     ST_GeomFromText('POINT($x $y $z)',$srid) AS point
-              FROM troncons WHERE id='$pk') AS foo;
+        SELECT position, distance
+        FROM ft_troncon_interpolate($pk, ST_GeomFromText('POINT($x $y $z)',$srid))
+             AS (position FLOAT, distance FLOAT)
         """)
         cursor.execute(sql.substitute({
             'pk': self.pk,

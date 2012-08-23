@@ -21,3 +21,19 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 DROP FUNCTION IF EXISTS ft_longueur() CASCADE;
+
+
+-------------------------------------------------------------------------------
+-- Interpolate along : the opposite of ST_LocateAlong
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
+DECLARE 
+  tuple RECORD;
+BEGIN
+    SELECT ST_Line_Locate_Point(line, point) AS position, 
+           ST_Distance(point, ST_Line_Interpolate_Point(line, ST_Line_Locate_Point(line, point))) AS offset
+    INTO tuple;
+    RETURN tuple;
+END;
+$$ LANGUAGE plpgsql;

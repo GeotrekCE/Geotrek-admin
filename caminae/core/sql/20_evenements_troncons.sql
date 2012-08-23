@@ -24,6 +24,22 @@ AFTER DELETE ON evenements_troncons
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
 
 
+
+-------------------------------------------------------------------------------
+-- Evenements utilities
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ft_troncon_interpolate(troncon integer, point geometry) RETURNS RECORD AS $$
+DECLARE 
+  line GEOMETRY;
+  result RECORD;
+BEGIN
+    SELECT geom FROM troncons WHERE id=troncon INTO line;
+    SELECT * FROM ST_InterpolateAlong(line, point) AS (position FLOAT, distance FLOAT) INTO result;
+    RETURN result;
+END;
+$$ LANGUAGE plpgsql;
+
 -------------------------------------------------------------------------------
 -- Compute geometry of Evenements
 -------------------------------------------------------------------------------
