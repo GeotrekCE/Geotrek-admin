@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 19:34+0200\n"
+"POT-Creation-Date: 2012-08-23 16:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,6 +41,14 @@ msgstr "Types d'aménagement"
 #: models.py:45 models.py:46
 msgid "Infrastructure"
 msgstr "Aménagement"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:12
+msgid "Interventions"
+msgstr "Interventions"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:13
+msgid "Add intervention"
+msgstr "Ajouter une intervention"
 
 #: templates/infrastructure/infrastructure_list.html:7
 #, fuzzy
