@@ -137,7 +137,15 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         var rtbounds = this._rtbounds(bounds);
         return this.rtree.search(rtbounds) || [];
     },
-    
+
+    searchBuffer: function (latlng, radius) {
+        var around = L.latLngBounds(L.latLng(latlng.lat - radius,
+                                             latlng.lng - radius),
+                                    L.latLng(latlng.lat + radius,
+                                             latlng.lng + radius));
+        return this.search(around);
+    },
+
     // Show all layers matching the pks
     updateFromPks: function(pks) {
         var self = this
@@ -251,6 +259,10 @@ MapEntity.MarkerSnapping = L.Handler.extend({
         var self = this;
         this._snaplist = [];
         this._markers = []
+        
+        // Get necessary distance around mouse in lat/lng from distance in pixels
+        this._buffer = this._map.layerPointToLatLng(new L.Point(0,0)).lat - 
+                       this._map.layerPointToLatLng(new L.Point(this.SNAP_DISTANCE,0)).lat;
 
         if (marker) {
             // new markers should be draggable !
@@ -283,41 +295,28 @@ MapEntity.MarkerSnapping = L.Handler.extend({
             if (this._markers[i] == marker) break;
         }
         if (i==this._markers.length) this._markers.push(marker);
-        marker.on('move', this._snapMarker, this);
+        marker.on('move', this._onMarkerMove, this);
     },
 
     unsnapMarker: function (marker) {
-        marker.off('move', this._snapMarker);
+        marker.off('move', this._onMarkerMove);
     },
 
-    setSnapList: function (l) {
-        l = l || [];
-        this._snaplist = l;
-        for (var i=0; i<this._markers.length; i++) {
-            var marker = this._markers[i];
-            // Mark as snap if any object of snaplist is already snapped !
-            var closest = this._closest(marker),
-                chosen = closest[0],
-                point = closest[1];
-            if (point &&
-                (Math.abs(point.lat - marker.getLatLng().lat) < this.TOLERANCE)  &&
-                (Math.abs(point.lng - marker.getLatLng().lng) < this.TOLERANCE)) {
-                $(marker._icon).addClass('marker-snapped');
-            }
-        }
+    setGuidesLayer: function (guides) {
+        this._guides = guides;
     },
 
-    _snapMarker: function (e) {
-        var marker = e.target
-        var closest = this._closest(marker);
-        this.updateClosest(marker, closest);
+    _onMarkerMove: function (e) {
+        this._snapMarker(e.target, true);
     },
 
-    updateClosest: function(marker, closest) {
+    _snapMarker: function(marker, setposition) {
+        var snaplist = this._guides.searchBuffer(marker.getLatLng(), this._buffer),
+            closest = MapEntity.Utils.closest(this._map, marker, snaplist, this.SNAP_DISTANCE);
         var chosen = closest[0],
             point = closest[1];
         if (chosen) {
-            marker.setLatLng(point);
+            if (setposition) marker.setLatLng(point);
             if (marker.snap != chosen) {
                 marker.snap = chosen;
                 $(marker._icon).addClass('marker-snapped');
@@ -475,8 +474,8 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
         this._snapper = new MapEntity.MarkerSnapping(map);
     },
 
-    setSnapList: function (l) {
-        this._snapper.setSnapList(l);
+    setGuidesLayer: function (guides) {
+        this._snapper.setGuidesLayer(guides);
     },
 
     _createMarker: function (latlng, index) {
@@ -488,15 +487,10 @@ L.Handler.SnappedEdit = L.Handler.PolyEdit.extend({
 
 
 MapEntity.SnapObserver = L.Class.extend({
-    MIN_SNAP_ZOOM: 7,
-
     initialize: function (map, guidesLayer) {
         this._map = map;
         this._guidesLayer = guidesLayer;
         this._editionLayers = [];
-
-        guidesLayer.on('load', this._refresh, this);
-        map.on('viewreset moveend', this._refresh, this);
     },
     guidesLayer: function () {
         return this._guidesLayer;
@@ -509,26 +503,12 @@ MapEntity.SnapObserver = L.Class.extend({
         }
         else {
             this._editionLayers.push(editionLayer);
-            editionLayer.editing.setSnapList(this.snapList());
-
+            editionLayer.editing.setGuidesLayer(this._guidesLayer);
         }
     },
     remove: function (editionLayer) {
         //TODO
     },
-    snapList: function () {
-        if (this._map.getZoom() > this.MIN_SNAP_ZOOM) {
-            return this._guidesLayer.search(this._map.getBounds());
-        }
-        console.log('No snapping at zoom level ' + this._map.getZoom());
-        return [];
-    },
-    _refresh: function () {
-        for (var i=0; i < this._editionLayers.length; i++) {
-            var editionLayer = this._editionLayers[i];
-            editionLayer.editing.setSnapList(this.snapList());
-        }
-    }
 });
 
 
