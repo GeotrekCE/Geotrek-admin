@@ -248,14 +248,20 @@ MapEntity.MarkerSnapping = L.Handler.extend({
 
     initialize: function (map, marker) {
         L.Handler.prototype.initialize.call(this, map);
+        var self = this;
         this._snaplist = [];
         this._markers = []
+
         if (marker) {
             // new markers should be draggable !
             if (!marker.dragging) marker.dragging = new L.Handler.MarkerDrag(marker);
             marker.dragging.enable();
             this.snapMarker(marker);
         }
+
+        this._closest = function(marker) {
+            return MapEntity.Utils.closest(map, marker, self._snaplist, self.SNAP_DISTANCE);
+        };
     },
 
     enable: function () {
@@ -301,73 +307,14 @@ MapEntity.MarkerSnapping = L.Handler.extend({
         }
     },
 
-    distance: function (latlng1, latlng2) {
-        return this._map.latLngToLayerPoint(latlng1).distanceTo(this._map.latLngToLayerPoint(latlng2));
-    },
-
-    distanceSegment: function (latlng, latlngA, latlngB) {
-        var p = this._map.latLngToLayerPoint(latlng),
-           p1 = this._map.latLngToLayerPoint(latlngA),
-           p2 = this._map.latLngToLayerPoint(latlngB);
-        return L.LineUtil.pointToSegmentDistance(p, p1, p2);
-    },
-
-    latlngOnSegment: function (latlng, latlngA, latlngB) {
-        var p = this._map.latLngToLayerPoint(latlng),
-           p1 = this._map.latLngToLayerPoint(latlngA),
-           p2 = this._map.latLngToLayerPoint(latlngB);
-           closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
-        return this._map.layerPointToLatLng(closest);
-    },
-
-    _closest: function (marker) {
-        var mindist = Number.MAX_VALUE,
-             chosen = null,
-             point = null;
-        var n = this._snaplist.length;
-        // /!\ Careful with size of this list, iterated at every marker move!
-        if (n>1000) console.warn("Snap list is very big : " + n + " objects!");
-
-        // Iterate the whole snaplist
-        for (var i = 0; i < n ; i++) {
-            var object = this._snaplist[i],
-                ll = null,
-                distance = Number.MAX_VALUE;
-            if (object.getLatLng) {
-                // Single dimension, snap on points
-                ll = object.getLatLng();
-                distance = this.distance(marker.getLatLng(), ll);
-            }
-            else {
-                // Iterate on line segments
-                var lls = object.getLatLngs(),
-                    segmentmindist = Number.MAX_VALUE;
-                // Keep the closest point of all segments
-                for (var j = 0; j < lls.length - 1; j++) {
-                    var p1 = lls[j],
-                        p2 = lls[j+1],
-                        d = this.distanceSegment(marker.getLatLng(), p1, p2);
-                    if (d < segmentmindist) {
-                        segmentmindist = d;
-                        ll = this.latlngOnSegment(marker.getLatLng(), p1, p2);
-                        distance = d;
-                    }
-                }
-            }
-            // Keep the closest point of all objects
-            if (distance < this.SNAP_DISTANCE && distance < mindist) {
-                mindist = distance;
-                chosen = object;
-                point = ll;
-            }
-        }
-        return [chosen, point];
-    },
-
     _snapMarker: function (e) {
         var marker = e.target
-        var closest = this._closest(marker),
-            chosen = closest[0],
+        var closest = this._closest(marker);
+        this.updateClosest(marker, closest);
+    },
+
+    updateClosest: function(marker, closest) {
+        var chosen = closest[0],
             point = closest[1];
         if (chosen) {
             marker.setLatLng(point);
@@ -384,7 +331,7 @@ MapEntity.MarkerSnapping = L.Handler.extend({
             }
             marker.snap = null;
         }
-    },
+    }
 });
 
 MapEntity.Utils = (function() {
@@ -446,7 +393,71 @@ MapEntity.Utils = (function() {
                 xs_len += xs.distanceTo(xs);
             }
             return xs_len;
+        },
+
+        distance: function (map, latlng1, latlng2) {
+            return map.latLngToLayerPoint(latlng1).distanceTo(map.latLngToLayerPoint(latlng2));
+        },
+
+        distanceSegment: function (map, latlng, latlngA, latlngB) {
+            var p = map.latLngToLayerPoint(latlng),
+               p1 = map.latLngToLayerPoint(latlngA),
+               p2 = map.latLngToLayerPoint(latlngB);
+            return L.LineUtil.pointToSegmentDistance(p, p1, p2);
+        },
+
+        latlngOnSegment: function (map, latlng, latlngA, latlngB) {
+            var p = map.latLngToLayerPoint(latlng),
+               p1 = map.latLngToLayerPoint(latlngA),
+               p2 = map.latLngToLayerPoint(latlngB);
+               closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
+            return map.layerPointToLatLng(closest);
+        },
+
+        closest: function (map, marker, snaplist, snap_distance) {
+            var mindist = Number.MAX_VALUE,
+                 chosen = null,
+                 point = null;
+            var n = snaplist.length;
+            // /!\ Careful with size of this list, iterated at every marker move!
+            if (n>1000) console.warn("Snap list is very big : " + n + " objects!");
+
+            // Iterate the whole snaplist
+            for (var i = 0; i < n ; i++) {
+                var object = snaplist[i],
+                    ll = null,
+                    distance = Number.MAX_VALUE;
+                if (object.getLatLng) {
+                    // Single dimension, snap on points
+                    ll = object.getLatLng();
+                    distance = self.distance(map, marker.getLatLng(), ll);
+                }
+                else {
+                    // Iterate on line segments
+                    var lls = object.getLatLngs(),
+                        segmentmindist = Number.MAX_VALUE;
+                    // Keep the closest point of all segments
+                    for (var j = 0; j < lls.length - 1; j++) {
+                        var p1 = lls[j],
+                            p2 = lls[j+1],
+                            d = self.distanceSegment(map, marker.getLatLng(), p1, p2);
+                        if (d < segmentmindist) {
+                            segmentmindist = d;
+                            ll = self.latlngOnSegment(map, marker.getLatLng(), p1, p2);
+                            distance = d;
+                        }
+                    }
+                }
+                // Keep the closest point of all objects
+                if (distance < snap_distance && distance < mindist) {
+                    mindist = distance;
+                    chosen = object;
+                    point = ll;
+                }
+            }
+            return [chosen, point];
         }
+
     };
 })();
 
