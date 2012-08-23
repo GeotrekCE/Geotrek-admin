@@ -162,34 +162,18 @@ FormField.makeModule = function(module, module_settings) {
                 var markPath = (function() {
                     var current_path_layer = null;
                     return {
-                        'updateGeom': function(new_edges) {
+                        'updateGeom': function(new_path_layer) {
                             var prev_path_layer = current_path_layer;
+                            current_path_layer = new_path_layer;
 
                             if (prev_path_layer) {
-                                // This is just used to get the WKT
                                 map.removeLayer(prev_path_layer);
                                 cameleon.deactivate('dijkstra_computed', prev_path_layer);
                             }
 
-                            if (! new_edges) {
-                                current_path_layer = null;
-                            } else {
-                                // Gather all LatLngs - $.map autoconcatenate
-                                var layers = $.map(new_edges, function(edge) {
-                                    return objectsLayer.getLayer(edge.id);
-                                });
-
-                                // unmark edges that were highlighted in multipath control
-                                // FIXME: Rather than undoing we should prevent this... or trigger event
-                                multipath_handler.unmarkLayers(layers);
-
-                                // Create a new layer from the union of all latlngs
-                                var cloned_layers = $.map(layers, function(l) { return [ l.getLatLngs() ]; });
-
-                                current_path_layer = new L.MultiPolyline(cloned_layers);
-                                map.addLayer(current_path_layer);
-                                cameleon.activate('dijkstra_computed', current_path_layer);
-
+                            if (new_path_layer) {
+                                map.addLayer(new_path_layer);
+                                cameleon.activate('dijkstra_computed', new_path_layer);
                             }
                         }
                     }
@@ -205,24 +189,83 @@ FormField.makeModule = function(module, module_settings) {
                     onStartOver.fire('startover');
                 });
 
+
+                // Returns true if the first point of the polyline
+                // is shared with one of the edge of the polyline
+                function getOrder(polyline, next_polyline) {
+                    var ll_p = polyline.getLatLngs()[0];
+
+                    var lls = next_polyline.getLatLngs()
+                      , ll_a = lls[0]
+                      , ll_b = lls[lls.length - 1];
+
+                    return ll_p.equals(ll_a) || ll_p.equals(ll_b);
+                }
+
+                function buildTopologyGeom(polylines, ll_start, ll_end, closest_first_idx, closest_end_idx) {
+                    var polyline_start = polylines[0]
+                      , polyline_end = polylines[polylines.length - 1]
+                      , polylines_inner = polylines.slice(1, -1);
+
+                    // Is the first point bound to the next edge or is it the other way ?
+
+                    var lls_tmp, lls_end, latlngs = [];
+
+                    if (getOrder(polyline_start, polylines_inner[0])) {
+                        // <--o-c- x---x---x // first point is shared ; include closest
+                        lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
+                        lls_tmp.push(ll_start);
+                    } else {
+                        // -c-o--> x---x---x // first point is not shared ; don't include closest
+                        lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
+                        lls_tmp.unshift(ll_start);
+                    }
+
+                    latlngs.push(lls_tmp);
+
+                    $.each(polylines_inner, function(idx, l) {
+                        latlngs.push(l.getLatLngs());
+                    });
+
+                    if (getOrder(polyline_end, polylines_inner[polylines_inner.length - 1])) {
+                        // x---x---x -c-o--> // first point is shared ; include closest
+                        lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
+                        lls_tmp.push(ll_end);
+                    } else {
+                        // x---x---x <--o-c- // first point is not shared ; don't include closest
+                        lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
+                        lls_tmp.unshift(ll_end);
+                    }
+
+                    latlngs.push(lls_tmp);
+
+                    return new L.MultiPolyline(latlngs);
+                }
+
+
                 multipath_handler.on('computed_paths', function(data) {
                     var new_edges = data['new_edges']
                       , marker_source = data['marker_source']
-                      , marker_dest = data['marker_dest'];
+                      , marker_dest = data['marker_dest']
+                      , ll_start = marker_source.getLatLng()
+                      , ll_end = marker_dest.getLatLng();
 
                     var paths = $.map(new_edges, function(edge) { return edge.id; });
-                    markPath.updateGeom(new_edges);
+                    var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
 
-                    var polyline_start = objectsLayer.getLayer(new_edges[0].id)
-                    var polyline_end = objectsLayer.getLayer(new_edges[new_edges.length-1].id)
-
-                    var ll_start = marker_source.getLatLng();
-                    var ll_end = marker_dest.getLatLng();
+                    var polyline_start = layers[0];
+                    var polyline_end = layers[layers.length -1];
 
                     var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
 
                     var start = percentageDistance(ll_start, polyline_start)
-                    var end = percentageDistance(ll_end, polyline_end);
+                      , end = percentageDistance(ll_end, polyline_end)
+                      , start_closest_idx = start.closest
+                      , end_closest_idx = end.closest
+                    ;
+
+                    var new_topology_geom = buildTopologyGeom(layers, ll_start, ll_end, start_closest_idx, end_closest_idx);
+                    markPath.updateGeom(new_topology_geom);
 
                     // visual check
                     if (false) {

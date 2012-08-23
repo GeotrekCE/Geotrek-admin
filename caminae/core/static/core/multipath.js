@@ -138,31 +138,9 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     unmarkAll: function() {
-        this.unmarkEdges(this.all_edges || []);
         this.marker_source && this.map.removeLayer(this.marker_source);
         this.marker_dest && this.map.removeLayer(this.marker_dest);
     },
-
-    // Provide a way to unmark everything
-    unmarkEdges: function(edges) {
-        var self = this;
-        this.unmarkLayers(
-            $.map(edges, function(edge) { return self.idToLayer(edge.id); })
-        );
-    },
-
-    // Try to deactivate all styles related to dijkstra
-    unmarkLayers: function(layers) {
-        var self = this;
-        $.each(layers, function(idx, layer) {
-            // deactivate lazily and then compute resulting style
-            self.cameleon.deactivate('dijkstra_to', layer, true);
-            self.cameleon.deactivate('dijkstra_from', layer, true);
-            self.cameleon.deactivate('dijkstra_computed', layer, true);
-            self.cameleon.applyCurrentStyle(layer);
-        });
-    },
-
 
     removeHooks: function () {
         var self = this;
@@ -200,11 +178,9 @@ L.Handler.MultiPath = L.Handler.extend({
         if (is_dest) {
             this._container.style.cursor = '';
             this.marker_dest = this.markersFactory.dest(latlng)
-            this.cameleon.activate('dijkstra_to', layer);
         } else {
             this._container.style.cursor = 'e-resize';
             this.marker_source = this.markersFactory.source(latlng)
-            this.cameleon.activate('dijkstra_from', layer);
         }
     },
 
@@ -256,11 +232,6 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // compute and store all edges of the new paths (usefull for further computation)
         this.all_edges = this._extractAllEdges(new_computed_paths);
-
-        // set inner style
-        this._eachInnerComputedPathsEdges(new_computed_paths, function(edge) {
-            self.cameleon.activate('dijkstra_computed', self.idToLayer(edge.id));
-        });
 
         this.fire('computed_paths', {
             'new': new_computed_paths,
