@@ -16,10 +16,6 @@ class InterventionViewsTest(MapEntityTest):
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
 
-    def get_bad_data(self):
-        baddata, msg = super(InterventionViewsTest, self).get_bad_data()
-        return {'topology': 'doh!'}, msg
-
     def get_good_data(self):
         InterventionStatusFactory.create()  # in case not any in db
         path = PathFactory.create()

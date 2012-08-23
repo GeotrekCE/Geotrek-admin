@@ -12,11 +12,8 @@ class POIViewsTest(MapEntityTest):
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
 
-    def get_bad_data(self):
-        baddata, msg = super(POIViewsTest, self).get_bad_data()
-        return baddata, u'Acune valeur g\xe9om\xe9trique fournie.'   # TODO until points managed as topologies
-
     def get_good_data(self):
+        path = PathFactory.create()
         return {
             'name_fr': 'test',
             'name_en': 'test',
@@ -25,7 +22,7 @@ class POIViewsTest(MapEntityTest):
             'description_en': 'here',
             'description_it': 'aca',
             'type': POITypeFactory.create().pk,
-            'geom': 'POINT (0.0 0.0 0.0)',
+            'topology': '{"paths": [%s], "offset": 18.4}' % path.pk,
         }
 
 
@@ -74,5 +71,5 @@ class TrekViewsTest(MapEntityTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }

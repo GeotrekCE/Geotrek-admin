@@ -19,7 +19,7 @@ class PhysicalEdgeViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'physical_type': PhysicalTypeFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -32,7 +32,7 @@ class LandEdgeViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'land_type': LandTypeFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -45,7 +45,7 @@ class CompetenceEdgeViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -58,7 +58,7 @@ class WorkManagementEdgeViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }
 
 
@@ -72,5 +72,5 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
-            'geom': '{"paths": [%s]}' % path.pk,
+            'topology': '{"paths": [%s]}' % path.pk,
         }
