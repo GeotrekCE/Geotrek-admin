@@ -257,6 +257,23 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(topology.aggregations.all()[0].path, path)
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
+        
+        # Multiple paths
+        p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
+        p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
+        p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
+        pks = [p.pk for p in [p1,p2,p3]]
+        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.0, "end": 1.0, "offset": 1}' % (pks))
+        for i in range(3):
+            self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
+            self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
+        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.3, "end": 0.7, "offset": 1}' % (pks))
+        self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
+        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
+        self.assertEqual(topology.aggregations.all()[1].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[1].end_position, 1.0)
+        self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
 
     def test_deserialize_point(self):
         PathFactory.create()
