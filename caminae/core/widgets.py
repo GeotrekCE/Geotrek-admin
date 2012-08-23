@@ -61,12 +61,12 @@ class LineStringWidget(GeometryWidget,
     pass
 
 
-class TopologyWidget(forms.Textarea):
-    """ A widget allowing to select a list of paths with start and end markers.
+class BaseTopologyWidget(forms.Textarea):
+    """ A widget allowing to create topologies on a map.
     """
     template_name = 'core/fieldtopology_fragment.html'
     display_json = settings.DEBUG
-    is_multipath = True
+    is_multipath = False
     is_point = False
 
     def value_from_datadict(self, data, files, name):
@@ -81,7 +81,7 @@ class TopologyWidget(forms.Textarea):
                 if isinstance(value, int):
                     value = TopologyMixin.objects.get(pk=value)
                 topologyjson = value.serialize()
-        context = super(TopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
+        context = super(BaseTopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')
         context['display_json'] = self.display_json
         context['is_multipath'] = self.is_multipath
@@ -96,19 +96,24 @@ class TopologyWidget(forms.Textarea):
         return context
 
 
-class PointTopologyWidget(TopologyWidget):
+class LineTopologyWidget(BaseTopologyWidget):
+    """ A widget allowing to select a list of paths. 
+    """
+    is_multipath = True
+
+class PointTopologyWidget(BaseTopologyWidget):
     """ A widget allowing to point a position with a marker. 
     """
     is_point = True
 
 
-class PointLineTopologyWidget(PointTopologyWidget, TopologyWidget):
+class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
     """ A widget allowing to point a position with a marker or a list of paths.
     """
     pass
 
 
-class TopologyReadonlyWidget(TopologyWidget):
+class TopologyReadonlyWidget(BaseTopologyWidget):
     template_name = 'core/fieldtopologyreadonly_fragment.html'
     
     def get_context(self, *args, **kwargs):

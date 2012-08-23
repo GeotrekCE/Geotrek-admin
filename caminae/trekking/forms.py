@@ -1,7 +1,7 @@
 import floppyforms as forms
 
 from caminae.core.forms import TopologyMixinForm
-from caminae.core.widgets import PointWidget
+from caminae.core.widgets import PointWidget, LineTopologyWidget, PointTopologyWidget
 
 from .models import Trek, POI
 
@@ -49,6 +49,10 @@ class TrekForm(TopologyMixinForm):
             'web_links',
             )
 
+    def __init__(self, *args, **kwargs):
+        super(TrekForm, self).__init__(*args, **kwargs)
+        self.fields['topology'].widget = LineTopologyWidget()
+
     class Meta(TopologyMixinForm.Meta):
         model = Trek
         exclude = TopologyMixinForm.Meta.exclude + ('name', 'departure', 'arrival', 
@@ -57,8 +61,6 @@ class TrekForm(TopologyMixinForm):
 
 
 class POIForm(TopologyMixinForm):
-    geom = forms.gis.GeometryField(widget=PointWidget)
-
     modelfields = (
             'name_fr',
             'name_it',
@@ -68,6 +70,10 @@ class POIForm(TopologyMixinForm):
             'description_en',
             'type',
             )
+
+    def __init__(self, *args, **kwargs):
+        super(POIForm, self).__init__(*args, **kwargs)
+        self.fields['topology'].widget = PointTopologyWidget()
 
     class Meta(TopologyMixinForm.Meta):
         model = POI

@@ -5,14 +5,14 @@ from django.utils.translation import ugettext_lazy as _
 import floppyforms as forms
 
 from .models import TopologyMixin
-from .widgets import TopologyWidget, PointLineTopologyWidget
+from .widgets import BaseTopologyWidget, PointLineTopologyWidget
 
 
 class TopologyField(forms.CharField):
     """
     Instead of building a Point geometry, this field builds a Topology.
     """
-    widget = TopologyWidget
+    widget = PointLineTopologyWidget
 
     default_error_messages = {
         'invalid_topology': _(u'Topology is not valid.'),
@@ -25,8 +25,3 @@ class TopologyField(forms.CharField):
             return TopologyMixin.deserialize(value)
         except ValueError:
             raise ValidationError(self.error_messages['invalid_topology'])
-
-
-
-class PointLineTopologyField(TopologyField):
-    widget = PointLineTopologyWidget

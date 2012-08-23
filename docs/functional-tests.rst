@@ -617,3 +617,13 @@ sa géométrie est modifiée pour refléter sa description.
   premier morceau apparait dans la géométrie de l'évènement.
 * Lorsqu'un évènement ponctuel est associé à plusieurs tronçons, la
   géométrie est laissée en l'état.
+
+
+#81 - Activer la saisie des topologies pour toutes les entités
+--------------------------------------------------------------
+
+Seules les lignes sont autorisées pour les itinéraires et la gestion foncière.
+
+Seuls les points sont autorisés pour les POI.
+
+Pour tout le reste (aménagements, interventions), les lignes et points sont autorisés.

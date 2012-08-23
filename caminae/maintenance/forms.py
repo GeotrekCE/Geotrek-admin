@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from crispy_forms.layout import Field
 
 from caminae.mapentity.forms import MapEntityForm
-from caminae.core.fields import PointLineTopologyField
+from caminae.core.fields import TopologyField
 from caminae.core.widgets import TopologyReadonlyWidget
 from caminae.infrastructure.models import BaseInfrastructure
 
@@ -13,7 +13,7 @@ from .models import Intervention, InterventionStatus, Project
 
 class InterventionForm(MapEntityForm):
     """ An intervention can be a Point or a Line """
-    topology = PointLineTopologyField()
+    topology = TopologyField()
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.all(),
                                             widget=forms.HiddenInput())
