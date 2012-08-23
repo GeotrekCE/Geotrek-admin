@@ -333,9 +333,15 @@ FormField.makeModule = function(module, module_settings) {
             // If no geojson is provided, we may be editing a topology
             var topology = $(module_settings.init.layerStoreElemSelector).val();
             if (topology) {
-                var point = JSON.parse(topology),
-                    existing = new L.Marker(new L.LatLng(point.lat, point.lng)).addTo(map)
-                onNewLayer(existing);
+                var point = JSON.parse(topology);
+                // Point topology
+                if (point.lat && point.lng) {
+                    var existing = new L.Marker(new L.LatLng(point.lat, point.lng)).addTo(map)
+                    onNewLayer(existing);
+                }
+                else {
+                    //TODO : line topology !
+                }
             }
         }
 

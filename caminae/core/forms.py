@@ -13,18 +13,36 @@ from .widgets import LineStringWidget
 
 
 class TopologyMixinForm(MapEntityForm):
-    """ We use the geom field to build the topology instead of adding a dedicated field """
-    geom = TopologyField()
-    geomfields = ('geom', )
+    """
+    This form is a bit specific : 
+    
+        We use a field (topology) in order to edit the whole instance.
+        Thus, at init, we load the instance into field, and at save, we
+        save the field into the instance.
+        
+    The geom field is fully ignored, since we edit a topology.
+    """
+    topology = TopologyField()
+    geomfields = ('topology', )
 
-    def clean(self):
-        cleaned_data = super(TopologyMixinForm, self).clean()
-        # TODO remove geom, assign topology
-        #geom = cleaned_data.pop("geom")
-        return cleaned_data
+    def __init__(self, *args, **kwargs):
+        super(TopologyMixinForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['topology'].initial = self.instance
+
+    def clean(self, *args, **kwargs):
+        data = super(TopologyMixinForm, self).clean()
+        del self.errors['geom']
+        return data
+
+    def save(self, *args, **kwargs):
+        topology = self.cleaned_data.pop('topology')
+        instance = super(TopologyMixinForm, self).save(*args, **kwargs)
+        instance.mutate(topology)
+        return instance
 
     class Meta:
-        exclude = ('offset',)
+        exclude = ('offset', 'geom')
 
 
 class PathForm(MapEntityForm):

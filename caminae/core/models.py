@@ -70,12 +70,20 @@ class Path(MapEntityMixin, StructureRelated):
 
     @classmethod
     def closest(cls, point):
+        """
+        Returns the closest path of the point.
+        Will fail if no path in database.
+        """
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
         return cls.objects.all().distance(point).order_by('distance')[0]
 
     def interpolate(self, point):
+        """
+        Returns position ([0.0-1.0]) and offset (distance) of the point
+        along this path.
+        """
         from django.db import connection
         from string import Template
         if not self.pk:
@@ -175,6 +183,9 @@ class TopologyMixin(models.Model):
         return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
     def add_path(self, path, start=0.0, end=1.0):
+        """
+        Shortcut function to add paths into this topology.
+        """
         from .factories import PathAggregationFactory
         aggr = PathAggregationFactory.create(topo_object=self, 
                                              path=path, 
@@ -184,7 +195,23 @@ class TopologyMixin(models.Model):
         self.reload()
         return aggr
 
+    def mutate(self, other, delete=True):
+        """
+        Take alls attributes of the other topology specified and
+        save them into this one. Optionnally deletes the other.
+        """
+        self.offset = other.offset
+        self.save()
+        for aggr in other.aggregations.all():
+            self.add_path(aggr.path, aggr.start_position, aggr.end_position)
+        if delete:
+            other.delete()
+        return self
+
     def reload(self):
+        """
+        Reload into instance all computed attributes in triggers.
+        """
         if self.pk:
             # Update computed values
             tmp = self.__class__.objects.get(pk=self.pk)
