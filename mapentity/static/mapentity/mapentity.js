@@ -390,32 +390,62 @@ MapEntity.MarkerSnapping = L.Handler.extend({
 MapEntity.Utils = (function() {
     var self;
     return self = {
-        isBetween: function(p, a, b, epsilon) {
+
+        // Calculate if a point p is between a and b
+        isBetween: function(x, a, b, epsilon) {
             epsilon = epsilon || 0.5;
-            var d = p.distanceTo(a) + p.distanceTo(b) - a.distanceTo(b);
+            var d = x.distanceTo(a) + x.distanceTo(b) - a.distanceTo(b);
             return d < epsilon;
         },
 
-        getPercentageDistanceFromPolyline: function(point, polyline) {
-            return self.getPercentageDistanceFromPoints(point, polyline._parts[0]);
+        // Use LatLng
+        getPercentageDistanceFromPolyline: function(ll, polyline) {
+            // Will test every point, considering a point is in a segment with an error of 100 meters
+            return self.getPercentageDistance(ll, polyline.getLatLngs(), 100 /* in meters */, false);
         },
 
-        getPercentageDistanceFromPoints: function(point, points) {
-            var line_len = 0
-              , distance = null;
+        // May be used for performance issue but you will loose precision
+        getPercentageDistanceFromPolylineAsPoints: function(point, polyline) {
+            return self.getPercentageDistance(point, polyline._parts[0], 0.5, true);
+        },
 
-            for (var j = 0; j < points.length - 1; j++) {
-                var p1 = points[j], p2 = points[j+1];
+        // You may pass latlng or point to this function
+        getPercentageDistance: function(x, xs, epsilon, only_first) {
+            var xs_len = 0
+              , distance_found = false
+              , closest_point = null
+              , distance = Number.MAX_VALUE;
 
-                // As we iterate in the order of the segment we keep the first result
-                if (distance == null && self.isBetween(point, p1, p2)) {
-                    distance = line_len + point.distanceTo(p1);
+            for (var i = 0; i < xs.length - 1; i++) {
+                var x1 = xs[i], x2 = xs[i+1];
+
+                // We iterate on each segment of the path
+                if (!distance_found || !only_first) {
+                    if (self.isBetween(x, x1, x2, epsilon)) {
+                        distance_found = true;
+                        xdistance = xs_len + x.distanceTo(x1);
+
+                        if (only_first || xdistance < distance) {
+                            distance = xdistance;
+                            closest_point = x1;
+                        }
+                    }
                 }
 
-                line_len += p1.distanceTo(p2);
+                xs_len += x1.distanceTo(x2);
             }
 
-            return distance / line_len;
+            return distance_found ? { 'distance': distance / xs_len, 'closest': closest_point } : null;
+        },
+
+        // Calculate length (works for either points or latlngs)
+        length: function(xs) {
+            var xs_len = 0;
+            for (var i = 0; i < xs.length - 1; i++) {
+                var p1 = xs[i], p2 = xs[i+1];
+                xs_len += xs.distanceTo(xs);
+            }
+            return xs_len;
         }
     };
 })();
