@@ -246,7 +246,6 @@ SPATIAL_EXTENT = None
 # API projection (client-side), can differ from SRID (database)
 API_SRID = 4326
 
-MIN_SNAP_ZOOM = 3   # Minimum zoom level required for snapping
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 LEAFLET_CONFIG = {

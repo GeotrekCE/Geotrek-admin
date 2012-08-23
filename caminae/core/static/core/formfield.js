@@ -337,7 +337,6 @@ FormField.makeModule = function(module, module_settings) {
         var path_snapping = module_settings.init.pathsnapping || module_settings.init.multipath,
             snapObserver = null;
         MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
-        MapEntity.SnapObserver.prototype.MIN_SNAP_ZOOM = module_settings.enablePathSnapping.MIN_SNAP_ZOOM;
 
         if (path_snapping) {
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);

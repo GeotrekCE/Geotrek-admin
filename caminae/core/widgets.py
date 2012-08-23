@@ -46,7 +46,6 @@ class GeometryWidget(LeafletMapWidget):
             value.transform(settings.API_SRID)
         context['path_snapping'] = self.path_snapping
         # TODO: this should come from context processor !
-        context['MIN_SNAP_ZOOM'] = settings.MIN_SNAP_ZOOM
         context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
@@ -91,7 +90,6 @@ class BaseTopologyWidget(forms.Textarea):
         context['topologyjson'] = topologyjson
         context['path_snapping'] = True
         # TODO: this should come from context processor !
-        context['MIN_SNAP_ZOOM'] = settings.MIN_SNAP_ZOOM
         context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
