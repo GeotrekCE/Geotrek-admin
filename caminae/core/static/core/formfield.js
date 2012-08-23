@@ -242,11 +242,30 @@ FormField.makeModule = function(module, module_settings) {
                         start: start.distance,
                         end: end.distance,
                         paths: paths,
+                        // Won't be on django side but in case there is a form error, will be there !
+                        start_point: {lat: ll_start.lat, lng: ll_start.lng },
+                        end_point: {lat: ll_end.lat, lng: ll_end.lng }
                     };
                     layerStore.storeLayerGeomInField(topology);
                 });
 
                 map.addControl(multipath_control);
+
+                var initialTopology = layerStore.getSerialized();
+
+                // We should check if the form has an error or not...
+                // core.models#TopologyMixin.serialize
+                if (initialTopology) {
+                    // This topology should contain postgres calculated value (start/end point as latln)
+                    var topo =  JSON.parse(initialTopology);
+                    var state = {
+                        start_ll: new L.LatLng(topo.start_point.lat, topo.start_point.lng),
+                        end_ll: new L.LatLng(topo.end_point.lat, topo.end_point.lng),
+                        start_layer: objectsLayer.getLayer(topo.paths[0]),
+                        end_layer: objectsLayer.getLayer(topo.paths[topo.paths.length - 1])
+                    };
+                    multipath_handler.setState(state);
+                }
 
             });
         });

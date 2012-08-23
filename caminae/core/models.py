@@ -255,6 +255,7 @@ class TopologyMixin(models.Model):
         # Point topology ?
         if lat and lng:
             return cls._topologypoint(lng, lat, kind)
+
         # Path aggregation
         topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
@@ -323,11 +324,23 @@ class TopologyMixin(models.Model):
             objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
+
+            # Create the markers points to be used with much more ease on javascript side
+            # (will be even easier/faster when more 'intermediary' markers will show up)
+            geom = Point(self.geom.coords[0], srid=settings.SRID)
+            start_point = geom.transform(settings.API_SRID, clone=True)
+
+            geom = Point(self.geom.coords[-1], srid=settings.SRID)
+            end_point = geom.transform(settings.API_SRID, clone=True)
+
             objdict = dict(kind=self.kind.kind,
                            offset=self.offset,
                            start=start,
                            end=end,
-                           paths=paths)
+                           paths=paths,
+                           start_point=dict(lng=start_point.x, lat=start_point.y),
+                           end_point=dict(lng=end_point.x, lat=end_point.y),
+                           )
         return simplejson.dumps(objdict)
 
 

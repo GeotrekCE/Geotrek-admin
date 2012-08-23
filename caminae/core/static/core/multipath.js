@@ -103,6 +103,20 @@ L.Handler.MultiPath = L.Handler.extend({
         };
     },
 
+    setState: function(state, autocompute) {
+        autocompute = autocompute === undefined ? true : autocompute;
+
+        // Ensure we got a fresh start
+        this.disable();
+        this.enable();
+
+        this.addStep(state.start_ll, state.start_layer);
+        this.addStep(state.end_ll, state.end_layer);
+
+        // We should (must !) find the same old path
+        autocompute && this.computePaths();
+    },
+
     // TODO: when to remove/update links..? what's the behaviour ?
     addHooks: function () {
         var self = this;
@@ -159,12 +173,20 @@ L.Handler.MultiPath = L.Handler.extend({
     // On click on a layer with the graph
     _onClick: function(e) {
         var layer = e.layer;
+        var latlng = e.latlng;
+        this.addStep(latlng, layer);
+        if (this.canCompute()) {
+            this.computePaths();
+        }
+    },
 
-        if (this.steps.length >= 2) {
+    addStep: function(latlng, layer) {
+        if (this.canCompute()) {
             return; // should not happen
         }
+
         // don't accept twice a step
-        if (this.steps.indexOf(e.layer) != -1) {
+        if (this.steps.indexOf(layer) != -1) {
             return;
         }
 
@@ -172,21 +194,26 @@ L.Handler.MultiPath = L.Handler.extend({
         var edge = this.graph.edges[edge_id];
 
         this.steps.push(edge_id);
-        var can_compute = (this.steps.length == 2);
+        var is_dest = this.steps.length == 2;
 
-        var marker;
         // mark
-        if (can_compute) {
+        if (is_dest) {
             this._container.style.cursor = '';
-            marker = this.marker_dest = this.markersFactory.dest(e.latlng)
+            this.marker_dest = this.markersFactory.dest(latlng)
             this.cameleon.activate('dijkstra_to', layer);
         } else {
             this._container.style.cursor = 'e-resize';
-            marker = this.marker_source = this.markersFactory.source(e.latlng)
+            this.marker_source = this.markersFactory.source(latlng)
             this.cameleon.activate('dijkstra_from', layer);
         }
+    },
 
-        if (can_compute) {
+    canCompute: function() {
+        return this.steps.length == 2;
+    },
+
+    computePaths: function() {
+        if (this.canCompute()) {
             var computed_paths = this.dijkstra.compute_path(this.graph, this.steps)
             this._onComputedPaths(computed_paths);
         }
