@@ -39,11 +39,13 @@ BEGIN
     -- Remove obsolete evenement
     IF TG_OP = 'UPDATE' THEN
         -- Related evenement/zonage/secteur/commune will be cleared by another trigger
-        DELETE FROM evenements_troncons WHERE troncon = OLD.id;
+        DELETE FROM evenements_troncons et USING zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
+        DELETE FROM evenements_troncons et USING secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
+        DELETE FROM evenements_troncons et USING commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
     END IF;
 
     -- Add new evenement
-    -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop as above.
+    -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
     FOR rec IN EXECUTE 'SELECT insee as id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_communes WHERE ST_Intersects(geom, $1)' USING NEW.geom
