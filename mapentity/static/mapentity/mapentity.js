@@ -414,6 +414,24 @@ MapEntity.Utils = (function() {
             return map.layerPointToLatLng(closest);
         },
 
+        closestOnLine: function (map, latlng, linestring) {
+            // Iterate on line segments
+            var lls = linestring.getLatLngs(),
+                segmentmindist = Number.MAX_VALUE,
+                ll = null;
+            // Keep the closest point of all segments
+            for (var j = 0; j < lls.length - 1; j++) {
+                var p1 = lls[j],
+                    p2 = lls[j+1],
+                    d = self.distanceSegment(map, latlng, p1, p2);
+                if (d < segmentmindist) {
+                    segmentmindist = d;
+                    ll = self.latlngOnSegment(map, latlng, p1, p2);
+                }
+            }
+            return ll;
+        },
+
         closest: function (map, marker, snaplist, snap_distance) {
             var mindist = Number.MAX_VALUE,
                  chosen = null,
@@ -433,20 +451,8 @@ MapEntity.Utils = (function() {
                     distance = self.distance(map, marker.getLatLng(), ll);
                 }
                 else {
-                    // Iterate on line segments
-                    var lls = object.getLatLngs(),
-                        segmentmindist = Number.MAX_VALUE;
-                    // Keep the closest point of all segments
-                    for (var j = 0; j < lls.length - 1; j++) {
-                        var p1 = lls[j],
-                            p2 = lls[j+1],
-                            d = self.distanceSegment(map, marker.getLatLng(), p1, p2);
-                        if (d < segmentmindist) {
-                            segmentmindist = d;
-                            ll = self.latlngOnSegment(map, marker.getLatLng(), p1, p2);
-                            distance = d;
-                        }
-                    }
+                    ll = MapEntity.Utils.closestOnLine(map, marker.getLatLng(), object);
+                    distance = MapEntity.Utils.distance(map, marker.getLatLng(), ll);
                 }
                 // Keep the closest point of all objects
                 if (distance < snap_distance && distance < mindist) {
