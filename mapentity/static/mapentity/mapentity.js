@@ -535,6 +535,8 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
         setTopologyMode: function(state) {
             topologyMode = state;
         },
+        // If topologyMode, store WKT
+        // Else store the given parameter using JSON.stringify
         storeLayerGeomInField: function(layer) {
             var old_layer = _current_layer;
             _current_layer = layer;
@@ -556,6 +558,9 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
         },
         getLayer: function () {
             return _current_layer;
+        },
+        getSerialized: function() {
+            return $field.val();
         }
     };
 };
