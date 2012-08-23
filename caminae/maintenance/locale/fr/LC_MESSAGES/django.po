@@ -90,7 +90,6 @@ msgid "Intervention status"
 msgstr "Suivi"
 
 #: models.py:48
-#, fuzzy
 msgid "Intervention type"
 msgstr "Type d'intervention"
 
@@ -127,12 +126,10 @@ msgid "Type"
 msgstr ""
 
 #: models.py:120
-#, fuzzy
 msgid "Intervention's type"
 msgstr "Type d'intervention"
 
 #: models.py:121
-#, fuzzy
 msgid "Intervention's types"
 msgstr "Types d'intervention"
 
@@ -221,11 +218,15 @@ msgid "Fundings"
 msgstr "Financements"
 
 #: templates/maintenance/intervention_list.html:7
-#, fuzzy
 msgid "Request intervention"
 msgstr "Demander une intervention"
 
+msgid "Add a new intervention"
+msgstr "Ajouter une nouvelle intervention"
+
 #: templates/maintenance/project_list.html:7
-#, fuzzy
 msgid "Add project"
+msgstr "Ajouter un chantier"
+
+msgid "Add a new project"
 msgstr "Ajouter un chantier"

@@ -49,7 +49,6 @@ msgstr ""
 "redirigé."
 
 #: decorators.py:70
-#, fuzzy
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."

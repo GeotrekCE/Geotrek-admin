@@ -152,20 +152,18 @@ msgid "Web link"
 msgstr "Lien web"
 
 #: models.py:186
-#, fuzzy
 msgid "Common departure"
-msgstr "Départ"
+msgstr "Départ en commun"
 
 #: models.py:187
 msgid "Common edge"
-msgstr ""
+msgstr "Tronçon commun"
 
 #: models.py:188
 msgid "Circuit step"
-msgstr ""
+msgstr "Étape de circuit"
 
 #: models.py:195
-#, fuzzy
 msgid "Trek relationship"
 msgstr "Réseaux randonnée"
 

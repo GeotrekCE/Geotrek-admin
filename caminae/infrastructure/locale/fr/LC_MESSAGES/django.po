@@ -51,11 +51,15 @@ msgid "Add intervention"
 msgstr "Ajouter une intervention"
 
 #: templates/infrastructure/infrastructure_list.html:7
-#, fuzzy
 msgid "Add infrastructure"
 msgstr "Ajouter un aménagement"
 
+msgid "Add a new infrastructure"
+msgstr "Ajouter un aménagement"
+
 #: templates/infrastructure/signage_list.html:7
-#, fuzzy
 msgid "Add signage"
+msgstr "Ajouter une signalétique"
+
+msgid "Add a new signage"
 msgstr "Ajouter une signalétique"

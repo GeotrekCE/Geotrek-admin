@@ -139,26 +139,37 @@ msgid "District edges"
 msgstr "Tronçons de secteur"
 
 #: templates/land/competenceedge_list.html:7
-#, fuzzy
 msgid "Add competence edge"
 msgstr "Ajouter un tronçon de compétence"
 
+msgid "Add a new competence edge"
+msgstr "Ajouter un tronçon de compétence"
+
+
 #: templates/land/landedge_list.html:7
-#, fuzzy
 msgid "Add land edge"
 msgstr "Ajouter un tronçon foncier"
 
+msgid "Add a new land edge"
+msgstr "Ajouter un tronçon foncier"
+
 #: templates/land/physicaledge_list.html:7
-#, fuzzy
 msgid "Add physical edge"
 msgstr "Ajouter un tronçon physique"
 
+msgid "Add a new physical edge"
+msgstr "Ajouter un tronçon physique"
+
 #: templates/land/signagemanagementedge_list.html:7
-#, fuzzy
 msgid "Add signage management"
 msgstr "Ajouter un tronçon de gestion signalétique"
 
+msgid "Add a new signage management"
+msgstr "Ajouter un tronçon de gestion signalétique"
+
 #: templates/land/workmanagementedge_list.html:7
-#, fuzzy
+msgid "Add a new work management"
+msgstr "Ajouter un tronçon de gestion de travaux"
+
 msgid "Add work management"
 msgstr "Ajouter un tronçon de gestion de travaux"

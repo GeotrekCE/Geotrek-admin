@@ -18,7 +18,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: fields.py:18
-#, fuzzy
 msgid "Topology is not valid."
 msgstr "La topology n'est pas valide."
 
@@ -87,7 +86,6 @@ msgid "Usages"
 msgstr "Usages"
 
 #: models.py:62 models.py:412
-#, fuzzy
 msgid "Networks"
 msgstr "Réseaux"
 
@@ -164,7 +162,6 @@ msgid "Source"
 msgstr "Source"
 
 #: models.py:373
-#, fuzzy
 msgid "Datasources"
 msgstr "Source de données"
 
@@ -201,12 +198,10 @@ msgid "Slope"
 msgstr "Dénivelé"
 
 #: templates/core/path_detail.html:38
-#, fuzzy
 msgid "Elevation"
 msgstr "Altitude"
 
 #: templates/core/path_detail.html:43
-#, fuzzy
 msgid "Management"
 msgstr "Gestion"
 
@@ -215,7 +210,6 @@ msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
 #: templates/core/path_detail.html:86
-#, fuzzy
 msgid "Altitude (m)"
 msgstr "Altitude (m)"
 
@@ -228,7 +222,6 @@ msgid "Add a path"
 msgstr "Ajouter un tronçon"
 
 #: templates/core/path_list.html:17
-#, fuzzy
 msgid "Manage land"
 msgstr "Gestion foncière"
 
@@ -245,12 +238,10 @@ msgid "Competence zones"
 msgstr "Zones de compétence"
 
 #: templates/core/path_list.html:24
-#, fuzzy
 msgid "Signage management"
 msgstr "Gestion signalétique"
 
 #: templates/core/path_list.html:25
-#, fuzzy
 msgid "Work management"
 msgstr "Gestion des travaux"
 
