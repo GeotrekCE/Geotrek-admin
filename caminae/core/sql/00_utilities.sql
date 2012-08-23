@@ -59,7 +59,6 @@ BEGIN
     ELSIF NOT lines_only AND t_count > 1 THEN
         -- FIXME: This is an invalid case (a multi-point topology or a
         -- mixed points/lines topology), how to handle it?
-        CONTINUE;
     ELSIF NOT lines_only AND t_count = 1 THEN
         -- Special case: the topology describe a point on the path
         -- Note: We are faking a M-geometry in order to use LocateAlong.

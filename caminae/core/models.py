@@ -1,4 +1,5 @@
 import logging
+import collections
 
 from django.contrib.gis.db import models
 from django.utils import simplejson
@@ -202,6 +203,7 @@ class TopologyMixin(models.Model):
         """
         self.offset = other.offset
         self.save()
+        PathAggregation.objects.filter(topo_object=self).delete()
         for aggr in other.aggregations.all():
             self.add_path(aggr.path, aggr.start_position, aggr.end_position)
         if delete:
@@ -246,7 +248,7 @@ class TopologyMixin(models.Model):
             try:
                 objdict = simplejson.loads(serialized)
             except simplejson.JSONDecodeError, e:
-                raise ValueError(_("Invalid serialized topology: %s") % e)
+                raise ValueError(_("Invalid serialization: %s") % e)
         kind = objdict.get('kind')
         lat = objdict.get('lat')
         lng = objdict.get('lng')
@@ -255,10 +257,16 @@ class TopologyMixin(models.Model):
             return cls._topologypoint(lng, lat, kind)
         # Path aggregation
         topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
+        PathAggregation.objects.filter(topo_object=topology).delete()
         # Start repopulating from serialized data
         start = objdict.get('start', 0.0)
         end = objdict.get('end', 1.0)
         paths = objdict['paths']
+        # Check that paths should be unique
+        if len(set(paths)) != len(paths):
+            paths = collections.Counter(paths)
+            extras = [p for p in paths if paths[p]>1]
+            raise ValueError(_("Paths are not unique : %s") % extras)
         # Create path aggregations
         for i, path in enumerate(paths):
             try:
@@ -347,7 +355,7 @@ class PathAggregation(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return u"%s (%s - %s)" % (_("Path aggregation"), self.start_position, self.end_position)
+        return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)
 
     class Meta:
         db_table = 'evenements_troncons'
