@@ -293,6 +293,10 @@ class TopologyMixinTest(TestCase):
         t.save()
         self.assertEqual(t.geom, LineString((3,2,2), (3,1,0), (4,1,0)))
 
+        t.offset = 0.5
+        t.save()
+        self.assertEqual(t.geom, LineString((2.5,2,2), (2.5,0.5,0), (4,0.5,0)))
+
     def test_troncon_geom_update(self):
         p = PathFactory.create(geom=LineString((0,0,0), (2,2,0)))
         t = TopologyMixinFactory.create(no_path=True)

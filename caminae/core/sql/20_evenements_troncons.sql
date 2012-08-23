@@ -66,7 +66,6 @@ BEGIN
         PERFORM update_geometry_of_evenement(eid);
 
         -- TODO: DELETE evenements_troncons ON DELETE OR UPDATE supprime ON evenements (disable this trigger)
-        -- TODO: UPDATE evenements ON UPDATE decallage ON evenement
     END LOOP;
 
     RETURN NULL;
