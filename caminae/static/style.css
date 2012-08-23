@@ -36,6 +36,38 @@ body {
 }
 
 
+.navbar {
+    margin-bottom: 8px;
+}
+
+
+/***** Entity detail ******/
+
+.centered {
+	text-align: center;
+}
+
+
+.groupfields {
+    margin-bottom: 15px;
+}
+
+
+.details-panel h3 {
+	border-bottom: 1px solid #333333;
+}
+
+.details-panel td {
+	color: #636363;
+}
+
+.details-panel th, .details-panel td {
+    border-top: 0px;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+
+
 
 /***** SPAN 1 *****/
 .nav-pills.nav-stacked > li > a {
