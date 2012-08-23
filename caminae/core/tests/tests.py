@@ -230,13 +230,38 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(len(TopologyMixin.objects.filter(pk=topology3.pk)), 1)
 
     def test_serialize(self):
-        topology = TopologyMixinFactory.create(offset=1)
-        self.assertEqual(len(topology.paths.all()), 1)
-        path = topology.paths.all()[0]
-        kind = topology.kind.kind
-        fieldvalue = topology.serialize()
-        self.assertEqual(fieldvalue, '{"paths": [%s], "kind": "%s", "end": 1.0, "start": 0.0, "offset": 1}' % (path.pk, kind))
-    
+        # At least two path are required
+        t = TopologyMixinFactory.create(offset=1)
+        self.assertEqual(len(t.paths.all()), 1)
+
+        # This path as been created automatically
+        # as we will check only basic json serialization property
+        path = t.paths.all()[0]
+        kind = t.kind.kind
+
+        # Reload as the geom of the topology will be build by trigger
+        t.reload()
+
+        # Create our objectdict to serialize
+
+        geom = Point(t.geom.coords[0], srid=settings.SRID)
+        start_point = geom.transform(settings.API_SRID, clone=True)
+
+        geom = Point(t.geom.coords[-1], srid=settings.SRID)
+        end_point = geom.transform(settings.API_SRID, clone=True)
+
+        test_objdict = dict(kind=t.kind.kind,
+                       offset=1,
+                       start=0.0,
+                       end=1.0,
+                       paths=[ path.pk ],
+                       start_point=dict(lng=start_point.x, lat=start_point.y),
+                       end_point=dict(lng=end_point.x, lat=end_point.y),
+                       )
+
+        objdict = simplejson.loads(t.serialize())
+        self.assertDictEqual(objdict, test_objdict)
+
     def test_serialize_point(self):
         path = PathFactory.create()
         topology = TopologyMixinFactory.create(offset=1, no_path=True)
