@@ -150,42 +150,76 @@ L.Handler.MultiPath = L.Handler.extend({
 
     // On click on a layer with the graph
     _onClick: function(e) {
-        var layer = e.layer;
-        var latlng = e.latlng;
-        this.addStep(latlng, layer);
-        if (this.canCompute()) {
+        if (this.steps.length >= 2) return;
+        var self = this;
+
+        var layer = e.layer
+          , latlng = e.latlng
+          , len = this.steps.length;
+
+        // Do not accept twice the same layer
+        if (this.hasStepLayer(layer)) return;
+
+        var next_step_idx = this.steps.length;
+
+        // 1. Click - you are adding a new marker
+        var marker;
+        if (next_step_idx == 0) {
+            this._container.style.cursor = 'e-resize';
+            marker = this.markersFactory.source(latlng)
+        } else {
+            this._container.style.cursor = '';
+            marker = this.markersFactory.dest(latlng)
+        }
+
+        marker.on('snap', function(chosen) {
+            var chosen_obj = chosen['object']
+            self.updateStep(next_step_idx, marker, chosen_obj);
+        });
+        marker.on('unsnap', function() {
+            self.steps.splice(next_step_idx, 1, null);
+        });
+
+        // Restrict snaplist to layer and snapdistance to max_value
+        // will ensure this get snapped and to the layer clicked
+        var snapdistance = Number.MAX_VALUE;
+        var closest = MapEntity.Utils.closest(map, marker, [ layer ], snapdistance);
+        marker.editing.updateClosest(marker, closest);
+    },
+
+    hasStepLayer: function(layer) {
+        return this.steps.indexOf(this.layerToId(layer)) != -1;
+    },
+
+    updateStep: function(step_idx, marker, layer, autocompute) {
+        // Should check that step_idx is < steps.length...
+        var autocompute = autocompute === undefined ? true : autocompute;
+
+        var edge_id = this.layerToId(layer);
+        // var edge = this.graph.edges[edge_id];
+
+        if (step_idx == 0) { this.marker_source = marker; }
+        else if (step_idx == 1) { this.marker_dest = marker; }
+        else { console.log('More than 2 points are unauthorized for now'); return; }
+
+        // Replace the point at idx step_idx
+        this.steps.splice(step_idx, 1, edge_id);
+
+        if (autocompute && this.canCompute()) {
             this.computePaths();
         }
     },
 
-    addStep: function(latlng, layer) {
-        if (this.canCompute()) {
-            return; // should not happen
-        }
-
-        // don't accept twice a step
-        if (this.steps.indexOf(layer) != -1) {
-            return;
-        }
-
-        var edge_id = this.layerToId(layer);
-        var edge = this.graph.edges[edge_id];
-
-        this.steps.push(edge_id);
-        var is_dest = this.steps.length == 2;
-
-        // mark
-        if (is_dest) {
-            this._container.style.cursor = '';
-            this.marker_dest = this.markersFactory.dest(latlng)
-        } else {
-            this._container.style.cursor = 'e-resize';
-            this.marker_source = this.markersFactory.source(latlng)
-        }
-    },
-
     canCompute: function() {
-        return this.steps.length == 2;
+        if (this.steps.length != 2)
+            return false;
+
+        for (var i = 0; i < this.steps.length; i++) {
+            if (this.steps[i] === null)
+                return false;
+        }
+
+        return true;
     },
 
     computePaths: function() {
