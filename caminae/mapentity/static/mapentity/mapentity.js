@@ -295,28 +295,29 @@ MapEntity.MarkerSnapping = L.Handler.extend({
             if (this._markers[i] == marker) break;
         }
         if (i==this._markers.length) this._markers.push(marker);
-        marker.on('move', this._onMarkerMove, this);
+        marker.on('move', this._snapMarker, this);
     },
 
     unsnapMarker: function (marker) {
-        marker.off('move', this._onMarkerMove);
+        marker.off('move', this._snapMarker);
     },
 
     setGuidesLayer: function (guides) {
         this._guides = guides;
     },
 
-    _onMarkerMove: function (e) {
-        this._snapMarker(e.target, true);
+    _snapMarker: function(e) {
+        var marker = e.target,
+            snaplist = this._guides.searchBuffer(marker.getLatLng(), this._buffer),
+            closest = MapEntity.Utils.closest(this._map, marker, snaplist, this.SNAP_DISTANCE);
+        this.updateClosest(marker, closest);
     },
 
-    _snapMarker: function(marker, setposition) {
-        var snaplist = this._guides.searchBuffer(marker.getLatLng(), this._buffer),
-            closest = MapEntity.Utils.closest(this._map, marker, snaplist, this.SNAP_DISTANCE);
+    updateClosest: function (marker, closest) {
         var chosen = closest[0],
             point = closest[1];
         if (chosen) {
-            if (setposition) marker.setLatLng(point);
+            marker.setLatLng(point);
             if (marker.snap != chosen) {
                 marker.snap = chosen;
                 $(marker._icon).addClass('marker-snapped');
