@@ -172,10 +172,15 @@ L.Handler.MultiPath = L.Handler.extend({
             marker = this.markersFactory.dest(latlng)
         }
 
-        marker.on('snap', function(e) {
+        marker.on('move', function (e) {
+            var marker = e.target;
+            if (marker.snap) marker.fire('snap', {object: marker.snap, 
+                                                  location: marker.getLatLng()});
+        });
+        marker.on('snap', function (e) {
             self.updateStep(next_step_idx, marker, e.object);
         });
-        marker.on('unsnap', function() {
+        marker.on('unsnap', function () {
             self.steps.splice(next_step_idx, 1, null);
             self.fire('unsnap');
         });
