@@ -148,7 +148,7 @@ class Path(MapEntityMixin, StructureRelated):
 
 class TopologyMixin(models.Model):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
-    offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
+    offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
 
     # Override default manager
