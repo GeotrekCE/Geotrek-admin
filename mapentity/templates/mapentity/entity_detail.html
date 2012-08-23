@@ -4,21 +4,22 @@
 {% block nav-detail %}active{% endblock nav-detail %}
 
 {% block mainpanel %}
-    <div class="span7">
+    <div class="details-panel span7">
     {% block detailspanel %}
         <h2>
             {% if object.structure %}
                 <span class="badge badge-info">{{ object.structure }}</span>
             {% endif %}
             {{ object }}
+            {% block extratitle %}{% endblock extratitle %}
             {% if can_edit %}
-                <a class="btn btn-primary" href="{{ object.get_update_url }}">{% trans "Update" %}</a>
+                <span class="pull-right"><a class="btn btn-primary" href="{{ object.get_update_url }}">{% trans "Update" %}</a></span>
             {% endif %}
         </h2>
     {% endblock detailspanel %}
     </div><!-- span7 -->
 
-    <div class="span5">
+    <div class="map-panel span5">
         {% block mappanel %}
         {{ object|fieldmap:"geom" }}
         {% endblock mappanel %}
