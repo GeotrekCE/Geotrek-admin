@@ -103,38 +103,24 @@ FormField.makeModule = function(module, module_settings) {
     };
 
     module.getMarkers = function(map, snapObserver) {
-        var marker_src = new L.Marker();
-        // setLatLng setIcon
-        var makeMarker = function() {};
-
-        var iconsUrl = module_settings.enableMultipath.iconsUrl;
-
-        var icon_source = $.extend(getDefaultIconOpts(), {'iconUrl': iconsUrl.source });
-        var icon_dest = $.extend(getDefaultIconOpts(), {'iconUrl': iconsUrl.dest });
-
         // snapObserver and map are required to setup snappable markers
-        function markerAsSnappable(marker) {
-            marker.editing = new MapEntity.MarkerSnapping(map, marker);
-            marker.editing.enable();
-            snapObserver.add(marker);
-            return marker;
-        }
-
         // returns marker with an on('snap' possibility ?
         var markerFactory = {
-            source: function(latlng, layer) {
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(icon_source)});
+            generic: function (latlng, layer, classname) {
+                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
                 map.addLayer(marker);
-                markerAsSnappable(marker);
+                $(marker._icon).addClass(classname);
+                marker.editing = new MapEntity.MarkerSnapping(map, marker);
+                marker.editing.enable();
+                snapObserver.add(marker);
                 // marker.on('snap', function() {});
                 return marker;
             },
+            source: function(latlng, layer) {
+                return this.generic(latlng, layer, 'marker-source');
+            },
             dest: function(latlng, layer) {
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(icon_dest)});
-                map.addLayer(marker);
-                markerAsSnappable(marker);
-                // marker.on('snap', function() {});
-                return marker;
+                return this.generic(latlng, layer, 'marker-target');
             }
         };
 
@@ -347,15 +333,13 @@ FormField.makeModule = function(module, module_settings) {
         var modelname = $('form input[name="model"]').val(),
             objectsLayer = module.addObjectsLayer(map, modelname);
 
-        // Enable snapping ?
-        var path_snapping = module_settings.init.pathsnapping,
+        // Enable snapping ? Multipath need path snapping too !
+        var path_snapping = module_settings.init.pathsnapping || module_settings.init.multipath,
             snapObserver = null;
         MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
         MapEntity.SnapObserver.prototype.MIN_SNAP_ZOOM = module_settings.enablePathSnapping.MIN_SNAP_ZOOM;
-        
 
-        // Multipath need path snapping too !
-        if (path_snapping || module_settings.init.multipath) {
+        if (path_snapping) {
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 

@@ -148,6 +148,10 @@ h2 {
 div.marker-snapped { background: yellow !important; }
 img.marker-add { background-image: url('images/marker-add.png') }
 img.marker-snapped { background-image: url('images/marker-snap.png') }
+img.marker-source { background-image: url('images/osrm_markers/marker-source.png') }
+img.marker-source.marker-snapped { background-image: url('images/osrm_markers/marker-source-snap.png') }
+img.marker-target { background-image: url('images/osrm_markers/marker-target.png') }
+img.marker-target.marker-snapped { background-image: url('images/osrm_markers/marker-target-snap.png') }
 
 .axislabel {
 	color: blue;
