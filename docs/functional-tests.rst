@@ -590,8 +590,10 @@ Sauvegarder.
 ------------------------------------------------
 
 Pour créer un évènement, on pourra utiliser SQL ou l'interface :
+
 * via l'interface, créez un évènement quelconque en cliquant une ou deux fois
   sur la carte.
+
 * en SQL via PgAdmin3, ajoutez d'abord un enregistrement dans la table
   ``evenements`` puis ajoutez un ou plusieurs enregistrements dans la table de
   jointure ``evenements_troncons``, les tronçons existent déjà quant à eux.
