@@ -110,8 +110,8 @@ L.Handler.MultiPath = L.Handler.extend({
         this.disable();
         this.enable();
 
-        this.addStep(state.start_ll, state.start_layer);
-        this.addStep(state.end_ll, state.end_layer);
+        this._onClick({latlng: state.start_ll, layer:state.start_layer});
+        this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         // We should (must !) find the same old path
         autocompute && this.computePaths();
@@ -156,9 +156,6 @@ L.Handler.MultiPath = L.Handler.extend({
         var layer = e.layer
           , latlng = e.latlng
           , len = this.steps.length;
-
-        // Do not accept twice the same layer
-        if (this.hasStepLayer(layer)) return;
 
         var next_step_idx = this.steps.length;
 

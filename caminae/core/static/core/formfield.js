@@ -192,39 +192,48 @@ FormField.makeModule = function(module, module_settings) {
                 function buildTopologyGeom(polylines, ll_start, ll_end, closest_first_idx, closest_end_idx) {
                     var polyline_start = polylines[0]
                       , polyline_end = polylines[polylines.length - 1]
-                      , polylines_inner = polylines.slice(1, -1);
+                      , single_path = polyline_start == polyline_end;
+                    var polylines_inner = single_path ? null : polylines.slice(1, -1);
 
                     // Is the first point bound to the next edge or is it the other way ?
 
                     var lls_tmp, lls_end, latlngs = [];
 
-                    if (getOrder(polyline_start, polylines_inner[0])) {
-                        // <--o-c- x---x---x // first point is shared ; include closest
-                        lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
-                        lls_tmp.push(ll_start);
-                    } else {
-                        // -c-o--> x---x---x // first point is not shared ; don't include closest
-                        lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
+                    if (single_path) {
+                        lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx+1, closest_end_idx + 1);
                         lls_tmp.unshift(ll_start);
-                    }
-
-                    latlngs.push(lls_tmp);
-
-                    $.each(polylines_inner, function(idx, l) {
-                        latlngs.push(l.getLatLngs());
-                    });
-
-                    if (getOrder(polyline_end, polylines_inner[polylines_inner.length - 1])) {
-                        // x---x---x -c-o--> // first point is shared ; include closest
-                        lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
                         lls_tmp.push(ll_end);
-                    } else {
-                        // x---x---x <--o-c- // first point is not shared ; don't include closest
-                        lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
-                        lls_tmp.unshift(ll_end);
+                        latlngs.push(lls_tmp);
                     }
+                    else {
+                        if (getOrder(polyline_start, polylines_inner[0])) {
+                            // <--o-c- x---x---x // first point is shared ; include closest
+                            lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
+                            lls_tmp.push(ll_start);
+                        } else {
+                            // -c-o--> x---x---x // first point is not shared ; don't include closest
+                            lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
+                            lls_tmp.unshift(ll_start);
+                        }
 
-                    latlngs.push(lls_tmp);
+                        latlngs.push(lls_tmp);
+
+                        $.each(polylines_inner, function(idx, l) {
+                            latlngs.push(l.getLatLngs());
+                        });
+
+                        if (getOrder(polyline_end, polylines_inner[polylines_inner.length - 1])) {
+                            // x---x---x -c-o--> // first point is shared ; include closest
+                            lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
+                            lls_tmp.push(ll_end);
+                        } else {
+                            // x---x---x <--o-c- // first point is not shared ; don't include closest
+                            lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
+                            lls_tmp.unshift(ll_end);
+                        }
+
+                        latlngs.push(lls_tmp);
+                    }
 
                     return new L.MultiPolyline(latlngs);
                 }
@@ -252,10 +261,15 @@ FormField.makeModule = function(module, module_settings) {
                       , end = percentageDistance(ll_end, polyline_end);
                     if (!start || !end)
                         return;  // TODO: clean-up before give-up ?
+
+                    if (polyline_start == polyline_end && start.distance > end.distance) {
+                        markPath.updateGeom(null);
+                        layerStore.storeLayerGeomInField(null);
+                        return;
+                    }
                     
                     var start_closest_idx = start.closest
-                      , end_closest_idx = end.closest
-                    ;
+                      , end_closest_idx = end.closest;
 
                     var new_topology_geom = buildTopologyGeom(layers, ll_start, ll_end, start_closest_idx, end_closest_idx);
                     markPath.updateGeom(new_topology_geom);
