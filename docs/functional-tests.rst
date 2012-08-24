@@ -627,3 +627,32 @@ Seules les lignes sont autorisées pour les itinéraires et la gestion foncière
 Seuls les points sont autorisés pour les POI.
 
 Pour tout le reste (aménagements, interventions), les lignes et points sont autorisés.
+
+
+#160 - Calculer la géométrie d'une topologie
+--------------------------------------------
+
+Lors de l'ajout, édition ou détail d'une topologie sa géométrie exacte est affichée.
+
+Une topologie de point est représenté par un marqueur.
+
+Une topologie de ligne est représentée par des tronçons coloriés en jaune encadrés par des marqueurs de début et de fin.
+Le décalage (offset) n'est pas pris en compte pour la topologie de ligne.
+
+
+#136 - Utiliser des marqueurs pour le départ et l'arrivée de la saisie multitronçons
+------------------------------------------------------------------------------------
+
+Lors de la saisie multitronçon, un clic sur un tronçon pose un marqueur de début (vert),
+un second clic sur un tronçon pose un marqueur de fin (rouge) et révèle le trajet le plus
+court (en jaune) du début à la fin.
+
+Ces marqueurs sont automatiquements "snappés" sur les tronçons.
+Je peux déplacer les marqueurs (de début ou de fin):
+
+- si les marqueurs sont tous les deux "snappés" à un tronçon pendant le mouvement ou après,
+  la saisie est considérée comme valide et le trajet le plus court est mis à jour en temps réel.
+- si un des deux marqueurs n'est pas sur un tronçon, la saisie est invalide et le trajet le plus
+  court n'est pas visible.
+
+
