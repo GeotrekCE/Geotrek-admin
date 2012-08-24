@@ -1,0 +1,13 @@
+{% extends "mapentity/entity_list.html" %}
+{% load i18n %}
+
+{% block nav-path %}active{% endblock nav-path %}
+
+{% block mainactions %}
+    <div class="btn-group">
+		<a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add competence edge" %}</a>
+	</div>
+
+    {% include "core/manageland_fragment.html" %}
+
+{% endblock mainactions %}

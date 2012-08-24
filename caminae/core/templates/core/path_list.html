@@ -1,23 +1,17 @@
-{% extends "core/module_list.html" %}
+{% extends "mapentity/entity_list.html" %}
 {% load i18n %}
 
 {% block nav-path %}active{% endblock nav-path %}
 
 {% block mainactions %}
     {% if user.profile.is_path_manager %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
-    {% else %}
-    <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
-    {% endif %}
     <div class="btn-group">
-      <button class="btn">{% trans "Manage land" %}</button>
-      <button class="btn dropdown-toggle" data-toggle="dropdown">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="disabled" href="#">{% trans "Competence zones" %}</a></li>
-        <li><a class="disabled" href="#">{% trans "Signage management" %}</a></li>
-      </ul>
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add a path" %}</a>
+        {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
+        {% endif %}
     </div>
-    
+
+    {% include "core/manageland_fragment.html" %}
+
 {% endblock mainactions %}

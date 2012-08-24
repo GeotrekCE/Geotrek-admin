@@ -1,60 +1,49 @@
 from math import isnan
 
-from django.contrib.gis.geos import LineString
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString
 
 import floppyforms as forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, Div, Button
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Field
 
+from caminae.mapentity.forms import MapEntityForm
 from .models import Path
+from .fields import TopologyField
 from .widgets import LineStringWidget
 
 
-class MapEntityForm(forms.ModelForm):
-    pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
-    model = forms.Field(required=False, widget=forms.Field.hidden_widget)
-
-    helper = FormHelper()
-    helper.form_class = 'form-horizontal'
+class TopologyMixinForm(MapEntityForm):
+    """
+    This form is a bit specific : 
     
-    modelfields = tuple()
-    geomfields = tuple()
-    actions = FormActions(
-        Button('cancel', _('Cancel'), ),
-        Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
-        css_class="form-actions span11",
-    )
+        We use a field (topology) in order to edit the whole instance.
+        Thus, at init, we load the instance into field, and at save, we
+        save the field into the instance.
+        
+    The geom field is fully ignored, since we edit a topology.
+    """
+    topology = TopologyField()
+    geomfields = ('topology', )
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityForm, self).__init__(*args, **kwargs)
-        # Generic behaviour
-        if self.instance.pk:
-            self.helper.form_action = self.instance.get_update_url()
-        else:
-            self.helper.form_action = self.instance.get_add_url()
-        self.fields['pk'].initial = self.instance.pk
-        self.fields['model'].initial = self.instance._meta.module_name
-        
-        # Get fields from subclasses
-        fields = ('pk','model') + self.modelfields
-        leftpanel = Div(
-            *fields,
-            css_class="span3"
-        )
+        super(TopologyMixinForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['topology'].initial = self.instance
 
-        rightpanel = Div(
-            *self.geomfields,
-            css_class="span8"
-        )
-        
-        # Main form layout
-        self.helper.layout = Layout(
-            leftpanel,
-            rightpanel,
-            self.actions
-        )
+    def clean(self, *args, **kwargs):
+        data = super(TopologyMixinForm, self).clean()
+        if 'geom' in self.errors:
+            del self.errors['geom']
+        return data
+
+    def save(self, *args, **kwargs):
+        topology = self.cleaned_data.pop('topology')
+        instance = super(TopologyMixinForm, self).save(*args, **kwargs)
+        instance.mutate(topology)
+        return instance
+
+    class Meta:
+        exclude = ('offset', 'geom')
 
 
 class PathForm(MapEntityForm):

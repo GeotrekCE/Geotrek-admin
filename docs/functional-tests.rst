@@ -244,6 +244,18 @@ N/A
 Sprint 2 - Version 0.2.0
 ========================
 
+#95 - Draper les tronçons sur le MNT
+------------------------------------
+
+* Visualiser le profil altimétrique d'un tronçon.
+* Modifier sa géométrie.
+* Vérifier que le profil a changé.
+
+:notes:
+
+    Toutes les informations pour charger le DEM sont dans le fichier README.
+
+
 #18 - Gérer les permissions d'édition des objets en fonction de la structure
 ----------------------------------------------------------------------------
 
@@ -305,6 +317,15 @@ dessin de courbes.
 * La sauvegarde enregistre les valeurs des champs du formulaire et la géométrie.
 * Si une erreur de saisie est levée sur un champ du formulaire, la géométrie saisie précedemment est conservée.
 
+#87 - Découper l'application en modules
+---------------------------------------
+
+Seuls Tronçons et Interventions ne sont activés pour l'instant.
+
+:notes:
+
+    Cette story consistat à écrire tout le code source pour activer facilement les modules
+    de manière générique.
 
 #119 - Servir le graphe du réseau de sentiers
 ---------------------------------------------
@@ -343,17 +364,22 @@ Il est accessible en JSON à l'url ``/data/graph.json``.
     d'accroche. Un niveau de zoom élevé garanti un nombre restreint d'objets
     affichés (<1000).
 
+#34 - Inverser un tronçon
+-------------------------
+
+Aller sur le formulaire d'un tronçon. Cocher "inverser". Sauvegarder.
+Noter que le profil altimétrique est inversé.
+
 
 #109 - Ajouter une intervention ponctuelle
 ------------------------------------------
 
 Lors de l'ajout d'une intervention, l'utilisateur peut choisir entre un point
-et une ligne. 
-Les deux types sont snappés sur le réseau des tronçons.
+et une saisie multi-tronçons.
 
 :notes:
 
-    Les boutons actuels pour choisir point ou ligne sont trop petits.
+    Les boutons actuels des controles sont trop petits.
 
 
 #113 - Passer les cartes en tuiles L93
@@ -368,7 +394,236 @@ par défaut.
     Le cache de tuiles n'est pas déployé avec le projet. C.f. story #112.
 
 
+#124 - Ajouter un cache intelligent
+-----------------------------------
+
+* Visualiser la couche des tronçons une 1ère fois. Cela prend plusieurs secondes.
+* Visualiser la couche des tronçons une 2ème fois, c'est instantané.
+* Modifier un tronçon.
+* Visualiser la couche des tronçons. Cela prend à nouveau plusieurs secondes.
+
+On peut forcer le raffraichissement en vidant le cache (Ctrl+F5 du navigateur).
+
+
 #130 - Intégrer les onglets
 ---------------------------
 
 Les onglets s'activent en fonction du module et de la page visitée.
+
+
+#114 - Ajouter une intervention liée à X tronçons
+-------------------------------------------------
+
+Depuis le formulaire d'édition d'intervention.
+
+Choisir le controle "Multipaths", au dessous du controle d'ajout de point.
+
+* Cliquer un premier tronçon, puis un deuxième.
+* Les tronçons intermédiaires se sélectionnent (plus court chemin). 
+  La géométrie stockée est l'union des tronçons sélectionnés.
+
+Si je reclique sur le controle, l'ancien tracé s'efface et je peux à nouveau refaire faire un calcul d'itinéraire
+
+:notes:
+
+    Problème connu: le tracé d'une intervention existante n'est pas chargée à l'ouverture
+    du formulaire.
+
+    À l'avenir, nous aurons un sélecteur d'itinéraires à-la Google Maps.
+
+
+========================
+Sprint 3 - Version 0.3.0
+========================
+
+#137 - Améliorer la navigation
+------------------------------
+
+Désormais, la liste des modules n'est présente que dans l'onglet recherche.
+
+
+#127 - Séparer le code d'un futur django-mapentity
+--------------------------------------------------
+
+Story purement technique (pour réutilisabiliter notamment).
+
+Création d'une app dans caminae, mapentity (pas de repo git à part pour l'instant)
+contenant les différents aspects génériques (MapEntityMixin et création d'url principalement).
+
+Le code JS présent dans formfieldmap.html fera aussi l'objet d'une extraction dans un JS à part
+pour pouvoir être réutilisable.
+
+Les Widgets ne sont pas concernés (ils seront intégrés éventuellement plus tard comme contrib à floppyforms)
+
+
+#40 - Filtrer les objets de la liste en fonction de l'étendue de la carte affichée
+----------------------------------------------------------------------------------
+
+** recette **
+
+En plus des filtres déjà présents, je peux filtrer géographiquement par l'étendue courante visible de carte.
+Lors de chaque déplacement, la liste est mise à jour pour n'afficher que les objets visibles sur la carte.
+La réinitialisation du formulaire réinitialise de plus la carte à son étendue de départ.
+Un 'spinner' sur la carte représentera l'avancement du filtrage.
+
+:notes:
+
+    Détail d'implémentation 1: la bbox n'est pas fournie conventionnellement selon ?bbox=minx,miny,maxx,maxy mais comme un WKT.
+    C'est un choix plus pratique car les fonctions de conversion (côté js et django) existent déjà
+    qui peuvent éviter de potentiels problèmes  (ex: gestion de la coordonnée Z, de la projection, etc.).
+    La gestion du filtrage via une géométrie quelconque est de plus réutilisable (ex. secteurs, communes, etc.)
+
+    Détail d'implémentation 2: lorsque le tri est purement géographique (mouvement de carte uniquement),
+    les objets présents sur la carte (contrairement à la liste des résultats) ne sont pas retirés
+    (mais ne sont pas visibles bien sûr) pour des raisons de performance.
+
+
+#138 - Lister les dernières fiches consultées
+---------------------------------------------
+
+Les onglets listent les dernières fiches consultées dans la session de l'utilisateur.
+
+Une fiche n'apparait toujours qu'une seule fois. L'onglet le plus à gauche est
+celui de la fiche en cours, puis suivent les fiches consultées précedemment,
+s'il y en a.
+
+Un setting détermine le nombre maximal à afficher (``HISTORY_ITEMS_MAX``).
+
+
+#139 - Conserver la dernière recherche effectuée
+------------------------------------------------
+
+* Effectuer une recherche en choisissant un module
+* Le nombre de résultats s'affiche dans l'onglet
+* Consulter une fiche, retourner à la recherche. Le module sélectionné précédement est actif.
+
+* Appliquer des filtres.
+* Consulter une fiche et revenir à la recherche. Les filtres saisis sont restaurés.
+
+* Vérifier que l'étendue de la carte et les couches affichées sont également restaurées.
+
+
+#141 - Implémenter l'ensemble des modules
+-----------------------------------------
+
+L'ensemble des entités manipulées dans l'application sont disponibles.
+
+:notes: 
+
+    Bien entendu, tout n'est pas fonctionnel. Mais cette étape permet de
+    valider la navigation dans l'application.
+
+
+#142 - Distinguer les formulaires d'ajout et de modification des interventions
+------------------------------------------------------------------------------
+
+À la création, le formulaire de demande d'intervention contient un minimum
+de champ, et seul le status "souhaitée" est disponible.
+
+
+#148, #149 - Afficher les fiches sentiers
+-----------------------------------------
+
+Il est désormais possible d'accéder à la fiche d'un sentier. Ces objets
+ne sont cependant pas éditables.
+
+
+#37 - Sélectionner un objet sur la carte le sélectionne dans la liste. Et vice-versa
+------------------------------------------------------------------------------------
+
+Dans la vue de liste de chaque entité:
+- un clic de l'entité sur la carte sélectionne dans la liste ajax (avec changement de page)
+- vice-versa, un clic sur une ligne dans la liste ajax sélectionne l'entité sur la carte
+
+Une seule entité peut être sélectionnée à la fois, une nouvelle sélection (clic carte ou liste)
+entraine la déselection de la précédente entité selectionnée.
+
+Un clic carte ou liste sur une entité déjà sélectionnée entraine sa déselection.
+
+Une sélection se traduit dans le tableau et dans la carte par un style spécifique.
+
+Un double clic de l'entité sur la carte affiche la fiche détail.
+Un clic sur le lien de la 1ere colonne (ex. nom) affiche la fiche détail.
+
+
+#159 - Afficher la couche des tronçons sur tous les modules
+-----------------------------------------------------------
+
+Dans le sélecteur de couches, il est désormais possible d'afficher la couche des tronçons. 
+Les objets de celle-ci ne sont pas clickables.
+
+Décocher la couche. Elle disparait. Raffraichir la page. La couche n'est toujours pas affichée.
+
+Aller sur la page des tronçons. La couche apparait. Revenir sur un autre module, la 
+couche est redevenue visible.
+
+#127 - Ajouter une intervention sur un aménagement
+--------------------------------------------------
+
+Aller sur la fiche d'un aménagement (ou signalétique).
+
+La liste des interventions est vide. Ajouter une intervention.
+
+La géométrie de l'aménagement est affichée, en lecture seule.
+
+Sauvegarder le formulaire.
+
+Retourner sur la fiche de l'aménagement, l'intervention apparait.
+
+
+#135, #161, #162, #135, #160 - Saisie des topologies
+----------------------------------------------------
+
+Ajouter une nouvelle intervention. 
+
+Il y a deux contrôles disponibles : ligne et point. 
+
+Saisir un point revient à poser un marqueur. Saisir une line revient à placer
+deux marqueurs.
+
+Sauvegarder.
+
+Éditer l'intervention précedemment crée. Le(s) marqueur(s) est présent à l'endroit saisi.
+
+
+#122 - Mettre à jour la géométrie des évènements
+------------------------------------------------
+
+Pour créer un évènement, on pourra utiliser SQL ou l'interface :
+* via l'interface, créez un évènement quelconque en cliquant une ou deux fois
+  sur la carte.
+* en SQL via PgAdmin3, ajoutez d'abord un enregistrement dans la table
+  ``evenements`` puis ajoutez un ou plusieurs enregistrements dans la table de
+  jointure ``evenements_troncons``, les tronçons existent déjà quant à eux.
+
+De même pour consulter la géométrie, on pourra utiliser QGIS, PgAdmin3 ou
+l'interface, dans la fiche détail.
+
+Après chaque insertion, modification ou suppression dans la table
+troncons_evenements, on pourra constater avec QGIS ou PgAdmin3 que l'évènement
+lié porte bien une géométrie reflétant sa description (liste de tronçon avec PK
+début et PK fin + décallage).
+
+Après modification ou suppression d'un tronçon, on peut également vérifier que
+les évènements liés portent bien une géométrie reflétant leur description.
+
+Après modification du décallage d'un évènement, on peut également vérifier que
+sa géométrie est modifiée pour refléter sa description.
+
+
+Évènements invalides :
+
+* Lorsque les tronçons forme une ligne discontinue, seul le
+  premier morceau apparait dans la géométrie de l'évènement.
+* Lorsqu'un évènement ponctuel est associé à plusieurs tronçons, la
+  géométrie est laissée en l'état.
+
+
+#81 - Activer la saisie des topologies pour toutes les entités
+--------------------------------------------------------------
+
+Seules les lignes sont autorisées pour les itinéraires et la gestion foncière.
+
+Seuls les points sont autorisés pour les POI.
+
+Pour tout le reste (aménagements, interventions), les lignes et points sont autorisés.

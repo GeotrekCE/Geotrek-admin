@@ -34,7 +34,7 @@ def path_manager_required(redirect_to):
 
 
 def trekking_manager_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_comm_manager()
+    f = lambda u: u.is_authenticated() and u.profile.is_trekking_manager()
     m = _(u'Access to the requested resource is restricted to communication managers. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
 

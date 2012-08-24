@@ -4,6 +4,6 @@ start on started network
 stop on stopping network
 stop on starting shutdown
 
-exec ${parts['buildout'].directory}/bin/supervisord --nodaemon --configuration ${parts['supervisor']['supervisord-conf']}
+exec ${parts['buildout'].directory}/bin/supervisord --nodaemon
 
 respawn

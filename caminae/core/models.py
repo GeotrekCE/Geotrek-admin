@@ -1,90 +1,18 @@
+import logging
+import collections
+
 from django.contrib.gis.db import models
+from django.utils import simplejson
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.utils import distance3D
+from caminae.common.utils import distance3D
+from caminae.mapentity.models import MapEntityMixin
 
 
-# Used to create the matching url name
-ENTITY_LAYER = "layer"
-ENTITY_LIST = "list"
-ENTITY_JSON_LIST = "json_list"
-ENTITY_DETAIL = "detail"
-ENTITY_CREATE = "add"
-ENTITY_UPDATE = "update"
-ENTITY_DELETE = "delete"
-
-ENTITY_KINDS = (
-    ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
-    ENTITY_DETAIL, ENTITY_CREATE,
-    ENTITY_UPDATE, ENTITY_DELETE,
-)
-
-class MapEntityMixin(object):
-
-    @classmethod
-    def latest_updated(cls):
-        try:
-            return cls.objects.latest("date_update").date_update
-        except cls.DoesNotExist:
-            return None
-
-    # List all different kind of views
-    @classmethod
-    def get_url_name(cls, kind):
-        if not kind in ENTITY_KINDS:
-            return None
-        return '%s:%s_%s' % (cls._meta.app_label, cls._meta.module_name, kind)
-
-    @classmethod
-    def get_url_name_for_registration(cls, kind):
-        if not kind in ENTITY_KINDS:
-            return None
-        return '%s_%s' % (cls._meta.module_name, kind)
-
-    @classmethod
-    @models.permalink
-    def get_layer_url(cls):
-        return (cls.get_url_name(ENTITY_LAYER), )
-
-    @classmethod
-    @models.permalink
-    def get_list_url(cls):
-        return (cls.get_url_name(ENTITY_LIST), )
-
-    @classmethod
-    @models.permalink
-    def get_jsonlist_url(cls):
-        return (cls.get_url_name(ENTITY_JSON_LIST), )
-
-    @classmethod
-    @models.permalink
-    def get_add_url(cls):
-        return (cls.get_url_name(ENTITY_CREATE), )
-
-    def get_absolute_url(self):
-        return self.get_detail_url()
-
-    @classmethod
-    @models.permalink
-    def get_generic_detail_url(self):
-        return (self.get_url_name(ENTITY_DETAIL), [str(0)])
-
-    @models.permalink
-    def get_detail_url(self):
-        return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
-
-    @models.permalink
-    def get_update_url(self):
-        return (self.get_url_name(ENTITY_UPDATE), [str(self.pk)])
-
-    @models.permalink
-    def get_delete_url(self):
-        return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
-
-
-
+logger = logging.getLogger(__name__)
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -141,6 +69,45 @@ class Path(MapEntityMixin, StructureRelated):
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
 
+    @classmethod
+    def closest(cls, point):
+        """
+        Returns the closest path of the point.
+        Will fail if no path in database.
+        """
+        # TODO: move to custom manager
+        if point.srid != settings.SRID:
+            point = point.transform(settings.SRID, clone=True)
+        return cls.objects.all().distance(point).order_by('distance')[0]
+
+    def interpolate(self, point):
+        """
+        Returns position ([0.0-1.0]) and offset (distance) of the point
+        along this path.
+        """
+        from django.db import connection
+        from string import Template
+        if not self.pk:
+            raise ValueError("Cannot compute interpolation on unsaved path")
+        if point.srid != settings.SRID:
+            point.transform(settings.SRID)
+        cursor = connection.cursor()
+        sql = Template("""
+        SELECT position, distance
+        FROM ft_troncon_interpolate($pk, ST_GeomFromText('POINT($x $y $z)',$srid))
+             AS (position FLOAT, distance FLOAT)
+        """)
+        cursor.execute(sql.substitute({
+            'pk': self.pk,
+            'x': point.x,
+            'y': point.y,
+            'z': 0,  # TODO: does it matter ?
+            'srid': settings.SRID,
+            'table': self._meta.db_table
+        }))
+        result = cursor.fetchall()
+        return result[0]
+
     def save(self, *args, **kwargs):
         super(Path, self).save(*args, **kwargs)
 
@@ -175,42 +142,206 @@ class Path(MapEntityMixin, StructureRelated):
 
     @property
     def trail_display(self):
-        return self.trail.name if self.trail else _("None")
+        if self.trail:
+            return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
+        return _("None")
 
 
 class TopologyMixin(models.Model):
-    troncons = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_(u"Path"))
-    offset = models.IntegerField(default=0, db_column='decallage', verbose_name=_(u"Offset"))
-    deleted = models.BooleanField(default=False, db_column='supprime', verbose_name=_(u"Deleted"))
-    kind = models.ForeignKey('TopologyMixinKind', verbose_name=_(u"Kind"))
+    paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
+    offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
+    kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
 
     # Override default manager
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
+
+    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
-    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
-    geom = models.LineStringField(editable=False, srid=settings.SRID,
-                                  spatial_index=False, dim=3)
 
-    def __unicode__(self):
-        return u"%s (%s)" % (_(u"Topology"), self.pk)
+    length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
+    geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
+                                blank=True, spatial_index=False, dim=3)
 
     class Meta:
         db_table = 'evenements'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
 
-    def save(self, *args, **kwargs):
-        super(TopologyMixin, self).save(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(TopologyMixin, self).__init__(*args, **kwargs)
+        if not self.pk:
+            self.kind = self.get_kind()
 
-        # Update computed values
-        tmp = self.__class__.objects.get(pk=self.pk)
-        self.date_insert = tmp.date_insert
-        self.date_update = tmp.date_update
-        self.length = tmp.length
-        self.geom = tmp.geom
+    def __unicode__(self):
+        return u"%s (%s)" % (_(u"Topology"), self.pk)
+
+    @classmethod
+    def get_kind(cls, name=None):
+        name = name or cls._meta.object_name
+        return TopologyMixinKind.objects.get_or_create(kind=name)[0]
+
+    def add_path(self, path, start=0.0, end=1.0):
+        """
+        Shortcut function to add paths into this topology.
+        """
+        from .factories import PathAggregationFactory
+        aggr = PathAggregationFactory.create(topo_object=self, 
+                                             path=path, 
+                                             start_position=start, 
+                                             end_position=end)
+        # Since a trigger modifies geom, we reload the object
+        self.reload()
+        return aggr
+
+    def mutate(self, other, delete=True):
+        """
+        Take alls attributes of the other topology specified and
+        save them into this one. Optionnally deletes the other.
+        """
+        self.offset = other.offset
+        self.save()
+        PathAggregation.objects.filter(topo_object=self).delete()
+        for aggr in other.aggregations.all():
+            self.add_path(aggr.path, aggr.start_position, aggr.end_position)
+        if delete:
+            other.delete()
+        return self
+
+    def reload(self):
+        """
+        Reload into instance all computed attributes in triggers.
+        """
+        if self.pk:
+            # Update computed values
+            tmp = self.__class__.objects.get(pk=self.pk)
+            self.date_insert = tmp.date_insert
+            self.date_update = tmp.date_update
+            self.length = tmp.length
+            self.geom = tmp.geom
+        return self
+
+    def save(self, *args, **kwargs):
+        # HACK: these fields are readonly from the Django point of view
+        # but they can be changed at DB level. Since Django write all fields
+        # to DB anyway, it is important to update it before writting
+        if self.pk:
+            tmp = self.__class__.objects.get(pk=self.pk)
+            self.length = tmp.length
+            self.geom = tmp.geom
+
+        if not self.kind:
+            if self._meta.object_name == "TopologyMixin":
+                raise Exception("Cannot save abstract topologies")
+            self.kind = self.get_kind()
+
+        super(TopologyMixin, self).save(*args, **kwargs)
+        self.reload()
+
+    @classmethod
+    def deserialize(cls, serialized):
+        from .factories import TopologyMixinFactory
+        objdict = serialized
+        if isinstance(serialized, basestring):
+            try:
+                objdict = simplejson.loads(serialized)
+            except simplejson.JSONDecodeError, e:
+                raise ValueError(_("Invalid serialization: %s") % e)
+        kind = objdict.get('kind')
+        lat = objdict.get('lat')
+        lng = objdict.get('lng')
+        # Point topology ?
+        if lat and lng:
+            return cls._topologypoint(lng, lat, kind)
+
+        # Path aggregation
+        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        # Start repopulating from serialized data
+        start = objdict.get('start', 0.0)
+        end = objdict.get('end', 1.0)
+        paths = objdict['paths']
+        # Check that paths should be unique
+        if len(set(paths)) != len(paths):
+            paths = collections.Counter(paths)
+            extras = [p for p in paths if paths[p]>1]
+            raise ValueError(_("Paths are not unique : %s") % extras)
+        # Create path aggregations
+        for i, path in enumerate(paths):
+            try:
+                path = Path.objects.get(pk=path)
+            except Path.DoesNotExist, e:
+                raise ValueError(str(e))
+            start_position = start if i==0 else 0.0
+            end_position = end if i==len(paths)-1 else 1.0
+            aggrobj = PathAggregation(topo_object=topology,
+                                      start_position=start_position,
+                                      end_position=end_position,
+                                      path=path)
+            aggrobj.save()
+        return topology
+
+    @classmethod
+    def _topologypoint(cls, lng, lat, kind=None):
+        """
+        Receives a point (lng, lat) with API_SRID, and returns
+        a topology objects with a computed path aggregation.
+        """
+        from .factories import TopologyMixinFactory
+        # Find closest path
+        point = Point((lng, lat), srid=settings.API_SRID)
+        point.transform(settings.SRID)
+        closest = Path.closest(point)
+        position, offset = closest.interpolate(point)
+        # We can now instantiante a Topology object
+        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=offset)
+        aggrobj = PathAggregation(topo_object=topology,
+                                  start_position=position,
+                                  end_position=position,
+                                  path=closest)
+        aggrobj.save()
+        return topology
+
+    def serialize(self):
+        paths = []
+        start = 1.0
+        end = 0.0
+        for aggregation in self.aggregations.all():
+            if aggregation.start_position < start:
+                start = aggregation.start_position
+            if aggregation.end_position > end:
+                end = aggregation.end_position
+            paths.append(aggregation.path.pk)
+        # Point topology
+        if start == end and len(paths) == 1:
+            geom = self.geom
+            if geom.geom_type != 'Point':
+                logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
+                geom = Point(geom.coords[0], srid=settings.SRID)
+            point = geom.transform(settings.API_SRID, clone=True)
+            objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
+        else:
+            # Line topology
+
+            # Create the markers points to be used with much more ease on javascript side
+            # (will be even easier/faster when more 'intermediary' markers will show up)
+            geom = Point(self.geom.coords[0], srid=settings.SRID)
+            start_point = geom.transform(settings.API_SRID, clone=True)
+
+            geom = Point(self.geom.coords[-1], srid=settings.SRID)
+            end_point = geom.transform(settings.API_SRID, clone=True)
+
+            objdict = dict(kind=self.kind.kind,
+                           offset=self.offset,
+                           start=start,
+                           end=end,
+                           paths=paths,
+                           start_point=dict(lng=start_point.x, lat=start_point.y),
+                           end_point=dict(lng=end_point.x, lat=end_point.y),
+                           )
+        return simplejson.dumps(objdict)
 
 
 class TopologyMixinKind(models.Model):
@@ -237,7 +368,7 @@ class PathAggregation(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return u"%s (%s - %s)" % (_("Path aggregation"), self.start_position, self.end_position)
+        return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)
 
     class Meta:
         db_table = 'evenements_troncons'
@@ -297,7 +428,7 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(StructureRelated):
+class Trail(MapEntityMixin, StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64)
     departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
@@ -310,4 +441,15 @@ class Trail(StructureRelated):
         verbose_name_plural = _(u"Trails")
 
     def __unicode__(self):
-        return u"%s (%s -> %s)" % (self.name, self.departure, self.arrival)
+        return self.name
+
+    @property
+    def geom(self):
+        paths = Path.objects.filter(trail=self)
+        geom = None
+        for p in paths:
+            if geom is None:
+                geom = LineString(p.geom.coords, srid=settings.SRID)
+            else:
+                geom = geom.union(p.geom)
+        return geom

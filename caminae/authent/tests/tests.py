@@ -34,7 +34,7 @@ class UserProfileTest(TestCase):
     def test_language(self):
         success = self.client.login(username=self.user.username, password=u"Bar")
         self.assertTrue(success)
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
         self.assertEqual(200, response.status_code)
         self.assertTrue(_("Logout") in response.content)
 
@@ -45,14 +45,14 @@ class UserProfileTest(TestCase):
         userprofile.save()
         self.assertEqual(self.user.profile.language, u"en")
         # No effect if no logout
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
         self.assertTrue(_("Logout") in response.content)
 
         self.client.logout()
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
         self.assertEqual(response.status_code, 302)
         self.client.login(username=self.user.username, password=u"Bar")
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
 
         self.assertEqual(self.client.session['django_language'], u"en")
         self.assertTrue(_("Logout") in response.content)
@@ -61,10 +61,10 @@ class UserProfileTest(TestCase):
         self.assertFalse(self.user.is_staff)
         success = self.client.login(username=self.user.username, password=u"Bar")
         self.assertTrue(success)
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
         self.assertFalse(_("Admin") in response.content)
 
         self.user.is_staff = True
         self.user.save()
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('core:path_list'))
         self.assertTrue(_("Admin") in response.content)

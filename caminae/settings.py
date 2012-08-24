@@ -1,5 +1,8 @@
 import os
 
+from django.contrib.messages import constants as messages
+
+
 gettext_noop = lambda s: s
 
 PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -180,6 +183,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.land',
     'caminae.trekking',
     'caminae.infrastructure',
+    'caminae.mapentity',
 )
 
 SERIALIZATION_MODULES = {
@@ -242,7 +246,7 @@ SPATIAL_EXTENT = None
 # API projection (client-side), can differ from SRID (database)
 API_SRID = 4326
 
-MIN_SNAP_ZOOM = 7
+SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 LEAFLET_CONFIG = {
     "TILES_URL" : [
@@ -258,7 +262,9 @@ MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'
 
-from django.contrib.messages import constants as messages
+# Navigation history tabs
+HISTORY_ITEMS_MAX = 7
+
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',

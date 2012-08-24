@@ -1,3 +1,44 @@
+L.Control.TopologyPoint = L.Control.extend({
+    options: {
+        position: 'topright',
+    },
+
+    initialize: function (map, options) {
+        L.Control.prototype.initialize.call(this, options);
+        this.topologyhandler = new L.Handler.TopologyPoint(map);
+    },
+
+    onAdd: function (map) {
+        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+        var link = L.DomUtil.create('a', 'leaflet-control-draw-marker', this._container);
+        link.href = '#';
+        link.title = 'Point';
+        var self = this;
+        L.DomEvent
+                .addListener(link, 'click', L.DomEvent.stopPropagation)
+                .addListener(link, 'click', L.DomEvent.preventDefault)
+                .addListener(link, 'click', function() {
+                     self.topologyhandler.enable();
+                });
+        return this._container;
+    },
+
+    onRemove: function (map) {
+    }
+});
+
+
+
+L.Handler.TopologyPoint = L.Marker.Draw.extend({
+    initialize: function (map, options) {
+        L.Marker.Draw.prototype.initialize.call(this, map, options);
+        map.on('draw:marker-created', function (e) {
+            this.fire('added', {marker:e.marker});
+        }, this);
+    },
+});
+
+
 
 L.Control.Multipath = L.Control.extend({
     options: {
@@ -5,10 +46,12 @@ L.Control.Multipath = L.Control.extend({
     },
 
     /* dijkstra */
-    initialize: function (map, graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
         L.Control.prototype.initialize.call(this, options);
         this.dijkstra = dijkstra;
-        this.multipath_handler = new L.Handler.MultiPath(map, graph_layer, dijkstra, this.options.handler);
+        this.multipath_handler = new L.Handler.MultiPath(
+            map, graph_layer, dijkstra, markersFactory, this.options.handler
+        );
     },
 
     onAdd: function (map) {
@@ -36,12 +79,20 @@ L.Control.Multipath = L.Control.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, dijkstra, options) {
+    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+        this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
+        this.cameleon = this.graph_layer._cameleon;
+
         // .graph .algo ?
         this.dijkstra = dijkstra;
         this.graph = dijkstra.graph;
+
+        // markers
+        this.markersFactory = markersFactory;
+        this.marker_source = null;
+        this.marker_dest = null;
 
         this.layerToId = function layerToId(layer) {
             return graph_layer.getPk(layer);
@@ -52,26 +103,43 @@ L.Handler.MultiPath = L.Handler.extend({
         };
     },
 
+    setState: function(state, autocompute) {
+        autocompute = autocompute === undefined ? true : autocompute;
+
+        // Ensure we got a fresh start
+        this.disable();
+        this.enable();
+
+        this._onClick({latlng: state.start_ll, layer:state.start_layer});
+        this._onClick({latlng: state.end_ll, layer:state.end_layer});
+
+        // We should (must !) find the same old path
+        autocompute && this.computePaths();
+    },
+
     // TODO: when to remove/update links..? what's the behaviour ?
     addHooks: function () {
         var self = this;
 
         // Clean all previous edges if they exist
-        var old_edges = this.all_edges || [];
-        $.each(old_edges, function(idx, edge) {
-            // You may find several times the same edge in a path
-            // so test for it (as pop removes it)
-            var layer = self.cameleon.pop(self.idToLayer(edge.id));
-            layer && layer.restoreStyle();
-        });
+        this.unmarkAll();
+
+        this.marker_source && this.map.removeLayer(this.marker_source);
+        this.marker_dest && this.map.removeLayer(this.marker_dest);
 
         this.steps = [];
-        this.computed_paths = []
+        this.computed_paths = [];
         this.all_edges = [];
-		this._container.style.cursor = 'w-resize';
+        this._container.style.cursor = 'w-resize';
 
-        this.cameleon = new Caminae.Cameleon(this.layerToId);
         this.graph_layer.on('click', this._onClick, this);
+
+        this.fire('enabled');
+    },
+
+    unmarkAll: function() {
+        this.marker_source && this.map.removeLayer(this.marker_source);
+        this.marker_dest && this.map.removeLayer(this.marker_dest);
     },
 
     removeHooks: function () {
@@ -82,35 +150,84 @@ L.Handler.MultiPath = L.Handler.extend({
 
     // On click on a layer with the graph
     _onClick: function(e) {
-        var layer = e.layer;
+        if (this.steps.length >= 2) return;
+        var self = this;
 
-        if (this.steps.length >= 2) {
-            return; // should not happen
+        var layer = e.layer
+          , latlng = e.latlng
+          , len = this.steps.length;
+
+        var next_step_idx = this.steps.length;
+
+        // 1. Click - you are adding a new marker
+        var marker;
+        if (next_step_idx == 0) {
+            this._container.style.cursor = 'e-resize';
+            marker = this.markersFactory.source(latlng)
+        } else {
+            this._container.style.cursor = '';
+            marker = this.markersFactory.dest(latlng)
         }
-        // don't accept twice a step
-        if (this.steps.indexOf(e.layer) != -1) {
-            return;
-        }
+
+        marker.on('move', function (e) {
+            var marker = e.target;
+            if (marker.snap) marker.fire('snap', {object: marker.snap, 
+                                                  location: marker.getLatLng()});
+        });
+        marker.on('snap', function (e) {
+            self.updateStep(next_step_idx, marker, e.object);
+        });
+        marker.on('unsnap', function () {
+            self.steps.splice(next_step_idx, 1, null);
+            self.fire('unsnap');
+        });
+
+        // Restrict snaplist to layer and snapdistance to max_value
+        // will ensure this get snapped and to the layer clicked
+        var snapdistance = Number.MAX_VALUE;
+        var closest = MapEntity.Utils.closest(map, marker, [ layer ], snapdistance);
+        marker.editing.updateClosest(marker, closest);
+    },
+
+    hasStepLayer: function(layer) {
+        return this.steps.indexOf(this.layerToId(layer)) != -1;
+    },
+
+    updateStep: function(step_idx, marker, layer, autocompute) {
+        // Should check that step_idx is < steps.length...
+        var autocompute = autocompute === undefined ? true : autocompute;
 
         var edge_id = this.layerToId(layer);
-        var edge = this.graph.edges[edge_id];
+        // var edge = this.graph.edges[edge_id];
 
-        this.steps.push(edge_id);
-        var can_compute = (this.steps.length == 2);
+        if (step_idx == 0) { this.marker_source = marker; }
+        else if (step_idx == 1) { this.marker_dest = marker; }
+        else { console.log('More than 2 points are unauthorized for now'); return; }
 
-        // mark
-        if (can_compute) {
-            this.cameleon.create(layer).toNodeStyle();
-            this._container.style.cursor = '';
-        } else {
-            this.cameleon.create(layer).fromNodeStyle();
-            this._container.style.cursor = 'e-resize';
+        // Replace the point at idx step_idx
+        this.steps.splice(step_idx, 1, edge_id);
+
+        if (autocompute && this.canCompute()) {
+            this.computePaths();
+        }
+    },
+
+    canCompute: function() {
+        if (this.steps.length != 2)
+            return false;
+
+        for (var i = 0; i < this.steps.length; i++) {
+            if (this.steps[i] === null)
+                return false;
         }
 
-        if (can_compute) {
-            this._onComputedPaths(
-                this.dijkstra.compute_path(this.graph, this.steps)
-            );
+        return true;
+    },
+
+    computePaths: function() {
+        if (this.canCompute()) {
+            var computed_paths = this.dijkstra.compute_path(this.graph, this.steps)
+            this._onComputedPaths(computed_paths);
         }
     },
 
@@ -152,15 +269,12 @@ L.Handler.MultiPath = L.Handler.extend({
         // compute and store all edges of the new paths (usefull for further computation)
         this.all_edges = this._extractAllEdges(new_computed_paths);
 
-        // set inner style
-        this._eachInnerComputedPathsEdges(new_computed_paths, function(edge) {
-            self.cameleon.create(self.idToLayer(edge.id)).computedNodeStyle();
-        });
-
         this.fire('computed_paths', {
             'new': new_computed_paths,
             'new_edges': this.all_edges,
-            'old': old_computed_paths
+            'old': old_computed_paths,
+            'marker_source': this.marker_source,
+            'marker_dest': this.marker_dest
         });
 
         this.disable();
@@ -217,50 +331,4 @@ Caminae.compute_path = (function() {
     // TODO: compute more than two steps
     return computeTwoStepsPath;
 
-})();
-
-
-// Simply store a layer, apply a color and restore the previous color
-Caminae.Cameleon = (function() {
-
-    var styleWrapper = function(layer) {
-        var initial_style = $.extend({}, layer.options);
-
-        var changeStyle = function(style) {
-            return function() {
-                layer.setStyle($.extend({}, initial_style, style));
-            };
-        };
-        return {
-              fromNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , toNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , stepNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , computedNodeStyle: changeStyle({'color': 'yellow', 'weight': 5, 'opacity': 1})
-            , restoreStyle: changeStyle(initial_style)
-        };
-    };
-
-    // Camleon wrap a layer in a style
-    // layerToId is used to convert a layer to a key
-    function Cameleon(layerToHashable) {
-        var self = this;
-        var wrappedLayer = {};
-        this.create = function(layer) {
-            return wrappedLayer[layerToHashable(layer)] = styleWrapper(layer);
-        };
-        this.get = function(layer) {
-            return wrappedLayer[layerToHashable(layer)]
-        };
-        this.getOrCreate = function(layer) {
-            return self.get(layer) || this.create(layer);
-        };
-        this.pop = function(layer) {
-            var ret = self.get(layer)
-            if (ret)
-                delete wrappedLayer[layerToHashable(layer)];
-            return ret;
-        };
-    }
-
-    return Cameleon;
 })();

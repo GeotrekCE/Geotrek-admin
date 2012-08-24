@@ -20,6 +20,57 @@ JQDataTable.init = function($elem, url, options) {
 
 JQDataTable.patched = false;
 
+
+// Iterate on all visible rows looking for the matching row using is_found.
+// Call cb_found or cb_not_found appropriately
+// cb_found(row: jquery elem, pagination: boolean, settings)
+JQDataTable.goToPage = function(dtable, is_found, cb_found, cb_not_found) {
+    var dt_settings = dtable.fnSettings();
+    var pagingInfo = dt_settings.oInstance.fnPagingInfo()
+
+    var aiRows = dt_settings.aiDisplay;
+    for (var position = 0, c = aiRows.length; position < c; position++) {
+        var iRow = aiRows[position];
+        if(is_found(dtable.fnGetData(iRow))) {
+            var page_idx = Math.floor(position / pagingInfo.iLength);
+
+            // If the page is the current one, call immediatly the callback
+            if (page_idx == pagingInfo.iTabIndex) {
+                cb($(dtable.fnGetNodes(iRow)), false, oSettings);
+            } else {
+                dt_settings._iDisplayStart =  page_idx * pagingInfo.iLength;
+
+                if (cb_found) {
+                    // There is currently no api to unregister cleanly a callback
+                    // (but it's just an array...).
+                    // Just ensure this gets called only once..
+                    var first = true;
+                    dt_settings.oApi._fnCallbackReg(dt_settings, 'aoDrawCallback',
+                        function(oSettings) {
+                            if(first) {
+                                first = false;
+                                cb_found($(dtable.fnGetNodes(iRow)), true, oSettings);
+                            }
+                        },
+                        'customGoToPageCb' + new Date().getTime() // ~random unique name
+                    );
+                }
+
+                dtable.oApi._fnCalculateEnd(dt_settings);
+                dtable.oApi._fnDraw(dt_settings);
+            }
+
+            // found, return !
+            return;
+        }
+        cb_not_found && cb_not_found();
+    }
+};
+
+
+
+
+
 // Set up a bootstrap configuration for jqDataTable
 // taken from: http://datatables.net/blog/Twitter_Bootstrap_2
 JQDataTable.apply_patch = function() {

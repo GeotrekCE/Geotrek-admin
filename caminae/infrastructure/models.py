@@ -5,7 +5,9 @@ from django.contrib.gis.db import models as gismodels
 from extended_choices import Choices
 
 from caminae.core.models import TopologyMixin
+from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelatedManager, StructureRelated
+
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -29,8 +31,11 @@ class InfrastructureType(StructureRelated):
         return self.label
 
 
-class BaseInfrastructure(TopologyMixin, StructureRelated):
+class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
     """ A generic infrastructure in the park """
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                      db_column='evenement')
+    
     name = models.CharField(db_column="nom", max_length=128)
     description = models.TextField(blank=True)
     type = models.ForeignKey(InfrastructureType)
@@ -43,17 +48,25 @@ class BaseInfrastructure(TopologyMixin, StructureRelated):
     def __unicode__(self):
         return self.name
 
+    @property
+    def name_display(self):
+        return '<a href="%s">%s</a>' % (self.get_detail_url(), self)
+
+    @property
+    def type_display(self):
+        return unicode(self.type)
+
 
 class InfrastructureGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
     def get_query_set(self):
-        return super(InfrastructureGISManager, self).get_query_set().filter(type__type__ne=INFRASTRUCTURE_TYPES.SIGNAGE)
+        return super(InfrastructureGISManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class InfrastructureStructureManager(StructureRelatedManager):
     """ Overide default structure related manager, and filter by type. """
     def get_query_set(self):
-        return super(InfrastructureStructureManager, self).get_query_set().filter(type__type__ne=INFRASTRUCTURE_TYPES.SIGNAGE)
+        return super(InfrastructureStructureManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class Infrastructure(BaseInfrastructure):

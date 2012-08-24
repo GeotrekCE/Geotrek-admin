@@ -1,0 +1,29 @@
+{% extends "mapentity/base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ form.media }}
+{% endblock extrahead %}
+
+{% block nav-detail %}active{% endblock nav-detail %}
+
+{% block mainpanel %}
+    <div class="span12">
+        <h1>{{ title }}
+        {% if object %}
+            <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
+        {% endif %}</h1>
+        
+        <div>&nbsp;</div>
+        
+        {% crispy form %}
+    </div>
+{% endblock mainpanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('#button-id-cancel').click(function (){ window.location = '{{ object.get_list_url }}';});
+    </script>
+{% endblock extrabody %}

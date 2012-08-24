@@ -39,15 +39,19 @@ BEGIN
     -- Remove obsolete evenement
     IF TG_OP = 'UPDATE' THEN
         -- Related evenement/zonage/secteur/commune will be cleared by another trigger
-        DELETE FROM evenements_troncons WHERE troncon = OLD.id;
+        DELETE FROM evenements_troncons et USING zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
+        DELETE FROM evenements_troncons et USING secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
+        DELETE FROM evenements_troncons et USING commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
     END IF;
 
     -- Add new evenement
-    -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop as above.
+    -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
     FOR rec IN EXECUTE 'SELECT insee as id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_communes WHERE ST_Intersects(geom, $1)' USING NEW.geom
     LOOP
+        -- FIXME: /!\ kind_id is now a dynamique values, it would require a
+        -- SELECT or INSERT. But we plan to change it for an enum.
         INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 2, 0, 0, NEW.geom) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
         INSERT INTO commune (evenement, city_id) VALUES (eid, rec.id);
@@ -56,6 +60,8 @@ BEGIN
     -- Secteur
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_secteurs WHERE ST_Intersects(geom, $1)' USING NEW.geom
     LOOP
+        -- FIXME: /!\ kind_id is now a dynamique values, it would require a
+        -- SELECT or INSERT. But we plan to change it for an enum.
         INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 3, 0, 0, NEW.geom) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
         INSERT INTO secteur (evenement, district_id) VALUES (eid, rec.id);
@@ -64,6 +70,8 @@ BEGIN
     -- Zonage
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point($1, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin FROM couche_zonage_reglementaire WHERE ST_Intersects(geom, $1)' USING NEW.geom
     LOOP
+        -- FIXME: /!\ kind_id is now a dynamique values, it would require a
+        -- SELECT or INSERT. But we plan to change it for an enum.
         INSERT INTO evenements (date_insert, date_update, kind_id, decallage, longueur, geom) VALUES (now(), now(), 4, 0, 0, NEW.geom) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, rec.pk_debut, rec.pk_fin);
         INSERT INTO zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
@@ -76,6 +84,29 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER troncons_couches_sig_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON troncons
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
+
+
+-------------------------------------------------------------------------------
+-- Update geometry of related topologies
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS troncons_evenements_geom_u_tgr ON troncons;
+
+CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
+DECLARE
+    eid integer;
+BEGIN
+    FOR eid IN SELECT DISTINCT evenement FROM evenements_troncons WHERE troncon = NEW.id LOOP
+        PERFORM update_geometry_of_evenement(eid);
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER troncons_evenements_geom_u_tgr
+AFTER UPDATE OF geom ON troncons
+FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 
 -------------------------------------------------------------------------------

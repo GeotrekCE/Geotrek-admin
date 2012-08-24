@@ -3,18 +3,17 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
-from caminae.core.models import Path
+from caminae.mapentity.models import MapEntityMixin
+from caminae.core.models import TopologyMixin
 
 
-class Trek(models.Model):
+class Trek(MapEntityMixin, TopologyMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
     validated = models.BooleanField(verbose_name=_(u"Validated"))
 
-    # same fields and core.models.path
-    length = models.FloatField(verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
     min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
@@ -23,31 +22,20 @@ class Trek(models.Model):
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
     description = models.TextField(verbose_name=_(u"Description"))
     ambiance = models.TextField(verbose_name=_(u"Ambiance"))
-    handicapped_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
+    disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
     duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
     is_transborder = models.BooleanField(verbose_name=_(u"Is transborder"))
 
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
-    parking_location = models.PointField(editable=False, srid=settings.SRID, spatial_index=False)
+    parking_location = models.PointField(srid=settings.SRID, spatial_index=False)
 
     public_transport = models.TextField(verbose_name=_(u"Public transport"))
     advice = models.TextField(verbose_name=_(u"Advice"))
 
-    geom = models.LineStringField(editable=False, srid=settings.SRID,
-                                          spatial_index=False, dim=3)
-
-    insert_date = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    update_date = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(verbose_name=_(u"Deleted"))
-
-
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))
-
-    paths = models.ManyToManyField(Path, related_name="treks",
-            verbose_name=_(u"Paths composition"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
             verbose_name=_(u"Usages"))
@@ -64,7 +52,8 @@ class Trek(models.Model):
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             verbose_name=_(u"Web links"))
 
-    # missing: photo
+    # Override default manager
+    objects = models.GeoManager()
 
     ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
@@ -106,6 +95,7 @@ class Usage(models.Model):
 
     def __unicode__(self):
         return self.usage
+
 
 class Route(models.Model):
 
@@ -211,11 +201,22 @@ class TrekRelationship(models.Model):
     objects = TrekRelationshipManager()
 
 
-# TODO: need to define "attached files" in the MCD to complete this model
-# class Photos(models.Model):
-#     pass
-#
-#     class Meta:
-#         db_table = 'photos'
+
+class POI(MapEntityMixin, TopologyMixin):
+    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+                                       db_column='evenement')
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    description = models.TextField(verbose_name=_(u"Description"))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+
+    # Override default manager
+    objects = models.GeoManager()
+
+    @property
+    def type_display(self):
+        return unicode(self.type)
 
 
+class POIType(models.Model):
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)

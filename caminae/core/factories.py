@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point, LineString
 from django.conf import settings
 
 from caminae.authent.factories import StructureRelatedDefaultFactory
-from caminae.utils import dbnow
+from caminae.common.utils import dbnow
 from . import models
 
 
@@ -28,7 +28,7 @@ class UsageFactory(factory.Factory):
 class NetworkFactory(factory.Factory):
     FACTORY_FOR = models.Network
 
-    network = factory.Sequence(lambda n: u"Usage %s" % n)
+    network = factory.Sequence(lambda n: u"Network %s" % n)
 
 
 class TrailFactory(factory.Factory):
@@ -75,17 +75,13 @@ class TopologyMixinFactory(factory.Factory):
 
     # Factory
     # troncons (M2M)
-    offset = 1
+    offset = 0
     deleted = False
     kind = factory.SubFactory(TopologyMixinKindFactory)
 
     # Trigger will override :
     date_insert = dbnow()
     date_update = dbnow()
-    
-    # FIXME: remove this when the trigger will be ready
-    length = 0.0
-    geom = LineString(Point(1, 1, 0), Point(2, 2, 0), srid=settings.SRID)
 
     @classmethod
     def _prepare(cls, create, **kwargs):
@@ -94,11 +90,13 @@ class TopologyMixinFactory(factory.Factory):
         PathAggregation).
         """
 
+        no_path = kwargs.pop('no_path', False)
         topo_mixin = super(TopologyMixinFactory, cls)._prepare(create, **kwargs)
-        if create:
+
+        if not no_path and create:
             PathAggregationFactory.create(topo_object=topo_mixin)
-        else:
-            PathAggregationFactory.build(topo_object=topo_mixin)
+            # Note that it is not possible to attach a related object before the
+            # topo_mixin has an ID.
         return topo_mixin
 
 

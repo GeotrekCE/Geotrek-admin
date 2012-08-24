@@ -26,7 +26,15 @@ translator.register(land_models.PhysicalType, PhysicalTypeTO)
 
 class TrekTO(TranslationOptions):
     fields = ('name', 'departure', 'arrival', 'description_teaser',
-        'description', 'ambiance', 'handicapped_infrastructure', 'advice', )
+        'description', 'ambiance', 'disabled_infrastructure', 'advice', )
+
+
+class POITO(TranslationOptions):
+    fields = ('name', 'description', )
+
+
+class POITypeTO(TranslationOptions):
+    fields = ('label', )
 
 
 class TrekNetworkTO(TranslationOptions):
@@ -56,6 +64,8 @@ class WebLinkTO(TranslationOptions):
 # Register previously defined translation options
 trek_translation_to_register = [
     (trekking_models.Trek, TrekTO),
+    (trekking_models.POI, POITO),
+    (trekking_models.POIType, POITypeTO),
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Usage, UsageTO),
     (trekking_models.Route, RouteTO),

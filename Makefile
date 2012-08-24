@@ -35,10 +35,12 @@ release:
 unit_tests: bin/ clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/develop update -f
-	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure
+	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure mapentity
 
 functional_tests:
-	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/*.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-88.xml caminae/tests/story_88_user_creation.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-88.xml caminae/tests/test_utils.js
 
 tests: unit_tests functional_tests
 

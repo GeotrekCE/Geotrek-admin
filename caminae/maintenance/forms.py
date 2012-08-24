@@ -1,23 +1,28 @@
-from django.contrib.gis.geos import Point, LineString
+from django import forms
+from django.utils.translation import ugettext_lazy as _
 
-import floppyforms as forms
 from crispy_forms.layout import Field
 
-from caminae.core.forms import MapEntityForm
-from caminae.core.widgets import PointOrMultipathWidget
+from caminae.mapentity.forms import MapEntityForm
+from caminae.core.fields import TopologyField
+from caminae.core.widgets import TopologyReadonlyWidget
+from caminae.infrastructure.models import BaseInfrastructure
 
-from .models import Intervention
+from .models import Intervention, InterventionStatus, Project
 
 
 class InterventionForm(MapEntityForm):
-    geom = forms.gis.GeometryField(widget=PointOrMultipathWidget)
-
+    """ An intervention can be a Point or a Line """
+    topology = TopologyField()
+    infrastructure = forms.ModelChoiceField(required=False,
+                                            queryset=BaseInfrastructure.objects.all(),
+                                            widget=forms.HiddenInput())
     modelfields = (
             'name',
             'structure',
             'date',
             'status',
-            'typology',
+            'type',
             'disorders',
             Field('comments', css_class='input-xlarge'),
             'in_maintenance',
@@ -30,25 +35,83 @@ class InterventionForm(MapEntityForm):
             'heliport_cost',
             'subcontract_cost',
             'stake',
-            'project',)
-    geomfields = ('geom',)
-
-    def save(self, commit=True):
-        intervention = super(InterventionForm, self).save(commit)
-        if not commit:
-            return intervention
-        
-        geom = self.cleaned_data.get('geom')
-        if not geom:
-            pass  # raise ValueError !
-
-        if isinstance(geom, Point):
-            intervention.initFromPoint(geom)
-        elif isinstance(geom, LineString):
-            # TODO: later it should be list of Path objects (from list of pks in form)
-            intervention.initFromPathsList(geom)
-        return intervention
+            'project',
+            'infrastructure',)
+    geomfields = ('topology',)
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'topology', 'jobs')  # TODO
+        exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
+
+    def __init__(self, *args, **kwargs):
+        super(InterventionForm, self).__init__(*args, **kwargs)
+        # If we create or edit an intervention on infrastructure, set
+        # topology field as read-only
+        infrastructure = kwargs.get('initial', {}).get('infrastructure')
+        if self.instance.on_infrastructure:
+            infrastructure = self.instance.topology
+        if infrastructure:
+            self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
+            self.fields['topology'].widget = TopologyReadonlyWidget()
+            self.fields['topology'].label = _(self.instance.topology.kind.kind)
+
+    def clean(self, *args, **kwargs):
+        # If topology was read-only, topology field is empty, get it from infra.
+        cleaned_data = super(InterventionForm, self).clean()
+        if 'infrastructure' in self.cleaned_data and \
+           'topology' not in self.cleaned_data:
+            self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        infrastructure = self.cleaned_data.get('infrastructure')
+        if infrastructure:
+            self.instance.set_infrastructure(infrastructure)
+        return super(InterventionForm, self).save(*args, **kwargs)
+
+
+class InterventionCreateForm(InterventionForm):
+    def __init__(self, *args, **kwargs):
+        # If we create an intervention on infrastructure, get its topology
+        initial = kwargs.get('initial', {})
+        infrastructure = initial.get('infrastructure')
+        if infrastructure:
+            initial['topology'] = infrastructure
+        kwargs['initial'] = initial
+        super(InterventionCreateForm, self).__init__(*args, **kwargs)
+        # Limit status choices to first one only ("requested")
+        first = InterventionStatus.objects.all()[0]
+        self.fields['status'] = forms.ModelChoiceField(queryset=InterventionStatus.objects.filter(pk=first.pk))
+
+    class Meta(InterventionForm.Meta):
+        exclude = InterventionForm.Meta.exclude + (
+            'length',
+            'height',
+            'width',
+            'area',
+            'slope',
+            'material_cost',
+            'heliport_cost',
+            'subcontract_cost',
+            'stake',
+            'project', )
+
+
+class ProjectForm(MapEntityForm):
+    modelfields = (
+            'name',
+            'structure',
+            'begin_year',
+            'end_year',
+            'constraint',
+            'cost',
+            Field('comments', css_class='input-xlarge'),
+            'contractors',
+            'project_owner',
+            'project_manager',
+            'founders',)
+    geomfields = tuple()  # no geom field in project
+
+    class Meta:
+        model = Project
+        exclude = ('deleted', 'founders',)  #TODO founders (inline form)

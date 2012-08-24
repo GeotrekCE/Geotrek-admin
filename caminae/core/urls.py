@@ -4,19 +4,19 @@ from .views import (
     PathLayer, PathList, PathDetail, PathCreate,
     PathUpdate, PathDelete, PathJsonList, ElevationProfile,
     get_graph_json,
+    TrailDetail,
 )
 
-from caminae.core.entity import view_classes_to_url
+from caminae.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',
-    url(r'^data/graph.json$', get_graph_json, name="path_json_graph"),
+    url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
     # Specific
-    url(r'^path/(?P<pk>\d+)/profile/$', ElevationProfile.as_view(), name='path_profile'),
+    url(r'^api/path/(?P<pk>\d+)/profile/$', ElevationProfile.as_view(), name='path_profile'),
 )
 
 urlpatterns += patterns('', *view_classes_to_url(
     PathList, PathCreate, PathDetail, PathUpdate,
-    PathDelete, PathLayer, PathJsonList
+    PathDelete, PathLayer, PathJsonList, TrailDetail
 ))
-

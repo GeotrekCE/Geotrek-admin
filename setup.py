@@ -24,10 +24,10 @@ setup(
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',
         'django-modeltranslation == 0.3.3',
-        'django-leaflet == 0.0.2',
         'django-floppyforms == 1.0',
         'django-crispy-forms == 1.1.4',
-        'django-geojson == 1.0.0',
+        'django-leaflet',   # pinned by buildout
+        'django-geojson',   # pinned by buildout
         'django-filter',   # pinned by buildout
         'django-extended-choices',  # pinned by buildout
     ] + test_requirements,

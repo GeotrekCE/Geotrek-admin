@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import factory
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import Point
 
 from . import models
-from caminae.utils.testdata import get_dummy_uploaded_image
+from caminae.core.factories import TopologyMixinFactory
+from caminae.common.utils.testdata import get_dummy_uploaded_image
 
 
 def dummy_filefield_as_sequence(toformat_name):
@@ -52,7 +53,7 @@ class WebLinkFactory(factory.Factory):
     thumbnail = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TrekFactory(factory.Factory):
+class TrekFactory(TopologyMixinFactory):
     FACTORY_FOR = models.Trek
 
     name = factory.Sequence(lambda n: u"name %s" % n)
@@ -69,7 +70,7 @@ class TrekFactory(factory.Factory):
     description_teaser = factory.Sequence(lambda n: u"description_teaser %s" % n)
     description = factory.Sequence(lambda n: u"description %s" % n)
     ambiance = factory.Sequence(lambda n: u"ambiance %s" % n)
-    handicapped_infrastructure = factory.Sequence(lambda n: u"handicapped_infrastructure %s" % n)
+    disabled_infrastructure = factory.Sequence(lambda n: u"disabled_infrastructure %s" % n)
     # 60 minutes (1 hour)
     duration = 60
 
@@ -81,12 +82,6 @@ class TrekFactory(factory.Factory):
 
     public_transport = factory.Sequence(lambda n: u"Public transport %s" % n)
     advice = factory.Sequence(lambda n: u"Advice %s" % n)
-
-    geom = LineString(Point(1, 1, 0), Point(2, 2, 0))
-
-    # do not populate insert_date / update_date
-
-    deleted = False
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
@@ -104,3 +99,15 @@ class TrekRelationshipFactory(factory.Factory):
     trek_b = factory.SubFactory(TrekFactory)
 
 
+class POITypeFactory(factory.Factory):
+    FACTORY_FOR = models.POIType
+    
+    label = factory.Sequence(lambda n: u"POIType %s" % n)
+    pictogram =  dummy_filefield_as_sequence('pictogram %s')
+
+
+class POIFactory(TopologyMixinFactory):
+    FACTORY_FOR = models.POI
+
+    name = factory.Sequence(lambda n: u"POI %s" % n)
+    type = factory.SubFactory(POITypeFactory)

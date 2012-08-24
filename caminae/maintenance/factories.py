@@ -1,6 +1,7 @@
 import factory
 
 from caminae.core.factories import StakeFactory
+from caminae.common.factories import OrganismFactory
 from . import models
 
 
@@ -16,10 +17,10 @@ class InterventionDisorderFactory(factory.Factory):
     disorder = factory.Sequence(lambda n: u"Disorder %s" % n)
 
 
-class InterventionTypologyFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionTypology
+class InterventionTypeFactory(factory.Factory):
+    FACTORY_FOR = models.InterventionType
 
-    typology = factory.Sequence(lambda n: u"Type %s" % n)
+    type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
 class InterventionJobFactory(factory.Factory):
@@ -40,7 +41,7 @@ class InterventionFactory(factory.Factory):
 
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
-    typology = factory.SubFactory(InterventionTypologyFactory)
+    type = factory.SubFactory(InterventionTypeFactory)
 
     @classmethod
     def _prepare(cls, create, **kwargs):
@@ -49,3 +50,34 @@ class InterventionFactory(factory.Factory):
             intervention.disorders.add(InterventionDisorderFactory.create())
             ManDayFactory.create(intervention=intervention)
         return intervention
+
+
+class ContractorFactory(factory.Factory):
+    FACTORY_FOR = models.Contractor
+
+    contractor = factory.Sequence(lambda n: u"Contractor %s" % n)
+
+
+class ProjectFactory(factory.Factory):
+    FACTORY_FOR = models.Project
+
+    name = factory.Sequence(lambda n: u"Project %s" % n)
+    begin_year = 2010
+    end_year = 2012
+    project_owner = factory.SubFactory(OrganismFactory)
+    project_manager = factory.SubFactory(OrganismFactory)
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        project = super(ProjectFactory, cls)._prepare(create, **kwargs)
+        if project.pk:
+            project.contractors.add(ContractorFactory.create())
+            FundingFactory.create(project=project)
+        return project
+
+
+class FundingFactory(factory.Factory):
+    FACTORY_FOR = models.Funding
+
+    project = factory.SubFactory(ProjectFactory)
+    organism = factory.SubFactory(OrganismFactory)

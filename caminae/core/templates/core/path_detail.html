@@ -1,57 +1,58 @@
-{% extends "core/module_detail.html" %}
+{% extends "mapentity/entity_detail.html" %}
 {% load i18n static field_verbose_name %}
-
-{% block nav-path %}active{% endblock nav-path %}
 
 {% block extrahead %}
     {{ block.super }}
     <script type="text/javascript" src="{% static "js/jquery.sparkline.js" %}"></script>
 {% endblock extrahead %}
 
+{% block extratitle %}{% endblock extratitle %}
 
 {% block detailspanel %}
     {{ block.super }}
-    <table class="table-striped table-bordered table">
+
+    {% if not path.valid %}
+        <div class="alert alert-error"><strong>{% trans "Invalid" %}</strong></div>
+    {% endif %}
+    
+    <div class="groupfields">
+        <h4>{{ path|verbose:"comments" }}</h4>
+        {{ path.comments|default:_("None") }}
+    </div>
+
+    <h3>{% trans "Properties" %}</h3>
+    <table class="table">
         <tr>
-            <th>{{ path|verbose:"valid" }}</th>
-            <td>{{ path.valid|yesno:_("Yes,No") }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"name" }}</th>
-            <td>{{ path.name|default:_("None") }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"comments" }}</th>
-            <td>{{ path.comments|default:_("None")  }}</td>
-        </tr><tr>
             <th>{{ path|verbose:"date_insert" }}</th>
             <td>{{ path.date_insert }}</td>
         </tr><tr>
             <th>{{ path|verbose:"date_update" }}</th>
             <td>{{ path.date_update }}</td>
         </tr><tr>
+            <th>{% trans "Slope" %}</th>
+            <td>-{{ path.descent }} m  +{{ path.ascent }} m</td>
+        </tr><tr>
             <th>{{ path|verbose:"length" }}</th>
-            <td>{{ path.length|stringformat:".2f" }} {% trans "meters" %}</td>
+            <td>{{ path.length|stringformat:".2f" }} m</td>
         </tr><tr>
-            <th>{{ path|verbose:"ascent" }}</th>
-            <td>{{ path.ascent }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"descent" }}</th>
-            <td>{{ path.descent }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"min_elevation" }}</th>
-            <td>{{ path.min_elevation }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"max_elevation" }}</th>
-            <td>{{ path.max_elevation }}</td>
-        </tr><tr>
+            <th>{% trans "Elevation" %}</th>
+            <td>Min: {{ path.min_elevation }} m, Max: {{ path.max_elevation }} m</td>
+        </tr>
+    </table>
+    
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
             <th>{{ path|verbose:"trail" }}</th>
-            <td>{{ path.trail|default:_("None") }}</td>
+            <td>{{ path.trail_display|safe }}</td>
         </tr><tr>
             <th>{{ path|verbose:"datasource" }}</th>
             <td>{{ path.datasource|default:_("None") }}</td>
         </tr><tr>
             <th>{{ path|verbose:"stake" }}</th>
             <td>{{ path.stake|default:_("None") }}</td>
-        </tr><tr>
+        </tr>
+        <tr>
             <th>{{ path|verbose:"usages" }}</th>
             <td>
                 {% for usage in  path.usages.all %}
@@ -80,28 +81,28 @@
 
 {% block mappanel %}
     {{ block.super }}
-	<div id="altitudegraph">
-		<h2>{% trans "Altitude profile" %}</h2>
-		<p class="axislabel">{% trans "Altitude (m)" %}</p>
-		<span id="profilealtitude"></span> <span class="axislabel" style="position:relative; top:85px">{% trans "Distance (m)" %}</span>
-		<p id="mouseoverprofil" class="axislabel" >&nbsp;</p>
-	</div>
+    <div id="altitudegraph">
+        <h2>{% trans "Altitude profile" %}</h2>
+        <p class="axislabel">{% trans "Altitude (m)" %}</p>
+        <span id="profilealtitude"></span> <span class="axislabel" style="position:relative; top:85px">{% trans "Distance (m)" %}</span>
+        <p id="mouseoverprofil" class="axislabel" >&nbsp;</p>
+    </div>
 
-	<div class="span11"></div><!-- clear -->
+    <div class="span11"></div><!-- clear -->
 
     <script type="text/javascript">
-		$(function() {
-			$.getJSON("{% url core:path_profile path.pk %}", function(data) {
-				$('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
-				$('#profilealtitude').bind('sparklineRegionChange', function(ev) {
-					var sparkline = ev.sparklines[0],
-						region = sparkline.getCurrentRegionFields();
-						value = region.y;
-					$('#mouseoverprofil').text(Math.round(region.x) +" m");
-				}).bind('mouseleave', function() {
-					$('#mouseoverprofil').text('');
-				});
-			});
-		});
-	</script>
+        $(function() {
+            $.getJSON("{% url core:path_profile path.pk %}", function(data) {
+                $('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
+                $('#profilealtitude').bind('sparklineRegionChange', function(ev) {
+                    var sparkline = ev.sparklines[0],
+                        region = sparkline.getCurrentRegionFields();
+                        value = region.y;
+                    $('#mouseoverprofil').text(Math.round(region.x) +" m");
+                }).bind('mouseleave', function() {
+                    $('#mouseoverprofil').text('');
+                });
+            });
+        });
+    </script>
 {% endblock mappanel %}
