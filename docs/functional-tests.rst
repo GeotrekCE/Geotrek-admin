@@ -673,3 +673,17 @@ Sprint 4 - Version 0.4.0
   des noms générés (ex: c28e793a0354.js)
 
 * Ouvrir l'un de ces fichiers, vérifier que le contenu est compressé.
+
+
+#102 - Calculer automatiquement l'enjeux par défaut d'une intervention
+----------------------------------------------------------------------
+
+* Définir l'enjeu d'un tronçon au maximum
+
+* Créer une intervention et un aménagement sur ce tronçon (en y incluant d'autres éventuellement)
+
+* Créer une intervention sur l'aménagement créé.
+
+* Vérifier que les enjeux des deux interventions créées correspondent bien à l'enjeu du tronçon.
+
+* Modifier l'enjeu d'une intervention, vérifier que cette valeur est conservée.

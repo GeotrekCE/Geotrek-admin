@@ -65,6 +65,19 @@ class Intervention(MapEntityMixin, StructureRelated):
         if not self.on_infrastructure:
             raise ValueError("Expecting an infrastructure or signage")
 
+    def default_stake(self):
+        stake = None
+        if self.topology:
+            for path in self.topology.paths.all():
+                if path.stake > stake:
+                    stake = path.stake
+        return stake
+
+    def save(self, *args, **kwargs):
+        if self.stake is None:
+            self.stake = self.default_stake()
+        super(Intervention, self).save(*args, **kwargs)
+
     @property
     def on_infrastructure(self):
         return self.is_infrastructure or self.is_signage

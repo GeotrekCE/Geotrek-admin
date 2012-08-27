@@ -8,7 +8,8 @@ from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
-from caminae.core.factories import PathFactory, PathAggregationFactory, TopologyMixinFactory
+from caminae.core.factories import (PathFactory, PathAggregationFactory, 
+    TopologyMixinFactory, StakeFactory)
 from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
 
 # TODO caminae.core should be self sufficient
@@ -35,6 +36,17 @@ class ViewsTest(MapEntityTest):
             'valid': 'on',
             'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
         }
+
+
+class StakeTest(TestCase):
+    def test_comparison(self):
+        s1 = StakeFactory.create()
+        s2 = StakeFactory.create()
+        self.assertTrue(s1 < s2)
+        self.assertTrue(s1 <= s2)
+        self.assertFalse(s1 > s2)
+        self.assertFalse(s1 >= s2)
+        self.assertFalse(s1 == s2)
 
 
 class PathTest(TestCase):

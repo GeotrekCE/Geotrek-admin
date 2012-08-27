@@ -432,6 +432,9 @@ class Stake(StructureRelated):
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
 
+    def __lt__(self, other):
+        return self.pk < other.pk
+
     def __unicode__(self):
         return self.stake
 
