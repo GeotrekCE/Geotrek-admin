@@ -53,7 +53,7 @@ class InterventionForm(MapEntityForm):
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
-            self.fields['topology'].label = _(self.instance.topology.kind.kind)
+            self.fields['topology'].label = _(infrastructure.kind.kind)
 
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
