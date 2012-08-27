@@ -342,8 +342,8 @@ class TopologyMixin(models.Model):
         # Fetch properly ordered aggregations
         aggregations = self.aggregations.all()
         start = aggregations[0].start_position
-        end = aggregations[-1].end_position
-        paths = aggregations.values_list('path__pk', flat=True)
+        end = aggregations[len(aggregations)-1].end_position
+        paths = list(aggregations.values_list('path__pk', flat=True))
 
         # Point topology
         if start == end and len(paths) == 1:
