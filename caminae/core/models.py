@@ -309,6 +309,7 @@ class TopologyMixin(models.Model):
                 raise ValueError(str(e))
             start_position = start if i==0 else 0.0
             end_position = end if i==len(paths)-1 else 1.0
+
             aggrobj = PathAggregation(topo_object=topology,
                                       start_position=start_position,
                                       end_position=end_position,
@@ -338,15 +339,12 @@ class TopologyMixin(models.Model):
         return topology
 
     def serialize(self):
-        paths = []
-        start = 1.0
-        end = 0.0
-        for aggregation in self.aggregations.all():
-            if aggregation.start_position < start:
-                start = aggregation.start_position
-            if aggregation.end_position > end:
-                end = aggregation.end_position
-            paths.append(aggregation.path.pk)
+        # Fetch properly ordered aggregations
+        aggregations = self.aggregations.all()
+        start = aggregations[0].start_position
+        end = aggregations[-1].end_position
+        paths = aggregations.values_list('path__pk', flat=True)
+
         # Point topology
         if start == end and len(paths) == 1:
             geom = self.geom
@@ -407,6 +405,9 @@ class PathAggregation(models.Model):
         db_table = 'evenements_troncons'
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
+        # Important - represent the order of the path in the TopologyMixin path list
+        ordering = ['id', ]
+
 
 
 class Datasource(StructureRelated):
