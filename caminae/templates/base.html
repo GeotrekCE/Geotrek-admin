@@ -1,12 +1,6 @@
 {% extends "main.html" %}
-{% load static leaflet_tags i18n %}
+{% load static i18n %}
 
-{% block extrahead %}
-    {% leaflet_css %}
-    {{ block.super }}
-
-    {% leaflet_js %}
-{% endblock extrahead %}
 
 {% block content %}
 

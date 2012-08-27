@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n leaflet_tags compress %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,20 +6,39 @@
     <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
 
-    <script src="{% static "js/jquery.js" %}"></script>
-    {% if DEBUG %}
-        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
-        <script src="{% static "bootstrap/js/bootstrap..js" %}"></script>
-    {% else %}
-    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
-        <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-    {% endif %}
+    {% compress css %}
+        {% if DEBUG %}
+            <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
+        {% else %}
+            <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+        {% endif %}
+        <link rel="stylesheet" type="text/css" href="{% static "dataTables/css/dataTables.bootstrap.css" %}">
+        {% leaflet_css %}
+        <link rel="stylesheet" href="{% static "style.css" %}" />
+    {% endcompress %}
 
+    {% compress js %}
+        {% if DEBUG %}
+            <script src="{% static "js/jquery.js" %}"></script>
+            <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+        {% else %}
+            <script src="{% static "js/jquery.min.js" %}"></script>
+            <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+        {% endif %}
+        {% leaflet_js %}
+
+        <script src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
+        <script src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
+        <script src="{% static "dataTables/js/dataTables.fnReloadAjax.js" %}"></script>
+
+        {% block extrajs %}
+        {% endblock extrajs %}
+    {% endcompress %}
+    
+    {% endblock head %}
+    
     {% block extrahead %}
     {% endblock extrahead %}
-    
-    <link rel="stylesheet" href="{% static "style.css" %}" />
-    {% endblock head %}
 </head>
 <body>
     {% if messages %}
