@@ -69,6 +69,18 @@ class Trek(MapEntityMixin, TopologyMixin):
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
 
+    @property
+    def pois(self):
+        s = []
+        for p in self.paths.all():
+            s += [POI.objects.get(pk=t.pk)
+                  for t in p.topologymixin_set.filter(kind=POI.get_kind())]
+        return list(set(s))
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
@@ -215,6 +227,18 @@ class POI(MapEntityMixin, TopologyMixin):
     @property
     def type_display(self):
         return unicode(self.type)
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
+    @property
+    def treks(self):
+        s = []
+        for p in self.paths.all():
+            s += [Trek.objects.get(pk=t.pk)
+                  for t in p.topologymixin_set.filter(kind=Trek.get_kind())]
+        return list(set(s))
 
 
 class POIType(models.Model):

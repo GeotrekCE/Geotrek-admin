@@ -10,6 +10,8 @@ from django.contrib.gis.geos import LineString, Point
 from caminae.authent.models import StructureRelated
 from caminae.common.utils import distance3D
 from caminae.mapentity.models import MapEntityMixin
+import caminae.infrastructure as inf
+import caminae.land as land
 
 
 logger = logging.getLogger(__name__)
@@ -145,6 +147,37 @@ class Path(MapEntityMixin, StructureRelated):
         if self.trail:
             return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
         return _("None")
+
+    @property
+    def interventions(self):
+        s = []
+        for t in self.topologymixin_set.all():
+            s += t.interventions.all()
+        return list(set(s))
+
+    @property
+    def projects(self):
+        return list(set([i.project
+                         for i in self.interventions
+                         if i.in_project]))
+
+    @property
+    def lands(self):
+        return list(set([land.models.LandEdge.objects.get(t.pk)
+                         for t in self.topologymixin_set.filter(
+                             kind=land.models.LandEdge.get_kind())]))
+
+    @property
+    def signages(self):
+        return [inf.models.Signage.objects.get(t.pk)
+                for t in self.topologymixin_set.filter(
+                    kind=inf.models.Signage.get_kind())]
+
+    @property
+    def infrastructures(self):
+        return [inf.models.Infrastructure.objects.get(t.pk)
+                for t in self.topologymixin_set.filter(
+                    kind=inf.models.Infrastructure.get_kind())]
 
 
 class TopologyMixin(models.Model):
