@@ -144,6 +144,7 @@ _EOF_
 
     else
         sudo apt-get install nginx
+        sudo apt-get install yui-compressor
 
         make deploy
 

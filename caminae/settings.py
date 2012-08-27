@@ -101,9 +101,21 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.yui.YUICSSFilter'
+]
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.yui.YUIJSFilter'
+]
+COMPRESS_YUI_BINARY = '/usr/bin/yui-compressor'
+
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;'
@@ -171,8 +183,8 @@ PROJECT_APPS = (
     'leaflet',
     'floppyforms',
     'crispy_forms',
-
-    'djgeojson',  # temporary, remove when released on pypi, required for testing only.
+    'compressor',
+    'djgeojson',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
