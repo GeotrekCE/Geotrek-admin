@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from django.test import TestCase
 
 
@@ -7,7 +8,7 @@ class MapEntityTest(TestCase):
     userfactory = None
 
     def get_bad_data(self):
-        return {'topology': 'doh!'}, u'Topology is not valid.'
+        return {'topology': 'doh!'}, _(u'Topology is not valid.')
 
     def get_good_data(self):
         raise NotImplementedError()
