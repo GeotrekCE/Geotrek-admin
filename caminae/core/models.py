@@ -163,19 +163,19 @@ class Path(MapEntityMixin, StructureRelated):
 
     @property
     def lands(self):
-        return list(set([land.models.LandEdge.objects.get(t.pk)
+        return list(set([land.models.LandEdge.objects.get(pk=t.pk)
                          for t in self.topologymixin_set.filter(
                              kind=land.models.LandEdge.get_kind())]))
 
     @property
     def signages(self):
-        return [inf.models.Signage.objects.get(t.pk)
+        return [inf.models.Signage.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.filter(
                     kind=inf.models.Signage.get_kind())]
 
     @property
     def infrastructures(self):
-        return [inf.models.Infrastructure.objects.get(t.pk)
+        return [inf.models.Infrastructure.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.filter(
                     kind=inf.models.Infrastructure.get_kind())]
 

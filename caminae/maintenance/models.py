@@ -95,14 +95,14 @@ class Intervention(MapEntityMixin, StructureRelated):
     def signages(self):
         if self.topology:
             if self.topology.kind.pk == Signage.get_kind().pk:
-                return [Signage.objects.get(self.topology.pk)]
+                return [Signage.objects.get(pk=self.topology.pk)]
         return []
 
     @property
     def infrastructures(self):
         if self.topology:
             if self.topology.kind.pk == Infrastructure.get_kind().pk:
-                return [Infrastructure.objects.get(self.topology.pk)]
+                return [Infrastructure.objects.get(pk=self.topology.pk)]
         return []
 
     @property
