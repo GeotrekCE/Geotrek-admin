@@ -14,3 +14,4 @@ class InterventionTest(TestCase):
         sign = SignageFactory.create()
         i.set_infrastructure(sign)
         self.assertTrue(i.on_infrastructure)
+

@@ -20,6 +20,9 @@ Caminae.Dijkstra = (function() {
             return l;
         }
 
+        function is_source(node_id) {
+            return (from_ids.indexOf(node_id) != -1)
+        }
         function is_destination(node_id) {
             return (to_ids.indexOf(node_id) != -1)
         }
@@ -32,7 +35,7 @@ Caminae.Dijkstra = (function() {
         });
 
         // return the ID of an unvisited node that has the less weight (less djk weight)
-        // Should be sorted, shoud not contain visited node
+        // FIXME: performance -> shoud not contain visited node, should be sorted by weight
         function djk_get_next_id () {
             var nodes_id = Object.keys(djk);
             var mini_weight = Number.MAX_VALUE;
@@ -129,7 +132,7 @@ Caminae.Dijkstra = (function() {
         // current_djk_node is the destination
         var final_weight = current_djk_node.weight;
         var tmp = current_djk_node;
-        while (tmp.prev !== null) {
+        while (!is_source(tmp.node)) {
             path.push(tmp.node);
             tmp = tmp.prev;
         }

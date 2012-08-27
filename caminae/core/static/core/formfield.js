@@ -206,7 +206,7 @@ FormField.makeModule = function(module, module_settings) {
                         latlngs.push(lls_tmp);
                     }
                     else {
-                        if (getOrder(polyline_start, polylines_inner[0])) {
+                        if (getOrder(polyline_start, polylines[1])) {
                             // <--o-c- x---x---x // first point is shared ; include closest
                             lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
                             lls_tmp.push(ll_start);
@@ -222,7 +222,7 @@ FormField.makeModule = function(module, module_settings) {
                             latlngs.push(l.getLatLngs());
                         });
 
-                        if (getOrder(polyline_end, polylines_inner[polylines_inner.length - 1])) {
+                        if (getOrder(polyline_end, polylines[polylines.length - 2])) {
                             // x---x---x -c-o--> // first point is shared ; include closest
                             lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
                             lls_tmp.push(ll_end);
@@ -267,7 +267,7 @@ FormField.makeModule = function(module, module_settings) {
                         layerStore.storeLayerGeomInField(null);
                         return;
                     }
-                    
+
                     var start_closest_idx = start.closest
                       , end_closest_idx = end.closest;
 
