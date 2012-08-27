@@ -658,3 +658,18 @@ Je peux déplacer les marqueurs (de début ou de fin):
   court n'est pas visible.
 
 
+
+
+==========================
+Sprint 4 - Version 0.4.0
+==========================
+
+#125 - Compresser les medias
+----------------------------
+
+* Ouvrir la source HTML d'une page
+
+* Vérifier que les Javascript et CSS requis dans la balise ``<head>`` ont
+  des noms générés (ex: c28e793a0354.js)
+
+* Ouvrir l'un de ces fichiers, vérifier que le contenu est compressé.
