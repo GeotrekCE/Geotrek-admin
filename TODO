@@ -4,8 +4,6 @@ In this sprint 3
 
 * Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 * Check form non field error
-* Improve color of objects
-* Improve fit map vertical height
 
 ==============
 Known problems
@@ -13,15 +11,19 @@ Known problems
 
 * ``dumpdata`` management command will not output the Z coordinates when
   present. Chaining dumpdata and loaddata will therefore not work.
-* ``MIN_SNAP_ZOOM`` not taken into account.
 * If map view is to wide, no background layer is displayed (c.f. WMS écrins)
 * No orthophoto
-* Existing interventions cannot be edited
 * CSS Fluid rows ignore offset (cf. future bootstrap 2.1.0)
+
+
 
 ==========
 Soon...
 ==========
+
+* Split and simplify formfield.js
+* Make mapentity generic : no notion of Caminae (move templates to common/)
+* Put bbox only once (4326 = human readable, usual form, cf. docs écrins)
 
 * Split django-mapentity
 * Split django-floppyforms-leaflet
@@ -39,6 +41,8 @@ Soon...
 * Generate project docs with Sphinx
 
 * Use localstorage instead of Django sessions for navigation history and last search
+
+* Remove core dependancies to other apps (registry?)
 
 ==========
 One day...
