@@ -4,10 +4,17 @@
 <head>
     {% block head %}
     <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
-    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
     <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+
     <script src="{% static "js/jquery.js" %}"></script>
-    
+    {% if DEBUG %}
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
+        <script src="{% static "bootstrap/js/bootstrap..js" %}"></script>
+    {% else %}
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+        <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    {% endif %}
+
     {% block extrahead %}
     {% endblock extrahead %}
     
