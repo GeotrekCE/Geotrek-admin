@@ -193,6 +193,7 @@ FormField.makeModule = function(module, module_settings) {
                     var polyline_start = polylines[0]
                       , polyline_end = polylines[polylines.length - 1]
                       , single_path = polyline_start == polyline_end;
+
                     var polylines_inner = single_path ? null : polylines.slice(1, -1);
 
                     // Is the first point bound to the next edge or is it the other way ?
@@ -200,9 +201,18 @@ FormField.makeModule = function(module, module_settings) {
                     var lls_tmp, lls_end, latlngs = [];
 
                     if (single_path) {
-                        lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx+1, closest_end_idx + 1);
-                        lls_tmp.unshift(ll_start);
-                        lls_tmp.push(ll_end);
+                        var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
+                        if (closest_first_idx < closest_end_idx) {
+                            _ll_end = ll_end, _ll_start = ll_start;
+                            _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
+                        } else {
+                            _ll_end = ll_start, _ll_start = ll_end;
+                            _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
+                        }
+
+                        lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx + 1);
+                        lls_tmp.unshift(_ll_start);
+                        lls_tmp.push(_ll_end);
                         latlngs.push(lls_tmp);
                     }
                     else {
@@ -235,7 +245,7 @@ FormField.makeModule = function(module, module_settings) {
                         latlngs.push(lls_tmp);
                     }
 
-                    return new L.MultiPolyline(latlngs);
+                    return new L.MultiPolyline(latlngs),
                 }
 
 
@@ -262,12 +272,6 @@ FormField.makeModule = function(module, module_settings) {
                     if (!start || !end)
                         return;  // TODO: clean-up before give-up ?
 
-                    if (polyline_start == polyline_end && start.distance > end.distance) {
-                        markPath.updateGeom(null);
-                        layerStore.storeLayerGeomInField(null);
-                        return;
-                    }
-
                     var start_closest_idx = start.closest
                       , end_closest_idx = end.closest;
 
@@ -287,14 +291,26 @@ FormField.makeModule = function(module, module_settings) {
                         new L.Marker(end.closest).addTo(map);
                     }
 
+                    var start_distance = start.distance
+                      , end_distance = end.distance
+                      , inverted = (start_distance > end_distance);
+
+                    // Do not inverse start and end point => do not inverse markers
+                    // Those are only used on javascript side (may be inverted in the database)
+                    var _start_point: {lat: ll_start.lat, lng: ll_start.lng }
+                      , _end_point: {lat: ll_end.lat, lng: ll_end.lng }
+                      // Ensure django/postgis will get the point in the right order
+                      , _start_distance = inverted ? end_distance : start_distance
+                      , _end_distance = inverted ? start_distance : end_distance;
+
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        start: start.distance,
-                        end: end.distance,
+                        start: _start_distance,
+                        end: _end_distance,
                         paths: paths,
                         // Won't be on django side but in case there is a form error, will be there !
-                        start_point: {lat: ll_start.lat, lng: ll_start.lng },
-                        end_point: {lat: ll_end.lat, lng: ll_end.lng }
+                        start_point: _start_point,
+                        end_point: _end_point
                     };
                     layerStore.storeLayerGeomInField(topology);
                 });
