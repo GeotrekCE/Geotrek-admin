@@ -9,9 +9,11 @@ server {
     keepalive_timeout 5;
 
     location ${parts['django'].staticurl} {
+        expires ${options.expiretime};
         alias ${parts['django'].staticroot};
     }
     location ${parts['django'].mediaurl} {
+        expires ${options.expiretime};
         alias ${parts['django'].mediaroot};
     }
     
@@ -31,10 +33,6 @@ server {
         # Due to bug in adminsite redirects and root url (FORCE_SCRIPT_NAME)
         rewrite  ^${parts['settings'].rooturl}/(.*)$$  /$$1  permanent;
         {% end %}
-
-        if ( $$uri ~* \.(css|js|json|jonsp|png) ) {
-            expires ${options.expiretime};
-        }
 
         proxy_pass  http://app_server;
     }
