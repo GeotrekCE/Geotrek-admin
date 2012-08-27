@@ -249,6 +249,8 @@ FormField.makeModule = function(module, module_settings) {
                     var paths = $.map(new_edges, function(edge) { return edge.id; });
                     var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
 
+                    console.log(paths.join(', '));
+
                     if (layers.length == 0)
                         return;  // TODO: clean-up before give-up ?
 

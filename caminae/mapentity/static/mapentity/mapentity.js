@@ -62,6 +62,10 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             this.on('dblclick', this.layer_events.detail_dblclick);
         }
 
+        this.on('click', function(e) {
+            console.log(e.layer.properties.pk);
+        });
+
         var self = this;
         if (!options.style) {
             options.style = function (geojson) {

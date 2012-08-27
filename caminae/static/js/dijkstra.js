@@ -13,9 +13,9 @@ Caminae.Dijkstra = (function() {
 
         function getPairWeightNode(node_id) {
             var l = [];
-            $.each(graph_nodes[node_id], function(k, v) {
+            $.each(graph_nodes[node_id], function(node_dest_id, edge_id) {
                 // Warning - weight is in fact edge.length in our data
-                l.push({'node_id': k, 'weight': graph_edges[v].length});
+                l.push({'node_id': node_dest_id, 'weight': graph_edges[edge_id].length});
             });
             return l;
         }
@@ -107,7 +107,9 @@ Caminae.Dijkstra = (function() {
                     if (djk_next_node.visited === true)
                         continue;
 
-                    if (djk_next_node.weight > next_weight)
+                    // If its weight is inferior, this node has a better previous edge already
+                    // Do not update it
+                    if (djk_next_node.weight < next_weight)
                         continue;
 
                     djk_next_node.weight = next_weight;
