@@ -10,6 +10,9 @@ from caminae.authent.factories import UserFactory, PathManagerFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
     TopologyMixinFactory, StakeFactory)
+from caminae.maintenance.factories import InterventionFactory, ProjectFactory
+from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
+from caminae.land.factories import LandEdgeFactory
 from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
 
 # TODO caminae.core should be self sufficient
@@ -182,6 +185,49 @@ class PathTest(TestCase):
         self.assertEquals(c.cityedge_set.count(), 0)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+
+    def test_helpers(self):
+        p = PathFactory.create()
+
+        self.assertEquals(len(p.interventions), 0)
+        self.assertEquals(len(p.projects), 0)
+        self.assertEquals(len(p.lands), 0)
+        self.assertEquals(len(p.signages), 0)
+        self.assertEquals(len(p.infrastructures), 0)
+
+        sign = SignageFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=sign, path=p,
+                                      start_position=0.5, end_position=0.5)
+
+        self.assertItemsEqual(p.signages, [sign])
+
+        infra = InfrastructureFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=infra, path=p)
+
+        self.assertItemsEqual(p.infrastructures, [infra])
+
+        i1 = InterventionFactory.create()
+        i1.set_infrastructure(sign)
+        i1.save()
+
+        self.assertItemsEqual(p.interventions, [i1])
+
+        i2 = InterventionFactory.create()
+        i2.set_infrastructure(infra)
+        i2.save()
+
+        self.assertItemsEqual(p.interventions, [i1, i2])
+
+        proj = ProjectFactory.create()
+        proj.intervention_set.add(i1)
+        proj.intervention_set.add(i2)
+
+        self.assertItemsEqual(p.projects, [proj])
+
+        l = LandEdgeFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=l, path=p)
+
+        self.assertItemsEqual(p.lands, [l])
 
 
 class TopologyMixinTest(TestCase):
