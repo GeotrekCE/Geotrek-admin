@@ -43,13 +43,18 @@ class ViewsTest(MapEntityTest):
 
 class StakeTest(TestCase):
     def test_comparison(self):
-        s1 = StakeFactory.create()
-        s2 = StakeFactory.create()
-        self.assertTrue(s1 < s2)
-        self.assertTrue(s1 <= s2)
-        self.assertFalse(s1 > s2)
-        self.assertFalse(s1 >= s2)
-        self.assertFalse(s1 == s2)
+        low = StakeFactory.create()
+        high = StakeFactory.create()
+        # In case SERIAL field was reinitialized
+        if high.pk < low.pk:
+            tmp = high
+            high = low
+            low = tmp
+        self.assertTrue(low < high)
+        self.assertTrue(low <= high)
+        self.assertFalse(low > high)
+        self.assertFalse(low >= high)
+        self.assertFalse(low == high)
 
 
 class PathTest(TestCase):

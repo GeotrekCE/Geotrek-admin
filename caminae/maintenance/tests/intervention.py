@@ -25,7 +25,10 @@ class InterventionTest(TestCase):
         
         lowstake = StakeFactory.create()
         highstake = StakeFactory.create()
-        self.assertTrue(lowstake < highstake)
+        if lowstake > highstake:
+            tmp = lowstake
+            lowstake = highstake
+            highstake = tmp
         
         # Add paths to topology
         infra = InfrastructureFactory.create(no_path=True)
