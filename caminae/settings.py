@@ -185,6 +185,7 @@ PROJECT_APPS = (
     'crispy_forms',
     'compressor',
     'djgeojson',
+    'tinymce',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (

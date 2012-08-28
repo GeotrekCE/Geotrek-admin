@@ -687,3 +687,12 @@ Sprint 4 - Version 0.4.0
 * Vérifier que les enjeux des deux interventions créées correspondent bien à l'enjeu du tronçon.
 
 * Modifier l'enjeu d'une intervention, vérifier que cette valeur est conservée.
+
+
+#32 - Éditer en Wysiwyg les champs texte
+----------------------------------------
+
+* Ouvrir n'importe quel formulaire, chaque champ texte contient un petit éditeur
+  Wysiwyg (TinyMCE) avec les options de base.
+
+* Le champ est sauvegardé avec le texte au format HTML.
