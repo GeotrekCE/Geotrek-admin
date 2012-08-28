@@ -726,3 +726,17 @@ Sprint 4 - Version 0.4.0
   les POIs.
 
 * Aller sur la fiche d'un POI et suivre le lien vers les itinéraires.
+
+
+#146 - Enlever les types liées à la signalétique dans le formulaire infrastructure
+----------------------------------------------------------------------------------
+
+* Aller sur le formulaire de création d'un aménagement. Le champs type ne doit
+  lister que les types non-associés à la signalétique
+
+
+# 147 - Enlever les types liées aux infrastructures dans le formulaire signalétique
+-----------------------------------------------------------------------------------
+
+* Aller sur le formulaire de création d'une signalétique. Le champs type ne
+  doit lister que les types associés à la signalétique
