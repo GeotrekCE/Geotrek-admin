@@ -189,10 +189,21 @@ FormField.makeModule = function(module, module_settings) {
                     return ll_p.equals(ll_a) || ll_p.equals(ll_b);
                 }
 
-                function buildTopologyGeom(polylines, ll_start, ll_end, closest_first_idx, closest_end_idx) {
+                // Returns [start_position, end_position]
+                function getPosition(bound_by_first_point, distance) {
+                    // bound_by_first_point => start point is included
+                    return bound_by_first_point ? [0.0, distance] : [distance, 1.0];
+                }
+
+                function buildTopologyGeom(polylines, ll_start, ll_end, start, end) {
+                    var closest_first_idx = start.closest
+                      , closest_end_idx = end.closest;
+
                     var polyline_start = polylines[0]
                       , polyline_end = polylines[polylines.length - 1]
-                      , single_path = polyline_start == polyline_end;
+                      , single_path = polyline_start == polyline_end
+                      // Positions:: polylines index => pair of position [ [0..1], [0..1] ]
+                      , positions = {};
 
                     var polylines_inner = single_path ? null : polylines.slice(1, -1);
 
@@ -214,9 +225,11 @@ FormField.makeModule = function(module, module_settings) {
                         lls_tmp.unshift(_ll_start);
                         lls_tmp.push(_ll_end);
                         latlngs.push(lls_tmp);
+                        positions[0] = [start.distance, end.distance];
                     }
                     else {
-                        if (getOrder(polyline_start, polylines[1])) {
+                        var start_bound_by_first_point = getOrder(polyline_start, polylines[1]);
+                        if (start_bound_by_first_point) {
                             // <--o-c- x---x---x // first point is shared ; include closest
                             lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
                             lls_tmp.push(ll_start);
@@ -225,6 +238,7 @@ FormField.makeModule = function(module, module_settings) {
                             lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
                             lls_tmp.unshift(ll_start);
                         }
+                        positions[0] = getPosition(start_bound_by_first_point, start.distance);
 
                         latlngs.push(lls_tmp);
 
@@ -232,7 +246,8 @@ FormField.makeModule = function(module, module_settings) {
                             latlngs.push(l.getLatLngs());
                         });
 
-                        if (getOrder(polyline_end, polylines[polylines.length - 2])) {
+                        var end_bound_by_first_point = getOrder(polyline_end, polylines[polylines.length - 2]);
+                        if (end_bound_by_first_point) {
                             // x---x---x -c-o--> // first point is shared ; include closest
                             lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
                             lls_tmp.push(ll_end);
@@ -241,11 +256,16 @@ FormField.makeModule = function(module, module_settings) {
                             lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
                             lls_tmp.unshift(ll_end);
                         }
+                        positions[polylines.length - 1] = getPosition(end_bound_by_first_point, end.distance);
 
                         latlngs.push(lls_tmp);
                     }
 
-                    return new L.MultiPolyline(latlngs),
+                    return {
+                        'geom': new L.MultiPolyline(latlngs),
+                        'positions': positions,
+                        'is_single_path': single_path
+                    };
                 }
 
 
@@ -272,10 +292,8 @@ FormField.makeModule = function(module, module_settings) {
                     if (!start || !end)
                         return;  // TODO: clean-up before give-up ?
 
-                    var start_closest_idx = start.closest
-                      , end_closest_idx = end.closest;
-
-                    var new_topology_geom = buildTopologyGeom(layers, ll_start, ll_end, start_closest_idx, end_closest_idx);
+                    var new_topology = buildTopologyGeom(layers, ll_start, ll_end, start, end);
+                    var new_topology_geom = new_topology.geom;
                     markPath.updateGeom(new_topology_geom);
 
                     // visual check
@@ -291,26 +309,27 @@ FormField.makeModule = function(module, module_settings) {
                         new L.Marker(end.closest).addTo(map);
                     }
 
-                    var start_distance = start.distance
-                      , end_distance = end.distance
-                      , inverted = (start_distance > end_distance);
-
                     // Do not inverse start and end point => do not inverse markers
                     // Those are only used on javascript side (may be inverted in the database)
-                    var _start_point: {lat: ll_start.lat, lng: ll_start.lng }
-                      , _end_point: {lat: ll_end.lat, lng: ll_end.lng }
-                      // Ensure django/postgis will get the point in the right order
-                      , _start_distance = inverted ? end_distance : start_distance
-                      , _end_distance = inverted ? start_distance : end_distance;
+                    var _start_ll = {lat: ll_start.lat, lng: ll_start.lng }
+                      , _end_ll = {lat: ll_end.lat, lng: ll_end.lng }
+                    ;
+                    var _paths = paths;
+                    if (new_topology.is_single_path) {
+                        if (paths.length > 1) {
+                            // Only get the first one
+                            _paths = _paths.slice(0, 1);
+                        }
+
+                    }
 
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        start: _start_distance,
-                        end: _end_distance,
-                        paths: paths,
+                        positions: new_topology.positions,
+                        paths: _paths,
                         // Won't be on django side but in case there is a form error, will be there !
-                        start_point: _start_point,
-                        end_point: _end_point
+                        start_point: _start_ll,
+                        end_point: _end_ll
                     };
                     layerStore.storeLayerGeomInField(topology);
                 });

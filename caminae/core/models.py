@@ -292,23 +292,25 @@ class TopologyMixin(models.Model):
         # Path aggregation
         topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
+
         # Start repopulating from serialized data
-        start = objdict.get('start', 0.0)
-        end = objdict.get('end', 1.0)
+        positions = objdict.get('positions', {})
         paths = objdict['paths']
         # Check that paths should be unique
         if len(set(paths)) != len(paths):
             paths = collections.Counter(paths)
             extras = [p for p in paths if paths[p]>1]
             raise ValueError(_("Paths are not unique : %s") % extras)
+
         # Create path aggregations
         for i, path in enumerate(paths):
             try:
                 path = Path.objects.get(pk=path)
             except Path.DoesNotExist, e:
                 raise ValueError(str(e))
-            start_position = start if i==0 else 0.0
-            end_position = end if i==len(paths)-1 else 1.0
+            # Javascript hash keys are parsed as a string
+            # Provides default values
+            start_position, end_position = positions.get(str(i), (0.0, 1.0))
 
             aggrobj = PathAggregation(topo_object=topology,
                                       start_position=start_position,
@@ -343,10 +345,9 @@ class TopologyMixin(models.Model):
         aggregations = self.aggregations.all()
         start = aggregations[0].start_position
         end = aggregations[len(aggregations)-1].end_position
-        paths = list(aggregations.values_list('path__pk', flat=True))
 
         # Point topology
-        if start == end and len(paths) == 1:
+        if start == end and len(aggregations) == 1:
             geom = self.geom
             if geom.geom_type != 'Point':
                 logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
@@ -355,6 +356,11 @@ class TopologyMixin(models.Model):
             objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
+
+            paths = list(aggregations.values_list('path__pk', flat=True))
+            # We may filter out aggregations that have default values (0.0 and 1.0)...
+            positions = dict((i, (a.start_position, a.end_position))
+                             for i, a in enumerate(aggregations))
 
             # Create the markers points to be used with much more ease on javascript side
             # (will be even easier/faster when more 'intermediary' markers will show up)
@@ -366,9 +372,9 @@ class TopologyMixin(models.Model):
 
             objdict = dict(kind=self.kind.kind,
                            offset=self.offset,
-                           start=start,
-                           end=end,
+                           positions=positions,
                            paths=paths,
+                           # Easy helper to be used by the javascript side for markers
                            start_point=dict(lng=start_point.x, lat=start_point.y),
                            end_point=dict(lng=end_point.x, lat=end_point.y),
                            )

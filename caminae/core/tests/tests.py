@@ -264,8 +264,8 @@ class TopologyMixinTest(TestCase):
 
         test_objdict = dict(kind=t.kind.kind,
                        offset=1,
-                       start=0.0,
-                       end=1.0,
+                       # 0 referencing the index in paths of the only created path
+                       positions={'0': [0.0, 1.0]},
                        paths=[ path.pk ],
                        start_point=dict(lng=start_point.x, lat=start_point.y),
                        end_point=dict(lng=end_point.x, lat=end_point.y),
@@ -287,7 +287,7 @@ class TopologyMixinTest(TestCase):
 
     def test_deserialize(self):
         path = PathFactory.create()
-        topology = TopologyMixin.deserialize('{"paths": [%s], "start": 0.0, "end": 1.0, "offset": 1}' % (path.pk))
+        topology = TopologyMixin.deserialize('{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}' % (path.pk))
         self.assertEqual(topology.offset, 1)
         self.assertEqual(topology.kind, TopologyMixin.get_kind())
         self.assertEqual(len(topology.paths.all()), 1)
@@ -300,11 +300,12 @@ class TopologyMixinTest(TestCase):
         p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
         p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
         pks = [p.pk for p in [p1,p2,p3]]
-        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.0, "end": 1.0, "offset": 1}' % (pks))
+        topology = TopologyMixin.deserialize('{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}' % (pks))
         for i in range(3):
             self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
             self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
-        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.3, "end": 0.7, "offset": 1}' % (pks))
+
+        topology = TopologyMixin.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % (pks))
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
         self.assertEqual(topology.aggregations.all()[1].start_position, 0.0)
