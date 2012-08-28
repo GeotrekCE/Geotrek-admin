@@ -696,3 +696,33 @@ Sprint 4 - Version 0.4.0
   Wysiwyg (TinyMCE) avec les options de base.
 
 * Le champ est sauvegardé avec le texte au format HTML.
+
+
+#47 - Accéder facilement aux fiches des objets liés à un objet
+--------------------------------------------------------------
+
+* S'assurer qu'il existe au moins quelques données de démonstration pour les
+  types d'objets "tronçon", "intervention", "chantier", "signalétique",
+  "aménagement", "foncier", "itinéraire" et "POI"
+
+* Aller sur la fiche d'un tronçon et suivre les liens vers les tronçons
+  fonciers, les interventions, les chantiers, les signalétiques et les
+  aménagements.
+
+* Aller sur la fiche d'une intervention et suivre les liens vers les tronçons.
+  La fiche indique également si l'intervention porte sur un aménagement ou
+  signalétique et si elle fait partie d'un chantier.
+
+* Aller sur la fiche d'un chantier et suivre les liens vers les tronçons, les
+  signalétiques et les aménagements.
+
+* Aller sur la fiche d'une signalétique et suivre les liens vers les tronçons
+  et les interventions.
+
+* Aller sur la fiche d'un aménagement et suivre les liens vers les tronçons et
+  les interventions.
+
+* Aller sur la fiche d'un itinéraire et suivre les liens vers les tronçons et
+  les POIs.
+
+* Aller sur la fiche d'un POI et suivre le lien vers les itinéraires.
