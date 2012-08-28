@@ -1,6 +1,7 @@
+from django import forms
 from caminae.core.forms import TopologyMixinForm
 
-from .models import Infrastructure, Signage
+from .models import Infrastructure, InfrastructureType, Signage
 
 
 class BaseInfrastructureForm(TopologyMixinForm):
@@ -11,10 +12,20 @@ class BaseInfrastructureForm(TopologyMixinForm):
 
 
 class InfrastructureForm(BaseInfrastructureForm):
+    def __init__(self, *args, **kwargs):
+        super(InfrastructureForm, self).__init__(*args, **kwargs)
+        self.fields['type'] = forms.ModelChoiceField(
+                    queryset=InfrastructureType.objects.for_infrastructures())
+
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
 
 
 class SignageForm(BaseInfrastructureForm):
+    def __init__(self, *args, **kwargs):
+        super(SignageForm, self).__init__(*args, **kwargs)
+        self.fields['type'] = forms.ModelChoiceField(
+                    queryset=InfrastructureType.objects.for_signages())
+
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
