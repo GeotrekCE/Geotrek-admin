@@ -126,6 +126,6 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.infrastructures, [infra])
 
         proj.intervention_set.add(i3)
-        self.assertEquals(proj.paths, [p1, p2])
+        self.assertItemsEqual(proj.paths, [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
