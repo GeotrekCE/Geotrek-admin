@@ -17,10 +17,31 @@ INFRASTRUCTURE_TYPES = Choices(
 )
 
 
+class InfrastructureTypeQuerySet(models.query.QuerySet):
+    def for_infrastructures(self):
+        return self.exclude(type__exact=INFRASTRUCTURE_TYPES.SIGNAGE)
+
+    def for_signages(self):
+        return self.filter(type__exact=INFRASTRUCTURE_TYPES.SIGNAGE)
+
+
+class InfrastructureTypeManager(models.Manager):
+    def get_query_set(self):
+        return InfrastructureTypeQuerySet(self.model, using=self._db)
+
+    def for_signages(self):
+        return self.get_query_set().for_signages()
+
+    def for_infrastructures(self):
+        return self.get_query_set().for_infrastructures()
+
+
 class InfrastructureType(StructureRelated):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
+
+    objects = InfrastructureTypeManager()
 
     class Meta:
         db_table = 'classe_amenagement'
