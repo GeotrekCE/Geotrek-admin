@@ -175,12 +175,12 @@ casper.waitForSelector("form",
     function fail() {
         this.test.assertExists("form");
 });
-casper.waitForSelector(x("//*[normalize-space(text())='inewton (PNE)']"),
+casper.waitForSelector(x("//*[contains(text(), 'inewton')]"),
     function success() {
-        this.test.assertExists(x("//*[normalize-space(text())='inewton (PNE)']"));
+        this.test.assertExists(x("//*[contains(text(), 'inewton')]"));
       },
     function fail() {
-        this.test.assertExists(x("//*[normalize-space(text())='inewton (PNE)']"));
+        this.test.assertExists(x("//*[contains(text(), 'inewton')]"));
 });
 casper.waitForSelector(x("//*[text()='Tronçon']"),
     function success() {
