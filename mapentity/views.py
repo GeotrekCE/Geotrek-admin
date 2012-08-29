@@ -173,6 +173,11 @@ class MapEntityCreate(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(MapEntityCreate, self).dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(MapEntityCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
         return super(MapEntityCreate, self).form_valid(form)
@@ -199,6 +204,11 @@ class MapEntityUpdate(UpdateView):
     @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(MapEntityUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
