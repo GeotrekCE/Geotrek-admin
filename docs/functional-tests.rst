@@ -727,7 +727,6 @@ Sprint 4 - Version 0.4.0
 
 * Aller sur la fiche d'un POI et suivre le lien vers les itinéraires.
 
-
 #146 - Enlever les types liées à la signalétique dans le formulaire infrastructure
 ----------------------------------------------------------------------------------
 
@@ -740,3 +739,21 @@ Sprint 4 - Version 0.4.0
 
 * Aller sur le formulaire de création d'une signalétique. Le champs type ne
   doit lister que les types associés à la signalétique
+
+
+#166 - Champ structure automatique dans les formulaires
+-------------------------------------------------------
+
+Les formulaires de création et d'édition n'ont plus de champ "structure".
+
+* Créer une intervention, sauvegarder. Dans la fiche détail, vérifier que la structure
+  est celle de l'utilisateur.
+
+* Se connecter avec un utilisateur d'une autre structure. 
+
+* Créer une intervention et vérifie que la structure correspond bien.
+
+:notes:
+
+    Dans la partie Admin, ce n'est pas implémenté.
+

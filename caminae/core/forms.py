@@ -6,13 +6,13 @@ from django.contrib.gis.geos import LineString
 import floppyforms as forms
 from crispy_forms.layout import Field
 
-from caminae.mapentity.forms import MapEntityForm
+from caminae.common.forms import CommonForm
 from .models import Path
 from .fields import TopologyField
 from .widgets import LineStringWidget
 
 
-class TopologyMixinForm(MapEntityForm):
+class TopologyMixinForm(CommonForm):
     """
     This form is a bit specific : 
     
@@ -46,7 +46,7 @@ class TopologyMixinForm(MapEntityForm):
         exclude = ('offset', 'geom')
 
 
-class PathForm(MapEntityForm):
+class PathForm(CommonForm):
     geom = forms.gis.LineStringField(widget=LineStringWidget)
 
     reverse_geom = forms.BooleanField(
@@ -56,7 +56,6 @@ class PathForm(MapEntityForm):
        )
 
     modelfields = ('name',
-              'structure',
               'stake',
               'trail',
               Field('comments', css_class='input-xlarge'),
