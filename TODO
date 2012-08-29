@@ -14,7 +14,9 @@ Known problems
 * If map view is to wide, no background layer is displayed (c.f. WMS écrins)
 * No orthophoto
 * CSS Fluid rows ignore offset (cf. future bootstrap 2.1.0)
-
+* Breakpoints on onLayerAdd and onLayerRemove triggered twice at page load which
+  seems to indicate that some layers (or features?) are unecessarily loaded. To
+  further investigated.
 
 
 ==========
