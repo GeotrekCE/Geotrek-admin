@@ -18,6 +18,8 @@ urlpatterns = patterns('',
     url(r'', include('caminae.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')),
     url(r'', include('caminae.maintenance.urls', namespace='maintenance', app_name='maintenance')),
     url(r'', include('caminae.trekking.urls', namespace='trekking', app_name='trekking')),
+
+    url(r'', include('caminae.common.urls', namespace='common', app_name='common')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

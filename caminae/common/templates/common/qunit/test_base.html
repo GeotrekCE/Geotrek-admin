@@ -1,0 +1,30 @@
+{# Should this really extends mapentity/base.html ? #}
+{% extends "mapentity/base.html" %}
+
+{% load i18n static field_verbose_name %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "qunit/qunit-1.9.0.js" %}"></script>
+    <script type="text/javascript" src="{% static "qunit/junitlogger.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "qunit/qunit-1.9.0.css" %}">
+{% endblock extrahead %}
+
+{% block mainpanel %}
+<div id="qunit"></div>
+
+{% block qunittest %}
+<script>
+QUnit.jUnitReport = function(data) {
+    QUnit.getReport = function() { return data.xml };
+};
+</script>
+
+{% for jsfile in jsfiles %}
+    <script type="text/javascript" src="{% static jsfile %}"></script>
+{% endfor %}
+
+{% endblock %}
+
+{% endblock mainpanel %}
+
