@@ -485,7 +485,7 @@ FormField.makeModule = function(module, module_settings) {
         };
         
         if (module_settings.init.enableDrawing) {
-            module.enableDrawing(map, onDrawn, onStartOver);
+            module.enableDrawing(map, onDrawn, removeLayerFromLayerStore);
         }
 
         if (module_settings.init.multipath) {
