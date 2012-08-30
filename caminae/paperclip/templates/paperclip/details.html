@@ -12,7 +12,7 @@
             <th>{{ att|verbose:"date_insert" }}</th>
             <th>{{ att|verbose:"date_update" }}</th>
             {% if attachment_delete_next %}
-                <th>{% trans "Delete" %}</th>
+                <th>{% trans "Actions" %}</th>
             {% endif %}
         </thead>
         {% endwith %}
@@ -25,7 +25,7 @@
             <td>{{ att.date_insert }}</td>
             <td>{{ att.date_update }}</td>
             {% if attachment_delete_next %}
-                <th><a href="{% url delete_attachment att.pk %}?next={{ attachment_delete_next }}">
+                <th><a class="delete-action" data-id="{{ att.pk }}" data-title="{{ att.title|default:att.pk }}" href="#">
                     {% trans "Delete" %}
                 </a></th>
             {% endif %}
@@ -35,3 +35,24 @@
 {% else %}
     {% trans "No file attached" %}
 {% endif %}
+
+    <div id="confirm-delete-msg"></div>
+
+    <script type="text/javascript">
+        $('.delete-action').click(function (e) {
+            e.preventDefault();
+            confirmDelete($(this).data('id'), $(this).data('title'));
+            return false;
+        });
+        
+        function confirmDelete(id, title) {
+            var url = "{% url delete_attachment 0 %}?next={{ attachment_delete_next }}".replace('0', id);
+            $('#confirm-delete-msg').confirmModal({
+                heading: '{% trans "Confirm file deletion" %}',
+                body: '{% trans "Are you sure to delete this file {file} ?" %}'.replace('{file}', title),
+                callback: function() {
+                    window.location = url;
+                }
+             });
+        }
+    </script>
