@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models.loading import get_model
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +10,7 @@ from django.contrib import messages
 
 from .models import Attachment
 from .forms import AttachmentForm
+import simplejson
 
 
 def add_url_for_obj(obj):
@@ -57,3 +58,12 @@ def delete_attachment(request, attachment_pk):
         messages.error(request, _('You are not allowed to delete this attachment.'))
     next_url = request.REQUEST.get('next', '/')
     return HttpResponseRedirect(next_url)
+
+
+
+def ajax_validate_attachment(request):
+    form = AttachmentForm(request.POST, request.FILES)
+    return HttpResponse(simplejson.dumps(form.errors), content_type='application/json')
+
+
+

@@ -1,11 +1,81 @@
-{% load i18n %}
+{% load i18n crispy_forms_tags %}
+
 {% if form %}
-<form method="post" enctype="multipart/form-data" action="{{ form_url }}" class="add-attachment">
-    {% csrf_token %}
+<form method="post" enctype="multipart/form-data"
+      action="{{ form_url }}" class="add-attachment form-horizontal">
+
     <input type="hidden" name="next" value="{{ next }}"/>
-    {{ form.as_p }}
-    <p class="submit">
-        <input type="submit" value="{% trans "Add attachment" %}"/>
-    </p>
+
+    {% crispy form %}
 </form>
+
+<script>
+$(function() {
+
+    var form = $('form[action="{{ form_url }}"]');
+    var validate_url = '{% url ajax_validate_attachment %}';
+    var is_form_valid = false;
+
+    form.submit(function(e) {
+        if (is_form_valid)
+            return true;
+
+        var form_data = form.serialize();
+        $.ajax({
+            'type': 'POST',
+            'url': validate_url,
+            'dataType': 'JSON',
+            'data': form_data,
+            'success': function(errors) {
+                is_form_valid = true;
+
+                // File fields content are not sent properly in ajax
+                // We make our own check client side
+                form.find('input[type="file"]').each(function() {
+                    if ($(this).val())
+                        delete errors[$(this).attr('name')];
+                })
+
+                // If there is at least one remaining error, the form is invalid
+                for (var i in errors) {
+                    is_form_valid = false;
+                    break;
+                }
+
+                // Reset form errors
+                form.find('.control-group.error')
+                    .removeClass('error')
+                    .find('span.help-inline').remove();
+
+                // Submit the form if valid
+                if (is_form_valid) {
+                    debugger;
+                    form.submit();
+                    return;
+                }
+
+                // Mark errors (mimic bootstrap error marking)
+                $.each(errors, function(name, errors) {
+                    var elem = form.find('.controls *[name="' + name + '"]')
+                      , elem_id = elem.attr('id')
+                      , elem_parent = elem.parent();
+
+                    elem.closest('.control-group').addClass('error');
+
+                    $.each(errors, function(id, error_msg) {
+                        $('<span></span>')
+                            .addClass('help-inline')
+                            .attr('id', 'error_' + (id + 1) + '_' + elem_id)
+                            .append($('<strong></strong').text(error_msg))
+                            .appendTo(elem_parent)
+                    });
+                });
+            }
+        });
+
+        return false;
+    });
+});
+</script>
+
 {% endif %}
