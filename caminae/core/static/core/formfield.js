@@ -375,6 +375,8 @@ FormField.makeModule = function(module, module_settings) {
     module.init = function(map, bounds) {
         map.removeControl(map.attributionControl);
 
+        map.addControl(new L.Control.Measurement());
+
         /*** <Map bounds and reset> ***/
 
         var initialBounds = bounds,
