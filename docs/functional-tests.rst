@@ -770,3 +770,30 @@ de l'utilisateur.
 * Changer la structure de l'utilisateur. Se déconnecter puis se reconnecter.
 
 * Observer que la liste des choix des enjeux a changé.
+
+
+#151 - [BUG] Certains boutons de l'adminsite ne sont pas traduits
+-----------------------------------------------------------------
+
+Pas reproduit : 
+
+* Passer l'utilisateur en langue It
+
+* Se déconnecter, se reconnecter
+
+* L'application est en italien. L'adminsite est totalement traduit ("Aggiungi", "Modifica"), 
+  l'application sentier en l'est que partiellement (ex: "cerca", "filtra")
+
+
+#152 - [BUG] Dans l'adminsite, les objets multilingues ne sont pas traduits en fonction de la langue de l'utilisateur
+---------------------------------------------------------------------------------------------------------------------
+
+Pas reproduit : 
+
+* Se connecter à l'adminsite avec un utilisateur italien.
+
+* Visualiser la liste des "Physical Types" par exemple. Elle contient les noms en français.
+
+* Éditer un élément, renseigner le champ italien, sauvegarder.
+
+* Visualiser la liste, le nom italien apparaît pour l'élément où la valeur est renseignée.

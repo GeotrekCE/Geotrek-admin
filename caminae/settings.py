@@ -39,6 +39,7 @@ TIME_ZONE = 'Europe/Paris'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'fr'
+MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
 LANGUAGES = (
     ('en', gettext_noop('English')),
