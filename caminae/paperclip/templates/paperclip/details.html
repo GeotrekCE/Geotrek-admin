@@ -6,9 +6,9 @@
     <table class="table">
         {% with att=attachments_list.0 %}
         <thead>
-            <th>{{ att|verbose:"creator" }}</th>
             <th>{{ att|verbose:"title" }}</th>
             <th>{{ att|verbose:"legend" }}</th>
+            <th>{{ att|verbose:"creator" }}</th>
             <th>{{ att|verbose:"date_insert" }}</th>
             <th>{{ att|verbose:"date_update" }}</th>
             {% if attachment_delete_next %}
@@ -19,9 +19,9 @@
         <tbody>
         {% for att in attachments_list %}
         <tr>
-            <td><a href="{{ att.attachment_file.url }}">{{ att.title }}</a></td>
-            <td>{{ att.creator }}</td>
+            <td><a href="{{ att.attachment_file.url }}">{{ att.title|default:att.pk }}</a></td>
             <td>{{ att.legend }}</td>
+            <td>{{ att.creator }}</td>
             <td>{{ att.date_insert }}</td>
             <td>{{ att.date_update }}</td>
             {% if attachment_delete_next %}
