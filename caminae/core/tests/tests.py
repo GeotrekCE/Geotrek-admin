@@ -4,6 +4,8 @@ from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS
 
+# TODO caminae.core should be self sufficient
+from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory
@@ -14,10 +16,6 @@ from caminae.maintenance.factories import InterventionFactory, ProjectFactory
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
 from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
-
-# TODO caminae.core should be self sufficient
-from caminae.land.models import (City, RestrictedArea, LandEdge)
-from caminae.land.factories import LandEdgeFactory
 
 
 class ViewsTest(MapEntityTest):
@@ -69,9 +67,9 @@ class PathTest(TestCase):
         self.assertEqual(len(Structure.objects.all()), 2)
         self.assertEqual(len(Path.objects.all()), 2)
 
-        self.assertEqual(Path.in_structure.byUser(user)[0], Path.forUser(user)[0])
-        self.assertTrue(p1 in Path.in_structure.byUser(user))
-        self.assertFalse(p2 in Path.in_structure.byUser(user))
+        self.assertEqual(Path.in_structure.for_user(user)[0], Path.for_user(user)[0])
+        self.assertTrue(p1 in Path.in_structure.for_user(user))
+        self.assertFalse(p2 in Path.in_structure.for_user(user))
 
         # Change user structure on-the-fly
         profile = user.profile
@@ -79,8 +77,8 @@ class PathTest(TestCase):
         profile.save()
 
         self.assertEqual(user.profile.structure.name, "other")
-        self.assertFalse(p1 in Path.in_structure.byUser(user))
-        self.assertTrue(p2 in Path.in_structure.byUser(user))
+        self.assertFalse(p1 in Path.in_structure.for_user(user))
+        self.assertTrue(p2 in Path.in_structure.for_user(user))
 
     def test_dates(self):
         t1 = dbnow()
@@ -253,7 +251,7 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(e.length, 0)
         e.save()
         self.assertEqual(e.length, 0)
-        p = PathAggregationFactory.create(topo_object=e)
+        PathAggregationFactory.create(topo_object=e)
         e.save()
         self.assertNotEqual(e.length, 0)
 
@@ -300,7 +298,6 @@ class TopologyMixinTest(TestCase):
         # This path as been created automatically
         # as we will check only basic json serialization property
         path = t.paths.all()[0]
-        kind = t.kind.kind
 
         # Reload as the geom of the topology will be build by trigger
         t.reload()
