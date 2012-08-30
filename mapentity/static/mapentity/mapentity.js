@@ -121,8 +121,14 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             this.fire('load');
             if (this.spinner) this.spinner.stop();
         };
+        var jsonError = function () {
+            if (this.spinner) this.spinner.stop();
+            $(this._map._container).addClass('map-error');
+            console.error("Could not load url '" + url + "'");
+        };
         if (this._map) this.spinner = new Spinner().spin(this._map._container);
-        $.getJSON(url, L.Util.bind(jsonLoad, this));
+        $.getJSON(url, L.Util.bind(jsonLoad, this))
+         .error(L.Util.bind(jsonError, this));
     },
 
     getLayer: function (pk) {
