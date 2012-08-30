@@ -812,7 +812,6 @@ qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écr
 Si le chargement de la couche vectorielle échoue, alors la carte apparaît
 en rouge, et un message est ajouté dans la console du navigateur.
 
-
 #78 - Mesurer une distance sur la carte
 ---------------------------------------
 
@@ -824,3 +823,16 @@ en rouge, et un message est ajouté dans la console du navigateur.
   s'affiche dynamiquement.
 
 * Désactiver l'outil de mesure en recliquant sur l'icône.
+
+
+#168 - Champ traduction par défaut
+----------------------------------
+
+Pour les champs traduisibles, il y a, en plus de la colonne, autant de colonnes en base que de langues
+déclarées dans les paramètres du projet.
+
+Par exemple: description, description_fr, description_it, description_en
+
+Lorsque l'utilisateur qui saisit est italien, c'est la valeur de ``description_it`` qui sera stockée
+dans le champ ``description`` en base.
+
