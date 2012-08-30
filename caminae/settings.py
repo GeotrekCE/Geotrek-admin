@@ -268,7 +268,7 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 LEAFLET_CONFIG = {
     "TILES_URL" : [
         ("IGN", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),
-        ("Ortho", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.png'),
+        ("Ortho", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.jpg'),
     ],
     "MAX_RESOLUTION" : 1142.7383,
     "TILES_EXTENT" : [700000,6325197,1060000,6617738],
