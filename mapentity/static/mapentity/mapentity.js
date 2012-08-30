@@ -828,19 +828,23 @@ L.Control.Measurement = L.Control.extend({
     },
 
     toggle: function() {
-        if (this.handler.enabled())
+        if (this.handler.enabled()) {
             this.handler.disable.call(this.handler);
-        else
+            L.DomUtil.removeClass(this._container, 'enabled');
+        } else {
             this.handler.enable.call(this.handler);
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
     },
 
     onAdd: function(map) {
-        var className = 'leaflet-control-draw',
-            container = L.DomUtil.create('div', className);
+        var className = 'leaflet-control-draw';
+
+        this._container = L.DomUtil.create('div', className);
 
         this.handler = new L.Polyline.Measure(map, this.options.handler);
 
-        var link = L.DomUtil.create('a', className+'-polyline', container); //TODO
+        var link = L.DomUtil.create('a', className+'-measure', this._container);
         link.href = '#';
         link.title = this.options.title;
 
@@ -849,6 +853,6 @@ L.Control.Measurement = L.Control.extend({
             .addListener(link, 'click', L.DomEvent.preventDefault)
             .addListener(link, 'click', this.toggle, this);
 
-        return container;
+        return this._container;
     }
 });
