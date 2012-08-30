@@ -778,6 +778,8 @@ L.Polyline.Measure = L.Polyline.Draw.extend({
 
         this._cleanUpShape();
 
+        this._updateLabelText(this._getLabelText());
+
         this._map.off('mousemove', this._onMouseMove);
         this._clearGuides();
         this._container.style.cursor = '';
@@ -797,6 +799,14 @@ L.Polyline.Measure = L.Polyline.Draw.extend({
         }
 
         L.Polyline.Draw.prototype._onClick.call(this, e);
+    },
+
+    _getLabelText: function() {
+        var labelText = L.Polyline.Draw.prototype._getLabelText.call(this);
+        if (!this._drawing) {
+            labelText.text = '';
+        }
+        return labelText;
     }
 });
 
