@@ -811,3 +811,16 @@ qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écr
 
 Si le chargement de la couche vectorielle échoue, alors la carte apparaît
 en rouge, et un message est ajouté dans la console du navigateur.
+
+
+#78 - Mesurer une distance sur la carte
+---------------------------------------
+
+* Aller sur une page comportant une carte.
+
+* Cliquer sur l'icône montrant une règle.
+
+* Cliquer sur la carte pour dessiner la distance à mesurer. La distance
+  s'affiche dynamiquement.
+
+* Désactiver l'outil de mesure en recliquant sur l'icône.
