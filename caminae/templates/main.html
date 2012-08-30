@@ -14,6 +14,7 @@
         {% endif %}
         <link rel="stylesheet" type="text/css" href="{% static "dataTables/css/dataTables.bootstrap.css" %}">
         {% leaflet_css %}
+        <link rel="stylesheet" href="{% static "Leaflet.draw/leaflet.draw.css" %}"></link>
         <link rel="stylesheet" href="{% static "style.css" %}" />
     {% endcompress %}
 
@@ -30,6 +31,8 @@
         <script type="text/javascript" src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
         <script type="text/javascript" src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
         <script type="text/javascript" src="{% static "dataTables/js/dataTables.fnReloadAjax.js" %}"></script>
+        <script type="text/javascript" src="{% static "Leaflet.draw/leaflet.draw.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/leaflet.measure.js" %}"></script>
 
         {% block extrajs %}
         {% endblock extrajs %}
