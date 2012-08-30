@@ -757,3 +757,16 @@ Les formulaires de création et d'édition n'ont plus de champ "structure".
 
     Dans la partie Admin, ce n'est pas implémenté.
 
+
+#120 - Filtrer les listes de choix par structure
+------------------------------------------------
+
+Les formulaires ont des listes de choix limitées aux éléments de la structure
+de l'utilisateur.
+
+* Vérifier avec les tronçons : ouvrir le formulaire d'ajout de tronçon avec
+  un utilisateur. Observer la liste des choix d'enjeu par exemple.
+
+* Changer la structure de l'utilisateur. Se déconnecter puis se reconnecter.
+
+* Observer que la liste des choix des enjeux a changé.

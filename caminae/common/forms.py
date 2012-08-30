@@ -1,12 +1,14 @@
 from django import forms as django_forms
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 import floppyforms as forms
 from crispy_forms.layout import Layout, Submit, Div, Button
 from crispy_forms.bootstrap import FormActions
 from tinymce.widgets import TinyMCE
 
-from caminae.authent.models import default_structure
+from caminae.authent.models import (default_structure, StructureRelated,
+                                    StructureRelatedQuerySet)
 from caminae.mapentity.forms import MapEntityForm
 
 
@@ -41,6 +43,15 @@ class CommonForm(MapEntityForm):
                 if self.user:
                     structure = self.user.profile.structure
                 self.fields['structure'].initial = structure
+
+        # Filter structured choice fields according to user's structure
+        for name, field in self.fields.items():
+            if isinstance(field, django_forms.models.ModelChoiceField):
+                modelfield = self.instance._meta.get_field(name)
+                if isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                    model = modelfield.related.parent_model
+                    if issubclass(model, StructureRelated):
+                        field.queryset = StructureRelatedQuerySet.queryset_for_user(field.queryset, self.user)
 
         # Get fields from subclasses
         fields = ('pk','model') + self.modelfields

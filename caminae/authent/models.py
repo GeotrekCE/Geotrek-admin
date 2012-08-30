@@ -36,12 +36,23 @@ def default_structure():
     return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
 
 
+class StructureRelatedQuerySet(models.query.QuerySet):
+    def for_user(self, user):
+        return StructureRelatedQuerySet.queryset_for_user(self, user)
+
+    @staticmethod
+    def queryset_for_user(queryset, user):
+        return queryset.filter(structure=user.profile.structure)
+
+
 class StructureRelatedManager(models.Manager):
     """ A simple manager to manage structure related objects"""
-    def byUser(self, user):
+    def get_query_set(self):
+        return StructureRelatedQuerySet(self.model, using=self._db)
+
+    def for_user(self, user):
         """ Filter by user's structure """
-        qs = super(StructureRelatedManager, self).get_query_set()
-        return qs.filter(structure=user.profile.structure)
+        return self.get_query_set().for_user(user)
 
 
 class StructureRelated(models.Model):
@@ -54,9 +65,9 @@ class StructureRelated(models.Model):
     in_structure = StructureRelatedManager()
 
     @classmethod
-    def forUser(cls, user):
+    def for_user(cls, user):
         """ Shortcut to manager's filter by user """
-        return cls.in_structure.byUser(user)
+        return cls.in_structure.for_user(user)
 
     def same_structure(self, user):
         """ Returns True if the user is in the same structure, False otherwise. """

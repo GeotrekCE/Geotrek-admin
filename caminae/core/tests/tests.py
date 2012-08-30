@@ -8,7 +8,7 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow, almostequal
-from caminae.authent.factories import UserFactory, PathManagerFactory
+from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
     TopologyMixinFactory, StakeFactory)
@@ -37,6 +37,32 @@ class ViewsTest(MapEntityTest):
             'valid': 'on',
             'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
         }
+
+    def test_structurerelated_filter(self):
+        def test_structure(structure, stake):
+            user = self.userfactory(password='booh')
+            p = user.profile
+            p.structure = structure
+            p.save()
+            success = self.client.login(username=user.username, password='booh')
+            self.assertTrue(success)
+            response = self.client.get(Path.get_add_url())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('form' in response.context)
+            form = response.context['form']
+            self.assertTrue('stake' in form.fields)
+            stakefield = form.fields['stake']
+            self.assertTrue((stake.pk, unicode(stake)) in stakefield.choices)
+            self.client.logout()
+        # Test for two structures
+        s1 = StructureFactory.create()
+        s2 = StructureFactory.create()
+        st1 = StakeFactory.create(structure=s1)
+        StakeFactory.create(structure=s1)
+        st2 = StakeFactory.create(structure=s2)
+        StakeFactory.create(structure=s2)
+        test_structure(s1, st1)
+        test_structure(s2, st2)
 
 
 class StakeTest(TestCase):
