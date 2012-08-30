@@ -53,5 +53,7 @@ def delete_attachment(request, attachment_pk):
        or request.user == g.creator:
         g.delete()
         messages.success(request, _('Your attachment was deleted.'))
+    else:
+        messages.error(request, _('You are not allowed to delete this attachment.'))
     next_url = request.REQUEST.get('next', '/')
     return HttpResponseRedirect(next_url)

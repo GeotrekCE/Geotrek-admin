@@ -11,7 +11,7 @@
             <th>{{ att|verbose:"creator" }}</th>
             <th>{{ att|verbose:"date_insert" }}</th>
             <th>{{ att|verbose:"date_update" }}</th>
-            {% if attachment_delete_next %}
+            {% if can_delete_attachment %}
                 <th>{% trans "Actions" %}</th>
             {% endif %}
         </thead>
@@ -24,7 +24,7 @@
             <td>{{ att.creator }}</td>
             <td>{{ att.date_insert }}</td>
             <td>{{ att.date_update }}</td>
-            {% if attachment_delete_next %}
+            {% if can_delete_attachment %}
                 <th><a class="delete-action" data-id="{{ att.pk }}" data-title="{{ att.title|default:att.pk }}" href="#">
                     {% trans "Delete" %}
                 </a></th>
