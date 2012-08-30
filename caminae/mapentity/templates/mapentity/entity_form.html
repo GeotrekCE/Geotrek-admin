@@ -22,6 +22,7 @@
 
         <div style="clear:both"></div>
 
+        {% if object.pk %}
         <div class="file-attachment span6">
             <h3>{% trans "File attachments" %}</h3>
             <div class="file-attachment-update">
@@ -36,6 +37,7 @@
                 {% endwith %}
             </div>
         </div>
+        {% endif %}
 
     </div>
 {% endblock mainpanel %}
