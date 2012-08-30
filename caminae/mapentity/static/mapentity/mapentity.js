@@ -754,6 +754,11 @@ L.Polyline.Measure = L.Polyline.Draw.extend({
 
         this._clearHideErrorTimeout();
 
+        //!\ Still useful when control is disabled before any drawing (refactor needed?)
+        this._map.off('mousemove', this._onMouseMove);
+        this._clearGuides();
+        this._container.style.cursor = '';
+
         this._removeShape();
 
         this._map.removeLayer(this._markerGroup);
