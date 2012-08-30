@@ -1,6 +1,6 @@
 from django import forms as django_forms
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 
 import floppyforms as forms
 from crispy_forms.layout import Layout, Submit, Div, Button
@@ -47,7 +47,11 @@ class CommonForm(MapEntityForm):
         # Filter structured choice fields according to user's structure
         for name, field in self.fields.items():
             if isinstance(field, django_forms.models.ModelChoiceField):
-                modelfield = self.instance._meta.get_field(name)
+                try:
+                    modelfield = self.instance._meta.get_field(name)
+                except FieldDoesNotExist:
+                    # be careful but custom form fields, not in model
+                    modelfield = None
                 if isinstance(modelfield, (ForeignKey, ManyToManyField)):
                     model = modelfield.related.parent_model
                     if issubclass(model, StructureRelated):
