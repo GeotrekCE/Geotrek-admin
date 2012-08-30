@@ -39,7 +39,10 @@ TIME_ZONE = 'Europe/Paris'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'fr'
+
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
+
+MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 LANGUAGES = (
     ('en', gettext_noop('English')),
@@ -116,7 +119,7 @@ COMPRESS_JS_FILTERS = [
     'compressor.filters.yui.YUIJSFilter'
 ]
 COMPRESS_YUI_BINARY = '/usr/bin/yui-compressor'
-
+COMPRESSOR_ENABLED = False
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;'
@@ -271,8 +274,6 @@ LEAFLET_CONFIG = {
     "TILES_EXTENT" : [700000,6325197,1060000,6617738],
     "SPATIAL_EXTENT" : [5.0, 43.8, 7.5, 45.8],
 }
-
-MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 
 UPLOAD_DIR = 'upload'
 
