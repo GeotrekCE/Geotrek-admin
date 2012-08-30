@@ -74,6 +74,7 @@ class StakeTest(TestCase):
             tmp = high
             high = low
             low = tmp
+            self.assertTrue(low.pk < high.pk)
         self.assertTrue(low < high)
         self.assertTrue(low <= high)
         self.assertFalse(low > high)
