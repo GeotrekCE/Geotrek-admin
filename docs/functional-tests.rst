@@ -797,3 +797,10 @@ Pas reproduit :
 * Éditer un élément, renseigner le champ italien, sauvegarder.
 
 * Visualiser la liste, le nom italien apparaît pour l'élément où la valeur est renseignée.
+
+
+#143 - Ajouter des placeholders aux formulaire de filtres
+---------------------------------------------------------
+
+Plutôt que d'utiliser des labels, les champs des filtres affichent une valeur
+qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écran.
