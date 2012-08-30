@@ -804,3 +804,10 @@ Pas reproduit :
 
 Plutôt que d'utiliser des labels, les champs des filtres affichent une valeur
 qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écran.
+
+
+#132 - [BUG] Afficher clairement l'état échoué d'une couche de la carte
+-----------------------------------------------------------------------
+
+Si le chargement de la couche vectorielle échoue, alors la carte apparaît
+en rouge, et un message est ajouté dans la console du navigateur.
