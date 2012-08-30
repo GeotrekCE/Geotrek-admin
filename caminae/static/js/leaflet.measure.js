@@ -80,7 +80,7 @@ L.Polyline.Measure = L.Polyline.Draw.extend({
 L.Control.Measurement = L.Control.extend({
 
     options: {
-        position: 'topright',
+        position: 'topleft',
         title: 'Measure distances',
         handler: {}
     },
