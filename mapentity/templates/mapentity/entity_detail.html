@@ -17,11 +17,21 @@
             {% endif %}
         </h2>
     {% endblock detailspanel %}
+
+    <div class="file-attachment file-attachment-detail">
+        <h3>{% trans "File attachments" %}</h3>
+
+        {% with object=object attachment_delete_next=object.get_detail_url %}
+            {% include 'paperclip/details.html' %}
+        {% endwith %}
+    </div>
+
     </div><!-- span7 -->
 
     <div class="map-panel span5">
         {% block mappanel %}
         {{ object|fieldmap:"geom" }}
         {% endblock mappanel %}
-    </div><!-- span4 -->
+    </div><!-- span5 -->
+
 {% endblock mainpanel %}

@@ -1,5 +1,6 @@
 {% extends "mapentity/base.html" %}
 {% load i18n crispy_forms_tags %}
+{% load attachments_tags %}
 
 {% block extrahead %}
     {{ block.super }}
@@ -18,6 +19,24 @@
         <div>&nbsp;</div>
         
         {% crispy form %}
+
+        <div style="clear:both"></div>
+
+        <div class="file-attachment span6">
+            <h3>{% trans "File attachments" %}</h3>
+            <div class="file-attachment-update">
+                <h4>{% trans "New file attachment" %}</h4>
+                {% attachment_form object %}
+            </div>
+
+            <div class="file-attachment file-attachment-detail">
+                <h4>{% trans "Existing file attachment" %}</h4>
+                {% with object=object attachment_delete_next=object.get_detail_url %}
+                    {% include 'paperclip/details.html' %}
+                {% endwith %}
+            </div>
+        </div>
+
     </div>
 {% endblock mainpanel %}
 
