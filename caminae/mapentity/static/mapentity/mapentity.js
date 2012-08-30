@@ -813,7 +813,9 @@ L.Polyline.Measure = L.Polyline.Draw.extend({
 L.Control.Measurement = L.Control.extend({
 
     options: {
-        position: 'topright'
+        position: 'topright',
+        title: 'Measure distances',
+        handler: {}
     },
 
     initialize: function(options) {
@@ -831,7 +833,7 @@ L.Control.Measurement = L.Control.extend({
         var className = 'leaflet-control-draw',
             container = L.DomUtil.create('div', className);
 
-        this.handler = new L.Polyline.Measure(map, this.options.polyline); //TODO
+        this.handler = new L.Polyline.Measure(map, this.options.handler);
 
         var link = L.DomUtil.create('a', className+'-polyline', container); //TODO
         link.href = '#';
