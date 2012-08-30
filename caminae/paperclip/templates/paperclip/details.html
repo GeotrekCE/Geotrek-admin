@@ -1,0 +1,37 @@
+{% load i18n field_verbose_name attachments_tags %}
+
+{% get_attachments_for object as "attachments_list" %}
+
+{% if attachments_list %}
+    <table class="table">
+        {% with att=attachments_list.0 %}
+        <thead>
+            <th>{{ att|verbose:"creator" }}</th>
+            <th>{{ att|verbose:"title" }}</th>
+            <th>{{ att|verbose:"legend" }}</th>
+            <th>{{ att|verbose:"date_insert" }}</th>
+            <th>{{ att|verbose:"date_update" }}</th>
+            {% if attachment_delete_next %}
+                <th>{% trans "Delete" %}</th>
+            {% endif %}
+        </thead>
+        {% endwith %}
+        <tbody>
+        {% for att in attachments_list %}
+        <tr>
+            <td><a href="{{ att.attachment_file.url }}">{{ att.title }}</a></td>
+            <td>{{ att.creator }}</td>
+            <td>{{ att.legend }}</td>
+            <td>{{ att.date_insert }}</td>
+            <td>{{ att.date_update }}</td>
+            {% if attachment_delete_next %}
+                <th><a href="{% url delete_attachment att.pk %}?next={{ attachment_delete_next }}">
+                    {% trans "Delete" %}
+                </a></th>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    {% trans "No file attached" %}
+{% endif %}

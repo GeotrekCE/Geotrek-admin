@@ -76,3 +76,4 @@ class CommonForm(MapEntityForm):
             rightpanel,
             self.actions
         )
+

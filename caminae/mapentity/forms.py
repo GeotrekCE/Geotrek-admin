@@ -2,6 +2,7 @@ import floppyforms as forms
 from crispy_forms.helper import FormHelper
 
 
+
 class MapEntityForm(forms.ModelForm):
     formfield_callback = lambda f: MapEntityForm.make_tinymce_widget(f)
 

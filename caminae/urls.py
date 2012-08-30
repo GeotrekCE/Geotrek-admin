@@ -1,9 +1,9 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import admin
 admin.autodiscover()
-
 
 urlpatterns = patterns('',
 
@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout',),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^paperclip/', include('caminae.paperclip.urls')),
 
     url(r'', include('caminae.core.urls', namespace='core', app_name='core')),
     url(r'', include('caminae.land.urls', namespace='land', app_name='land')),
@@ -23,3 +24,12 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += staticfiles_urlpatterns()
+
+
+# Serve uploaded files from django directly. Assumes settings.MEDIA_URL is set to '/media/'
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+            }),
+    )
