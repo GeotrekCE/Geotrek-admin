@@ -19,17 +19,17 @@
 
     {% compress js %}
         {% if DEBUG %}
-            <script src="{% static "js/jquery.js" %}"></script>
-            <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
+            <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.js" %}"></script>
         {% else %}
-            <script src="{% static "js/jquery.min.js" %}"></script>
-            <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
         {% endif %}
         {% leaflet_js %}
 
-        <script src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
-        <script src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
-        <script src="{% static "dataTables/js/dataTables.fnReloadAjax.js" %}"></script>
+        <script type="text/javascript" src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
+        <script type="text/javascript" src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
+        <script type="text/javascript" src="{% static "dataTables/js/dataTables.fnReloadAjax.js" %}"></script>
 
         {% block extrajs %}
         {% endblock extrajs %}
