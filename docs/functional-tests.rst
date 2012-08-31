@@ -812,7 +812,6 @@ qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écr
 Si le chargement de la couche vectorielle échoue, alors la carte apparaît
 en rouge, et un message est ajouté dans la console du navigateur.
 
-
 #78 - Mesurer une distance sur la carte
 ---------------------------------------
 
@@ -882,3 +881,11 @@ Pour les autres, le nom de fichier est présenté avec un icône selon son type.
   valeurs du settings.ini
 
 * La conf des couches Django est construite automatiquement.
+
+
+
+#178 - [BUG] Afficher tous les status lors de la création d'une intervention
+----------------------------------------------------------------------------
+
+Fixé.
+

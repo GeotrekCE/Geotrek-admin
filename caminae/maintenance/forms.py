@@ -78,9 +78,6 @@ class InterventionCreateForm(InterventionForm):
             initial['topology'] = infrastructure
         kwargs['initial'] = initial
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
-        # Limit status choices to first one only ("requested")
-        first = InterventionStatus.objects.all()[0]
-        self.fields['status'] = forms.ModelChoiceField(queryset=InterventionStatus.objects.filter(pk=first.pk))
 
     class Meta(InterventionForm.Meta):
         exclude = InterventionForm.Meta.exclude + (
