@@ -860,3 +860,11 @@ Je peux attacher des documents à n'importe quelle entité ou à un projet :
 * La modification d'un document est pour le moment impossible (il faut
   supprimer/recréer le document).
 
+
+#54 - Créer automatiquement les vignettes des fichiers attachés de type photo
+-----------------------------------------------------------------------------
+
+Dans la liste des fichiers attachés, un aperçu est disponible pour tous les
+fichiers attachés de type image.
+
+Pour les autres, le nom de fichier est présenté avec un icône selon son type.
