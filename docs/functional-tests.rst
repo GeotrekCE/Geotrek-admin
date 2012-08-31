@@ -889,3 +889,13 @@ Pour les autres, le nom de fichier est présenté avec un icône selon son type.
 
 Fixé.
 
+
+#187 - [BUG] le champ NOM est vide, même si le tronçon a bien un nom
+--------------------------------------------------------------------
+
+Pas reproduit. 
+
+Attention, le nom affiché dans la liste est construit à partir de la
+clé primaire uniquement quand le nom est vide. En saisissant un nom, le champ
+du formulaire fonctionne bien. 
+
