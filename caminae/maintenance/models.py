@@ -257,7 +257,7 @@ class Project(MapEntityMixin, StructureRelated):
         """ Merge all interventions geometry into a collection
         """
         interventions = Intervention.objects.filter(project=self)
-        geoms = [i.geom for i in interventions]
+        geoms = [i.geom for i in interventions if i.geom is not None]
         if geoms:
             return GeometryCollection(*geoms)
         return None

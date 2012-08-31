@@ -44,21 +44,6 @@ class InterventionViewsTest(MapEntityTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
-    def test_project_layer(self):
-        p1 = ProjectFactory.create()
-        ProjectFactory.create()
-        InterventionFactory.create(project=p1)
-        
-        # Check that only p1 is in geojson
-        response = self.client.get(self.model.get_layer_url())
-        self.assertEqual(response.status_code, 200)
-        geojson = simplejson.loads(response.content)
-        features = geojson['features']
-        
-        self.assertEqual(len(Project.objects.all()), 2)
-        self.assertEqual(len(features), 1)
-        self.assertEqual(features[0]['properties']['pk'], p1.pk)
-
 
 class ProjectViewsTest(MapEntityTest):
     model = Project
@@ -83,6 +68,43 @@ class ProjectViewsTest(MapEntityTest):
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
         }
+
+    def test_project_layer(self):
+        p1 = ProjectFactory.create()
+        ProjectFactory.create()
+        InterventionFactory.create(project=p1)
+        
+        # Check that only p1 is in geojson
+        response = self.client.get(self.model.get_layer_url())
+        self.assertEqual(response.status_code, 200)
+        geojson = simplejson.loads(response.content)
+        features = geojson['features']
+        
+        self.assertEqual(len(Project.objects.all()), 2)
+        self.assertEqual(len(features), 1)
+        self.assertEqual(features[0]['properties']['pk'], p1.pk)
+
+    def test_project_bbox_filter(self):
+        p1 = ProjectFactory.create()
+        ProjectFactory.create()
+        ProjectFactory.create()
+        
+        t = TopologyMixinFactory.create()
+        InterventionFactory.create(project=p1, topology=t)
+        
+        def jsonlist(bbox):
+            url = self.model.get_jsonlist_url() + bbox
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            json = simplejson.loads(response.content)
+            return json['aaData']
+        
+        # Check that projects without interventions are always present
+        self.assertEqual(len(Project.objects.all()), 3)
+        self.assertEqual(len(jsonlist('')), 3)
+        self.assertEqual(len(jsonlist('?bbox=POLYGON((1%202%200%2C1%202%200%2C1%202%200%2C1%202%200%2C1%202%200))')), 2)
+        
+
 
 class InterventionTest(TestCase):
     def test_helpers(self):
