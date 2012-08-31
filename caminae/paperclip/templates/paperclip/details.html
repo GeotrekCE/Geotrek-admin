@@ -1,0 +1,66 @@
+{% load i18n field_verbose_name attachments_tags thumbnail static %}
+
+{% get_attachments_for object as "attachments_list" %}
+
+{% if attachments_list %}
+    <table class="table">
+        {% with att=attachments_list.0 %}
+        <thead>
+            <th>{{ att|verbose:"title" }}</th>
+            <th>{{ att|verbose:"legend" }}</th>
+            <th>{{ att|verbose:"creator" }}</th>
+            <th>{{ att|verbose:"date_insert" }}</th>
+            <th>{{ att|verbose:"date_update" }}</th>
+            {% if can_delete_attachment %}
+                <th>{% trans "Actions" %}</th>
+            {% endif %}
+        </thead>
+        {% endwith %}
+        <tbody>
+        {% for att in attachments_list %}
+        <tr>
+            <td>
+                <a href="{{ att.attachment_file.url }}">
+                    {% if att.is_image %}
+                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}">
+                    {% else %}
+                        <img src="{% get_static_prefix %}paperclip/fileicons/{{ att.mimetype.1 }}.png"/>&nbsp;{{ att.title|default:att.filename }}
+                    {% endif %}
+                </a>
+            </td>
+            <td>{{ att.legend }}</td>
+            <td>{{ att.creator }}</td>
+            <td>{{ att.date_insert }}</td>
+            <td>{{ att.date_update }}</td>
+            {% if can_delete_attachment %}
+                <th><a class="delete-action" data-id="{{ att.pk }}" data-title="{{ att.title|default:att.pk }}" href="#">
+                    {% trans "Delete" %}
+                </a></th>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    {% trans "No file attached" %}
+{% endif %}
+
+    <div id="confirm-delete-msg"></div>
+
+    <script type="text/javascript">
+        $('.delete-action').click(function (e) {
+            e.preventDefault();
+            confirmDelete($(this).data('id'), $(this).data('title'));
+            return false;
+        });
+        
+        function confirmDelete(id, title) {
+            var url = "{% url delete_attachment 0 %}?next={{ attachment_delete_next }}".replace('0', id);
+            $('#confirm-delete-msg').confirmModal({
+                heading: '{% trans "Confirm file deletion" %}',
+                body: '{% trans "Are you sure to delete this file {file} ?" %}'.replace('{file}', title),
+                callback: function() {
+                    window.location = url;
+                }
+             });
+        }
+    </script>

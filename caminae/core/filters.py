@@ -1,10 +1,12 @@
+from django.utils.translation import ugettext_lazy as _
+
 from .models import Path
 
 from caminae.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
 
 
 class PathFilter(StructureRelatedFilterSet):
-    length = OptionalRangeFilter()
+    length = OptionalRangeFilter(label=_('length'))   # TODO: why force ?
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path

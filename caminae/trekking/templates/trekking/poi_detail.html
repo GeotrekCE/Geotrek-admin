@@ -17,4 +17,20 @@
             <td>{{ poi.description }}</td>
         </tr>
     </table>
+
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Trekkings" %}</th>
+            <td>
+                {% for t in poi.treks %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ t.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
 {% endblock detailspanel %}

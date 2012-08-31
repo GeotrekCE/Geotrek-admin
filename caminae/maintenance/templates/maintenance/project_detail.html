@@ -9,4 +9,42 @@
             <td>{{ project.name }}</td>
         </tr>
     </table>
+
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Paths" %}</th>
+            <td>
+                {% for p in project.paths %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr><tr>
+            <th>{% trans "Infrastructures" %}</th>
+            <td>
+                {% for i in project.infrastructures %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ i.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr><tr>
+            <th>{% trans "Signages" %}</th>
+            <td>
+                {% for s in project.signages %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ s.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
 {% endblock detailspanel %}

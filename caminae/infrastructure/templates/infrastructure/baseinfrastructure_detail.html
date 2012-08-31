@@ -16,4 +16,31 @@
         <li><a href="{{ intervention.get_detail_url }}">{{ intervention }}</a></li>
         {% endfor %}
     </ul>
+
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Paths" %}</th>
+            <td>
+                {% for p in object.paths.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr><tr>
+            <th>{% trans "Interventions" %}</th>
+            <td>
+                {% for i in object.interventions.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ i.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
 {% endblock detailspanel %}

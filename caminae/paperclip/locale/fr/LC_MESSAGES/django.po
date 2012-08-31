@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-31 11:40+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: forms.py:13
+msgid "Upload attachment"
+msgstr "Charger un fichier"
+
+#: forms.py:23
+msgid "Add attachment"
+msgstr "Ajouter un fichier lié"
+
+#: models.py:34
+msgid "Attachment"
+msgstr "Fichier"
+
+#: models.py:37
+msgid "Creator"
+msgstr "Auteur"
+
+#: models.py:38
+msgid "Title"
+msgstr "Titre"
+
+#: models.py:39
+msgid "Legend"
+msgstr "Légende"
+
+#: models.py:41
+msgid "Insertion date"
+msgstr "Ajouté"
+
+#: models.py:42
+msgid "Update date"
+msgstr "Modifié"
+
+#: views.py:37
+msgid "Your attachment was uploaded."
+msgstr "Votre fichier a été ajouté."
+
+#: views.py:56
+msgid "Your attachment was deleted."
+msgstr "Votre fichier a été supprimé."
+
+#: views.py:58
+msgid "You are not allowed to delete this attachment."
+msgstr "Vous n'êtes pas autorisé à supprimer ce fichier lié."
+
+#: templates/paperclip/delete_link.html:2
+msgid "Delete attachment"
+msgstr "Supprimer le fichier"
+
+#: templates/paperclip/details.html:15
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/paperclip/details.html:37
+msgid "Delete"
+msgstr "Supprimer"
+
+#: templates/paperclip/details.html:44
+msgid "No file attached"
+msgstr ""
+
+#: templates/paperclip/details.html:59
+msgid "Confirm file deletion"
+msgstr ""
+
+#: templates/paperclip/details.html:60
+msgid "Are you sure to delete this file {file} ?"
+msgstr ""

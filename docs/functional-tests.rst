@@ -658,3 +658,244 @@ Je peux déplacer les marqueurs (de début ou de fin):
   court n'est pas visible.
 
 
+
+
+==========================
+Sprint 4 - Version 0.4.0
+==========================
+
+#125 - Compresser les medias
+----------------------------
+
+* Ouvrir la source HTML d'une page
+
+* Vérifier que les Javascript et CSS requis dans la balise ``<head>`` ont
+  des noms générés (ex: c28e793a0354.js)
+
+* Ouvrir l'un de ces fichiers, vérifier que le contenu est compressé.
+
+
+#102 - Calculer automatiquement l'enjeux par défaut d'une intervention
+----------------------------------------------------------------------
+
+* Définir l'enjeu d'un tronçon au maximum
+
+* Créer une intervention et un aménagement sur ce tronçon (en y incluant d'autres éventuellement)
+
+* Créer une intervention sur l'aménagement créé.
+
+* Vérifier que les enjeux des deux interventions créées correspondent bien à l'enjeu du tronçon.
+
+* Modifier l'enjeu d'une intervention, vérifier que cette valeur est conservée.
+
+
+#32 - Éditer en Wysiwyg les champs texte
+----------------------------------------
+
+* Ouvrir n'importe quel formulaire, chaque champ texte contient un petit éditeur
+  Wysiwyg (TinyMCE) avec les options de base.
+
+* Le champ est sauvegardé avec le texte au format HTML.
+
+
+#47 - Accéder facilement aux fiches des objets liés à un objet
+--------------------------------------------------------------
+
+* S'assurer qu'il existe au moins quelques données de démonstration pour les
+  types d'objets "tronçon", "intervention", "chantier", "signalétique",
+  "aménagement", "foncier", "itinéraire" et "POI"
+
+* Aller sur la fiche d'un tronçon et suivre les liens vers les tronçons
+  fonciers, les interventions, les chantiers, les signalétiques et les
+  aménagements.
+
+* Aller sur la fiche d'une intervention et suivre les liens vers les tronçons.
+  La fiche indique également si l'intervention porte sur un aménagement ou
+  signalétique et si elle fait partie d'un chantier.
+
+* Aller sur la fiche d'un chantier et suivre les liens vers les tronçons, les
+  signalétiques et les aménagements.
+
+* Aller sur la fiche d'une signalétique et suivre les liens vers les tronçons
+  et les interventions.
+
+* Aller sur la fiche d'un aménagement et suivre les liens vers les tronçons et
+  les interventions.
+
+* Aller sur la fiche d'un itinéraire et suivre les liens vers les tronçons et
+  les POIs.
+
+* Aller sur la fiche d'un POI et suivre le lien vers les itinéraires.
+
+#146 - Enlever les types liées à la signalétique dans le formulaire infrastructure
+----------------------------------------------------------------------------------
+
+* Aller sur le formulaire de création d'un aménagement. Le champs type ne doit
+  lister que les types non-associés à la signalétique
+
+
+# 147 - Enlever les types liées aux infrastructures dans le formulaire signalétique
+-----------------------------------------------------------------------------------
+
+* Aller sur le formulaire de création d'une signalétique. Le champs type ne
+  doit lister que les types associés à la signalétique
+
+
+#166 - Champ structure automatique dans les formulaires
+-------------------------------------------------------
+
+Les formulaires de création et d'édition n'ont plus de champ "structure".
+
+* Créer une intervention, sauvegarder. Dans la fiche détail, vérifier que la structure
+  est celle de l'utilisateur.
+
+* Se connecter avec un utilisateur d'une autre structure. 
+
+* Créer une intervention et vérifie que la structure correspond bien.
+
+:notes:
+
+    Dans la partie Admin, ce n'est pas implémenté.
+
+
+#120 - Filtrer les listes de choix par structure
+------------------------------------------------
+
+Les formulaires ont des listes de choix limitées aux éléments de la structure
+de l'utilisateur.
+
+* Vérifier avec les tronçons : ouvrir le formulaire d'ajout de tronçon avec
+  un utilisateur. Observer la liste des choix d'enjeu par exemple.
+
+* Changer la structure de l'utilisateur. Se déconnecter puis se reconnecter.
+
+* Observer que la liste des choix des enjeux a changé.
+
+
+#151 - [BUG] Certains boutons de l'adminsite ne sont pas traduits
+-----------------------------------------------------------------
+
+Pas reproduit : 
+
+* Passer l'utilisateur en langue It
+
+* Se déconnecter, se reconnecter
+
+* L'application est en italien. L'adminsite est totalement traduit ("Aggiungi", "Modifica"), 
+  l'application sentier en l'est que partiellement (ex: "cerca", "filtra")
+
+
+#152 - [BUG] Dans l'adminsite, les objets multilingues ne sont pas traduits en fonction de la langue de l'utilisateur
+---------------------------------------------------------------------------------------------------------------------
+
+Pas reproduit : 
+
+* Se connecter à l'adminsite avec un utilisateur italien.
+
+* Visualiser la liste des "Physical Types" par exemple. Elle contient les noms en français.
+
+* Éditer un élément, renseigner le champ italien, sauvegarder.
+
+* Visualiser la liste, le nom italien apparaît pour l'élément où la valeur est renseignée.
+
+
+#143 - Ajouter des placeholders aux formulaire de filtres
+---------------------------------------------------------
+
+Plutôt que d'utiliser des labels, les champs des filtres affichent une valeur
+qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écran.
+
+
+#132 - [BUG] Afficher clairement l'état échoué d'une couche de la carte
+-----------------------------------------------------------------------
+
+Si le chargement de la couche vectorielle échoue, alors la carte apparaît
+en rouge, et un message est ajouté dans la console du navigateur.
+
+#78 - Mesurer une distance sur la carte
+---------------------------------------
+
+* Aller sur une page comportant une carte.
+
+* Cliquer sur l'icône montrant une règle.
+
+* Cliquer sur la carte pour dessiner la distance à mesurer. La distance
+  s'affiche dynamiquement.
+
+* Désactiver l'outil de mesure en recliquant sur l'icône.
+
+
+#168 - Champ traduction par défaut
+----------------------------------
+
+Pour les champs traduisibles, il y a, en plus de la colonne, autant de colonnes en base que de langues
+déclarées dans les paramètres du projet.
+
+Par exemple: description, description_fr, description_it, description_en
+
+Lorsque l'utilisateur qui saisit est italien, c'est la valeur de ``description_it`` qui sera stockée
+dans le champ ``description`` en base.
+
+
+#51 - Attacher des fichiers à un objet
+--------------------------------------
+
+Je peux attacher des documents à n'importe quelle entité ou à un projet :
+
+* Lors de la création d'une entité, l'ajout de document n'est pas possible
+
+* La vue d'édition d'une entité contient un formulaire pour ajouter un nouveau document à la fois.
+  À l'ajout valide d'un document, je suis redirigé sur la même page (page d'édition de l'entité).
+
+* La vue d'édition d'une entité liste les documents liés existants et un bouton
+  permettant de supprimer chaque document.
+  Lors d'un clic sur un de ces boutons, une demande de confirmation de
+  suppression m'est demandée qui poursuit ou annule l'action.
+  Lors d'une suppression confirmée, je suis redirigé sur la même page (page
+  d'édition de l'entité).
+
+* La vue de détail d'une entité liste les documents liés et un lien
+  permettant de télécharger chaque document.
+
+* La modification d'un document est pour le moment impossible (il faut
+  supprimer/recréer le document).
+
+
+#54 - Créer automatiquement les vignettes des fichiers attachés de type photo
+-----------------------------------------------------------------------------
+
+Dans la liste des fichiers attachés, un aperçu est disponible pour tous les
+fichiers attachés de type image.
+
+Pour les autres, le nom de fichier est présenté avec un icône selon son type.
+
+
+#112 - Tuiler les fonds PNE en L93
+----------------------------------
+
+* TileCache est servi par gunicorn/nginx
+
+* Supervisor lance le process
+
+* La conf Tilecache est construite automatiquement a partir des
+  valeurs du settings.ini
+
+* La conf des couches Django est construite automatiquement.
+
+
+
+#178 - [BUG] Afficher tous les status lors de la création d'une intervention
+----------------------------------------------------------------------------
+
+Fixé.
+
+
+#187 - [BUG] le champ NOM est vide, même si le tronçon a bien un nom
+--------------------------------------------------------------------
+
+Pas reproduit. 
+
+Attention, le nom affiché dans la liste est construit à partir de la
+clé primaire uniquement quand le nom est vide. En saisissant un nom, le champ
+du formulaire fonctionne bien. 
+

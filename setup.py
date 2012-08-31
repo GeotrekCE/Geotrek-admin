@@ -26,10 +26,14 @@ setup(
         'django-modeltranslation == 0.3.3',
         'django-floppyforms == 1.0',
         'django-crispy-forms == 1.1.4',
+        'django-compressor == 1.2',
+        'Pillow == 1.7.7',
+        'easy-thumbnails == 1.1',
         'django-leaflet',   # pinned by buildout
         'django-geojson',   # pinned by buildout
         'django-filter',   # pinned by buildout
         'django-extended-choices',  # pinned by buildout
+        'django-tinymce',  # pinned by buildout
     ] + test_requirements,
     tests_requires = test_requirements,
     packages=find_packages(),

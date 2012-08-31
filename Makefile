@@ -37,10 +37,13 @@ unit_tests: bin/ clean_harmless
 	bin/develop update -f
 	bin/django jenkins --coverage-rcfile=.coveragerc authent core land maintenance trekking common infrastructure mapentity
 
+unit_tests_js:
+	casperjs --baseurl=$(baseurl) --reportdir=reports caminae/tests/test_qunit.js
+
 functional_tests:
 	casperjs --baseurl=$(baseurl) --save=reports/FUNC-auth.xml caminae/tests/auth.js
 	casperjs --baseurl=$(baseurl) --save=reports/FUNC-88.xml caminae/tests/story_88_user_creation.js
-	casperjs --baseurl=$(baseurl) --save=reports/FUNC-88.xml caminae/tests/test_utils.js
+	casperjs --baseurl=$(baseurl) --save=reports/FUNC-test_utils.xml caminae/tests/test_utils.js
 
 tests: unit_tests functional_tests
 
@@ -58,6 +61,7 @@ deploy: bin/ clean_harmless all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --noinput
+	bin/django update_translation_fields
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data

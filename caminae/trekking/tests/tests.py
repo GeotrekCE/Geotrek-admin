@@ -1,7 +1,8 @@
+from django.test import TestCase
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
 
-from caminae.core.factories import PathFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.trekking.models import POI, Trek
 from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
     TrekNetworkFactory, UsageFactory, WebLinkFactory)
@@ -73,3 +74,23 @@ class TrekViewsTest(MapEntityTest):
             'web_links': WebLinkFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
         }
+
+class RelatedObjectsTest(TestCase):
+    def test_helpers(self):
+        trek = TrekFactory.create()
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        poi = POIFactory.create()
+        PathAggregationFactory.create(topo_object=trek, path=p1,
+                                      start_position=0.5)
+        PathAggregationFactory.create(topo_object=trek, path=p2)
+        PathAggregationFactory.create(topo_object=poi, path=p1,
+                                      start_position=0.6, end_position=0.6)
+        # Ensure related objects are accessible
+        self.assertEqual(trek.pois, [poi])
+        self.assertEqual(poi.treks, [trek])
+        # Ensure there is no duplicates
+        PathAggregationFactory.create(topo_object=trek, path=p1,
+                                      end_position=0.5)
+        self.assertEqual(trek.pois, [poi])
+        self.assertEqual(poi.treks, [trek])

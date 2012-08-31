@@ -10,6 +10,8 @@ from django.contrib.gis.geos import LineString, Point
 from caminae.authent.models import StructureRelated
 from caminae.common.utils import distance3D
 from caminae.mapentity.models import MapEntityMixin
+import caminae.infrastructure as inf
+import caminae.land as land
 
 
 logger = logging.getLogger(__name__)
@@ -146,6 +148,37 @@ class Path(MapEntityMixin, StructureRelated):
             return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
         return _("None")
 
+    @property
+    def interventions(self):
+        s = []
+        for t in self.topologymixin_set.all():
+            s += t.interventions.all()
+        return list(set(s))
+
+    @property
+    def projects(self):
+        return list(set([i.project
+                         for i in self.interventions
+                         if i.in_project]))
+
+    @property
+    def lands(self):
+        return list(set([land.models.LandEdge.objects.get(pk=t.pk)
+                         for t in self.topologymixin_set.filter(
+                             kind=land.models.LandEdge.get_kind())]))
+
+    @property
+    def signages(self):
+        return [inf.models.Signage.objects.get(pk=t.pk)
+                for t in self.topologymixin_set.filter(
+                    kind=inf.models.Signage.get_kind())]
+
+    @property
+    def infrastructures(self):
+        return [inf.models.Infrastructure.objects.get(pk=t.pk)
+                for t in self.topologymixin_set.filter(
+                    kind=inf.models.Infrastructure.get_kind())]
+
 
 class TopologyMixin(models.Model):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
@@ -259,23 +292,26 @@ class TopologyMixin(models.Model):
         # Path aggregation
         topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
+
         # Start repopulating from serialized data
-        start = objdict.get('start', 0.0)
-        end = objdict.get('end', 1.0)
+        positions = objdict.get('positions', {})
         paths = objdict['paths']
         # Check that paths should be unique
         if len(set(paths)) != len(paths):
             paths = collections.Counter(paths)
             extras = [p for p in paths if paths[p]>1]
             raise ValueError(_("Paths are not unique : %s") % extras)
+
         # Create path aggregations
         for i, path in enumerate(paths):
             try:
                 path = Path.objects.get(pk=path)
             except Path.DoesNotExist, e:
                 raise ValueError(str(e))
-            start_position = start if i==0 else 0.0
-            end_position = end if i==len(paths)-1 else 1.0
+            # Javascript hash keys are parsed as a string
+            # Provides default values
+            start_position, end_position = positions.get(str(i), (0.0, 1.0))
+
             aggrobj = PathAggregation(topo_object=topology,
                                       start_position=start_position,
                                       end_position=end_position,
@@ -305,17 +341,13 @@ class TopologyMixin(models.Model):
         return topology
 
     def serialize(self):
-        paths = []
-        start = 1.0
-        end = 0.0
-        for aggregation in self.aggregations.all():
-            if aggregation.start_position < start:
-                start = aggregation.start_position
-            if aggregation.end_position > end:
-                end = aggregation.end_position
-            paths.append(aggregation.path.pk)
+        # Fetch properly ordered aggregations
+        aggregations = self.aggregations.all()
+        start = aggregations[0].start_position
+        end = aggregations[len(aggregations)-1].end_position
+
         # Point topology
-        if start == end and len(paths) == 1:
+        if start == end and len(aggregations) == 1:
             geom = self.geom
             if geom.geom_type != 'Point':
                 logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
@@ -324,6 +356,11 @@ class TopologyMixin(models.Model):
             objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
+
+            paths = list(aggregations.values_list('path__pk', flat=True))
+            # We may filter out aggregations that have default values (0.0 and 1.0)...
+            positions = dict((i, (a.start_position, a.end_position))
+                             for i, a in enumerate(aggregations))
 
             # Create the markers points to be used with much more ease on javascript side
             # (will be even easier/faster when more 'intermediary' markers will show up)
@@ -335,9 +372,9 @@ class TopologyMixin(models.Model):
 
             objdict = dict(kind=self.kind.kind,
                            offset=self.offset,
-                           start=start,
-                           end=end,
+                           positions=positions,
                            paths=paths,
+                           # Easy helper to be used by the javascript side for markers
                            start_point=dict(lng=start_point.x, lat=start_point.y),
                            end_point=dict(lng=end_point.x, lat=end_point.y),
                            )
@@ -374,6 +411,9 @@ class PathAggregation(models.Model):
         db_table = 'evenements_troncons'
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
+        # Important - represent the order of the path in the TopologyMixin path list
+        ordering = ['id', ]
+
 
 
 class Datasource(StructureRelated):
@@ -397,6 +437,9 @@ class Stake(StructureRelated):
         db_table = 'enjeu'
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
+
+    def __lt__(self, other):
+        return self.pk < other.pk
 
     def __unicode__(self):
         return self.stake

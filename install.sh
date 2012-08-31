@@ -89,7 +89,17 @@ defaultstructure = PNE
 # EPSG code of the coordinate system to use
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
-spatial_extent = (898000, 6360000, 1013000, 6476000)
+spatial_extent = 700000, 6325197, 1060000, 6617738
+# (minx, miny, maxx, maxy) expressed in WGS84
+spatial_extent_wgs84 = 5.0, 43.8, 7.5, 45.8
+# Resolution at zoomlevel 0
+max_resolution = 1142.7383
+# WMS server url
+wms_url = http://extranet.parcnational.fr/pnx/wms?
+# Layers for aerial picture
+ortho_layers = ortho
+# Layers for terrain map
+terrain_layers = scan100,scan25
 _EOF_
     fi
     # Prompt user to edit/review settings
@@ -144,6 +154,7 @@ _EOF_
 
     else
         sudo apt-get install nginx
+        sudo apt-get install yui-compressor
 
         make deploy
 

@@ -1,3 +1,6 @@
+from django.test import TestCase
+from django.utils import simplejson
+
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.models import default_structure
 from caminae.authent.factories import PathManagerFactory
@@ -5,7 +8,9 @@ from caminae.core.factories import StakeFactory
 from caminae.common.factories import OrganismFactory
 
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
-from caminae.core.factories import PathFactory
+from caminae.core.factories import (PathFactory, PathAggregationFactory,
+                                   TopologyMixinFactory)
+from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.maintenance.factories import (InterventionFactory, 
     InterventionDisorderFactory, InterventionStatusFactory,
     ProjectFactory, ContractorFactory)
@@ -63,3 +68,103 @@ class ProjectViewsTest(MapEntityTest):
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
         }
+
+    def test_project_layer(self):
+        p1 = ProjectFactory.create()
+        ProjectFactory.create()
+        InterventionFactory.create(project=p1)
+        
+        # Check that only p1 is in geojson
+        response = self.client.get(self.model.get_layer_url())
+        self.assertEqual(response.status_code, 200)
+        geojson = simplejson.loads(response.content)
+        features = geojson['features']
+        
+        self.assertEqual(len(Project.objects.all()), 2)
+        self.assertEqual(len(features), 1)
+        self.assertEqual(features[0]['properties']['pk'], p1.pk)
+
+    def test_project_bbox_filter(self):
+        p1 = ProjectFactory.create()
+        ProjectFactory.create()
+        ProjectFactory.create()
+        
+        t = TopologyMixinFactory.create()
+        InterventionFactory.create(project=p1, topology=t)
+        
+        def jsonlist(bbox):
+            url = self.model.get_jsonlist_url() + bbox
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            json = simplejson.loads(response.content)
+            return json['aaData']
+        
+        # Check that projects without interventions are always present
+        self.assertEqual(len(Project.objects.all()), 3)
+        self.assertEqual(len(jsonlist('')), 3)
+        self.assertEqual(len(jsonlist('?bbox=POLYGON((1%202%200%2C1%202%200%2C1%202%200%2C1%202%200%2C1%202%200))')), 2)
+        
+
+
+class InterventionTest(TestCase):
+    def test_helpers(self):
+        infra = InfrastructureFactory.create()
+        sign = SignageFactory.create()
+        interv = InterventionFactory.create()
+        proj = ProjectFactory.create()
+
+        interv.set_infrastructure(infra)
+        self.assertTrue(interv.on_infrastructure())
+        self.assertFalse(interv.is_signage())
+        self.assertTrue(interv.is_infrastructure())
+        self.assertEquals(interv.signages, [])
+        self.assertEquals(interv.infrastructures, [infra])
+
+        interv.set_infrastructure(sign)
+        self.assertTrue(interv.on_infrastructure())
+        self.assertTrue(interv.is_signage())
+        self.assertFalse(interv.is_infrastructure())
+        self.assertEquals(interv.signages, [sign])
+        self.assertEquals(interv.infrastructures, [])
+
+        self.assertFalse(interv.in_project())
+        interv.project = proj
+        self.assertTrue(interv.in_project())
+
+class ProjectTest(TestCase):
+    def test_helpers(self):
+        i1 = InterventionFactory.create()
+        i2 = InterventionFactory.create()
+        i3 = InterventionFactory.create()
+
+        sign = SignageFactory.create()
+        i1.set_infrastructure(sign)
+        p1 = sign.paths.get()
+
+        infra = InfrastructureFactory.create()
+        i2.set_infrastructure(infra)
+        p2 = infra.paths.get()
+
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p1)
+        i3.topology = t
+
+        proj = ProjectFactory.create()
+        self.assertEquals(proj.paths, [])
+        self.assertEquals(proj.signages, [])
+        self.assertEquals(proj.infrastructures, [])
+
+        proj.intervention_set.add(i1)
+        self.assertEquals(proj.paths, [p1])
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [])
+
+        proj.intervention_set.add(i2)
+        self.assertItemsEqual(proj.paths, [p1, p2])
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])
+
+        proj.intervention_set.add(i3)
+        self.assertItemsEqual(proj.paths, [p1, p2])
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])

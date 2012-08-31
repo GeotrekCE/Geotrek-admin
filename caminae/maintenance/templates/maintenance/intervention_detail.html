@@ -9,4 +9,29 @@
             <td>{{ intervention.status }}</td>
         </tr>
     </table>
+
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Paths" %}</th>
+            <td>
+                {% for p in intervention.paths %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr><tr>
+            <th>{% trans "In a project?" %}</th>
+            <td>{% if intervention.in_project %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        </tr><tr>
+            <th>{% trans "On an infrastructure?" %}</th>
+            <td>{% if intervention.is_infrastructure %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        </tr><tr>
+            <th>{% trans "On a signage?" %}</th>
+            <td>{% if intervention.is_signage %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        </tr>
+    </table>
 {% endblock detailspanel %}

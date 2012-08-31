@@ -40,6 +40,10 @@ TIME_ZONE = 'Europe/Paris'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'fr'
 
+MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
+
+MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
+
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('fr', gettext_noop('French')),
@@ -70,12 +74,12 @@ LOGIN_REDIRECT_URL = '/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -101,9 +105,21 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.yui.YUICSSFilter'
+]
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.yui.YUIJSFilter'
+]
+COMPRESS_YUI_BINARY = '/usr/bin/yui-compressor'
+COMPRESSOR_ENABLED = False
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;'
@@ -171,8 +187,10 @@ PROJECT_APPS = (
     'leaflet',
     'floppyforms',
     'crispy_forms',
-
-    'djgeojson',  # temporary, remove when released on pypi, required for testing only.
+    'compressor',
+    'djgeojson',
+    'tinymce',
+    'easy_thumbnails',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -184,6 +202,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.trekking',
     'caminae.infrastructure',
     'caminae.mapentity',
+    'caminae.paperclip',
 )
 
 SERIALIZATION_MODULES = {
@@ -238,6 +257,13 @@ LOGGING = {
     }
 }
 
+THUMBNAIL_ALIASES = {
+    '': {
+        'thumbnail': {'size': (150, 150)},
+    },
+}
+
+
 TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
 SRID = None
@@ -248,17 +274,8 @@ API_SRID = 4326
 
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
-LEAFLET_CONFIG = {
-    "TILES_URL" : [
-        ("IGN", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),
-        ("Ortho", 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.png'),
-    ],
-    "MAX_RESOLUTION" : 1142.7383,
-    "TILES_EXTENT" : [700000,6325197,1060000,6617738],
-    "SPATIAL_EXTENT" : [5.0, 43.8, 7.5, 45.8],
-}
-
-MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
+# Let this be defined at instance-level
+LEAFLET_CONFIG = {}
 
 UPLOAD_DIR = 'upload'
 

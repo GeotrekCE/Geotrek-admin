@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-23 16:25+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:12 models.py:78 models.py:91 models.py:102 models.py:128
-#: models.py:142 models.py:143 models.py:208
+#: models.py:12 models.py:94 models.py:107 models.py:118 models.py:144
+#: models.py:158 models.py:159 models.py:224
 msgid "Name"
 msgstr "Nom"
 
@@ -55,7 +55,7 @@ msgstr "Altitude maximum"
 msgid "Description teaser"
 msgstr "Résumé"
 
-#: models.py:23 models.py:209
+#: models.py:23 models.py:225
 msgid "Description"
 msgstr "Description"
 
@@ -91,7 +91,7 @@ msgstr "Transport en commun"
 msgid "Advice"
 msgstr "Recommandations"
 
-#: models.py:38 models.py:83
+#: models.py:38 models.py:99
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
@@ -99,19 +99,19 @@ msgstr "Réseaux randonnée"
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:44 models.py:106
+#: models.py:44 models.py:122
 msgid "Route"
 msgstr "Parcours"
 
-#: models.py:47 models.py:115 models.py:119
+#: models.py:47 models.py:131 models.py:135
 msgid "Difficulty level"
 msgstr "Niveau de difficulté"
 
-#: models.py:50 models.py:133
+#: models.py:50 models.py:149
 msgid "Destination"
 msgstr "Destination"
 
-#: models.py:53 models.py:149
+#: models.py:53 models.py:165
 msgid "Web links"
 msgstr "Liens web"
 
@@ -123,65 +123,88 @@ msgstr "Itinérarire"
 msgid "Treks"
 msgstr "Itinéraires"
 
-#: models.py:82
+#: models.py:98
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
-#: models.py:107
+#: models.py:123
 msgid "Routes"
 msgstr "Parcours"
 
-#: models.py:120
+#: models.py:136
 msgid "Difficulty levels"
 msgstr "Niveaux de difficulté"
 
-#: models.py:129 models.py:222
+#: models.py:145 models.py:254
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-#: models.py:134
+#: models.py:150
 msgid "Destinations"
 msgstr "Destinations"
 
-#: models.py:144
+#: models.py:160
 msgid "Thumbnail"
 msgstr "Vignette"
 
-#: models.py:148
+#: models.py:164
 msgid "Web link"
 msgstr "Lien web"
 
-#: models.py:186
+#: models.py:202
 msgid "Common departure"
 msgstr "Départ en commun"
 
-#: models.py:187
+#: models.py:203
 msgid "Common edge"
 msgstr "Tronçon commun"
 
-#: models.py:188
+#: models.py:204
 msgid "Circuit step"
 msgstr "Étape de circuit"
 
-#: models.py:195
+#: models.py:211
 msgid "Trek relationship"
 msgstr "Réseaux randonnée"
 
-#: models.py:196
+#: models.py:212
 msgid "Trek relationships"
 msgstr "Liens entre itinéraires"
 
-#: models.py:210
+#: models.py:226
 msgid "Type"
 msgstr "Type"
 
-#: models.py:221
+#: models.py:253
 msgid "Label"
 msgstr "Label"
+
+#: templates/trekking/poi_detail.html:21
+#: templates/trekking/trek_detail.html:13
+msgid "Management"
+msgstr "Gestion"
+
+#: templates/trekking/poi_detail.html:24
+msgid "Trekkings"
+msgstr "Itinéraires"
+
+#: templates/trekking/poi_detail.html:31
+#: templates/trekking/trek_detail.html:23
+#: templates/trekking/trek_detail.html:34
+msgid "None"
+msgstr "Aucun"
 
 #: templates/trekking/poi_list.html:7
 msgid "Add POI"
 msgstr "Ajouter un POI"
+
+#: templates/trekking/trek_detail.html:16
+msgid "Paths"
+msgstr "Tronçons"
+
+#: templates/trekking/trek_detail.html:27
+msgid "POIs"
+msgstr "POIs"
 
 #: templates/trekking/trek_list.html:7
 msgid "Add trek"

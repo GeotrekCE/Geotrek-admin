@@ -13,13 +13,16 @@ Caminae.Dijkstra = (function() {
 
         function getPairWeightNode(node_id) {
             var l = [];
-            $.each(graph_nodes[node_id], function(k, v) {
+            $.each(graph_nodes[node_id], function(node_dest_id, edge_id) {
                 // Warning - weight is in fact edge.length in our data
-                l.push({'node_id': k, 'weight': graph_edges[v].length});
+                l.push({'node_id': node_dest_id, 'weight': graph_edges[edge_id].length});
             });
             return l;
         }
 
+        function is_source(node_id) {
+            return (from_ids.indexOf(node_id) != -1)
+        }
         function is_destination(node_id) {
             return (to_ids.indexOf(node_id) != -1)
         }
@@ -32,7 +35,7 @@ Caminae.Dijkstra = (function() {
         });
 
         // return the ID of an unvisited node that has the less weight (less djk weight)
-        // Should be sorted, shoud not contain visited node
+        // FIXME: performance -> shoud not contain visited node, should be sorted by weight
         function djk_get_next_id () {
             var nodes_id = Object.keys(djk);
             var mini_weight = Number.MAX_VALUE;
@@ -104,7 +107,9 @@ Caminae.Dijkstra = (function() {
                     if (djk_next_node.visited === true)
                         continue;
 
-                    if (djk_next_node.weight > next_weight)
+                    // If its weight is inferior, this node has a better previous edge already
+                    // Do not update it
+                    if (djk_next_node.weight < next_weight)
                         continue;
 
                     djk_next_node.weight = next_weight;
@@ -129,7 +134,7 @@ Caminae.Dijkstra = (function() {
         // current_djk_node is the destination
         var final_weight = current_djk_node.weight;
         var tmp = current_djk_node;
-        while (tmp.prev !== null) {
+        while (!is_source(tmp.node)) {
             path.push(tmp.node);
             tmp = tmp.prev;
         }

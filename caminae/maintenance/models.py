@@ -65,12 +65,58 @@ class Intervention(MapEntityMixin, StructureRelated):
         if not self.on_infrastructure:
             raise ValueError("Expecting an infrastructure or signage")
 
+    def default_stake(self):
+        stake = None
+        if self.topology:
+            for path in self.topology.paths.all():
+                if path.stake > stake:
+                    stake = path.stake
+        return stake
+
+    def save(self, *args, **kwargs):
+        if self.stake is None:
+            self.stake = self.default_stake()
+        super(Intervention, self).save(*args, **kwargs)
+
     @property
     def on_infrastructure(self):
+        return self.is_infrastructure or self.is_signage
+
+    @property
+    def is_infrastructure(self):
         if self.topology:
-            return self.topology.kind.pk == Infrastructure.get_kind().pk or \
-                   self.topology.kind.pk == Signage.get_kind().pk
+            return self.topology.kind.pk == Infrastructure.get_kind().pk
         return False
+
+    @property
+    def is_signage(self):
+        if self.topology:
+            return self.topology.kind.pk == Signage.get_kind().pk
+        return False
+
+    @property
+    def in_project(self):
+        return self.project is not None
+
+    @property
+    def paths(self):
+        if self.topology:
+            return self.topology.paths.all()
+        return []
+
+    @property
+    def signages(self):
+        if self.topology:
+            if self.topology.kind.pk == Signage.get_kind().pk:
+                return [Signage.objects.get(pk=self.topology.pk)]
+        return []
+
+    @property
+    def infrastructures(self):
+        if self.topology:
+            if self.topology.kind.pk == Infrastructure.get_kind().pk:
+                return [Infrastructure.objects.get(pk=self.topology.pk)]
+        return []
 
     @property
     def geom(self):
@@ -186,14 +232,39 @@ class Project(MapEntityMixin, StructureRelated):
         verbose_name_plural = _(u"Projects")
 
     @property
+    def paths(self):
+        s = []
+        for i in self.intervention_set.all():
+            s += i.paths
+        return list(set(s))
+
+    @property
+    def signages(self):
+        s = []
+        for i in self.intervention_set.all():
+            s += i.signages
+        return list(set(s))
+
+    @property
+    def infrastructures(self):
+        s = []
+        for i in self.intervention_set.all():
+            s += i.infrastructures
+        return list(set(s))
+
+    @property
     def geom(self):
         """ Merge all interventions geometry into a collection
         """
         interventions = Intervention.objects.filter(project=self)
-        geoms = [i.geom for i in interventions]
+        geoms = [i.geom for i in interventions if i.geom is not None]
         if geoms:
             return GeometryCollection(*geoms)
         return None
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
 
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""

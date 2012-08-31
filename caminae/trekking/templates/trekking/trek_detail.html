@@ -9,4 +9,31 @@
             <td>{{ trek.name }}</td>
         </tr>
     </table>
+
+    <h3>{% trans "Management" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Paths" %}</th>
+            <td>
+                {% for p in trek.paths.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr><tr>
+            <th>{% trans "POIs" %}</th>
+            <td>
+                {% for p in trek.pois %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
 {% endblock detailspanel %}

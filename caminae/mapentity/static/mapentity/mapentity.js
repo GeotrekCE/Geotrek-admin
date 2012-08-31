@@ -121,8 +121,14 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
             this.fire('load');
             if (this.spinner) this.spinner.stop();
         };
+        var jsonError = function () {
+            if (this.spinner) this.spinner.stop();
+            $(this._map._container).addClass('map-error');
+            console.error("Could not load url '" + url + "'");
+        };
         if (this._map) this.spinner = new Spinner().spin(this._map._container);
-        $.getJSON(url, L.Util.bind(jsonLoad, this));
+        $.getJSON(url, L.Util.bind(jsonLoad, this))
+         .error(L.Util.bind(jsonError, this));
     },
 
     getLayer: function (pk) {
@@ -178,12 +184,16 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
     },
 
     highlight: function (pk, on) {
-        var on = on === undefined ? true : on;
-        this._cameleon[on ? 'activate': 'deactivate']('highlight', this.getLayer(pk));
+        var on = on === undefined ? true : on,
+            layer = this.getLayer(pk);
+        if (!layer) return;
+        this._cameleon[on ? 'activate': 'deactivate']('highlight', layer);
     },
     select: function(pk, on) {
-        var on = on === undefined ? true : on;
-        this._cameleon[on ? 'activate': 'deactivate']('select', this.getLayer(pk));
+        var on = on === undefined ? true : on,
+            layer = this.getLayer(pk);
+        if (!layer) return;
+        this._cameleon[on ? 'activate': 'deactivate']('select', layer);
     }
 });
 
@@ -239,13 +249,17 @@ L.Control.Information = L.Control.extend({
     },
 
     _onLayerAdd: function (e) {
-        e.layer.on('info', L.Util.bind(function (ei) {
-            this._container.innerHTML = ei.info;
-        }, this));
+        if (e.layer && e.layer.on) {
+            e.layer.on('info', L.Util.bind(function (ei) {
+                this._container.innerHTML = ei.info;
+            }, this));
+        }
     },
 
     _onLayerRemove: function (e) {
-        e.layer.off('info');
+        if (e.layer && e.layer.off) {
+            e.layer.off('info');
+        }
     }
 });
 
@@ -347,8 +361,8 @@ MapEntity.Utils = (function() {
 
         // Use LatLng
         getPercentageDistanceFromPolyline: function(ll, polyline) {
-            // Will test every point, considering a point is in a segment with an error of 100 meters
-            return self.getPercentageDistance(ll, polyline.getLatLngs(), 100 /* in meters */, false);
+            // Will test every point, considering a point is in a segment with an error of 5 meters
+            return self.getPercentageDistance(ll, polyline.getLatLngs(), 5 /* in meters */, true);
         },
 
         // May be used for performance issue but you will loose precision

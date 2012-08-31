@@ -4,16 +4,18 @@ from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS
 
-from caminae.mapentity.tests import MapEntityTest
-from caminae.common.utils import dbnow, almostequal
-from caminae.authent.factories import UserFactory, PathManagerFactory
-from caminae.authent.models import Structure, default_structure
-from caminae.core.factories import PathFactory, PathAggregationFactory, TopologyMixinFactory
-from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
-
 # TODO caminae.core should be self sufficient
 from caminae.land.models import (City, RestrictedArea, LandEdge)
+from caminae.mapentity.tests import MapEntityTest
+from caminae.common.utils import dbnow, almostequal
+from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
+from caminae.authent.models import Structure, default_structure
+from caminae.core.factories import (PathFactory, PathAggregationFactory, 
+    TopologyMixinFactory, StakeFactory)
+from caminae.maintenance.factories import InterventionFactory, ProjectFactory
+from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
+from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
 
 
 class ViewsTest(MapEntityTest):
@@ -36,6 +38,50 @@ class ViewsTest(MapEntityTest):
             'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
         }
 
+    def test_structurerelated_filter(self):
+        def test_structure(structure, stake):
+            user = self.userfactory(password='booh')
+            p = user.profile
+            p.structure = structure
+            p.save()
+            success = self.client.login(username=user.username, password='booh')
+            self.assertTrue(success)
+            response = self.client.get(Path.get_add_url())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('form' in response.context)
+            form = response.context['form']
+            self.assertTrue('stake' in form.fields)
+            stakefield = form.fields['stake']
+            self.assertTrue((stake.pk, unicode(stake)) in stakefield.choices)
+            self.client.logout()
+        # Test for two structures
+        s1 = StructureFactory.create()
+        s2 = StructureFactory.create()
+        st1 = StakeFactory.create(structure=s1)
+        StakeFactory.create(structure=s1)
+        st2 = StakeFactory.create(structure=s2)
+        StakeFactory.create(structure=s2)
+        test_structure(s1, st1)
+        test_structure(s2, st2)
+
+
+# FIXME: this test has random results (as reported by Hudson)
+#class StakeTest(TestCase):
+#    def test_comparison(self):
+#        low = StakeFactory.create()
+#        high = StakeFactory.create()
+#        # In case SERIAL field was reinitialized
+#        if high.pk < low.pk:
+#            tmp = high
+#            high = low
+#            low = tmp
+#            self.assertTrue(low.pk < high.pk)
+#        self.assertTrue(low < high)
+#        self.assertTrue(low <= high)
+#        self.assertFalse(low > high)
+#        self.assertFalse(low >= high)
+#        self.assertFalse(low == high)
+
 
 class PathTest(TestCase):
     def test_paths_bystructure(self):
@@ -49,9 +95,9 @@ class PathTest(TestCase):
         self.assertEqual(len(Structure.objects.all()), 2)
         self.assertEqual(len(Path.objects.all()), 2)
 
-        self.assertEqual(Path.in_structure.byUser(user)[0], Path.forUser(user)[0])
-        self.assertTrue(p1 in Path.in_structure.byUser(user))
-        self.assertFalse(p2 in Path.in_structure.byUser(user))
+        self.assertEqual(Path.in_structure.for_user(user)[0], Path.for_user(user)[0])
+        self.assertTrue(p1 in Path.in_structure.for_user(user))
+        self.assertFalse(p2 in Path.in_structure.for_user(user))
 
         # Change user structure on-the-fly
         profile = user.profile
@@ -59,8 +105,8 @@ class PathTest(TestCase):
         profile.save()
 
         self.assertEqual(user.profile.structure.name, "other")
-        self.assertFalse(p1 in Path.in_structure.byUser(user))
-        self.assertTrue(p2 in Path.in_structure.byUser(user))
+        self.assertFalse(p1 in Path.in_structure.for_user(user))
+        self.assertTrue(p2 in Path.in_structure.for_user(user))
 
     def test_dates(self):
         t1 = dbnow()
@@ -171,6 +217,49 @@ class PathTest(TestCase):
         self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
 
+    def test_helpers(self):
+        p = PathFactory.create()
+
+        self.assertEquals(len(p.interventions), 0)
+        self.assertEquals(len(p.projects), 0)
+        self.assertEquals(len(p.lands), 0)
+        self.assertEquals(len(p.signages), 0)
+        self.assertEquals(len(p.infrastructures), 0)
+
+        sign = SignageFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=sign, path=p,
+                                      start_position=0.5, end_position=0.5)
+
+        self.assertItemsEqual(p.signages, [sign])
+
+        infra = InfrastructureFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=infra, path=p)
+
+        self.assertItemsEqual(p.infrastructures, [infra])
+
+        i1 = InterventionFactory.create()
+        i1.set_infrastructure(sign)
+        i1.save()
+
+        self.assertItemsEqual(p.interventions, [i1])
+
+        i2 = InterventionFactory.create()
+        i2.set_infrastructure(infra)
+        i2.save()
+
+        self.assertItemsEqual(p.interventions, [i1, i2])
+
+        proj = ProjectFactory.create()
+        proj.intervention_set.add(i1)
+        proj.intervention_set.add(i2)
+
+        self.assertItemsEqual(p.projects, [proj])
+
+        l = LandEdgeFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=l, path=p)
+
+        self.assertItemsEqual(p.lands, [l])
+
 
 class TopologyMixinTest(TestCase):
     def test_dates(self):
@@ -190,7 +279,7 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(e.length, 0)
         e.save()
         self.assertEqual(e.length, 0)
-        p = PathAggregationFactory.create(topo_object=e)
+        PathAggregationFactory.create(topo_object=e)
         e.save()
         self.assertNotEqual(e.length, 0)
 
@@ -237,7 +326,6 @@ class TopologyMixinTest(TestCase):
         # This path as been created automatically
         # as we will check only basic json serialization property
         path = t.paths.all()[0]
-        kind = t.kind.kind
 
         # Reload as the geom of the topology will be build by trigger
         t.reload()
@@ -252,8 +340,8 @@ class TopologyMixinTest(TestCase):
 
         test_objdict = dict(kind=t.kind.kind,
                        offset=1,
-                       start=0.0,
-                       end=1.0,
+                       # 0 referencing the index in paths of the only created path
+                       positions={'0': [0.0, 1.0]},
                        paths=[ path.pk ],
                        start_point=dict(lng=start_point.x, lat=start_point.y),
                        end_point=dict(lng=end_point.x, lat=end_point.y),
@@ -275,7 +363,7 @@ class TopologyMixinTest(TestCase):
 
     def test_deserialize(self):
         path = PathFactory.create()
-        topology = TopologyMixin.deserialize('{"paths": [%s], "start": 0.0, "end": 1.0, "offset": 1}' % (path.pk))
+        topology = TopologyMixin.deserialize('{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}' % (path.pk))
         self.assertEqual(topology.offset, 1)
         self.assertEqual(topology.kind, TopologyMixin.get_kind())
         self.assertEqual(len(topology.paths.all()), 1)
@@ -288,11 +376,12 @@ class TopologyMixinTest(TestCase):
         p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
         p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
         pks = [p.pk for p in [p1,p2,p3]]
-        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.0, "end": 1.0, "offset": 1}' % (pks))
+        topology = TopologyMixin.deserialize('{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}' % (pks))
         for i in range(3):
             self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
             self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
-        topology = TopologyMixin.deserialize('{"paths": %s, "start": 0.3, "end": 0.7, "offset": 1}' % (pks))
+
+        topology = TopologyMixin.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % (pks))
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
         self.assertEqual(topology.aggregations.all()[1].start_position, 0.0)
