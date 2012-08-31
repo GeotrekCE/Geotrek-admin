@@ -89,7 +89,11 @@ defaultstructure = PNE
 # EPSG code of the coordinate system to use
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
-spatial_extent = (898000, 6360000, 1013000, 6476000)
+spatial_extent = 700000, 6325197, 1060000, 6617738
+# (minx, miny, maxx, maxy) expressed in WGS84
+spatial_extent_wgs84 = 5.0, 43.8, 7.5, 45.8
+# Resolution at zoomlevel 0
+max_resolution = 1142.7383
 _EOF_
     fi
     # Prompt user to edit/review settings
