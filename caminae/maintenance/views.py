@@ -83,6 +83,10 @@ class InterventionDelete(MapEntityDelete):
 class ProjectLayer(MapEntityLayer):
     model = Project
 
+    def get_queryset(self):
+        nonemptyqs = Intervention.objects.filter(project__isnull=False).values('project')
+        return super(ProjectLayer, self).get_queryset().filter(pk__in=nonemptyqs)
+
 
 class ProjectList(MapEntityList):
     model = Project
