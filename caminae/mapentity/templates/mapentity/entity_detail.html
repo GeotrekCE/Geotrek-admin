@@ -30,7 +30,11 @@
 
     <div class="map-panel span5">
         {% block mappanel %}
-        {{ object|fieldmap:"geom" }}
+        {% if object.geom %}
+            {{ object|fieldmap:"geom" }}
+        {% else %}
+            {% trans "No map available for this object." %}
+        {% endif %}
         {% endblock mappanel %}
     </div><!-- span5 -->
 
