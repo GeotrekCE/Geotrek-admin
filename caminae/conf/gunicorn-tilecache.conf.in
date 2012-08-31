@@ -1,0 +1,5 @@
+bind = "${options.bind}"
+pidfile = "${options.pidfile}"
+workers = ${options.workers}
+errorlog = "${options.errorlog}"
+debug = False
