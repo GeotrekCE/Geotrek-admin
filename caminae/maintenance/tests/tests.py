@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.utils import simplejson
+
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.models import default_structure
 from caminae.authent.factories import PathManagerFactory
@@ -41,6 +43,21 @@ class InterventionViewsTest(MapEntityTest):
             'material_cost': 0.0,
             'topology': '{"paths": [%s]}' % path.pk,
         }
+
+    def test_project_layer(self):
+        p1 = ProjectFactory.create()
+        ProjectFactory.create()
+        InterventionFactory.create(project=p1)
+        
+        # Check that only p1 is in geojson
+        response = self.client.get(self.model.get_layer_url())
+        self.assertEqual(response.status_code, 200)
+        geojson = simplejson.loads(response.content)
+        features = geojson['features']
+        
+        self.assertEqual(len(Project.objects.all()), 2)
+        self.assertEqual(len(features), 1)
+        self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
 
 class ProjectViewsTest(MapEntityTest):
