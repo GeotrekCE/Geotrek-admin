@@ -903,3 +903,16 @@ du formulaire fonctionne bien.
 ------------------------------------------------------------------------------------------------------------------
 
 Fixé.
+
+
+#164 - [BUG] Saisie topologie - les tronçons ne correspondent pas au trajet le plus court
+-----------------------------------------------------------------------------------------
+
+Corrigé.
+
+
+#171 - [BUG] Saisie topologie - sélection multitronçon sur un même tronçon ne fonctionne que dans un sens
+---------------------------------------------------------------------------------------------------------
+
+Corrigé.
+
