@@ -24,10 +24,16 @@ Soon...
 ==========
 
 * Split and simplify formfield.js
-* Make mapentity generic : no notion of Caminae (move templates to common/)
+
+* Release Leaflet.measure
+
+* Make application optional (ex: remove dependancies from core)
+
+* Make mapentity generic : no notion of Caminae (move templates to common/, move attachments)
+* Split django-mapentity
+
 * Put bbox only once (4326 = human readable, usual form, cf. docs écrins)
 
-* Split django-mapentity
 * Split django-floppyforms-leaflet
 
 * Django model translations : default language to avoid excluding form fields ? Auto-add all fields
