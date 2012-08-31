@@ -836,3 +836,27 @@ Par exemple: description, description_fr, description_it, description_en
 Lorsque l'utilisateur qui saisit est italien, c'est la valeur de ``description_it`` qui sera stockée
 dans le champ ``description`` en base.
 
+
+#51 - Attacher des fichiers à un objet
+--------------------------------------
+
+Je peux attacher des documents à n'importe quelle entité ou à un projet :
+
+* Lors de la création d'une entité, l'ajout de document n'est pas possible
+
+* La vue d'édition d'une entité contient un formulaire pour ajouter un nouveau document à la fois.
+  À l'ajout valide d'un document, je suis redirigé sur la même page (page d'édition de l'entité).
+
+* La vue d'édition d'une entité liste les documents liés existants et un bouton
+  permettant de supprimer chaque document.
+  Lors d'un clic sur un de ces boutons, une demande de confirmation de
+  suppression m'est demandée qui poursuit ou annule l'action.
+  Lors d'une suppression confirmée, je suis redirigé sur la même page (page
+  d'édition de l'entité).
+
+* La vue de détail d'une entité liste les documents liés et un lien
+  permettant de télécharger chaque document.
+
+* La modification d'un document est pour le moment impossible (il faut
+  supprimer/recréer le document).
+
