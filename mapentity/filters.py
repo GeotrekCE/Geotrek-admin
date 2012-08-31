@@ -19,7 +19,10 @@ class PythonPolygonFilter(PolygonFilter):
         filtered = []
         for o in qs.all():
             geom = getattr(o, self.name)
-            if geom and geom.intersects(value):
+            if geom:
+                if geom.intersects(value):
+                    filtered.append(o.pk)
+            else:
                 filtered.append(o.pk)
         return qs.filter(pk__in=filtered)
 
