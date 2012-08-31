@@ -38,8 +38,8 @@ def add_attachment(request, app_label, module_name, pk,
         return HttpResponseRedirect(next_url)
     else:
         template_context = {
-            'form': form,
-            'form_url': add_url_for_obj(obj),
+            'attachment_form': form,
+            'attachment_form_url': add_url_for_obj(obj),
             'next': next_url,
         }
         template_context.update(extra_context)

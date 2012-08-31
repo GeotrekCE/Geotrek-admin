@@ -1,5 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from django.test import TestCase
+from django.test.testcases import to_list
+
+from caminae.mapentity.forms import MapEntityForm
 
 
 class MapEntityTest(TestCase):
@@ -60,11 +63,24 @@ class MapEntityTest(TestCase):
             bad_data, form_error = self.get_bad_data()
             response = self.client.post(url, bad_data)
             self.assertEqual(response.status_code, 200)
-            self.assertFormError(response, 'form', bad_data.keys()[0], form_error)
+
+            form = None
+            for c in response.context:
+                _form = c.get('form')
+                if _form and isinstance(_form, MapEntityForm):
+                    form = _form
+                    break
+
+            if not form:
+                self.fail(u'Could not find form')
+
+            fields_errors = form.errors[bad_data.keys()[0]]
+            for err in to_list(form_error):
+                self.assertTrue(err in fields_errors)
 
             response = self.client.post(url, self.get_good_data())
             if response.status_code != 302:
-                self.assertEqual(response.context['form'].errors, [])  # this will show form errors
+                self.assertEqual(form.errors, [])  # this will show form errors
                 
             self.assertEqual(response.status_code, 302)  # success, redirects to detail view
 

@@ -1,18 +1,18 @@
 {% load i18n crispy_forms_tags %}
 
-{% if form %}
+{% if attachment_form %}
 <form method="post" enctype="multipart/form-data"
-      action="{{ form_url }}" class="add-attachment form-horizontal">
+      action="{{ attachment_form_url }}" class="add-attachment form-horizontal">
 
     <input type="hidden" name="next" value="{{ next }}"/>
 
-    {% crispy form %}
+    {% crispy attachment_form %}
 </form>
 
 <script>
 $(function() {
 
-    var form = $('form[action="{{ form_url }}"]');
+    var form = $('form[action="{{ attachment_form_url }}"]');
     var validate_url = '{% url ajax_validate_attachment %}';
     var is_form_valid = false;
 
