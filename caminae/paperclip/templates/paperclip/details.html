@@ -22,7 +22,7 @@
             <td>
                 <a href="{{ att.attachment_file.url }}">
                     {% if att.is_image %}
-                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.pk }}">
+                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}">
                     {% else %}
                         <img src="{% get_static_prefix %}paperclip/fileicons/{{ att.mimetype.1 }}.png"/>&nbsp;{{ att.title|default:att.filename }}
                     {% endif %}
