@@ -812,6 +812,7 @@ qui disparait lors de la saisie. Cela permet d'économiser de l'espace à l'écr
 Si le chargement de la couche vectorielle échoue, alors la carte apparaît
 en rouge, et un message est ajouté dans la console du navigateur.
 
+
 #78 - Mesurer une distance sur la carte
 ---------------------------------------
 
@@ -868,3 +869,16 @@ Dans la liste des fichiers attachés, un aperçu est disponible pour tous les
 fichiers attachés de type image.
 
 Pour les autres, le nom de fichier est présenté avec un icône selon son type.
+
+
+#112 - Tuiler les fonds PNE en L93
+----------------------------------
+
+* TileCache est servi par gunicorn/nginx
+
+* Supervisor lance le process
+
+* La conf Tilecache est construite automatiquement a partir des
+  valeurs du settings.ini
+
+* La conf des couches Django est construite automatiquement.
