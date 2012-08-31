@@ -27,6 +27,8 @@ setup(
         'django-floppyforms == 1.0',
         'django-crispy-forms == 1.1.4',
         'django-compressor == 1.2',
+        'Pillow == 1.7.7',
+        'easy-thumbnails == 1.1',
         'django-leaflet',   # pinned by buildout
         'django-geojson',   # pinned by buildout
         'django-filter',   # pinned by buildout

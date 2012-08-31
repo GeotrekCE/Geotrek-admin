@@ -1,4 +1,4 @@
-{% load i18n field_verbose_name attachments_tags %}
+{% load i18n field_verbose_name attachments_tags thumbnail %}
 
 {% get_attachments_for object as "attachments_list" %}
 
@@ -19,7 +19,7 @@
         <tbody>
         {% for att in attachments_list %}
         <tr>
-            <td><a href="{{ att.attachment_file.url }}">{{ att.title|default:att.pk }}</a></td>
+            <td><a href="{{ att.attachment_file.url }}"><img src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt=""><br/>{{ att.title|default:att.pk }}</a></td>
             <td>{{ att.legend }}</td>
             <td>{{ att.creator }}</td>
             <td>{{ att.date_insert }}</td>

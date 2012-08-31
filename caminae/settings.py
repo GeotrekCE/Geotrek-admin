@@ -190,6 +190,7 @@ PROJECT_APPS = (
     'compressor',
     'djgeojson',
     'tinymce',
+    'easy_thumbnails',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -255,6 +256,13 @@ LOGGING = {
         },
     }
 }
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'thumbnail': {'size': (50, 50), 'crop': True},
+    },
+}
+
 
 TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None
