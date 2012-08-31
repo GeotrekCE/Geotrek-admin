@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-23 16:25+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,46 +18,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: forms.py:19
-msgid "Cancel"
-msgstr "Annuler"
+#: tests.py:14
+msgid "Topology is not valid."
+msgstr "La topologie n'est pas valide."
 
-#: forms.py:20
-msgid "Save changes"
-msgstr "Sauvegarder"
-
-#: views.py:169
+#: views.py:170
 #, python-format
 msgid "Add a new %s"
 msgstr "Ajouter un nouveau %s"
 
-#: views.py:177
+#: views.py:183
 msgid "Created"
 msgstr "Créé"
 
-#: views.py:181 views.py:208
+#: views.py:187 views.py:219
 msgid "Your form contains errors"
 msgstr "Le formulaire contient des erreurs"
 
-#: views.py:196
+#: views.py:202
 #, python-format
 msgid "Edit %s"
 msgstr "Éditer %s"
 
-#: views.py:204
+#: views.py:215
 msgid "Saved"
 msgstr "Sauvegardé"
 
-#: templates/mapentity/entity_confirm_delete.html:17
+#: templates/mapentity/entity_confirm_delete.html:18
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
 msgstr "Voulez-vous vraiment supprimer <strong>%(object)s</strong> ?"
 
-#: templates/mapentity/entity_confirm_delete.html:21
+#: templates/mapentity/entity_confirm_delete.html:22
 msgid "Yes, delete"
 msgstr "Oui, supprimer"
 
-#: templates/mapentity/entity_confirm_delete.html:22
+#: templates/mapentity/entity_confirm_delete.html:23
 msgid "No, back to edit view"
 msgstr "Non, retour à la vue d'édition"
 
@@ -65,14 +61,37 @@ msgstr "Non, retour à la vue d'édition"
 msgid "Update"
 msgstr "Éditer"
 
-#: templates/mapentity/entity_form.html:15
+#: templates/mapentity/entity_detail.html:22
+#: templates/mapentity/entity_form.html:27
+msgid "Attached files"
+msgstr "Fichiers liés"
+
+#: templates/mapentity/entity_detail.html:36
+msgid "No map available for this object."
+msgstr "Pas de carte disponible pour cet objet."
+
+#: templates/mapentity/entity_form.html:16
 msgid "Delete"
 msgstr "Supprimer"
 
-#: templates/mapentity/entity_list.html:19
+#: templates/mapentity/entity_form.html:29
+msgid "New file attachment"
+msgstr "Nouveau fichier lié"
+
+#: templates/mapentity/entity_form.html:34
+msgid "Existing file attachment"
+msgstr "Fichiers liés existant"
+
+#: templates/mapentity/entity_list.html:14
 msgid "Filter"
 msgstr "Filtrer"
 
-#: templates/mapentity/entity_list.html:109
+#: templates/mapentity/entity_list.html:106
 msgid "Paths"
 msgstr "Tronçons"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Save changes"
+#~ msgstr "Sauvegarder"

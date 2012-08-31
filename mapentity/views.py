@@ -152,6 +152,7 @@ class MapEntityDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
         context['can_edit'] = self.can_edit()
+        context['can_delete_attachment'] = self.can_edit()
         return context
 
 
@@ -172,6 +173,11 @@ class MapEntityCreate(CreateView):
     @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(MapEntityCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         messages.success(self.request, _("Created"))
@@ -200,6 +206,11 @@ class MapEntityUpdate(UpdateView):
     def dispatch(self, *args, **kwargs):
         return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(MapEntityUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         messages.success(self.request, _("Saved"))
         return super(MapEntityUpdate, self).form_valid(form)
@@ -214,6 +225,7 @@ class MapEntityUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
         context['title'] = self.get_title()
+        context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
 
 

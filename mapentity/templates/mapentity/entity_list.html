@@ -3,11 +3,6 @@
 
 {% block nav-list %}active{% endblock nav-list %}
 
-{% block extrahead %}
-    {{ block.super }}
-    {% include "dataTables_template.html" %}
-{% endblock extrahead %}
-
 {% block mainmap %}
     {% leaflet_map "mainmap" %}
 {% endblock mainmap %}
@@ -98,6 +93,8 @@
             });
             mainmap.addControl(new L.Control.Information());
             {% endif %}
+
+            mainmap.addControl(new L.Control.Measurement());
             
             // Always show the path layer, except if model is path
             if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {

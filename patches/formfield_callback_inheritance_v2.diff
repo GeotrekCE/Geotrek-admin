@@ -1,0 +1,23 @@
+Index: django/forms/models.py
+===================================================================
+--- django/forms/models.py	(1.4.1)
++++ django/forms/models.py	(working copy)
+@@ -185,7 +185,8 @@
+ 
+ class ModelFormMetaclass(type):
+     def __new__(cls, name, bases, attrs):
+-        formfield_callback = attrs.pop('formfield_callback', None)
++        if 'formfield_callback' in attrs:
++            attrs['formfield_callback'] = staticmethod(attrs['formfield_callback'])
+         try:
+             parents = [b for b in bases if issubclass(b, ModelForm)]
+         except NameError:
+@@ -203,7 +204,7 @@
+         if opts.model:
+             # If a model is defined, extract form fields from it.
+             fields = fields_for_model(opts.model, opts.fields,
+-                                      opts.exclude, opts.widgets, formfield_callback)
++                                      opts.exclude, opts.widgets, getattr(new_class, 'formfield_callback', lambda f: f.formfield()))
+             # make sure opts.fields doesn't specify an invalid field
+             none_model_fields = [k for k, v in fields.iteritems() if not v]
+             missing_fields = set(none_model_fields) - \
