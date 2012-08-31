@@ -2,20 +2,20 @@
 type=Disk
 base=${options.cachedir}
 
-[ign]
+[${options.terrain_layername}]
 type=WMSLayer
-layers=scan100,scan25
-url=http://extranet.parcnational.fr/pnx/wms?
+layers=${options.terrain_layers}
+url=${options.wms_url}
 extension=jpg
 tms_type=google
 srs=EPSG:${options.srid}
 bbox=${options.spatial_extent}
 maxResolution=${options.max_resolution}
 
-[ortho]
+[${options.ortho_layername}]
 type=WMSLayer
-layers=ortho
-url=http://extranet.parcnational.fr/pnx/wms?
+layers=${options.ortho_layers}
+url=${options.wms_url}
 extension=jpg
 tms_type=google
 srs=EPSG:${options.srid}
