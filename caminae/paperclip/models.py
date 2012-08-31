@@ -1,4 +1,5 @@
 import os
+import mimetypes
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -52,3 +53,11 @@ class Attachment(models.Model):
     @property
     def filename(self):
         return os.path.split(self.attachment_file.name)[1]
+
+    @property
+    def mimetype(self):
+        return mimetypes.guess_type(self.attachment_file.name, strict=True)[0].split('/')
+
+    @property
+    def is_image(self):
+        return self.mimetype[0].startswith('image')

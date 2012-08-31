@@ -259,7 +259,7 @@ LOGGING = {
 
 THUMBNAIL_ALIASES = {
     '': {
-        'thumbnail': {'size': (50, 50), 'crop': True},
+        'thumbnail': {'size': (150, 150)},
     },
 }
 
