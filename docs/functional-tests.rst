@@ -899,3 +899,7 @@ Attention, le nom affiché dans la liste est construit à partir de la
 clé primaire uniquement quand le nom est vide. En saisissant un nom, le champ
 du formulaire fonctionne bien. 
 
+#190 - [BUG] Lors de l’édition d’un tronçon, les valeurs choisies pour USAGES et RESEAUX ne sont pas enregistrées.
+------------------------------------------------------------------------------------------------------------------
+
+Fixé.

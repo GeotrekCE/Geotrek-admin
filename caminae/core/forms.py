@@ -78,6 +78,7 @@ class PathForm(CommonForm):
 
         if commit:
             path.save()
+            self.save_m2m()
 
         return path
 
