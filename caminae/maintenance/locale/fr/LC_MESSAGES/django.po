@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 19:34+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,216 +17,265 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:15
+#: models.py:14
 msgid "Whether the intervention is currently happening"
 msgstr "En maintenance"
 
-#: models.py:16 models.py:170
+#: models.py:15 models.py:205
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:17
+#: models.py:16
 msgid "Date"
 msgstr "Date"
 
-#: models.py:18 models.py:175
+#: models.py:17 models.py:210
 msgid "Comments"
 msgstr "Commentaires"
 
-#: models.py:21
+#: models.py:20
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:22
+#: models.py:21
 msgid "Width"
 msgstr "Largeur"
 
-#: models.py:23
+#: models.py:22
 msgid "Height"
 msgstr "Hauteur"
 
-#: models.py:24
+#: models.py:23
 msgid "Area"
 msgstr "Surface"
 
-#: models.py:25
+#: models.py:24
 msgid "Slope"
 msgstr "Pente"
 
-#: models.py:28
+#: models.py:27
 msgid "Material cost"
 msgstr "Coût matériel"
 
-#: models.py:29
+#: models.py:28
 msgid "Heliport cost"
 msgstr "Coût héliportage"
 
-#: models.py:30
+#: models.py:29
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-#: models.py:33 models.py:177
+#: models.py:32 models.py:212
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:34 models.py:178
+#: models.py:33 models.py:213
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:35 models.py:179 models.py:210
+#: models.py:34 models.py:214 models.py:270
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:40 models.py:95
+#: models.py:39 models.py:61
 msgid "Interventions"
 msgstr "Interventions"
 
-#: models.py:43
+#: models.py:42
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:45
+#: models.py:44
 msgid "Intervention status"
 msgstr "Suivi"
 
-#: models.py:48
+#: models.py:47
 msgid "Intervention type"
 msgstr "Type d'intervention"
 
-#: models.py:51
+#: models.py:50
 msgid "Disorders"
 msgstr "Désordres"
 
-#: models.py:54
+#: models.py:53
 msgid "Jobs"
 msgstr "Fonctions"
 
-#: models.py:57 models.py:196
+#: models.py:56 models.py:231
 msgid "Project"
 msgstr "Chantier"
 
-#: models.py:94
+#: models.py:60
 msgid "Intervention"
 msgstr "Intervention"
 
-#: models.py:103
+#: models.py:137
 msgid "Status"
 msgstr "Suivi"
 
-#: models.py:107
+#: models.py:141
 msgid "Intervention's status"
 msgstr "Suivi"
 
-#: models.py:108
+#: models.py:142
 msgid "Intervention's statuses"
 msgstr "Suivis"
 
-#: models.py:116
+#: models.py:151
 msgid "Type"
 msgstr ""
 
-#: models.py:120
+#: models.py:155
 msgid "Intervention's type"
 msgstr "Type d'intervention"
 
-#: models.py:121
+#: models.py:156
 msgid "Intervention's types"
 msgstr "Types d'intervention"
 
-#: models.py:129
+#: models.py:164
 msgid "Disorder"
 msgstr "Désordre"
 
-#: models.py:133
+#: models.py:168
 msgid "Intervention's disorder"
 msgstr "Désordre"
 
-#: models.py:134
+#: models.py:169
 msgid "Intervention's disorders"
 msgstr "Désordres"
 
-#: models.py:142
+#: models.py:177
 msgid "Job"
 msgstr "Fonction"
 
-#: models.py:146
+#: models.py:181
 msgid "Intervention's job"
 msgstr "Fonction"
 
-#: models.py:147
+#: models.py:182
 msgid "Intervention's jobs"
 msgstr "Fonctions"
 
-#: models.py:155 models.py:162
+#: models.py:190 models.py:197
 msgid "Mandays"
 msgstr "Jours-Homme"
 
-#: models.py:161
+#: models.py:196
 msgid "Manday"
 msgstr "Jour-Homme"
 
-#: models.py:171
+#: models.py:206
 msgid "Begin year"
 msgstr "Année de début"
 
-#: models.py:172
+#: models.py:207
 msgid "End year"
 msgstr "Année de fin"
 
-#: models.py:173
+#: models.py:208
 msgid "Constraint"
 msgstr "Contraintes"
 
-#: models.py:174
+#: models.py:209
 msgid "Cost"
 msgstr "Coût"
 
-#: models.py:183 models.py:221
+#: models.py:218 models.py:281
 msgid "Contractors"
 msgstr "Prestataires"
 
-#: models.py:186
+#: models.py:221
 msgid "Project owner"
 msgstr "Maître d'ouvrage"
 
-#: models.py:189
+#: models.py:224
 msgid "Project manager"
 msgstr "Maître d'oeuvre"
 
-#: models.py:192
+#: models.py:227
 msgid "Founders"
 msgstr "Financeurs"
 
-#: models.py:197
+#: models.py:232
 msgid "Projects"
 msgstr "Chantiers"
 
-#: models.py:216 models.py:220
+#: models.py:276 models.py:280
 msgid "Contractor"
 msgstr "Prestataire"
 
-#: models.py:229
+#: models.py:289
 msgid "Amount"
 msgstr "Montant"
 
-#: models.py:235
+#: models.py:295
 msgid "Funding"
 msgstr "Financement"
 
-#: models.py:236
+#: models.py:296
 msgid "Fundings"
 msgstr "Financements"
+
+#: templates/maintenance/intervention_detail.html:13
+#: templates/maintenance/project_detail.html:13
+msgid "Management"
+msgstr "Gestion"
+
+#: templates/maintenance/intervention_detail.html:16
+#: templates/maintenance/project_detail.html:16
+msgid "Paths"
+msgstr "Tronçons"
+
+#: templates/maintenance/intervention_detail.html:23
+#: templates/maintenance/project_detail.html:23
+#: templates/maintenance/project_detail.html:34
+#: templates/maintenance/project_detail.html:45
+msgid "None"
+msgstr "Aucun"
+
+#: templates/maintenance/intervention_detail.html:27
+msgid "In a project?"
+msgstr "Dans un chantier?"
+
+#: templates/maintenance/intervention_detail.html:28
+#: templates/maintenance/intervention_detail.html:31
+#: templates/maintenance/intervention_detail.html:34
+msgid "Yes"
+msgstr "Oui"
+
+#: templates/maintenance/intervention_detail.html:28
+#: templates/maintenance/intervention_detail.html:31
+#: templates/maintenance/intervention_detail.html:34
+msgid "No"
+msgstr "Non"
+
+#: templates/maintenance/intervention_detail.html:30
+msgid "On an infrastructure?"
+msgstr "Sur un aménagement?"
+
+#: templates/maintenance/intervention_detail.html:33
+msgid "On a signage?"
+msgstr "Sur une signalétique?"
 
 #: templates/maintenance/intervention_list.html:7
 msgid "Request intervention"
 msgstr "Demander une intervention"
 
-msgid "Add a new intervention"
-msgstr "Ajouter une nouvelle intervention"
+#: templates/maintenance/project_detail.html:27
+msgid "Infrastructures"
+msgstr "Aménagements"
+
+#: templates/maintenance/project_detail.html:38
+msgid "Signages"
+msgstr "Signalétiques"
 
 #: templates/maintenance/project_list.html:7
 msgid "Add project"
 msgstr "Ajouter un chantier"
 
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
+#~ msgid "Add a new intervention"
+#~ msgstr "Ajouter une nouvelle intervention"
+
+#~ msgid "Add a new project"
+#~ msgstr "Ajouter un chantier"

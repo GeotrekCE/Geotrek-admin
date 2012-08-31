@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 19:34+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: filters.py:14
+#, python-format
+msgid "min %s"
+msgstr "min %s"
+
+#: filters.py:15
+#, python-format
+msgid "max %s"
+msgstr "max %s"
+
+#: forms.py:21
+msgid "Cancel"
+msgstr "Annuler"
+
+#: forms.py:22
+msgid "Save changes"
+msgstr "Sauvegarder"
 
 #: models.py:10 models.py:14
 msgid "Organism"

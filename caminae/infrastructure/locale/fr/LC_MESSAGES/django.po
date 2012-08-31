@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-23 16:25+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,19 +30,20 @@ msgstr "Équipement"
 msgid "Signage"
 msgstr "Signalétique"
 
-#: models.py:27
+#: models.py:48
 msgid "Infrastructure Type"
 msgstr "Type d'aménagement"
 
-#: models.py:28
+#: models.py:49
 msgid "Infrastructure Types"
 msgstr "Types d'aménagement"
 
-#: models.py:45 models.py:46
+#: models.py:66 models.py:67
 msgid "Infrastructure"
 msgstr "Aménagement"
 
 #: templates/infrastructure/baseinfrastructure_detail.html:12
+#: templates/infrastructure/baseinfrastructure_detail.html:34
 msgid "Interventions"
 msgstr "Interventions"
 
@@ -50,16 +51,29 @@ msgstr "Interventions"
 msgid "Add intervention"
 msgstr "Ajouter une intervention"
 
+#: templates/infrastructure/baseinfrastructure_detail.html:20
+msgid "Management"
+msgstr "Gestion"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:23
+msgid "Paths"
+msgstr "Tronçons"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:30
+#: templates/infrastructure/baseinfrastructure_detail.html:41
+msgid "None"
+msgstr "Aucun"
+
 #: templates/infrastructure/infrastructure_list.html:7
 msgid "Add infrastructure"
-msgstr "Ajouter un aménagement"
-
-msgid "Add a new infrastructure"
 msgstr "Ajouter un aménagement"
 
 #: templates/infrastructure/signage_list.html:7
 msgid "Add signage"
 msgstr "Ajouter une signalétique"
 
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"
+#~ msgid "Add a new infrastructure"
+#~ msgstr "Ajouter un aménagement"
+
+#~ msgid "Add a new signage"
+#~ msgstr "Ajouter une signalétique"

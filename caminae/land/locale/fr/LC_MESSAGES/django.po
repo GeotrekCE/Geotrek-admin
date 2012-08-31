@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 19:34+0200\n"
+"POT-Creation-Date: 2012-08-31 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:14 models.py:39 models.py:100 models.py:126 models.py:151
+#: models.py:14 models.py:46 models.py:135 models.py:167 models.py:198
 msgid "Name"
 msgstr "Nom"
 
@@ -30,146 +30,145 @@ msgstr "Type physique"
 msgid "Physical types"
 msgstr "Types physique"
 
-#: models.py:32
+#: models.py:35
 msgid "Physical edge"
 msgstr "Tronçon physique"
 
-#: models.py:33
+#: models.py:36
 msgid "Physical edges"
 msgstr "Tronçons physique"
 
-#: models.py:40
+#: models.py:47
 msgid "Right of way"
 msgstr "Droit de passage"
 
-#: models.py:44 models.py:54
+#: models.py:51 models.py:61
 msgid "Land type"
 msgstr "Type foncier"
 
-#: models.py:45
+#: models.py:52
 msgid "Land types"
 msgstr "Types foncier"
 
-#: models.py:58
+#: models.py:68
 msgid "Land edge"
 msgstr "Tronçon foncier"
 
-#: models.py:59
+#: models.py:69
 msgid "Land edges"
 msgstr "Tronçon foncier"
 
-#: models.py:67 models.py:78 models.py:89
+#: models.py:81 models.py:99 models.py:117
 msgid "Organism"
 msgstr "Organisme"
 
-#: models.py:71
+#: models.py:88
 msgid "Competence edge"
 msgstr "Tronçon de compétence"
 
-#: models.py:72
+#: models.py:89
 msgid "Competence edges"
 msgstr "Tronçons de compétence"
 
-#: models.py:82
+#: models.py:106
 msgid "Work management edge"
 msgstr "Tronçon de gestion de travaux"
 
-#: models.py:83
+#: models.py:107
 msgid "Work management edges"
 msgstr "Tronçons de gestion de travaux"
 
-#: models.py:93
+#: models.py:124
 msgid "Signage management edge"
 msgstr "Tronçon de gestion signalétique"
 
-#: models.py:94
+#: models.py:125
 msgid "Signage management edges"
 msgstr "Tronçons de gestion signalétique"
 
-#: models.py:101
+#: models.py:136
 msgid "Order"
 msgstr "Ordre"
 
-#: models.py:106 models.py:116
+#: models.py:144 models.py:154
 msgid "Restricted area"
 msgstr "Zonage réglementaire"
 
-#: models.py:107
+#: models.py:145
 msgid "Restricted areas"
 msgstr "Zonage réglementaire"
 
-#: models.py:120
+#: models.py:161
 msgid "Restricted area edge"
 msgstr "Tronçon de zonage réglementaire"
 
-#: models.py:121
+#: models.py:162
 msgid "Restricted area edges"
 msgstr "Tronçons de zonage réglementaire"
 
-#: models.py:131 models.py:142
+#: models.py:175 models.py:186
 msgid "City"
 msgstr "Commune"
 
-#: models.py:132
+#: models.py:176
 msgid "Cities"
 msgstr "Communes"
 
-#: models.py:146
+#: models.py:193
 msgid "City edge"
 msgstr "Tronçon de commune"
 
-#: models.py:147
+#: models.py:194
 msgid "City edges"
 msgstr "Tronçons de commune"
 
-#: models.py:156 models.py:166
+#: models.py:206 models.py:216
 msgid "District"
 msgstr "Secteur"
 
-#: models.py:157
+#: models.py:207
 msgid "Districts"
 msgstr "Secteurs"
 
-#: models.py:170
+#: models.py:223
 msgid "District edge"
 msgstr "Tronçon de secteur"
 
-#: models.py:171
+#: models.py:224
 msgid "District edges"
 msgstr "Tronçons de secteur"
 
-#: templates/land/competenceedge_list.html:7
+#: templates/land/competenceedge_list.html:8
 msgid "Add competence edge"
 msgstr "Ajouter un tronçon de compétence"
 
-msgid "Add a new competence edge"
-msgstr "Ajouter un tronçon de compétence"
-
-
-#: templates/land/landedge_list.html:7
+#: templates/land/landedge_list.html:8
 msgid "Add land edge"
 msgstr "Ajouter un tronçon foncier"
 
-msgid "Add a new land edge"
-msgstr "Ajouter un tronçon foncier"
-
-#: templates/land/physicaledge_list.html:7
+#: templates/land/physicaledge_list.html:8
 msgid "Add physical edge"
 msgstr "Ajouter un tronçon physique"
 
-msgid "Add a new physical edge"
-msgstr "Ajouter un tronçon physique"
-
-#: templates/land/signagemanagementedge_list.html:7
+#: templates/land/signagemanagementedge_list.html:8
 msgid "Add signage management"
 msgstr "Ajouter un tronçon de gestion signalétique"
 
-msgid "Add a new signage management"
-msgstr "Ajouter un tronçon de gestion signalétique"
-
-#: templates/land/workmanagementedge_list.html:7
-msgid "Add a new work management"
-msgstr "Ajouter un tronçon de gestion de travaux"
-
+#: templates/land/workmanagementedge_list.html:8
 msgid "Add work management"
 msgstr "Ajouter un tronçon de gestion de travaux"
+
+#~ msgid "Add a new competence edge"
+#~ msgstr "Ajouter un tronçon de compétence"
+
+#~ msgid "Add a new land edge"
+#~ msgstr "Ajouter un tronçon foncier"
+
+#~ msgid "Add a new physical edge"
+#~ msgstr "Ajouter un tronçon physique"
+
+#~ msgid "Add a new signage management"
+#~ msgstr "Ajouter un tronçon de gestion signalétique"
+
+#~ msgid "Add a new work management"
+#~ msgstr "Ajouter un tronçon de gestion de travaux"
