@@ -96,12 +96,8 @@ spatial_extent_wgs84 = 5.0, 43.8, 7.5, 45.8
 max_resolution = 1142.7383
 # WMS server url
 wms_url = http://extranet.parcnational.fr/pnx/wms?
-# Tileset name for aerial picture
-ortho_layername = ortho
 # Layers for aerial picture
 ortho_layers = ortho
-# Tileset name for terrain map
-terrain_layername = ign
 # Layers for terrain map
 terrain_layers = scan100,scan25
 _EOF_

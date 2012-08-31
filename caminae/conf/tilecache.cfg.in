@@ -2,7 +2,7 @@
 type=Disk
 base=${options.cachedir}
 
-[${options.terrain_layername}]
+[terrain]
 type=WMSLayer
 layers=${options.terrain_layers}
 url=${options.wms_url}
@@ -12,7 +12,7 @@ srs=EPSG:${options.srid}
 bbox=${options.spatial_extent}
 maxResolution=${options.max_resolution}
 
-[${options.ortho_layername}]
+[ortho]
 type=WMSLayer
 layers=${options.ortho_layers}
 url=${options.wms_url}
