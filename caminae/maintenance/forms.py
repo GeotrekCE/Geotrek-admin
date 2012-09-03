@@ -8,7 +8,7 @@ from caminae.core.fields import TopologyField
 from caminae.core.widgets import TopologyReadonlyWidget
 from caminae.infrastructure.models import BaseInfrastructure
 
-from .models import Intervention, InterventionStatus, Project
+from .models import Intervention, Project
 
 
 class InterventionForm(CommonForm):
@@ -21,8 +21,8 @@ class InterventionForm(CommonForm):
             'name',
             'date',
             'status',
-            'type',
             'disorders',
+            'type',
             Field('comments', css_class='input-xlarge'),
             'in_maintenance',
             'length',

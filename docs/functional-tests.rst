@@ -925,3 +925,9 @@ Sprint 4 - Version 0.4.0
 -------------------------------------------
 
 * Le champ s'appelle désormais 'publié'.
+
+
+#180 - Inverser l'ordre des champs désordres et type dans le formulaire
+-----------------------------------------------------------------------
+
+Fixé.
