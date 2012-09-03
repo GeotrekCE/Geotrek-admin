@@ -940,3 +940,12 @@ Lorsque je suis sur une vue de liste d'entité et que j'ajoute une entité,
 je souhaite que l'état de la carte (zoom, étendue) soit conservé entre ces deux vues.
 
 
+#211 - Évenement type point : trigger modification
+--------------------------------------------------
+
+Ajouter un évènement de type point (un aménagement par exemple) à proximité
+d'une intersection en s'assurant que le snapping relie bien l'évènement à
+l'extrêmité d'un des tronçons.
+
+Aller sur la fiche de détail de l'évènement ainsi créé. La liste des objets liés
+doit montrer tout les tronçons partant ou arrivant à cette intersection.
