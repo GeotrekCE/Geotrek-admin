@@ -26,6 +26,7 @@ class InterventionViewsTest(MapEntityTest):
         path = PathFactory.create()
         return {
             'name': 'test',
+            'date': '2012-08-23',
             'structure': default_structure().pk,
             'stake': '',
             'disorders': InterventionDisorderFactory.create().pk,
