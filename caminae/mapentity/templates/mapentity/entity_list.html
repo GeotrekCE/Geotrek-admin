@@ -32,55 +32,6 @@
     {{ block.super }}
 
     <script type="text/javascript">
-        function saveFullContext(map, datatable) {
-            localStorage.setItem('list-map-view', 
-                                 map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
-            localStorage.setItem('list-filter', $('#mainfilter').serialize());
-            var sortcol = datatable.fnSettings().aaSorting;
-            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
-            // layers shown by name
-            var layers = [];
-            $('form.leaflet-control-layers-list input:checked').each(function () {
-                layers.push($.trim($(this).parent().text()));
-            });
-            localStorage.setItem('list-layers', JSON.stringify(layers));
-        };
-        
-        function restoreFullContext(map, datatable) {
-            var mapView = localStorage.getItem('list-map-view');
-            if (mapView) {
-                mapView = mapView.split(',');
-                map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
-            }
-            var filter = localStorage.getItem('list-filter');
-            if (filter) {
-                $('#mainfilter').deserialize(filter);
-            }
-            var sortcol = localStorage.getItem('list-sortcolumns');
-            if (sortcol) {
-                datatable.fnSort(JSON.parse(sortcol));
-            }
-            // Show layers by their name
-            var layers = localStorage.getItem('list-layers');
-            if (layers) {
-                layers = JSON.parse(layers);
-                layers.push('{{ objectsname }}');
-                $('form.leaflet-control-layers-list input').each(function () {
-                    if ($.trim($(this).parent().text()) != '{{ objectsname }}' ) {
-                        $(this).removeAttr('checked');
-                    }
-                });
-                for(var i=0; i<layers.length; i++) {
-                    var layer = layers[i];
-                    $('form.leaflet-control-layers-list input').each(function () {
-                        if ($.trim($(this).parent().text()) == layer) {
-                            $(this).attr('checked', 'checked');
-                        }
-                    });
-                }
-                map.layerscontrol._onInputClick();
-            }
-        };
 
         function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
@@ -121,9 +72,9 @@
             // init ajax list
             var dt = initAjaxList(mainmap, objectsLayer);
 
-            restoreFullContext(mainmap, dt);
+            MapEntity.Context.restoreFullContext(mainmap, dt, '{{ objectsname }}');
             $(window).unload(function () {
-                saveFullContext(mainmap, dt);
+                MapEntity.Context.saveFullContext(mainmap, dt);
             });
             
             $('#filter').click();
