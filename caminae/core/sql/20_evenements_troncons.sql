@@ -78,7 +78,7 @@ FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 
 
 -------------------------------------------------------------------------------
--- Compute geometry of Evenements
+-- Emulate junction points
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS evenements_troncons_junction_point_iu_tgr ON evenements_troncons;
@@ -87,11 +87,21 @@ CREATE OR REPLACE FUNCTION ft_evenements_troncons_junction_point_iu() RETURNS tr
 DECLARE
     junction geometry;
 BEGIN
-    -- Don't proceed for non-junction points
-    IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
-        RETURN NEW;
+    -- Deal with previously connected paths in the case of an UDPATE action
+    IF TG_OP = 'UPDATE' THEN
+        -- There were connected paths only if it was a junction point
+        IF OLD.pk_debut = OLD.pk_fin AND OLD.pk_debut IN (0.0, 1.0) THEN
+            DELETE FROM evenements_troncons
+            WHERE id != OLD.id AND evenement = OLD.evenement;
+        END IF;
     END IF;
 
+    -- Don't proceed for non-junction points
+    IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
+        RETURN NULL;
+    END IF;
+
+    -- Deal with newly connected paths
     IF NEW.pk_debut = 0.0 THEN
         SELECT ST_StartPoint(geom) INTO junction FROM troncons WHERE id = NEW.troncon;
     ELSIF NEW.pk_debut = 1.0 THEN
@@ -120,5 +130,5 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- required for this case (in order to avoid trigger cascading)
 
 CREATE TRIGGER evenements_troncons_junction_point_iu_tgr
-AFTER INSERT OR UPDATE ON evenements_troncons
+AFTER INSERT OR UPDATE OF pk_debut, pk_fin ON evenements_troncons
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_junction_point_iu();
