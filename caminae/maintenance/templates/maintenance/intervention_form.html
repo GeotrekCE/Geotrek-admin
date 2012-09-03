@@ -1,1 +1,8 @@
 {% extends "mapentity/entity_form.html" %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('#id_date').datepicker({format: '{{ DATE_INPUT_FORMAT_JS }}'});
+    </script>
+{% endblock extrabody %}
