@@ -24,7 +24,6 @@ AFTER DELETE ON evenements_troncons
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
 
 
-
 -------------------------------------------------------------------------------
 -- Evenements utilities
 -------------------------------------------------------------------------------
@@ -39,6 +38,7 @@ BEGIN
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -------------------------------------------------------------------------------
 -- Compute geometry of Evenements
@@ -75,3 +75,50 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER evenements_troncons_geometry_tgr
 AFTER INSERT OR UPDATE OR DELETE ON evenements_troncons
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
+
+
+-------------------------------------------------------------------------------
+-- Compute geometry of Evenements
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS evenements_troncons_junction_point_iu_tgr ON evenements_troncons;
+
+CREATE OR REPLACE FUNCTION ft_evenements_troncons_junction_point_iu() RETURNS trigger AS $$
+DECLARE
+    junction geometry;
+BEGIN
+    -- Don't proceed for non-junction points
+    IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.pk_debut = 0.0 THEN
+        SELECT ST_StartPoint(geom) INTO junction FROM troncons WHERE id = NEW.troncon;
+    ELSIF NEW.pk_debut = 1.0 THEN
+        SELECT ST_EndPoint(geom) INTO junction FROM troncons WHERE id = NEW.troncon;
+    END IF;
+
+    INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+    SELECT id, NEW.evenement, 0.0, 0.0 -- Troncon departing from this junction
+    FROM troncons t
+    WHERE id != NEW.troncon AND ST_StartPoint(geom) = junction AND NOT EXISTS (
+        -- prevent trigger recursion
+        SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement
+    )
+    UNION
+    SELECT id, NEW.evenement, 1.0, 1.0-- Troncon arriving at this junction
+    FROM troncons t
+    WHERE id != NEW.troncon AND ST_EndPoint(geom) = junction AND NOT EXISTS (
+        -- prevent trigger recursion
+        SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement
+    );
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+-- VOLATILE is the default but I prefer to set it explicitly because it is
+-- required for this case (in order to avoid trigger cascading)
+
+CREATE TRIGGER evenements_troncons_junction_point_iu_tgr
+AFTER INSERT OR UPDATE ON evenements_troncons
+FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_junction_point_iu();

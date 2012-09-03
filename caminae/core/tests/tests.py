@@ -423,6 +423,19 @@ class TopologyMixinTest(TestCase):
         self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
                                     after.aggregations.all()[0].end_position))
 
+    def test_junction_point(self):
+        p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
+        p2 = PathFactory.create(geom=LineString((0,0,0), (2,0,0)))
+        p3 = PathFactory.create(geom=LineString((0,2,2), (0,0,0)))
+
+        t = TopologyMixinFactory.create(no_path=True)
+        self.assertEqual(len(t.paths.all()), 0)
+
+        PathAggregationFactory.create(topo_object=t, path=p1,
+                                      start_position=0.0, end_position=0.0)
+
+        self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
+
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
         p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
