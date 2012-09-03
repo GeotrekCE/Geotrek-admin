@@ -931,3 +931,12 @@ Sprint 4 - Version 0.4.0
 -----------------------------------------------------------------------
 
 Fixé.
+
+
+#184 - Conserver l'étendue de la carte recherche lors de l'ajout
+----------------------------------------------------------------
+
+Lorsque je suis sur une vue de liste d'entité et que j'ajoute une entité,
+je souhaite que l'état de la carte (zoom, étendue) soit conservé entre ces deux vues.
+
+
