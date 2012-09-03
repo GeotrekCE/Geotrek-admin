@@ -79,9 +79,15 @@ FormField.makeModule = function(module, module_settings) {
     };
 
 
-    module.addObjectsLayer = function(map, modelname) {
+    // Returns the pk of the mapentity object if it exists
+    // FIXME: $('form') => fails if there are more than one form
+    module.getObjectPk = function() {
         // On creation, this should be null
-        var object_pk = $('form input[name="pk"]').val() || null;
+        return $('form input[name="pk"]').val() || null;
+    };
+
+    module.addObjectsLayer = function(map, modelname) {
+        var object_pk = module.getObjectPk();
 
         var exclude_current_object = null;
         if (object_pk) {
@@ -279,7 +285,9 @@ FormField.makeModule = function(module, module_settings) {
         handler.on('added', function (e) { drawncallback(e.marker) });
     };
     
-    module.init = function(map, bounds) {
+    module.init = function(map, bounds, fitToBounds) {
+        fitToBounds = fitToBounds === undefined ? true : fitToBounds;
+
         map.removeControl(map.attributionControl);
 
         map.addControl(new L.Control.Measurement());
@@ -289,11 +297,16 @@ FormField.makeModule = function(module, module_settings) {
         var initialBounds = bounds,
             objectBounds = module_settings.init.objectBounds,
             currentBounds = objectBounds || initialBounds;
-        getBounds = function () {
+
+        var getBounds = function () {
             return currentBounds;
         };
+
+        if (fitToBounds) {
+            map.fitBounds(currentBounds);
+        }
+
         map.addControl(new L.Control.ResetView(getBounds));
-        map.fitBounds(currentBounds);
         map.addControl(new L.Control.Scale());
 
         // Show other objects of same type

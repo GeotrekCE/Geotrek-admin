@@ -43,6 +43,20 @@ var {{ module }}_settings = {
 FormField.makeModule({{ module }}, {{ module }}_settings);
 
 // Callback
-{{ module }}Init =  {{ module }}.init.bind({{ module }});
+{{ module }}Init = function (map, bounds) {
+    var module = {{ module }};
+    var fitToBounds = true;
+
+    // We are displaying a form - if no object instance, restore previous map view
+    if (! module.getObjectPk()) {
+        MapEntity.Context.restoreMapView(map);
+        bounds = map.getBounds();
+        // We just changed the map bounds, avoid resetting them...
+        fitToBounds = false;
+    }
+    module.init(map, bounds, fitToBounds);
+};
+
+
 
 </script>
