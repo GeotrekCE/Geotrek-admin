@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
@@ -13,7 +14,7 @@ from caminae.infrastructure.models import Infrastructure, Signage
 class Intervention(MapEntityMixin, StructureRelated):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(auto_now_add=True, verbose_name=_(u"Date"))
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Date"))
     comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
