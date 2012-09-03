@@ -32,8 +32,8 @@ msgid "Arrival"
 msgstr "Arrivée"
 
 #: models.py:15
-msgid "Validated"
-msgstr "Validée"
+msgid "Published"
+msgstr "Publié"
 
 #: models.py:17
 msgid "Ascent"

@@ -44,7 +44,7 @@ class TrekViewsTest(MapEntityTest):
             'arrival_fr': '',
             'arrival_en': '',
             'arrival_it': '',
-            'validated': '',
+            'published': '',
             'difficulty': '',
             'route': '',
             'destination': '',

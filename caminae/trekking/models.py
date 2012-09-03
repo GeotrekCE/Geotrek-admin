@@ -12,7 +12,7 @@ class Trek(MapEntityMixin, TopologyMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
-    validated = models.BooleanField(verbose_name=_(u"Validated"))
+    published = models.BooleanField(verbose_name=_(u"Published"))
 
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))

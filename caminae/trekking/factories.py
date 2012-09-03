@@ -59,7 +59,7 @@ class TrekFactory(TopologyMixinFactory):
     name = factory.Sequence(lambda n: u"name %s" % n)
     departure = factory.Sequence(lambda n: u"departure %s" % n)
     arrival = factory.Sequence(lambda n: u"arrival %s" % n)
-    validated = True
+    published = True
 
     length = 10
     ascent = 0

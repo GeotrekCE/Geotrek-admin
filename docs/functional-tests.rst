@@ -661,7 +661,7 @@ Je peux déplacer les marqueurs (de début ou de fin):
 
 
 ==========================
-Sprint 4 - Version 0.4.0
+Sprint 3.1 - Version 0.3.1
 ==========================
 
 #125 - Compresser les medias
@@ -916,3 +916,12 @@ Corrigé.
 
 Corrigé.
 
+
+========================
+Sprint 4 - Version 0.4.0
+========================
+
+#26 - Changer l'état publié d'un itinéraire
+-------------------------------------------
+
+* Le champ s'appelle désormais 'publié'.

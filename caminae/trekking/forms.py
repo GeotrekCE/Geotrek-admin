@@ -19,7 +19,7 @@ class TrekForm(TopologyMixinForm):
             'arrival_fr',
             'arrival_en',
             'arrival_it',
-            'validated',
+            'published',
             'difficulty',
             'route',
             'destination',
