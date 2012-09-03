@@ -5,6 +5,12 @@
 DROP INDEX IF EXISTS troncons_geom_idx;
 CREATE INDEX troncons_geom_idx ON troncons USING gist(geom);
 
+DROP INDEX IF EXISTS troncons_start_point_idx;
+CREATE INDEX troncons_start_point_idx ON troncons USING gist(ST_StartPoint(geom));
+
+DROP INDEX IF EXISTS troncons_end_point_idx;
+CREATE INDEX troncons_end_point_idx ON troncons USING gist(ST_EndPoint(geom));
+
 DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
 CREATE INDEX troncons_geom_cadastre_idx ON troncons USING gist(geom_cadastre);
 
