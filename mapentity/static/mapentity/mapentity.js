@@ -1,6 +1,5 @@
 if (!MapEntity) var MapEntity = {};
 
-
 MapEntity.ObjectsLayer = L.GeoJSON.extend({
     COLOR: 'blue',
     HIGHLIGHT: 'red',
@@ -196,6 +195,65 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this._cameleon[on ? 'activate': 'deactivate']('select', layer);
     }
 });
+
+
+MapEntity.Context = new function() {
+    var self = this;
+
+    self.saveFullContext = function(map, datatable) {
+        localStorage.setItem('list-map-view',
+                             map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
+        localStorage.setItem('list-filter', $('#mainfilter').serialize());
+        var sortcol = datatable.fnSettings().aaSorting;
+        localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
+        // layers shown by name
+        var layers = [];
+        $('form.leaflet-control-layers-list input:checked').each(function () {
+            layers.push($.trim($(this).parent().text()));
+        });
+        localStorage.setItem('list-layers', JSON.stringify(layers));
+    };
+
+    self.restoreMapView = function(map) {
+        var mapView = localStorage.getItem('list-map-view');
+        if (mapView) {
+            mapView = mapView.split(',');
+            map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
+        }
+    };
+
+    self.restoreFullContext = function(map, datatable, objectsname) {
+        self.restoreMapView(map);
+        var filter = localStorage.getItem('list-filter');
+        if (filter) {
+            $('#mainfilter').deserialize(filter);
+        }
+        var sortcol = localStorage.getItem('list-sortcolumns');
+        if (sortcol) {
+            datatable.fnSort(JSON.parse(sortcol));
+        }
+        // Show layers by their name
+        var layers = localStorage.getItem('list-layers');
+        if (layers) {
+            layers = JSON.parse(layers);
+            layers.push(objectsname);
+            $('form.leaflet-control-layers-list input').each(function () {
+                if ($.trim($(this).parent().text()) != objectsname) {
+                    $(this).removeAttr('checked');
+                }
+            });
+            for(var i=0; i<layers.length; i++) {
+                var layer = layers[i];
+                $('form.leaflet-control-layers-list input').each(function () {
+                    if ($.trim($(this).parent().text()) == layer) {
+                        $(this).attr('checked', 'checked');
+                    }
+                });
+            }
+            map.layerscontrol._onInputClick();
+        }
+    };
+};
 
 
 MapEntity.getWKT = function(layer) {
