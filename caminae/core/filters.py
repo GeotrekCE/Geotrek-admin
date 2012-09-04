@@ -10,4 +10,8 @@ class PathFilter(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
-        fields = StructureRelatedFilterSet.Meta.fields + ['length',]
+        fields = StructureRelatedFilterSet.Meta.fields + [
+                    'length', 'name', 'networks', 'comments', 'trail',
+                ]
+
+
