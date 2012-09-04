@@ -38,3 +38,10 @@ def wkt_to_geom(wkt):
 
 def almostequal(v1, v2, precision=2):
     return abs(v1 - v2) < 10**-precision
+
+
+class classproperty(object):
+     def __init__(self, getter):
+        self.getter= getter
+     def __get__(self, instance, owner):
+         return self.getter(owner)

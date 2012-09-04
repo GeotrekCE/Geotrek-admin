@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.common.utils import distance3D
+from caminae.common.utils import distance3D, classproperty
 from caminae.mapentity.models import MapEntityMixin
 import caminae.infrastructure as inf
 import caminae.land as land
@@ -165,25 +165,25 @@ class Path(MapEntityMixin, StructureRelated):
     def lands(self):
         return list(set([land.models.LandEdge.objects.get(pk=t.pk)
                          for t in self.topologymixin_set.filter(
-                             kind=land.models.LandEdge.get_kind())]))
+                             kind=land.models.LandEdge.KIND)]))
 
     @property
     def signages(self):
         return [inf.models.Signage.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.filter(
-                    kind=inf.models.Signage.get_kind())]
+                    kind=inf.models.Signage.KIND)]
 
     @property
     def infrastructures(self):
         return [inf.models.Infrastructure.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.filter(
-                    kind=inf.models.Infrastructure.get_kind())]
+                    kind=inf.models.Infrastructure.KIND)]
 
 
 class TopologyMixin(models.Model):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
-    kind = models.ForeignKey('TopologyMixinKind', editable=False, verbose_name=_(u"Kind"))
+    kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
 
     # Override default manager
     objects = models.GeoManager()
@@ -206,15 +206,14 @@ class TopologyMixin(models.Model):
     def __init__(self, *args, **kwargs):
         super(TopologyMixin, self).__init__(*args, **kwargs)
         if not self.pk:
-            self.kind = self.get_kind()
+            self.kind = self.__class__.KIND
+
+    @classproperty
+    def KIND(cls):
+        return cls._meta.object_name.upper()
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
-
-    @classmethod
-    def get_kind(cls, name=None):
-        name = name or cls._meta.object_name
-        return TopologyMixinKind.objects.get_or_create(kind=name)[0]
 
     def add_path(self, path, start=0.0, end=1.0):
         """
@@ -266,9 +265,9 @@ class TopologyMixin(models.Model):
             self.geom = tmp.geom
 
         if not self.kind:
-            if self._meta.object_name == "TopologyMixin":
+            if self.KIND == "TOPOLOGYMIXIN":
                 raise Exception("Cannot save abstract topologies")
-            self.kind = self.get_kind()
+            self.kind = self.__class__.KIND
 
         super(TopologyMixin, self).save(*args, **kwargs)
         self.reload()
@@ -290,7 +289,7 @@ class TopologyMixin(models.Model):
             return cls._topologypoint(lng, lat, kind)
 
         # Path aggregation
-        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=objdict.get('offset', 0.0))
+        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
 
         # Start repopulating from serialized data
@@ -332,7 +331,7 @@ class TopologyMixin(models.Model):
         closest = Path.closest(point)
         position, offset = closest.interpolate(point)
         # We can now instantiante a Topology object
-        topology = TopologyMixinFactory.create(no_path=True, kind=cls.get_kind(kind), offset=offset)
+        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=offset)
         aggrobj = PathAggregation(topo_object=topology,
                                   start_position=position,
                                   end_position=position,
@@ -353,7 +352,7 @@ class TopologyMixin(models.Model):
                 logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
                 geom = Point(geom.coords[0], srid=settings.SRID)
             point = geom.transform(settings.API_SRID, clone=True)
-            objdict = dict(kind=self.kind.kind, lng=point.x, lat=point.y)
+            objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
 
@@ -370,7 +369,7 @@ class TopologyMixin(models.Model):
             geom = Point(self.geom.coords[-1], srid=settings.SRID)
             end_point = geom.transform(settings.API_SRID, clone=True)
 
-            objdict = dict(kind=self.kind.kind,
+            objdict = dict(kind=self.kind,
                            offset=self.offset,
                            positions=positions,
                            paths=paths,
@@ -379,19 +378,6 @@ class TopologyMixin(models.Model):
                            end_point=dict(lng=end_point.x, lat=end_point.y),
                            )
         return simplejson.dumps(objdict)
-
-
-class TopologyMixinKind(models.Model):
-
-    kind = models.CharField(max_length=128, verbose_name=_(u"Topology's kind"))
-
-    def __unicode__(self):
-        return self.kind
-
-    class Meta:
-        db_table = 'type_evenements'
-        verbose_name = _(u"Topology's kind")
-        verbose_name_plural = _(u"Topology's kinds")
 
 
 class PathAggregation(models.Model):

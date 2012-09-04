@@ -392,7 +392,7 @@
         "pk": 1,
         "model": "core.topologymixin",
         "fields": {
-            "kind": 1,
+            "kind": "INFRASTRUCTURE",
             "deleted": false,
             "date_update": "2012-08-20T11:39:31.631Z",
             "date_insert": "2012-08-20T11:39:31.631Z",
@@ -405,7 +405,7 @@
         "pk": 2,
         "model": "core.topologymixin",
         "fields": {
-            "kind": 2,
+            "kind": "INFRASTRUCTURE",
             "deleted": false,
             "date_update": "2012-08-20T11:39:31.631Z",
             "date_insert": "2012-08-20T11:39:31.631Z",

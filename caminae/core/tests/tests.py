@@ -15,7 +15,7 @@ from caminae.core.factories import (PathFactory, PathAggregationFactory,
 from caminae.maintenance.factories import InterventionFactory, ProjectFactory
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
-from caminae.core.models import Path, TopologyMixin, TopologyMixinKind,PathAggregation
+from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 
 class ViewsTest(MapEntityTest):
@@ -284,15 +284,13 @@ class TopologyMixinTest(TestCase):
         self.assertNotEqual(e.length, 0)
 
     def test_kind(self):
-        self.assertEqual('TopologyMixin', TopologyMixin.get_kind().kind)
-        self.assertEqual(0, len(TopologyMixinKind.objects.filter(kind='LandEdge')))
-        self.assertEqual('LandEdge', LandEdge.get_kind().kind)
-        self.assertEqual(1, len(TopologyMixinKind.objects.filter(kind='LandEdge')))
-        pk = LandEdge.get_kind().pk
+        self.assertEqual('TOPOLOGYMIXIN', TopologyMixin.KIND)
+        self.assertEqual(0, len(TopologyMixin.objects.filter(kind='LANDEDGE')))
+        self.assertEqual('LANDEDGE', LandEdge.KIND)
         # Kind of instances
         e = LandEdgeFactory.create()
-        self.assertEqual(e.kind, LandEdge.get_kind())
-        self.assertEqual(pk, e.get_kind().pk)
+        self.assertEqual(e.kind, LandEdge.KIND)
+        self.assertEqual(1, len(TopologyMixin.objects.filter(kind='LANDEDGE')))
 
     def test_delete(self):
         # Make sure it deletes in cascade
@@ -338,7 +336,7 @@ class TopologyMixinTest(TestCase):
         geom = Point(t.geom.coords[-1], srid=settings.SRID)
         end_point = geom.transform(settings.API_SRID, clone=True)
 
-        test_objdict = dict(kind=t.kind.kind,
+        test_objdict = dict(kind=t.kind,
                        offset=1,
                        # 0 referencing the index in paths of the only created path
                        positions={'0': [0.0, 1.0]},
@@ -355,17 +353,17 @@ class TopologyMixinTest(TestCase):
         topology = TopologyMixinFactory.create(offset=1, no_path=True)
         topology.add_path(path, start=0.5, end=0.5)
         fieldvalue = topology.serialize()
-        # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TopologyMixin"}'
+        # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGYMIXIN"}'
         field = simplejson.loads(fieldvalue)
         self.assertTrue(almostequal(field['lat'],  -5.983))
         self.assertTrue(almostequal(field['lng'],  -1.363))
-        self.assertEqual(field['kind'],  "TopologyMixin")
+        self.assertEqual(field['kind'],  "TOPOLOGYMIXIN")
 
     def test_deserialize(self):
         path = PathFactory.create()
         topology = TopologyMixin.deserialize('{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}' % (path.pk))
         self.assertEqual(topology.offset, 1)
-        self.assertEqual(topology.kind, TopologyMixin.get_kind())
+        self.assertEqual(topology.kind, TopologyMixin.KIND)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.aggregations.all()[0].path, path)
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)

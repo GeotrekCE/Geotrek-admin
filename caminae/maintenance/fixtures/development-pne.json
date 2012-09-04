@@ -353,7 +353,7 @@
         "pk": 3,
         "model": "core.topologymixin",
         "fields": {
-            "kind": 3,
+            "kind": "INTERVENTION",
             "deleted": false,
             "date_update": "2012-08-20T11:39:31.631Z",
             "date_insert": "2012-08-20T11:39:31.631Z",

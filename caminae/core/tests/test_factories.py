@@ -16,9 +16,6 @@ class CoreFactoriesTest(TestCase):
     def test_topology_mixin_factory(self):
         factories.TopologyMixinFactory()
 
-    def test_topology_mixin_kind_factory(self):
-        factories.TopologyMixinKindFactory()
-
     def test_path_aggregation_factory(self):
         factories.PathAggregationFactory()
 

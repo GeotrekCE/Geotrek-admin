@@ -64,12 +64,6 @@ class PathFactory(StructureRelatedDefaultFactory):
     stake = factory.SubFactory(StakeFactory)
 
 
-class TopologyMixinKindFactory(factory.Factory):
-    FACTORY_FOR = models.TopologyMixinKind
-
-    kind = factory.Sequence(lambda n: u"Kind %s" % n)
-
-
 class TopologyMixinFactory(factory.Factory):
     FACTORY_FOR = models.TopologyMixin
 
@@ -77,7 +71,6 @@ class TopologyMixinFactory(factory.Factory):
     # troncons (M2M)
     offset = 0
     deleted = False
-    kind = factory.SubFactory(TopologyMixinKindFactory)
 
     # Trigger will override :
     date_insert = dbnow()
