@@ -949,3 +949,21 @@ l'extrêmité d'un des tronçons.
 
 Aller sur la fiche de détail de l'évènement ainsi créé. La liste des objets liés
 doit montrer tout les tronçons partant ou arrivant à cette intersection.
+
+#207 - Modifier un tronçon et déclencher les triggers
+-----------------------------------------------------
+
+Aller sur la page d'édition des tronçons et modifier la géométrie. Si la
+nouvelle géométrie s'auto-intersecte, le formulaire doit indiquer une erreur lors
+de la validation. S'il n'y a pas d'auto-intersection, le formulaire doit valider
+normalement.
+
+Après validation du formulaire, vous pouvez constater que les évènements ont été
+mis à jour :
+* Les évènements faisant le lien avec les couches SIG reflètent bien les
+  relations actuelles entre le tronçon et les différentes entités des couches
+  SIG.
+* Les évènements linéaires associés ont vu leur géométrie mise à jour pour
+  suivre la nouvelle géométrie du tronçon.
+* Les évènements ponctuelles associés ont vu leurs PK début/fin et leur
+  décallage mis à jour mais sont rester à la même position géographique.
