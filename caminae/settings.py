@@ -112,15 +112,6 @@ STATICFILES_FINDERS = (
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor.filters.yui.YUICSSFilter'
-]
-
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.yui.YUIJSFilter'
-]
-COMPRESS_YUI_BINARY = '/usr/bin/yui-compressor'
 COMPRESSOR_ENABLED = False
 
 # Make this unique, and don't share it with anybody.
