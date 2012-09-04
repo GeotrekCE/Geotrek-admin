@@ -252,6 +252,9 @@ class TopologyMixin(models.Model):
             self.date_insert = tmp.date_insert
             self.date_update = tmp.date_update
             self.length = tmp.length
+            self.offset = tmp.offset # /!\ offset may be set by a trigger OR in
+                                     # the django code, reload() will override
+                                     # any unsaved value
             self.geom = tmp.geom
         return self
 

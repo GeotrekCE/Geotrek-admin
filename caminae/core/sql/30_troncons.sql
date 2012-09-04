@@ -95,9 +95,27 @@ DROP TRIGGER IF EXISTS troncons_evenements_geom_u_tgr ON troncons;
 CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
 DECLARE
     eid integer;
+    egeom geometry;
+    linear_offset float;
+    side_offset float;
 BEGIN
-    FOR eid IN SELECT DISTINCT evenement FROM evenements_troncons WHERE troncon = NEW.id LOOP
+    -- Geometry of linear topologies are always updated
+    -- Geometry of point topologies are updated if offset = 0
+    FOR eid IN SELECT DISTINCT e.id
+               FROM evenements_troncons et, evenements e
+               WHERE et.troncon = NEW.id AND et.evenement = e.id AND (et.pk_debut != et.pk_fin OR e.decallage = 0.0)
+    LOOP
         PERFORM update_geometry_of_evenement(eid);
+    END LOOP;
+
+    -- Special case of point geometries with offset != 0
+    FOR eid, egeom IN SELECT e.id, e.geom
+               FROM evenements_troncons et, evenements e
+               WHERE et.troncon = NEW.id AND et.evenement = e.id AND et.pk_debut = et.pk_fin AND e.decallage != 0.0
+    LOOP
+        SELECT * INTO linear_offset, side_offset FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
+        UPDATE evenements SET decallage = side_offset WHERE id = eid;
+        UPDATE evenements_troncons SET pk_debut = linear_offset, pk_fin = linear_offset WHERE evenement = eid AND troncon = NEW.id;
     END LOOP;
 
     RETURN NULL;

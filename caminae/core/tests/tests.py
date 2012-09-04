@@ -260,6 +260,52 @@ class PathTest(TestCase):
 
         self.assertItemsEqual(p.lands, [l])
 
+    def test_geom_update(self):
+        # Create a path
+        p = PathFactory.create(geom=LineString((0,0,0),(4,0,0)))
+
+        # Create a linear topology
+        t1 = TopologyMixinFactory.create(offset=1, no_path=True)
+        t1.add_path(p, start=0.0, end=0.5)
+        t1_agg = t1.aggregations.get()
+
+        # Create a point topology
+        t2 = TopologyMixinFactory.create(offset=-1, no_path=True)
+        t2.add_path(p, start=0.5, end=0.5)
+        t2_agg = t2.aggregations.get()
+
+        # Ensure linear topology is correct before path modification
+        self.assertEqual(t1.offset, 1)
+        self.assertEqual(t1.geom.coords, ((0,1,0),(2,1,0)))
+        self.assertEqual(t1_agg.start_position, 0.0)
+        self.assertEqual(t1_agg.end_position, 0.5)
+
+        # Ensure point topology is correct before path modification
+        self.assertEqual(t2.offset, -1)
+        self.assertEqual(t2.geom.coords, (2,-1,0))
+        self.assertEqual(t2_agg.start_position, 0.5)
+        self.assertEqual(t2_agg.end_position, 0.5)
+
+        # Modify path geometry and refresh computed data
+        p.geom = LineString((0,2,0),(8,2,0))
+        p.save()
+        t1.reload()
+        t1_agg = t1.aggregations.get()
+        t2.reload()
+        t2_agg = t2.aggregations.get()
+
+        # Ensure linear topology is correct after path modification
+        self.assertEqual(t1.offset, 1)
+        self.assertEqual(t1.geom.coords, ((0,3,0),(4,3,0)))
+        self.assertEqual(t1_agg.start_position, 0.0)
+        self.assertEqual(t1_agg.end_position, 0.5)
+
+        # Ensure point topology is correct before path modification
+        self.assertEqual(t2.offset, -3)
+        self.assertEqual(t2.geom.coords, (2,-1,0))
+        self.assertEqual(t2_agg.start_position, 0.25)
+        self.assertEqual(t2_agg.end_position, 0.25)
+
     def test_valid_geometry(self):
         connection = connections[DEFAULT_DB_ALIAS]
 
