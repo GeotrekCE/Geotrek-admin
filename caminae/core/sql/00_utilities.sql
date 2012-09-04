@@ -27,12 +27,20 @@ DROP FUNCTION IF EXISTS ft_longueur() CASCADE;
 -------------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
-DECLARE 
-  tuple RECORD;
+DECLARE
+    linear_offset float;
+    shortest_line geometry;
+    crossing_dir integer;
+    side_offset float;
+    tuple record;
 BEGIN
-    SELECT ST_Line_Locate_Point(line, point) AS position, 
-           ST_Distance(point, ST_Line_Interpolate_Point(line, ST_Line_Locate_Point(line, point))) AS offset
-    INTO tuple;
+    linear_offset := ST_Line_Locate_Point(line, point);
+    shortest_line := ST_3DShortestLine(line, point);
+    crossing_dir := ST_LineCrossingDirection(line, shortest_line);
+    -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
+    side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir < 0 THEN 1 WHEN crossing_dir > 0 THEN -1 ELSE 0 END;
+
+    SELECT linear_offset AS position, side_offset AS distance INTO tuple;
     RETURN tuple;
 END;
 $$ LANGUAGE plpgsql;

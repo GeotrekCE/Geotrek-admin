@@ -408,17 +408,18 @@ class TopologyMixinTest(TestCase):
     def test_deserialize_point(self):
         PathFactory.create()
         # Take a point
-        p = Point(0, 2.0, 0, srid=settings.SRID)
+        p = Point(2, 1, 0, srid=settings.SRID)
         p.transform(settings.API_SRID)
         closest = Path.closest(p)
         # Check closest path
         self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
         # The point has same x as first point of path, and y to 0 :
         topology = TopologyMixin.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertTrue(almostequal(topology.offset, 1.414))
+        self.assertAlmostEqual(topology.offset, -0.7071, 3)
         self.assertEqual(len(topology.paths.all()), 1)
-        self.assertTrue(almostequal(topology.aggregations.all()[0].start_position, 7.34463799778595e-07))
-        self.assertTrue(almostequal(topology.aggregations.all()[0].end_position, 7.34463799778595e-07))
+        pagg = topology.aggregations.get()
+        self.assertTrue(almostequal(pagg.start_position, 0.5))
+        self.assertTrue(almostequal(pagg.end_position, 0.5))
 
     def test_deserialize_serialize(self):
         path = PathFactory.create(geom=LineString((1,1,1), (2,2,2), (2,0,0)))
