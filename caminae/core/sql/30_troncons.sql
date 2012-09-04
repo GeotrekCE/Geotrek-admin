@@ -110,6 +110,14 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 
 -------------------------------------------------------------------------------
+-- Ensure paths have valid geometries
+-------------------------------------------------------------------------------
+
+ALTER TABLE troncons DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
+ALTER TABLE troncons ADD CONSTRAINT troncons_geom_issimple CHECK (ST_IsSimple(geom));
+
+
+-------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 

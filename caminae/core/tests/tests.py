@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 
 # TODO caminae.core should be self sufficient
 from caminae.land.models import (City, RestrictedArea, LandEdge)
@@ -259,6 +259,24 @@ class PathTest(TestCase):
         PathAggregationFactory.create(topo_object=l, path=p)
 
         self.assertItemsEqual(p.lands, [l])
+
+    def test_valid_geometry(self):
+        connection = connections[DEFAULT_DB_ALIAS]
+
+        # Create path with self-intersection
+        p = PathFactory.build(geom=LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0)))
+        self.assertRaises(IntegrityError, p.save)
+        # FIXME: Why a regular transaction.rollback does not work???
+        connection.close() # Clear DB exception at psycopg level
+
+        # Fix self-intersection
+        p.geom = LineString((0,0,0),(2,0,0),(1,1,0))
+        p.save()
+
+        # Update with self-intersection
+        p.geom = LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0))
+        self.assertRaises(IntegrityError, p.save)
+        connection.close() # Clear DB exception at psycopg level
 
 
 class TopologyMixinTest(TestCase):
