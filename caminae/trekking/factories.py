@@ -13,6 +13,13 @@ def dummy_filefield_as_sequence(toformat_name):
     return factory.Sequence(lambda n: get_dummy_uploaded_image(toformat_name % n))
 
 
+class ThemeFactory(factory.Factory):
+    FACTORY_FOR = models.Theme
+
+    label = factory.Sequence(lambda n: u"Theme %s" % n)
+    thumbnail = dummy_filefield_as_sequence('thumbnail %s')
+
+
 class TrekNetworkFactory(factory.Factory):
     FACTORY_FOR = models.TrekNetwork
 

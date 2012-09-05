@@ -5,7 +5,7 @@ from caminae.authent.factories import TrekkingManagerFactory
 from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.trekking.models import POI, Trek
 from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
-    TrekNetworkFactory, UsageFactory, WebLinkFactory)
+    TrekNetworkFactory, UsageFactory, WebLinkFactory, ThemeFactory)
 
 
 class POIViewsTest(MapEntityTest):
@@ -69,6 +69,7 @@ class TrekViewsTest(MapEntityTest):
             'advice_fr': '',
             'advice_it': '',
             'advice_en': '',
+            'themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
