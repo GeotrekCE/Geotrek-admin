@@ -168,7 +168,7 @@ class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     url = models.URLField(verbose_name=_(u"URL"), max_length=128)
-    thumbnail = models.FileField(verbose_name=_(u"Thumbnail"), upload_to=settings.UPLOAD_DIR)
+    thumbnail = models.FileField(null=True, blank=True, verbose_name=_(u"Thumbnail"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
         db_table = 'liens_web'
@@ -177,6 +177,11 @@ class WebLink(models.Model):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.url)
+
+    @classmethod
+    @models.permalink
+    def get_add_url(cls):
+        return ('trekking:weblink_add', )
 
 
 class Theme(models.Model):
