@@ -61,6 +61,8 @@
         {% endfor %}
     </ul>
     {% endif %}
+
+    {% block navbar %}
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container">
@@ -82,6 +84,8 @@
         </div>
       </div>
     </div>
+    {% endblock navbar %}
+
     {% block body %}
         <div id="viewport-l2" class="content">
           {% block content %}

@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+{% load static i18n crispy_forms_tags %}
+
+{% block title %}{% trans "Add Web link" %}{% endblock title %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block body %}
+    <h3>{% trans "Add Web link"%}</h3>
+    {% crispy form %}
+{% endblock body %}

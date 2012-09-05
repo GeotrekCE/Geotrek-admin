@@ -1,10 +1,11 @@
 {% extends "mapentity/base.html" %}
-{% load i18n crispy_forms_tags %}
+{% load i18n static crispy_forms_tags %}
 {% load attachments_tags %}
 
 {% block extrahead %}
     {{ block.super }}
     {{ form.media }}
+    <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
 {% endblock extrahead %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
@@ -18,8 +19,10 @@
         
         <div>&nbsp;</div>
         
+        {% block mainform %}
         {% crispy form %}
-
+        {% endblock mainform %}
+        
         <div style="clear:both"></div>
 
         {% if object.pk %}
