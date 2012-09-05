@@ -1010,3 +1010,14 @@ signalétique, le nom est rappellé dans le titre du formulaire, avec un lien po
 Il est désormais possible d'associer des thèmes aux itinéraires.
 
 Ils sont gérés dans l'AdminSite.
+
+
+#153 - [BUG] La carte n'est pas ajustée à la hauteur de l'écran
+---------------------------------------------------------------
+
+Afficher une page, la partie droite doit occuper toute la hauteur de la page
+(pas de blanc en bas).
+
+Redimmensionner la fenêtre du naviagteur, la partie droite doit toujours occuper
+toute la hauteur de la page, tous les éléments de la partie droite restent
+visibles et c'est l'élément carte qui est ajusté aux nouvelles dimensions.
