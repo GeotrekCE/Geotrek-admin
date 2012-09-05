@@ -193,3 +193,12 @@ tr.selected-row td {
     background-color: #DF8 !important;
     opacity: 1 !important;
 }
+
+/**** Layout (based on "Conflicting position" trick) ****/
+
+#viewport-l2 {position: absolute; top: 46px; bottom: 0; left: 0; right: 0;}
+#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
+#viewport-l4 {position: absolute; top: 0; bottom: 0;}
+#panelright {position: absolute; top: 0; bottom: 0; right: 0;}
+#mainmap {position: absolute; top: 0; bottom: 75px; left: 0; right: 0;}
+#mainmap-controls {position: absolute; bottom: 0; right: 0;}
