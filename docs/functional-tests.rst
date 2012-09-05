@@ -967,3 +967,14 @@ mis à jour :
   suivre la nouvelle géométrie du tronçon.
 * Les évènements ponctuelles associés ont vu leurs PK début/fin et leur
   décallage mis à jour mais sont rester à la même position géographique.
+
+
+#167 - Refactor de la relation "Topology kind"
+----------------------------------------------
+
+Pour simplifier énormément la gestion des types d'évènements, le type d'évènement 
+est désormais une colonne texte. Idéalement, il aurait fallu un type ENUM, 
+mais Django ne les gère pas facilement.
+
+En utilisant une relation 1-N, cela compliquait l'accès à un type particulier, 
+puisqu'une jointure était nécessaire pour éviter d'utiliser la clé primaire.
