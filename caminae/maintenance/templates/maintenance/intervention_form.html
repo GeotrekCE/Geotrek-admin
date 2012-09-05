@@ -1,4 +1,12 @@
 {% extends "mapentity/entity_form.html" %}
+{% load i18n %}
+
+{% block paneltitle %}
+    {{ block.super }}
+    {% if infrastructure %}
+        {% trans "on" %} <a href="{{ infrastructure.get_detail_url }}">{{ infrastructure }}</a>
+    {% endif %}
+{% endblock paneltitle %}
 
 {% block extrabody %}
     {{ block.super }}

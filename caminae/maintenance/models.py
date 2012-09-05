@@ -84,6 +84,15 @@ class Intervention(MapEntityMixin, StructureRelated):
         return self.is_infrastructure or self.is_signage
 
     @property
+    def infrastructure(self):
+        if self.on_infrastructure:
+            if self.is_signage:
+                return self.signages[0]
+            if self.is_infrastructure:
+                return self.infrastructures[0]
+        return None
+
+    @property
     def is_infrastructure(self):
         if self.topology:
             return self.topology.kind == Infrastructure.KIND

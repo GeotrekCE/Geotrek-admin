@@ -45,6 +45,24 @@ class InterventionViewsTest(MapEntityTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def test_form_on_infrastructure(self):
+        user = self.userfactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+        
+        infra = InfrastructureFactory.create()
+        infrastr = u"%s" % infra
+        # For creation
+        response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, infrastr)
+        # For edition
+        intervention = InterventionFactory.create()
+        intervention.set_infrastructure(infra)
+        response = self.client.get(infra.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, infrastr)
+
 
 class ProjectViewsTest(MapEntityTest):
     model = Project
@@ -104,7 +122,6 @@ class ProjectViewsTest(MapEntityTest):
         self.assertEqual(len(Project.objects.all()), 3)
         self.assertEqual(len(jsonlist('')), 3)
         self.assertEqual(len(jsonlist('?bbox=POLYGON((1%202%200%2C1%202%200%2C1%202%200%2C1%202%200%2C1%202%200))')), 2)
-        
 
 
 class InterventionTest(TestCase):
@@ -114,12 +131,16 @@ class InterventionTest(TestCase):
         interv = InterventionFactory.create()
         proj = ProjectFactory.create()
 
+        self.assertFalse(interv.on_infrastructure)
+        self.assertEquals(interv.infrastructure, None)
+
         interv.set_infrastructure(infra)
-        self.assertTrue(interv.on_infrastructure())
+        self.assertTrue(interv.on_infrastructure)
         self.assertFalse(interv.is_signage())
         self.assertTrue(interv.is_infrastructure())
         self.assertEquals(interv.signages, [])
         self.assertEquals(interv.infrastructures, [infra])
+        self.assertEquals(interv.infrastructure, infra)
 
         interv.set_infrastructure(sign)
         self.assertTrue(interv.on_infrastructure())
@@ -127,6 +148,7 @@ class InterventionTest(TestCase):
         self.assertFalse(interv.is_infrastructure())
         self.assertEquals(interv.signages, [sign])
         self.assertEquals(interv.infrastructures, [])
+        self.assertEquals(interv.infrastructure, sign)
 
         self.assertFalse(interv.in_project())
         interv.project = proj

@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from caminae.infrastructure.models import BaseInfrastructure
+from caminae.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
 from .forms import InterventionForm, InterventionCreateForm, ProjectForm
@@ -41,12 +41,15 @@ class InterventionCreate(MapEntityCreate):
     form_class = InterventionCreateForm
 
     def on_infrastucture(self):
-        try:
-            pk = self.request.GET.get('infrastructure')
-            if pk:
-                return BaseInfrastructure.objects.get(pk=pk)
-        except BaseInfrastructure.DoesNotExist:
-            logger.warning("Intervention on unknown infrastructure %s" % pk)
+        pk = self.request.GET.get('infrastructure')
+        if pk:
+            try:
+                return Infrastructure.objects.get(pk=pk)
+            except Infrastructure.DoesNotExist:
+                try:
+                    return Signage.objects.get(pk=pk)
+                except Signage.DoesNotExist:
+                    logger.warning("Intervention on unknown infrastructure %s" % pk)
         return None
 
     def get_initial(self):
@@ -59,6 +62,11 @@ class InterventionCreate(MapEntityCreate):
             initial['infrastructure'] = infrastructure
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super(InterventionCreate, self).get_context_data(**kwargs)
+        context['infrastructure'] = self.on_infrastucture()
+        return context
+
 
 class InterventionUpdate(MapEntityUpdate):
     model = Intervention
@@ -68,6 +76,11 @@ class InterventionUpdate(MapEntityUpdate):
     @method_decorator(path_manager_required('maintenance:intervention_detail'))
     def dispatch(self, *args, **kwargs):
         return super(InterventionUpdate, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(InterventionUpdate, self).get_context_data(**kwargs)
+        context['infrastructure'] = self.object.infrastructure
+        return context
 
 
 class InterventionDelete(MapEntityDelete):

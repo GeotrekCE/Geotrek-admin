@@ -978,3 +978,10 @@ mais Django ne les gère pas facilement.
 
 En utilisant une relation 1-N, cela compliquait l'accès à un type particulier, 
 puisqu'une jointure était nécessaire pour éviter d'utiliser la clé primaire.
+
+
+#186 - Rappeler sur quel aménagement ou signalétique on est en train d'ajouter une intervention.
+------------------------------------------------------------------------------------------------
+
+Désormais lors de la création ou l'édition d'une intervention sur un aménagement ou une 
+signalétique, le nom est rappellé dans le titre du formulaire, avec un lien pour le consulter.
