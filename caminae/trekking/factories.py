@@ -17,7 +17,7 @@ class ThemeFactory(factory.Factory):
     FACTORY_FOR = models.Theme
 
     label = factory.Sequence(lambda n: u"Theme %s" % n)
-    thumbnail = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class TrekNetworkFactory(factory.Factory):
