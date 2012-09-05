@@ -1002,3 +1002,11 @@ signalétique, le nom est rappellé dans le titre du formulaire, avec un lien po
     Dans la mesure où l'utilisateur n'a pas encore choisi s'il allait créé
     un point ou une ligne, nous nous contentons de centrer la carte sur le
     tronçon.
+
+
+#23 - Associer des thématiques aux itinéraires indépendamment des types des POI
+-------------------------------------------------------------------------------
+
+Il est désormais possible d'associer des thèmes aux itinéraires.
+
+Ils sont gérés dans l'AdminSite.

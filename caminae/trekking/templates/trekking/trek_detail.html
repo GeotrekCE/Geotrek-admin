@@ -8,6 +8,30 @@
             <th>{{ trek|verbose:"name" }}</th>
             <td>{{ trek.name }}</td>
         </tr>
+        <tr>
+            <th>{{ trek|verbose:"themes" }}</th>
+            <td>
+                {% for t in trek.themes.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ t }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "POI types" %}</th>
+            <td>
+                {% for t in trek.poi_types %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ t }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
     </table>
 
     <h3>{% trans "Management" %}</h3>

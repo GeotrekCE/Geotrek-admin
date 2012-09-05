@@ -34,6 +34,9 @@ class Trek(MapEntityMixin, TopologyMixin):
     public_transport = models.TextField(verbose_name=_(u"Public transport"))
     advice = models.TextField(verbose_name=_(u"Advice"))
 
+    themes = models.ManyToManyField('Theme', related_name="treks",
+            verbose_name=_(u"Trek themes"))
+
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))
 
@@ -80,6 +83,11 @@ class Trek(MapEntityMixin, TopologyMixin):
                       aggregations__end_position__lte=a.end_position
                   )]
         return s
+
+    @property
+    def poi_types(self):
+        types = [p.type for p in self.pois]
+        return set(types)
 
     @property
     def name_display(self):
@@ -156,7 +164,7 @@ class Destination(models.Model):
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    url = models.URLField(verbose_name=_(u"Name"), max_length=128)
+    url = models.URLField(verbose_name=_(u"URL"), max_length=128)
     thumbnail = models.FileField(verbose_name=_(u"Thumbnail"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
@@ -167,6 +175,14 @@ class WebLink(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.url)
 
+
+class Theme(models.Model):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    def __unicode__(self):
+        return self.label
 
 
 class TrekRelationshipManager(models.Manager):
@@ -228,6 +244,9 @@ class POI(MapEntityMixin, TopologyMixin):
     # Override default manager
     objects = models.GeoManager()
 
+    def __unicode__(self):
+        return self.name
+
     @property
     def type_display(self):
         return unicode(self.type)
@@ -252,3 +271,6 @@ class POI(MapEntityMixin, TopologyMixin):
 class POIType(models.Model):
     label = models.CharField(verbose_name=_(u"Label"), max_length=128)
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    def __unicode__(self):
+        return self.label

@@ -14,12 +14,24 @@
         </tr>
         <tr>
             <th>{{ poi|verbose:"description" }}</th>
-            <td>{{ poi.description }}</td>
+            <td>{{ poi.description|safe }}</td>
         </tr>
     </table>
 
     <h3>{% trans "Management" %}</h3>
     <table class="table">
+        <tr>
+            <th>{% trans "Paths" %}</th>
+            <td>
+                {% for p in poi.paths.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
         <tr>
             <th>{% trans "Trekkings" %}</th>
             <td>

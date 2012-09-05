@@ -1,0 +1,188 @@
+[
+    {
+        "pk": 84,
+        "model": "core.topologymixin",
+        "fields": {
+            "kind": "TREK",
+            "deleted": false,
+            "date_update": "2012-09-05T10:27:36.875Z",
+            "date_insert": "2012-09-05T10:27:36.605Z",
+            "length": 815.24837259151,
+            "geom": "LINESTRING (954506.9488729099975899 6396728.3227274529635906, 954518.5798396456521004 6396730.1335439449176192, 954562.6109893969260156 6396724.3839348424226046, 954581.1233427434926853 6396720.7276108069345355, 954602.2955315256258473 6396721.4191997880116105, 954657.8013817640021443 6396706.8289324948564172, 954686.0359886568039656 6396708.3337862258777022, 954710.8733775657601655 6396721.3570292759686708, 954737.2683964294847101 6396712.2628228925168514, 954759.0563017342938110 6396711.9500480256974697, 954792.0357732989359647 6396720.6571049476042390, 954819.4813564724754542 6396724.7912706518545747, 954865.5038908398710191 6396718.2751896381378174, 954897.9311821442097425 6396713.6246909061446786, 954928.8331591697642580 6396720.3515572864562273, 954982.8039800965925679 6396730.5010412158444524, 955060.4550824137404561 6396728.0830414192751050, 955208.6517947210231796 6396731.9251266987994313, 955247.2545437926892191 6396719.3538305405527353, 955305.6105408982839435 6396700.1999480109661818)",
+            "offset": 0.0
+        }
+    },
+    {
+        "pk": 666,
+        "model": "core.pathaggregation",
+        "fields": {
+            "path": 1574,
+            "end_position": 1.0,
+            "start_position": 0.80185742780659,
+            "topo_object": 84
+        }
+    },
+    {
+        "pk": 667,
+        "model": "core.pathaggregation",
+        "fields": {
+            "path": 1575,
+            "end_position": 1.0,
+            "start_position": 0.671521039360522,
+            "topo_object": 84
+        }
+    },
+    {
+        "pk": 84,
+        "model": "trekking.trek",
+        "fields": {
+            "is_park_centered": false,
+            "name_fr": "Passer la chapelle",
+            "description_teaser_fr": null,
+            "is_transborder": false,
+            "ambiance": "",
+            "usages": [
+                1
+            ],
+            "ambiance_it": null,
+            "themes": [
+                1
+            ],
+            "arrival_en": "Chabottes",
+            "departure_en": "Ancelle",
+            "description_fr": null,
+            "duration": 1,
+            "destination": null,
+            "arrival_it": "Chabottes",
+            "ascent": 0,
+            "advised_parking": "Ancelle",
+            "name_it": "Passar la cappella",
+            "descent": 0,
+            "departure_it": "Ancelle",
+            "parking_location": "POINT (954236.9526425795629621 6396644.9218788957223296)",
+            "description_teaser": "",
+            "networks": [
+                1
+            ],
+            "advice_it": null,
+            "arrival": "Chabottes",
+            "departure_fr": "Ancelle",
+            "description": "",
+            "advice": "",
+            "disabled_infrastructure": "",
+            "description_en": null,
+            "description_teaser_en": null,
+            "difficulty": 1,
+            "disabled_infrastructure_fr": null,
+            "description_it": null,
+            "ambiance_fr": null,
+            "name_en": "Pass the chapel",
+            "advice_en": null,
+            "min_elevation": 0,
+            "disabled_infrastructure_it": null,
+            "arrival_fr": "Chabottes",
+            "name": "Pass the chapel",
+            "route": null,
+            "departure": "Ancelle",
+            "ambiance_en": null,
+            "max_elevation": 0,
+            "public_transport": "<p>Oui</p>",
+            "disabled_infrastructure_en": null,
+            "published": true,
+            "advice_fr": null,
+            "description_teaser_it": null,
+            "web_links": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": "Villas",
+            "network": "City",
+            "network_en": "City",
+            "network_fr": "En ville"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "Casual",
+            "usage_en": "Casual",
+            "usage_it": "Promenada",
+            "usage_fr": "Promenade"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": "Facilo",
+            "difficulty": "Easy",
+            "difficulty_fr": "Facile",
+            "difficulty_en": "Easy"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": "Duro",
+            "difficulty": "Hard",
+            "difficulty_fr": "Difficile",
+            "difficulty_en": "Hard"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.weblink",
+        "fields": {
+            "name_fr": "FE",
+            "name_it": "FE",
+            "name": "FE",
+            "url": "http://fe.com",
+            "name_en": "FE",
+            "thumbnail": "upload/fe.jpg"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Histoire"
+            "label_fr": "Histoire"
+            "label_it": "Historia"
+            "label_en": "History"
+        }
+    },
+    {
+        "pk": 79,
+        "model": "trekking.poi",
+        "fields": {
+            "name_fr": "Chapelle",
+            "name_it": "Cappella",
+            "name": "Chapel",
+            "description_en": "<p>Very nice</p>",
+            "description_fr": "<p>Tr&egrave;s belle</p>",
+            "description_it": "<p>Molto bella</p>",
+            "name_en": "Chapel",
+            "type": 1,
+            "description": "<p>Very nice</p>"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Monumento",
+            "pictogram": "upload/church.png",
+            "label_en": "Monument",
+            "label_fr": "Monument",
+            "label": "Monument"
+        }
+    }
+]
