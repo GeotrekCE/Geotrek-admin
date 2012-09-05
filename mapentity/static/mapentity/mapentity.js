@@ -204,14 +204,17 @@ MapEntity.Context = new function() {
         localStorage.setItem('list-map-view',
                              map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
         localStorage.setItem('list-filter', $('#mainfilter').serialize());
-        var sortcol = datatable.fnSettings().aaSorting;
-        localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
         // layers shown by name
         var layers = [];
         $('form.leaflet-control-layers-list input:checked').each(function () {
             layers.push($.trim($(this).parent().text()));
         });
         localStorage.setItem('list-layers', JSON.stringify(layers));
+        
+        if (datatable) {
+            var sortcol = datatable.fnSettings().aaSorting;
+            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
+        }
     };
 
     self.restoreMapView = function(map) {
