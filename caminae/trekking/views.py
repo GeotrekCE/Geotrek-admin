@@ -1,11 +1,14 @@
+from django.http import HttpResponse
 from django.utils.decorators import method_decorator
+from django.utils.html import escape
+from django.views.generic.edit import CreateView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from .models import Trek, POI
+from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
-from .forms import TrekForm, POIForm
+from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 
 
 class TrekLayer(MapEntityLayer):
@@ -100,3 +103,16 @@ class POIDelete(MapEntityDelete):
     @method_decorator(trekking_manager_required('trekking:poi_detail'))
     def dispatch(self, *args, **kwargs):
         return super(POIDelete, self).dispatch(*args, **kwargs)
+
+
+
+class WebLinkCreatePopup(CreateView):
+    model = WebLink
+    form_class = WebLinkCreateFormPopup
+
+    def form_valid(self, form):
+        self.object = form.save()
+        print form.instance
+        return HttpResponse("""
+            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
+        """ % (escape(form.instance._get_pk_val()), escape(form.instance)))

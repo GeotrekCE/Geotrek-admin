@@ -1,9 +1,15 @@
+from django.utils.translation import ugettext as _
+
 import floppyforms as forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Layout, Submit, HTML
 
 from caminae.core.forms import TopologyMixinForm
 from caminae.core.widgets import PointWidget, LineTopologyWidget, PointTopologyWidget
+from caminae.mapentity.widgets import SelectMultipleWithPop
 
-from .models import Trek, POI
+from .models import Trek, POI, WebLink
 
 
 class TrekForm(TopologyMixinForm):
@@ -54,6 +60,9 @@ class TrekForm(TopologyMixinForm):
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = LineTopologyWidget()
+        self.fields['web_links'].widget = SelectMultipleWithPop(
+												choices=self.fields['web_links'].choices, 
+												add_url=WebLink.get_add_url())
 
     class Meta(TopologyMixinForm.Meta):
         model = Trek
@@ -80,3 +89,28 @@ class POIForm(TopologyMixinForm):
     class Meta(TopologyMixinForm.Meta):
         model = POI
         exclude = TopologyMixinForm.Meta.exclude + ('name', 'description')  # TODO: topology editor
+
+
+class WebLinkCreateFormPopup(forms.ModelForm):
+    helper = FormHelper()
+
+    def __init__(self, *args, **kwargs):
+        super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
+        self.helper.form_action = self.instance.get_add_url()
+        # Main form layout
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            'name_fr',
+            'name_en',
+            'name_it',
+            'url',
+            'thumbnail',
+            FormActions(
+                HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
+                Submit('save_changes', _('Create'), css_class="btn-primary"),
+                css_class="form-actions",
+            )
+        )
+    class Meta:
+        model = WebLink
+        exclude = ('name', )
