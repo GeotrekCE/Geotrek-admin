@@ -985,3 +985,20 @@ puisqu'une jointure était nécessaire pour éviter d'utiliser la clé primaire.
 
 Désormais lors de la création ou l'édition d'une intervention sur un aménagement ou une 
 signalétique, le nom est rappellé dans le titre du formulaire, avec un lien pour le consulter.
+
+
+#182 - Ajouter une intervention depuis un tronçon
+-------------------------------------------------
+
+* Consulter la fiche d'un tronçon
+
+* Cliquer sur "Ajouter une intervention"
+
+* Le formulaire d'ajout d'intervention s'ouvre avec la carte placée sur le 
+  tronçon précédemment consulté.
+
+:notes: 
+
+    Dans la mesure où l'utilisateur n'a pas encore choisi s'il allait créé
+    un point ou une ligne, nous nous contentons de centrer la carte sur le
+    tronçon.

@@ -30,7 +30,7 @@
             <td>{{ path.date_update }}</td>
         </tr><tr>
             <th>{% trans "Slope" %}</th>
-            <td>-{{ path.descent }} m  +{{ path.ascent }} m</td>
+            <td>{{ path.descent }} m  +{{ path.ascent }} m</td>
         </tr><tr>
             <th>{{ path|verbose:"length" }}</th>
             <td>{{ path.length|stringformat:".2f" }} m</td>
@@ -88,6 +88,9 @@
         </tr><tr>
             <th>{% trans "Interventions" %}</th>
             <td>
+                <p><a href="{% url maintenance:intervention_add %}" class="btn btn-mini btn-success">
+                    <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}
+                </a></p>
                 {% for i in path.interventions %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li>{{ i.name_display|safe }}</li>
@@ -144,9 +147,15 @@
     </div>
 
     <div class="span11"></div><!-- clear -->
+{% endblock mappanel %}
 
+{% block extrabody %}
+    {{ block.super }}
     <script type="text/javascript">
         $(function() {
+            /* 
+             * Load altimetric profile from JSON
+             */
             $.getJSON("{% url core:path_profile path.pk %}", function(data) {
                 $('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
                 $('#profilealtitude').bind('sparklineRegionChange', function(ev) {
@@ -160,4 +169,4 @@
             });
         });
     </script>
-{% endblock mappanel %}
+{% endblock extrabody %}
