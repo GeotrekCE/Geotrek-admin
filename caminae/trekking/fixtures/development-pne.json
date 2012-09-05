@@ -46,6 +46,10 @@
             ],
             "ambiance_it": null,
             "themes": [
+                1,
+                2,
+            ],
+            "main_themes": [
                 1
             ],
             "arrival_en": "Chabottes",
@@ -155,8 +159,30 @@
             "pictogram": "",
             "label": "Histoire"
             "label_fr": "Histoire"
-            "label_it": "Historia"
+            "label_it": "Storia"
             "label_en": "History"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Nature"
+            "label_fr": "Nature"
+            "label_it": "Natura"
+            "label_en": "Nature"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Sport"
+            "label_fr": "Sport"
+            "label_it": "Sport"
+            "label_en": "Sport"
         }
     },
     {

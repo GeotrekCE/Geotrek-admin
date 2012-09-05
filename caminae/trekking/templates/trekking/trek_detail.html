@@ -13,7 +13,11 @@
             <td>
                 {% for t in trek.themes.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t }}</li>
+                    {% if t in trek.main_themes.all %}
+                        <li>{{ t }}</li>
+                    {% else %}
+                        <li><strong>{{ t }}</strong><i class="icon-star"></i></li>
+                    {% endif %}
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}

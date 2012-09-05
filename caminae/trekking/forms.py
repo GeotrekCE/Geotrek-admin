@@ -45,6 +45,7 @@ class TrekForm(TopologyMixinForm):
             'advice_it',
             'advice_en',
             'themes',
+            'main_themes',
             'networks',
             'usages',
             'web_links',

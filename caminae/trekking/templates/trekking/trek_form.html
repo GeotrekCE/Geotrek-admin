@@ -1,1 +1,24 @@
 {% extends "mapentity/entity_form.html" %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function reduceMainThemes() {
+            // Save selected
+            var mainselected = [];
+            $("#id_main_themes option:selected").each(function () {
+                mainselected.push($(this).val());
+            });
+            // Reduce available choices
+            $('#id_main_themes').find('option').remove();
+            $("#id_themes option:selected").each(function () {
+                var option = $(this).clone().removeAttr('selected');
+                $('#id_main_themes').append(option);
+            });
+            // Restore selected
+            $('#id_main_themes').val(mainselected);
+        };
+        reduceMainThemes();
+        $('#id_themes').change(reduceMainThemes);
+    </script>
+{% endblock extrabody %}

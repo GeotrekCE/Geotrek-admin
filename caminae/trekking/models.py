@@ -35,7 +35,10 @@ class Trek(MapEntityMixin, TopologyMixin):
     advice = models.TextField(verbose_name=_(u"Advice"))
 
     themes = models.ManyToManyField('Theme', related_name="treks",
-            verbose_name=_(u"Trek themes"))
+            verbose_name=_(u"Themes"))
+
+    main_themes = models.ManyToManyField('Theme', related_name="treks_main",
+            verbose_name=_(u"Main themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
             verbose_name=_(u"Trek networks"))

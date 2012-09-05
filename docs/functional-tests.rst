@@ -1011,7 +1011,6 @@ Il est désormais possible d'associer des thèmes aux itinéraires.
 
 Ils sont gérés dans l'AdminSite.
 
-
 #153 - [BUG] La carte n'est pas ajustée à la hauteur de l'écran
 ---------------------------------------------------------------
 
@@ -1021,3 +1020,24 @@ Afficher une page, la partie droite doit occuper toute la hauteur de la page
 Redimmensionner la fenêtre du naviagteur, la partie droite doit toujours occuper
 toute la hauteur de la page, tous les éléments de la partie droite restent
 visibles et c'est l'élément carte qui est ajusté aux nouvelles dimensions.
+
+
+
+#101 - Ajouter la notion de thème(s) majeur(s) pour les itinéraires
+-------------------------------------------------------------------
+
+Il est désormais possible d'associer des thèmes majeurs aux itinéaires.
+
+La liste des choix proposés est réduite aux thèmes choisis dans l'itinéraire.
+
+* Choisir des thèmes pour l'itinéraire
+
+* La liste des choix des thèmes majeurs est réduite.
+
+* Sélectionner un thème majeur.
+
+* Ajouter des thèmes pour l'itinéraire, la liste des majeurs est raffraichie, 
+  la sélection est conservée.
+
+Dans la fiche détail, les thèmes majeurs sont décorés d'une étoile.
+
