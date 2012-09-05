@@ -11,7 +11,7 @@
 
 {% block mainpanel %}
     <div class="span12">
-        <h1>{{ title }}
+        <h1>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
         {% if object %}
             <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
         {% endif %}</h1>
