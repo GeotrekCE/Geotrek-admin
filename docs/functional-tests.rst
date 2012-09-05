@@ -1041,3 +1041,12 @@ La liste des choix proposés est réduite aux thèmes choisis dans l'itinéraire
 
 Dans la fiche détail, les thèmes majeurs sont décorés d'une étoile.
 
+
+#53 - Ajouter des liens Web à un itinéraire
+-------------------------------------------
+
+Un bouton "ajouter" est désormais disponible sur la liste des choix des liens Web
+dans le formulaire de création et d'édition des itinéraires.
+
+Lors de l'ajout, une popup avec le formulaire s'ouvre. À la fermeture, le 
+lien est automatiquement ajouté à la liste, et sélectionné.
