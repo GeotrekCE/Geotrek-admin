@@ -1,5 +1,8 @@
 import factory
-from django.contrib.gis.geos import Point, LineString
+import random
+import math
+
+from django.contrib.gis.geos import Point, LineString, Polygon
 from django.conf import settings
 
 from caminae.authent.factories import StructureRelatedDefaultFactory
@@ -64,6 +67,42 @@ class PathFactory(StructureRelatedDefaultFactory):
     stake = factory.SubFactory(StakeFactory)
 
 
+def getRandomLineStringInBounds(*args, **kwargs):
+    """Return an horizontal line with 2 in bounds random points"""
+
+    srid = settings.SRID
+    minx, miny, maxx, maxy = settings.SPATIAL_EXTENT
+
+    assert srid == 2154, "Following code will use math fns that depends on this srid (floor)"
+
+    # SRID 2154 use integer values. Substract 1 to maxx and maxy to be sure to be in bounds
+    get_in_bound_x = lambda: math.floor( random.random() * ((maxx - minx) + 1) + minx )
+    get_in_bound_y = lambda: math.floor( random.random() * ((maxy - miny) + 1) + miny )
+
+    p1_x, p2_x = get_in_bound_x(), get_in_bound_x()
+    p1_y = p2_y = get_in_bound_y() # make a straight line to be easily identified
+
+    return LineString([Point(p1_x, p1_y, 0), Point(p2_x, p2_y, 0)], srid=srid)
+
+
+def getExistingLineStringInBounds(*args, **kwargs):
+    """Return the geom of the first Path whose geom is in bounds"""
+    p = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+    return models.Path.objects.filter(geom__contained=p)[0].geom
+
+
+## Those two factories return Path whose geom is in bounds
+## (better for testing UI for example that always has a bbox filter)
+## TODO: Well genereting "in bounds" geom should be the default ?!
+
+class PathInBoundsRandomGeomFactory(PathFactory):
+    geom = factory.Sequence(getRandomLineStringInBounds)
+
+
+class PathInBoundsExistingGeomFactory(PathFactory):
+    geom = factory.Sequence(getExistingLineStringInBounds)
+
+
 class TopologyMixinFactory(factory.Factory):
     FACTORY_FOR = models.TopologyMixin
 
@@ -77,6 +116,10 @@ class TopologyMixinFactory(factory.Factory):
     date_update = dbnow()
 
     @classmethod
+    def create_pathaggregation_from_topo(self, topo_mixin):
+        return PathAggregationFactory.create(topo_object=topo_mixin)
+
+    @classmethod
     def _prepare(cls, create, **kwargs):
         """
         A topology mixin should be linked to at least one Path (through
@@ -87,10 +130,22 @@ class TopologyMixinFactory(factory.Factory):
         topo_mixin = super(TopologyMixinFactory, cls)._prepare(create, **kwargs)
 
         if not no_path and create:
-            PathAggregationFactory.create(topo_object=topo_mixin)
+            cls.create_pathaggregation_from_topo(topo_mixin)
             # Note that it is not possible to attach a related object before the
             # topo_mixin has an ID.
         return topo_mixin
+
+
+class TopologyMixinInBoundsRandomGeomFactory(TopologyMixinFactory):
+    @classmethod
+    def create_pathaggregation_from_topo(cls, topo_mixin):
+        return PathAggregationInBoundsRandomGeomFactory.create(topo_object=topo_mixin)
+
+
+class TopologyMixinInBoundsExistingGeomFactory(TopologyMixinFactory):
+    @classmethod
+    def create_pathaggregation_from_topo(cls, topo_mixin):
+        return PathAggregationInBoundsExistingGeomFactory.create(topo_object=topo_mixin)
 
 
 class PathAggregationFactory(factory.Factory):
@@ -101,3 +156,13 @@ class PathAggregationFactory(factory.Factory):
 
     start_position = 0.0
     end_position = 1.0
+
+
+class PathAggregationInBoundsRandomGeomFactory(PathAggregationFactory):
+    path = factory.SubFactory(PathInBoundsRandomGeomFactory)
+
+
+class PathAggregationInBoundsExistingGeomFactory(PathAggregationFactory):
+    path = factory.SubFactory(PathInBoundsExistingGeomFactory)
+
+
