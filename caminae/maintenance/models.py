@@ -292,7 +292,7 @@ class Contractor(StructureRelated):
         return self.contractor
 
 
-class Funding(StructureRelated):
+class Funding(models.Model):
 
     amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"))
     project = models.ForeignKey(Project)

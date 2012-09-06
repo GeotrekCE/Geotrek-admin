@@ -1,14 +1,15 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.forms.models import inlineformset_factory
 
-from crispy_forms.layout import Field
+from crispy_forms.layout import Field, Fieldset
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
 from caminae.core.widgets import TopologyReadonlyWidget
 from caminae.infrastructure.models import BaseInfrastructure
 
-from .models import Intervention, Project
+from .models import Intervention, Project, Funding
 
 
 class InterventionForm(CommonForm):
@@ -93,6 +94,8 @@ class InterventionCreateForm(InterventionForm):
             'project', )
 
 
+FundingFormSet = inlineformset_factory(Project, Project.founders.through, extra=2)
+
 class ProjectForm(CommonForm):
     modelfields = (
             'name',
@@ -103,10 +106,14 @@ class ProjectForm(CommonForm):
             Field('comments', css_class='input-xlarge'),
             'contractors',
             'project_owner',
-            'project_manager',
-            'founders',)
+            'project_manager',)
     geomfields = tuple()  # no geom field in project
+    actions = tuple()
 
     class Meta:
         model = Project
-        exclude = ('deleted', 'founders',)  #TODO founders (inline form)
+        exclude = ('deleted', 'founders')
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
