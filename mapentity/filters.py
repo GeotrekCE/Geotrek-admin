@@ -91,7 +91,7 @@ class MapEntityFilterSet(FilterSet):
         empty choices label, etc. This allows to greatly save space in form layout,
         which is required for concise filter forms.
         """
-        for fieldname in self._meta.fields:
+        for fieldname in self.base_filters.keys():
             field = self.form.fields[fieldname]
             if isinstance(field, django_forms.MultiValueField):
                 for i, widget in enumerate(field.widget.widgets):
