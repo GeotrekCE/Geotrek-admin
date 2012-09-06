@@ -78,17 +78,17 @@ class InfraFilterTestMixin():
         self.factory()
 
         # Bad signage: intervention with wrong year
-        bad_topo = self.factory(no_path=True)
+        bad_topo = self.factory()
         InterventionFactory(topology=bad_topo, date=bad_date_year)
 
         # Good signage: intervention with the good year
-        good_topo = self.factory(no_path=True)
-        intervention = InterventionFactory(topology=good_topo, date=good_date_year)
+        good_topo = self.factory()
+        InterventionFactory(topology=good_topo, date=good_date_year)
 
         data = {
             'intervention_year': year_idx
         }
-        response = self.client.get(model.get_jsonlist_url(), data, follow=True)
+        response = self.client.get(model.get_jsonlist_url(), data)
 
         self.assertEqual(response.status_code, 200)
         topo_pk = simplejson.loads(response.content)['map_obj_pk']
