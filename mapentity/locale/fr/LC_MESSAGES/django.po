@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-31 11:39+0200\n"
+"POT-Creation-Date: 2012-09-06 17:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: filters.py:19
+msgid "Any year"
+msgstr "Année"
 
 #: tests.py:14
 msgid "Topology is not valid."
@@ -62,7 +66,7 @@ msgid "Update"
 msgstr "Éditer"
 
 #: templates/mapentity/entity_detail.html:22
-#: templates/mapentity/entity_form.html:27
+#: templates/mapentity/entity_form.html:30
 msgid "Attached files"
 msgstr "Fichiers liés"
 
@@ -70,15 +74,15 @@ msgstr "Fichiers liés"
 msgid "No map available for this object."
 msgstr "Pas de carte disponible pour cet objet."
 
-#: templates/mapentity/entity_form.html:16
+#: templates/mapentity/entity_form.html:17
 msgid "Delete"
 msgstr "Supprimer"
 
-#: templates/mapentity/entity_form.html:29
+#: templates/mapentity/entity_form.html:32
 msgid "New file attachment"
 msgstr "Nouveau fichier lié"
 
-#: templates/mapentity/entity_form.html:34
+#: templates/mapentity/entity_form.html:37
 msgid "Existing file attachment"
 msgstr "Fichiers liés existant"
 
@@ -86,9 +90,13 @@ msgstr "Fichiers liés existant"
 msgid "Filter"
 msgstr "Filtrer"
 
-#: templates/mapentity/entity_list.html:106
+#: templates/mapentity/entity_list.html:57
 msgid "Paths"
 msgstr "Tronçons"
+
+#: templates/mapentity/popupplus.html:8
+msgid "Add"
+msgstr "Ajouter"
 
 #~ msgid "Cancel"
 #~ msgstr "Annuler"
