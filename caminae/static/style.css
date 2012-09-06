@@ -200,5 +200,5 @@ tr.selected-row td {
 #container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
 #viewport-l4 {position: absolute; top: 0; bottom: 0;}
 #panelright {position: absolute; top: 0; bottom: 0; right: 0;}
-#mainmap {position: absolute; top: 0; bottom: 75px; left: 0; right: 0;}
+#mainmap {position: absolute; top: 0; bottom: 40px; left: 0; right: 0;}
 #mainmap-controls {position: absolute; bottom: 0; right: 0;}
