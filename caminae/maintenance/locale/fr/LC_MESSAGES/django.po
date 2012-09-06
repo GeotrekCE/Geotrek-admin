@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-31 11:39+0200\n"
+"POT-Creation-Date: 2012-09-06 17:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,203 +17,211 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: models.py:14
+#: filters.py:23
+msgid "Year"
+msgstr "Année"
+
+#: filters.py:35
+msgid "Year of activity"
+msgstr "Année d'activité"
+
+#: models.py:15
 msgid "Whether the intervention is currently happening"
 msgstr "En maintenance"
 
-#: models.py:15 models.py:205
+#: models.py:16 models.py:213
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:16
+#: models.py:17
 msgid "Date"
 msgstr "Date"
 
-#: models.py:17 models.py:210
+#: models.py:18 models.py:218
 msgid "Comments"
 msgstr "Commentaires"
 
-#: models.py:20
+#: models.py:21
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:21
+#: models.py:22
 msgid "Width"
 msgstr "Largeur"
 
-#: models.py:22
+#: models.py:23
 msgid "Height"
 msgstr "Hauteur"
 
-#: models.py:23
+#: models.py:24
 msgid "Area"
 msgstr "Surface"
 
-#: models.py:24
+#: models.py:25
 msgid "Slope"
 msgstr "Pente"
 
-#: models.py:27
+#: models.py:28
 msgid "Material cost"
 msgstr "Coût matériel"
 
-#: models.py:28
+#: models.py:29
 msgid "Heliport cost"
 msgstr "Coût héliportage"
 
-#: models.py:29
+#: models.py:30
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-#: models.py:32 models.py:212
+#: models.py:33 models.py:220
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:33 models.py:213
+#: models.py:34 models.py:221
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:34 models.py:214 models.py:270
+#: models.py:35 models.py:222 models.py:278
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:39 models.py:61
+#: models.py:40 models.py:62
 msgid "Interventions"
 msgstr "Interventions"
 
-#: models.py:42
+#: models.py:43
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:44
+#: models.py:45
 msgid "Intervention status"
 msgstr "Suivi"
 
-#: models.py:47
+#: models.py:48
 msgid "Intervention type"
 msgstr "Type d'intervention"
 
-#: models.py:50
+#: models.py:51
 msgid "Disorders"
 msgstr "Désordres"
 
-#: models.py:53
+#: models.py:54
 msgid "Jobs"
 msgstr "Fonctions"
 
-#: models.py:56 models.py:231
+#: models.py:57 models.py:239
 msgid "Project"
 msgstr "Chantier"
 
-#: models.py:60
+#: models.py:61
 msgid "Intervention"
 msgstr "Intervention"
 
-#: models.py:137
+#: models.py:145
 msgid "Status"
 msgstr "Suivi"
 
-#: models.py:141
+#: models.py:149
 msgid "Intervention's status"
 msgstr "Suivi"
 
-#: models.py:142
+#: models.py:150
 msgid "Intervention's statuses"
 msgstr "Suivis"
 
-#: models.py:151
+#: models.py:159
 msgid "Type"
 msgstr ""
 
-#: models.py:155
+#: models.py:163
 msgid "Intervention's type"
 msgstr "Type d'intervention"
 
-#: models.py:156
+#: models.py:164
 msgid "Intervention's types"
 msgstr "Types d'intervention"
 
-#: models.py:164
+#: models.py:172
 msgid "Disorder"
 msgstr "Désordre"
 
-#: models.py:168
+#: models.py:176
 msgid "Intervention's disorder"
 msgstr "Désordre"
 
-#: models.py:169
+#: models.py:177
 msgid "Intervention's disorders"
 msgstr "Désordres"
 
-#: models.py:177
+#: models.py:185
 msgid "Job"
 msgstr "Fonction"
 
-#: models.py:181
+#: models.py:189
 msgid "Intervention's job"
 msgstr "Fonction"
 
-#: models.py:182
+#: models.py:190
 msgid "Intervention's jobs"
 msgstr "Fonctions"
 
-#: models.py:190 models.py:197
+#: models.py:198 models.py:205
 msgid "Mandays"
 msgstr "Jours-Homme"
 
-#: models.py:196
+#: models.py:204
 msgid "Manday"
 msgstr "Jour-Homme"
 
-#: models.py:206
+#: models.py:214
 msgid "Begin year"
 msgstr "Année de début"
 
-#: models.py:207
+#: models.py:215
 msgid "End year"
 msgstr "Année de fin"
 
-#: models.py:208
+#: models.py:216
 msgid "Constraint"
 msgstr "Contraintes"
 
-#: models.py:209
+#: models.py:217
 msgid "Cost"
 msgstr "Coût"
 
-#: models.py:218 models.py:281
+#: models.py:226 models.py:289
 msgid "Contractors"
 msgstr "Prestataires"
 
-#: models.py:221
+#: models.py:229
 msgid "Project owner"
 msgstr "Maître d'ouvrage"
 
-#: models.py:224
+#: models.py:232
 msgid "Project manager"
 msgstr "Maître d'oeuvre"
 
-#: models.py:227
+#: models.py:235
 msgid "Founders"
 msgstr "Financeurs"
 
-#: models.py:232
+#: models.py:240
 msgid "Projects"
 msgstr "Chantiers"
 
-#: models.py:276 models.py:280
+#: models.py:284 models.py:288
 msgid "Contractor"
 msgstr "Prestataire"
 
-#: models.py:289
+#: models.py:297
 msgid "Amount"
 msgstr "Montant"
 
-#: models.py:295
+#: models.py:303
 msgid "Funding"
 msgstr "Financement"
 
-#: models.py:296
+#: models.py:304
 msgid "Fundings"
 msgstr "Financements"
 
@@ -257,6 +265,10 @@ msgstr "Sur un aménagement?"
 #: templates/maintenance/intervention_detail.html:33
 msgid "On a signage?"
 msgstr "Sur une signalétique?"
+
+#: templates/maintenance/intervention_form.html:7
+msgid "on"
+msgstr "sur"
 
 #: templates/maintenance/intervention_list.html:7
 msgid "Request intervention"
