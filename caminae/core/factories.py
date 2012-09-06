@@ -71,7 +71,7 @@ def getRandomLineStringInBounds(*args, **kwargs):
     """Return an horizontal line with 2 in bounds random points"""
 
     srid = settings.SRID
-    minx, miny, maxx, maxy = settings.SPATIAL_EXTENT
+    minx, miny, maxx, maxy = kwargs.pop('bbox', settings.SPATIAL_EXTENT)
 
     assert srid == 2154, "Following code will use math fns that depends on this srid (floor)"
 
@@ -87,7 +87,8 @@ def getRandomLineStringInBounds(*args, **kwargs):
 
 def getExistingLineStringInBounds(*args, **kwargs):
     """Return the geom of the first Path whose geom is in bounds"""
-    p = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+    bbox = kwargs.pop('bbox', settings.SPATIAL_EXTENT)
+    p = Polygon.from_bbox(bbox)
     return models.Path.objects.filter(geom__contained=p)[0].geom
 
 
