@@ -357,11 +357,12 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(1, len(TopologyMixin.objects.filter(kind='LANDEDGE')))
 
     def test_delete(self):
-        # Make sure it deletes in cascade
+        # Make sure object remains in database with deleted status
         topology = TopologyMixinFactory.create(offset=1)
         self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
         topology.delete()
-        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 0)
+        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
+        self.assertTrue(topology.deleted)
 
     def test_mutate(self):
         topology1 = TopologyMixinFactory.create(no_path=True)
@@ -373,7 +374,7 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(topology1.offset, 14.5)
         self.assertEqual(len(topology1.paths.all()), 1)
         # topology2 does not exist anymore
-        self.assertEqual(len(TopologyMixin.objects.filter(pk=topology2.pk)), 0)
+        self.assertTrue(topology2.deleted)
         # Without deletion
         topology3 = TopologyMixinFactory.create()
         topology1.mutate(topology3, delete=False)

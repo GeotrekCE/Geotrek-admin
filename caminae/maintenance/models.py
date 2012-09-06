@@ -5,13 +5,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import TopologyMixin
+from caminae.core.models import NoDeleteMixin, TopologyMixin
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, StructureRelated):
+class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     date = models.DateField(default=datetime.now, verbose_name=_(u"Date"))
@@ -32,7 +32,6 @@ class Intervention(MapEntityMixin, StructureRelated):
     #TODO: remove this --> abstract class
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(editable=False, default=False, verbose_name=_(u"Deleted"))
 
     """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
@@ -215,7 +214,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(MapEntityMixin, StructureRelated):
+class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
@@ -226,7 +225,6 @@ class Project(MapEntityMixin, StructureRelated):
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
-    deleted = models.BooleanField(default=False, verbose_name=_(u"Deleted"))
 
     ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",

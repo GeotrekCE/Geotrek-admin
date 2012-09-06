@@ -180,7 +180,18 @@ class Path(MapEntityMixin, StructureRelated):
                     kind=inf.models.Infrastructure.KIND)]
 
 
-class TopologyMixin(models.Model):
+class NoDeleteMixin(models.Model):
+    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+
+    def delete(self, using=None):
+        self.deleted = True
+        self.save(using=using)
+
+    class Meta:
+        abstract = True
+
+
+class TopologyMixin(NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -189,11 +200,8 @@ class TopologyMixin(models.Model):
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
-
-    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
-
     length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 blank=True, spatial_index=False, dim=3)
