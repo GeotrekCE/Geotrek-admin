@@ -103,7 +103,7 @@ terrain_layers = scan100,scan25
 _EOF_
     fi
     # Prompt user to edit/review settings
-    editor $settingsfile
+    vim $settingsfile
 
     # Activate PostGIS in database
     dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < $settingsfile)
