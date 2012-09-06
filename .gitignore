@@ -7,6 +7,7 @@
 /reports/
 /var/
 /etc/
+/caminae/media/
 
 # buildout stuff
 .mr.developer.cfg
