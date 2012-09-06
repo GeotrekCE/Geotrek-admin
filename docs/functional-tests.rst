@@ -1050,3 +1050,29 @@ dans le formulaire de création et d'édition des itinéraires.
 
 Lors de l'ajout, une popup avec le formulaire s'ouvre. À la fermeture, le 
 lien est automatiquement ajouté à la liste, et sélectionné.
+
+
+#208 - Implémenter les filtres (story #82) pour chaque type d'évènement
+-----------------------------------------------------------------------
+
+* Tronçons
+  - Type de réseau
+  - Recherche sur le nom du tronçon (contient une partie de la saisie)
+  - Recherche sur le commentaire (contient une partie de la saisie)
+  - Liste déroulante des sentiers
+* Interventions
+  - Suivi
+  - Type d'intervention
+  - Année
+  - Enjeu
+* Chantier
+  - Année (retourne les chantiers qui sont/étaient en cours pendant cette année)
+* Signalétique
+   - Type
+   - Année de travaux (retourne les signalétiques dont au moins une intervention
+     s'est déroulée pendant l'année saisie)
+* Aménagement
+   - Type
+   - Année de travaux (retourne les signalétiques dont au moins une intervention
+     s'est déroulée pendant l'année saisie)
+
