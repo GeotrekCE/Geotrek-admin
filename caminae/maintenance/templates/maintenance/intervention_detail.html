@@ -8,6 +8,21 @@
             <th>{{ intervention|verbose:"status" }}</th>
             <td>{{ intervention.status }}</td>
         </tr>
+        <tr>
+            <th>{% trans "Mandays" %}</th>
+            <td>
+                {% for md in intervention.manday_set.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>
+                    {% blocktrans with md.nb_days as nb_days and md.job as job %}
+                     {{ job }}: {{ nb_days }} days
+                    {% endblocktrans %}
+                    </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% endfor %}
+                <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "day" %}{{ intervention.total_manday|pluralize }}</p>
+            </td>
+        </tr>
     </table>
 
     <h3>{% trans "Management" %}</h3>

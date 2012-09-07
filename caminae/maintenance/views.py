@@ -1,9 +1,8 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from django.http import HttpResponseRedirect
-from django.core.exceptions import ValidationError
 
+from caminae.common.views import FormsetMixin
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -11,7 +10,7 @@ from caminae.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
-                    FundingFormSet)
+                    FundingFormSet, ManDayFormSet)
 
 
 logger = logging.getLogger(__name__)
@@ -39,7 +38,12 @@ class InterventionDetail(MapEntityDetail):
                self.get_object().same_structure(self.request.user)
 
 
-class InterventionCreate(MapEntityCreate):
+class ManDayFormsetMixin(FormsetMixin):
+    context_name = 'manday_formset'
+    formset_class = ManDayFormSet
+
+
+class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
     model = Intervention
     form_class = InterventionCreateForm
 
@@ -71,7 +75,7 @@ class InterventionCreate(MapEntityCreate):
         return context
 
 
-class InterventionUpdate(MapEntityUpdate):
+class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     model = Intervention
     form_class = InterventionForm
 
@@ -122,29 +126,9 @@ class ProjectDetail(MapEntityDetail):
                self.get_object().same_structure(self.request.user)
 
 
-class FundingFormsetMixin(object):
-    def form_valid(self, form):
-        context = self.get_context_data()
-        funding_form = context['funding_formset']
-        
-        if funding_form.is_valid():
-            self.object = form.save()
-            funding_form.instance = self.object
-            funding_form.save()
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-
-    def get_context_data(self, **kwargs):
-        context = super(FundingFormsetMixin, self).get_context_data(**kwargs)
-        if self.request.POST:
-            try:
-                context['funding_formset'] = FundingFormSet(self.request.POST, instance=self.object)
-            except ValidationError:
-                pass
-        else:
-            context['funding_formset'] = FundingFormSet(instance=self.object)
-        return context
+class FundingFormsetMixin(FormsetMixin):
+    context_name = 'funding_formset'
+    formset_class = FundingFormSet
 
 
 class ProjectCreate(FundingFormsetMixin, MapEntityCreate):

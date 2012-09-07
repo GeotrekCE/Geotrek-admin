@@ -8,6 +8,8 @@ from django.utils.functional import Promise, curry
 from django.utils import simplejson
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+from django.http import HttpResponseRedirect
+from django.core.exceptions import ValidationError
 
 
 class HttpJSONResponse(HttpResponse):
@@ -89,3 +91,29 @@ def qunit_tests_list_json(request):
     return HttpResponse(json_django_dumps(qunit_views_urls), content_type='application/json')
 
 
+class FormsetMixin(object):
+    context_name = None
+    formset_class = None
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        funding_form = context[self.context_name]
+        
+        if funding_form.is_valid():
+            self.object = form.save()
+            funding_form.instance = self.object
+            funding_form.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(FormsetMixin, self).get_context_data(**kwargs)
+        if self.request.POST:
+            try:
+                context[self.context_name] = self.formset_class(self.request.POST, instance=self.object)
+            except ValidationError:
+                pass
+        else:
+            context[self.context_name] = self.formset_class(instance=self.object)
+        return context

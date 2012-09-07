@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_form.html" %}
-{% load i18n %}
+{% load i18n crispy_forms_tags %}
 
 {% block paneltitle %}
     {{ block.super }}
@@ -8,9 +8,43 @@
     {% endif %}
 {% endblock paneltitle %}
 
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" method="POST">
+    
+    {% crispy form %}
+    
+    <fieldset class="formset">
+        {{ manday_formset.management_form }}
+        {% for manday_form in manday_formset %}
+            <div class="form-row inline controls controls-row {{ manday_formset.prefix }}">
+            {% crispy manday_form %}
+            </div>
+        {% endfor %}
+    </fieldset>
+    
+    </form>
+{% endblock mainform %}
+
+
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
         $('#id_date').datepicker({format: '{{ DATE_INPUT_FORMAT_JS }}'});
+        
+        // TODO: do this with crispyforms !
+        $("fieldset.formset").detach().appendTo('#mainform fieldset');
+        
+        $(".clearfix").removeClass("clearfix");
+        
+        $('.form-row.inline.{{ manday_formset.prefix }}').formset({
+            prefix: '{{ manday_formset.prefix }}',
+            keepFieldValues: "[name='csrfmiddlewaretoken']",
+            addCssClass: 'btn btn-success add-row',
+            deleteCssClass: 'delete-row',
+            addText: '{% trans "Add manday" %}',
+            deleteText: '{% trans "Remove" %}', 
+        })
+        
     </script>
 {% endblock extrabody %}

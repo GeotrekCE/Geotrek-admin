@@ -13,6 +13,34 @@ from caminae.infrastructure.models import BaseInfrastructure
 from .models import Intervention, Project
 
 
+class ManDayForm(forms.ModelForm):
+    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(ManDayForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(Div('nb_days', css_class="span2"),
+                                    Div('job', css_class="span4"))
+        self.fields['nb_days'].widget.attrs['class'] = 'span12'
+        self.fields['job'].widget.attrs['class'] = 'input-small'
+
+
+ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)
+
+
+class FundingForm(forms.ModelForm):
+    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(FundingForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(Div('amount', css_class="span1"),
+                                    Div('organism', css_class="span4"))
+        self.fields['amount'].widget.attrs['class'] = 'span12'
+        self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
+
+
+FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
+
+
 class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
     topology = TopologyField()
@@ -37,8 +65,9 @@ class InterventionForm(CommonForm):
             'subcontract_cost',
             'stake',
             'project',
-            'infrastructure',)
-    geomfields = ('topology',)
+            'infrastructure')
+    geomfields = ('topology',
+                  Fieldset(_("Mandays"),))
 
     class Meta:
         model = Intervention
@@ -93,21 +122,6 @@ class InterventionCreateForm(InterventionForm):
             'subcontract_cost',
             'stake',
             'project', )
-
-
-class FundingForm(forms.ModelForm):
-    helper = FormHelper()
-    def __init__(self, *args, **kwargs):
-        super(FundingForm, self).__init__(*args, **kwargs)
-        self.helper.form_tag = False
-        self.helper.layout = Layout(Div('amount', css_class="span1"),
-                                    Div('organism', css_class="span4"))
-        self.fields['amount'].widget.attrs['class'] = 'span12'
-        self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
-        
-
-
-FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
 
 
 class ProjectForm(CommonForm):

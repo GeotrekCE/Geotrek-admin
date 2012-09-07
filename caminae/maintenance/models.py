@@ -127,6 +127,13 @@ class Intervention(MapEntityMixin, StructureRelated):
         return []
 
     @property
+    def total_manday(self):
+        total = 0
+        for md in self.manday_set.all():
+            total += md.nb_days
+        return total
+
+    @property
     def geom(self):
         if self.topology:
             return self.topology.geom

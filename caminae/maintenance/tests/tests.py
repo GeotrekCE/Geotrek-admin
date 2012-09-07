@@ -15,7 +15,7 @@ from caminae.core.factories import (PathFactory, PathAggregationFactory,
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.maintenance.factories import (InterventionFactory, 
     InterventionDisorderFactory, InterventionStatusFactory,
-    ProjectFactory, ContractorFactory)
+    ProjectFactory, ContractorFactory, InterventionJobFactory)
 
 
 class InterventionViewsTest(MapEntityTest):
@@ -45,6 +45,20 @@ class InterventionViewsTest(MapEntityTest):
             'heliport_cost': 0.0,
             'material_cost': 0.0,
             'topology': '{"paths": [%s]}' % path.pk,
+            
+            'manday_set-TOTAL_FORMS': '2',
+            'manday_set-INITIAL_FORMS': '0',
+            'manday_set-MAX_NUM_FORMS': '',
+            
+            'manday_set-0-nb_days': '48',
+            'manday_set-0-job': InterventionJobFactory.create().pk,
+            'manday_set-0-id': '',
+            'manday_set-0-DELETE': '',
+            
+            'manday_set-1-nb_days': '12',
+            'manday_set-1-job': InterventionJobFactory.create().pk,
+            'manday_set-1-id': '',
+            'manday_set-1-DELETE': '',
         }
 
     def test_form_on_infrastructure(self):
