@@ -2,14 +2,15 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
 
-from crispy_forms.layout import Field, Fieldset
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Fieldset, Layout, Div
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
 from caminae.core.widgets import TopologyReadonlyWidget
 from caminae.infrastructure.models import BaseInfrastructure
 
-from .models import Intervention, Project, Funding
+from .models import Intervention, Project
 
 
 class InterventionForm(CommonForm):
@@ -94,7 +95,20 @@ class InterventionCreateForm(InterventionForm):
             'project', )
 
 
-FundingFormSet = inlineformset_factory(Project, Project.founders.through, extra=2)
+class FundingForm(forms.ModelForm):
+    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(FundingForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(Div('amount', css_class="span1"),
+                                    Div('organism', css_class="span4"))
+        self.fields['amount'].widget.attrs['class'] = 'span12'
+        self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
+        
+
+
+FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
+
 
 class ProjectForm(CommonForm):
     modelfields = (
@@ -103,12 +117,11 @@ class ProjectForm(CommonForm):
             'end_year',
             'constraint',
             'cost',
-            Field('comments', css_class='input-xlarge'),
-            'contractors',
+            Field('comments', css_class='input-xlarge'),)
+    geomfields = ('contractors',
             'project_owner',
-            'project_manager',)
-    geomfields = tuple()  # no geom field in project
-    actions = tuple()
+            'project_manager',
+            Fieldset(_("Fundings"),))  # no geom field in project
 
     class Meta:
         model = Project

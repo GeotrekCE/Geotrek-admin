@@ -53,7 +53,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     jobs = models.ManyToManyField('InterventionJob', through='ManDay',
             verbose_name=_(u"Jobs"))
 
-    project = models.ForeignKey('Project', null=True, blank=True,
+    project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
             verbose_name=_(u"Project"))
 
     class Meta:
