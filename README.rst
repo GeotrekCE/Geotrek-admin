@@ -19,16 +19,17 @@ A first estimation on system resources is :
 Installation
 ------------
 
-Once the OS is installed, copy and extract the source archive.
+Once the OS is installed (basic installation, with OpenSSH server), copy and extract the source archive.
 
-Follow the installation process :
+Go into the extracted directory, just follow the installation process :
 
 ::
 
+	chmod +x install.sh
     ./install.sh
 
-
-You will mainly be prompt for editing the base configuration file (``settings.ini``).
+You will mainly be prompt for editing the base configuration file (``settings.ini``),
+using *Vim* (Finish with 'Esc' then ':wq' to save and quit).
 
 To make sure the application runs well after a reboot, try now : reboot. And
 access the ``http://yourserver/``.
@@ -39,11 +40,28 @@ See paragraph below for loading initial demonstration data.
 Software update
 ---------------
 
-Overwrite the source code (or use symlinks), and run :
+You can just overwrite the source code (or use symlinks), and run :
 
 ::
 
     make deploy
+
+
+Or if you prefer to keep previous versions :
+
+
+::
+
+	# Copy previous settings
+	cp ../previous-version/etc/settings.ini  etc/settings.ini
+	
+	make deploy
+	
+	# Overwrite generated conf system-wide
+	sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
+	sudo /etc/init.d/nginx restart
+	sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
+	sudo restart supervisor
 
 
 Initial Data

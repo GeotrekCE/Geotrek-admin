@@ -56,7 +56,7 @@ function ubuntu_precise {
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
     sudo apt-add-repository -y ppa:sharpie/postgis-stable 
     sudo apt-get update > /dev/null
-    sudo apt-get install -y python-virtualenv build-essential python-dev unzip
+    sudo apt-get install -y git python-virtualenv build-essential python-dev unzip
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
     sudo apt-get install -y postgis-bin gdal-bin
     sudo apt-get install -y gettext
@@ -72,7 +72,7 @@ function ubuntu_precise {
         fi
     fi
     # Prompt user to edit/review settings
-    vim $settingsfile
+     vim -c 'startinsert' $settingsfile
 
     # Activate PostGIS in database
     dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < $settingsfile)
@@ -122,16 +122,16 @@ function ubuntu_precise {
         fi
 
     else
-        sudo apt-get install nginx
-        sudo apt-get install yui-compressor
+        sudo apt-get install -y nginx
+        sudo apt-get install -y yui-compressor
 
         make deploy
 
         sudo rm /etc/nginx/sites-enabled/default
-        sudo ln -sf etc/nginx.conf /etc/nginx/sites-enabled/default
+        sudo cp  etc/nginx.conf /etc/nginx/sites-enabled/default
         sudo /etc/init.d/nginx restart
         
-        sudo ln -sf etc/init/supervisor.conf /etc/init/supervisor.conf
+        sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
         sudo start supervisor
     fi
 
