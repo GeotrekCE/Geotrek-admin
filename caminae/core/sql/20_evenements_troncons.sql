@@ -64,8 +64,6 @@ BEGIN
 
     FOREACH eid IN ARRAY eids LOOP
         PERFORM update_geometry_of_evenement(eid);
-
-        -- TODO: DELETE evenements_troncons ON DELETE OR UPDATE supprime ON evenements (disable this trigger)
     END LOOP;
 
     RETURN NULL;

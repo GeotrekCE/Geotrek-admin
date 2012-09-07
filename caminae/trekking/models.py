@@ -59,7 +59,7 @@ class Trek(MapEntityMixin, TopologyMixin):
             verbose_name=_(u"Web links"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
@@ -250,7 +250,7 @@ class POI(MapEntityMixin, TopologyMixin):
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     def __unicode__(self):
         return self.name

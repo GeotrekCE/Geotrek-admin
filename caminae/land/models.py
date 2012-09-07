@@ -28,7 +28,7 @@ class PhysicalEdge(MapEntityMixin, TopologyMixin):
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'nature'
@@ -61,7 +61,7 @@ class LandEdge(MapEntityMixin, TopologyMixin):
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'foncier'
@@ -81,7 +81,7 @@ class CompetenceEdge(MapEntityMixin, TopologyMixin):
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'competence'
@@ -99,7 +99,7 @@ class WorkManagementEdge(MapEntityMixin, TopologyMixin):
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'gestion_travaux'
@@ -117,7 +117,7 @@ class SignageManagementEdge(MapEntityMixin, TopologyMixin):
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'gestion_signaletique'
@@ -154,7 +154,7 @@ class RestrictedAreaEdge(TopologyMixin):
     restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'zonage'
@@ -186,7 +186,7 @@ class CityEdge(TopologyMixin):
     city = models.ForeignKey(City, verbose_name=_(u"City"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'commune'
@@ -216,7 +216,7 @@ class DistrictEdge(TopologyMixin):
     district = models.ForeignKey(District, verbose_name=_(u"District"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'secteur'

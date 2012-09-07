@@ -333,8 +333,7 @@ class TopologyMixinTest(TestCase):
         t2 = dbnow()
         self.assertTrue(t1 < e.date_insert < t2)
 
-        e.deleted = True
-        e.save()
+        e.delete()
         t3 = dbnow()
         self.assertTrue(t2 < e.date_update < t3)
 
@@ -357,12 +356,21 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(1, len(TopologyMixin.objects.filter(kind='LANDEDGE')))
 
     def test_delete(self):
-        # Make sure object remains in database with deleted status
         topology = TopologyMixinFactory.create(offset=1)
+        path = topology.paths.get()
         self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
+        self.assertEqual(len(path.topologymixin_set.all()), 1)
         topology.delete()
+        # Make sure object remains in database with deleted status
         self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
+        # Make sure object has deleted status
         self.assertTrue(topology.deleted)
+        # Make sure object still exists
+        self.assertEqual(len(path.topologymixin_set.all()), 1)
+        self.assertIn(topology, TopologyMixin.objects.all())
+        # Make sure object can be hidden from managers
+        self.assertNotIn(topology, TopologyMixin.objects.existing())
+        self.assertEqual(len(path.topologymixin_set.existing()), 0)
 
     def test_mutate(self):
         topology1 = TopologyMixinFactory.create(no_path=True)

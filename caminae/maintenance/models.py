@@ -55,6 +55,9 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
             verbose_name=_(u"Project"))
 
+    # Special manager
+    objects = TopologyMixin.get_manager_cls()()
+
     class Meta:
         db_table = 'interventions'
         verbose_name = _(u"Intervention")
@@ -238,6 +241,9 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     founders = models.ManyToManyField(Organism, through='Funding',
             verbose_name=_(u"Founders"))
+
+    # Special manager
+    objects = TopologyMixin.get_manager_cls()()
 
     class Meta:
         db_table = 'chantiers'

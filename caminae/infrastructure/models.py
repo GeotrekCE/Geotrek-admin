@@ -92,7 +92,7 @@ class InfrastructureStructureManager(StructureRelatedManager):
 
 class Infrastructure(BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
-    objects = InfrastructureGISManager()
+    objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
     in_structure = InfrastructureStructureManager()
     class Meta:
         proxy = True
@@ -112,7 +112,7 @@ class SignageStructureManager(StructureRelatedManager):
 
 class Signage(BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
-    objects = SignageGISManager()
+    objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
     in_structure = SignageStructureManager()
     class Meta:
         proxy = True

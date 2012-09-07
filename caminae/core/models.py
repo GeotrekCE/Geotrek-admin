@@ -2,6 +2,7 @@ import logging
 import collections
 
 from django.contrib.gis.db import models
+from django.db.models import Manager as DefaultManager
 from django.utils import simplejson
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -190,6 +191,19 @@ class NoDeleteMixin(models.Model):
     class Meta:
         abstract = True
 
+    @classmethod
+    def get_manager_cls(cls, parent_mgr_cls=DefaultManager):
+
+        class NoDeleteManager(parent_mgr_cls):
+            # Use this manager when walking through FK/M2M relationships
+            use_for_related_fields = True
+
+            # Filter out deleted objects
+            def existing(self):
+                return self.get_query_set().filter(deleted=False)
+
+        return NoDeleteManager
+
 
 class TopologyMixin(NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
@@ -197,7 +211,7 @@ class TopologyMixin(NoDeleteMixin):
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))

@@ -63,7 +63,7 @@ BEGIN
 
     IF t_count = 0 THEN
         -- No more troncons, close this topology
-        UPDATE evenements SET geom = ST_GeomFromText('POINTZ EMPTY', 2154), longueur = 0, supprime = TRUE WHERE id = eid;
+        UPDATE evenements SET geom = ST_GeomFromText('POINTZ EMPTY', 2154), longueur = 0 WHERE id = eid;
     ELSIF NOT lines_only AND t_count > 1 THEN
         -- FIXME: This is an invalid case (a multi-point topology or a
         -- mixed points/lines topology), how to handle it?
@@ -76,7 +76,7 @@ BEGIN
             INTO egeom
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
-        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom), supprime = FALSE WHERE id = eid;
+        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom) WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
         -- Note: We are faking a M-geometry in order to use LocateBetween
@@ -89,7 +89,7 @@ BEGIN
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
             GROUP BY e.id, e.decallage;
-        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom), supprime = FALSE WHERE id = eid;
+        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom) WHERE id = eid;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
