@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n leaflet_tags field_verbose_name %}
+{% load i18n leaflet_tags field_verbose_name land %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
@@ -8,6 +8,9 @@
 {% endblock mainmap %}
 
 {% block mainlist %}
+    {# ids: bbox_cities bbox_districts #}
+    {% combobox_bbox_land %}
+
     <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
         {{ filterform.form.as_p }}
         <input id="reset" type="reset" class="btn" />
@@ -26,7 +29,6 @@
         </tbody>
     </table>
 {% endblock mainlist %}
-
 
 {% block extrabody %}
     {{ block.super }}
@@ -78,6 +80,13 @@
             });
             
             $('#filter').click();
+
+            $('#bbox_cities, #bbox_districts').on('change', function() {
+                if ($(this).val()) {
+                    var bbox = $.map($(this).val().split(','), parseFloat); // minx,miny,maxx,maxy
+                    map.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
+                }
+            });
         }
 
         /* Table initialisation */
