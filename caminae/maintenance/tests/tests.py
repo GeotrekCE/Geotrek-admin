@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.test import TestCase
 from django.utils import simplejson
 
@@ -71,7 +73,12 @@ class ProjectViewsTest(MapEntityTest):
 
 
     def get_bad_data(self):
-        return {'begin_year':''}, u'Ce champ est obligatoire.'
+        return OrderedDict([
+                ('begin_year', ''),
+                ('funding_set-TOTAL_FORMS', '0'),
+                ('funding_set-INITIAL_FORMS', '1'),
+                ('funding_set-MAX_NUM_FORMS', '0'),
+            ]), u'Ce champ est obligatoire.'
 
     def get_good_data(self):
         return {
@@ -86,6 +93,22 @@ class ProjectViewsTest(MapEntityTest):
             'contractors':  ContractorFactory.create().pk,
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
+            
+            'funding_set-TOTAL_FORMS': '2',
+            'funding_set-INITIAL_FORMS': '0',
+            'funding_set-MAX_NUM_FORMS': '',
+            
+            'funding_set-0-amount': '468.0',
+            'funding_set-0-organism': OrganismFactory.create().pk,
+            'funding_set-0-project': '',
+            'funding_set-0-id': '',
+            'funding_set-0-DELETE': '',
+
+            'funding_set-1-amount': '789',
+            'funding_set-1-organism': OrganismFactory.create().pk,
+            'funding_set-1-project': '',
+            'funding_set-1-id': '',
+            'funding_set-1-DELETE': ''
         }
 
     def test_project_layer(self):
@@ -177,17 +200,17 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.signages, [])
         self.assertEquals(proj.infrastructures, [])
 
-        proj.intervention_set.add(i1)
+        proj.interventions.add(i1)
         self.assertEquals(proj.paths, [p1])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [])
 
-        proj.intervention_set.add(i2)
+        proj.interventions.add(i2)
         self.assertItemsEqual(proj.paths, [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
 
-        proj.intervention_set.add(i3)
+        proj.interventions.add(i3)
         self.assertItemsEqual(proj.paths, [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])

@@ -1,6 +1,8 @@
 import logging
 
 from django.utils.decorators import method_decorator
+from django.http import HttpResponseRedirect
+from django.core.exceptions import ValidationError
 
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
@@ -8,7 +10,8 @@ from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList
 from caminae.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
-from .forms import InterventionForm, InterventionCreateForm, ProjectForm
+from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
+                    FundingFormSet)
 
 
 logger = logging.getLogger(__name__)
@@ -119,12 +122,37 @@ class ProjectDetail(MapEntityDetail):
                self.get_object().same_structure(self.request.user)
 
 
-class ProjectCreate(MapEntityCreate):
+class FundingFormsetMixin(object):
+    def form_valid(self, form):
+        context = self.get_context_data()
+        funding_form = context['funding_formset']
+        
+        if funding_form.is_valid():
+            self.object = form.save()
+            funding_form.instance = self.object
+            funding_form.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(FundingFormsetMixin, self).get_context_data(**kwargs)
+        if self.request.POST:
+            try:
+                context['funding_formset'] = FundingFormSet(self.request.POST, instance=self.object)
+            except ValidationError:
+                pass
+        else:
+            context['funding_formset'] = FundingFormSet(instance=self.object)
+        return context
+
+
+class ProjectCreate(FundingFormsetMixin, MapEntityCreate):
     model = Project
     form_class = ProjectForm
 
 
-class ProjectUpdate(MapEntityUpdate):
+class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
     model = Project
     form_class = ProjectForm
 

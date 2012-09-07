@@ -1,7 +1,9 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.forms.models import inlineformset_factory
 
-from crispy_forms.layout import Field
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Fieldset, Layout, Div
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
@@ -93,6 +95,21 @@ class InterventionCreateForm(InterventionForm):
             'project', )
 
 
+class FundingForm(forms.ModelForm):
+    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(FundingForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(Div('amount', css_class="span1"),
+                                    Div('organism', css_class="span4"))
+        self.fields['amount'].widget.attrs['class'] = 'span12'
+        self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
+        
+
+
+FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
+
+
 class ProjectForm(CommonForm):
     modelfields = (
             'name',
@@ -100,13 +117,16 @@ class ProjectForm(CommonForm):
             'end_year',
             'constraint',
             'cost',
-            Field('comments', css_class='input-xlarge'),
-            'contractors',
+            Field('comments', css_class='input-xlarge'),)
+    geomfields = ('contractors',
             'project_owner',
             'project_manager',
-            'founders',)
-    geomfields = tuple()  # no geom field in project
+            Fieldset(_("Fundings"),))  # no geom field in project
 
     class Meta:
         model = Project
-        exclude = ('deleted', 'founders',)  #TODO founders (inline form)
+        exclude = ('deleted', 'founders')
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False

@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+# Make sure only root can run our script
+if [ "$(id -u)" == "0" ]; then
+   echo "This script must NOT be run as root" 1>&2
+   exit 1
+fi
+
+# Make sure script runs from source root
+if [ ! -f Makefile ]; then
+   echo "This script must be run from source folder (c.f. README)" 1>&2
+   exit 1
+fi
+
 #
 # Redirect whole output to log file
 #----------------------------------

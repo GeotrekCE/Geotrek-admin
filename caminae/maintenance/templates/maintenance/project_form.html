@@ -1,1 +1,39 @@
 {% extends "mapentity/entity_form.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" method="POST">
+    
+    {% crispy form %}
+    
+    <fieldset class="formset">
+        {{ funding_formset.management_form }}
+        {% for funding_form in funding_formset %}
+            <div class="form-row inline controls controls-row {{ funding_formset.prefix }}">
+            {% crispy funding_form %}
+            </div>
+        {% endfor %}
+    </fieldset>
+    
+    </form>
+{% endblock mainform %}
+
+{% block extrabody %}
+<script type="text/javascript">
+$(function() {
+    // TODO: do this with crispyforms !
+    $("fieldset.formset").detach().appendTo('#mainform fieldset');
+    
+    $(".clearfix").removeClass("clearfix");
+    
+    $('.form-row.inline.{{ funding_formset.prefix }}').formset({
+        prefix: '{{ funding_formset.prefix }}',
+        keepFieldValues: "[name='csrfmiddlewaretoken']",
+        addCssClass: 'btn btn-success add-row',
+        deleteCssClass: 'delete-row',
+        addText: '{% trans "Add funding" %}',
+        deleteText: '{% trans "Remove" %}', 
+    })
+})
+</script>
+{% endblock extrabody %}

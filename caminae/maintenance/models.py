@@ -53,7 +53,7 @@ class Intervention(MapEntityMixin, StructureRelated):
     jobs = models.ManyToManyField('InterventionJob', through='ManDay',
             verbose_name=_(u"Jobs"))
 
-    project = models.ForeignKey('Project', null=True, blank=True,
+    project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
             verbose_name=_(u"Project"))
 
     class Meta:
@@ -242,21 +242,21 @@ class Project(MapEntityMixin, StructureRelated):
     @property
     def paths(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.paths
         return list(set(s))
 
     @property
     def signages(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.signages
         return list(set(s))
 
     @property
     def infrastructures(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.infrastructures
         return list(set(s))
 
@@ -292,7 +292,7 @@ class Contractor(StructureRelated):
         return self.contractor
 
 
-class Funding(StructureRelated):
+class Funding(models.Model):
 
     amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"))
     project = models.ForeignKey(Project)

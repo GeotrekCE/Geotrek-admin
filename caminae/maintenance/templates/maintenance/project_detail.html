@@ -8,6 +8,34 @@
             <th>{{ project|verbose:"name" }}</th>
             <td>{{ project.name }}</td>
         </tr>
+        <tr>
+            <th>{% trans "Fundings" %}</th>
+            <td>
+                {% for f in project.funding_set.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>
+                    {% blocktrans with f.amount as amount and f.organism as organism %}
+                    {{ amount }}€ by {{ organism }}
+                    {% endblocktrans %}
+                    </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Interventions" %}</th>
+            <td>
+                {% for i in project.interventions.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ i }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
     </table>
 
     <h3>{% trans "Management" %}</h3>
