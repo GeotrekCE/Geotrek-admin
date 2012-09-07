@@ -250,8 +250,8 @@ class PathTest(TestCase):
         self.assertItemsEqual(p.interventions, [i1, i2])
 
         proj = ProjectFactory.create()
-        proj.intervention_set.add(i1)
-        proj.intervention_set.add(i2)
+        proj.interventions.add(i1)
+        proj.interventions.add(i2)
 
         self.assertItemsEqual(p.projects, [proj])
 

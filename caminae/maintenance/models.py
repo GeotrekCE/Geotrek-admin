@@ -242,21 +242,21 @@ class Project(MapEntityMixin, StructureRelated):
     @property
     def paths(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.paths
         return list(set(s))
 
     @property
     def signages(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.signages
         return list(set(s))
 
     @property
     def infrastructures(self):
         s = []
-        for i in self.intervention_set.all():
+        for i in self.interventions.all():
             s += i.infrastructures
         return list(set(s))
 

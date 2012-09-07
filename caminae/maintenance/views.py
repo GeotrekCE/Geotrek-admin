@@ -2,6 +2,7 @@ import logging
 
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ValidationError
 
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
@@ -137,7 +138,10 @@ class FundingFormsetMixin(object):
     def get_context_data(self, **kwargs):
         context = super(FundingFormsetMixin, self).get_context_data(**kwargs)
         if self.request.POST:
-            context['funding_formset'] = FundingFormSet(self.request.POST, instance=self.object)
+            try:
+                context['funding_formset'] = FundingFormSet(self.request.POST, instance=self.object)
+            except ValidationError:
+                pass
         else:
             context['funding_formset'] = FundingFormSet(instance=self.object)
         return context
