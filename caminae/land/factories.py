@@ -2,8 +2,13 @@
 
 import factory
 
+from django.conf import settings
+from django.contrib.gis.geos import Polygon, MultiPolygon
+
 from caminae.core.factories import TopologyMixinFactory
 from caminae.common.factories import OrganismFactory
+from caminae.mapentity.helpers import bbox_split_srid_2154
+
 from . import models
 
 
@@ -48,3 +53,24 @@ class SignageManagementEdgeFactory(TopologyMixinFactory):
     FACTORY_FOR = models.SignageManagementEdge
 
     organization = factory.SubFactory(OrganismFactory)
+
+
+
+# Create 16 cities and 4 districts distinct same-area zone covering the spatial_extent and cycle on it
+geom_city_iter = bbox_split_srid_2154(settings.SPATIAL_EXTENT, by_x=4, by_y=4, cycle=True)
+geom_district_iter = bbox_split_srid_2154(settings.SPATIAL_EXTENT, by_x=2, by_y=2, cycle=True)
+
+class CityFactory(factory.Factory):
+    FACTORY_FOR = models.City
+
+    code = factory.Sequence(lambda n: u"#%s" % n) # id (!) with max_length=6
+    name = factory.Sequence(lambda n: u"City name %s" % n)
+    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_city_iter.next()), srid=settings.SRID))
+
+
+class DistrictFactory(factory.Factory):
+    FACTORY_FOR = models.District
+
+    name = factory.Sequence(lambda n: u"District name %s" % n)
+    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_district_iter.next()), srid=settings.SRID))
+

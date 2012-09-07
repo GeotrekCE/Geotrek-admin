@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<!-- begin land/bbox.html -->
+<select id="bbox_cities">
+    <option value="" selected>{% trans "Center on city" %}</li>
+    {% for bbox in bbox_cities %}
+        <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
+    {% endfor %}
+</select>
+
+<select id="bbox_districts">
+    <option value="" selected>{% trans "Center on district" %}</li>
+    {% for bbox in bbox_districts %}
+        <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
+    {% endfor %}
+</select>
+<!-- end land/bbox.html -->
+
