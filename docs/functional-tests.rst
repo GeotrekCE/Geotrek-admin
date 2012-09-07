@@ -1076,3 +1076,23 @@ lien est automatiquement ajouté à la liste, et sélectionné.
    - Année de travaux (retourne les signalétiques dont au moins une intervention
      s'est déroulée pendant l'année saisie)
 
+
+#179 - Ajouter les infos comptables sur les interventions et chantiers
+-----------------------------------------------------------------------
+
+Il est désormais possible d'ajouter des hommes-jours aux interventions et
+des financements aux chantiers.
+
+* Créer une intervention, ne pas ajouter d'hommes-jours, sauvegarder. 
+  L'intervention est créée sans erreur.
+
+* Créer une intervention, ajouter des hommes-jours, sauvegarder. L'intervention
+  est créée avec des hommes-jours.
+
+* Éditer l'intervention, enlever les hommes-jours, sauvegarder. L'intervention
+  n'a plus d'homme-jours.
+
+* Éditer l'intervention, ajouter des hommes-jours, sauvegarder. L'intervention
+  a bien les hommes-jours saisis.
+
+Recommencer avec les financements sur les chantiers.
