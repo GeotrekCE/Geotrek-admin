@@ -3,13 +3,13 @@
 # Make sure only root can run our script
 if [ "$(id -u)" == "0" ]; then
    echo "This script must NOT be run as root" 1>&2
-   exit 1
+   exit 2
 fi
 
 # Make sure script runs from source root
 if [ ! -f Makefile ]; then
    echo "This script must be run from source folder (c.f. README)" 1>&2
-   exit 1
+   exit 3
 fi
 
 #
@@ -47,6 +47,25 @@ database_exists () {
     fi
 }
 
+
+user_exists () {
+    # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
+    # as appropriate.
+    if [ -z $1 ]
+    then
+        # Argument is null
+        return 0
+    else
+        exists=`sudo -n -u postgres -s -- psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$1'" | wc -l`
+        return $exists
+    fi
+}
+
+ini_value () {
+    return $(sed -n 's/.*$2 *= *\([^ ]*.*\)/\1/p' < $1)
+}
+
+
 while [[ -n $1 ]]; do
     case $1 in
         -d | --dev )        dev=true
@@ -64,14 +83,14 @@ done
 function ubuntu_precise {
     set -x
 
+    sudo apt-get update > /dev/null
     sudo apt-get install -y python-software-properties
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
-    sudo apt-add-repository -y ppa:sharpie/postgis-stable 
+    sudo apt-add-repository -y ppa:sharpie/postgis-stable
     sudo apt-get update > /dev/null
-    sudo apt-get install -y git python-virtualenv build-essential python-dev unzip
-    sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1 postgresql postgresql-client postgresql-9.1-postgis2 postgresql-server-dev-9.1
-    sudo apt-get install -y postgis-bin gdal-bin
-    sudo apt-get install -y gettext
+    sudo apt-get install -y git gettext python-virtualenv build-essential python-dev unzip
+    sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
+    sudo apt-get install -y postgresql-client postgis-bin gdal-bin
 
     # Default settings if not any
     mkdir -p etc/
@@ -84,14 +103,53 @@ function ubuntu_precise {
         fi
     fi
     # Prompt user to edit/review settings
-     vim -c 'startinsert' $settingsfile
+    vim -c 'startinsert' $settingsfile
 
-    # Activate PostGIS in database
-    dbname=$(sed -n 's/.*dbname *= *\([^ ]*.*\)/\1/p' < $settingsfile)
-    if ! database_exists ${dbname}
-    then
-        sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};"
-        sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
+    #
+    # If database is local, check it !
+    #----------------------------------
+    dbname=`ini_value $settingsfile dbhost`
+    dbhost=`ini_value $settingsfile dbname`
+    dbpassword=`ini_value $settingsfile dbpassword`
+    
+    if [ ${dbhost} == "localhost" ] ; then
+        echo "Installing postgresql server locally..."
+        sudo apt-get install -y postgresql postgresql-9.1-postgis2 postgresql-server-dev-9.1
+        
+        # Activate PostGIS in database
+        if ! database_exists ${dbname}
+        then
+            sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};"
+            sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
+        fi
+        
+        # Create user if missing
+        if ! user_exists ${dbuser}
+        then
+            sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
+            sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
+            
+            # Open local and host connection for this user as md5
+            sudo cat >> /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
+# Automatically added by Caminae installation :
+local    ${dbname}    ${dbuser}        md5
+host     ${dbname}    ${dbuser}        md5
+_EOF_
+            sudo /etc/init.d/postgresql restart
+        fi
+    else
+        # Check that database connection is correct
+        dbport=$(sed -n 's/.*dbport *= *\([^ ]*.*\)/\1/p' < $settingsfile)
+        export PGPASSWORD=$dbpassword    
+        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
+        result=$?
+        export PGPASSWORD=
+        if [ ! $result -eq 0 ]
+        then
+            echo "Failed to connect to database with settings provided in '$settingsfile'."
+            echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
+            exit 4
+        fi
     fi
 
     if $dev ; then
@@ -112,27 +170,24 @@ function ubuntu_precise {
         sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
         cd ..
 
-        cd ..
-
         # A postgis template is required for django tests
-        if ! database_exists template_postgis
-        then
-            sudo -n -u postgres -s -- createdb template_postgis
-            sudo -n -u postgres -s -- psql -d template_postgis -c "CREATE EXTENSION postgis"
-            sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
-            sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
-            sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
-            
-            # In development installation (i.e. VM from scratch), we set explicit password
-            sudo -n -u postgres -s -- psql -c "ALTER USER postgres WITH PASSWORD 'postgres'"
-            # Use password authent (Django compliant)
-            sudo sed -i 's/^\(local.*postgres.*\)peer$/\1md5/' /etc/postgresql/9.1/main/pg_hba.conf
-            # Listen to all network interfaces
-            listen="'*'"
-            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
-            sudo /etc/init.d/postgresql restart
+        if [ ${dbhost} == "localhost" ] ; then
+            if ! database_exists template_postgis
+            then
+                sudo -n -u postgres -s -- createdb template_postgis
+                sudo -n -u postgres -s -- psql -d template_postgis -c "CREATE EXTENSION postgis"
+                sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
+                sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
+                sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
+                
+                # Listen to all network interfaces (useful for VM etc.)
+                listen="'*'"
+                sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
+                sudo /etc/init.d/postgresql restart
+            fi
         fi
 
+        cd ..
     else
         sudo apt-get install -y nginx
         sudo apt-get install -y yui-compressor
@@ -140,7 +195,7 @@ function ubuntu_precise {
         make deploy
 
         sudo rm /etc/nginx/sites-enabled/default
-        sudo cp  etc/nginx.conf /etc/nginx/sites-enabled/default
+        sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
         sudo /etc/init.d/nginx restart
         
         sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
@@ -149,6 +204,7 @@ function ubuntu_precise {
 
     set +x
 
+    sudo chmod 600 install.log
     echo "Output is available in 'install.log'"
     echo "Done."
 }
