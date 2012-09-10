@@ -44,7 +44,7 @@ class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
     topology = TopologyField()
     infrastructure = forms.ModelChoiceField(required=False,
-                                            queryset=BaseInfrastructure.objects.all(),
+                                            queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
     modelfields = (
             'name',

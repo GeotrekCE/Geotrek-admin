@@ -80,7 +80,7 @@ class Trek(MapEntityMixin, TopologyMixin):
         s = []
         for a in self.aggregations.all():
             s += [POI.objects.get(pk=t.pk)
-                  for t in a.path.topologymixin_set.filter(
+                  for t in a.path.topologymixin_set.existing().filter(
                       kind=POI.KIND,
                       aggregations__start_position__gte=a.start_position,
                       aggregations__end_position__lte=a.end_position
@@ -268,12 +268,12 @@ class POI(MapEntityMixin, TopologyMixin):
         s = []
         for a in self.aggregations.all():
             s += [Trek.objects.get(pk=t.pk)
-                  for t in a.path.topologymixin_set.filter(
+                  for t in a.path.topologymixin_set.existing().filter(
                       kind=Trek.KIND,
                       aggregations__start_position__lte=a.end_position,
                       aggregations__end_position__gte=a.start_position
                   )]
-        return s
+        return list(set(s))
 
 
 class POIType(models.Model):

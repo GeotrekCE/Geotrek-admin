@@ -119,13 +119,13 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     @property
     def signages(self):
         if self.is_signage:
-            return [Signage.objects.get(pk=self.topology.pk)]
+            return [Signage.objects.existing().get(pk=self.topology.pk)]
         return []
 
     @property
     def infrastructures(self):
         if self.is_infrastructure:
-            return [Infrastructure.objects.get(pk=self.topology.pk)]
+            return [Infrastructure.objects.existing().get(pk=self.topology.pk)]
         return []
 
     @property
@@ -275,7 +275,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def geom(self):
         """ Merge all interventions geometry into a collection
         """
-        interventions = Intervention.objects.filter(project=self)
+        interventions = Intervention.objects.existing().filter(project=self)
         geoms = [i.geom for i in interventions if i.geom is not None]
         if geoms:
             return GeometryCollection(*geoms)

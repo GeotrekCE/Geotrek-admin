@@ -55,10 +55,10 @@ class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
         pk = self.request.GET.get('infrastructure')
         if pk:
             try:
-                return Infrastructure.objects.get(pk=pk)
+                return Infrastructure.objects.existing().get(pk=pk)
             except Infrastructure.DoesNotExist:
                 try:
-                    return Signage.objects.get(pk=pk)
+                    return Signage.objects.existing().get(pk=pk)
                 except Signage.DoesNotExist:
                     logger.warning("Intervention on unknown infrastructure %s" % pk)
         return None
@@ -108,7 +108,7 @@ class ProjectLayer(MapEntityLayer):
     model = Project
 
     def get_queryset(self):
-        nonemptyqs = Intervention.objects.filter(project__isnull=False).values('project')
+        nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
         return super(ProjectLayer, self).get_queryset().filter(pk__in=nonemptyqs)
 
 
