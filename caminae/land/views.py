@@ -10,11 +10,11 @@ from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManag
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
-    model = PhysicalEdge
+    queryset = PhysicalEdge.objects.existing()
 
 
 class PhysicalEdgeList(MapEntityList):
-    model = PhysicalEdge
+    queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilter
     columns = ['id', 'physical_type']
 
@@ -57,11 +57,11 @@ class PhysicalEdgeDelete(MapEntityDelete):
 
 
 class LandEdgeLayer(MapEntityLayer):
-    model = LandEdge
+    queryset = LandEdge.objects.existing()
 
 
 class LandEdgeList(MapEntityList):
-    model = LandEdge
+    queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilter
     columns = ['id', 'land_type']
 
@@ -104,11 +104,11 @@ class LandEdgeDelete(MapEntityDelete):
 
 
 class CompetenceEdgeLayer(MapEntityLayer):
-    model = CompetenceEdge
+    queryset = CompetenceEdge.objects.existing()
 
 
 class CompetenceEdgeList(MapEntityList):
-    model = CompetenceEdge
+    queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilter
     columns = ['id', 'organization']
 
@@ -151,11 +151,11 @@ class CompetenceEdgeDelete(MapEntityDelete):
 
 
 class WorkManagementEdgeLayer(MapEntityLayer):
-    model = WorkManagementEdge
+    queryset = WorkManagementEdge.objects.existing()
 
 
 class WorkManagementEdgeList(MapEntityList):
-    model = WorkManagementEdge
+    queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilter
     columns = ['id', 'organization']
 
@@ -198,11 +198,11 @@ class WorkManagementEdgeDelete(MapEntityDelete):
 
 
 class SignageManagementEdgeLayer(MapEntityLayer):
-    model = SignageManagementEdge
+    queryset = SignageManagementEdge.objects.existing()
 
 
 class SignageManagementEdgeList(MapEntityList):
-    model = SignageManagementEdge
+    queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilter
     columns = ['id', 'organization']
 

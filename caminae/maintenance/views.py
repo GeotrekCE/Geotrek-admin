@@ -17,11 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 class InterventionLayer(MapEntityLayer):
-    model = Intervention
+    queryset = Intervention.objects.existing()
 
 
 class InterventionList(MapEntityList):
-    model = Intervention
+    queryset = Intervention.objects.existing()
     filterform = InterventionFilter
     columns = ['id', 'name', 'date', 'material_cost']
 
@@ -105,7 +105,7 @@ class InterventionDelete(MapEntityDelete):
 
 
 class ProjectLayer(MapEntityLayer):
-    model = Project
+    queryset = Project.objects.existing()
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
@@ -113,7 +113,7 @@ class ProjectLayer(MapEntityLayer):
 
 
 class ProjectList(MapEntityList):
-    model = Project
+    queryset = Project.objects.existing()
     filterform = ProjectFilter
     columns = ['id', 'name', 'begin_year', 'end_year', 'cost']
 

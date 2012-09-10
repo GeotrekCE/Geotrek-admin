@@ -9,11 +9,11 @@ from .forms import InfrastructureForm, SignageForm
 
 
 class InfrastructureLayer(MapEntityLayer):
-    model = Infrastructure
+    queryset = Infrastructure.objects.existing()
 
 
 class InfrastructureList(MapEntityList):
-    model = Infrastructure
+    queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilter
     columns = ['id', 'name', 'type']
 
@@ -63,11 +63,11 @@ class InfrastructureDelete(MapEntityDelete):
 
 
 class SignageLayer(MapEntityLayer):
-    model = Signage
+    queryset = Signage.objects.existing()
 
 
 class SignageList(MapEntityList):
-    model = Signage
+    queryset = Signage.objects.existing()
     filterform = SignageFilter
     columns = ['id', 'name', 'type']
 

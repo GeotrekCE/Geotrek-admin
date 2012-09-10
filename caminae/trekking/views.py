@@ -12,11 +12,11 @@ from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 
 
 class TrekLayer(MapEntityLayer):
-    model = Trek
+    queryset = Trek.objects.existing()
 
 
 class TrekList(MapEntityList):
-    model = Trek
+    queryset = Trek.objects.existing()
     filterform = TrekFilter
     columns = ['id', 'name', 'departure', 'arrival']
 
@@ -63,11 +63,11 @@ class TrekDelete(MapEntityDelete):
 
 
 class POILayer(MapEntityLayer):
-    model = POI
+    queryset = POI.objects.existing()
 
 
 class POIList(MapEntityList):
-    model = POI
+    queryset = POI.objects.existing()
     filterform = POIFilter
     columns = ['id', 'name', 'type']
 
