@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from django.conf.urls.defaults import url
 
 from .models import (
     ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
-    ENTITY_DETAIL, ENTITY_CREATE,
+    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
@@ -19,6 +21,9 @@ def url_list(kind, model):
 def url_json_list(kind, model):
     model_str = frommodel(model)
     return r'^api/{0}/{1}s.json$'.format(model_str, model_str)
+
+def url_format_list(kind, model):
+    return r'^{0}/list_format/$'.format(frommodel(model))
 
 def url_detail(kind, model):
     return r'^{0}/(?P<pk>\d+)/$'.format(frommodel(model))
@@ -37,6 +42,7 @@ kind_to_urlpath = {
     ENTITY_LAYER: url_layer,
     ENTITY_LIST: url_list,
     ENTITY_JSON_LIST: url_json_list,
+    ENTITY_FORMAT_LIST: url_format_list,
     ENTITY_DETAIL: url_detail,
     ENTITY_CREATE: url_create,
     ENTITY_UPDATE: url_update,

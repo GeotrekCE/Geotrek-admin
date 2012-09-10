@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 
 
@@ -5,6 +7,7 @@ from django.db import models
 ENTITY_LAYER = "layer"
 ENTITY_LIST = "list"
 ENTITY_JSON_LIST = "json_list"
+ENTITY_FORMAT_LIST = "format_list"
 ENTITY_DETAIL = "detail"
 ENTITY_CREATE = "add"
 ENTITY_UPDATE = "update"
@@ -12,7 +15,7 @@ ENTITY_DELETE = "delete"
 
 ENTITY_KINDS = (
     ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
-    ENTITY_DETAIL, ENTITY_CREATE,
+    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
@@ -55,6 +58,11 @@ class MapEntityMixin(object):
 
     @classmethod
     @models.permalink
+    def get_format_list_url(cls):
+        return (cls.get_url_name(ENTITY_FORMAT_LIST), )
+
+    @classmethod
+    @models.permalink
     def get_add_url(cls):
         return (cls.get_url_name(ENTITY_CREATE), )
 
@@ -77,3 +85,4 @@ class MapEntityMixin(object):
     @models.permalink
     def get_delete_url(self):
         return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
+
