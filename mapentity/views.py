@@ -1,6 +1,12 @@
+# -*- coding: utf-8 -*-
+import csv
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
+from django.utils.functional import Promise
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -240,3 +246,63 @@ class MapEntityDelete(DeleteView):
 
     def get_success_url(self):
         return self.model.get_list_url()
+
+
+class MapEntityFormat(MapEntityList):
+    """Make it  extends your EntityList"""
+
+    def __init__(self, *args, **kwargs):
+        self.formats = {
+            'csv': self.csv_view
+        }
+        super(MapEntityFormat, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_FORMAT_LIST
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        fmt_str = request.GET.get('format', 'csv')
+        self.fmt = self.formats.get(fmt_str)
+
+        if not self.fmt:
+            raise Http404
+
+        return super(MapEntityList, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """Get the right objects"""
+        queryset = kwargs.pop('object_list')
+        return { 'queryset': self.filterform(self.request.GET or None, queryset=queryset) }
+
+    def render_to_response(self, context, **response_kwargs):
+        """Delegate to the fmt view function found at dispatch time"""
+        return self.fmt(
+            request = self.request,
+            context = context,
+            **response_kwargs
+        )
+
+    def csv_view(self, request, context, **kwargs):
+        def to_str(attr):
+            if isinstance(attr, Promise):
+                return force_unicode(attr)
+            return str(attr)
+
+        def get_lines():
+            for obj in context['queryset']:
+                columns = []
+                for field in self.columns:
+                    columns.append(to_str(
+                        getattr(obj, field + '_display', getattr(obj, field))
+                    ))
+                yield columns
+
+        response = HttpResponse(mimetype='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=list.csv'
+
+        writer = csv.writer(response)
+        writer.writerows(get_lines())
+
+        return response
