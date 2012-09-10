@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.core.cache import get_cache
 
+from shapes.views import ShpResponder
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
@@ -253,7 +254,8 @@ class MapEntityFormat(MapEntityList):
 
     def __init__(self, *args, **kwargs):
         self.formats = {
-            'csv': self.csv_view
+            'csv': self.csv_view,
+            'shp': self.shape_view,
         }
         super(MapEntityFormat, self).__init__(*args, **kwargs)
 
@@ -306,3 +308,28 @@ class MapEntityFormat(MapEntityList):
         writer.writerows(get_lines())
 
         return response
+
+    def shape_view(self, request, context, **kwarg):
+        queryset = context['queryset'].qs
+
+        return MapEntityShpResponder(queryset,
+            attribute_fieldnames=self.columns,
+            geo_field='geom', # name of the geofield or None (if None, only one geofield should be presetn)
+            proj_transform=settings.API_SRID, # proj_transform is for the output
+            readme=None,
+            file_name='shp_download',
+            mimetype='application/zip',
+        )()
+
+
+class MapEntityShpResponder(ShpResponder):
+    def __init__(self, *args, **kwargs):
+        self.attribute_fieldnames = kwargs.pop('attribute_fieldnames', None)
+        super(MapEntityShpResponder, self).__init__(*args, **kwargs)
+
+    def get_attributes(self):
+        attrs = super(MapEntityShpResponder, self).get_attributes()
+        if self.attribute_fieldnames is not None:
+            attrs = [ f for f in attrs if attrs in self.attribute_fieldnames ]
+        return attrs
+

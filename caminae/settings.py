@@ -184,6 +184,7 @@ PROJECT_APPS = (
     'djgeojson',
     'tinymce',
     'easy_thumbnails',
+    'shapes',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
