@@ -57,7 +57,7 @@ def view_class_to_url(view_class):
     if not kind:
         return None
 
-    model = view_class.model
+    model = view_class.model or view_class.queryset.model
     url_name = model.get_url_name_for_registration(kind)
     url_path = kind_to_urlpath[kind](kind, model)
     return url(url_path, view_class.as_view(), name=url_name)
