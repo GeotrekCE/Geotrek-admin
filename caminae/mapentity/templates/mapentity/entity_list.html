@@ -33,9 +33,7 @@
         <p>
             <i class="icon-download-alt"></i> 
             Exporter la liste
-            <button class="btn btn-mini">Type1</button>
-            <button class="btn btn-mini">Type2</button>
-            <button class="btn btn-mini">Type3</button>
+            <button class="btn btn-mini" name="csv" >CSV</button>
         </p>
     </div>
 
@@ -219,6 +217,17 @@
 
                 return false;
             }
+
+            // Trigger a call to the format url
+            $('#list-download-toolbar button').on('click', function exportList() {
+                var format = $(this).attr('name');
+                var url = "{{ model.get_format_list_url }}" + '?' +
+                          filterform.serialize() + '&format=' + format;
+
+                document.location = url;
+
+                return false;
+            });
 
             // Store the map bounds as WKT in the bbox field
             function storeBoundsToField($field, bounds) {
