@@ -7,12 +7,20 @@ DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON evenements_troncons;
 CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
 DECLARE
     tab varchar;
+    eid integer;
 BEGIN
     FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
     LOOP
         -- Delete related object in association tables
-        EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' WHERE evenement = $1' USING OLD.evenement;
-        -- TODO: Related evenement will be cleared by a more general trigger
+        -- /!\ This query is executed for any kind of evenement, but it will
+        -- return an eid only if the evenement is involved in an association
+        -- table with commune, secteur or zonage. It returns NULL otherwise.
+        EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' WHERE evenement = $1 RETURNING evenement' INTO eid USING OLD.evenement;
+
+        -- Delete the evenement itself
+        IF eid IS NOT NULL THEN
+            DELETE FROM evenements WHERE id = eid;
+        END IF;
     END LOOP;
 
     RETURN NULL;

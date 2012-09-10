@@ -1096,3 +1096,14 @@ des financements aux chantiers.
   a bien les hommes-jours saisis.
 
 Recommencer avec les financements sur les chantiers.
+
+
+#212 - Supprimer un évènement et déclencher les triggers
+--------------------------------------------------------
+
+Lors de la suppression d'un évènement, seul son statut "supprimé" change. Les
+informations associées continuent à lui être attachées et à être maintenues (mise à
+jour de la géométrie en cas de modification des tronçon notamment).
+
+Les évènements faisant le lien automatique entre tronçons et couches SIG sont
+en revanche supprimés au niveau base de données.

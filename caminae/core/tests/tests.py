@@ -186,8 +186,10 @@ class PathTest(TestCase):
 
         # This should results in 3 PathAggregation (2 for RA, 1 for City)
         self.assertEquals(p.aggregations.count(), 3)
+        self.assertEquals(p.topologymixin_set.count(), 3)
 
         # PathAgg is plain for City
+        t_c = c.cityedge_set.get().topo_object
         pa = c.cityedge_set.get().aggregations.get()
         self.assertEquals(pa.start_position, 0.0)
         self.assertEquals(pa.end_position, 1.0)
@@ -196,7 +198,9 @@ class PathTest(TestCase):
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
         pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
+        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
         pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
+        t_ra2 = ra2.restrictedareaedge_set.get().topo_object
         self.assertEquals(pa1.start_position, 0.0)
         self.assertEquals(pa1.end_position, 0.5)
         self.assertEquals(pa2.start_position, 0.5)
@@ -205,17 +209,37 @@ class PathTest(TestCase):
         # Ensure everything is in order after update
         p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
         p.save()
+        self.assertEquals(p.aggregations.count(), 2)
+        self.assertEquals(p.topologymixin_set.count(), 2)
+        # TopologyMixin are re-created at DB-level after any update
+        self.assertRaises(TopologyMixin.DoesNotExist,
+                          TopologyMixin.objects.get, pk=t_c.pk)
+        self.assertRaises(TopologyMixin.DoesNotExist,
+                          TopologyMixin.objects.get, pk=t_ra1.pk)
+        self.assertRaises(TopologyMixin.DoesNotExist,
+                          TopologyMixin.objects.get, pk=t_ra2.pk)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
-        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        # a new association exists for C
+        t_c = c.cityedge_set.get().topo_object
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_c.pk).count(), 1)
+        # a new association exists for RA1
+        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra1.pk).count(), 1)
         pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
         self.assertEquals(pa1.start_position, 0.0)
         self.assertEquals(pa1.end_position, 1.0)
+        # RA2 is not connected anymore
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra2.pk).count(), 0)
 
         # All intermediary objects should be cleaned on delete
         p.delete()
         self.assertEquals(c.cityedge_set.count(), 0)
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_c.pk).count(), 0)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra1.pk).count(), 0)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra2.pk).count(), 0)
 
     def test_helpers(self):
         p = PathFactory.create()
