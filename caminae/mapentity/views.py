@@ -31,6 +31,11 @@ class MapEntityLayer(GeoJSONLayerView):
 
     srid = settings.API_SRID
 
+    def __init__(self, *args, **kwargs):
+        super(GeoJSONLayerView, self).__init__(*args, **kwargs)
+        if self.model is None:
+            self.model = self.queryset.model
+
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_LAYER
@@ -70,6 +75,11 @@ class MapEntityList(ListView):
     filterform = None
     columns = []
     """
+
+    def __init__(self, *args, **kwargs):
+        super(ListView, self).__init__(*args, **kwargs)
+        if self.model is None:
+            self.model = self.queryset.model
 
     @classmethod
     def get_entity_kind(cls):
