@@ -1105,5 +1105,8 @@ Lors de la suppression d'un évènement, seul son statut "supprimé" change. Les
 informations associées continuent à lui être attachées et à être maintenues (mise à
 jour de la géométrie en cas de modification des tronçon notamment).
 
+Les interventions éventuellement liées à l'évènement sont supprimées en cascade,
+c'est-à-dire que leur statut "supprimé" devient vrai.
+
 Les évènements faisant le lien automatique entre tronçons et couches SIG sont
 en revanche supprimés au niveau base de données.

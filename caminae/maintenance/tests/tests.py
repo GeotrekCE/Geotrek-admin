@@ -191,6 +191,13 @@ class InterventionTest(TestCase):
         interv.project = proj
         self.assertTrue(interv.in_project())
 
+    def test_delete_topology(self):
+        infra = InfrastructureFactory.create()
+        interv = InterventionFactory.create()
+        interv.set_infrastructure(infra)
+        infra.delete()
+        self.assertEqual(Intervention.objects.existing().count(), 0)
+
 class ProjectTest(TestCase):
     def test_helpers(self):
         i1 = InterventionFactory.create()
