@@ -37,6 +37,19 @@ class MapEntityTest(TestCase):
         response = self.client.get(self.model.get_jsonlist_url()+params)
         self.assertEqual(response.status_code, 200)
 
+    def test_basic_format(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        user = self.userfactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+        self.modelfactory.create()
+        params = '?bbox=POLYGON((5+44+0%2C5+45+0%2C6+45+0%2C6+44+0%2C5+44+0))'
+        response = self.client.get(self.model.get_format_list_url() + params + '&format=csv')
+        self.assertEqual(response.status_code, 200)
+
     def test_crud_status(self):
         if self.model is None:
             return  # Abstract test should not run
