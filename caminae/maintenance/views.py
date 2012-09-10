@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 
 from caminae.common.views import FormsetMixin
 from caminae.authent.decorators import same_structure_required, path_manager_required
-from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
+from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from caminae.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
@@ -27,6 +27,10 @@ class InterventionList(MapEntityList):
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
+    pass
+
+
+class InterventionFormatList(MapEntityFormat, InterventionList):
     pass
 
 
@@ -115,6 +119,10 @@ class ProjectList(MapEntityList):
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
+    pass
+
+
+class ProjectFormatList(MapEntityFormat, ProjectList):
     pass
 
 

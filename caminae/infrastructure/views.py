@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import same_structure_required, path_manager_required
-from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
+from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilter, SignageFilter
@@ -19,6 +19,10 @@ class InfrastructureList(MapEntityList):
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
+    pass
+
+
+class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     pass
 
 
@@ -69,6 +73,10 @@ class SignageList(MapEntityList):
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
+    pass
+
+
+class SignageFormatList(MapEntityFormat, SignageList):
     pass
 
 

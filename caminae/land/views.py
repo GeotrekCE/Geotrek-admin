@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import path_manager_required
-from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, 
+from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
@@ -20,6 +20,10 @@ class PhysicalEdgeList(MapEntityList):
 
 
 class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
+    pass
+
+
+class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     pass
 
 
@@ -66,6 +70,10 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
     pass
 
 
+class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
+    pass
+
+
 class LandEdgeDetail(MapEntityDetail):
     model = LandEdge
 
@@ -106,6 +114,10 @@ class CompetenceEdgeList(MapEntityList):
 
 
 class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
+    pass
+
+
+class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     pass
 
 
@@ -152,6 +164,10 @@ class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
     pass
 
 
+class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
+    pass
+
+
 class WorkManagementEdgeDetail(MapEntityDetail):
     model = WorkManagementEdge
 
@@ -192,6 +208,10 @@ class SignageManagementEdgeList(MapEntityList):
 
 
 class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList):
+    pass
+
+
+class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
     pass
 
 

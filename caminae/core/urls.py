@@ -2,7 +2,8 @@ from django.conf.urls import patterns, url
 
 from .views import (
     PathLayer, PathList, PathDetail, PathCreate,
-    PathUpdate, PathDelete, PathJsonList, ElevationProfile,
+    PathUpdate, PathDelete, PathJsonList, PathFormatList,
+    ElevationProfile,
     get_graph_json,
     TrailDetail,
 )
@@ -18,5 +19,5 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('', *view_classes_to_url(
     PathList, PathCreate, PathDetail, PathUpdate,
-    PathDelete, PathLayer, PathJsonList, TrailDetail
+    PathDelete, PathLayer, PathJsonList, PathFormatList, TrailDetail
 ))
