@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                                      MapEntityDetail, MapEntityCreate, MapEntityUpdate, 
-                                     MapEntityDelete)
+                                     MapEntityDelete, MapEntityDocument)
 from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
 
@@ -52,6 +52,10 @@ class PathDetail(MapEntityDetail):
         context = super(PathDetail, self).get_context_data(**kwargs)
         context['profile'] = self.get_object().get_elevation_profile()
         return context
+
+
+class PathDocument(MapEntityDocument):
+    model = Path
 
 
 class PathCreate(MapEntityCreate):
