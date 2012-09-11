@@ -22,7 +22,11 @@ class TrekList(MapEntityList):
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
-    pass
+    queryset = Trek.objects.existing().filter(published=True)
+    columns = ['id', 'name', 'departure', 'arrival', 'serializable_difficulty',
+               'duration', 'ascent', 'serializable_themes',
+               'serializable_usages', 'disabled_infrastructure', 'is_loop',
+               'is_transborder']
 
 
 class TrekFormatList(MapEntityFormat, TrekList):

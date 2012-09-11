@@ -93,6 +93,27 @@ class Trek(MapEntityMixin, TopologyMixin):
         return set(types)
 
     @property
+    def serializable_difficulty(self):
+        return {'id': self.difficulty.pk,
+                'label': self.difficulty.difficulty}
+
+    @property
+    def serializable_themes(self):
+        return [{'id': t.pk,
+                 'label': t.label,
+                 'pictogram': t.pictogram.read().encode('base64')
+                } for t in self.themes.all()]
+
+    @property
+    def serializable_usages(self):
+        return [{'id': u.pk,
+                 'label': u.usage} for u in self.usages.all()]
+
+    @property
+    def is_loop(self):
+        return self.departure == self.arrival
+
+    @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
 
