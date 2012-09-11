@@ -11,8 +11,13 @@ from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 
 
+
 class TrekLayer(MapEntityLayer):
-    queryset = Trek.objects.existing()
+    queryset = Trek.objects.existing().filter(published=True)
+    fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
+              'duration', 'ascent', 'serializable_themes',
+              'serializable_usages', 'disabled_infrastructure', 'is_loop',
+              'is_transborder']
 
 
 class TrekList(MapEntityList):
@@ -22,11 +27,7 @@ class TrekList(MapEntityList):
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
-    queryset = Trek.objects.existing().filter(published=True)
-    columns = ['id', 'name', 'departure', 'arrival', 'serializable_difficulty',
-               'duration', 'ascent', 'serializable_themes',
-               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-               'is_transborder']
+    pass
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
