@@ -5,6 +5,7 @@
 
 {% block mainpanel %}
     <div class="details-panel span7">
+
     {% block detailspanel %}
         <h2>
             {% if object.structure %}
@@ -12,12 +13,20 @@
             {% endif %}
             {{ object }}
             {% block extratitle %}{% endblock extratitle %}
-            {% if can_edit %}
-                <span class="pull-right"><a class="btn btn-primary" href="{{ object.get_update_url }}">{% trans "Update" %}</a></span>
-            {% endif %}
+            
+            <div class="pull-right">
+                {% if can_edit %}
+                    <a class="btn btn-primary" href="{{ object.get_update_url }}"><i class="icon-pencil icon-white"></i>{% trans "Update" %}</a>
+                {% endif %}
+                <div class="btn-group">
+                    <a class="btn btn-mini" href="{{ object.get_document_url }}"><img src="{% static "paperclip/fileicons/odt.png" %}"/> {% trans "ODT" %}</a>
+                    <a class="btn btn-mini disabled"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "PDF" %}</a>
+                </div>
+            </div>
         </h2>
     {% endblock detailspanel %}
 
+    {% block attachmentpanel %}
     <div class="file-attachment file-attachment-detail">
         <h3>{% trans "Attached files" %}</h3>
 
@@ -25,6 +34,7 @@
             {% include 'paperclip/details.html' %}
         {% endwith %}
     </div>
+    {% endblock attachmentpanel %}
 
     </div><!-- span7 -->
 
