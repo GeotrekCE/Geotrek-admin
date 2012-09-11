@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import smart_str
 from django.utils.functional import Promise
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -318,16 +318,11 @@ class MapEntityFormat(MapEntityList):
         )
 
     def csv_view(self, request, context, **kwargs):
-        def to_str(attr):
-            if isinstance(attr, Promise):
-                return force_unicode(attr)
-            return str(attr)
-
         def get_lines():
             for obj in context['queryset']:
                 columns = []
                 for field in self.columns:
-                    columns.append(to_str(
+                    columns.append(smart_str(
                         getattr(obj, field + '_display', getattr(obj, field))
                     ))
                 yield columns
