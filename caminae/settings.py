@@ -76,7 +76,9 @@ LOGIN_REDIRECT_URL = '/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
+MEDIA_ROOT = ''
+
+UPLOAD_DIR = 'upload'    # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -270,8 +272,6 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {}
-
-UPLOAD_DIR = 'upload'
 
 # Navigation history tabs
 HISTORY_ITEMS_MAX = 7

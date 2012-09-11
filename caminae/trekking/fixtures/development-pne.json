@@ -227,11 +227,88 @@
         "pk": 1,
         "model": "trekking.poitype",
         "fields": {
-            "label_it": "Monumento",
+            "label_it": "Picolo patrimonio",
             "pictogram": "upload/church.png",
-            "label_en": "Monument",
-            "label_fr": "Monument",
-            "label": "Monument"
+            "label_en": "Small patrimony",
+            "label_fr": "Petit patrimoine",
+            "label": "Petit patrimoine"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Flora",
+            "pictogram": "upload/flora.png",
+            "label_en": "Flora",
+            "label_fr": "Flore",
+            "label": "Flore"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Fauna",
+            "pictogram": "upload/fauna.png",
+            "label_en": "Fauna",
+            "label_fr": "Faune",
+            "label": "Faune"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Panorama",
+            "pictogram": "upload/panorama.png",
+            "label_en": "Panorama",
+            "label_fr": "Point de vue",
+            "label": "Point de vue"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Rifugio",
+            "pictogram": "upload/refuge.png",
+            "label_en": "Refuge",
+            "label_fr": "Refuge",
+            "label": "Refuge"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Lago",
+            "pictogram": "upload/lake.png",
+            "label_en": "Lake",
+            "label_fr": "Lac",
+            "label": "Lac"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Picco",
+            "pictogram": "upload/peak.png",
+            "label_en": "Peak",
+            "label_fr": "Sommet",
+            "label": "Sommet"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Geologia",
+            "pictogram": "upload/geology.png",
+            "label_en": "Geology",
+            "label_fr": "Géologie",
+            "label": "Géologie"
         }
     }
 ]

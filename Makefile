@@ -55,6 +55,7 @@ serve: bin/ clean_harmless all_compilemessages
 load_data:
 	# /!\ will delete existing data
 	bin/django loaddata development-pne
+	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
 deploy: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
