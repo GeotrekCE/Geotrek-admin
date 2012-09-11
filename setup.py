@@ -23,6 +23,7 @@ setup(
         'South == 0.7.5',
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',
+        'gpxpy == 0.7.1',
         # 'pyshp == 1.1.4',
         'django-shapes == 0.2.0',
         'django-modeltranslation == 0.3.3',
