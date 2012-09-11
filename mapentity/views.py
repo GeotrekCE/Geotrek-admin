@@ -170,6 +170,12 @@ class MapEntityDocument(DetailView):
             self.model._meta.object_name.lower(),
             self.template_name_suffix)
 
+    def get_context_data(self, **kwargs):
+        context = super(MapEntityDocument, self).get_context_data(**kwargs)
+        # ODT template requires absolute URL for images insertion
+        context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)
+        return context
+
 
 class MapEntityCreate(CreateView):
     @classmethod
