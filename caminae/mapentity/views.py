@@ -38,7 +38,7 @@ class MapEntityLayer(GeoJSONLayerView):
     srid = settings.API_SRID
 
     def __init__(self, *args, **kwargs):
-        super(GeoJSONLayerView, self).__init__(*args, **kwargs)
+        super(MapEntityLayer, self).__init__(*args, **kwargs)
         if self.model is None:
             self.model = self.queryset.model
 
@@ -83,7 +83,7 @@ class MapEntityList(ListView):
     """
 
     def __init__(self, *args, **kwargs):
-        super(ListView, self).__init__(*args, **kwargs)
+        super(MapEntityList, self).__init__(*args, **kwargs)
         if self.model is None:
             self.model = self.queryset.model
 
