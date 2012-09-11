@@ -17,6 +17,7 @@ from django.core.cache import get_cache
 
 from shapes.views import ShpResponder
 from djgeojson.views import GeoJSONLayerView
+from djappypod.response import OdtTemplateResponse
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 
@@ -170,6 +171,26 @@ class MapEntityDetail(DetailView):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
         context['can_edit'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
+        return context
+
+
+class MapEntityDocument(DetailView):
+    response_class = OdtTemplateResponse
+
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_DOCUMENT
+
+    def __init__(self, *args, **kwargs):
+        self.template_name = "%s/%s%s.odt" % (
+            self.model._meta.app_label,
+            self.model._meta.object_name.lower(),
+            self.template_name_suffix)
+
+    def get_context_data(self, **kwargs):
+        context = super(MapEntityDocument, self).get_context_data(**kwargs)
+        # ODT template requires absolute URL for images insertion
+        context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)
         return context
 
 

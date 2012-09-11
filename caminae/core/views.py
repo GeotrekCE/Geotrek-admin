@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -8,7 +6,7 @@ from django.core.cache import get_cache
 from django.shortcuts import redirect
 
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                                     MapEntityDetail, MapEntityCreate, MapEntityUpdate,
+                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                                      MapEntityDelete, MapEntityFormat)
 from caminae.authent.decorators import path_manager_required, same_structure_required
 from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
@@ -58,6 +56,10 @@ class PathDetail(MapEntityDetail):
         context = super(PathDetail, self).get_context_data(**kwargs)
         context['profile'] = self.get_object().get_elevation_profile()
         return context
+
+
+class PathDocument(MapEntityDocument):
+    model = Path
 
 
 class PathCreate(MapEntityCreate):

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.db import models
 
 
@@ -9,13 +7,14 @@ ENTITY_LIST = "list"
 ENTITY_JSON_LIST = "json_list"
 ENTITY_FORMAT_LIST = "format_list"
 ENTITY_DETAIL = "detail"
+ENTITY_DOCUMENT = "document"
 ENTITY_CREATE = "add"
 ENTITY_UPDATE = "update"
 ENTITY_DELETE = "delete"
 
 ENTITY_KINDS = (
     ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
-    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_CREATE,
+    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_DOCUMENT, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
@@ -79,10 +78,13 @@ class MapEntityMixin(object):
         return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
 
     @models.permalink
+    def get_document_url(self):
+        return (self.get_url_name(ENTITY_DOCUMENT), [str(self.pk)])
+
+    @models.permalink
     def get_update_url(self):
         return (self.get_url_name(ENTITY_UPDATE), [str(self.pk)])
 
     @models.permalink
     def get_delete_url(self):
         return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
-

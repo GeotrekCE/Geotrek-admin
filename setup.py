@@ -31,6 +31,7 @@ setup(
         'django-compressor == 1.2',
         'Pillow == 1.7.7',
         'easy-thumbnails == 1.1',
+        'django-appypod == 0.0.1',
         'django-leaflet',   # pinned by buildout
         'django-geojson',   # pinned by buildout
         'django-filter',   # pinned by buildout
