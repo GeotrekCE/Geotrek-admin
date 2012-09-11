@@ -1098,6 +1098,21 @@ des financements aux chantiers.
 Recommencer avec les financements sur les chantiers.
 
 
+#210 - Ajouter les attributs nécessaires au portail rando dans la couche itinéraires geojson
+--------------------------------------------------------------------------------------------
+
+La liste des itinéraires est accessible à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/treks.json
+
+Bien qu'au format GeoJSON, la liste reste lisible, on peut y retrouver les
+attributs permettant le filtrage ainsi que l'affichae tabulaire et
+cartographique.
+
+Note: les itinéraires avec le statut "publiée" à faux ne sont pas inclus dans
+cette liste.
+
+
 #212 - Supprimer un évènement et déclencher les triggers
 --------------------------------------------------------
 
