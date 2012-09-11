@@ -10,6 +10,7 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.core.cache import get_cache
 
 from djgeojson.views import GeoJSONLayerView
+from djappypod.response import OdtTemplateResponse
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 
@@ -154,6 +155,20 @@ class MapEntityDetail(DetailView):
         context['can_edit'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
+
+
+class MapEntityDocument(DetailView):
+    response_class = OdtTemplateResponse
+
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_DOCUMENT
+
+    def __init__(self, *args, **kwargs):
+        self.template_name = "%s/%s%s.odt" % (
+            self.model._meta.app_label,
+            self.model._meta.object_name.lower(),
+            self.template_name_suffix)
 
 
 class MapEntityCreate(CreateView):
