@@ -15,6 +15,8 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.core.cache import get_cache
+from django.template.loader import find_template
+from django.template.base import TemplateDoesNotExist
 
 from django.contrib.gis.geos.point import Point
 from django.contrib.gis.geos.linestring import LineString
@@ -187,10 +189,18 @@ class MapEntityDocument(DetailView):
         return mapentity_models.ENTITY_DOCUMENT
 
     def __init__(self, *args, **kwargs):
-        self.template_name = "%s/%s%s.odt" % (
-            self.model._meta.app_label,
-            self.model._meta.object_name.lower(),
-            self.template_name_suffix)
+        super(MapEntityDocument, self).__init__(*args, **kwargs)
+        name_for = lambda app, object: "%s/%s%s.odt" % (app, object, self.template_name_suffix)
+        try:
+            template_name = name_for(self.model._meta.app_label, 
+                                     self.model._meta.object_name.lower())
+            # Try to access it!
+            find_template(template_name)
+            # If it exists, use it
+            self.template_name = template_name
+        except TemplateDoesNotExist:
+            # It does not exist, use default one
+            self.template_name = name_for("mapentity", "entity")
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
@@ -440,4 +450,3 @@ class MapEntityShpResponder(ShpResponder):
         if self.attribute_fieldnames is not None:
             attrs = [ f for f in attrs if attrs in self.attribute_fieldnames ]
         return attrs
-

@@ -30,6 +30,12 @@ class MapEntityTest(TestCase):
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
 
+        # Document layer either
+        obj = self.modelfactory.create()
+        response = self.client.get(obj.get_document_url())
+        self.assertEqual(response.status_code, 200)
+
+
     def test_bbox_filter(self):
         if self.model is None:
             return  # Abstract test should not run
