@@ -31,7 +31,8 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Document layer either
-        response = self.client.get(self.model.get_document_url())
+        obj = self.modelfactory.create()
+        response = self.client.get(obj.get_document_url())
         self.assertEqual(response.status_code, 200)
 
 
