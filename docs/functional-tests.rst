@@ -1103,13 +1103,13 @@ Recommencer avec les financements sur les chantiers.
 
 La liste des itinéraires est accessible à l'adresse :
 
-http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/treks.json
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/trek.geojson
 
 Bien qu'au format GeoJSON, la liste reste lisible, on peut y retrouver les
 attributs permettant le filtrage ainsi que l'affichae tabulaire et
 cartographique.
 
-Note: les itinéraires avec le statut "publiée" à faux ne sont pas inclus dans
+Note: suels les itinéraires avec le statut "publié" sont inclus dans
 cette liste.
 
 
