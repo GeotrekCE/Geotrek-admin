@@ -136,3 +136,7 @@ class TrailDetail(MapEntityDetail):
 
     def can_edit(self):
         return False
+
+
+class TrailDocument(MapEntityDocument):
+    model = Trail

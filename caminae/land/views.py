@@ -2,7 +2,7 @@ from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
 from .filters import PhysicalEdgeFilter, LandEdgeFilter, CompetenceEdgeFilter, WorkManagementEdgeFilter, SignageManagementEdgeFilter
@@ -32,6 +32,10 @@ class PhysicalEdgeDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_path_manager
+
+
+class PhysicalEdgeDocument(MapEntityDocument):
+    model = PhysicalEdge
 
 
 class PhysicalEdgeCreate(MapEntityCreate):
@@ -81,6 +85,10 @@ class LandEdgeDetail(MapEntityDetail):
         return self.request.user.profile.is_path_manager
 
 
+class LandEdgeDocument(MapEntityDocument):
+    model = LandEdge
+
+
 class LandEdgeCreate(MapEntityCreate):
     model = LandEdge
     form_class = LandEdgeForm
@@ -126,6 +134,10 @@ class CompetenceEdgeDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_path_manager
+
+
+class CompetenceEdgeDocument(MapEntityDocument):
+    model = CompetenceEdge
 
 
 class CompetenceEdgeCreate(MapEntityCreate):
@@ -175,6 +187,10 @@ class WorkManagementEdgeDetail(MapEntityDetail):
         return self.request.user.profile.is_path_manager
 
 
+class WorkManagementEdgeDocument(MapEntityDocument):
+    model = WorkManagementEdge
+
+
 class WorkManagementEdgeCreate(MapEntityCreate):
     model = WorkManagementEdge
     form_class = WorkManagementEdgeForm
@@ -220,6 +236,10 @@ class SignageManagementEdgeDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_path_manager
+
+
+class SignageManagementEdgeDocument(MapEntityDocument):
+    model = SignageManagementEdge
 
 
 class SignageManagementEdgeCreate(MapEntityCreate):

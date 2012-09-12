@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
@@ -34,6 +34,10 @@ class TrekDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_trekking_manager()
+
+
+class TrekDocument(MapEntityDocument):
+    model = Trek
 
 
 class TrekCreate(MapEntityCreate):
@@ -85,6 +89,11 @@ class POIDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_trekking_manager()
+
+
+class POIDocument(MapEntityDocument):
+    model = POI
+
 
 
 class POICreate(MapEntityCreate):
