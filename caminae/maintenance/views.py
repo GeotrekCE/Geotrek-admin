@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from caminae.common.views import FormsetMixin
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from caminae.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
 from .filters import InterventionFilter, ProjectFilter
@@ -40,6 +40,10 @@ class InterventionDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.profile.is_path_manager and \
                self.get_object().same_structure(self.request.user)
+
+
+class InterventionDocument(MapEntityDocument):
+    model = Intervention
 
 
 class ManDayFormsetMixin(FormsetMixin):
@@ -132,6 +136,10 @@ class ProjectDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.profile.is_path_manager and \
                self.get_object().same_structure(self.request.user)
+
+
+class ProjectDocument(MapEntityDocument):
+    model = Project
 
 
 class FundingFormsetMixin(FormsetMixin):

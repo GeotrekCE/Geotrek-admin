@@ -2,7 +2,7 @@ from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import same_structure_required, path_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilter, SignageFilter
 from .forms import InfrastructureForm, SignageForm
@@ -32,6 +32,10 @@ class InfrastructureDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.profile.is_path_manager() and \
                self.get_object().same_structure(self.request.user)
+
+
+class InfrastructureDocument(MapEntityDocument):
+    model = Infrastructure
 
 
 class InfrastructureCreate(MapEntityCreate):
@@ -85,6 +89,10 @@ class SignageDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.profile.is_path_manager()
+
+
+class SignageDocument(MapEntityDocument):
+    model = Signage
 
 
 class SignageCreate(MapEntityCreate):
