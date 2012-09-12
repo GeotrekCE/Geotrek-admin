@@ -24,6 +24,22 @@ def distance3D(a, b):
                      (b[2] - a[2]) ** 2)
 
 
+def elevation_profile(g):
+    """
+    Extract elevation profile from a 3D geometry.
+    """
+    # Initialize with null distance at start point
+    distance = 0.0
+    profile = [(distance, g.coords[0][2])]
+    # Add elevation and cumulative distance at each point
+    for i in range(1, len(g.coords)):
+        a = g.coords[i - 1]
+        b = g.coords[i]
+        distance += distance3D(a, b)
+        profile.append((distance, b[2],))
+    return profile
+
+
 def wkt_to_geom(wkt):
     try:
         geom = fromstr(wkt, srid=settings.API_SRID)

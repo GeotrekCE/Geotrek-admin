@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.common.utils import distance3D, classproperty
+from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 import caminae.infrastructure as inf
 import caminae.land as land
@@ -131,15 +131,7 @@ class Path(MapEntityMixin, StructureRelated):
         """
         Extract elevation profile from path.
         """
-        coords = self.geom.coords
-        profile = [(0.0, coords[0][2])]
-        distance = 0
-        for i in range(1, len(coords)):
-            a = coords[i - 1]
-            b = coords[i]
-            distance += distance3D(a, b)
-            profile.append((distance, b[2],))
-        return profile
+        return elevation_profile(self.geom)
 
     @property
     def name_display(self):
