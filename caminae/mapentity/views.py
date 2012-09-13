@@ -21,14 +21,18 @@ from django.template.base import TemplateDoesNotExist
 from django.contrib.gis.geos.point import Point
 from django.contrib.gis.geos.linestring import LineString
 from django.contrib.gis.geos.collections import GeometryCollection, MultiPoint, MultiLineString
+from django.contrib.gis.db.models.fields import (
+        GeometryField, GeometryCollectionField, PointField, LineStringField
+)
 
-from shapes.views import ShpResponder
 from djgeojson.views import GeoJSONLayerView
 from djappypod.response import OdtTemplateResponse
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
+from caminae.core.models import split_bygeom # TODO
 
 from . import models as mapentity_models
+from . import shape_exporter
 from .decorators import save_history
 
 
@@ -354,14 +358,46 @@ class MapEntityFormat(MapEntityList):
     def shape_view(self, request, context, **kwarg):
         queryset = context['queryset'].qs
 
-        return MapEntityShpResponder(queryset,
-            attribute_fieldnames=self.columns,
-            geo_field='geom', # name of the geofield or None (if None, only one geofield should be presetn)
-            proj_transform=settings.API_SRID, # proj_transform is for the output
-            readme=None,
-            file_name='shp_download',
-            mimetype='application/zip',
-        )()
+        shp_creator = shape_exporter.ShapeCreator()
+
+        self.create_shape(shp_creator, queryset)
+
+        return shp_creator.as_zipped_response('shp_download')
+
+    def create_shape(self, shp_creator, queryset):
+        """Split a shapes into one or more shapes (one for point and one for linestring)"""
+        fieldmap = self.get_fieldmap(queryset)
+        # Don't use this - projection does not work yet (looses z dimension)
+        # srid_out = settings.API_SRID
+
+        get_geom, geom_type, srid = self.get_geom_info(queryset.model)
+
+        if geom_type in (GeometryField.geom_type, GeometryCollectionField.geom_type):
+            by_points, by_linestrings = self.split_points_linestrings(queryset, get_geom)
+
+            for split_qs, split_geom_field in ((by_points, PointField), (by_linestrings, LineStringField)):
+                split_geom_type = split_geom_field.geom_type
+
+                shp_filepath = shape_exporter.shape_write(
+                                    split_qs, fieldmap, get_geom, split_geom_type, srid)
+
+                shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
+        else:
+            shp_filepath = shape_exporter.shape_write(
+                                queryset, fieldmap, get_geom, geom_type, srid)
+
+            shp_creator.add_shape('shp_download', shp_filepath)
+
+    def split_points_linestrings(self, queryset, get_geom):
+        return split_bygeom(queryset, geom_getter=get_geom)
+
+    def get_fieldmap(self, qs):
+        return shape_exporter.fieldmap_from_fields(qs.model, self.columns)
+
+    def get_geom_info(self, model):
+        geo_field = shape_exporter.geo_field_from_model(model, 'geom')
+        get_geom, geom_type, srid = shape_exporter.info_from_geo_field(geo_field)
+        return get_geom, geom_type, srid
 
     def gpx_view(self, request, context, **kwargs):
         queryset = context['queryset'].qs
@@ -438,16 +474,3 @@ def point_to_GPX(point):
 
     return gpxpy.gpx.GPXWaypoint(latitude=y, longitude=x, elevation=z)
 
-
-class MapEntityShpResponder(ShpResponder):
-    """Simplistic subclass that will just filter out fields by name in get_attributes"""
-
-    def __init__(self, *args, **kwargs):
-        self.attribute_fieldnames = kwargs.pop('attribute_fieldnames', None)
-        super(MapEntityShpResponder, self).__init__(*args, **kwargs)
-
-    def get_attributes(self):
-        attrs = super(MapEntityShpResponder, self).get_attributes()
-        if self.attribute_fieldnames is not None:
-            attrs = [ f for f in attrs if attrs in self.attribute_fieldnames ]
-        return attrs
