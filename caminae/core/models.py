@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import collections
 
@@ -179,6 +181,28 @@ class Path(MapEntityMixin, StructureRelated):
         return [inf.models.Infrastructure.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.existing().filter(
                     kind=inf.models.Infrastructure.KIND)]
+
+
+def split_bygeom_cb(iterable, geom_getter=lambda x: x.geom, point_cb=lambda x: None, linestring_cb=lambda x: None, none_cb=lambda x: None):
+    # Faster implems may exist (eg: postgres ST_GeometryType)
+    for x in iterable:
+        geom = geom_getter(x)
+        if geom is None:
+            none_cb(x)
+        elif isinstance(geom, Point):
+            point_cb(x)
+        elif isinstance(geom, LineString):
+            linestring_cb(x)
+        else:
+            raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
+
+def split_bygeom(iterable, **kwargs):
+    """Split an iterable in two list (points, linestring)"""
+    points, linestrings = [], []
+    kwargs.update(dict(point_cb=points.append, linestring_cb=linestrings.append))
+
+    split_bygeom_cb(iterable, **kwargs)
+    return points, linestrings
 
 
 class NoDeleteMixin(models.Model):

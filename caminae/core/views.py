@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
