@@ -53,8 +53,10 @@ class MapEntityTest(TestCase):
 
         self.modelfactory.create()
         params = '?bbox=POLYGON((5+44+0%2C5+45+0%2C6+45+0%2C6+44+0%2C5+44+0))'
-        response = self.client.get(self.model.get_format_list_url() + params + '&format=csv')
-        self.assertEqual(response.status_code, 200)
+
+        for fmt in ('csv', 'shp', 'gpx'):
+            response = self.client.get(self.model.get_format_list_url() + params + '&format=' + fmt)
+            self.assertEqual(response.status_code, 200, u"")
 
     def test_crud_status(self):
         if self.model is None:
