@@ -378,8 +378,9 @@ class MapEntityFormat(MapEntityList):
             # All geometries will looses their SRID being convert to simple tuples
             # They must have the same SRID to be treated equally.
             # Converting at point level only avoid creating unused point only to carry SRID (could be a param too..)
-            assert geom.srid == settings.SRID, "Invalid srid"
-            geomToGPX(gpx, geom)
+            if geom:
+                assert geom.srid == settings.SRID, "Invalid srid"
+                geomToGPX(gpx, geom)
 
         response = HttpResponse(gpx.to_xml(), mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=list.gpx'
