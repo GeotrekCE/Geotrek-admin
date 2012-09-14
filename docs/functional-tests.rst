@@ -1141,6 +1141,7 @@ Un point seul (un évènement de type point) est ajouté comme un "Way Point".
 Une liste de point (une ligne - évènement ou tronçon -) est ajouté comme une route.
 
 Ne sont exportés au format GPX que les géométries (aucune autre donnée pour le moment).
+Les géométries seront reprojetées en projection GPS (WGS 84).
 
 Cas particulier:
 
@@ -1156,6 +1157,8 @@ Sur la vue de chaque entité, je peux exporter la liste courante au format shape
 Un fichier shape est composé de 4 fichiers différents (shp, shx, prj, dbf).
 Il ne peut contenir qu'un seul type de géometrie, ainsi, un fichier shape
 distinct sera créer par type de géométrie (point, ligne, ...).
+
+Les géométries resteront dans leur projection initiale (epsg:2154 - lambert 93).
 
 L'export entrainera la création et le téléchargement d'un zip comprenant
 l'ensemble de ces fichiers.
