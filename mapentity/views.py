@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import csv
-import gpxpy
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -24,6 +23,7 @@ from django.contrib.gis.db.models.fields import (
         GeometryField, GeometryCollectionField, PointField, LineStringField
 )
 
+import gpxpy
 from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
@@ -226,7 +226,8 @@ class MapEntityDocument(DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
         # ODT template requires absolute URL for images insertion
-        context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)
+        context['ROOT_URL'] = self.request.build_absolute_uri('/')[:-1]
+        context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         return context
 
 

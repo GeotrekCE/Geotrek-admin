@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
 
+from screamshot.views import capture
 
-urlpatterns = patterns('',
-    url(r'^capture/$',  include('screamshot.urls', namespace='screamshot', app_name='screamshot')),
+
+urlpatterns = patterns('screamshot.views',
+    url(r'^capture/$', capture, name='capture'),
 )
+
