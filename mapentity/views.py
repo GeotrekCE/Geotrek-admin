@@ -490,17 +490,3 @@ def point_to_GPX(point):
     z = point.z # transform looses the Z parameter - reassign it
 
     return gpxpy.gpx.GPXWaypoint(latitude=y, longitude=x, elevation=z)
-
-
-class MapEntityShpResponder(ShpResponder):
-    """Simplistic subclass that will just filter out fields by name in get_attributes"""
-
-    def __init__(self, *args, **kwargs):
-        self.attribute_fieldnames = kwargs.pop('attribute_fieldnames', None)
-        super(MapEntityShpResponder, self).__init__(*args, **kwargs)
-
-    def get_attributes(self):
-        attrs = super(MapEntityShpResponder, self).get_attributes()
-        if self.attribute_fieldnames is not None:
-            attrs = [ f for f in attrs if attrs in self.attribute_fieldnames ]
-        return attrs
