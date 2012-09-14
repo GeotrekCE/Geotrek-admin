@@ -27,6 +27,7 @@ from django.contrib.gis.db.models.fields import (
 from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
+from screamshot.decorators import login_required_capturable
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 from caminae.core.models import split_bygeom # TODO
@@ -170,7 +171,7 @@ class MapEntityDetail(DetailView):
     def get_title(self):
         return unicode(self.get_object())
 
-    @method_decorator(login_required)
+    @method_decorator(login_required_capturable)
     @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityDetail, self).dispatch(*args, **kwargs)
