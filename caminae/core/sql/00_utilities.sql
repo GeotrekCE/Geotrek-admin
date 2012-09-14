@@ -132,6 +132,10 @@ BEGIN
         FROM evenements_troncons et
         WHERE et.evenement = eid;
 
+    -- /!\ linear offset (start and end point) are given as a fraction of the
+    -- 2D-length in Postgis. Since we are working on 3D geometry, it could lead
+    -- to unexpected results.
+
     IF t_count = 0 THEN
         -- No more troncons, close this topology
         UPDATE evenements SET geom = ST_GeomFromText('POINTZ EMPTY', 2154), longueur = 0 WHERE id = eid;
@@ -147,7 +151,7 @@ BEGIN
             INTO egeom
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
-        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom) WHERE id = eid;
+        UPDATE evenements SET geom = egeom, longueur = ST_3DLength(egeom) WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
         -- Note: We are faking a M-geometry in order to use LocateBetween
@@ -155,12 +159,15 @@ BEGIN
         -- Z-index.
         -- FIXME: If paths are not contiguous, only the first chunk will be
         -- considered. How to handle these invalid linear topologies?
+        -- FIXME: LineMerge and Line_Substring work on X and Y only. If two
+        -- points in the line have the same X/Y but a different Z, these
+        -- functions will see only on point.
         SELECT ST_Force_3DZ(ST_GeometryN(ST_LocateBetween(ST_AddMeasure(ST_LineMerge(ST_Collect(ST_Line_Substring(t.geom, et.pk_debut, et.pk_fin))), 0, 1), 0, 1, e.decallage), 1))
             INTO egeom
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
             GROUP BY e.id, e.decallage;
-        UPDATE evenements SET geom = egeom, longueur = ST_Length(egeom) WHERE id = eid;
+        UPDATE evenements SET geom = egeom, longueur = ST_3DLength(egeom) WHERE id = eid;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
