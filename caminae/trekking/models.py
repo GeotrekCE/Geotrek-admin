@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
+from caminae.common.utils import elevation_profile
 
 
 class Trek(MapEntityMixin, TopologyMixin):
@@ -108,6 +109,10 @@ class Trek(MapEntityMixin, TopologyMixin):
     def serializable_usages(self):
         return [{'id': u.pk,
                  'label': u.usage} for u in self.usages.all()]
+
+    @property
+    def elevation_profile(self):
+        return elevation_profile(self.geom)
 
     @property
     def is_loop(self):

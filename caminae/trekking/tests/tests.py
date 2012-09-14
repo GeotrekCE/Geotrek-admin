@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.gis.geos import LineString
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
 
@@ -78,6 +79,20 @@ class TrekViewsTest(MapEntityTest):
         }
 
 class RelatedObjectsTest(TestCase):
+    def test_elevation(self):
+        trek = TrekFactory.create(no_path=True)
+        p1 = PathFactory.create(geom=LineString((1,0,1), (0,0,1), (0,1,1)))
+        p2 = PathFactory.create(geom=LineString((0,1,1), (1,1,1), (1,2,2)))
+        PathAggregationFactory.create(topo_object=trek, path=p1,
+                                      start_position=0.5)
+        PathAggregationFactory.create(topo_object=trek, path=p2)
+
+        trek = Trek.objects.get(pk=trek.pk) # reload to get computed fields
+
+        actual_profile = trek.elevation_profile
+        expected_profile = ((0,1), (1,1), (2,1), (2+2**0.5,2),)
+        self.assertItemsEqual(actual_profile, expected_profile)
+
     def test_helpers(self):
         trek = TrekFactory.create()
         p1 = PathFactory.create()
