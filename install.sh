@@ -152,24 +152,27 @@ _EOF_
         fi
     fi
 
+
+    mkdir -p lib/
+    cd lib/
+
+    wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
+    tar -jxvf phantomjs.tar.bz2
+    rm phantomjs.tar.bz2
+    cd *phantomjs*
+    sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
+    cd ..
+
+    wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
+    unzip -o casperjs.zip > /dev/null
+    rm casperjs.zip
+    cd *casperjs*
+    sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
+    cd ..
+
+    cd ..
+
     if $dev ; then
-        mkdir -p lib/
-        cd lib/
-
-        wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
-        tar -jxvf phantomjs.tar.bz2
-        rm phantomjs.tar.bz2
-        cd *phantomjs*
-        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
-        cd ..
-
-        wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
-        unzip -o casperjs.zip > /dev/null
-        rm casperjs.zip
-        cd *casperjs*
-        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-        cd ..
-
         # A postgis template is required for django tests
         if [ ${dbhost} == "localhost" ] ; then
             if ! database_exists template_postgis
@@ -186,8 +189,6 @@ _EOF_
                 sudo /etc/init.d/postgresql restart
             fi
         fi
-
-        cd ..
     else
         sudo apt-get install -y nginx
         sudo apt-get install -y yui-compressor
