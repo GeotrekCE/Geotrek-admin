@@ -46,6 +46,77 @@ END;
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
+-- Convert 2D linestring to 3D using a DEM
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION add_elevation(geom geometry) RETURNS record AS $$
+DECLARE
+    num_points integer;
+    current_point geometry;
+    points3d geometry[];
+    ele integer;
+    last_ele integer;
+    max_ele integer;
+    min_ele integer;
+    positive_gain integer := 0;
+    negative_gain integer := 0;
+    geom3d geometry;
+    result record;
+BEGIN
+    -- Ensure we have a DEM
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND THEN
+        SELECT ST_Force_3DZ(geom), 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Ensure parameter is a point or a line
+    IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
+        SELECT ST_Force_3DZ(geom), 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Obtain point number
+    num_points := ST_NPoints(geom); -- /!\ NPoints() works with all types of geom
+
+    -- Iterate over points (i.e. path vertices)
+    FOR i IN 1..num_points LOOP
+        -- Obtain current point
+        IF i = 1 AND ST_GeometryType(geom) = 'ST_Point' THEN
+            current_point := geom;
+        ELSE
+            current_point := ST_PointN(geom, i);
+        END IF;
+
+        -- Obtain elevation
+        SELECT ST_Value(rast, 1, current_point) INTO ele FROM mnt WHERE ST_Intersects(rast, current_point);
+        IF NOT FOUND THEN
+            ele := 0;
+        END IF;
+
+        -- Store new 3D points
+        points3d := array_append(points3d, ST_MakePoint(ST_X(current_point), ST_Y(current_point), ele));
+
+        -- Compute indicators
+        min_ele := least(coalesce(min_ele, ele), ele);
+        max_ele := greatest(coalesce(max_ele, ele), ele);
+        positive_gain := positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
+        negative_gain := negative_gain + least(ele - coalesce(last_ele, ele), 0);
+        last_ele := ele;
+    END LOOP;
+
+    IF ST_GeometryType(geom) = 'ST_Point' THEN
+        geom3d := ST_SetSRID(points3d[0], ST_SRID(geom));
+    ELSE
+        geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
+    END IF;
+
+    SELECT geom3d, min_ele, max_ele, positive_gain, negative_gain INTO result;
+    RETURN result;
+END;
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
 -- Update geometry of an "evenement"
 -------------------------------------------------------------------------------
 

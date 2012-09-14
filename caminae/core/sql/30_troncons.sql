@@ -143,54 +143,22 @@ DROP TRIGGER IF EXISTS troncons_elevation_iu_tgr ON troncons;
 
 CREATE OR REPLACE FUNCTION troncons_elevation_iu() RETURNS trigger AS $$
 DECLARE
-    num_points integer;
-    current_point geometry;
-    points3d geometry[];
-    ele integer;
-    last_ele integer;
+    line3d geometry;
     max_ele integer;
     min_ele integer;
-    positive_gain integer := 0;
-    negative_gain integer := 0;
+    positive_gain integer;
+    negative_gain integer;
 BEGIN
-    -- Ensure we have a DEM
-    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF NOT FOUND THEN
-        NEW.longueur := ST_Length(NEW.geom);
-        -- NOTE: Other indicators have safe default values
-        RETURN NEW;
-    END IF;
 
-    -- Obtain point number
-    num_points := ST_NumPoints(NEW.geom);
-
-    -- Iterate over points (i.e. path vertices)
-    FOR i IN 1..num_points LOOP
-        -- Obtain current point
-        current_point := ST_PointN(NEW.geom, i);
-
-        -- Obtain elevation
-        SELECT ST_Value(rast, 1, current_point) INTO ele FROM mnt WHERE ST_Intersects(rast, current_point);
-        IF NOT FOUND THEN
-            ele := 0;
-        END IF;
-
-        -- Store new 3D points
-        points3d := array_append(points3d, ST_MakePoint(ST_X(current_point), ST_Y(current_point), ele));
-
-        -- Compute indicators
-        min_ele := least(coalesce(min_ele, ele), ele);
-        max_ele := greatest(coalesce(max_ele, ele), ele);
-        positive_gain := positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
-        negative_gain := negative_gain + least(ele - coalesce(last_ele, ele), 0);
-        last_ele := ele;
-    END LOOP;
+    SELECT *
+    FROM add_elevation(NEW.geom) AS (line3d geometry, min_ele integer, max_ele integer, positive_gain integer, negative_gain integer)
+    INTO line3d, min_ele, max_ele, positive_gain, negative_gain;
 
     -- Update path geometry
-    NEW.geom := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(NEW.geom));
+    NEW.geom := line3d;
 
     -- Update path indicators
-    NEW.longueur := ST_3DLength(NEW.geom);
+    NEW.longueur := ST_3DLength(line3d);
     NEW.altitude_minimum := min_ele;
     NEW.altitude_maximum := max_ele;
     NEW.denivelee_positive := positive_gain;
