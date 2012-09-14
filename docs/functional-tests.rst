@@ -1125,3 +1125,54 @@ c'est-à-dire que leur statut "supprimé" devient vrai.
 
 Les évènements faisant le lien automatique entre tronçons et couches SIG sont
 en revanche supprimés au niveau base de données.
+
+
+#41 - Exporter la liste obtenue au format tableur (CSV)
+-------------------------------------------------------
+
+Sur la vue liste de chaque entité, je peux exporter la liste courante au format CSV.
+Les colonnes présentes dans le CSV seront celles de la liste en cours.
+
+#43 - Exporter l'itinéraire au format GPX
+-----------------------------------------
+
+Sur la vue de chaque entité, je peux exporter la liste courante au format GPX.
+Un point seul (un évènement de type point) est ajouté comme un "Way Point".
+Une liste de point (une ligne - évènement ou tronçon -) est ajouté comme une route.
+
+Ne sont exportés au format GPX que les géométries (aucune autre donnée pour le moment).
+
+Cas particulier:
+
+* Un sentier est une union de tronçons: un sentier est ajouté comme une seule route
+* Un projet correspond à un ensemble d'intervention, donc d'évènements:
+  tous les évènements (ligne et point) sont fusionnés au sein d'une unique route
+
+#42 - Exporter la liste obtenue au format Shape
+-----------------------------------------------
+
+Sur la vue de chaque entité, je peux exporter la liste courante au format shape.
+
+Un fichier shape est composé de 4 fichiers différents (shp, shx, prj, dbf).
+Il ne peut contenir qu'un seul type de géometrie, ainsi, un fichier shape
+distinct sera créer par type de géométrie (point, ligne, ...).
+
+L'export entrainera la création et le téléchargement d'un zip comprenant
+l'ensemble de ces fichiers.
+
+Les données attributaires seront pour l'instant celles de la liste en cours.
+
+Cas particulier:
+
+* Un projet correspond à un ensemble d'intervention, donc d'évènements.
+  Or, un évènement peut être un point ou une ligne, nous obtenons
+  donc un projet qui peut être réparti sur des fichiers shapes différents.
+  Les données attributaires d'un projet seront celle de la liste en cours
+  ainsi qu'un élément (id, nom) permettant de distinguer l'intervention
+  correspondant à la géometrie.
+
+
+
+
+
+
