@@ -259,6 +259,10 @@ THUMBNAIL_ALIASES = {
     },
 }
 
+SCREAMSHOT_CONFIG = {
+    'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
+}
+
 
 TITLE = gettext_noop("Caminae")
 DEFAULT_STRUCTURE_NAME = None

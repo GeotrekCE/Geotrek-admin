@@ -51,7 +51,8 @@ class PathDetail(MapEntityDetail):
     model = Path
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager and \
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager and \
                self.get_object().same_structure(self.request.user)
 
     def get_context_data(self, **kwargs):

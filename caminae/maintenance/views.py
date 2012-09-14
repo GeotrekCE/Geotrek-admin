@@ -48,7 +48,8 @@ class InterventionDetail(MapEntityDetail):
     model = Intervention
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager and \
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager and \
                self.get_object().same_structure(self.request.user)
 
 
@@ -180,7 +181,8 @@ class ProjectDetail(MapEntityDetail):
     model = Project
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager and \
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager and \
                self.get_object().same_structure(self.request.user)
 
 

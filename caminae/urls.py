@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^paperclip/', include('caminae.paperclip.urls')),
 
+    url(r'', include('caminae.mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'', include('caminae.core.urls', namespace='core', app_name='core')),
     url(r'', include('caminae.land.urls', namespace='land', app_name='land')),
     url(r'', include('caminae.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')),

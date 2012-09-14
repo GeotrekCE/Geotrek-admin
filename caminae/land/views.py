@@ -31,7 +31,8 @@ class PhysicalEdgeDetail(MapEntityDetail):
     model = PhysicalEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager
 
 
 class PhysicalEdgeDocument(MapEntityDocument):
@@ -82,7 +83,8 @@ class LandEdgeDetail(MapEntityDetail):
     model = LandEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager
 
 
 class LandEdgeDocument(MapEntityDocument):
@@ -133,7 +135,8 @@ class CompetenceEdgeDetail(MapEntityDetail):
     model = CompetenceEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager
 
 
 class CompetenceEdgeDocument(MapEntityDocument):
@@ -184,7 +187,8 @@ class WorkManagementEdgeDetail(MapEntityDetail):
     model = WorkManagementEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager
 
 
 class WorkManagementEdgeDocument(MapEntityDocument):
@@ -235,7 +239,8 @@ class SignageManagementEdgeDetail(MapEntityDetail):
     model = SignageManagementEdge
 
     def can_edit(self):
-        return self.request.user.profile.is_path_manager
+        return hasattr(self.request.user, 'profile') and \
+               self.request.user.profile.is_path_manager
 
 
 class SignageManagementEdgeDocument(MapEntityDocument):
