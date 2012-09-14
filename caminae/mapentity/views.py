@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
-from django.utils.functional import Promise
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -20,12 +19,13 @@ from django.template.base import TemplateDoesNotExist
 
 from django.contrib.gis.geos.point import Point
 from django.contrib.gis.geos.linestring import LineString
-from django.contrib.gis.geos.collections import GeometryCollection, MultiPoint, MultiLineString
+from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.db.models.fields import (
         GeometryField, GeometryCollectionField, PointField, LineStringField
 )
 
 from djgeojson.views import GeoJSONLayerView
+from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
@@ -194,17 +194,33 @@ class MapEntityDocument(DetailView):
 
     def __init__(self, *args, **kwargs):
         super(MapEntityDocument, self).__init__(*args, **kwargs)
-        name_for = lambda app, object: "%s/%s%s.odt" % (app, object, self.template_name_suffix)
-        try:
-            template_name = name_for(self.model._meta.app_label, 
-                                     self.model._meta.object_name.lower())
-            # Try to access it!
-            find_template(template_name)
-            # If it exists, use it
-            self.template_name = template_name
-        except TemplateDoesNotExist:
-            # It does not exist, use default one
-            self.template_name = name_for("mapentity", "entity")
+        # Try to load template for each lang and object detail
+        name_for = lambda app, object, lang: "%s/%s%s%s.odt" % (app, object, lang, self.template_name_suffix)
+        langs = ['_%s' % lang for lang, langname in settings.LANGUAGES]
+        langs.append('')   # Will also try without lang
+        found = None
+        for lang in langs:
+            try:
+                template_name = name_for(self.model._meta.app_label, 
+                                         self.model._meta.object_name.lower(),
+                                         lang)
+                get_template(template_name)
+                found = template_name
+                break
+            except TemplateDoesNotExist:
+                pass
+        if not found:
+            for lang in langs:
+                try:
+                    template_name = name_for("mapentity", "entity", lang) 
+                    get_template(template_name)
+                    found = template_name
+                    break
+                except TemplateDoesNotExist:
+                    pass
+        if not found:
+            raise TemplateDoesNotExist(name_for(self.model._meta.app_label, self.model._meta.object_name.lower(), ''))
+        self.template_name = found
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
@@ -474,3 +490,16 @@ def point_to_GPX(point):
 
     return gpxpy.gpx.GPXWaypoint(latitude=y, longitude=x, elevation=z)
 
+
+class MapEntityShpResponder(ShpResponder):
+    """Simplistic subclass that will just filter out fields by name in get_attributes"""
+
+    def __init__(self, *args, **kwargs):
+        self.attribute_fieldnames = kwargs.pop('attribute_fieldnames', None)
+        super(MapEntityShpResponder, self).__init__(*args, **kwargs)
+
+    def get_attributes(self):
+        attrs = super(MapEntityShpResponder, self).get_attributes()
+        if self.attribute_fieldnames is not None:
+            attrs = [ f for f in attrs if attrs in self.attribute_fieldnames ]
+        return attrs
