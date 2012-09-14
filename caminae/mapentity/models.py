@@ -1,4 +1,8 @@
+import urllib
+
 from django.db import models
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 
 # Used to create the matching url name
@@ -76,6 +80,16 @@ class MapEntityMixin(object):
     @models.permalink
     def get_detail_url(self):
         return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
+
+    def get_map_image_url(self, rooturl=None):
+        if rooturl is None:
+            rooturl = settings.SCREAMSHOT_CONFIG.get('CAPTURE_ROOT_URL', 'http://localhost:8000')
+        captureurl = reverse('mapentity:capture')
+        detailurl = rooturl + self.get_detail_url()
+        detailurl = urllib.quote(detailurl)
+        selector = urllib.quote('.map-panel')
+        return captureurl + '?selector=%s&url=%s' % (selector, detailurl)
+        #return captureurl + '?url=%s' % detailurl
 
     @models.permalink
     def get_document_url(self):
