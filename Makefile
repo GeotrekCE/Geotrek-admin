@@ -53,7 +53,7 @@ tests: unit_tests functional_tests
 serve: bin/ clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
-	bin/django runserver $(listen)
+	bin/django runcserver $(listen)
 
 load_data:
 	# /!\ will delete existing data
