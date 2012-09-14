@@ -19,7 +19,10 @@ clean_harmless:
 clean: clean_harmless
 	rm -rf bin/ lib/ local/ include/ *.egg-info/ develop-eggs/ parts/
 	rm -rf reports/ var/
+	rm -rf etc/init/
+	rm -rf src/appy-archive/
 	rm -f .installed.cfg
+	rm -f install.log
 
 .PHONY: all_makemessages all_compilemessages
 
