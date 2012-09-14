@@ -1175,6 +1175,26 @@ Cas particulier:
   correspondant à la géometrie.
 
 
+#50 - Exporter la fiche au format bureautique
+---------------------------------------------
+
+Il est désormais possible d'accéder à la version OpenDocument (OpenOffice) 
+de la fiche.
+
+Pour l'instant la fiche ne contient aucune information à part les dates d'insertion,
+de modification et une image avec une carte centrée sur l'objet.
+
+:notes:
+
+    * il n'y a pas de mise en cache, et l'obtention de la carte en image est
+      assez longue.
+
+    * il faudra décliner la fiche pour chaque type d'objet, ou utiliser tout
+      simplement les mêmes informations que ce qui est présenté dans la version
+      Web.
+
+    * pour les itinéraires, il faudra prévoir autant de versions que de langues,
+      avec à chaque fois la distinction avec/sans POI.
 
 
 
