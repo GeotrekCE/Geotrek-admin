@@ -960,6 +960,7 @@ normalement.
 
 Après validation du formulaire, vous pouvez constater que les évènements ont été
 mis à jour :
+
 * Les évènements faisant le lien avec les couches SIG reflètent bien les
   relations actuelles entre le tronçon et les différentes entités des couches
   SIG.
