@@ -13,7 +13,6 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.core.cache import get_cache
-from django.template.loader import find_template
 from django.template.base import TemplateDoesNotExist
 
 from django.contrib.gis.geos.point import Point
@@ -231,6 +230,12 @@ class MapEntityDocument(DetailView):
         context['ROOT_URL'] = self.request.build_absolute_uri('/')[:-1]
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         return context
+
+    def dispatch(self, *args, **kwargs):
+        handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
+        # Screenshot of object map
+        self.get_object().prepare_map_image(self.request.build_absolute_uri('/'))
+        return handler
 
 
 class MapEntityCreate(CreateView):

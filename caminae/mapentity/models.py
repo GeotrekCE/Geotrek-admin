@@ -1,8 +1,13 @@
-import urllib
+import os
+import time
+from datetime import datetime
+from urlparse import urljoin
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.utils import timezone
+
+from screamshot.utils import casperjs_capture
 
 
 # Used to create the matching url name
@@ -81,15 +86,28 @@ class MapEntityMixin(object):
     def get_detail_url(self):
         return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
 
-    def get_map_image_url(self, rooturl=None):
-        if rooturl is None:
-            rooturl = settings.SCREAMSHOT_CONFIG.get('CAPTURE_ROOT_URL', 'http://localhost:8000')
-        captureurl = reverse('mapentity:capture')
-        detailurl = rooturl + self.get_detail_url()
-        detailurl = urllib.quote(detailurl)
-        selector = urllib.quote('.map-panel')
-        return captureurl + '?selector=%s&url=%s' % (selector, detailurl)
-        #return captureurl + '?url=%s' % detailurl
+    def prepare_map_image(self, rooturl):
+        path = self.get_map_image_path()
+        # If already exists and up-to-date, do nothing
+        if os.path.exists(path):
+            modified = datetime.fromtimestamp(os.path.getmtime(path))
+            modified = modified.replace(tzinfo=timezone.utc)
+            if modified > self.date_update:
+                return
+        # Run head-less capture
+        url = urljoin(rooturl, self.get_detail_url())
+        with open(path, 'wb') as f:
+            casperjs_capture(f, url, selector='.map-panel')
+        # TODO : remove capture image file on delete
+
+    def get_map_image_path(self):
+        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
+        if not os.path.exists(basefolder):
+            os.mkdir(basefolder)
+        return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
+
+    def get_map_image_url(self):
+        return os.path.join(settings.MEDIA_URL, 'maps', '%s-%s.png' % (self._meta.module_name, self.pk))
 
     @models.permalink
     def get_document_url(self):
