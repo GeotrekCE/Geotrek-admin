@@ -1225,3 +1225,10 @@ http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
 
 Note: seuls les profiles des itinéraires avec le statut "publié" sont
 consultable à cette adresse.
+
+#170 - Définir les couleurs de couche : tronçons et entité
+----------------------------------------------------------
+
+Sur toutes les cartes, les tronçons apparaissent d'une couleur et les autres objets métiers d'une autre couleur.
+
+Ces couleurs sont paramétrables dans les settings Django.
