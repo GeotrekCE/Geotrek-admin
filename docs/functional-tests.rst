@@ -1198,6 +1198,7 @@ de modification et une image avec une carte centrée sur l'objet.
       avec à chaque fois la distinction avec/sans POI.
 
 
+
 ========================
 Sprint 5 - Version 0.5.0
 ========================
@@ -1246,3 +1247,8 @@ est similaire à l'ajout d'une intervention sur un tronçon : il s'agit juste
 du centrage de la carte sur le sentier.
 
 
+#231 - Snapper sur les noeuds des tronçons (en plus des segments)
+-----------------------------------------------------------------
+
+Lors du déplacement des marqueurs, le snapping s'effectue sur les tronçons et
+sur les points qui composent sa ligne brisée (extrémités et points intermédiaires).
