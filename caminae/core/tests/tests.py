@@ -4,18 +4,19 @@ from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 
-# TODO caminae.core should be self sufficient
-from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
-    TopologyMixinFactory, StakeFactory)
+    TopologyMixinFactory, StakeFactory, TrailFactory)
+from caminae.core.models import Path, TopologyMixin, PathAggregation
+
+# TODO caminae.core should be self sufficient
+from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.maintenance.factories import InterventionFactory, ProjectFactory
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
-from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 
 class ViewsTest(MapEntityTest):
@@ -573,3 +574,25 @@ class TopologyMixinTest(TestCase):
         p.save()
         t.reload()
         self.assertEqual(t.geom, LineString((0,2,0), (2,2,0)))
+
+
+class TrailTest(TestCase):
+    def test_helpers(self):
+        t = TrailFactory.create()
+        self.assertEqual(0, len(t.interventions))
+        
+        p = PathFactory.create()
+        t.paths.add(p)
+        
+        topo = TopologyMixinFactory.create(no_path=True)
+        topo.add_path(p)
+        i = InterventionFactory(topology=topo)
+        self.assertEqual(1, len(t.interventions))
+        self.assertEqual([i], t.interventions)
+
+    def test_geom(self):
+        t = TrailFactory.create()
+        self.assertTrue(t.geom is None)
+        p = PathFactory.create()
+        t.paths.add(p)
+        self.assertFalse(t.geom is None)

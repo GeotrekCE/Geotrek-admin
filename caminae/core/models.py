@@ -504,11 +504,18 @@ class Trail(MapEntityMixin, StructureRelated):
 
     @property
     def geom(self):
-        paths = Path.objects.filter(trail=self)
         geom = None
-        for p in paths:
+        for p in self.paths.all():
             if geom is None:
                 geom = LineString(p.geom.coords, srid=settings.SRID)
             else:
                 geom = geom.union(p.geom)
         return geom
+
+    @property
+    def interventions(self):
+        """ Interventions of a trail is the union of interventions on all its paths """
+        s = []
+        for p in self.paths.all():
+            s.extend(p.interventions)
+        return list(set(s))

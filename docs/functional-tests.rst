@@ -1110,7 +1110,7 @@ Bien qu'au format GeoJSON, la liste reste lisible, on peut y retrouver les
 attributs permettant le filtrage ainsi que l'affichae tabulaire et
 cartographique.
 
-Note: seuls les itinéraires avec le statut "publié" sont inclus dans
+Note: suels les itinéraires avec le statut "publié" sont inclus dans
 cette liste.
 
 
@@ -1198,7 +1198,6 @@ de modification et une image avec une carte centrée sur l'objet.
       avec à chaque fois la distinction avec/sans POI.
 
 
-
 ========================
 Sprint 5 - Version 0.5.0
 ========================
@@ -1233,3 +1232,17 @@ consultable à cette adresse.
 Sur toutes les cartes, les tronçons apparaissent d'une couleur et les autres objets métiers d'une autre couleur.
 
 Ces couleurs sont paramétrables dans les settings Django.
+
+
+
+#240 - Ajouter une intervention depuis un sentier
+-------------------------------------------------
+
+La fiche sentier affiche désormais la liste des interventions associées 
+aux tronçons qui le composent. 
+
+Il est possible d'ajouter une intervention sur le sentier, le comportement
+est similaire à l'ajout d'une intervention sur un tronçon : il s'agit juste
+du centrage de la carte sur le sentier.
+
+
