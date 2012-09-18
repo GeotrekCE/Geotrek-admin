@@ -29,6 +29,8 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
         context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context)
         context['update'] = bool(value)
         context['field'] = value
+        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
+        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 
@@ -91,6 +93,8 @@ class BaseTopologyWidget(forms.Textarea):
         context['path_snapping'] = True
         # TODO: this should come from context processor !
         context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
+        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
+        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 

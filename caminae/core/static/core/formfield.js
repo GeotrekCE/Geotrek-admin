@@ -65,7 +65,7 @@ FormField.makeModule = function(module, module_settings) {
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
             var pathsLayer = new MapEntity.ObjectsLayer(null, {
-                style: {weight: 2, clickable: true},
+                style: {weight: 2, clickable: true, color: module_settings.colors.paths},
             });
             map.addLayer(pathsLayer);
             snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
@@ -98,8 +98,9 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         // Start loading all objects, readonly
+        var color = modelname == 'path' ? module_settings.colors.paths : module_settings.colors.others;
         var objectsLayer = new MapEntity.ObjectsLayer(null, {
-                style: {weight: 2, clickable: true},
+            style: {weight: 2, clickable: true, 'color': color},
                 filter: exclude_current_object
             }),
             url = module_settings.addObjectsLayer.getUrl(modelname);

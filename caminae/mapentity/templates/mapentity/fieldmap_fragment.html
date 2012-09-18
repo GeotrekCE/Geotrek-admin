@@ -17,7 +17,7 @@ function {{ mapname }}Init(map, bounds) {
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
     var objectLayer = new MapEntity.ObjectsLayer(geojson, {
-        style: {weight: 5, opacity: 1, clickable: false}
+        style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'}
     });
     map.addLayer(objectLayer);
     var objectBounds = {{ object|latlngbounds }},
@@ -27,7 +27,7 @@ function {{ mapname }}Init(map, bounds) {
     
     // Paths layer (TODO: should we show objectsLayers ?)
     var pathsLayer = new MapEntity.ObjectsLayer(null, {
-        style: {weight: 2, opacity: 0.7, clickable: false}
+        style: {weight: 2, opacity: 0.7, clickable: false, color: '{{ LAYERCOLOR_PATHS }}'}
     });
     map.addLayer(pathsLayer);
     pathsLayer.load("{% url core:path_layer %}");

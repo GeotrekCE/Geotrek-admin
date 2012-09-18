@@ -37,6 +37,10 @@ var {{ module }}_settings = {
         'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
         'iconUrl': '{% static "images/marker-trans.png" %}',
         'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}'
+    },
+    'colors': {
+        'paths': '{{ LAYERCOLOR_PATHS }}',
+        'others': '{{ LAYERCOLOR_OTHERS }}',
     }
 };
 
