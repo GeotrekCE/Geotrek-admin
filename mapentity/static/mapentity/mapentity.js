@@ -331,8 +331,6 @@ MapEntity.MarkerSnapping = L.Handler.extend({
 
     initialize: function (map, marker) {
         L.Handler.prototype.initialize.call(this, map);
-        var self = this;
-        this._snaplist = [];
         this._markers = []
         
         // Get necessary distance around mouse in lat/lng from distance in pixels
@@ -345,10 +343,6 @@ MapEntity.MarkerSnapping = L.Handler.extend({
             marker.dragging.enable();
             this.snapMarker(marker);
         }
-
-        this._closest = function(marker) {
-            return MapEntity.Utils.closest(map, marker, self._snaplist, self.SNAP_DISTANCE);
-        };
     },
 
     enable: function () {
@@ -646,9 +640,22 @@ MapEntity.Utils = (function() {
                     point = ll;
                 }
             }
+            // Try to snap on line points (extremities and middle points)
+            if (chosen && chosen.getLatLngs) {
+                var mindist = snap_distance,
+                    linepoint = null;
+                for (var i=0; i<chosen.getLatLngs().length; i++) {
+                    var lp = chosen.getLatLngs()[i], 
+                        distance = MapEntity.Utils.distance(map, point, lp);
+                    if (distance < mindist) {
+                        linepoint = lp;
+                        mindist = distance;
+                    }
+                }
+                if (linepoint) point = linepoint;
+            }
             return [chosen, point];
         }
-
     };
 })();
 
