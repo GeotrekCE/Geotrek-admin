@@ -223,28 +223,25 @@ FormField.makeModule = function(module, module_settings) {
                         new L.Marker(end.closest).addTo(map);
                     }
 
-                    // Do not inverse start and end point => do not inverse markers
-                    // Those are only used on javascript side (may be inverted in the database)
-                    var _start_ll = {lat: ll_start.lat, lng: ll_start.lng }
-                      , _end_ll = {lat: ll_end.lat, lng: ll_end.lng }
-                    ;
                     var _paths = paths;
                     if (new_topology.is_single_path) {
                         if (paths.length > 1) {
                             // Only get the first one
                             _paths = _paths.slice(0, 1);
                         }
-
                     }
+
+                    var sorted_positions = {};
+                    $.each(new_topology.positions, function(k, v) {
+                        sorted_positions[k] = v.sort()
+                    });
 
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        positions: new_topology.positions,
-                        paths: _paths,
-                        // Won't be on django side but in case there is a form error, will be there !
-                        start_point: _start_ll,
-                        end_point: _end_ll
+                        positions: sorted_positions,
+                        paths: _paths
                     };
+
                     layerStore.storeLayerGeomInField(topology);
                 });
 
@@ -256,13 +253,41 @@ FormField.makeModule = function(module, module_settings) {
                 // core.models#TopologyMixin.serialize
                 if (initialTopology) {
                     // This topology should contain postgres calculated value (start/end point as latln)
-                    var topo =  JSON.parse(initialTopology);
+                    var topo =  JSON.parse(initialTopology)
+                      , paths = topo.paths
+                      , positions = topo.positions;
+
+                    var start_layer = objectsLayer.getLayer(paths[0]);
+                    var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
+
+                    // Only first and last positions
+                    var first_pos, last_pos;
+                    if (paths.length == 1) {
+                        // There is only one path, both positions values are relevant
+                        // and each one represents a marker
+                        first_pos = positions[0][0];
+                        last_pos = positions[0][1];
+                    } else {
+                        // first and last path position
+                        var first_position = positions[0]
+                          , last_position = positions[paths.length - 1];
+
+                        // Look for the relevant value:
+                        // 0 is the default in first_position, get the other value
+                        first_pos = first_position[0] == 0 ? first_position[1] : first_position[0];
+                        last_pos = last_position[0] == 0 ? last_position[1] : last_position[0];
+                    }
+
+                    var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
+                    var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
+
                     var state = {
-                        start_ll: new L.LatLng(topo.start_point.lat, topo.start_point.lng),
-                        end_ll: new L.LatLng(topo.end_point.lat, topo.end_point.lng),
-                        start_layer: objectsLayer.getLayer(topo.paths[0]),
-                        end_layer: objectsLayer.getLayer(topo.paths[topo.paths.length - 1])
+                        start_ll: start_ll,
+                        end_ll: end_ll,
+                        start_layer: start_layer,
+                        end_layer: end_layer
                     };
+
                     multipath_handler.setState(state);
                 }
 

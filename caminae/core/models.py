@@ -402,21 +402,10 @@ class TopologyMixin(NoDeleteMixin):
             positions = dict((i, (a.start_position, a.end_position))
                              for i, a in enumerate(aggregations))
 
-            # Create the markers points to be used with much more ease on javascript side
-            # (will be even easier/faster when more 'intermediary' markers will show up)
-            geom = Point(self.geom.coords[0], srid=settings.SRID)
-            start_point = geom.transform(settings.API_SRID, clone=True)
-
-            geom = Point(self.geom.coords[-1], srid=settings.SRID)
-            end_point = geom.transform(settings.API_SRID, clone=True)
-
             objdict = dict(kind=self.kind,
                            offset=self.offset,
                            positions=positions,
                            paths=paths,
-                           # Easy helper to be used by the javascript side for markers
-                           start_point=dict(lng=start_point.x, lat=start_point.y),
-                           end_point=dict(lng=end_point.x, lat=end_point.y),
                            )
         return simplejson.dumps(objdict)
 

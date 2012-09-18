@@ -79,6 +79,7 @@ class QUnitView(TemplateView):
 ## Add tests here ##
 qunit_views = dict(
     dijkstra=QUnitView.as_view(jsfiles=['js/dijkstra.js', 'core/test_dijkstra.js']),
+    utils=QUnitView.as_view(jsfiles=['mapentity/test_utils.js']),
 )
 
 

@@ -1,4 +1,4 @@
-Caminae = Caminae || {};
+var Caminae = Caminae || {};
 
 Caminae.TopologyHelper = (function() {
 
