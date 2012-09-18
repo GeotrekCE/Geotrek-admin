@@ -59,6 +59,15 @@ class TrekJsonDetail(BaseDetailView):
         return HttpJSONResponse(json_django_dumps(context))
 
 
+class TrekJsonProfile(BaseDetailView):
+    queryset = Trek.objects.existing().filter(published=True)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        profile = self.object.elevation_profile
+        return HttpJSONResponse(json_django_dumps(profile))
+
+
 class TrekDetail(MapEntityDetail):
     model = Trek
 
