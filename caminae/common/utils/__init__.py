@@ -1,4 +1,5 @@
 import math
+from urlparse import urljoin
 
 from django.db import connection
 from django.conf import settings
@@ -61,3 +62,11 @@ class classproperty(object):
         self.getter= getter
      def __get__(self, instance, owner):
          return self.getter(owner)
+
+
+def smart_urljoin(base, path):
+    if base[-1] != '/':
+        base += '/'
+    if path[0] == '/':
+        path = path[1:]
+    return urljoin(base, path)
