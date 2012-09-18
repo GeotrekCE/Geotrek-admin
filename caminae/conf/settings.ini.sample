@@ -35,4 +35,7 @@ wms_url = http://extranet.parcnational.fr/pnx/wms?
 ortho_layers = ortho
 # Layers for terrain map
 terrain_layers = scan100,scan25
+
+layercolor_paths = #0000FF
+layercolor_others = #00FF00
 _EOF_
