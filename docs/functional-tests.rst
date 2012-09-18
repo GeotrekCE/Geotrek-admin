@@ -1109,7 +1109,7 @@ Bien qu'au format GeoJSON, la liste reste lisible, on peut y retrouver les
 attributs permettant le filtrage ainsi que l'affichae tabulaire et
 cartographique.
 
-Note: suels les itinéraires avec le statut "publié" sont inclus dans
+Note: seuls les itinéraires avec le statut "publié" sont inclus dans
 cette liste.
 
 
@@ -1198,4 +1198,30 @@ de modification et une image avec une carte centrée sur l'objet.
 
 
 
+========================
+Sprint 5 - Version 0.5.0
+========================
 
+#209 - Exporter tous les attributs d'un itinéraire en JSON
+----------------------------------------------------------
+
+Les propriétés d'un itinéraire sont accessibles à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/trek-<ID>.json
+
+(Remplacez ``<ID>`` par l'identifiant de l'itinéraire désiré.
+
+Note: seuls les itinéraires avec le statut "publié" sont consultable à cette
+adresse.
+
+#209 - Exporter tous les attributs d'un itinéraire en JSON
+----------------------------------------------------------
+
+Le profile d'un itinéraire est accessible à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
+
+(Remplacez ``<ID>`` par l'identifiant de l'itinéraire souhaité).
+
+Note: seuls les profiles des itinéraires avec le statut "publié" sont
+consultable à cette adresse.
