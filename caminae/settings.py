@@ -70,6 +70,8 @@ USE_TZ = True
 DATE_INPUT_FORMATS = ('%d/%m/%Y',)
 
 AUTH_PROFILE_MODULE = 'authent.UserProfile'
+
+ROOT_URL = '/'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 LOGIN_REDIRECT_URL = '/'
