@@ -227,14 +227,13 @@ class MapEntityDocument(DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
         # ODT template requires absolute URL for images insertion
-        context['ROOT_URL'] = self.request.build_absolute_uri('/')[:-1]
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         return context
 
     def dispatch(self, *args, **kwargs):
         handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
         # Screenshot of object map
-        self.get_object().prepare_map_image(self.request.build_absolute_uri('/'))
+        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL))
         return handler
 
 

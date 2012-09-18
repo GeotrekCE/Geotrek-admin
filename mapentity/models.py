@@ -1,13 +1,13 @@
 import os
-import time
 from datetime import datetime
-from urlparse import urljoin
 
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
 from screamshot.utils import casperjs_capture
+
+from caminae.common.utils import smart_urljoin
 
 
 # Used to create the matching url name
@@ -94,8 +94,8 @@ class MapEntityMixin(object):
             modified = modified.replace(tzinfo=timezone.utc)
             if modified > self.date_update:
                 return
-        # Run head-less capture
-        url = urljoin(rooturl, self.get_detail_url())
+        # Run head-less capture (takes time)
+        url = smart_urljoin(rooturl, self.get_detail_url())
         with open(path, 'wb') as f:
             casperjs_capture(f, url, selector='.map-panel')
         # TODO : remove capture image file on delete

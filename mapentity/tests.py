@@ -1,3 +1,4 @@
+import os
 from django.utils.translation import ugettext_lazy as _
 from django.test import TestCase
 from django.test.testcases import to_list
@@ -34,7 +35,6 @@ class MapEntityTest(TestCase):
         obj = self.modelfactory.create()
         response = self.client.get(obj.get_document_url())
         self.assertEqual(response.status_code, 200)
-
 
     def test_bbox_filter(self):
         if self.model is None:
@@ -107,3 +107,10 @@ class MapEntityTest(TestCase):
 
         response = self.client.get(obj.get_delete_url())
         self.assertEqual(response.status_code, 200)
+
+
+    def test_map_image(self):
+        obj = self.modelfactory.create()
+        # Initially, map image does not exists
+        self.assertFalse(os.path.exists(obj.get_map_image_path()))
+        # TODO: live server test
