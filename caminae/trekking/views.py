@@ -2,10 +2,12 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
+from django.views.generic.detail import BaseDetailView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from caminae.common.views import json_django_dumps, HttpJSONResponse
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
@@ -32,6 +34,29 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 class TrekFormatList(MapEntityFormat, TrekList):
     pass
+
+
+class TrekJsonDetail(BaseDetailView):
+    queryset = Trek.objects.existing().filter(published=True)
+    fields = ['name', 'departure', 'arrival', 'duration', 'description',
+              'description_teaser', 'length', 'ascent', 'max_elevation',
+              'web_links', 'advice', 'networks', 'ambiance']
+
+    def get_context_data(self, **kwargs):
+        o = self.object
+        ctx = {}
+
+        for fname in self.fields:
+            field = o._meta.get_field_by_name(fname)[0]
+            if field in o._meta.many_to_many:
+                ctx[fname] = getattr(o, fname).all()
+            else:
+                ctx[fname] = getattr(o, fname)
+
+        return ctx
+
+    def render_to_response(self, context):
+        return HttpJSONResponse(json_django_dumps(context))
 
 
 class TrekDetail(MapEntityDetail):

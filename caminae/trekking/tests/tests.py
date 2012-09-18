@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
+from django.utils import simplejson
+from django.core.urlresolvers import reverse
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
 
@@ -77,6 +79,30 @@ class TrekViewsTest(MapEntityTest):
             'web_links': WebLinkFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
         }
+
+class TrekCustomViewTests(TestCase):
+    def test_json_translation(self):
+        trek = TrekFactory.build()
+        trek.name_fr = 'Voie lactee'
+        trek.name_en = 'Milky way'
+        trek.name_it = 'Via Lattea'
+        trek.save()
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
+
+        # Test default case
+        response = self.client.get(url)
+        obj = simplejson.loads(response.content)
+        self.assertEqual(obj['name'], trek.name)
+
+        # Test with another language
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        obj = simplejson.loads(response.content)
+        self.assertEqual(obj['name'], trek.name_it)
+
+        # Test with yet another language
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr-FR')
+        obj = simplejson.loads(response.content)
+        self.assertEqual(obj['name'], trek.name_fr)
 
 class RelatedObjectsTest(TestCase):
     def test_elevation(self):
