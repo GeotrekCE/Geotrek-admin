@@ -182,12 +182,19 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         self._current_objects = new_objects;
     },
 
+    jumpTo: function (pk) {
+        var layer = this.getLayer(pk);
+        if (!layer) return;
+        this._map.fitBounds(layer.getBounds());
+    },
+
     highlight: function (pk, on) {
         var on = on === undefined ? true : on,
             layer = this.getLayer(pk);
         if (!layer) return;
         this._cameleon[on ? 'activate': 'deactivate']('highlight', layer);
     },
+
     select: function(pk, on) {
         var on = on === undefined ? true : on,
             layer = this.getLayer(pk);
