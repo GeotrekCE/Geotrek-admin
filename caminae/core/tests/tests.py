@@ -425,21 +425,11 @@ class TopologyMixinTest(TestCase):
         # Reload as the geom of the topology will be build by trigger
         t.reload()
 
-        # Create our objectdict to serialize
-
-        geom = Point(t.geom.coords[0], srid=settings.SRID)
-        start_point = geom.transform(settings.API_SRID, clone=True)
-
-        geom = Point(t.geom.coords[-1], srid=settings.SRID)
-        end_point = geom.transform(settings.API_SRID, clone=True)
-
         test_objdict = dict(kind=t.kind,
                        offset=1,
                        # 0 referencing the index in paths of the only created path
                        positions={'0': [0.0, 1.0]},
-                       paths=[ path.pk ],
-                       start_point=dict(lng=start_point.x, lat=start_point.y),
-                       end_point=dict(lng=end_point.x, lat=end_point.y),
+                       paths=[ path.pk ]
                        )
 
         objdict = simplejson.loads(t.serialize())
