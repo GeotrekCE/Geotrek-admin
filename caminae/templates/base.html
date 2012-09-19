@@ -10,7 +10,7 @@
             <ul class="nav nav-tabs">
                 <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url home %}">{% trans "Search" %} <span id="nbresults" class="badge">?</span></a></li>
                 {% for item in request.session.history %}
-                    <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %}"><a href="{{ item.1 }}" title="{{ item.0 }}">{{ item.0|truncatechars:16 }}</a></li>
+                    <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:16 }}</a></li>
                 {% endfor %}
 
                 <li class="pull-right {% block nav-report %}disabled{% endblock nav-report %}"><a href="#">{% trans "Reporting" %}</a></li>

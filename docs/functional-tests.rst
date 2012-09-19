@@ -1252,3 +1252,8 @@ du centrage de la carte sur le sentier.
 
 Lors du déplacement des marqueurs, le snapping s'effectue sur les tronçons et
 sur les points qui composent sa ligne brisée (extrémités et points intermédiaires).
+
+#192 - Quand on est sur une fiche, reprendre le picto qui correspond au type d'objet pour bien identifier sur quel type d'objet je travaille.
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Le picto est désormais affiché dans l'ongle, la fiche et le formulaire.

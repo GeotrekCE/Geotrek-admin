@@ -208,12 +208,26 @@ tr.selected-row td {
 
 
 /* Icons for each entity */
-.form-panel h2 { padding-left: 50px; }
-.form-panel.path,           .details-panel.path           { background: url(images/path.png) no-repeat; }
-.form-panel.trail,          .details-panel.trail          { background: url(images/trail.png) no-repeat; }
-.form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention.png) no-repeat; }
-.form-panel.project,        .details-panel.project        { background: url(images/project.png) no-repeat; }
-.form-panel.signage,        .details-panel.signage        { background: url(images/signage.png) no-repeat; }
-.form-panel.infrastructure, .details-panel.infrastructure { background: url(images/infrastructure.png) no-repeat; }
-.form-panel.trek,           .details-panel.trek           { background: url(images/trek.png) no-repeat; }
-.form-panel.poi,            .details-panel.poi            { background: url(images/poi.png) no-repeat; }
+.details-panel h2 { min-height: 75px; }
+.form-panel h2 { padding-left: 100px; }
+.form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
+.form-panel.trail,          .details-panel.trail          { background: url(images/trail-96.png) no-repeat; }
+.form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention-96.png) no-repeat; }
+.form-panel.project,        .details-panel.project        { background: url(images/project-96.png) no-repeat; }
+.form-panel.signage,        .details-panel.signage        { background: url(images/signage-96.png) no-repeat; }
+.form-panel.infrastructure, .details-panel.infrastructure { background: url(images/infrastructure-96.png) no-repeat; }
+.form-panel.trek,           .details-panel.trek           { background: url(images/trek-96.png) no-repeat; }
+.form-panel.poi,            .details-panel.poi            { background: url(images/poi-96.png) no-repeat; }
+
+/* Icons for tabs */
+li.history a { 
+    padding-left: 20px;
+}
+li.history.path a { background: url(images/path-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trail a { background: url(images/trail-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.intervention a { background: url(images/intervention-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.project a { background: url(images/project-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.signage a { background: url(images/signage-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.infrastructure a { background: url(images/infrastructure-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trek a { background: url(images/trek-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.poi a { background: url(images/poi-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
