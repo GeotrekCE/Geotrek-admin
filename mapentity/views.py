@@ -182,6 +182,7 @@ class MapEntityDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['can_edit'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
@@ -270,6 +271,7 @@ class MapEntityCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         return context
 
@@ -305,6 +307,7 @@ class MapEntityUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
