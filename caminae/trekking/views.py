@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.db.models.fields import FieldDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
@@ -19,7 +20,7 @@ class TrekLayer(MapEntityLayer):
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
               'duration', 'ascent', 'serializable_themes',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'is_transborder']
+              'is_transborder', 'districts']
 
 
 class TrekList(MapEntityList):
@@ -40,18 +41,21 @@ class TrekJsonDetail(BaseDetailView):
     queryset = Trek.objects.existing().filter(published=True)
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
-              'web_links', 'advice', 'networks', 'ambiance']
+              'web_links', 'advice', 'networks', 'ambiance', 'districts']
 
     def get_context_data(self, **kwargs):
         o = self.object
         ctx = {}
 
         for fname in self.fields:
-            field = o._meta.get_field_by_name(fname)[0]
-            if field in o._meta.many_to_many:
-                ctx[fname] = getattr(o, fname).all()
+            ctx[fname] = getattr(o, fname)
+            try:
+                field = o._meta.get_field_by_name(fname)[0]
+            except FieldDoesNotExist: # fname may refer to non-field properties
+                pass
             else:
-                ctx[fname] = getattr(o, fname)
+                if field in o._meta.many_to_many:
+                    ctx[fname] = ctx[fname].all()
 
         return ctx
 
