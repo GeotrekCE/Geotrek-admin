@@ -1,11 +1,12 @@
 from django.test import TestCase
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
 
 from caminae.core.factories import PathFactory, PathAggregationFactory
+from caminae.land.factories import DistrictFactory
 from caminae.trekking.models import POI, Trek
 from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
     TrekNetworkFactory, UsageFactory, WebLinkFactory, ThemeFactory)
@@ -120,20 +121,29 @@ class RelatedObjectsTest(TestCase):
         self.assertItemsEqual(actual_profile, expected_profile)
 
     def test_helpers(self):
-        trek = TrekFactory.create()
-        p1 = PathFactory.create()
-        p2 = PathFactory.create()
-        poi = POIFactory.create()
+        trek = TrekFactory.create(no_path=True)
+        # /!\ District are automatically linked to paths at DB level
+        d1 = DistrictFactory.create(geom=MultiPolygon(
+            Polygon(((-2,-2), (3,-2), (3,3), (-2,3), (-2,-2)))))
+        p1 = PathFactory.create(geom=LineString((0,0,0), (4,4,2)))
+        p2 = PathFactory.create(geom=LineString((4,4,2), (8,8,4)))
+        poi = POIFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       start_position=0.5)
         PathAggregationFactory.create(topo_object=trek, path=p2)
         PathAggregationFactory.create(topo_object=poi, path=p1,
                                       start_position=0.6, end_position=0.6)
         # Ensure related objects are accessible
-        self.assertEqual(trek.pois, [poi])
-        self.assertEqual(poi.treks, [trek])
+        self.assertItemsEqual(trek.pois, [poi])
+        self.assertItemsEqual(poi.treks, [trek])
+        self.assertItemsEqual(trek.districts, [d1])
         # Ensure there is no duplicates
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       end_position=0.5)
-        self.assertEqual(trek.pois, [poi])
-        self.assertEqual(poi.treks, [trek])
+        self.assertItemsEqual(trek.pois, [poi])
+        self.assertItemsEqual(poi.treks, [trek])
+
+        # FIXME: District should be automatically linked to paths at DB level
+        #d2 = DistrictFactory.create(geom=MultiPolygon(
+        #    Polygon(((3,3), (9,3), (9,9), (3,9), (3,3)))))
+        #self.assertItemsEqual(trek.districts, [d1, d2])

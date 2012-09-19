@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
+from caminae.land.models import DistrictEdge
 from caminae.common.utils import elevation_profile
 
 
@@ -85,6 +86,18 @@ class Trek(MapEntityMixin, TopologyMixin):
                       kind=POI.KIND,
                       aggregations__start_position__gte=a.start_position,
                       aggregations__end_position__lte=a.end_position
+                  )]
+        return s
+
+    @property
+    def districts(self):
+        s = []
+        for a in self.aggregations.all():
+            s += [DistrictEdge.objects.get(pk=t.pk).district
+                  for t in a.path.topologymixin_set.existing().filter(
+                      kind=DistrictEdge.KIND,
+                      aggregations__start_position__lte=a.end_position,
+                      aggregations__end_position__gte=a.start_position
                   )]
         return s
 
