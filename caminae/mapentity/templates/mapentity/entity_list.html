@@ -178,6 +178,9 @@
                         $(nRow).click(function() {
                             selectorOnce.select(pk, $(nRow));
                         });
+                        $(nRow).dblclick(function() {
+                            objectsLayer.jumpTo(pk);
+                        });
                     },
                     "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
                     aaData: [],

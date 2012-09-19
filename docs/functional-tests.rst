@@ -1215,18 +1215,6 @@ http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/trek-<ID>.json
 Note: seuls les itinéraires avec le statut "publié" sont consultable à cette
 adresse.
 
-#209 - Exporter tous les attributs d'un itinéraire en JSON
-----------------------------------------------------------
-
-Le profile d'un itinéraire est accessible à l'adresse :
-
-http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
-
-(Remplacez ``<ID>`` par l'identifiant de l'itinéraire souhaité).
-
-Note: seuls les profiles des itinéraires avec le statut "publié" sont
-consultable à cette adresse.
-
 #170 - Définir les couleurs de couche : tronçons et entité
 ----------------------------------------------------------
 
@@ -1257,3 +1245,17 @@ sur les points qui composent sa ligne brisée (extrémités et points intermédi
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 Le picto est désormais affiché dans l'ongle, la fiche et le formulaire.
+
+#185 - Ajouter une option ZOOMER SUR L'OBJET depuis la liste
+------------------------------------------------------------
+
+En double-cliquant sur une ligne de la liste, la carte se centre sur l'objet.
+
+Cela fonctionne aussi pour des points.
+
+:notes:
+
+    Afin de rester cohérent avec le comportement actuel, la liste se restreint
+    alors aux objets affichés sur la carte. 
+    Dans la mesure où cette fonctionnalité pourrait s'avérer pertubante, puisqu'elle
+    vide la liste, nous avons décidé de ne pas l'exposer aux utilisateurs avec un bouton.
