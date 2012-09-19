@@ -119,6 +119,9 @@ h2 {
 	text-align: center;
 }
 
+.form-panel h2 {
+	text-align: left;
+}
 
 #entete {
 	background-color: #CCCCCC;	
@@ -202,3 +205,15 @@ tr.selected-row td {
 #panelright {position: absolute; top: 0; bottom: 0; right: 0;}
 #mainmap {position: absolute; top: 0; bottom: 40px; left: 0; right: 0;}
 #mainmap-controls {position: absolute; bottom: 0; right: 0;}
+
+
+/* Icons for each entity */
+.form-panel h2 { padding-left: 50px; }
+.form-panel.path,           .details-panel.path           { background: url(images/path.png) no-repeat; }
+.form-panel.trail,          .details-panel.trail          { background: url(images/trail.png) no-repeat; }
+.form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention.png) no-repeat; }
+.form-panel.project,        .details-panel.project        { background: url(images/project.png) no-repeat; }
+.form-panel.signage,        .details-panel.signage        { background: url(images/signage.png) no-repeat; }
+.form-panel.infrastructure, .details-panel.infrastructure { background: url(images/infrastructure.png) no-repeat; }
+.form-panel.trek,           .details-panel.trek           { background: url(images/trek.png) no-repeat; }
+.form-panel.poi,            .details-panel.poi            { background: url(images/poi.png) no-repeat; }
