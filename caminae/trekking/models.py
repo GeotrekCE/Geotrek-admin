@@ -99,7 +99,7 @@ class Trek(MapEntityMixin, TopologyMixin):
                       aggregations__start_position__lte=a.end_position,
                       aggregations__end_position__gte=a.start_position
                   )]
-        return s
+        return list(set(s))
 
     @property
     def poi_types(self):
