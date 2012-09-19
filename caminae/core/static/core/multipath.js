@@ -189,23 +189,19 @@ L.Handler.MultiPath = L.Handler.extend({
         marker.editing.updateClosest(marker, closest);
     },
 
-    hasStepLayer: function(layer) {
-        return this.steps.indexOf(this.layerToId(layer)) != -1;
-    },
-
     updateStep: function(step_idx, marker, layer, autocompute) {
         // Should check that step_idx is < steps.length...
         var autocompute = autocompute === undefined ? true : autocompute;
 
-        var edge_id = this.layerToId(layer);
-        // var edge = this.graph.edges[edge_id];
 
         if (step_idx == 0) { this.marker_source = marker; }
         else if (step_idx == 1) { this.marker_dest = marker; }
         else { console.log('More than 2 points are unauthorized for now'); return; }
 
+        var pop = new Caminae.TopologyHelper.PointOnPolyline(marker.getLatLng(), layer);
+
         // Replace the point at idx step_idx
-        this.steps.splice(step_idx, 1, edge_id);
+        this.steps.splice(step_idx, 1, pop);
 
         if (autocompute && this.canCompute()) {
             this.computePaths();
@@ -245,20 +241,14 @@ L.Handler.MultiPath = L.Handler.extend({
 
     // Extract the complete edges list from the first to the last one
     _extractAllEdges: function(computed_paths) {
-        var all_edges = [];
-        if (computed_paths) {
-            computed_paths.forEach(function(cpath) {
-                all_edges.push(cpath.from_edge);
-                cpath.path.forEach(function(path_component) {
-                    all_edges.push(path_component.edge);
-                });
-            })
-            all_edges.push(
-                computed_paths[computed_paths.length - 1].to_edge
-            );
-        }
-        // fixme: seems to return more than once the first edge ? :<
-        return all_edges;
+        if (! computed_paths)
+            return [];
+
+        return $.map(computed_paths, function(cpath) {
+            return $.map(cpath.path, function(path_component) {
+                return path_component.real_edge || path_component.edge;
+            });
+        });
     },
 
     _onComputedPaths: function(new_computed_paths) {
@@ -287,11 +277,8 @@ L.Handler.MultiPath = L.Handler.extend({
 //
 // Returns:
 //   Array of {
-//        'from_edge': Edge
-//      , 'to_edge': Edge
-//      , 'weight': Int
-//      , 'path': DisjktraPath as returned by dijkstra_from_nodes.path
-//                Array of { start: Node, end: Node, edge: { id, length }, weigh: int }
+//       path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
+//       weight: Int
 //   }
 //
 Caminae.compute_path = (function() {
@@ -300,32 +287,60 @@ Caminae.compute_path = (function() {
         if (steps.length > 2) {
             return null; // should raise
         }
+        if (! (steps[0].isValid() && steps[1].isValid() )) {
+            return null;
+        }
 
-        var from_edge_id = steps[0]
-          , to_edge_id = steps[1]
-          , from_edge = graph.edges[from_edge_id]
-          , to_edge = graph.edges[to_edge_id]
-          , from_nodes = from_edge.nodes_id
-          , to_nodes = to_edge.nodes_id
-        ;
+        var from_pop = steps[0]
+          , to_pop = steps[1];
 
-        // path: {
-        //   weight: ... ,
-        //   path : list of { start, end, edge } ids
-        var path = Caminae.Dijkstra.get_shortest_path_from_graph(graph, from_nodes, to_nodes);
+        // alter graph
+        var from_pop_opt = from_pop.addToGraph(graph)
+          , to_pop_opt = to_pop.addToGraph(graph);
 
-        if(! path)
+        var from_nodes = [ from_pop_opt.new_node_id ]
+          , to_nodes = [ to_pop_opt.new_node_id ];
+
+        // weighted_path: {
+        //   path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
+        //   weight: Int
+        // }
+        var weighted_path = Caminae.Dijkstra.get_shortest_path_from_graph(graph, from_nodes, to_nodes);
+
+        // restore graph
+        from_pop_opt.rmFromGraph();
+        to_pop_opt.rmFromGraph();
+
+        if(! weighted_path)
             return null;
 
-        // return an array as we may compute more than two steps path
-        var computed_paths = [{
-              'from_edge': from_edge
-            , 'to_edge': to_edge
-            , 'path': path.path
-            , 'weight': path.weight
-        }];
+        // Some path component may use an edge that does not belong to the graph
+        // (a transient edge that was created from a transient point - a marker).
+        // In this case, the path component gets a new `real_edge' attribute
+        // which is the edge that the virtual edge is part of.
+        function markVirtualPath(path, pops_opt) {
+            $.each(path, function(i, path_component) {
+                var edge_id = path_component.edge.id;
+                var pop_opt, edge;
 
-        return computed_paths;
+                // Those PointOnPolylines knows the virtual edge and the initial one
+                for (var i = 0; i < pops_opt.length; i++) {
+                    pop_opt = pops_opt[i];
+                    edge = pop_opt.new_edges[edge_id]
+                    if (edge !== undefined) {
+                        path_component.real_edge = pop_opt.initial_edge;
+                        break;
+                    }
+                }
+            });
+        }
+
+        markVirtualPath(weighted_path.path, [ from_pop_opt, to_pop_opt ]);
+
+        // return an array as we may compute more than two steps path
+        return [
+            weighted_path
+        ];
     }
 
     // TODO: compute more than two steps

@@ -575,8 +575,7 @@ MapEntity.Utils = (function() {
         length: function(xs) {
             var xs_len = 0;
             for (var i = 0; i < xs.length - 1; i++) {
-                var p1 = xs[i], p2 = xs[i+1];
-                xs_len += xs.distanceTo(xs);
+                xs_len += xs[i].distanceTo(xs[i+1]);
             }
             return xs_len;
         },

@@ -210,19 +210,6 @@ FormField.makeModule = function(module, module_settings) {
                     var new_topology_geom = new_topology.geom;
                     markPath.updateGeom(new_topology_geom);
 
-                    // visual check
-                    if (false) {
-                        // Highlight segments to clearly see start and end
-                        cameleon.activate('highlight', polyline_start);
-                        cameleon.activate('highlight', polyline_end);
-                        // Highligh the start point to see the order of points in the polyline
-                        new L.Marker(polyline_start.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
-                        new L.Marker(polyline_end.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
-                        // Check the chosen point from which the distance was calculated
-                        new L.Marker(start.closest).addTo(map);
-                        new L.Marker(end.closest).addTo(map);
-                    }
-
                     var _paths = paths;
                     if (new_topology.is_single_path) {
                         if (paths.length > 1) {
