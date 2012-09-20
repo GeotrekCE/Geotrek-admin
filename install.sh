@@ -108,6 +108,9 @@ function ubuntu_precise {
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
     sudo apt-get install -y postgresql-client postgis-bin gdal-bin
 
+    # topdf conversion
+    sudo apt-get install -y unoconv
+
     # Default settings if not any
     mkdir -p etc/
     settingsfile=etc/settings.ini
