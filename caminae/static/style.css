@@ -163,6 +163,12 @@ img.marker-source.marker-snapped { background-image: url('images/osrm_markers/ma
 img.marker-target { background-image: url('images/osrm_markers/marker-target.png') }
 img.marker-target.marker-snapped { background-image: url('images/osrm_markers/marker-target-snap.png') }
 
+img.marker-via { background-image: url('images/osrm_markers/marker-via.png') }
+img.marker-via.marker-snapped { background-image: url('images/osrm_markers/marker-via-snap.png') }
+
+/* snap drag */
+img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
+
 .axislabel {
 	color: blue;
 	font-size: 10px;
