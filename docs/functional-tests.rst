@@ -1227,6 +1227,15 @@ http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
 Note: seuls les profiles des itinéraires avec le statut "publié" sont
 consultable à cette adresse.
 
+#251 - Ajouter/éditer/supprimer des éléments des couches SIG et déclencher les triggers
+---------------------------------------------------------------------------------------
+
+Lors de l'ajout, de la modification ou de la suppression d'un élément dans les
+couches SIG (secteur, commune, zonage), les relations avec les tronçons sont
+maintenues à jour.
+
+On pourra plus facilement le vérifier avec PgAdmin.
+
 #170 - Définir les couleurs de couche : tronçons et entité
 ----------------------------------------------------------
 
