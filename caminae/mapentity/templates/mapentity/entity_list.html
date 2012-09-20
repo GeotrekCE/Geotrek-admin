@@ -63,7 +63,7 @@
             // Always show the path layer, except if model is path
             if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
                 var paths = new MapEntity.ObjectsLayer(null, {
-                    style: { clickable:false, weight:2, color: '{{ LAYERCOLOR_PATHS }}'}
+                    style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
                 });
                 paths.addTo(mainmap)
                 paths.load('{% url core:path_layer %}');
@@ -77,7 +77,7 @@
             
             var objectsLayer = new MapEntity.ObjectsLayer(null, {
                 objectUrl: getUrl,
-                style: {color: '{{ LAYERCOLOR_OTHERS }}'}
+                style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
             });
             mainmap.addLayer(objectsLayer);
             mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
