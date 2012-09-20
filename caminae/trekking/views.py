@@ -69,7 +69,7 @@ class TrekJsonProfile(BaseDetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         profile = self.object.elevation_profile
-        return HttpJSONResponse(json_django_dumps(profile))
+        return HttpJSONResponse(json_django_dumps({'profile': profile}))
 
 
 class TrekDetail(MapEntityDetail):
