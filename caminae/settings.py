@@ -279,6 +279,9 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {}
 
+LAYERCOLOR_PATHS = ''
+LAYERCOLOR_OTHERS = ''
+
 # Navigation history tabs
 HISTORY_ITEMS_MAX = 7
 
