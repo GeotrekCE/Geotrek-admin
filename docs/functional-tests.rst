@@ -1215,13 +1215,24 @@ http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/trek-<ID>.json
 Note: seuls les itinéraires avec le statut "publié" sont consultable à cette
 adresse.
 
+#206 - Exporte le profil altimétrique d'un itinéraire en JSON
+-------------------------------------------------------------
+
+Le profile d'un itinéraire est accessible à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
+
+(Remplacez ``<ID>`` par l'identifiant de l'itinéraire souhaité).
+
+Note: seuls les profiles des itinéraires avec le statut "publié" sont
+consultable à cette adresse.
+
 #170 - Définir les couleurs de couche : tronçons et entité
 ----------------------------------------------------------
 
 Sur toutes les cartes, les tronçons apparaissent d'une couleur et les autres objets métiers d'une autre couleur.
 
 Ces couleurs sont paramétrables dans les settings Django.
-
 
 
 #240 - Ajouter une intervention depuis un sentier
