@@ -171,3 +171,36 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER troncons_elevation_iu_tgr
 BEFORE INSERT OR UPDATE OF geom ON troncons
 FOR EACH ROW EXECUTE PROCEDURE troncons_elevation_iu();
+
+
+-------------------------------------------------------------------------------
+-- Change status of related objects when paths are deleted
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS troncons_related_objects_d_tgr ON troncons;
+
+CREATE OR REPLACE FUNCTION troncons_related_objects_d() RETURNS trigger AS $$
+DECLARE
+BEGIN
+    -- Un-published treks because they might be broken
+    UPDATE itineraire i
+        SET published = FALSE
+        FROM evenements_troncons et
+        WHERE et.evenement = i.topologymixin_ptr_id AND et.troncon = OLD.id;
+
+    -- Mark empty topologies as deleted
+    UPDATE evenements e
+        SET supprime = TRUE
+        FROM evenements_troncons et
+        WHERE et.evenement = e.id AND et.troncon = OLD.id AND NOT EXISTS(
+            SELECT * FROM evenements_troncons
+            WHERE evenement = e.id AND troncon != OLD.id
+        );
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER troncons_related_objects_d_tgr
+BEFORE DELETE ON troncons
+FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();
