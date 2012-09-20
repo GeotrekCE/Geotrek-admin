@@ -22,7 +22,7 @@ def save_history():
             # Remove previous visits of this page
             try:
                 history = [h for h in history if h.path != request.path]
-            except TypeError:
+            except AttributeError:
                 pass  # Manage legacy history items, which were simple tuples
             # Add this one and remove extras
             history.insert(0, HistoryItem(unicode(self.get_title()), 
