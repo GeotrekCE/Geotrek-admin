@@ -1,4 +1,28 @@
 -------------------------------------------------------------------------------
+-- Alter FK to troncon in order to add CASCADE behavior at DB-level
+-------------------------------------------------------------------------------
+
+DO LANGUAGE plpgsql $$
+DECLARE
+    fk_name varchar;
+BEGIN
+    -- Obtain FK name (which is dynamically generated when table is created)
+    SELECT c.conname INTO fk_name
+        FROM pg_class t1, pg_class t2, pg_constraint c
+        WHERE t1.relname = 'evenements_troncons' AND c.conrelid = t1.oid
+          AND t2.relname = 'troncons' AND c.confrelid = t2.oid
+          AND c.contype = 'f';
+    -- Use a dynamic SQL statement with the name found
+    IF fk_name IS NOT NULL THEN
+        EXECUTE 'ALTER TABLE evenements_troncons DROP CONSTRAINT ' || quote_ident(fk_name);
+    END IF;
+END;
+$$;
+
+-- Now re-create the FK with cascade option
+ALTER TABLE evenements_troncons ADD FOREIGN KEY (troncon) REFERENCES troncons(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+-------------------------------------------------------------------------------
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 

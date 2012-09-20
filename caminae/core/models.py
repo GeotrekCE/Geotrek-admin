@@ -411,7 +411,10 @@ class TopologyMixin(NoDeleteMixin):
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False, db_column='troncon', verbose_name=_(u"Path"), related_name="aggregations")
+    path = models.ForeignKey(Path, null=False, db_column='troncon',
+                             verbose_name=_(u"Path"),
+                             related_name="aggregations",
+                             on_delete=models.DO_NOTHING) # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
