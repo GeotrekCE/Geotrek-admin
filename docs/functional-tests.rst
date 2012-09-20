@@ -1254,6 +1254,13 @@ Il est possible d'ajouter une intervention sur le sentier, le comportement
 est similaire à l'ajout d'une intervention sur un tronçon : il s'agit juste
 du centrage de la carte sur le sentier.
 
+#35 - Supprimer un tronçon et déclencher les triggers
+-----------------------------------------------------
+
+Si un itinéraire emprunte le tronçon supprimé, il est dépublié.
+
+Si un événement est composé de ce troncon uniquement, son statut supprimé
+devient vrai.
 
 #231 - Snapper sur les noeuds des tronçons (en plus des segments)
 -----------------------------------------------------------------
