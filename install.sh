@@ -65,6 +65,22 @@ ini_value () {
     echo $(sed -n "s/.*$2 *= *\([^ ]*.*\)/\1/p" < $1)
 }
 
+migrate_settings () {
+    userfile=$1
+    samplefile=$2
+    cp $userfile $userfile.$(date +%y%m%d%H%M)
+    
+     grep -e '^[a-zA-Z]' $samplefile | while read line; do
+         inikey=$(echo $line | sed -n 's/\([^ ]*.*\) *=.*/\1/p')
+         if [ $(grep $inikey $userfile | wc -l) -eq 0 ] ;
+         then
+            echo "Setting $inikey was missing, add default."
+            echo $line >> $userfile
+         fi
+    done
+}
+
+
 
 while [[ -n $1 ]]; do
     case $1 in
@@ -95,13 +111,17 @@ function ubuntu_precise {
     # Default settings if not any
     mkdir -p etc/
     settingsfile=etc/settings.ini
+    settingssample=caminae/conf/settings.ini.sample
     if [ ! -f $settingsfile ]; then
-        if [ -f caminae/conf/settings.ini.sample ]; then
-            cp caminae/conf/settings.ini.sample $settingsfile
+        if [ -f $settingssample ]; then
+            cp $settingssample $settingsfile
         else
             echo "# WARNING : empty configuration ! Use model file 'settings.ini.sample'" > $settingsfile
         fi
+    else
+        migrate_settings $settingsfile $settingssample
     fi
+    
     # Prompt user to edit/review settings
     vim -c 'startinsert' $settingsfile
 
@@ -211,15 +231,11 @@ _EOF_
 }
 
 
-printf "Target operating system [precise]: "
-while read options; do
-  case "$options" in
-    "")         ubuntu_precise
-                exit
-                ;;
-    precise)    ubuntu_precise
-                exit
-                ;;
-    *) printf "Incorrect value option!\nPlease enter the correct value: " ;;
-  esac
-done
+precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
+
+if [ $precise -eq 1 ] ; then
+    ubuntu_precise
+else
+    echo "Unsupported operating system. Aborted."
+    exit 5
+fi
