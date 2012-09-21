@@ -176,19 +176,23 @@ _EOF_
     mkdir -p lib/
     cd lib/
 
-    wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
-    tar -jxvf phantomjs.tar.bz2
-    rm phantomjs.tar.bz2
-    cd *phantomjs*
-    sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
-    cd ..
+    if [ ! -f /usr/local/bin/phantomjs ]; then
+        wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
+        tar -jxvf phantomjs.tar.bz2
+        rm phantomjs.tar.bz2
+        cd *phantomjs*
+        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
+        cd ..
+    fi
 
-    wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
-    unzip -o casperjs.zip > /dev/null
-    rm casperjs.zip
-    cd *casperjs*
-    sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-    cd ..
+    if [ ! -f /usr/local/bin/casperjs ]; then
+        wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
+        unzip -o casperjs.zip > /dev/null
+        rm casperjs.zip
+        cd *casperjs*
+        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
+        cd ..
+    fi
 
     cd ..
 
@@ -215,12 +219,18 @@ _EOF_
 
         make deploy
 
-        sudo rm /etc/nginx/sites-enabled/default
-        sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
-        sudo /etc/init.d/nginx restart
-        
-        sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
-        sudo start supervisor
+        # If buildout was successful, deploy really !
+        if [ -f etc/nginx.conf ]; then
+            sudo rm /etc/nginx/sites-enabled/default
+            sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
+            sudo /etc/init.d/nginx restart
+            
+            sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
+            sudo start supervisor
+        else
+            echo "Caminae package could not be installed."
+            exit 6
+        fi
     fi
 
     set +x
