@@ -62,7 +62,7 @@ user_exists () {
 }
 
 ini_value () {
-    return $(sed -n 's/.*$2 *= *\([^ ]*.*\)/\1/p' < $1)
+    echo $(sed -n "s/.*$2 *= *\([^ ]*.*\)/\1/p" < $1)
 }
 
 
@@ -108,11 +108,11 @@ function ubuntu_precise {
     #
     # If database is local, check it !
     #----------------------------------
-    dbname=`ini_value $settingsfile dbhost`
-    dbhost=`ini_value $settingsfile dbname`
-    dbpassword=`ini_value $settingsfile dbpassword`
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
+    dbpassword=$(ini_value $settingsfile dbpassword)
     
-    if [ ${dbhost} == "localhost" ] ; then
+    if [ "${dbhost}" == "localhost" ] ; then
         echo "Installing postgresql server locally..."
         sudo apt-get install -y postgresql postgresql-9.1-postgis2 postgresql-server-dev-9.1
         
@@ -139,8 +139,8 @@ _EOF_
         fi
     else
         # Check that database connection is correct
-        dbport=$(sed -n 's/.*dbport *= *\([^ ]*.*\)/\1/p' < $settingsfile)
-        export PGPASSWORD=$dbpassword    
+        dbport=$(ini_value $settingsfile dbport)
+        export PGPASSWORD=$dbpassword   
         psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
         result=$?
         export PGPASSWORD=
@@ -174,7 +174,7 @@ _EOF_
 
     if $dev ; then
         # A postgis template is required for django tests
-        if [ ${dbhost} == "localhost" ] ; then
+        if [ "${dbhost}" == "localhost" ] ; then
             if ! database_exists template_postgis
             then
                 sudo -n -u postgres -s -- createdb template_postgis
