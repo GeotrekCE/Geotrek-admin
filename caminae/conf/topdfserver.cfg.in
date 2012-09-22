@@ -12,9 +12,9 @@ converted_dir = ${options.converted_dir}
 
 
 [server:main]
-use = egg:waitress#main
-host = 0.0.0.0
-port = 8001
+use = egg:gunicorn#main
+host = ${options.host}
+port = ${options.port}
 
 # Begin logging configuration
 
