@@ -27,6 +27,10 @@ ENTITY_KINDS = (
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
+class MapImageError(Exception):
+    pass
+
+
 class MapEntityMixin(object):
 
     @classmethod
@@ -89,7 +93,7 @@ class MapEntityMixin(object):
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
         # If already exists and up-to-date, do nothing
-        if os.path.exists(path):
+        if os.path.exists(path) and os.path.getsize(path) > 0:
             modified = datetime.fromtimestamp(os.path.getmtime(path))
             modified = modified.replace(tzinfo=timezone.utc)
             if modified > self.date_update:
@@ -98,6 +102,8 @@ class MapEntityMixin(object):
         url = smart_urljoin(rooturl, self.get_detail_url())
         with open(path, 'wb') as f:
             casperjs_capture(f, url, selector='.map-panel')
+        if not os.path.exists(path) or os.path.getsize(path) == 0:
+            raise MapImageError("%s could not be captured into %s" % (url, path))
         # TODO : remove capture image file on delete
 
     def get_map_image_path(self):
