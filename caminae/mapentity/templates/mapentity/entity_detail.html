@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n static field_verbose_name maps %}
+{% load i18n static field_verbose_name maps convert_tags %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
 
@@ -8,6 +8,7 @@
 
     {% block detailspanel %}
         <h2>
+            
             {% if object.structure %}
                 <span class="badge badge-info">{{ object.structure }}</span>
             {% endif %}
@@ -20,7 +21,7 @@
                 {% endif %}
                 <div class="btn-group">
                     <a class="btn btn-mini" href="{{ object.get_document_url }}"><img src="{% static "paperclip/fileicons/odt.png" %}"/> {% trans "ODT" %}</a>
-                    <a class="btn btn-mini disabled"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "PDF" %}</a>
+                    <a class="btn btn-mini" href="{% convert_url request object.get_document_url %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "PDF" %}</a>
                 </div>
             </div>
         </h2>
