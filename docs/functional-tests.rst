@@ -1286,3 +1286,24 @@ Cela fonctionne aussi pour des points.
     alors aux objets affichés sur la carte. 
     Dans la mesure où cette fonctionnalité pourrait s'avérer pertubante, puisqu'elle
     vide la liste, nous avons décidé de ne pas l'exposer aux utilisateurs avec un bouton.
+
+
+#269 - Gérer l'ajout de nouveaux settings lors de l'upgrade
+-----------------------------------------------------------
+
+En lançant le process ``./install.sh`` les settings du fichier ``etc/settings.ini`` sera
+complété avec toutes les valeurs par défaut des paramètres apparus depuis le dernier
+déploiement.
+
+#49 - Exporter la fiche au format PDF
+-------------------------------------
+
+Il est désormais possible d'obtenir la version PDF de la fiche d'un objet.
+
+#236 - Envoyer un mail aux admins sur exception (internal error)
+----------------------------------------------------------------
+
+Configurer l'envoi d'email dans le fichier ``etc/settings.ini`` et un mail sera
+envoyé à chaque erreur interne.
+
+Pour tester, arrêter le service postgresql par exemple.
