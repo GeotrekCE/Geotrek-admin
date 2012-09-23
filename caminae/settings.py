@@ -292,3 +292,5 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }
+
+CONVERSION_SERVER = None
