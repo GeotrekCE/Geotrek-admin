@@ -234,7 +234,7 @@ class MapEntityDocument(DetailView):
     def dispatch(self, *args, **kwargs):
         handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
         # Screenshot of object map
-        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL))
+        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
         return handler
 
 
