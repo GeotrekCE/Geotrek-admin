@@ -88,7 +88,7 @@ Caminae.TopologyHelper = (function() {
         }
 
         return {
-            'geom': new L.MultiPolyline(latlngs),
+            'latlngs': latlngs,
             'positions': positions,
             'is_single_path': single_path
         };
@@ -102,18 +102,51 @@ Caminae.TopologyHelper = (function() {
     })();
 
     // pol: point on polyline
-    function PointOnPolyline(ll, polyline) {
-        this.ll = ll;
-        this.polyline = polyline;
-        this.length = MapEntity.Utils.length(polyline.getLatLngs());
-        var dist_closest = MapEntity.Utils.getPercentageDistanceFromPolyline(ll, polyline)
-        this.percent_distance = dist_closest == null ? null : dist_closest.distance;
+    function PointOnPolyline(marker) {
+        this.marker = marker;
+        // if valid
+        this.ll = null;
+        this.polyline = null;
+        this.length = null;
+        this.percent_distance = null;
 
-        // The point (ll) must be on the polyline
-        this.isValid = function() {
-            return (dist_closest != null);
-        };
+        this.events = L.Util.extend({}, L.Mixin.Events);
+
+        this.bindMarker(marker);
     }
+
+    PointOnPolyline.prototype.bindMarker = function() {
+        // ?
+        function onMove (e) {
+            var marker = e.target;
+            if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
+        }
+
+        function onSnap(e) {
+            this.ll = e.location;
+            this.polyline = e.object;
+
+            this.length = MapEntity.Utils.length(this.polyline.getLatLngs());
+            this.percent_distance = MapEntity.Utils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
+
+            this.events.fire('valid'); // self
+        }
+
+        function onUnsnap(e) {
+            this.ll = null;
+            this.polyline = null;
+            this.events.fire('invalid');
+        }
+
+        var marker = this.marker;
+        marker.on('move', onMove, this);
+        marker.on('snap', onSnap, this);
+        marker.on('unsnap', onUnsnap, this);
+    };
+
+    PointOnPolyline.prototype.isValid = function(graph) {
+        return (this.ll && this.polyline);
+    };
 
     // Alter the graph: adding two edges and one node (the polyline gets break in two parts by the point)
     // The polyline MUST be an edge of the graph.

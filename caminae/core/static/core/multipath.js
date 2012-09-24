@@ -138,8 +138,11 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     unmarkAll: function() {
-        this.marker_source && this.map.removeLayer(this.marker_source);
-        this.marker_dest && this.map.removeLayer(this.marker_dest);
+        var self = this;
+
+        this.steps && $.map(this.steps, function(pop) {
+            self.map.removeLayer(pop.marker);
+        });
     },
 
     removeHooks: function () {
@@ -164,61 +167,83 @@ L.Handler.MultiPath = L.Handler.extend({
         if (next_step_idx == 0) {
             this._container.style.cursor = 'e-resize';
             marker = this.markersFactory.source(latlng)
+            this.marker_source = marker;
         } else {
             this._container.style.cursor = '';
             marker = this.markersFactory.dest(latlng)
+            this.marker_dest = marker;
         }
 
-        marker.on('move', function (e) {
-            var marker = e.target;
-            if (marker.snap) marker.fire('snap', {object: marker.snap, 
-                                                  location: marker.getLatLng()});
-        });
-        marker.on('snap', function (e) {
-            self.updateStep(next_step_idx, marker, e.object);
-        });
-        marker.on('unsnap', function () {
-            self.steps.splice(next_step_idx, 1, null);
-            self.fire('unsnap');
-        });
-
+        self.createStep(marker, next_step_idx);
+        // If this was clicked, the marker should be close enought, snap it.
         // Restrict snaplist to layer and snapdistance to max_value
         // will ensure this get snapped and to the layer clicked
         var snapdistance = Number.MAX_VALUE;
-        var closest = MapEntity.Utils.closest(map, marker, [ layer ], snapdistance);
+        var closest = MapEntity.Utils.closest(self.map, marker, [ layer ], snapdistance);
         marker.editing.updateClosest(marker, closest);
     },
 
-    updateStep: function(step_idx, marker, layer, autocompute) {
-        // Should check that step_idx is < steps.length...
-        var autocompute = autocompute === undefined ? true : autocompute;
+    createStep: function(marker, idx) {
+        var self = this;
 
+        var pop = new Caminae.TopologyHelper.PointOnPolyline(marker);
+        this.steps.splice(idx, 0, pop);
 
-        if (step_idx == 0) { this.marker_source = marker; }
-        else if (step_idx == 1) { this.marker_dest = marker; }
-        else { console.log('More than 2 points are unauthorized for now'); return; }
+        pop.events.on('valid', function() {
+            self.computePaths();
+        });
 
-        var pop = new Caminae.TopologyHelper.PointOnPolyline(marker.getLatLng(), layer);
+        return pop;
+    },
 
-        // Replace the point at idx step_idx
-        this.steps.splice(step_idx, 1, pop);
+    // add an in between step
+    addViaStep: function(marker, step_idx) {
+        var self = this;
 
-        if (autocompute && this.canCompute()) {
-            this.computePaths();
+        // A via step idx must be inserted between first and last...
+        if (! (step_idx >= 1 && step_idx <= this.steps.length - 1)) {
+            throw "NOT";
         }
+
+        var pop = this.createStep(marker, step_idx);
+
+        // remove marker on click
+        marker.on('click', function() {
+            self.steps.splice(self.getStepIdx(pop), 1);
+
+            self.map.removeLayer(marker);
+
+            self.computePaths();
+        });
     },
 
     canCompute: function() {
-        if (this.steps.length != 2)
+        if (this.steps.length < 2)
             return false;
 
         for (var i = 0; i < this.steps.length; i++) {
-            if (this.steps[i] === null)
+            if (! this.steps[i].isValid())
                 return false;
         }
 
         return true;
     },
+
+    getStepIdx: function(step) {
+        return this.steps.indexOf(step);
+    },
+
+    /*
+    getStepIdxFromMarker: function(marker) {
+
+        for (var i = 0; i < this.steps.length; i++) {
+            if (this.steps[i].marker === marker)
+                return i;
+        }
+
+        return -1
+    },
+    */
 
     computePaths: function() {
         if (this.canCompute()) {
@@ -245,9 +270,9 @@ L.Handler.MultiPath = L.Handler.extend({
             return [];
 
         return $.map(computed_paths, function(cpath) {
-            return $.map(cpath.path, function(path_component) {
+            return [ $.map(cpath.path, function(path_component) {
                 return path_component.real_edge || path_component.edge;
-            });
+            }) ];
         });
     },
 
@@ -260,7 +285,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.all_edges = this._extractAllEdges(new_computed_paths);
 
         this.fire('computed_paths', {
-            'new': new_computed_paths,
+            'computed_paths': new_computed_paths,
             'new_edges': this.all_edges,
             'old': old_computed_paths,
             'marker_source': this.marker_source,
@@ -272,7 +297,6 @@ L.Handler.MultiPath = L.Handler.extend({
 
 });
 
-
 // Computed_paths:
 //
 // Returns:
@@ -282,17 +306,57 @@ L.Handler.MultiPath = L.Handler.extend({
 //   }
 //
 Caminae.compute_path = (function() {
+    // Some path component may use an edge that does not belong to the graph
+    // (a transient edge that was created from a transient point - a marker).
+    // In this case, the path component gets a new `real_edge' attribute
+    // which is the edge that the virtual edge is part of.
+    function markVirtualPath(path, pops_opt) {
+        $.each(path, function(i, path_component) {
+            var edge_id = path_component.edge.id;
+            var pop_opt, edge;
 
-    function computeTwoStepsPath(graph, steps) {
-        if (steps.length > 2) {
-            return null; // should raise
-        }
-        if (! (steps[0].isValid() && steps[1].isValid() )) {
+            // Those PointOnPolylines knows the virtual edge and the initial one
+            for (var i = 0; i < pops_opt.length; i++) {
+                pop_opt = pops_opt[i];
+                edge = pop_opt.new_edges[edge_id]
+                if (edge !== undefined) {
+                    path_component.real_edge = pop_opt.initial_edge;
+                    break;
+                }
+            }
+        });
+    }
+
+    function computePaths(graph, steps) {
+        /*
+        if (steps.length < 2) {
             return null;
         }
 
-        var from_pop = steps[0]
-          , to_pop = steps[1];
+        for (var i = 0; i < steps.length; i ++) {
+            if (! steps[i].isValid())
+                return null;
+        }
+        */
+
+        var paths = [], path;
+        for (var j = 0; j < steps.length - 1; j++) {
+            path = computeTwoStepsPath(graph, steps[j], steps[j + 1]);
+
+            if (! path)
+                return null;
+
+            // may be usefull to check back
+            path.from_pop = steps[j];
+            path.to_pop = steps[j+1];
+
+            paths.push(path);
+        }
+
+        return paths;
+    }
+
+    function computeTwoStepsPath(graph, from_pop, to_pop) {
 
         // alter graph
         var from_pop_opt = from_pop.addToGraph(graph)
@@ -314,36 +378,13 @@ Caminae.compute_path = (function() {
         if(! weighted_path)
             return null;
 
-        // Some path component may use an edge that does not belong to the graph
-        // (a transient edge that was created from a transient point - a marker).
-        // In this case, the path component gets a new `real_edge' attribute
-        // which is the edge that the virtual edge is part of.
-        function markVirtualPath(path, pops_opt) {
-            $.each(path, function(i, path_component) {
-                var edge_id = path_component.edge.id;
-                var pop_opt, edge;
-
-                // Those PointOnPolylines knows the virtual edge and the initial one
-                for (var i = 0; i < pops_opt.length; i++) {
-                    pop_opt = pops_opt[i];
-                    edge = pop_opt.new_edges[edge_id]
-                    if (edge !== undefined) {
-                        path_component.real_edge = pop_opt.initial_edge;
-                        break;
-                    }
-                }
-            });
-        }
-
         markVirtualPath(weighted_path.path, [ from_pop_opt, to_pop_opt ]);
 
         // return an array as we may compute more than two steps path
-        return [
-            weighted_path
-        ];
+        return weighted_path;
     }
 
     // TODO: compute more than two steps
-    return computeTwoStepsPath;
+    return computePaths;
 
 })();

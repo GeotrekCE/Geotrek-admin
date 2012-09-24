@@ -600,9 +600,12 @@ MapEntity.Utils = (function() {
         },
 
         closestOnLine: function (map, latlng, linestring) {
+            return self.closestOnLatLngs(map, latlng, linestring.getLatLngs());
+        },
+
+        closestOnLatLngs: function (map, latlng, lls) {
             // Iterate on line segments
-            var lls = linestring.getLatLngs(),
-                segmentmindist = Number.MAX_VALUE,
+            var segmentmindist = Number.MAX_VALUE,
                 ll = null;
             // Keep the closest point of all segments
             for (var j = 0; j < lls.length - 1; j++) {
