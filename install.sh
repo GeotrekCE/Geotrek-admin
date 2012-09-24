@@ -161,19 +161,19 @@ host     ${dbname}    ${dbuser}        md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
-    else
-        # Check that database connection is correct
-        dbport=$(ini_value $settingsfile dbport)
-        export PGPASSWORD=$dbpassword   
-        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
-        result=$?
-        export PGPASSWORD=
-        if [ ! $result -eq 0 ]
-        then
-            echo "Failed to connect to database with settings provided in '$settingsfile'."
-            echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
-            exit 4
-        fi
+    fi
+    
+    # Check that database connection is correct
+    dbport=$(ini_value $settingsfile dbport)
+    export PGPASSWORD=$dbpassword   
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
+    result=$?
+    export PGPASSWORD=
+    if [ ! $result -eq 0 ]
+    then
+        echo "Failed to connect to database with settings provided in '$settingsfile'."
+        echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
+        exit 4
     fi
 
 
@@ -223,6 +223,10 @@ _EOF_
 
         make deploy
 
+        # Protect files with sensitive information
+        chmod -f 700 etc/settings.ini
+        chmod -f 700 parts/django/django_extrasettings/settings.py
+        
         # If buildout was successful, deploy really !
         if [ -f etc/nginx.conf ]; then
             sudo rm /etc/nginx/sites-enabled/default
