@@ -2,5 +2,6 @@
 
 from .tests import *
 from .structures import *
+from .backend import *
 from .groups import *
 from .test_factories import *
