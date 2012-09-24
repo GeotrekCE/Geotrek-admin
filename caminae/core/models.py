@@ -399,8 +399,11 @@ class TopologyMixin(NoDeleteMixin):
 
             paths = list(aggregations.values_list('path__pk', flat=True))
             # We may filter out aggregations that have default values (0.0 and 1.0)...
-            positions = dict((i, (a.start_position, a.end_position))
-                             for i, a in enumerate(aggregations))
+            positions = dict(
+                (i, (a.start_position, a.end_position))
+                for i, a in enumerate(aggregations)
+                if (a.start_position, a.end_position) != (0, 1)
+            )
 
             objdict = dict(kind=self.kind,
                            offset=self.offset,
