@@ -1,15 +1,26 @@
 import os
+import shutil
+
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.test import TestCase
+from django.test import LiveServerTestCase
+from django.test.utils import override_settings
 from django.test.testcases import to_list
 
 from caminae.mapentity.forms import MapEntityForm
 
 
-class MapEntityTest(TestCase):
+@override_settings(MEDIA_ROOT='/tmp/caminae-media')
+class MapEntityTest(LiveServerTestCase):
     model = None
     modelfactory = None
     userfactory = None
+
+    def setUp(self):
+        os.makedirs(settings.MEDIA_ROOT)
+
+    def tearDown(self):
+        shutil.rmtree(settings.MEDIA_ROOT)
 
     def get_bad_data(self):
         return {'topology': 'doh!'}, _(u'Topology is not valid.')
@@ -33,6 +44,10 @@ class MapEntityTest(TestCase):
 
         # Document layer either
         obj = self.modelfactory.create()
+        print obj.date_insert, obj.date_update
+        # Will have to mock screenshot, though.
+        with open(obj.get_map_image_path(), 'w') as f:
+            f.write('This is fake PNG file')
         response = self.client.get(obj.get_document_url())
         self.assertEqual(response.status_code, 200)
 
@@ -108,9 +123,13 @@ class MapEntityTest(TestCase):
         response = self.client.get(obj.get_delete_url())
         self.assertEqual(response.status_code, 200)
 
-
     def test_map_image(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
         obj = self.modelfactory.create()
+        
         # Initially, map image does not exists
         self.assertFalse(os.path.exists(obj.get_map_image_path()))
-        # TODO: live server test
+        obj.prepare_map_image(self.live_server_url)
+        self.assertTrue(os.path.exists(obj.get_map_image_path()))
