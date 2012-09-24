@@ -93,11 +93,14 @@ class MapEntityMixin(object):
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
         # If already exists and up-to-date, do nothing
-        if os.path.exists(path) and os.path.getsize(path) > 0:
-            modified = datetime.fromtimestamp(os.path.getmtime(path))
-            modified = modified.replace(tzinfo=timezone.utc)
-            if modified > self.date_update:
-                return
+        if os.path.exists(path):
+            if os.path.getsize(path) > 0:
+                modified = datetime.fromtimestamp(os.path.getmtime(path))
+                modified = modified.replace(tzinfo=timezone.utc)
+                if modified > self.date_update:
+                    return
+            else:
+                os.remove(path)
         # Run head-less capture (takes time)
         url = smart_urljoin(rooturl, self.get_detail_url())
         with open(path, 'wb') as f:
