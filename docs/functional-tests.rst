@@ -1248,7 +1248,7 @@ Ces couleurs sont paramétrables dans les settings Django.
 -------------------------------------------------
 
 La fiche sentier affiche désormais la liste des interventions associées 
-aux tronçons qui le composent. 
+aux tronçons qui le composent.
 
 Il est possible d'ajouter une intervention sur le sentier, le comportement
 est similaire à l'ajout d'une intervention sur un tronçon : il s'agit juste
@@ -1272,6 +1272,37 @@ sur les points qui composent sa ligne brisée (extrémités et points intermédi
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 Le picto est désormais affiché dans l'ongle, la fiche et le formulaire.
+
+#198 - Configuration des langues
+--------------------------------
+
+L'usage de différentes langues est bien paramétrable et non figé en nombre ?
+............................................................................
+
+Oui, il est possible de rajouter des langues. La procédure est la suivante :
+
+1. Ajouter les langues dans ``settings.LANGUAGES``
+
+2. Extraire les évolutions des modèles pour les applications faisaint usage des
+   traductions ::
+
+    bin/django schemamigration common --auto
+    bin/django schemamigration trekking --auto
+    bin/django schemamigration land --auto
+
+3. Mettre à jour la base de données ::
+
+    bin/django syncdb --noinput --migrate
+
+Vérifier que les champs des formulaires sont bien automatiquement ajoutés
+.........................................................................
+
+Lorsqu'un champs traduit est insérée dans un formulaire, il est automatiquement
+répliqué autant de fois qu'il y a de langues définie dans
+``settings.LANGUAGES``.
+
+On peut le constater en affichant le formulaire d'édition des itinéraires après
+avec rajouté une langue (voir ci-dessus).
 
 #185 - Ajouter une option ZOOMER SUR L'OBJET depuis la liste
 ------------------------------------------------------------
