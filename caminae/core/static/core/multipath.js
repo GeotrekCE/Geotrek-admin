@@ -105,6 +105,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     setState: function(state, autocompute) {
         autocompute = autocompute === undefined ? true : autocompute;
+        var self = this;
 
         // Ensure we got a fresh start
         this.disable();
@@ -113,8 +114,11 @@ L.Handler.MultiPath = L.Handler.extend({
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
-        // We should (must !) find the same old path
-        autocompute && this.computePaths();
+        state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
+            self.addViaStep(via_marker.marker, idx + 1);
+
+            self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
+        });
     },
 
     // TODO: when to remove/update links..? what's the behaviour ?
@@ -176,6 +180,12 @@ L.Handler.MultiPath = L.Handler.extend({
 
         self.createStep(marker, next_step_idx);
         // If this was clicked, the marker should be close enought, snap it.
+        self.forceMarkerToLayer(marker, layer);
+    },
+
+    forceMarkerToLayer: function(marker, layer) {
+        var self = this;
+
         // Restrict snaplist to layer and snapdistance to max_value
         // will ensure this get snapped and to the layer clicked
         var snapdistance = Number.MAX_VALUE;
@@ -233,17 +243,13 @@ L.Handler.MultiPath = L.Handler.extend({
         return this.steps.indexOf(step);
     },
 
-    /*
     getStepIdxFromMarker: function(marker) {
-
         for (var i = 0; i < this.steps.length; i++) {
             if (this.steps[i].marker === marker)
                 return i;
         }
-
         return -1
     },
-    */
 
     computePaths: function() {
         if (this.canCompute()) {

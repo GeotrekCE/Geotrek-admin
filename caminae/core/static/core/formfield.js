@@ -233,7 +233,6 @@ FormField.makeModule = function(module, module_settings) {
                         draggable_marker.off('dragend', dragend);
                         init();
                     }
-
                     function init() {
                         draggable_marker = markersFactory.drag(new L.LatLng(0, 0), null, true);
 
@@ -419,38 +418,69 @@ FormField.makeModule = function(module, module_settings) {
                       , paths = topo.paths
                       , positions = topo.positions;
 
-                    var start_layer = objectsLayer.getLayer(paths[0]);
-                    var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
-
                     // Only first and last positions
-                    var first_pos, last_pos;
                     if (paths.length == 1) {
                         // There is only one path, both positions values are relevant
                         // and each one represents a marker
-                        first_pos = positions[0][0];
-                        last_pos = positions[0][1];
+                        var first_pos = positions[0][0];
+                        var last_pos = positions[0][1];
+
+                        var start_layer = objectsLayer.getLayer(paths[0]);
+                        var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
+
+                        var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
+                        var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
+
+                        var state = {
+                            start_ll: start_ll,
+                            end_ll: end_ll,
+                            start_layer: start_layer,
+                            end_layer: end_layer
+                        };
+                        multipath_handler.setState(state);
+
                     } else {
-                        // first and last path position
-                        var first_position = positions[0]
-                          , last_position = positions[paths.length - 1];
 
-                        // Look for the relevant value:
-                        // 0 is the default in first_position, get the other value
-                        first_pos = first_position[0] == 0 ? first_position[1] : first_position[0];
-                        last_pos = last_position[0] == 0 ? last_position[1] : last_position[0];
+                        var layer_ll_s = [];
+                        $.each(positions, function(k, pos) {
+                            // default value: this is not supposed to be a marker ?!
+                            if (pos[0] == 0 && pos[1] == 1)
+                                return;
+
+                            var path_idx = parseInt(k);
+                            var layer = objectsLayer.getLayer(paths[path_idx]);
+                            // Look for the relevant value:
+                            // 0 is the default in first_position, get the other value
+                            var used_pos = pos[0] == 0 ? pos[1] : pos[0];
+
+                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ])[0];
+
+                            layer_ll_s.push({
+                                layer: layer,
+                                ll: ll
+                            });
+                        });
+
+                        var start_layer_ll = layer_ll_s.shift();
+                        var end_layer_ll = layer_ll_s.pop();
+
+                        var via_markers = $.map(layer_ll_s, function(layer_ll) {
+                            return {
+                                layer: layer_ll.layer,
+                                marker: markersFactory.drag(layer_ll.ll, null, true)
+                            };
+                        });
+
+                        var state = {
+                            start_ll: start_layer_ll.ll,
+                            end_ll: end_layer_ll.ll,
+                            start_layer: start_layer_ll.layer,
+                            end_layer: end_layer_ll.layer,
+                            via_markers: via_markers
+                        };
+
+                        multipath_handler.setState(state);
                     }
-
-                    var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
-                    var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
-
-                    var state = {
-                        start_ll: start_ll,
-                        end_ll: end_ll,
-                        start_layer: start_layer,
-                        end_layer: end_layer
-                    };
-
-                    multipath_handler.setState(state);
                 }
 
             });
