@@ -151,6 +151,7 @@ function ubuntu_precise {
         then
             sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
             sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
+            sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
             
             # Open local and host connection for this user as md5
             sudo cat >> /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
@@ -229,6 +230,7 @@ _EOF_
             sudo /etc/init.d/nginx restart
             
             sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
+            sudo stop supervisor
             sudo start supervisor
         else
             echo "Caminae package could not be installed."
