@@ -335,11 +335,6 @@ FormField.makeModule = function(module, module_settings) {
                     var positions = data[0].topology.positions
                       , paths = data[0].topology.paths;
 
-                    $.each(data, function(k, v) {
-                        console.log(v.topology.paths);
-                        console.log(JSON.stringify(v.topology.positions));
-                    });
-
                     for (var k = 1; k < data.length; k++) {
                         var data_topology = data[k].topology;
                         // substract one as we delete first position
