@@ -461,7 +461,7 @@ class TopologyMixinTest(TestCase):
         test_objdict = dict(kind=t.kind,
                        offset=1,
                        # 0 referencing the index in paths of the only created path
-                       positions={'0': [0.0, 1.0]},
+                       positions={},
                        paths=[ path.pk ]
                        )
 
