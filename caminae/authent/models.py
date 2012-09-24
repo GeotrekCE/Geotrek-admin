@@ -14,7 +14,6 @@ from django.contrib.auth.signals import user_logged_in
 GROUP_PATH_MANAGER = u'Référents sentiers'
 GROUP_TREKKING_MANAGER = u'Référents communication'
 GROUP_EDITOR = u'Rédacteurs'
-GROUP_ADMINISTRATOR = u'Administrateurs'
 
 
 class Structure(models.Model):
@@ -111,11 +110,6 @@ class UserProfile(StructureRelated):
     def is_editor(self):
         """ Returns True if the user belongs to editors group. """
         g = Group.objects.get(name=GROUP_EDITOR)
-        return self.has_group(g) or self.user.is_staff
-
-    def is_administrator(self):
-        """ Returns True if the user belongs to administrators group. """
-        g = Group.objects.get(name=GROUP_ADMINISTRATOR)
         return self.has_group(g) or self.user.is_staff
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])

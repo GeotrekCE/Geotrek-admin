@@ -6,8 +6,7 @@ from django.utils.decorators import available_attrs
 
 __all__ = ('path_manager_required',
            'trekking_manager_required',
-           'editor_required',
-           'administrator_required',)
+           'editor_required',)
 
 
 def user_passes_test_or_redirect(f, redirect_to, msg):
@@ -42,12 +41,6 @@ def trekking_manager_required(redirect_to):
 def editor_required(redirect_to):
     f = lambda u: u.is_authenticated() and u.profile.is_editor()
     m = _(u'Access to the requested resource is restricted to work editor. You have been redirected.')
-    return user_passes_test_or_redirect(f, redirect_to, m)
-
-
-def admininistrator_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_administrator()
-    m = _(u'Access to the requested resource is restricted to administrator. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
 
 

@@ -1394,3 +1394,16 @@ et les communes. L'état affiché/caché de chaque couche est conservé d'une se
 
 Pour un itinéraire, sa trace GPX est disponible à l'adresse 
 ``http://server/api/trek/trek-<id>.gpx``. 
+
+
+
+
+Authent
+-------
+
+* Configurer la base et la vue/table
+* Vérifier que le niveau est bien raffraichi à chaque connexion
+* Vérifier que les users ne sont plus gérables dans l'Admin
+* Vérifier qu'un changement de password dans la table fait bien échouer le login
+
+

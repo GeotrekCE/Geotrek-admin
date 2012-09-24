@@ -11,7 +11,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Makina Corpus', 'geobi@makina-corpus.com'),
 )
 
 MANAGERS = ADMINS
@@ -26,6 +26,13 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+AUTH_PROFILE_MODULE = 'authent.UserProfile'
+
+# Settings required for caminae.authent.backend.DatabaseBackend : 
+AUTHENT_DATABASE = None
+AUTHENT_TABLENAME = None
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -68,8 +75,6 @@ USE_L10N = True
 USE_TZ = True
 
 DATE_INPUT_FORMATS = ('%d/%m/%Y',)
-
-AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
 ROOT_URL = '/'
 LOGIN_URL = '/login/'
