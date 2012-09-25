@@ -209,45 +209,72 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
 MapEntity.Context = new function() {
     var self = this;
 
-    self.saveFullContext = function(map, datatable) {
-        localStorage.setItem('list-map-view',
-                             map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
-        localStorage.setItem('list-filter', $('#mainfilter').serialize());
+    self.serializeFullContext = function(map, filter, datatable) {
+        var context = {};
+        
+        // Map view
+        context['mapview'] = {'lat': map.getCenter().lat, 'lng': map.getCenter().lng, 'zoom': map.getZoom()};
+        
         // layers shown by name
         var layers = [];
         $('form.leaflet-control-layers-list input:checked').each(function () {
             layers.push($.trim($(this).parent().text()));
         });
-        localStorage.setItem('list-layers', JSON.stringify(layers));
+        context['maplayers'] = layers;
         
-        if (datatable) {
-            var sortcol = datatable.fnSettings().aaSorting;
-            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
-        }
-    };
-
-    self.restoreMapView = function(map) {
-        var mapView = localStorage.getItem('list-map-view');
-        if (mapView) {
-            mapView = mapView.split(',');
-            map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
-        }
-    };
-
-    self.restoreFullContext = function(map, datatable, objectsname) {
-        self.restoreMapView(map);
-        var filter = localStorage.getItem('list-filter');
+        // Form filters
         if (filter) {
-            $('#mainfilter').deserialize(filter);
+            // exclude bbox field, since it comes from the map view.
+            var fields = $($('filter').serializeArray()).filter(function (){ return this.name != 'bbox'});
+            context['filter'] = $.param(fields);
         }
-        var sortcol = localStorage.getItem('list-sortcolumns');
-        if (sortcol) {
-            datatable.fnSort(JSON.parse(sortcol));
+        
+        // Sort columns
+        if (datatable) {
+            context['sortcolumns'] = datatable.fnSettings().aaSorting;
+        }
+        
+        // Extra-info, not restored so far but can be useful for screenshoting
+        context['viewport'] = {'width': window.outerWidth, 'height': window.outerHeight};
+        context['mapsize'] = {'width': $('.map-panel').width(), 'height': $('.map-panel').height()};
+
+        return JSON.stringify(context);
+    },
+
+    self.saveFullContext = function(map, filter, datatable) {
+        var serialized = self.serializeFullContext(map, filter, datatable);
+        localStorage.setItem('map-context', serialized);
+    };
+
+    self.__loadFullContext = function() {
+        var context = localStorage.getItem('map-context');
+        if (context)
+            return JSON.parse(context);
+        return null;
+    };
+
+    self.restoreMapView = function(map, context) {
+        if (!context) context = self.__loadFullContext();
+        if (context && context.mapview) {
+            map.setView(L.latLng(context.mapview.lat, context.mapview.lng), context.mapview.zoom);
+        }
+    };
+
+    self.restoreFullContext = function(map, filter, datatable, objectsname) {
+        var context = self.__loadFullContext();
+        if (!context)
+            return;
+        self.restoreMapView(map, context);
+        
+        if (filter && context.filter) {
+            $(filter).deserialize(context.filter);
+        }
+        if (datatable && context.sortcolumns) {
+            datatable.fnSort(context.sortcolumns);
         }
         // Show layers by their name
-        var layers = localStorage.getItem('list-layers');
-        if (layers) {
-            layers = JSON.parse(layers);
+        if (context.maplayers) {
+            var layers = context.maplayers;
             layers.push(objectsname);
             $('form.leaflet-control-layers-list input').each(function () {
                 if ($.trim($(this).parent().text()) != objectsname) {
