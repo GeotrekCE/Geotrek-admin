@@ -3,7 +3,7 @@ from collections import namedtuple
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, check_password
-from django.db import connections, DatabaseError
+from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
 
 from .models import Structure, GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
@@ -65,12 +65,13 @@ class DatabaseBackend(object):
             raise ImproperlyConfigured("Database backend is used, without AUTHENT_DATABASE setting.")
         if not settings.AUTHENT_TABLENAME:
             raise ImproperlyConfigured("Database backend is used, without AUTHENT_TABLENAME setting.")
-        cursor = connections[settings.AUTHENT_DATABASE].cursor()
-        sqlquery = "SELECT %s FROM %s WHERE username = " % (','.join(FIELDS), settings.AUTHENT_TABLENAME)
         try:
+            cursor = connections[settings.AUTHENT_DATABASE].cursor()
+            sqlquery = "SELECT %s FROM %s WHERE username = " % (','.join(FIELDS), settings.AUTHENT_TABLENAME)
             cursor.execute(sqlquery + "%s", [username])
             result = cursor.fetchone()
-        except DatabaseError:
+        except Exception, e:
+            logger.exception(e)
             connections[settings.AUTHENT_DATABASE].close()
             raise
         if result:

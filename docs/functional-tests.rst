@@ -1397,13 +1397,29 @@ Pour un itinéraire, sa trace GPX est disponible à l'adresse
 
 
 
+#79 - Authentification sur table/vue externe
+--------------------------------------------
 
-Authent
--------
+Lors de l'exécution de ``./install.sh``, des nouveaux paramètres vont
+être ajoutés au fichier de configuration ``etc/settings.ini``. Pour avoir
+leur description, reportez vous au nouveau fichier d'exemple situé dans *caminae/conf/settings.ini.sample*.
 
-* Configurer la base et la vue/table
-* Vérifier que le niveau est bien raffraichi à chaque connexion
-* Vérifier que les users ne sont plus gérables dans l'Admin
+Un paragraphe a également été ajouté au README décrivant la structure de la
+table/vue attendue.
+
+Si le paramètre ``authent_dbname`` est non vide, l'identification des utilisateurs
+se fait à travers la table externe. Les autres paramètres (``authent_XXX``) deviennent alors
+obligatoires.
+
+* Activer l'authent en configurant le fichier de settings.
+* Vérifier que le login fonctionne (password en md5 dans la vue, cf. README)
+* Vérifier que la gestion des utilisateurs est bien désactivée dans l'admin.
+* Vérifier que l'utilisateur a bien les droits adéquats en fonction de la colonne *level*
+* Vérifier que les droits sont bien raffraichis à chaque déconnexion-reconnexion
 * Vérifier qu'un changement de password dans la table fait bien échouer le login
 
+#228- Gestion des utilisateurs
+------------------------------
 
+Pour désactiver l'identification des utilisateurs sur une table distante. Enlever
+la valeur de ``authent_dbname`` et exécuter ``make deploy``.

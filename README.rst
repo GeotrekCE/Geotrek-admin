@@ -37,16 +37,6 @@ access the ``http://yourserver/``.
 See information below for configuration and loading initial demonstration data.
 
 
-Configuration update
---------------------
-
-After editing ``etc/settings.ini``, refresh the running instance with :
-
-::
-
-    make deploy
-
-
 Software update
 ---------------
 
@@ -103,6 +93,49 @@ or change its password :
     bin/django changepassword --username admin <password>
 
 
+=============
+CONFIGURATION
+=============
+
+
+Configuration update
+--------------------
+
+After editing ``etc/settings.ini``, refresh the running instance with :
+
+::
+
+    make deploy
+
+
+External authent
+----------------
+
+You can authenticate user against a remote database table or view.
+
+To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
+
+Expected columns in table/view are : 
+
+* username : string (*unique*)
+* first_name : string
+* last_name : string
+* password : string (simple md5 encoded, or full hashed and salted password)
+* email : string
+* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 6: administrator)
+* structure : string
+* lang : string (language code)
+
+
+:notes:
+
+    User management will be disabled from Administration backoffice.
+
+    In order to disable remote login, just remove *authent_dbname* value in settings
+    file, and update instance (see paragraph above).
+    
+    Caminae can support many types of users authentication (LDAP, oauth, ...), contact-us
+    for more details.
 
 :note:
 
