@@ -29,8 +29,6 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
         context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context)
         context['update'] = bool(value)
         context['field'] = value
-        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
-        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 

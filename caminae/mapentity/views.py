@@ -116,8 +116,6 @@ class MapEntityList(ListView):
             filterform=self.filterform(None, queryset=self.get_queryset()),
             columns=self.columns,
             generic_detail_url=self.model.get_generic_detail_url(),
-            LAYERCOLOR_PATHS=settings.LAYERCOLOR_PATHS,
-            LAYERCOLOR_OTHERS=settings.LAYERCOLOR_OTHERS,
         ))
         return context
 

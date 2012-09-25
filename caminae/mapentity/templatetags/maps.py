@@ -13,8 +13,6 @@ def fieldmap(obj, fieldname):
     t = template.loader.get_template("mapentity/fieldmap_fragment.html")
     return t.render(Context(dict(
                     object=obj,
-                    LAYERCOLOR_PATHS=settings.LAYERCOLOR_PATHS,
-                    LAYERCOLOR_OTHERS=settings.LAYERCOLOR_OTHERS,
                     mapname=name)))
 
 
