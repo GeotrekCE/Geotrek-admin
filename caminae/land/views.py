@@ -1,11 +1,9 @@
 from django.utils.decorators import method_decorator
 from django.conf import settings
-from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required
-from caminae.common.views import JSONResponseMixin
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -34,16 +32,7 @@ class DistrictGeoJSONLayer(GeoJSONLayerView):
     model = District
     precision = settings.LAYER_PRECISION_LAND
     simplify = settings.LAYER_SIMPLIFY_LAND
-
-
-class DistrictJSONList(JSONResponseMixin, ListView):
-    model = District
-
-    def get_context_data(self, **kwargs):
-        context = []
-        for district in self.get_queryset():
-            context.append(dict(pk=district.pk, name=district.name))
-        return context
+    fields = ['name']
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
