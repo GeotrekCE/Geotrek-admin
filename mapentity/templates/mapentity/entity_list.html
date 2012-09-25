@@ -61,13 +61,29 @@
             mainmap.addControl(new L.Control.Measurement());
             
             // Always show the path layer, except if model is path
+            // TODO: this is not supposed to be in mapentity --> caminae.common
             if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
                 var paths = new MapEntity.ObjectsLayer(null, {
+                    indexing: false,
                     style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
                 });
                 paths.addTo(mainmap)
                 paths.load('{% url core:path_layer %}');
                 mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+            }
+            // Add land layers (TODO--> caminae.common)
+            var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}'},
+                              {url:'{% url land:city_layer %}', name: '{% trans "City" %}'},
+                              {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}'}];
+            for (var i=0; i<landLayers.length; i++) {
+                var landLayer = landLayers[i];
+                var layer = new MapEntity.ObjectsLayer(null, {
+                    indexing: false,
+                    style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
+                });
+                layer.addTo(mainmap)
+                layer.load(landLayer.url);
+                mainmap.layerscontrol.addOverlay(layer, landLayer.name);
             }
             
             var getUrl = function (properties, layer) {
