@@ -195,6 +195,10 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
     background-image: url(images/multipath-control.png);
 }
 
+.screenshot-control {
+    background-image: url(images/screenshot-control.png);
+}
+
 tr.selected-row td {
     /* Button green color #5BB75B */
     background-color: #DF8 !important;

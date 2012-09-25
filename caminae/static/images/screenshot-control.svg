@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="camera-photo.svg"
+   height="48px"
+   sodipodi:version="0.32"
+   width="48px"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886">
+  <defs
+     id="defs9" />
+  <sodipodi:namedview
+     id="base"
+     borderopacity="1.0"
+     showgrid="true"
+     bordercolor="#666666"
+     guidetolerance="1.0000000px"
+     pagecolor="#ffffff"
+     gridtolerance="1.0000000px"
+     showguides="true"
+     inkscape:zoom="4.9166667"
+     inkscape:cx="24"
+     inkscape:cy="24"
+     inkscape:window-width="473"
+     inkscape:window-height="413"
+     inkscape:window-x="538"
+     inkscape:window-y="152"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2">
+    <inkscape:grid
+       id="GridFromPre046Settings"
+       type="xygrid"
+       originx="0.0000000px"
+       originy="0.0000000px"
+       spacingx="1.0000000px"
+       spacingy="1.0000000px"
+       color="#3f3fff"
+       empcolor="#3f3fff"
+       opacity="0.15"
+       empopacity="0.38"
+       empspacing="5" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+        <dc:title>Camera</dc:title>
+        <dc:description>A photo camera.</dc:description>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Design based on existing icon in HighContast GNOME icon theme.</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Luca Ferretti &lt;elle.uca@libero.it&gt;</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     id="rect9880"
+     style="fill:none"
+     ry="0"
+     height="48"
+     width="48"
+     y="0"
+     x="0" />
+  <path
+     id="rect8423"
+     sodipodi:nodetypes="ccccccccccccc"
+     style="fill-rule:evenodd"
+     d="m5.9529 12.058h9.0521l2-5.0004h14l2 5.0004h9.053c1.079 0 1.947 0.868 1.947 1.947l0.105 24.053c0 1.079-0.869 1.947-1.948 1.947h-36.104c-1.0794 0-1.9481-0.868-1.9481-1.947l-0.1047-24.053c0-1.079 0.8687-1.947 1.9477-1.947z" />
+  <path
+     id="path12070"
+     sodipodi:nodetypes="cszzscsssc"
+     style="fill:#fff;fill-rule:evenodd"
+     d="m24.058 16.005c-5.479 0-9.944 4.504-9.944 10s4.465 10 9.944 10c5.478 0 9.943-4.504 9.943-10s-4.465-10-9.943-10zm0 4.909c2.797 0 5.045 2.258 5.045 5.091 0 2.834-2.248 5.091-5.045 5.091-2.798 0-5.046-2.257-5.046-5.091 0-2.833 2.248-5.091 5.046-5.091z" />
+</svg>
