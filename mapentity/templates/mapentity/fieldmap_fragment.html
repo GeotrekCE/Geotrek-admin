@@ -32,7 +32,7 @@ function {{ mapname }}Init(map, bounds) {
     map.addLayer(pathsLayer);
     pathsLayer.load("{% url core:path_layer %}");
     
-	// Save map context (ref story #182)
+	// Save map context : will be restored on next form (e.g. interventions, ref story #182)
     $(window).unload(function () {
         MapEntity.Context.saveFullContext(map);
     });
