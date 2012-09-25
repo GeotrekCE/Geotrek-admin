@@ -28,7 +28,7 @@
 .leaflet-control-draw a:first-child{
 	margin-top: 0;
 } 	
-.leaflet-control-draw a:hover, .leaflet-control-draw.enabled a {
+.leaflet-control-draw a:hover {
 	background-color: #fff;
 	}
 .leaflet-touch .leaflet-control-draw a {
@@ -49,9 +49,6 @@
 	}
 .leaflet-control-draw-marker {
 	background-image: url(images/draw-marker-icon.png);
-	}
-.leaflet-control-draw-measure {
-	background-image: url(images/draw-measure.png);
 	}
 
 .leaflet-draw-label {

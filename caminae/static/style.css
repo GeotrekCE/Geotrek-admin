@@ -191,6 +191,14 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
     padding-bottom: 4px;
 }
 
+.leaflet-control-draw.enabled a {
+ 	background-color: #fff;
+}
+
+.leaflet-control-draw-measure {
+	background-image: url(images/measure-control.png);
+}
+
 .multipath-control {
     background-image: url(images/multipath-control.png);
 }
