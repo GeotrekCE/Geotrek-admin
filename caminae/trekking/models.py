@@ -87,7 +87,7 @@ class Trek(MapEntityMixin, TopologyMixin):
                       aggregations__start_position__gte=a.start_position,
                       aggregations__end_position__lte=a.end_position
                   )]
-        return s
+        return POI.objects.filter(pk__in=[p.pk for p in s])
 
     @property
     def districts(self):

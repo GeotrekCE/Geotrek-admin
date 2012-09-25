@@ -1373,3 +1373,11 @@ Ajout de passage forcés 'à la Google Maps' :
 - La sauvegarde ainsi que l'édition d'un itinéraire possédant de telles contraintes fonctionne.
 
 
+#205 - Liste des POI d'un itinéraire au format GeoJSON
+---------------------------------------------------
+
+Pour un itinéraire, la liste de ses POIs est disponible à l'adresse 
+``http://server/api/trek/<id>/pois.geojson``. 
+
+Cela servira au portail rando, pour afficher les POIs sur la fiche détail d'un itinéraire.
+

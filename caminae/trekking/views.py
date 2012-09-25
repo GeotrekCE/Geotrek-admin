@@ -1,9 +1,11 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
+
+from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
@@ -70,6 +72,17 @@ class TrekJsonProfile(BaseDetailView):
         self.object = self.get_object()
         profile = self.object.elevation_profile
         return HttpJSONResponse(json_django_dumps({'profile': profile}))
+
+
+class TrekPOIGeoJSON(GeoJSONLayerView):
+    pk_url_kwarg = 'pk'
+    def get_queryset(self):
+        try:
+            trek_pk = self.kwargs.get(self.pk_url_kwarg)
+            trek = Trek.objects.get(pk=trek_pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.pois
 
 
 class TrekDetail(MapEntityDetail):

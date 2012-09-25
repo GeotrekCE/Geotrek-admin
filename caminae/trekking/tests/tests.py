@@ -81,7 +81,15 @@ class TrekViewsTest(MapEntityTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+
 class TrekCustomViewTests(TestCase):
+
+    def test_pois_geojson(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_json_translation(self):
         trek = TrekFactory.build()
         trek.name_fr = 'Voie lactee'
