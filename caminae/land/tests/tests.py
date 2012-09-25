@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
+from django.core.urlresolvers import reverse
 
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import PathManagerFactory
@@ -80,6 +81,13 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
         }
 
 class CouchesSIGTest(TestCase):
+
+    def test_layers_status(self):
+        for layer in ['city', 'restrictedarea', 'district']:
+            url = reverse('land:%s_layer' % layer)
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
     def test_troncons_link(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (1,1,1)))
         p2 = PathFactory.create(geom=LineString((1,1,1), (3,3,3)))

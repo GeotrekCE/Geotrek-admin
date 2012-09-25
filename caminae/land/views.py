@@ -1,12 +1,27 @@
 from django.utils.decorators import method_decorator
 
+from djgeojson.views import GeoJSONLayerView
+
 from caminae.authent.decorators import path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
+from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge,
+                     City, RestrictedArea, District)
 from .filters import PhysicalEdgeFilter, LandEdgeFilter, CompetenceEdgeFilter, WorkManagementEdgeFilter, SignageManagementEdgeFilter
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+
+
+class CityGeoJSONLayer(GeoJSONLayerView):
+    model = City
+
+
+class RestrictedAreaGeoJSONLayer(GeoJSONLayerView):
+    model = RestrictedArea
+
+
+class DistrictGeoJSONLayer(GeoJSONLayerView):
+    model = District
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
