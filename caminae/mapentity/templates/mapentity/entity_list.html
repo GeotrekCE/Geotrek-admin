@@ -46,6 +46,32 @@
 
     <script type="text/javascript">
 
+        L.Control.Screenshot = L.Control.extend({
+            includes: L.Mixin.Events,
+            options: {
+                position: 'topleft',
+                title: '{% trans "Save map as image" %}',
+            },
+            
+            screenshot: function () {
+                this.fire('trigger');
+            },
+
+            onAdd: function(map) {
+                this.map = map;
+                this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+                var link = L.DomUtil.create('a', 'leaflet-control-zoom-out', this._container);
+                link.href = '#';
+                link.title = this.options.title;
+
+                L.DomEvent
+                    .addListener(link, 'click', L.DomEvent.stopPropagation)
+                    .addListener(link, 'click', L.DomEvent.preventDefault)
+                    .addListener(link, 'click', this.screenshot, this);
+                return this._container;
+            }
+        });
+
         function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
             mainmap.doubleClickZoom.disable();
@@ -69,7 +95,7 @@
                 });
                 paths.addTo(mainmap)
                 paths.load('{% url core:path_layer %}');
-                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+                mainmap.layerscontrol.addOverlay(paths, '{% trans "Trails" %}');
             }
             // Add land layers (TODO--> caminae.common)
             var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}'},
@@ -96,16 +122,25 @@
                 style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
             });
             mainmap.addLayer(objectsLayer);
-            mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
+            mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|slugify|title }}');
             objectsLayer.load("{{ model.get_layer_url }}");
 
             // init ajax list
             var dt = initAjaxList(mainmap, objectsLayer);
 
-            MapEntity.Context.restoreFullContext(mainmap, dt, '{{ objectsname }}');
+            MapEntity.Context.restoreFullContext(mainmap, '#mainfilter', dt, '{{ objectsname }}');
             $(window).unload(function () {
-                MapEntity.Context.saveFullContext(mainmap, dt);
+                MapEntity.Context.saveFullContext(mainmap, '#mainfilter', dt);
             });
+            var screenshot = new L.Control.Screenshot()
+            screenshot.on('trigger', function () {
+                var fullContext = MapEntity.Context.serializeFullContext(mainmap, '#mainfilter', dt);
+                // Hack to download response attachment in Ajax
+                $('<form action="{% url mapentity:map_screenshot %}" method="post">' + 
+                '<textarea name="printcontext">' + fullContext + '</textarea>' + 
+                '</form>').appendTo('body').submit().remove();
+            });
+            mainmap.addControl(screenshot);
             
             $('#filter').click();
 
