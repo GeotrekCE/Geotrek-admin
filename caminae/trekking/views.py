@@ -11,6 +11,7 @@ from djgeojson.views import GeoJSONLayerView
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from caminae.mapentity.serializers import GPXSerializer
 from caminae.common.views import json_django_dumps, HttpJSONResponse
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
@@ -64,6 +65,18 @@ class TrekJsonDetail(BaseDetailView):
 
     def render_to_response(self, context):
         return HttpJSONResponse(json_django_dumps(context))
+
+
+class TrekGPXDetail(BaseDetailView):
+    queryset = Trek.objects.existing().filter(published=True)
+
+    def render_to_response(self, context):
+        geom_field = 'geom'
+        gpx_serializer = GPXSerializer()
+        gpx_xml = gpx_serializer.serialize(self.get_queryset(), geom_field=geom_field)
+        response = HttpResponse(gpx_xml, mimetype='application/gpx+xml')
+        response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
+        return response
 
 
 class TrekJsonProfile(BaseDetailView):
