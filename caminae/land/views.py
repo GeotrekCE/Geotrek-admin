@@ -1,12 +1,26 @@
 from django.utils.decorators import method_decorator
+from django.conf import settings
+
+from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge
+from .models import PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge, City, District
 from .filters import PhysicalEdgeFilter, LandEdgeFilter, CompetenceEdgeFilter, WorkManagementEdgeFilter, SignageManagementEdgeFilter
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+
+
+
+class CityLayer(GeoJSONLayerView):
+    model = City
+    srid = settings.API_SRID
+
+
+class DistrictLayer(GeoJSONLayerView):
+    model = District
+    srid = settings.API_SRID
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
@@ -267,3 +281,4 @@ class SignageManagementEdgeDelete(MapEntityDelete):
     @method_decorator(path_manager_required('land:signagemanagementedge_detail'))
     def dispatch(self, *args, **kwargs):
         return super(SignageManagementEdgeDelete, self).dispatch(*args, **kwargs)
+

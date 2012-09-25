@@ -1,6 +1,7 @@
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url
 
 from .views import (
+    CityLayer, DistrictLayer,
     PhysicalEdgeLayer, PhysicalEdgeList, PhysicalEdgeDetail, PhysicalEdgeDocument, PhysicalEdgeCreate,
     PhysicalEdgeUpdate, PhysicalEdgeDelete, PhysicalEdgeJsonList, PhysicalEdgeFormatList,
     LandEdgeLayer, LandEdgeList, LandEdgeDetail, LandEdgeDocument, LandEdgeCreate,
@@ -28,3 +29,9 @@ urlpatterns = patterns('', *view_classes_to_url(
     SignageManagementEdgeLayer, SignageManagementEdgeList, SignageManagementEdgeDetail, SignageManagementEdgeDocument, SignageManagementEdgeCreate,
     SignageManagementEdgeUpdate, SignageManagementEdgeDelete, SignageManagementEdgeJsonList, SignageManagementEdgeFormatList,
 ))
+
+urlpatterns += patterns('',
+    url(r'api/city/city.geojson', CityLayer.as_view(), name='city_layer'),
+    url(r'api/district/district.geojson', DistrictLayer.as_view(), name='district_layer'),
+)
+
