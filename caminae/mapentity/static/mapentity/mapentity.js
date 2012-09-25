@@ -1,5 +1,62 @@
 if (!MapEntity) var MapEntity = {};
 
+// To trigger a new async request watched by the map spinner:
+// getMapSpinner(map).addCallback(async, function(errorcb, successcb() {
+//     // your code
+// ));
+//
+// You must call errorcb or successcb to notify that your async request completed.
+// The spinner will hide itself if no async request are active.
+// If the error callback is called, the loading error will be displayed appropriatly
+//
+// Note: this could easily be made more generic
+MapEntity.getMapSpinner = (function() {
+
+    var mapSpinnerSingleton;
+
+    return function(map, verbose) {
+        if (! mapSpinnerSingleton) {
+            mapSpinnerSingleton = new MapSpinner(map, verbose)
+        }
+
+        return mapSpinnerSingleton;
+    };
+
+    function MapSpinner(map, verbose) {
+        var callbacks = []
+          , spinner = new Spinner();
+
+        function completeCb(async, error) {
+            return function() {
+                var pos = callbacks.indexOf(async);
+
+                // Should not happen:
+                // callback of success/erros have been called more than once
+                if (pos == -1) return;
+
+                callbacks.splice(pos, 1);
+
+                if (callbacks.length == 0)
+                    spinner.stop();
+
+                if (error) {
+                    $(map._container).addClass('map-error');
+                    if (verbose && console) {
+                        console.error("Error in async function: ", async);
+                    }
+                }
+            }
+        };
+
+        this.addCallback = function(async) {
+            callbacks.push(async);
+            spinner.spin(map._container);
+            async(completeCb(async, true), completeCb(async));
+        };
+    }
+})();
+
+
 MapEntity.ObjectsLayer = L.GeoJSON.extend({
     COLOR: 'blue',
     HIGHLIGHT: 'red',
@@ -115,19 +172,17 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
     },
 
     load: function (url) {
-        var jsonLoad = function (data) {
-            this.addData(data);
-            this.fire('load');
-            if (this.spinner) this.spinner.stop();
-        };
-        var jsonError = function () {
-            if (this.spinner) this.spinner.stop();
-            $(this._map._container).addClass('map-error');
-            console.error("Could not load url '" + url + "'");
-        };
-        if (this._map) this.spinner = new Spinner().spin(this._map._container);
-        $.getJSON(url, L.Util.bind(jsonLoad, this))
-         .error(L.Util.bind(jsonError, this));
+        var self = this;
+
+        var mapSpinner = MapEntity.getMapSpinner(this._map);
+        mapSpinner.addCallback(function(errorCb, successCb) {
+            $.getJSON(url, function jsonLoad(data) {
+                successCb();
+
+                self.addData(data);
+                self.fire('load');
+            }).error(errorCb);
+        });
     },
 
     getLayer: function (pk) {
@@ -932,3 +987,4 @@ MapEntity.Cameleon = (function() {
         'createDefaultCameleon': createDefaultCameleon
     };
 })();
+
