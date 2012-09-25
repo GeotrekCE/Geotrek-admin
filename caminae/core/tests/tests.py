@@ -184,12 +184,12 @@ class PathTest(TestCase):
         c.save()
 
         # Fake paths in these areas
-        p = PathFactory(geom=LineString((0.5,0.5,0), (1.5,1.5,0)))
+        p = PathFactory(geom=LineString((0.5,0.5,0), (0.5,1.5,0), (1.5,1.5,0), (1.5,0.5,0)))
         p.save()
 
-        # This should results in 3 PathAggregation (2 for RA, 1 for City)
-        self.assertEquals(p.aggregations.count(), 3)
-        self.assertEquals(p.topologymixin_set.count(), 3)
+        # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
+        self.assertEquals(p.aggregations.count(), 4)
+        self.assertEquals(p.topologymixin_set.count(), 4)
 
         # PathAgg is plain for City
         t_c = c.cityedge_set.get().topo_object
@@ -197,17 +197,23 @@ class PathTest(TestCase):
         self.assertEquals(pa.start_position, 0.0)
         self.assertEquals(pa.end_position, 1.0)
 
-        # PathAgg is splitted in 2 parts for RA
-        self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
+        # PathAgg is splitted for RA
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 2)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
-        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
-        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        rae1a = ra1.restrictedareaedge_set.filter(aggregations__start_position=0).get()
+        rae1b = ra1.restrictedareaedge_set.filter(aggregations__end_position=1).get()
+        pa1a = rae1a.aggregations.get()
+        pa1b = rae1b.aggregations.get()
+        t_ra1a = rae1a.topo_object
+        t_ra1b = rae1b.topo_object
         pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
         t_ra2 = ra2.restrictedareaedge_set.get().topo_object
-        self.assertEquals(pa1.start_position, 0.0)
-        self.assertEquals(pa1.end_position, 0.5)
-        self.assertEquals(pa2.start_position, 0.5)
-        self.assertEquals(pa2.end_position, 1.0)
+        self.assertAlmostEqual(pa1a.start_position, 0.0)
+        self.assertAlmostEqual(pa1a.end_position, 0.5/3)
+        self.assertAlmostEqual(pa1b.start_position, 2.5/3)
+        self.assertAlmostEqual(pa1b.end_position, 1.0)
+        self.assertAlmostEqual(pa2.start_position, 0.5/3)
+        self.assertAlmostEqual(pa2.end_position, 2.5/3)
 
         # Ensure everything is in order after update
         p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
@@ -218,7 +224,9 @@ class PathTest(TestCase):
         self.assertRaises(TopologyMixin.DoesNotExist,
                           TopologyMixin.objects.get, pk=t_c.pk)
         self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_ra1.pk)
+                          TopologyMixin.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(TopologyMixin.DoesNotExist,
+                          TopologyMixin.objects.get, pk=t_ra1b.pk)
         self.assertRaises(TopologyMixin.DoesNotExist,
                           TopologyMixin.objects.get, pk=t_ra2.pk)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)

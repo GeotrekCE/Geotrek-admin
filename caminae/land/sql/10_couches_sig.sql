@@ -74,10 +74,10 @@ BEGIN
     END IF;
 
     -- Add new evenement
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point(geom, ST_StartPoint(ST_Intersection(geom, $1))) as pk_debut, ST_Line_Locate_Point(geom, ST_EndPoint(ST_Intersection(geom, $1))) as pk_fin, geom FROM troncons WHERE ST_Intersects(geom, $1)' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_Line_Locate_Point(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_Line_Locate_Point(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM troncons WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom) VALUES (now(), now(), kind_name, 0, 0, rec.geom) RETURNING id INTO eid;
-        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, rec.pk_debut, rec.pk_fin);
+        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         EXECUTE 'INSERT INTO '|| quote_ident(table_name) ||' (evenement, '|| quote_ident(fk_name) ||') VALUES ($1, $2)' USING eid, obj.id;
     END LOOP;
 

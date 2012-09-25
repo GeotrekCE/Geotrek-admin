@@ -92,6 +92,7 @@ class CouchesSIGTest(TestCase):
         p1 = PathFactory.create(geom=LineString((0,0,0), (1,1,1)))
         p2 = PathFactory.create(geom=LineString((1,1,1), (3,3,3)))
         p3 = PathFactory.create(geom=LineString((3,3,3), (4,4,4)))
+        p4 = PathFactory.create(geom=LineString((4,1,1), (6,2,2), (4,3,3)))
 
         # Paths should not be linked to anything at this stage
         self.assertEquals(p1.aggregations.count(), 0)
@@ -109,6 +110,7 @@ class CouchesSIGTest(TestCase):
         self.assertEquals(p1.aggregations.count(), 1)
         self.assertEquals(p2.aggregations.count(), 2)
         self.assertEquals(p3.aggregations.count(), 1)
+        self.assertEquals(p4.aggregations.count(), 2)
 
         c1.geom = MultiPolygon(Polygon(((1.5,0), (2,0), (2,4), (1.5,4), (1.5,0)),
                                        srid=settings.SRID))
@@ -118,6 +120,7 @@ class CouchesSIGTest(TestCase):
         self.assertEquals(p1.aggregations.count(), 0)
         self.assertEquals(p2.aggregations.count(), 2)
         self.assertEquals(p3.aggregations.count(), 1)
+        self.assertEquals(p4.aggregations.count(), 2)
 
         c1.delete()
 
@@ -125,3 +128,4 @@ class CouchesSIGTest(TestCase):
         self.assertEquals(p1.aggregations.count(), 0)
         self.assertEquals(p2.aggregations.count(), 1)
         self.assertEquals(p3.aggregations.count(), 1)
+        self.assertEquals(p4.aggregations.count(), 2)
