@@ -1373,6 +1373,7 @@ Ajout de passage forcés 'à la Google Maps' :
 - La sauvegarde ainsi que l'édition d'un itinéraire possédant de telles contraintes fonctionne.
 
 
+
 #205 - Liste des POI d'un itinéraire au format GeoJSON
 ---------------------------------------------------
 
@@ -1381,3 +1382,9 @@ Pour un itinéraire, la liste de ses POIs est disponible à l'adresse
 
 Cela servira au portail rando, pour afficher les POIs sur la fiche détail d'un itinéraire.
 
+
+#224 - Afficher les couches des secteurs et communes
+-------------------------------------------------
+
+Dans le sélecteur de couches, il est désormais possible d'afficher les secteurs
+et les communes. L'état affiché/caché de chaque couche est conservé d'une session à l'autre.
