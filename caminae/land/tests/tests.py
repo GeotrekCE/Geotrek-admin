@@ -82,11 +82,15 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
 
 class CouchesSIGTest(TestCase):
 
-    def test_layers_status(self):
+    def test_views_status(self):
         for layer in ['city', 'restrictedarea', 'district']:
             url = reverse('land:%s_layer' % layer)
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
+        
+        url = reverse('land:district_json_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
     def test_troncons_link(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (1,1,1)))

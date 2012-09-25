@@ -1,10 +1,13 @@
 from django.utils.decorators import method_decorator
+from django.conf import settings
+from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import path_manager_required
-from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from caminae.common.views import JSONResponseMixin
+from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge,
                      City, RestrictedArea, District)
@@ -14,14 +17,32 @@ from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManag
 
 class CityGeoJSONLayer(GeoJSONLayerView):
     model = City
+    srid = settings.API_SRID
+    precision = 0
+    simplify = 10000
 
 
 class RestrictedAreaGeoJSONLayer(GeoJSONLayerView):
     model = RestrictedArea
+    srid = settings.API_SRID
+    precision = 0
 
 
 class DistrictGeoJSONLayer(GeoJSONLayerView):
+    srid = settings.API_SRID
     model = District
+    precision = 0
+
+
+class DistrictJSONList(JSONResponseMixin, ListView):
+    model = District
+
+    def get_context_data(self, **kwargs):
+        context = []
+        for district in self.get_queryset():
+            context.append(dict(pk=district.pk, name=district.name))
+        print context
+        return context
 
 
 class PhysicalEdgeLayer(MapEntityLayer):

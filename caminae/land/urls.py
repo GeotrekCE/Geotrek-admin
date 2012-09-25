@@ -12,7 +12,7 @@ from .views import (
     SignageManagementEdgeLayer, SignageManagementEdgeList, SignageManagementEdgeDetail, SignageManagementEdgeDocument, SignageManagementEdgeCreate,
     SignageManagementEdgeUpdate, SignageManagementEdgeDelete, SignageManagementEdgeJsonList, SignageManagementEdgeFormatList,
     
-    CityGeoJSONLayer, RestrictedAreaGeoJSONLayer, DistrictGeoJSONLayer
+    CityGeoJSONLayer, RestrictedAreaGeoJSONLayer, DistrictGeoJSONLayer, DistrictJSONList
 )
 
 from caminae.mapentity.urlizor import view_classes_to_url
@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^api/city/city.geojson$', CityGeoJSONLayer.as_view(), name="city_layer"), 
     url(r'^api/restrictedarea/restrictedarea.geojson$', RestrictedAreaGeoJSONLayer.as_view(), name="restrictedarea_layer"), 
     url(r'^api/district/district.geojson$', DistrictGeoJSONLayer.as_view(), name="district_layer"), 
+    url(r'^api/district/district.json$', DistrictJSONList.as_view(), name="district_json_list"), 
     
     *view_classes_to_url(
         PhysicalEdgeLayer, PhysicalEdgeList, PhysicalEdgeDetail, PhysicalEdgeDocument, PhysicalEdgeCreate,
