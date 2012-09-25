@@ -1,6 +1,39 @@
 [
     {
         "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Histoire",
+            "label_fr": "Histoire",
+            "label_it": "Storia",
+            "label_en": "History"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Nature",
+            "label_fr": "Nature",
+            "label_it": "Natura",
+            "label_en": "Nature"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Sport",
+            "label_fr": "Sport",
+            "label_it": "Sport",
+            "label_en": "Sport"
+        }
+    },
+    {
+        "pk": 1,
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Picolo patrimonio",
@@ -279,5 +312,5 @@
             "type": 1,
             "description": "<p>Very nice</p>"
         }
-    },
+    }
 ]
