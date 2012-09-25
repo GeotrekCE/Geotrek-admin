@@ -379,7 +379,7 @@
 
 
     {
-         "pk": 1000,
+         "pk": 100000,
          "model": "infrastructure.baseinfrastructure",
          "fields": {
              "type": 10,
@@ -389,7 +389,7 @@
          }
     },
     {
-        "pk": 2000,
+        "pk": 200000,
         "model": "infrastructure.baseinfrastructure",
         "fields": {
             "type": 37,
@@ -399,7 +399,7 @@
         }
     },
     {
-        "pk": 1000,
+        "pk": 100000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "INFRASTRUCTURE",
@@ -412,7 +412,7 @@
         }
     },
     {
-        "pk": 2000,
+        "pk": 200000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "INFRASTRUCTURE",
@@ -431,7 +431,7 @@
             "path": 896,
             "end_position": 1.0,
             "start_position": 0.0,
-            "topo_object": 1000
+            "topo_object": 100000
         }
     },
     {
@@ -441,7 +441,7 @@
             "path": 941,
             "end_position": 1.0,
             "start_position": 0.0,
-            "topo_object": 1000
+            "topo_object": 100000
         }
     },
     {
@@ -451,7 +451,7 @@
             "path": 941,
             "end_position": 0.5,
             "start_position": 0.5,
-            "topo_object": 2000
+            "topo_object": 200000
         }
     }
 ]

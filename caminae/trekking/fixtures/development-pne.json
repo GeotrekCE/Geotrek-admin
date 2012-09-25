@@ -121,7 +121,7 @@
         }
     },
     {
-        "pk": 8000,
+        "pk": 800000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "TREK",
@@ -140,7 +140,7 @@
             "path": 1574,
             "end_position": 1.0,
             "start_position": 0.80185742780659,
-            "topo_object": 8000
+            "topo_object": 800000
         }
     },
     {
@@ -150,11 +150,11 @@
             "path": 1575,
             "end_position": 1.0,
             "start_position": 0.671521039360522,
-            "topo_object": 8000
+            "topo_object": 800000
         }
     },
     {
-        "pk": 8000,
+        "pk": 800000,
         "model": "trekking.trek",
         "fields": {
             "is_park_centered": false,
@@ -276,7 +276,7 @@
 
 
     {
-        "pk": 9000,
+        "pk": 900000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "POI",
@@ -295,11 +295,11 @@
             "path": 1574,
             "end_position": 0.5,
             "start_position": 0.5,
-            "topo_object": 9000
+            "topo_object": 900000
         }
     },
     {
-        "pk": 9000,
+        "pk": 900000,
         "model": "trekking.poi",
         "fields": {
             "name_fr": "Chapelle",

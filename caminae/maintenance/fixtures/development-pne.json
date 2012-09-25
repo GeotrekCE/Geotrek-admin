@@ -348,7 +348,7 @@
             "in_maintenance": false,
             "date": "2012-08-21",
             "structure": 1,
-            "topology": 2000,
+            "topology": 200000,
             "subcontract_cost": 0.0,
             "name": "Repeindre la pancarte",
             "material_cost": 0.0,
@@ -358,7 +358,7 @@
         }
     },
     {
-        "pk": 3000,
+        "pk": 300000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "INTERVENTION",
@@ -377,7 +377,7 @@
             "path": 465,
             "end_position": 0.8,
             "start_position": 0.3,
-            "topo_object": 3000
+            "topo_object": 300000
         }
     },
     {
@@ -401,7 +401,7 @@
             "in_maintenance": false,
             "date": "2012-08-21",
             "structure": 1,
-            "topology": 3000,
+            "topology": 300000,
             "subcontract_cost": 0.0,
             "name": "Dégager le passage",
             "material_cost": 0.0,
