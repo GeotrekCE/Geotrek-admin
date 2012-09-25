@@ -1,9 +1,8 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-from screamshot.views import capture
+from .views import map_screenshot
 
 
-urlpatterns = patterns('screamshot.views',
-    url(r'^capture/$', capture, name='capture'),
+urlpatterns = patterns('',
+    url(r'^map_screenshot/$', map_screenshot, name='map_screenshot'),
 )
-

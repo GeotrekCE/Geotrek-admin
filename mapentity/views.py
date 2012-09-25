@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import urllib2
 import logging
 
 from django.conf import settings
@@ -13,6 +14,7 @@ from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
 from django.contrib.gis.db.models.fields import (
@@ -23,6 +25,7 @@ from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
 from screamshot.decorators import login_required_capturable
+from screamshot.utils import casperjs_capture
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 from caminae.core.models import split_bygeom # TODO
@@ -34,6 +37,45 @@ from .serializers import GPXSerializer
 
 logger = logging.getLogger(__name__)
 
+# Concrete views
+
+@csrf_exempt
+@login_required
+def map_screenshot(request):
+    """
+    This view allows to take screenshots, via django-screamshot, of
+    the map currently viewed by the user.
+    
+    - A context full of information is built on client-side and posted here.
+    - We reproduce this context, via headless browser, and take a capture
+    - We return the resulting image as attachment.
+    
+    This seems overkill ? Please look around and find a better way.
+    """
+    printcontext = request.POST.get('printcontext')
+    try:
+        assert len(printcontext) < 1024, "Print context is way too big."
+        printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
+        contextencoded = urllib2.quote(printcontext)
+        
+        # Use referer to get page to capture
+        map_url = request.META['HTTP_REFERER'].split('?', 1)[0]
+        # Provide print context
+        map_url += '?context=%s' % contextencoded
+        # Set print flag 
+        map_url += '&print'
+        # Capture image and return it
+        response = HttpResponse(mimetype='image/png')
+        response['Content-Disposition'] = 'attachment; filename=image.png'
+        casperjs_capture(response, map_url, selector='.map-panel')
+        return response
+
+    except Exception, e: 
+        logger.exception(e)
+    raise Http404  # TODO: should raise 400
+
+
+# Generic views, to be overriden
 
 class MapEntityLayer(GeoJSONLayerView):
     """
@@ -100,7 +142,7 @@ class MapEntityList(ListView):
         qs = super(MapEntityList, self).get_queryset()
         return qs.select_related(depth=1)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required_capturable)
     def dispatch(self, request, *args, **kwargs):
         # Save last list visited in session
         request.session['last_list'] = request.path
