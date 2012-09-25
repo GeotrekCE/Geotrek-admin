@@ -18,20 +18,22 @@ from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManag
 class CityGeoJSONLayer(GeoJSONLayerView):
     model = City
     srid = settings.API_SRID
-    precision = 0
-    simplify = 10000
+    precision = settings.LAYER_PRECISION_LAND
+    simplify = settings.LAYER_SIMPLIFY_LAND
 
 
 class RestrictedAreaGeoJSONLayer(GeoJSONLayerView):
     model = RestrictedArea
     srid = settings.API_SRID
-    precision = 0
+    precision = settings.LAYER_PRECISION_LAND
+    simplify = settings.LAYER_SIMPLIFY_LAND
 
 
 class DistrictGeoJSONLayer(GeoJSONLayerView):
     srid = settings.API_SRID
     model = District
-    precision = 0
+    precision = settings.LAYER_PRECISION_LAND
+    simplify = settings.LAYER_SIMPLIFY_LAND
 
 
 class DistrictJSONList(JSONResponseMixin, ListView):
@@ -41,7 +43,6 @@ class DistrictJSONList(JSONResponseMixin, ListView):
         context = []
         for district in self.get_queryset():
             context.append(dict(pk=district.pk, name=district.name))
-        print context
         return context
 
 

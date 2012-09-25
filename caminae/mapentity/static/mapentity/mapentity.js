@@ -98,6 +98,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         layer.properties = geojson.properties;
         
         // Spatial indexing
+        if (!this.options.indexing)
+            return;
         var bounds = null;
         if (layer instanceof L.MultiPolyline) {
             bounds = new L.LatLngBounds();

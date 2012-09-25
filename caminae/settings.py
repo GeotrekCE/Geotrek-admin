@@ -279,8 +279,12 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {}
 
-LAYERCOLOR_PATHS = ''
-LAYERCOLOR_OTHERS = ''
+LAYERCOLOR_PATHS = ''      # Hex color for paths
+LAYERCOLOR_LAND = ''       # Hex color for land layers
+LAYERCOLOR_OTHERS = ''     # Hex color for entity layers
+LAYER_PRECISION_LAND = 4   # Number of fraction digit
+LAYER_SIMPLIFY_LAND  = 10  # Simplification tolerance
+
 
 # Navigation history tabs
 HISTORY_ITEMS_MAX = 7
@@ -293,4 +297,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-error',
 }
 
-CONVERSION_SERVER = None
+CONVERSION_SERVER = None   # URL of PDF conversion server
