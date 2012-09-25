@@ -5,9 +5,10 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
+from django.utils import simplejson
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -52,18 +53,20 @@ def map_screenshot(request):
     
     This seems overkill ? Please look around and find a better way.
     """
-    printcontext = request.POST.get('printcontext')
     try:
-        assert len(printcontext) < 1024, "Print context is way too big."
+        printcontext = request.POST['printcontext']
+        assert len(printcontext) < 512, "Print context is way too big."
+        
+        # Prepare context, extract and add infos
+        context = simplejson.loads(printcontext)
+        map_url = context.pop('url').split('?', 1)[0]
+        context['print'] = True
+        printcontext = simplejson.dumps(context)
+        
+        # Provide print context to destination
         printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
         contextencoded = urllib2.quote(printcontext)
-        
-        # Use referer to get page to capture
-        map_url = request.META['HTTP_REFERER'].split('?', 1)[0]
-        # Provide print context
         map_url += '?context=%s' % contextencoded
-        # Set print flag 
-        map_url += '&print'
         # Capture image and return it
         response = HttpResponse(mimetype='image/png')
         response['Content-Disposition'] = 'attachment; filename=image.png'
@@ -72,7 +75,7 @@ def map_screenshot(request):
 
     except Exception, e: 
         logger.exception(e)
-    raise Http404  # TODO: should raise 400
+        return HttpResponseBadRequest(e)
 
 
 # Generic views, to be overriden
