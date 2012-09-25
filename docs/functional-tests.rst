@@ -1338,3 +1338,38 @@ Configurer l'envoi d'email dans le fichier ``etc/settings.ini`` et un mail sera
 envoyé à chaque erreur interne.
 
 Pour tester, arrêter le service postgresql par exemple.
+
+
+#250 - Topologie : calcul en JS d'un lat/lng d'un point sur un tronçon à partir de debut/fin
+--------------------------------------------------------------------------------------------
+
+Partie purement technique.
+
+#249 - Topologie : dé/sérialization des contraintes de point de passage
+-----------------------------------------------------------------------
+
+Partie purement technique.
+
+#248 - Calcul du plus court chemin : prendre en compte la position du point sur le tronçon
+------------------------------------------------------------------------------------------
+
+Sur la page d'ajout d'une intervention, lors d'une saisie multitronçons, le calcul
+du plus court chemin prend en compte la position du point sur le tronçon
+(et non pas une des deux extrémités du tronçon comme point).
+Le tronçon original est séparé par le point en deux autres tronçons 'virtuels'
+dont le poids est réparti proportionnellement à leur longueur.
+
+
+#134 - Ajouter des points de passage forcés à la saisie multitronçons
+---------------------------------------------------------------------
+
+Ajout de passage forcés 'à la Google Maps' :
+
+- Au survol de l'itinéraire calculé, un marqueur intermédiaire apparait
+- Le démarrage d'une action de drag sur ce marqueur l'ajoute comme une contrainte intermédiaire
+- Lors du drag sur un marqueur intermédiaire, le marqueur se "snappe" au réseau existant et l'itinéraire
+  le plus court est recalculé à la volée
+- Un clic sur le marqueur intermédiare, supprime le marqueur et la contrainte
+- La sauvegarde ainsi que l'édition d'un itinéraire possédant de telles contraintes fonctionne.
+
+
