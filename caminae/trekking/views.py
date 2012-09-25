@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.decorators import method_decorator
@@ -75,6 +76,7 @@ class TrekJsonProfile(BaseDetailView):
 
 
 class TrekPOIGeoJSON(GeoJSONLayerView):
+    srid = settings.API_SRID
     pk_url_kwarg = 'pk'
     def get_queryset(self):
         try:
