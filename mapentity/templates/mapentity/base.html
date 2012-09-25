@@ -7,6 +7,7 @@
     <script type="text/javascript" src="{% static "mapentity/spin.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/rtree.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/jquery.deserialize.js" %}"></script>
+    {% include "land/layers.html" %}
 {% endblock extrajs %}
 
 {% block nav-list %}{{ block.super }}{% endblock nav-list %}
