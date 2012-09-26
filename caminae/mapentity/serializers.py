@@ -34,7 +34,7 @@ class GPXSerializer(Serializer):
 #TODO : this should definitely respect Serializer abstraction :
 # LineString -> Route with Point
 # Collection -> route with all merged
-def geomToGPX(self, gpx, geom):
+def geomToGPX(gpx, geom):
     """Convert a geometry to a gpx entity.
     Raise ValueError if it is not a Point, LineString or a collection of those
 
