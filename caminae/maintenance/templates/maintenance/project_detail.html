@@ -27,9 +27,9 @@
         <tr>
             <th>{% trans "Interventions" %}</th>
             <td>
-                {% for i in project.interventions.all %}
+                {% for intervention in project.interventions.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ i }}</li>
+                    <li>{{ intervention.name_display|safe }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}
