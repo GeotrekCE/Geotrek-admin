@@ -1423,3 +1423,18 @@ obligatoires.
 
 Pour désactiver l'identification des utilisateurs sur une table distante. Enlever
 la valeur de ``authent_dbname`` et exécuter ``make deploy``.
+
+
+#243 - [BUG] Le CSV contient de l'html pour les noms
+----------------------------------------------------
+
+Corrigé.
+
+#242 - [BUG] Le CSV n'a pas de headers
+--------------------------------------
+
+Corrigé.
+
+Le header du CSV est créé à partir du nom des colonnes, i.e.:
+ils seront identiques aux headers du tableau dans la vue liste de chaque entité.
+
