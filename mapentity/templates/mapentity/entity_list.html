@@ -83,11 +83,6 @@
             mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
             objectsLayer.load("{{ model.get_layer_url }}");
 
-            Caminae.LandsLayer.addLayersToMap(mainmap, function() {
-                mainmap.removeLayer(objectsLayer);
-                mainmap.addLayer(objectsLayer);
-            });
-
             // init ajax list
             var dt = initAjaxList(mainmap, objectsLayer);
 
