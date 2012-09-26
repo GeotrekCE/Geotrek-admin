@@ -8,22 +8,20 @@ var Caminae = Caminae || {};
 Caminae.LandsLayer = (function(city_url, district_url) {
 
     var getCityLayer = function(cb) {
-        MapEntity.getMapSpinner().addCallback(function(notifyError, notifySuccess) {
-            $.getJSON(city_url, function success(geojson) {
-                notifySuccess();
-                var layer = new L.GeoJSON(geojson);
-                cb({ 'layer': layer, 'name': '{% trans "City" %}' });
-            }).error(notifyError);
+        $.getJSON(city_url, function(geojson) {
+            var layer = new L.GeoJSON(geojson);
+
+            cb({ 'layer': layer, 'name': '{% trans "City" %}' });
         });
     };
 
     var getDistrictLayer = function(cb) {
-        MapEntity.getMapSpinner().addCallback(function(notifyError, notifySuccess) {
-            $.getJSON(district_url, function success(geojson) {
-                notifySuccess();
-                var layer = new L.GeoJSON(geojson);
-                cb({ 'layer': layer, 'name': '{% trans "District" %}' });
-            }).error(notifyError);
+        MapEntity.getMapSpinner(/* will fail if not initialized */);
+
+        $.getJSON(district_url, function(geojson) {
+            var layer = new L.GeoJSON(geojson);
+
+            cb({ 'layer': layer, 'name': '{% trans "District" %}' });
         });
     };
 
