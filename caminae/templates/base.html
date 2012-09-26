@@ -29,13 +29,13 @@
                 <!-- Liste des modules -->
                 <div class="span1">
                     <ul id="entitylist" class="nav nav-pills nav-stacked">
-                        <li class="{% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
-                        <li class="{% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}" tooltip="{% trans "Intervention" %}"><img src="{% static "images/intervention.png" %}"/></a></li>
-                        <li class="{% block nav-project %}{% endblock nav-project %}"><a href="{% url maintenance:project_list %}" tooltip="{% trans "Project" %}"><img src="{% static "images/project.png" %}"/></a></li>
-                        <li class="{% block nav-signage %}{% endblock nav-signage %}"><a href="{% url infrastructure:signage_list %}" tooltip="{% trans "Signage" %}"><img src="{% static "images/signage.png" %}"/></a></li>
-                        <li class="{% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="{% url infrastructure:infrastructure_list %}" tooltip="{% trans "Infrastructure" %}"><img src="{% static "images/infrastructure.png" %}"/></a></li>
-                        <li class="{% block nav-trekking %}{% endblock nav-trekking %}"><a href="{% url trekking:trek_list %}" tooltip="{% trans "Trek" %}"><img src="{% static "images/trek.png" %}"/></a></li>
-                        <li class="{% block nav-poi %}{% endblock nav-poi %}"><a href="{% url trekking:poi_list %}" tooltip="{% trans "POI" %}"><img src="{% static "images/poi.png" %}"/></a></li>
+                        <li class="centered {% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
+                        <li class="centered {% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}" title="{% trans "Intervention" %}"><img src="{% static "images/intervention.png" %}"/></a></li>
+                        <li class="centered {% block nav-project %}{% endblock nav-project %}"><a href="{% url maintenance:project_list %}" title="{% trans "Project" %}"><img src="{% static "images/project.png" %}"/></a></li>
+                        <li class="centered {% block nav-signage %}{% endblock nav-signage %}"><a href="{% url infrastructure:signage_list %}" title="{% trans "Signage" %}"><img src="{% static "images/signage.png" %}"/></a></li>
+                        <li class="centered {% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="{% url infrastructure:infrastructure_list %}" title="{% trans "Infrastructure" %}"><img src="{% static "images/infrastructure.png" %}"/></a></li>
+                        <li class="centered {% block nav-trekking %}{% endblock nav-trekking %}"><a href="{% url trekking:trek_list %}" title="{% trans "Trek" %}"><img src="{% static "images/trek.png" %}"/></a></li>
+                        <li class="centered {% block nav-poi %}{% endblock nav-poi %}"><a href="{% url trekking:poi_list %}" title="{% trans "POI" %}"><img src="{% static "images/poi.png" %}"/></a></li>
                     </ul>
                 </div> <!--/span-->
 

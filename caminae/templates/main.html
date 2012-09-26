@@ -95,15 +95,12 @@
 
     {% block extrabody %}
     <script type="text/javascript">
-        var hideMessages = function () {
+        $(document).ready(function() {
             // Fade out success/infos messages
             $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
-        };
-        var initTooltips = function () {
-            $('#entitylist a').tooltip();
-        };
-        $().load(hideMessages);
-        $().load(initTooltips);
+        
+            $('#entitylist a').tooltip({'placement': 'right'});
+        });
     </script>
     {% endblock extrabody %}
 </body>

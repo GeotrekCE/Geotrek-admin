@@ -1,4 +1,5 @@
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.conf import settings
 
 from djgeojson.views import GeoJSONLayerView
@@ -13,25 +14,26 @@ from .filters import PhysicalEdgeFilter, LandEdgeFilter, CompetenceEdgeFilter, W
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 
 
-class CityGeoJSONLayer(GeoJSONLayerView):
+class LandLayerMixin(object):
+    srid = settings.API_SRID
+    precision = settings.LAYER_PRECISION_LAND
+    simplify = settings.LAYER_SIMPLIFY_LAND
+
+    @method_decorator(cache_page(60 * 60 * 24, cache="fat"))
+    def dispatch(self, request, *args, **kwargs):
+        return super(LandLayerMixin, self).dispatch(request, *args, **kwargs)
+
+
+class CityGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
     model = City
-    srid = settings.API_SRID
-    precision = settings.LAYER_PRECISION_LAND
-    simplify = settings.LAYER_SIMPLIFY_LAND
 
 
-class RestrictedAreaGeoJSONLayer(GeoJSONLayerView):
+class RestrictedAreaGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
     model = RestrictedArea
-    srid = settings.API_SRID
-    precision = settings.LAYER_PRECISION_LAND
-    simplify = settings.LAYER_SIMPLIFY_LAND
 
 
-class DistrictGeoJSONLayer(GeoJSONLayerView):
-    srid = settings.API_SRID
+class DistrictGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
     model = District
-    precision = settings.LAYER_PRECISION_LAND
-    simplify = settings.LAYER_SIMPLIFY_LAND
     fields = ['name']
 
 
