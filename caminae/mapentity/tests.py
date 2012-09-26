@@ -1,11 +1,16 @@
+# -*- coding: utf-8 -*-
+
 import os
-import shutil
+import shutil, StringIO, csv
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.test import LiveServerTestCase
 from django.test.utils import override_settings
 from django.test.testcases import to_list
+
+from django.utils import html
 
 from caminae.mapentity.forms import MapEntityForm
 
@@ -69,11 +74,39 @@ class MapEntityTest(LiveServerTestCase):
         self.assertTrue(success)
 
         self.modelfactory.create()
-        params = '?bbox=POLYGON((5+44+0%2C5+45+0%2C6+45+0%2C6+44+0%2C5+44+0))'
 
         for fmt in ('csv', 'shp', 'gpx'):
-            response = self.client.get(self.model.get_format_list_url() + params + '&format=' + fmt)
+            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
+
+
+
+    def test_no_html_in_csv(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        user = self.userfactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+        self.modelfactory.create()
+
+        fmt = 'csv'
+        response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Read the csv
+        lines = list(csv.reader(StringIO.StringIO(response.content), delimiter=','))
+
+        # There should be one more line in the csv than in the items: this is the header line
+        self.assertEqual(len(lines), self.model.objects.all().count() + 1)
+
+        for line in lines:
+            for col in line:
+                # the col should not contains any html tags
+                self.assertEquals(force_unicode(col), html.strip_tags(col))
+
 
     def test_crud_status(self):
         if self.model is None:

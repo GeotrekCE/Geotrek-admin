@@ -135,6 +135,10 @@ class Trek(MapEntityMixin, TopologyMixin):
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
 
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
+
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
@@ -301,6 +305,10 @@ class POI(MapEntityMixin, TopologyMixin):
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
 
     @property
     def treks(self):

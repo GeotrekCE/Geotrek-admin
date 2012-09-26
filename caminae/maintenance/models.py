@@ -145,6 +145,10 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
 
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
+
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.date)
 
@@ -284,6 +288,10 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
 
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""

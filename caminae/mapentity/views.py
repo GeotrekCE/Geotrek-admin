@@ -409,12 +409,34 @@ class MapEntityFormat(MapEntityList):
         )
 
     def csv_view(self, request, context, **kwargs):
+        """
+        Uses self.columns, containing fieldnames to produce the CSV.
+        The header of the csv is made of the verbose name of each field
+        Each column content is made using (by priority order):
+            * <field_name>_csv_display
+            * <field_name>_display
+            * <field_name>
+        """
+
         def get_lines():
-            for obj in context['queryset']:
+            queryset = context['queryset'].qs
+
+            # Header line
+            yield [
+                smart_str(queryset.model._meta.get_field(field).verbose_name)
+                for field in self.columns
+            ]
+
+            for obj in queryset:
                 columns = []
                 for field in self.columns:
+                    # may be optimized
                     columns.append(smart_str(
-                        getattr(obj, field + '_display', getattr(obj, field))
+                        getattr(obj, field + '_csv_display',
+                            getattr(obj, field + '_display',
+                                getattr(obj, field)
+                            )
+                        )
                     ))
                 yield columns
 

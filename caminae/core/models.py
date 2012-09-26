@@ -138,9 +138,19 @@ class Path(MapEntityMixin, StructureRelated):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)
 
     @property
+    def name_csv_display(self):
+        return unicode(self)
+
+    @property
     def trail_display(self):
         if self.trail:
             return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
+        return _("None")
+
+    @property
+    def trail_csv_display(self):
+        if self.trail:
+            return unicode(self.trail)
         return _("None")
 
     @property
