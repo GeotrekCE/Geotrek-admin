@@ -1438,3 +1438,11 @@ Corrigé.
 Le header du CSV est créé à partir du nom des colonnes, i.e.:
 ils seront identiques aux headers du tableau dans la vue liste de chaque entité.
 
+
+#238 - Afficher les liens vers les objects liés plutot que oui/non
+------------------------------------------------------------------
+
+Détail projet: ajout d'un lien vers intervention
+Détail intervention: ajout de lien sur projet, infrastructure et signage
+
+
