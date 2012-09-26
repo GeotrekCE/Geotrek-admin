@@ -17,6 +17,8 @@ class MapEntityTest(LiveServerTestCase):
     userfactory = None
 
     def setUp(self):
+        if os.path.exists(settings.MEDIA_ROOT):
+            self.tearDown()
         os.makedirs(settings.MEDIA_ROOT)
 
     def tearDown(self):
