@@ -1389,7 +1389,7 @@ Cela servira au portail rando, pour afficher les POIs sur la fiche détail d'un 
 Dans le sélecteur de couches, il est désormais possible d'afficher les secteurs
 et les communes. L'état affiché/caché de chaque couche est conservé d'une session à l'autre.
 
-X - Exporter l'itinéraire au format GPX
+#66 - Exporter l'itinéraire au format GPX
 ---------------------------------------
 
 Pour un itinéraire, sa trace GPX est disponible à l'adresse 
