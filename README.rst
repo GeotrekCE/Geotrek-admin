@@ -63,6 +63,12 @@ Load MNT raster
     bin/django loaddem <PATH>/w001001.adf
 
 
+:note:
+
+    This command makes use of *GDAL* and ``raster2pgsql`` internally. It
+    therefore supports all GDAL raster input formats. You can list these formats
+    with the command ``raster2pgsql -G``.
+
 
 Initial Data
 ------------
