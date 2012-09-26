@@ -132,11 +132,9 @@ h2 {
 	border-top: 1px solid #DDDDDD;	
 }
 
-
-#listeModules {
-	text-align: center;
+#entitylist a {
+    padding: 0px;
 }
-
 
 #module {
 	border-top: 1px solid #DDDDDD;	
