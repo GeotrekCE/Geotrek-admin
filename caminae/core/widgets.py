@@ -47,6 +47,9 @@ class GeometryWidget(LeafletMapWidget):
         context['path_snapping'] = self.path_snapping
         # TODO: this should come from context processor !
         context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
+        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
+        context['LAYERCOLOR_LAND'] = settings.LAYERCOLOR_LAND
+        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 
@@ -92,6 +95,7 @@ class BaseTopologyWidget(forms.Textarea):
         # TODO: this should come from context processor !
         context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
+        context['LAYERCOLOR_LAND'] = settings.LAYERCOLOR_LAND
         context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
