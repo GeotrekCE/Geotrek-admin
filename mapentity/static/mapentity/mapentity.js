@@ -17,9 +17,6 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this._current_objects = {};
 
         this._cameleon = MapEntity.Cameleon.createDefaultCameleon();
-
-        this.spinner = null;
-        this._nbspinning = 0;
         
         this.rtree = new RTree();
 
@@ -124,17 +121,19 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
 
         if (state) {
             // start spinning !
-            if (!this.spinner)
-                this.spinner = new Spinner().spin(this._map._container);
-            this._nbspinning++;
+            if (!this._map._spinner) {
+                this._map._spinner = new Spinner().spin(this._map._container);
+                this._map._spinning = 0;
+            }
+            this._map._spinning++;
         }
         else {
-            this._nbspinning--;
-            if (this._nbspinning == 0) {
+            this._map._spinning--;
+            if (this._map._spinning == 0) {
                 // end spinning !
-                if (this.spinner) {
-                    this.spinner.stop();
-                    this.spinner = null;
+                if (this._map._spinner) {
+                    this._map._spinner.stop();
+                    this._map._spinner = null;
                 }
             }
         }
