@@ -206,6 +206,16 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
 });
 
 
+/**
+ * Get URL parameter in Javascript
+ * source: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
+ */
+function getURLParameter(name) {
+    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+    return decodeURIComponent(paramEncoded);
+}
+
+
 MapEntity.Context = new function() {
     var self = this;
 
@@ -262,9 +272,27 @@ MapEntity.Context = new function() {
     };
 
     self.restoreFullContext = function(map, filter, datatable, objectsname) {
-        var context = self.__loadFullContext();
+        var context = getURLParameter('context');
+        if (context) {
+            context = JSON.parse(context);
+        }
+        else {
+            // If not received from URL, load from LocalStorage
+            context = self.__loadFullContext();
+        }
         if (!context)
-            return;
+            return;  // No context, no restore.
+        
+        if (context.print) {
+            // Hide controls
+            $('.leaflet-control').hide();   // Hide all
+            $('.leaflet-control-scale').show(); // Show scale
+            // Adjust map viewport size
+            $('.map-panel').height(context.mapsize.height);
+            $('.map-panel').width(context.mapsize.width);
+            map.invalidateSize();
+        }
+
         self.restoreMapView(map, context);
         
         if (filter && context.filter) {
