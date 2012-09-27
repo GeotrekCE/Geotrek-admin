@@ -68,9 +68,11 @@ def map_screenshot(request):
         contextencoded = urllib2.quote(printcontext)
         map_url += '?context=%s' % contextencoded
         # Capture image and return it
+        width = context.get('viewport', {}).get('width')
+        height = context.get('viewport', {}).get('height')
         response = HttpResponse(mimetype='image/png')
         response['Content-Disposition'] = 'attachment; filename=image.png'
-        casperjs_capture(response, map_url, selector='.map-panel')
+        casperjs_capture(response, map_url, width=width, height=height, selector='.map-panel')
         return response
 
     except Exception, e: 
