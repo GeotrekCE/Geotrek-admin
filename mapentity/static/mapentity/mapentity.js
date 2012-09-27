@@ -19,6 +19,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this._cameleon = MapEntity.Cameleon.createDefaultCameleon();
 
         this.spinner = null;
+        this._nbspinning = 0;
+        
         this.rtree = new RTree();
 
         var onFeatureParse = function (geojson, layer) {
@@ -116,18 +118,39 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this.rtree.insert(this._rtbounds(bounds), layer);
     },
 
+    spin: function (state) {
+        if (!this._map) return;
+
+        if (state) {
+            // start spinning !
+            if (!this.spinner)
+                this.spinner = new Spinner().spin(this._map._container);
+            this._nbspinning++;
+        }
+        else {
+            this._nbspinning--;
+            if (this._nbspinning == 0) {
+                // end spinning !
+                if (this.spinner) {
+                    this.spinner.stop();
+                    this.spinner = null;
+                }
+            }
+        }
+    },
+
     load: function (url) {
         var jsonLoad = function (data) {
             this.addData(data);
+            this.spin(false);
             this.fire('load');
-            if (this.spinner) this.spinner.stop();
         };
         var jsonError = function () {
-            if (this.spinner) this.spinner.stop();
+            this.spin(false);
             $(this._map._container).addClass('map-error');
             console.error("Could not load url '" + url + "'");
         };
-        if (this._map) this.spinner = new Spinner().spin(this._map._container);
+        this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
          .error(L.Util.bind(jsonError, this));
     },
@@ -246,7 +269,7 @@ MapEntity.Context = new function() {
         
         // Extra-info, not restored so far but can be useful for screenshoting
         context['url'] = window.location.toString();
-        context['viewport'] = {'width': window.outerWidth, 'height': window.outerHeight};
+        context['viewport'] = {'width': $(window).width(), 'height': $(window).height()};
         context['mapsize'] = {'width': $('.map-panel').width(), 'height': $('.map-panel').height()};
 
         return JSON.stringify(context);
@@ -287,10 +310,6 @@ MapEntity.Context = new function() {
             // Hide controls
             $('.leaflet-control').hide();   // Hide all
             $('.leaflet-control-scale').show(); // Show scale
-            // Adjust map viewport size
-            $('.map-panel').height(context.mapsize.height);
-            $('.map-panel').width(context.mapsize.width);
-            map.invalidateSize();
         }
 
         self.restoreMapView(map, context);
