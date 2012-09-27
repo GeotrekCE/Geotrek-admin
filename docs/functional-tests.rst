@@ -1446,3 +1446,18 @@ Détail projet: ajout d'un lien vers intervention
 Détail intervention: ajout de lien sur projet, infrastructure et signage
 
 
+#55 - Exporter la carte assemblée au format image
+-------------------------------------------------
+
+Cliquer sur le bouton "Screenshot". Une image est proposée au téléchargement,
+le nom de fichier contient la date. L'image respecte la position de la carte
+et les couches affichées.
+
+Déplacer la carte, décocher des couches, observer que l'image exportée est correcte.
+
+:notes:
+
+    Problèmes connus:
+    
+    * les objects vectoriels sont décalés sur l'image.
+    * l'obtention de l'image est longue, cela est dû au cache qui n'est pas actif pour l'impression.

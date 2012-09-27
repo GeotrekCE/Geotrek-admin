@@ -2,6 +2,7 @@
 import csv
 import urllib2
 import logging
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -71,7 +72,7 @@ def map_screenshot(request):
         width = context.get('viewport', {}).get('width')
         height = context.get('viewport', {}).get('height')
         response = HttpResponse(mimetype='image/png')
-        response['Content-Disposition'] = 'attachment; filename=image.png'
+        response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
         casperjs_capture(response, map_url, width=width, height=height, selector='.map-panel')
         return response
 
