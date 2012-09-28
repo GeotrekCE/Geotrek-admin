@@ -1,8 +1,13 @@
-import urllib
+import os
+from datetime import datetime
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.utils import timezone
+
+from screamshot.utils import casperjs_capture
+
+from caminae.common.utils import smart_urljoin
 
 
 # Used to create the matching url name
@@ -21,6 +26,10 @@ ENTITY_KINDS = (
     ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_DOCUMENT, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
+
+class MapImageError(Exception):
+    pass
+
 
 class MapEntityMixin(object):
 
@@ -81,15 +90,33 @@ class MapEntityMixin(object):
     def get_detail_url(self):
         return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
 
-    def get_map_image_url(self, rooturl=None):
-        if rooturl is None:
-            rooturl = settings.SCREAMSHOT_CONFIG.get('CAPTURE_ROOT_URL', 'http://localhost:8000')
-        captureurl = reverse('mapentity:capture')
-        detailurl = rooturl + self.get_detail_url()
-        detailurl = urllib.quote(detailurl)
-        selector = urllib.quote('.map-panel')
-        return captureurl + '?selector=%s&url=%s' % (selector, detailurl)
-        #return captureurl + '?url=%s' % detailurl
+    def prepare_map_image(self, rooturl):
+        path = self.get_map_image_path()
+        # If already exists and up-to-date, do nothing
+        if os.path.exists(path):
+            if os.path.getsize(path) > 0:
+                modified = datetime.fromtimestamp(os.path.getmtime(path))
+                modified = modified.replace(tzinfo=timezone.utc)
+                if modified > self.date_update:
+                    return
+            else:
+                os.remove(path)
+        # Run head-less capture (takes time)
+        url = smart_urljoin(rooturl, self.get_detail_url())
+        with open(path, 'wb') as f:
+            casperjs_capture(f, url, selector='.map-panel')
+        if not os.path.exists(path) or os.path.getsize(path) == 0:
+            raise MapImageError("%s could not be captured into %s" % (url, path))
+        # TODO : remove capture image file on delete
+
+    def get_map_image_path(self):
+        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
+        if not os.path.exists(basefolder):
+            os.mkdir(basefolder)
+        return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
+
+    def get_map_image_url(self):
+        return os.path.join(settings.MEDIA_URL, 'maps', '%s-%s.png' % (self._meta.module_name, self.pk))
 
     @models.permalink
     def get_document_url(self):

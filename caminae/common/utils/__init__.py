@@ -1,4 +1,5 @@
 import math
+from urlparse import urljoin
 
 from django.db import connection
 from django.conf import settings
@@ -24,6 +25,22 @@ def distance3D(a, b):
                      (b[2] - a[2]) ** 2)
 
 
+def elevation_profile(g):
+    """
+    Extract elevation profile from a 3D geometry.
+    """
+    # Initialize with null distance at start point
+    distance = 0.0
+    profile = [(distance, g.coords[0][2])]
+    # Add elevation and cumulative distance at each point
+    for i in range(1, len(g.coords)):
+        a = g.coords[i - 1]
+        b = g.coords[i]
+        distance += distance3D(a, b)
+        profile.append((distance, b[2],))
+    return profile
+
+
 def wkt_to_geom(wkt):
     try:
         geom = fromstr(wkt, srid=settings.API_SRID)
@@ -45,3 +62,11 @@ class classproperty(object):
         self.getter= getter
      def __get__(self, instance, owner):
          return self.getter(owner)
+
+
+def smart_urljoin(base, path):
+    if base[-1] != '/':
+        base += '/'
+    if path[0] == '/':
+        path = path[1:]
+    return urljoin(base, path)

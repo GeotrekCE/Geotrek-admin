@@ -42,6 +42,11 @@ var {{ module }}_settings = {
         
         'json': '{{ topologyjson|safe }}',  // If creation, will be empty.
         'objectBounds': {{ topology|latlngbounds }}
+    },
+    'colors': {
+        'paths': '{{ LAYERCOLOR_PATHS }}',
+        'land': '{{ LAYERCOLOR_LAND }}',
+        'others': '{{ LAYERCOLOR_OTHERS }}',
     }
 };
 

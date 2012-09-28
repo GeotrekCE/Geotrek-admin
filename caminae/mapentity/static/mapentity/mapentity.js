@@ -17,8 +17,7 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this._current_objects = {};
 
         this._cameleon = MapEntity.Cameleon.createDefaultCameleon();
-
-        this.spinner = null;
+        
         this.rtree = new RTree();
 
         var onFeatureParse = function (geojson, layer) {
@@ -31,6 +30,7 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         };
         
         if (!options) options = {};
+        options.indexing = options.indexing !== undefined ? options.indexing : true;
         options.highlight = options.highlight || typeof(options.objectUrl) != 'undefined';
         this._onEachFeature = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
@@ -98,6 +98,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         layer.properties = geojson.properties;
         
         // Spatial indexing
+        if (!this.options.indexing)
+            return;
         var bounds = null;
         if (layer instanceof L.MultiPolyline) {
             bounds = new L.LatLngBounds();
@@ -114,18 +116,41 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this.rtree.insert(this._rtbounds(bounds), layer);
     },
 
+    spin: function (state) {
+        if (!this._map) return;
+
+        if (state) {
+            // start spinning !
+            if (!this._map._spinner) {
+                this._map._spinner = new Spinner().spin(this._map._container);
+                this._map._spinning = 0;
+            }
+            this._map._spinning++;
+        }
+        else {
+            this._map._spinning--;
+            if (this._map._spinning == 0) {
+                // end spinning !
+                if (this._map._spinner) {
+                    this._map._spinner.stop();
+                    this._map._spinner = null;
+                }
+            }
+        }
+    },
+
     load: function (url) {
         var jsonLoad = function (data) {
             this.addData(data);
+            this.spin(false);
             this.fire('load');
-            if (this.spinner) this.spinner.stop();
         };
         var jsonError = function () {
-            if (this.spinner) this.spinner.stop();
+            this.spin(false);
             $(this._map._container).addClass('map-error');
             console.error("Could not load url '" + url + "'");
         };
-        if (this._map) this.spinner = new Spinner().spin(this._map._container);
+        this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
          .error(L.Util.bind(jsonError, this));
     },
@@ -182,12 +207,19 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         self._current_objects = new_objects;
     },
 
+    jumpTo: function (pk) {
+        var layer = this.getLayer(pk);
+        if (!layer) return;
+        this._map.fitBounds(layer.getBounds());
+    },
+
     highlight: function (pk, on) {
         var on = on === undefined ? true : on,
             layer = this.getLayer(pk);
         if (!layer) return;
         this._cameleon[on ? 'activate': 'deactivate']('highlight', layer);
     },
+
     select: function(pk, on) {
         var on = on === undefined ? true : on,
             layer = this.getLayer(pk);
@@ -197,48 +229,100 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
 });
 
 
+/**
+ * Get URL parameter in Javascript
+ * source: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
+ */
+function getURLParameter(name) {
+    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+    return decodeURIComponent(paramEncoded);
+}
+
+
 MapEntity.Context = new function() {
     var self = this;
 
-    self.saveFullContext = function(map, datatable) {
-        localStorage.setItem('list-map-view',
-                             map.getCenter().lat + ',' + map.getCenter().lng + ',' + map.getZoom());
-        localStorage.setItem('list-filter', $('#mainfilter').serialize());
+    self.serializeFullContext = function(map, filter, datatable) {
+        var context = {};
+        
+        // Map view
+        context['mapview'] = {'lat': map.getCenter().lat, 'lng': map.getCenter().lng, 'zoom': map.getZoom()};
+        
         // layers shown by name
         var layers = [];
         $('form.leaflet-control-layers-list input:checked').each(function () {
             layers.push($.trim($(this).parent().text()));
         });
-        localStorage.setItem('list-layers', JSON.stringify(layers));
+        context['maplayers'] = layers;
         
-        if (datatable) {
-            var sortcol = datatable.fnSettings().aaSorting;
-            localStorage.setItem('list-sortcolumns', JSON.stringify(sortcol));
-        }
-    };
-
-    self.restoreMapView = function(map) {
-        var mapView = localStorage.getItem('list-map-view');
-        if (mapView) {
-            mapView = mapView.split(',');
-            map.setView(L.latLng(mapView[0], mapView[1]), mapView[2]);
-        }
-    };
-
-    self.restoreFullContext = function(map, datatable, objectsname) {
-        self.restoreMapView(map);
-        var filter = localStorage.getItem('list-filter');
+        // Form filters
         if (filter) {
-            $('#mainfilter').deserialize(filter);
+            // exclude bbox field, since it comes from the map view.
+            var fields = $($('filter').serializeArray()).filter(function (){ return this.name != 'bbox'});
+            context['filter'] = $.param(fields);
         }
-        var sortcol = localStorage.getItem('list-sortcolumns');
-        if (sortcol) {
-            datatable.fnSort(JSON.parse(sortcol));
+        
+        // Sort columns
+        if (datatable) {
+            context['sortcolumns'] = datatable.fnSettings().aaSorting;
+        }
+        
+        // Extra-info, not restored so far but can be useful for screenshoting
+        context['url'] = window.location.toString();
+        context['viewport'] = {'width': $(window).width(), 'height': $(window).height()};
+        context['mapsize'] = {'width': $('.map-panel').width(), 'height': $('.map-panel').height()};
+
+        return JSON.stringify(context);
+    },
+
+    self.saveFullContext = function(map, filter, datatable) {
+        var serialized = self.serializeFullContext(map, filter, datatable);
+        localStorage.setItem('map-context', serialized);
+    };
+
+    self.__loadFullContext = function() {
+        var context = localStorage.getItem('map-context');
+        if (context)
+            return JSON.parse(context);
+        return null;
+    };
+
+    self.restoreMapView = function(map, context) {
+        if (!context) context = self.__loadFullContext();
+        if (context && context.mapview) {
+            map.setView(L.latLng(context.mapview.lat, context.mapview.lng), context.mapview.zoom);
+        }
+    };
+
+    self.restoreFullContext = function(map, filter, datatable, objectsname) {
+        var context = getURLParameter('context');
+        if (context) {
+            context = JSON.parse(context);
+        }
+        else {
+            // If not received from URL, load from LocalStorage
+            context = self.__loadFullContext();
+        }
+        if (!context)
+            return;  // No context, no restore.
+        
+        if (context.print) {
+            // Hide controls
+            $('.leaflet-control').hide();   // Hide all
+            $('.leaflet-control-scale').show(); // Show scale
+        }
+
+        self.restoreMapView(map, context);
+        
+        if (filter && context.filter) {
+            $(filter).deserialize(context.filter);
+        }
+        if (datatable && context.sortcolumns) {
+            datatable.fnSort(context.sortcolumns);
         }
         // Show layers by their name
-        var layers = localStorage.getItem('list-layers');
-        if (layers) {
-            layers = JSON.parse(layers);
+        if (context.maplayers) {
+            var layers = context.maplayers;
             layers.push(objectsname);
             $('form.leaflet-control-layers-list input').each(function () {
                 if ($.trim($(this).parent().text()) != objectsname) {
@@ -331,8 +415,6 @@ MapEntity.MarkerSnapping = L.Handler.extend({
 
     initialize: function (map, marker) {
         L.Handler.prototype.initialize.call(this, map);
-        var self = this;
-        this._snaplist = [];
         this._markers = []
         
         // Get necessary distance around mouse in lat/lng from distance in pixels
@@ -345,10 +427,6 @@ MapEntity.MarkerSnapping = L.Handler.extend({
             marker.dragging.enable();
             this.snapMarker(marker);
         }
-
-        this._closest = function(marker) {
-            return MapEntity.Utils.closest(map, marker, self._snaplist, self.SNAP_DISTANCE);
-        };
     },
 
     enable: function () {
@@ -460,12 +538,121 @@ MapEntity.Utils = (function() {
             return distance_found ? { 'distance': distance / xs_len, 'closest': closest_idx } : null;
         },
 
+        // todo accept an array of positions ?
+        getLatLngFromPos: function(map, polyline, pos_list, equal_delta) {
+            equal_delta === equal_delta === undefined ? 5 /*in meters*/ : equal_delta;
+
+            $.each(pos_list, function(i, pos) {
+                var prev_pos = pos[i - 1];
+                var sorted = prev_pos === undefined ? true : pos > prev_pos;
+
+                if (! (pos >= 0 && pos <= 1 && sorted)) {
+                    throw 'Wrong value: ' + pos_list;
+                }
+            });
+
+            // Polyline related
+            var polyline_lls = polyline.getLatLngs();
+            var d_len = self.getDistances(polyline_lls)
+              , polyline_len = d_len.length
+              , polyline_distances = d_len.distances;
+
+            var ds = $.map(pos_list, function(pos) { return polyline_len * pos; });
+
+            var res = [];
+            var i;
+
+            var current_distance = ds.shift()
+              , current_geom = [];
+
+            if (current_distance == 0) {
+                res.push(self.cloneLatLng(polyline_distances[0].x1));
+                current_distance = ds.shift()
+            }
+
+            for (i = 0; i < polyline_distances.length; i++) {
+                var dist = polyline_distances[i];
+                var new_acc = dist.acc + dist.distance;
+
+                var delta = Math.abs(current_distance - new_acc)
+                var distance_equal = delta < equal_delta;
+
+                if (distance_equal || current_distance < new_acc) {
+                    if (distance_equal) {
+                        // Same point
+                        res.push(self.cloneLatLng(dist.x2));
+                    } else { 
+                        // current_distance < new_acc
+                        // New point
+
+                        var dist_from_point = current_distance - dist.acc;
+                        var ratio_dist = dist_from_point / dist.distance;
+                        var ll = self.getPointOnLine(map, ratio_dist, dist.x1, dist.x2);
+
+                        res.push(ll);
+                    }
+
+                    if (ds.length == 0) break;
+                    current_distance = ds.shift()
+                }
+            }
+
+            return res;
+        },
+
+        cloneLatLng: function(latlng) {
+            return new L.LatLng(latlng.lat, latlng.lng);
+        },
+
+        getPointOnLine: function(map, ratio_dist, ll1, ll2) {
+            var p1 = map.project(ll1, 18)
+              , p2 = map.project(ll2, 18)
+              , d = p1.distanceTo(p2)
+              , point_distance = ratio_dist * d;
+
+            var coeff = self.getFunction(p1.x, p1.y, p2.x, p2.y);
+            var angle = Math.atan(coeff.a);
+
+            var sign_x = (p2.x - p1.x) > 0 ? -1 : 1;
+            // var sign_y = (p2.y - p1.y) > 0 ? 1 : -1;
+            // var y_new = p1.y + sign_y * point_distance * Math.cos(angle);
+
+            var x_new = p1.x + sign_x * point_distance * Math.sin(angle);
+            var y_new = coeff.a * x_new + coeff.b;
+
+            return map.unproject(new L.Point(x_new, y_new), 18);
+        },
+
+        getFunction: function(x1, y1, x2, y2) {
+            var a = (y2 - y1) / (x2 - x1);
+            var b = y1 - (a * x1);
+            return {'a': a, 'b': b};
+        },
+
+        getDistances: function(xs) {
+            var xs_len = 0, d, distances = [];
+
+            for (var i = 0; i < xs.length - 1; i++) {
+                var x1 = xs[i], x2 = xs[i+1];
+                d = x1.distanceTo(x2);
+
+                // acc: so far (without distance)
+                distances.push({
+                    'i1': i, 'i2': i+1,
+                    'x1': x1, 'x2': x2,
+                    'acc': xs_len, 'distance': d
+                });
+
+                xs_len += d
+            }
+            return {'length': xs_len, 'distances': distances};
+        },
+
         // Calculate length (works for either points or latlngs)
         length: function(xs) {
             var xs_len = 0;
             for (var i = 0; i < xs.length - 1; i++) {
-                var p1 = xs[i], p2 = xs[i+1];
-                xs_len += xs.distanceTo(xs);
+                xs_len += xs[i].distanceTo(xs[i+1]);
             }
             return xs_len;
         },
@@ -490,9 +677,12 @@ MapEntity.Utils = (function() {
         },
 
         closestOnLine: function (map, latlng, linestring) {
+            return self.closestOnLatLngs(map, latlng, linestring.getLatLngs());
+        },
+
+        closestOnLatLngs: function (map, latlng, lls) {
             // Iterate on line segments
-            var lls = linestring.getLatLngs(),
-                segmentmindist = Number.MAX_VALUE,
+            var segmentmindist = Number.MAX_VALUE,
                 ll = null;
             // Keep the closest point of all segments
             for (var j = 0; j < lls.length - 1; j++) {
@@ -536,9 +726,22 @@ MapEntity.Utils = (function() {
                     point = ll;
                 }
             }
+            // Try to snap on line points (extremities and middle points)
+            if (chosen && chosen.getLatLngs) {
+                var mindist = snap_distance,
+                    linepoint = null;
+                for (var i=0; i<chosen.getLatLngs().length; i++) {
+                    var lp = chosen.getLatLngs()[i], 
+                        distance = MapEntity.Utils.distance(map, point, lp);
+                    if (distance < mindist) {
+                        linepoint = lp;
+                        mindist = distance;
+                    }
+                }
+                if (linepoint) point = linepoint;
+            }
             return [chosen, point];
         }
-
     };
 })();
 

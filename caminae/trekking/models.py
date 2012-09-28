@@ -5,6 +5,8 @@ from django.db.models import Q
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
+from caminae.land.models import DistrictEdge
+from caminae.common.utils import elevation_profile
 
 
 class Trek(MapEntityMixin, TopologyMixin):
@@ -85,7 +87,19 @@ class Trek(MapEntityMixin, TopologyMixin):
                       aggregations__start_position__gte=a.start_position,
                       aggregations__end_position__lte=a.end_position
                   )]
-        return s
+        return POI.objects.filter(pk__in=[p.pk for p in s])
+
+    @property
+    def districts(self):
+        s = []
+        for a in self.aggregations.all():
+            s += [DistrictEdge.objects.get(pk=t.pk).district
+                  for t in a.path.topologymixin_set.existing().filter(
+                      kind=DistrictEdge.KIND,
+                      aggregations__start_position__lte=a.end_position,
+                      aggregations__end_position__gte=a.start_position
+                  )]
+        return list(set(s))
 
     @property
     def poi_types(self):
@@ -110,12 +124,20 @@ class Trek(MapEntityMixin, TopologyMixin):
                  'label': u.usage} for u in self.usages.all()]
 
     @property
+    def elevation_profile(self):
+        return elevation_profile(self.geom)
+
+    @property
     def is_loop(self):
         return self.departure == self.arrival
 
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -283,6 +305,10 @@ class POI(MapEntityMixin, TopologyMixin):
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
 
     @property
     def treks(self):

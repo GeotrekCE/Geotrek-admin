@@ -960,6 +960,7 @@ normalement.
 
 Après validation du formulaire, vous pouvez constater que les évènements ont été
 mis à jour :
+
 * Les évènements faisant le lien avec les couches SIG reflètent bien les
   relations actuelles entre le tronçon et les différentes entités des couches
   SIG.
@@ -1198,4 +1199,288 @@ de modification et une image avec une carte centrée sur l'objet.
 
 
 
+========================
+Sprint 5 - Version 0.5.0
+========================
+
+#209 - Exporter tous les attributs d'un itinéraire en JSON
+----------------------------------------------------------
+
+Les propriétés d'un itinéraire sont accessibles à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/trek-<ID>.json
+
+(Remplacez ``<ID>`` par l'identifiant de l'itinéraire désiré.
+
+Note: seuls les itinéraires avec le statut "publié" sont consultable à cette
+adresse.
+
+#206 - Exporte le profil altimétrique d'un itinéraire en JSON
+-------------------------------------------------------------
+
+Le profile d'un itinéraire est accessible à l'adresse :
+
+http://geobi.makina-corpus.net/ecrins-sentiers/api/trek/profile-<ID>.json
+
+(Remplacez ``<ID>`` par l'identifiant de l'itinéraire souhaité).
+
+Note: seuls les profiles des itinéraires avec le statut "publié" sont
+consultable à cette adresse.
+
+#251 - Ajouter/éditer/supprimer des éléments des couches SIG et déclencher les triggers
+---------------------------------------------------------------------------------------
+
+Lors de l'ajout, de la modification ou de la suppression d'un élément dans les
+couches SIG (secteur, commune, zonage), les relations avec les tronçons sont
+maintenues à jour.
+
+On pourra plus facilement le vérifier avec PgAdmin.
+
+#170 - Définir les couleurs de couche : tronçons et entité
+----------------------------------------------------------
+
+Sur toutes les cartes, les tronçons apparaissent d'une couleur et les autres objets métiers d'une autre couleur.
+
+Ces couleurs sont paramétrables dans les settings Django.
+
+
+#240 - Ajouter une intervention depuis un sentier
+-------------------------------------------------
+
+La fiche sentier affiche désormais la liste des interventions associées 
+aux tronçons qui le composent.
+
+Il est possible d'ajouter une intervention sur le sentier, le comportement
+est similaire à l'ajout d'une intervention sur un tronçon : il s'agit juste
+du centrage de la carte sur le sentier.
+
+#35 - Supprimer un tronçon et déclencher les triggers
+-----------------------------------------------------
+
+Si un itinéraire emprunte le tronçon supprimé, il est dépublié.
+
+Si un événement est composé de ce troncon uniquement, son statut supprimé
+devient vrai.
+
+#231 - Snapper sur les noeuds des tronçons (en plus des segments)
+-----------------------------------------------------------------
+
+Lors du déplacement des marqueurs, le snapping s'effectue sur les tronçons et
+sur les points qui composent sa ligne brisée (extrémités et points intermédiaires).
+
+#192 - Quand on est sur une fiche, reprendre le picto qui correspond au type d'objet pour bien identifier sur quel type d'objet je travaille.
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Le picto est désormais affiché dans l'ongle, la fiche et le formulaire.
+
+#198 - Configuration des langues
+--------------------------------
+
+L'usage de différentes langues est bien paramétrable et non figé en nombre ?
+............................................................................
+
+Oui, il est possible de rajouter des langues. La procédure est la suivante :
+
+1. Ajouter les langues dans ``settings.LANGUAGES``
+
+2. Extraire les évolutions des modèles pour les applications faisaint usage des
+   traductions ::
+
+    bin/django schemamigration common --auto
+    bin/django schemamigration trekking --auto
+    bin/django schemamigration land --auto
+
+3. Mettre à jour la base de données ::
+
+    bin/django syncdb --noinput --migrate
+
+Vérifier que les champs des formulaires sont bien automatiquement ajoutés
+.........................................................................
+
+Lorsqu'un champs traduit est insérée dans un formulaire, il est automatiquement
+répliqué autant de fois qu'il y a de langues définie dans
+``settings.LANGUAGES``.
+
+On peut le constater en affichant le formulaire d'édition des itinéraires après
+avec rajouté une langue (voir ci-dessus).
+
+#185 - Ajouter une option ZOOMER SUR L'OBJET depuis la liste
+------------------------------------------------------------
+
+En double-cliquant sur une ligne de la liste, la carte se centre sur l'objet.
+
+Cela fonctionne aussi pour des points.
+
+:notes:
+
+    Afin de rester cohérent avec le comportement actuel, la liste se restreint
+    alors aux objets affichés sur la carte. 
+    Dans la mesure où cette fonctionnalité pourrait s'avérer pertubante, puisqu'elle
+    vide la liste, nous avons décidé de ne pas l'exposer aux utilisateurs avec un bouton.
+
+
+#269 - Gérer l'ajout de nouveaux settings lors de l'upgrade
+-----------------------------------------------------------
+
+En lançant le process ``./install.sh`` les settings du fichier ``etc/settings.ini`` sera
+complété avec toutes les valeurs par défaut des paramètres apparus depuis le dernier
+déploiement.
+
+#49 - Exporter la fiche au format PDF
+-------------------------------------
+
+Il est désormais possible d'obtenir la version PDF de la fiche d'un objet.
+
+#236 - Envoyer un mail aux admins sur exception (internal error)
+----------------------------------------------------------------
+
+Configurer l'envoi d'email dans le fichier ``etc/settings.ini`` et un mail sera
+envoyé à chaque erreur interne.
+
+Pour tester, arrêter le service postgresql par exemple.
+
+
+#250 - Topologie : calcul en JS d'un lat/lng d'un point sur un tronçon à partir de debut/fin
+--------------------------------------------------------------------------------------------
+
+Partie purement technique.
+
+#249 - Topologie : dé/sérialization des contraintes de point de passage
+-----------------------------------------------------------------------
+
+Partie purement technique.
+
+#248 - Calcul du plus court chemin : prendre en compte la position du point sur le tronçon
+------------------------------------------------------------------------------------------
+
+Sur la page d'ajout d'une intervention, lors d'une saisie multitronçons, le calcul
+du plus court chemin prend en compte la position du point sur le tronçon
+(et non pas une des deux extrémités du tronçon comme point).
+Le tronçon original est séparé par le point en deux autres tronçons 'virtuels'
+dont le poids est réparti proportionnellement à leur longueur.
+
+
+#134 - Ajouter des points de passage forcés à la saisie multitronçons
+---------------------------------------------------------------------
+
+Ajout de passage forcés 'à la Google Maps' :
+
+- Au survol de l'itinéraire calculé, un marqueur intermédiaire apparait
+- Le démarrage d'une action de drag sur ce marqueur l'ajoute comme une contrainte intermédiaire
+- Lors du drag sur un marqueur intermédiaire, le marqueur se "snappe" au réseau existant et l'itinéraire
+  le plus court est recalculé à la volée
+- Un clic sur le marqueur intermédiare, supprime le marqueur et la contrainte
+- La sauvegarde ainsi que l'édition d'un itinéraire possédant de telles contraintes fonctionne.
+
+
+
+#205 - Liste des POI d'un itinéraire au format GeoJSON
+---------------------------------------------------
+
+Pour un itinéraire, la liste de ses POIs est disponible à l'adresse 
+``http://server/api/trek/<id>/pois.geojson``. 
+
+Cela servira au portail rando, pour afficher les POIs sur la fiche détail d'un itinéraire.
+
+
+#224 - Afficher les couches des secteurs et communes
+-------------------------------------------------
+
+Dans le sélecteur de couches, il est désormais possible d'afficher les secteurs
+et les communes. L'état affiché/caché de chaque couche est conservé d'une session à l'autre.
+
+#66 - Exporter l'itinéraire au format GPX
+---------------------------------------
+
+Pour un itinéraire, sa trace GPX est disponible à l'adresse 
+``http://server/api/trek/trek-<id>.gpx``. 
+
+
+
+#79 - Authentification sur table/vue externe
+--------------------------------------------
+
+Lors de l'exécution de ``./install.sh``, des nouveaux paramètres vont
+être ajoutés au fichier de configuration ``etc/settings.ini``. Pour avoir
+leur description, reportez vous au nouveau fichier d'exemple situé dans *caminae/conf/settings.ini.sample*.
+
+Un paragraphe a également été ajouté au README décrivant la structure de la
+table/vue attendue.
+
+Si le paramètre ``authent_dbname`` est non vide, l'identification des utilisateurs
+se fait à travers la table externe. Les autres paramètres (``authent_XXX``) deviennent alors
+obligatoires.
+
+* Activer l'authent en configurant le fichier de settings.
+* Vérifier que le login fonctionne (password en md5 dans la vue, cf. README)
+* Vérifier que la gestion des utilisateurs est bien désactivée dans l'admin.
+* Vérifier que l'utilisateur a bien les droits adéquats en fonction de la colonne *level*
+* Vérifier que les droits sont bien raffraichis à chaque déconnexion-reconnexion
+* Vérifier qu'un changement de password dans la table fait bien échouer le login
+
+#228- Gestion des utilisateurs
+------------------------------
+
+Pour désactiver l'identification des utilisateurs sur une table distante. Enlever
+la valeur de ``authent_dbname`` et exécuter ``make deploy``.
+
+
+#243 - [BUG] Le CSV contient de l'html pour les noms
+----------------------------------------------------
+
+Corrigé.
+
+#242 - [BUG] Le CSV n'a pas de headers
+--------------------------------------
+
+Corrigé.
+
+Le header du CSV est créé à partir du nom des colonnes, i.e.:
+ils seront identiques aux headers du tableau dans la vue liste de chaque entité.
+
+
+#238 - Afficher les liens vers les objects liés plutot que oui/non
+------------------------------------------------------------------
+
+Détail projet: ajout d'un lien vers intervention
+Détail intervention: ajout de lien sur projet, infrastructure et signage
+
+
+#55 - Exporter la carte assemblée au format image
+-------------------------------------------------
+
+Cliquer sur le bouton "Screenshot". Une image est proposée au téléchargement,
+le nom de fichier contient la date. L'image respecte la position de la carte
+et les couches affichées.
+
+Déplacer la carte, décocher des couches, observer que l'image exportée est correcte.
+
+:notes:
+
+    Problèmes connus:
+    
+    * les objects vectoriels sont décalés sur l'image.
+    * l'obtention de l'image est longue, cela est dû au cache qui n'est pas actif pour l'impression.
+
+
+#241 - Filtres sur foncier
+--------------------------
+
+Je peux filtrer de nombreuses entités en fonction de filtre de type foncier.
+
+Types de filtre:
+
+    * Organisme compétent
+    * Organisme en charge de la gestion signalétique
+    * Organisme en charge de la gestion travaux
+
+Entités pouvant être filtrées:
+
+    * Tronçon
+    * Intervention
+    * Projet
+    * Itinéraire
+    * POI
+    * Signage
+    * Infrastructure
 

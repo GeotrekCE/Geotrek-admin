@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
@@ -16,40 +17,24 @@ class TrekForm(TopologyMixinForm):
     parking_location = forms.gis.GeometryField(widget=PointWidget)
 
     modelfields = (
-            'name_fr',
-            'name_it',
-            'name_en',
-            'departure_fr',
-            'departure_it',
-            'departure_en',
-            'arrival_fr',
-            'arrival_en',
-            'arrival_it',
+            'name',
+            'departure',
+            'arrival',
             'published',
             'difficulty',
             'route',
             'destination',
-            'description_teaser_fr',
-            'description_teaser_it',
-            'description_teaser_en',
-            'description_fr',
-            'description_it',
-            'description_en',
-            'ambiance_fr',
-            'ambiance_it',
-            'ambiance_en',
-            'disabled_infrastructure_fr',
-            'disabled_infrastructure_it',
-            'disabled_infrastructure_en',
+            'description_teaser',
+            'description',
+            'ambiance',
+            'disabled_infrastructure',
             'duration',
             'is_park_centered',
             'is_transborder',
             'advised_parking',
             'parking_location',
             'public_transport',
-            'advice_fr',
-            'advice_it',
-            'advice_en',
+            'advice',
             'themes',
             'main_themes',
             'networks',
@@ -66,19 +51,12 @@ class TrekForm(TopologyMixinForm):
 
     class Meta(TopologyMixinForm.Meta):
         model = Trek
-        exclude = TopologyMixinForm.Meta.exclude + ('name', 'departure', 'arrival', 
-                   'description', 'description_teaser', 'ambiance', 'advice',
-                   'disabled_infrastructure',)  # TODO, fix modeltranslations
 
 
 class POIForm(TopologyMixinForm):
     modelfields = (
-            'name_fr',
-            'name_it',
-            'name_en',
-            'description_fr',
-            'description_it',
-            'description_en',
+            'name',
+            'description',
             'type',
             )
 
@@ -88,7 +66,6 @@ class POIForm(TopologyMixinForm):
 
     class Meta(TopologyMixinForm.Meta):
         model = POI
-        exclude = TopologyMixinForm.Meta.exclude + ('name', 'description')  # TODO: topology editor
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
@@ -99,18 +76,13 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         self.helper.form_action = self.instance.get_add_url()
         # Main form layout
         self.helper.form_class = 'form-horizontal'
-        self.helper.layout = Layout(
-            'name_fr',
-            'name_en',
-            'name_it',
-            'url',
-            'thumbnail',
-            FormActions(
-                HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
-                Submit('save_changes', _('Create'), css_class="btn-primary"),
-                css_class="form-actions",
-            )
-        )
+        arg_list = ['name_{0}'.format(l[0]) for l in settings.LANGUAGES]
+        arg_list += ['url', 'thumbnail', FormActions(
+            HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
+            Submit('save_changes', _('Create'), css_class="btn-primary"),
+            css_class="form-actions",
+        )]
+        self.helper.layout = Layout(*arg_list)
     class Meta:
         model = WebLink
-        exclude = ('name', )
+        exclude = ('name',)

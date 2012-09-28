@@ -1,6 +1,127 @@
 [
     {
-        "pk": 84,
+        "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Histoire",
+            "label_fr": "Histoire",
+            "label_it": "Storia",
+            "label_en": "History"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Nature",
+            "label_fr": "Nature",
+            "label_it": "Natura",
+            "label_en": "Nature"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "",
+            "label": "Sport",
+            "label_fr": "Sport",
+            "label_it": "Sport",
+            "label_en": "Sport"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Picolo patrimonio",
+            "pictogram": "upload/church.png",
+            "label_en": "Small patrimony",
+            "label_fr": "Petit patrimoine",
+            "label": "Petit patrimoine"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Flora",
+            "pictogram": "upload/flora.png",
+            "label_en": "Flora",
+            "label_fr": "Flore",
+            "label": "Flore"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Fauna",
+            "pictogram": "upload/fauna.png",
+            "label_en": "Fauna",
+            "label_fr": "Faune",
+            "label": "Faune"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Panorama",
+            "pictogram": "upload/panorama.png",
+            "label_en": "Panorama",
+            "label_fr": "Point de vue",
+            "label": "Point de vue"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Rifugio",
+            "pictogram": "upload/refuge.png",
+            "label_en": "Refuge",
+            "label_fr": "Refuge",
+            "label": "Refuge"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Lago",
+            "pictogram": "upload/lake.png",
+            "label_en": "Lake",
+            "label_fr": "Lac",
+            "label": "Lac"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Picco",
+            "pictogram": "upload/peak.png",
+            "label_en": "Peak",
+            "label_fr": "Sommet",
+            "label": "Sommet"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Geologia",
+            "pictogram": "upload/geology.png",
+            "label_en": "Geology",
+            "label_fr": "Géologie",
+            "label": "Géologie"
+        }
+    },
+    {
+        "pk": 800000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "TREK",
@@ -13,27 +134,27 @@
         }
     },
     {
-        "pk": 666,
+        "pk": 80000,
         "model": "core.pathaggregation",
         "fields": {
             "path": 1574,
             "end_position": 1.0,
             "start_position": 0.80185742780659,
-            "topo_object": 84
+            "topo_object": 800000
         }
     },
     {
-        "pk": 667,
+        "pk": 80001,
         "model": "core.pathaggregation",
         "fields": {
             "path": 1575,
             "end_position": 1.0,
             "start_position": 0.671521039360522,
-            "topo_object": 84
+            "topo_object": 800000
         }
     },
     {
-        "pk": 84,
+        "pk": 800000,
         "model": "trekking.trek",
         "fields": {
             "is_park_centered": false,
@@ -152,41 +273,10 @@
             "thumbnail": "upload/fe.jpg"
         }
     },
+
+
     {
-        "pk": 1,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Histoire",
-            "label_fr": "Histoire",
-            "label_it": "Storia",
-            "label_en": "History"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Nature",
-            "label_fr": "Nature",
-            "label_it": "Natura",
-            "label_en": "Nature"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Sport",
-            "label_fr": "Sport",
-            "label_it": "Sport",
-            "label_en": "Sport"
-        }
-    },
-    {
-        "pk": 79,
+        "pk": 900000,
         "model": "core.topologymixin",
         "fields": {
             "kind": "POI",
@@ -199,17 +289,17 @@
         }
     },
     {
-        "pk": 668,
+        "pk": 90000,
         "model": "core.pathaggregation",
         "fields": {
             "path": 1574,
             "end_position": 0.5,
             "start_position": 0.5,
-            "topo_object": 79
+            "topo_object": 900000
         }
     },
     {
-        "pk": 79,
+        "pk": 900000,
         "model": "trekking.poi",
         "fields": {
             "name_fr": "Chapelle",
@@ -221,94 +311,6 @@
             "name_en": "Chapel",
             "type": 1,
             "description": "<p>Very nice</p>"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Picolo patrimonio",
-            "pictogram": "upload/church.png",
-            "label_en": "Small patrimony",
-            "label_fr": "Petit patrimoine",
-            "label": "Petit patrimoine"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Flora",
-            "pictogram": "upload/flora.png",
-            "label_en": "Flora",
-            "label_fr": "Flore",
-            "label": "Flore"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Fauna",
-            "pictogram": "upload/fauna.png",
-            "label_en": "Fauna",
-            "label_fr": "Faune",
-            "label": "Faune"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Panorama",
-            "pictogram": "upload/panorama.png",
-            "label_en": "Panorama",
-            "label_fr": "Point de vue",
-            "label": "Point de vue"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Rifugio",
-            "pictogram": "upload/refuge.png",
-            "label_en": "Refuge",
-            "label_fr": "Refuge",
-            "label": "Refuge"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Lago",
-            "pictogram": "upload/lake.png",
-            "label_en": "Lake",
-            "label_fr": "Lac",
-            "label": "Lac"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Picco",
-            "pictogram": "upload/peak.png",
-            "label_en": "Peak",
-            "label_fr": "Sommet",
-            "label": "Sommet"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "trekking.poitype",
-        "fields": {
-            "label_it": "Geologia",
-            "pictogram": "upload/geology.png",
-            "label_en": "Geology",
-            "label_fr": "Géologie",
-            "label": "Géologie"
         }
     }
 ]

@@ -65,7 +65,7 @@ FormField.makeModule = function(module, module_settings) {
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
             var pathsLayer = new MapEntity.ObjectsLayer(null, {
-                style: {weight: 2, clickable: true},
+                style: {weight: 2, clickable: true, color: module_settings.colors.paths},
             });
             map.addLayer(pathsLayer);
             snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
@@ -98,8 +98,9 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         // Start loading all objects, readonly
+        var color = modelname == 'path' ? module_settings.colors.paths : module_settings.colors.others;
         var objectsLayer = new MapEntity.ObjectsLayer(null, {
-                style: {weight: 2, clickable: true},
+            style: {weight: 2, clickable: true, 'color': color},
                 filter: exclude_current_object
             }),
             url = module_settings.addObjectsLayer.getUrl(modelname);
@@ -111,15 +112,31 @@ FormField.makeModule = function(module, module_settings) {
     module.getMarkers = function(map, snapObserver) {
         // snapObserver and map are required to setup snappable markers
         // returns marker with an on('snap' possibility ?
-        var markerFactory = {
-            generic: function (latlng, layer, classname) {
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
-                map.addLayer(marker);
-                $(marker._icon).addClass(classname);
+        var dragging = false;
+        function setDragging() { dragging = true; };
+        function unsetDragging() { dragging = false; };
+        function isDragging() { return dragging; };
+
+        var markersFactory = {
+            isDragging: isDragging,
+            makeSnappable: function(marker) {
                 marker.editing = new MapEntity.MarkerSnapping(map, marker);
                 marker.editing.enable();
                 snapObserver.add(marker);
-                // marker.on('snap', function() {});
+                marker.on('dragstart', setDragging);
+                marker.on('dragend', unsetDragging);
+            },
+            generic: function (latlng, layer, classname, snappable) {
+                snappable = snappable === undefined ? true : snappable;
+
+                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
+                map.addLayer(marker);
+
+                $(marker._icon).addClass(classname);
+
+                if (snappable)
+                    this.makeSnappable(marker);
+
                 return marker;
             },
             source: function(latlng, layer) {
@@ -127,10 +144,28 @@ FormField.makeModule = function(module, module_settings) {
             },
             dest: function(latlng, layer) {
                 return this.generic(latlng, layer, 'marker-target');
+            },
+            via: function(latlng, layer, snappable) {
+                return this.generic(latlng, layer, 'marker-via', snappable);
+            },
+            drag: function(latlng, layer, snappable) {
+                // FIXME: static
+                var icon = new L.Icon({
+                    iconUrl: '/static/images/osrm_markers/marker-drag.png'
+                    , iconSize: new L.Point(18, 18)
+                });
+
+                var marker = new L.Marker(latlng, {'draggable': true, 'icon': icon });
+
+                map.addLayer(marker);
+                if (snappable)
+                    this.makeSnappable(marker);
+
+                return marker;
             }
         };
 
-        return markerFactory;
+        return markersFactory;
     };
 
     module.enableMultipath = function(map, objectsLayer, layerStore, onStartOver, snapObserver) {
@@ -169,9 +204,13 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 })();
 
+                var drawOnMouseMove = null;
+
                 onStartOver.on('startover', function() {
                     markPath.updateGeom(null);
                     multipath_handler.unmarkAll();
+
+                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
                 });
                 multipath_handler.on('unsnap', function () {
                     markPath.updateGeom(null);
@@ -182,18 +221,148 @@ FormField.makeModule = function(module, module_settings) {
                 });
 
 
+                // Draggable marker initialisation and step creation
+                var draggable_marker = null;
+                (function() {
+                    function dragstart(e) {
+                        var next_step_idx = draggable_marker.group_layer.step_idx + 1;
+                        multipath_handler.addViaStep(draggable_marker, next_step_idx);
+                    }
+                    function dragend(e) {
+                        draggable_marker.off('dragstart', dragstart);
+                        draggable_marker.off('dragend', dragend);
+                        init();
+                    }
+                    function init() {
+                        draggable_marker = markersFactory.drag(new L.LatLng(0, 0), null, true);
+
+                        draggable_marker.on('dragstart', dragstart);
+                        draggable_marker.on('dragend', dragend);
+                        map.removeLayer(draggable_marker);
+                    }
+
+                    init();
+                })();
+
                 multipath_handler.on('computed_paths', function(data) {
-                    var new_edges = data['new_edges']
-                      , marker_source = data['marker_source']
-                      , marker_dest = data['marker_dest']
-                      , ll_start = marker_source.getLatLng()
-                      , ll_end = marker_dest.getLatLng();
+                    var computed_paths = data['computed_paths']
+                      , new_edges = data['new_edges'];
+
+                    var cpath, data = [], topo;
+                    for (var i = 0; i < computed_paths.length; i++ ) {
+                        cpath = computed_paths[i];
+                        topo = createTopology(cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
+                        topo.from_pop = cpath.from_pop;
+                        topo.to_pop = cpath.to_pop;
+                        data.push(topo);
+                    }
+
+                    var group_layers = $.map(data, function(topo, idx) {
+                        var polylines = $.map(topo.array_lls, function(lls) {
+                            return new L.Polyline(lls);
+                        });
+                        // var group_layer = new L.FeatureGroup(polylines);
+                        // var group_layer = new L.MultiPolyline(polylines);
+                        var group_layer = new L.FeatureGroup(polylines);
+
+                        group_layer.from_pop = topo.from_pop;
+                        group_layer.to_pop = topo.to_pop;
+                        group_layer.step_idx = idx;
+
+                        return group_layer;
+                    });
+
+                    var super_layer = new L.FeatureGroup(group_layers);
+                    markPath.updateGeom(super_layer);
+
+                    // ## ONCE ##
+                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
+
+                    var dragTimer = new Date();
+                    drawOnMouseMove = function(a) {
+                        var date = new Date();
+                        if ((date - dragTimer) < 25) {
+                            return;
+                        }
+                        if (markersFactory.isDragging()) {
+                            return;
+                        }
+
+                        dragTimer = date;
+
+
+                        for (var i = 0; i < multipath_handler.steps.length; i++) {
+                            // Compare point rather than ll
+                            var marker_ll = multipath_handler.steps[i].marker.getLatLng();
+                            var marker_p = map.latLngToLayerPoint(marker_ll);
+
+                            if (marker_p.distanceTo(a.layerPoint) < 10) {
+                                map.removeLayer(draggable_marker);
+                                return;
+                            }
+                        }
+
+                        var MIN_DIST = 30;
+
+                        var layerPoint = a.layerPoint
+                          , min_dist = Number.MAX_VALUE
+                          , closest_point = null
+                          , matching_group_layer = null;
+
+                        super_layer.eachLayer(function(group_layer) {
+                            group_layer.eachLayer(function(layer) {
+                                var p = layer.closestLayerPoint(layerPoint);
+                                if (p && p.distance < min_dist && p.distance < MIN_DIST) {
+                                    min_dist = p.distance;
+                                    closest_point = p;
+                                    matching_group_layer = group_layer;
+                                }
+                            });
+                        });
+
+                        if (closest_point) {
+                            draggable_marker.setLatLng(map.layerPointToLatLng(closest_point));
+                            draggable_marker.addTo(map);
+                            draggable_marker.group_layer = matching_group_layer;
+                        } else {
+                            map.removeLayer(draggable_marker);
+                        }
+                    };
+
+                    map.on('mousemove', drawOnMouseMove);
+
+                    // assemble topologies
+                    var positions = data[0].topology.positions
+                      , paths = data[0].topology.paths;
+
+                    for (var k = 1; k < data.length; k++) {
+                        var data_topology = data[k].topology;
+                        // substract one as we delete first position
+                        var offset = paths.length - 1;
+
+                        // avoid the first one
+                        paths = paths.concat(data_topology.paths.slice(1));
+
+                        delete data_topology.positions[0]
+                        $.each(data_topology.positions, function(k, v) {
+                            positions[parseInt(k) + offset] = v;
+                        });
+                    }
+
+                    var topology = {
+                        offset: 0,  // TODO: input for offset
+                        positions: positions,
+                        paths: paths
+                    };
+                    layerStore.storeLayerGeomInField(topology);
+                });
+
+                function createTopology(computed_path, from_pop, to_pop, new_edges) {
+                    var ll_start = from_pop.ll
+                      , ll_end = to_pop.ll;
 
                     var paths = $.map(new_edges, function(edge) { return edge.id; });
                     var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
-
-                    if (layers.length == 0)
-                        return;  // TODO: clean-up before give-up ?
 
                     var polyline_start = layers[0];
                     var polyline_end = layers[layers.length -1];
@@ -202,50 +371,35 @@ FormField.makeModule = function(module, module_settings) {
 
                     var start = percentageDistance(ll_start, polyline_start)
                       , end = percentageDistance(ll_end, polyline_end);
+
                     if (!start || !end)
                         return;  // TODO: clean-up before give-up ?
 
                     var new_topology = Caminae.TopologyHelper.buildTopologyGeom(layers, ll_start, ll_end, start, end);
-                    var new_topology_geom = new_topology.geom;
-                    markPath.updateGeom(new_topology_geom);
 
-                    // visual check
-                    if (false) {
-                        // Highlight segments to clearly see start and end
-                        cameleon.activate('highlight', polyline_start);
-                        cameleon.activate('highlight', polyline_end);
-                        // Highligh the start point to see the order of points in the polyline
-                        new L.Marker(polyline_start.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
-                        new L.Marker(polyline_end.getLatLngs()[0], {'opacity': 0.5}).addTo(map);
-                        // Check the chosen point from which the distance was calculated
-                        new L.Marker(start.closest).addTo(map);
-                        new L.Marker(end.closest).addTo(map);
-                    }
-
-                    // Do not inverse start and end point => do not inverse markers
-                    // Those are only used on javascript side (may be inverted in the database)
-                    var _start_ll = {lat: ll_start.lat, lng: ll_start.lng }
-                      , _end_ll = {lat: ll_end.lat, lng: ll_end.lng }
-                    ;
-                    var _paths = paths;
                     if (new_topology.is_single_path) {
                         if (paths.length > 1) {
                             // Only get the first one
-                            _paths = _paths.slice(0, 1);
+                            paths = paths.slice(0, 1);
                         }
-
                     }
+
+                    var sorted_positions = {};
+                    $.each(new_topology.positions, function(k, v) {
+                        sorted_positions[k] = v.sort()
+                    });
 
                     var topology = {
                         offset: 0,  // TODO: input for offset
-                        positions: new_topology.positions,
-                        paths: _paths,
-                        // Won't be on django side but in case there is a form error, will be there !
-                        start_point: _start_ll,
-                        end_point: _end_ll
+                        positions: sorted_positions,
+                        paths: paths
                     };
-                    layerStore.storeLayerGeomInField(topology);
-                });
+
+                    return {
+                        topology: topology
+                      , array_lls: new_topology.latlngs
+                    };
+                }
 
                 map.addControl(multipath_control);
 
@@ -255,14 +409,73 @@ FormField.makeModule = function(module, module_settings) {
                 // core.models#TopologyMixin.serialize
                 if (initialTopology) {
                     // This topology should contain postgres calculated value (start/end point as latln)
-                    var topo =  JSON.parse(initialTopology);
-                    var state = {
-                        start_ll: new L.LatLng(topo.start_point.lat, topo.start_point.lng),
-                        end_ll: new L.LatLng(topo.end_point.lat, topo.end_point.lng),
-                        start_layer: objectsLayer.getLayer(topo.paths[0]),
-                        end_layer: objectsLayer.getLayer(topo.paths[topo.paths.length - 1])
-                    };
-                    multipath_handler.setState(state);
+                    var topo =  JSON.parse(initialTopology)
+                      , paths = topo.paths
+                      , positions = topo.positions;
+
+                    // Only first and last positions
+                    if (paths.length == 1) {
+                        // There is only one path, both positions values are relevant
+                        // and each one represents a marker
+                        var first_pos = positions[0][0];
+                        var last_pos = positions[0][1];
+
+                        var start_layer = objectsLayer.getLayer(paths[0]);
+                        var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
+
+                        var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
+                        var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
+
+                        var state = {
+                            start_ll: start_ll,
+                            end_ll: end_ll,
+                            start_layer: start_layer,
+                            end_layer: end_layer
+                        };
+                        multipath_handler.setState(state);
+
+                    } else {
+
+                        var layer_ll_s = [];
+                        $.each(positions, function(k, pos) {
+                            // default value: this is not supposed to be a marker ?!
+                            if (pos[0] == 0 && pos[1] == 1)
+                                return;
+
+                            var path_idx = parseInt(k);
+                            var layer = objectsLayer.getLayer(paths[path_idx]);
+                            // Look for the relevant value:
+                            // 0 is the default in first_position, get the other value
+                            var used_pos = pos[0] == 0 ? pos[1] : pos[0];
+
+                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ])[0];
+
+                            layer_ll_s.push({
+                                layer: layer,
+                                ll: ll
+                            });
+                        });
+
+                        var start_layer_ll = layer_ll_s.shift();
+                        var end_layer_ll = layer_ll_s.pop();
+
+                        var via_markers = $.map(layer_ll_s, function(layer_ll) {
+                            return {
+                                layer: layer_ll.layer,
+                                marker: markersFactory.drag(layer_ll.ll, null, true)
+                            };
+                        });
+
+                        var state = {
+                            start_ll: start_layer_ll.ll,
+                            end_ll: end_layer_ll.ll,
+                            start_layer: start_layer_ll.layer,
+                            end_layer: end_layer_ll.layer,
+                            via_markers: via_markers
+                        };
+
+                        multipath_handler.setState(state);
+                    }
                 }
 
             });

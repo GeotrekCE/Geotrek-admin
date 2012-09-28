@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.common.utils import distance3D, classproperty
+from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 import caminae.infrastructure as inf
 import caminae.land as land
@@ -131,24 +131,26 @@ class Path(MapEntityMixin, StructureRelated):
         """
         Extract elevation profile from path.
         """
-        coords = self.geom.coords
-        profile = [(0.0, coords[0][2])]
-        distance = 0
-        for i in range(1, len(coords)):
-            a = coords[i - 1]
-            b = coords[i]
-            distance += distance3D(a, b)
-            profile.append((distance, b[2],))
-        return profile
+        return elevation_profile(self.geom)
 
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)
 
     @property
+    def name_csv_display(self):
+        return unicode(self)
+
+    @property
     def trail_display(self):
         if self.trail:
             return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
+        return _("None")
+
+    @property
+    def trail_csv_display(self):
+        if self.trail:
+            return unicode(self.trail)
         return _("None")
 
     @property
@@ -407,30 +409,25 @@ class TopologyMixin(NoDeleteMixin):
 
             paths = list(aggregations.values_list('path__pk', flat=True))
             # We may filter out aggregations that have default values (0.0 and 1.0)...
-            positions = dict((i, (a.start_position, a.end_position))
-                             for i, a in enumerate(aggregations))
-
-            # Create the markers points to be used with much more ease on javascript side
-            # (will be even easier/faster when more 'intermediary' markers will show up)
-            geom = Point(self.geom.coords[0], srid=settings.SRID)
-            start_point = geom.transform(settings.API_SRID, clone=True)
-
-            geom = Point(self.geom.coords[-1], srid=settings.SRID)
-            end_point = geom.transform(settings.API_SRID, clone=True)
+            positions = dict(
+                (i, (a.start_position, a.end_position))
+                for i, a in enumerate(aggregations)
+                if (a.start_position, a.end_position) != (0, 1)
+            )
 
             objdict = dict(kind=self.kind,
                            offset=self.offset,
                            positions=positions,
                            paths=paths,
-                           # Easy helper to be used by the javascript side for markers
-                           start_point=dict(lng=start_point.x, lat=start_point.y),
-                           end_point=dict(lng=end_point.x, lat=end_point.y),
                            )
         return simplejson.dumps(objdict)
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False, db_column='troncon', verbose_name=_(u"Path"), related_name="aggregations")
+    path = models.ForeignKey(Path, null=False, db_column='troncon',
+                             verbose_name=_(u"Path"),
+                             related_name="aggregations",
+                             on_delete=models.DO_NOTHING) # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
@@ -523,11 +520,18 @@ class Trail(MapEntityMixin, StructureRelated):
 
     @property
     def geom(self):
-        paths = Path.objects.filter(trail=self)
         geom = None
-        for p in paths:
+        for p in self.paths.all():
             if geom is None:
                 geom = LineString(p.geom.coords, srid=settings.SRID)
             else:
                 geom = geom.union(p.geom)
         return geom
+
+    @property
+    def interventions(self):
+        """ Interventions of a trail is the union of interventions on all its paths """
+        s = []
+        for p in self.paths.all():
+            s.extend(p.interventions)
+        return list(set(s))

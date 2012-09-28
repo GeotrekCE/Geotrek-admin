@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
 from collections import OrderedDict
 
+from django.conf import settings
+from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis import gdal
 from django.test import TestCase
 from django.utils import simplejson
 
@@ -7,9 +11,13 @@ from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.models import default_structure
 from caminae.authent.factories import PathManagerFactory
 from caminae.core.factories import StakeFactory
+from caminae.core.models import TopologyMixin
 from caminae.common.factories import OrganismFactory
 
+from caminae.mapentity import shape_exporter
+
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
+from caminae.maintenance.views import ProjectFormatList
 from caminae.core.factories import (PathFactory, PathAggregationFactory,
                                    TopologyMixinFactory)
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
@@ -235,3 +243,74 @@ class ProjectTest(TestCase):
         self.assertItemsEqual(proj.paths, [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
+
+
+class ExportTest(TestCase):
+
+    def test_shape_mixed(self):
+        """
+        Test that a project made of intervention of different geom create multiple files.
+        Check that those files are each of a different type (Point/LineString) and that
+        the project and the intervention are correctly referenced in it.
+        """
+
+        # Create topology line
+        topo_line = TopologyMixinFactory.create(no_path=True)
+        line = PathFactory.create(geom=LineString(Point(10,10,0), Point(11, 10, 0)))
+        PathAggregationFactory.create(topo_object=topo_line, path=line)
+
+        # Create a topology point
+        lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
+
+        closest_path = PathFactory(geom=LineString(Point(0, 0, 0), Point(1, 0, 0), srid=settings.SRID))
+        topo_point = TopologyMixin._topologypoint(lng, lat, None).reload()
+
+        self.assertEquals(topo_point.paths.get(), closest_path)
+
+        # Create one intervention by geometry (point/linestring)
+        it_point = InterventionFactory.create(topology=topo_point)
+        it_line = InterventionFactory.create(topology=topo_line)
+        # reload
+        it_point = type(it_point).objects.get(pk=it_point.pk)
+        it_line = type(it_line).objects.get(pk=it_line.pk)
+
+        proj = ProjectFactory.create()
+        proj.interventions.add(it_point)
+        proj.interventions.add(it_line)
+
+        shp_creator = shape_exporter.ShapeCreator()
+
+        # instanciate the class based view 'abnormally' to use create_shape directly
+        # to avoid making http request, authent and reading from a zip
+        pfl = ProjectFormatList()
+        pfl.create_shape(shp_creator, Project.objects.all())
+
+        self.assertEquals(len(shp_creator.shapes), 2)
+
+        ds_point = gdal.DataSource(shp_creator.shapes[0][1])
+        layer_point = ds_point[0]
+        ds_line = gdal.DataSource(shp_creator.shapes[1][1])
+        layer_line = ds_line[0]
+
+        self.assertEquals(layer_point.geom_type.name, 'Point')
+        self.assertEquals(layer_line.geom_type.name, 'LineString')
+
+        for layer in [layer_point, layer_line]:
+            self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
+            self.assertItemsEqual(layer.fields,
+                ['it_name', 'name', 'end_year', 'begin_year', 'cost', 'it_pk', 'id'])
+
+        self.assertEquals(len(layer_point), 1)
+        self.assertEquals(len(layer_line), 1)
+
+        for feature in layer_point:
+            self.assertEquals(str(feature['id']), str(proj.pk))
+            self.assertEquals(str(feature['it_pk']), str(it_point.pk))
+            self.assertTrue(feature.geom.geos.equals(it_point.geom))
+
+        for feature in layer_line:
+            self.assertEquals(str(feature['id']), str(proj.pk))
+            self.assertEquals(str(feature['it_pk']), str(it_line.pk))
+            self.assertTrue(feature.geom.geos.equals(it_line.geom))
+
+

@@ -12,11 +12,11 @@
 {% block nav-detail %}active{% endblock nav-detail %}
 
 {% block mainpanel %}
-    <div class="span12">
-        <h1>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
+    <div class="form-panel span12 {{ modelname }}">
+        <h2>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
         {% if object %}
             <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
-        {% endif %}</h1>
+        {% endif %}</h2>
         
         <div>&nbsp;</div>
         

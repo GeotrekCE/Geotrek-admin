@@ -40,14 +40,6 @@ msgid ""
 msgstr ""
 "L'accès à cette ressource est restreinte aux éditeurs.Vous avez été redirigé."
 
-#: decorators.py:50
-msgid ""
-"Access to the requested resource is restricted to administrator. You have "
-"been redirected."
-msgstr ""
-"L'accès à cette ressource est restreinte aux administrateurs.Vous avez été "
-"redirigé."
-
 #: decorators.py:70
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "

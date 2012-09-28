@@ -1,0 +1,48 @@
+[app:main]
+use = egg:topdfserver
+
+pyramid.reload_templates = false
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+
+download_dir = ${options.download_dir}
+converted_dir = ${options.converted_dir}
+
+
+[server:main]
+use = egg:gunicorn#main
+host = ${options.host}
+port = ${options.port}
+
+# Begin logging configuration
+
+[loggers]
+keys = root, topdfserver
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARN
+handlers = console
+
+[logger_topdfserver]
+level = WARN
+handlers =
+qualname = topdfserver
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s
+
+# End logging configuration

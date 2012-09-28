@@ -6,6 +6,10 @@ upstream tile_server {
     server ${parts['gunicorn-tilecache-conf'].bind} fail_timeout=0;
 }
 
+upstream conversion_server {
+    server ${parts['gunicorn-topdfserver-conf'].bind} fail_timeout=0;
+}
+
 server {
     listen ${options.port} default;
     server_name _;
@@ -30,6 +34,10 @@ server {
         {% end %}
 
         proxy_pass  http://tile_server/1.0.0;
+    }
+
+    location /convert {
+        proxy_pass  http://conversion_server;
     }
 
     location / {

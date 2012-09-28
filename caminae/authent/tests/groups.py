@@ -35,19 +35,16 @@ class GroupTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_group(self):
-        groups = (Group.objects.get(name=auth_models.GROUP_ADMINISTRATOR),
-                  Group.objects.get(name=auth_models.GROUP_EDITOR),
+        groups = (Group.objects.get(name=auth_models.GROUP_EDITOR),
                   Group.objects.get(name=auth_models.GROUP_PATH_MANAGER),
                   Group.objects.get(name=auth_models.GROUP_TREKKING_MANAGER),
                  )
         user = UserFactory()
-        self.assertFalse(user.profile.is_administrator())
         self.assertFalse(user.profile.is_editor())
         self.assertFalse(user.profile.is_path_manager())
         self.assertFalse(user.profile.is_trekking_manager())
         
         user = UserFactory(groups=groups)
-        self.assertTrue(user.profile.is_administrator())
         self.assertTrue(user.profile.is_editor())
         self.assertTrue(user.profile.is_path_manager())
         self.assertTrue(user.profile.is_trekking_manager())

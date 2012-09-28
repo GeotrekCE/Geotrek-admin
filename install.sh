@@ -62,8 +62,24 @@ user_exists () {
 }
 
 ini_value () {
-    return $(sed -n 's/.*$2 *= *\([^ ]*.*\)/\1/p' < $1)
+    echo $(sed -n "s/.*$2 *= *\([^ ]*.*\)/\1/p" < $1)
 }
+
+migrate_settings () {
+    userfile=$1
+    samplefile=$2
+    cp $userfile $userfile.$(date +%y%m%d%H%M)
+    
+     grep -e '^[a-zA-Z]' $samplefile | while read line; do
+         inikey=$(echo $line | sed -n 's/\([^ ]*.*\) *=.*/\1/p')
+         if [ $(grep $inikey $userfile | wc -l) -eq 0 ] ;
+         then
+            echo "Setting $inikey was missing, add default."
+            echo $line >> $userfile
+         fi
+    done
+}
+
 
 
 while [[ -n $1 ]]; do
@@ -92,27 +108,34 @@ function ubuntu_precise {
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
     sudo apt-get install -y postgresql-client postgis-bin gdal-bin
 
+    # topdf conversion
+    sudo apt-get install -y unoconv
+
     # Default settings if not any
     mkdir -p etc/
     settingsfile=etc/settings.ini
+    settingssample=caminae/conf/settings.ini.sample
     if [ ! -f $settingsfile ]; then
-        if [ -f caminae/conf/settings.ini.sample ]; then
-            cp caminae/conf/settings.ini.sample $settingsfile
+        if [ -f $settingssample ]; then
+            cp $settingssample $settingsfile
         else
             echo "# WARNING : empty configuration ! Use model file 'settings.ini.sample'" > $settingsfile
         fi
+    else
+        migrate_settings $settingsfile $settingssample
     fi
+    
     # Prompt user to edit/review settings
     vim -c 'startinsert' $settingsfile
 
     #
     # If database is local, check it !
     #----------------------------------
-    dbname=`ini_value $settingsfile dbhost`
-    dbhost=`ini_value $settingsfile dbname`
-    dbpassword=`ini_value $settingsfile dbpassword`
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
+    dbpassword=$(ini_value $settingsfile dbpassword)
     
-    if [ ${dbhost} == "localhost" ] ; then
+    if [ "${dbhost}" == "localhost" ] ; then
         echo "Installing postgresql server locally..."
         sudo apt-get install -y postgresql postgresql-9.1-postgis2 postgresql-server-dev-9.1
         
@@ -128,6 +151,7 @@ function ubuntu_precise {
         then
             sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
             sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
+            sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
             
             # Open local and host connection for this user as md5
             sudo cat >> /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
@@ -137,44 +161,48 @@ host     ${dbname}    ${dbuser}        md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
-    else
-        # Check that database connection is correct
-        dbport=$(sed -n 's/.*dbport *= *\([^ ]*.*\)/\1/p' < $settingsfile)
-        export PGPASSWORD=$dbpassword    
-        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
-        result=$?
-        export PGPASSWORD=
-        if [ ! $result -eq 0 ]
-        then
-            echo "Failed to connect to database with settings provided in '$settingsfile'."
-            echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
-            exit 4
-        fi
+    fi
+    
+    # Check that database connection is correct
+    dbport=$(ini_value $settingsfile dbport)
+    export PGPASSWORD=$dbpassword   
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
+    result=$?
+    export PGPASSWORD=
+    if [ ! $result -eq 0 ]
+    then
+        echo "Failed to connect to database with settings provided in '$settingsfile'."
+        echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
+        exit 4
     fi
 
 
     mkdir -p lib/
     cd lib/
 
-    wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
-    tar -jxvf phantomjs.tar.bz2
-    rm phantomjs.tar.bz2
-    cd *phantomjs*
-    sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
-    cd ..
+    if [ ! -f /usr/local/bin/phantomjs ]; then
+        wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
+        tar -jxvf phantomjs.tar.bz2
+        rm phantomjs.tar.bz2
+        cd *phantomjs*
+        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
+        cd ..
+    fi
 
-    wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
-    unzip -o casperjs.zip > /dev/null
-    rm casperjs.zip
-    cd *casperjs*
-    sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-    cd ..
+    if [ ! -f /usr/local/bin/casperjs ]; then
+        wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
+        unzip -o casperjs.zip > /dev/null
+        rm casperjs.zip
+        cd *casperjs*
+        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
+        cd ..
+    fi
 
     cd ..
 
     if $dev ; then
         # A postgis template is required for django tests
-        if [ ${dbhost} == "localhost" ] ; then
+        if [ "${dbhost}" == "localhost" ] ; then
             if ! database_exists template_postgis
             then
                 sudo -n -u postgres -s -- createdb template_postgis
@@ -195,12 +223,23 @@ _EOF_
 
         make deploy
 
-        sudo rm /etc/nginx/sites-enabled/default
-        sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
-        sudo /etc/init.d/nginx restart
+        # Protect files with sensitive information
+        chmod -f 700 etc/settings.ini
+        chmod -f 700 parts/django/django_extrasettings/settings.py
         
-        sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
-        sudo start supervisor
+        # If buildout was successful, deploy really !
+        if [ -f etc/nginx.conf ]; then
+            sudo rm /etc/nginx/sites-enabled/default
+            sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
+            sudo /etc/init.d/nginx restart
+            
+            sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
+            sudo stop supervisor
+            sudo start supervisor
+        else
+            echo "Caminae package could not be installed."
+            exit 6
+        fi
     fi
 
     set +x
@@ -211,15 +250,11 @@ _EOF_
 }
 
 
-printf "Target operating system [precise]: "
-while read options; do
-  case "$options" in
-    "")         ubuntu_precise
-                exit
-                ;;
-    precise)    ubuntu_precise
-                exit
-                ;;
-    *) printf "Incorrect value option!\nPlease enter the correct value: " ;;
-  esac
-done
+precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
+
+if [ $precise -eq 1 ] ; then
+    ubuntu_precise
+else
+    echo "Unsupported operating system. Aborted."
+    exit 5
+fi

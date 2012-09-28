@@ -49,11 +49,9 @@ class UserProfileTest(TestCase):
         self.assertTrue(_("Logout") in response.content)
 
         self.client.logout()
-        response = self.client.get(reverse('core:path_list'))
-        self.assertEqual(response.status_code, 302)
+
         self.client.login(username=self.user.username, password=u"Bar")
         response = self.client.get(reverse('core:path_list'))
-
         self.assertEqual(self.client.session['django_language'], u"en")
         self.assertTrue(_("Logout") in response.content)
 

@@ -1,33 +1,33 @@
 # -*- coding: utf-8 -*-
 import csv
+import urllib2
+import logging
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
+from django.utils import simplejson
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import get_cache
-from django.template.loader import find_template
 from django.template.base import TemplateDoesNotExist
-
-from django.contrib.gis.geos.point import Point
-from django.contrib.gis.geos.linestring import LineString
-from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.db.models.fields import (
         GeometryField, GeometryCollectionField, PointField, LineStringField
 )
 
-import gpxpy
 from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
 from screamshot.decorators import login_required_capturable
+from screamshot.utils import casperjs_capture
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
 from caminae.core.models import split_bygeom # TODO
@@ -35,7 +35,53 @@ from caminae.core.models import split_bygeom # TODO
 from . import models as mapentity_models
 from . import shape_exporter
 from .decorators import save_history
+from .serializers import GPXSerializer
 
+logger = logging.getLogger(__name__)
+
+# Concrete views
+
+@csrf_exempt
+@login_required
+def map_screenshot(request):
+    """
+    This view allows to take screenshots, via django-screamshot, of
+    the map currently viewed by the user.
+    
+    - A context full of information is built on client-side and posted here.
+    - We reproduce this context, via headless browser, and take a capture
+    - We return the resulting image as attachment.
+    
+    This seems overkill ? Please look around and find a better way.
+    """
+    try:
+        printcontext = request.POST['printcontext']
+        assert len(printcontext) < 512, "Print context is way too big."
+        
+        # Prepare context, extract and add infos
+        context = simplejson.loads(printcontext)
+        map_url = context.pop('url').split('?', 1)[0]
+        context['print'] = True
+        printcontext = simplejson.dumps(context)
+        
+        # Provide print context to destination
+        printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
+        contextencoded = urllib2.quote(printcontext)
+        map_url += '?context=%s' % contextencoded
+        # Capture image and return it
+        width = context.get('viewport', {}).get('width')
+        height = context.get('viewport', {}).get('height')
+        response = HttpResponse(mimetype='image/png')
+        response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
+        casperjs_capture(response, map_url, width=width, height=height, selector='.map-panel')
+        return response
+
+    except Exception, e: 
+        logger.exception(e)
+        return HttpResponseBadRequest(e)
+
+
+# Generic views, to be overriden
 
 class MapEntityLayer(GeoJSONLayerView):
     """
@@ -102,7 +148,7 @@ class MapEntityList(ListView):
         qs = super(MapEntityList, self).get_queryset()
         return qs.select_related(depth=1)
 
-    @method_decorator(login_required)
+    @method_decorator(login_required_capturable)
     def dispatch(self, request, *args, **kwargs):
         # Save last list visited in session
         request.session['last_list'] = request.path
@@ -181,6 +227,7 @@ class MapEntityDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['can_edit'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
@@ -226,9 +273,14 @@ class MapEntityDocument(DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
         # ODT template requires absolute URL for images insertion
-        context['ROOT_URL'] = self.request.build_absolute_uri('/')[:-1]
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         return context
+
+    def dispatch(self, *args, **kwargs):
+        handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
+        # Screenshot of object map
+        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+        return handler
 
 
 class MapEntityCreate(CreateView):
@@ -264,6 +316,7 @@ class MapEntityCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         return context
 
@@ -299,6 +352,7 @@ class MapEntityUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
+        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
@@ -319,6 +373,7 @@ class MapEntityDelete(DeleteView):
 
 class MapEntityFormat(MapEntityList):
     """Make it  extends your EntityList"""
+    DEFAULT_FORMAT = 'csv'
 
     def __init__(self, *args, **kwargs):
         self.formats = {
@@ -334,10 +389,11 @@ class MapEntityFormat(MapEntityList):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        fmt_str = request.GET.get('format', 'csv')
-        self.fmt = self.formats.get(fmt_str)
+        fmt_str = request.GET.get('format', self.DEFAULT_FORMAT)
+        self.formatter = self.formats.get(fmt_str)
 
-        if not self.fmt:
+        if not self.formatter:
+            logger.warning(_("Unknown serialization format '%s'") % fmt_str)
             raise Http404
 
         return super(MapEntityList, self).dispatch(request, *args, **kwargs)
@@ -349,19 +405,41 @@ class MapEntityFormat(MapEntityList):
 
     def render_to_response(self, context, **response_kwargs):
         """Delegate to the fmt view function found at dispatch time"""
-        return self.fmt(
+        return self.formatter(
             request = self.request,
             context = context,
             **response_kwargs
         )
 
     def csv_view(self, request, context, **kwargs):
+        """
+        Uses self.columns, containing fieldnames to produce the CSV.
+        The header of the csv is made of the verbose name of each field
+        Each column content is made using (by priority order):
+            * <field_name>_csv_display
+            * <field_name>_display
+            * <field_name>
+        """
+
         def get_lines():
-            for obj in context['queryset']:
+            queryset = context['queryset'].qs
+
+            # Header line
+            yield [
+                smart_str(queryset.model._meta.get_field(field).verbose_name)
+                for field in self.columns
+            ]
+
+            for obj in queryset:
                 columns = []
                 for field in self.columns:
+                    # may be optimized
                     columns.append(smart_str(
-                        getattr(obj, field + '_display', getattr(obj, field))
+                        getattr(obj, field + '_csv_display',
+                            getattr(obj, field + '_display',
+                                getattr(obj, field)
+                            )
+                        )
                     ))
                 yield columns
 
@@ -420,74 +498,11 @@ class MapEntityFormat(MapEntityList):
     def gpx_view(self, request, context, **kwargs):
         queryset = context['queryset'].qs
         geom_field = 'geom'
-
-        gpx = gpxpy.gpx.GPX()
-
+        gpx_serializer = GPXSerializer()
         # Can't use values_list('geom', flat=True) as some geom are not a field but a property
         qs = queryset.select_related(depth=1)
-        for obj in qs:
-            geom = getattr(obj, geom_field)
-
-            # geom.transform(settings.API_SRID, clone=True)) does not work as it looses the Z
-            # All geometries will looses their SRID being convert to simple tuples
-            # They must have the same SRID to be treated equally.
-            # Converting at point level only avoid creating unused point only to carry SRID (could be a param too..)
-            if geom:
-                assert geom.srid == settings.SRID, "Invalid srid"
-                geomToGPX(gpx, geom)
-
-        response = HttpResponse(gpx.to_xml(), mimetype='application/gpx+xml')
+        gpx_xml = gpx_serializer.serialize(qs, geom_field=geom_field)
+        
+        response = HttpResponse(gpx_xml, mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=list.gpx'
-
         return response
-
-
-# LineString -> Route with Point
-# Collection -> route with all merged
-def geomToGPX(gpx, geom):
-    """Convert a geometry to a gpx entity.
-    Raise ValueError if it is not a Point, LineString or a collection of those
-
-    Point -> add as a Way Point
-    LineString -> add all Points in a Route
-    Collection (of LineString or Point) -> add as a route, concatening all points
-    """
-    if isinstance(geom, Point):
-        gpx.waypoints.append(point_to_GPX(geom))
-    else:
-        gpx_route = gpxpy.gpx.GPXRoute()
-        gpx.routes.append(gpx_route)
-
-        if isinstance(geom, LineString):
-            gpx_route.points = lineString_to_GPX(geom)
-        # Accept collections composed of Point and LineString mixed or not
-        elif isinstance(geom, GeometryCollection):
-            points = gpx_route.points
-            for g in geom:
-                if isinstance(g, Point):
-                    points.append(point_to_GPX(g))
-                elif isinstance(g, LineString):
-                    points.extend(lineString_to_GPX(g))
-                else:
-                    raise ValueError("Unsupported geometry %s" % geom)
-        else:
-            raise ValueError("Unsupported geometry %s" % geom)
-
-
-def lineString_to_GPX(geom):
-    return [ point_to_GPX(point) for point in geom ]
-
-def point_to_GPX(point):
-    """Should be a tuple with 3 coords or a Point"""
-    # FIXME: suppose point are in the settings.SRID format
-    # Set point SRID to such srid if invalid or missing
-
-    if not isinstance(point, Point):
-        point = Point(*point, srid=settings.SRID)
-    elif (point.srid is None or point.srid < 0):
-        point.srid = settings.SRID
-
-    x, y = point.transform(4326, clone=True) # transformation: gps uses 4326
-    z = point.z # transform looses the Z parameter - reassign it
-
-    return gpxpy.gpx.GPXWaypoint(latitude=y, longitude=x, elevation=z)

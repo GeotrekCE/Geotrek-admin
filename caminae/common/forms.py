@@ -1,4 +1,5 @@
 from django import forms as django_forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 
@@ -6,6 +7,7 @@ import floppyforms as forms
 from crispy_forms.layout import Layout, Submit, Div, Button
 from crispy_forms.bootstrap import FormActions
 from tinymce.widgets import TinyMCE
+from modeltranslation.translator import translator, NotRegistered
 
 from caminae.authent.models import (default_structure, StructureRelated,
                                     StructureRelatedQuerySet)
@@ -56,6 +58,24 @@ class CommonForm(MapEntityForm):
                     model = modelfield.related.parent_model
                     if issubclass(model, StructureRelated):
                         field.queryset = StructureRelatedQuerySet.queryset_for_user(field.queryset, self.user)
+
+        # Expand i18n fields
+        try:
+            # Obtain model translation options
+            mto = translator.get_options_for_model(self._meta.model)
+        except NotRegistered:
+            # No translation field on this model, nothing to do
+            pass
+        else:
+            self.modelfields = list(self.modelfields) # Switch to mutable sequence
+            for f in mto.fields:
+                self.fields.pop(f)
+                if f in self.modelfields:
+                    # Replace i18n field by dynamic l10n fields
+                    i = self.modelfields.index(f)
+                    self.modelfields[i:i+1] = ['{0}_{1}'.format(f, l[0])
+                                             for l in settings.LANGUAGES]
+            self.modelfields = tuple(self.modelfields) # Switch back to unmutable sequence
 
         # Get fields from subclasses
         fields = ('pk','model') + self.modelfields

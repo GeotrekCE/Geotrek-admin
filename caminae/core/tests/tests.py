@@ -4,18 +4,21 @@ from django.utils import simplejson
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPolygon
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 
-# TODO caminae.core should be self sufficient
-from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
-    TopologyMixinFactory, StakeFactory)
+    TopologyMixinFactory, StakeFactory, TrailFactory)
+from caminae.core.models import Path, TopologyMixin, PathAggregation
+
+# TODO caminae.core should be self sufficient
+from caminae.land.models import (City, RestrictedArea, LandEdge)
 from caminae.maintenance.factories import InterventionFactory, ProjectFactory
+from caminae.trekking.models import Trek
+from caminae.trekking.factories import TrekFactory
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
-from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 
 class ViewsTest(MapEntityTest):
@@ -181,12 +184,12 @@ class PathTest(TestCase):
         c.save()
 
         # Fake paths in these areas
-        p = PathFactory(geom=LineString((0.5,0.5,0), (1.5,1.5,0)))
+        p = PathFactory(geom=LineString((0.5,0.5,0), (0.5,1.5,0), (1.5,1.5,0), (1.5,0.5,0)))
         p.save()
 
-        # This should results in 3 PathAggregation (2 for RA, 1 for City)
-        self.assertEquals(p.aggregations.count(), 3)
-        self.assertEquals(p.topologymixin_set.count(), 3)
+        # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
+        self.assertEquals(p.aggregations.count(), 4)
+        self.assertEquals(p.topologymixin_set.count(), 4)
 
         # PathAgg is plain for City
         t_c = c.cityedge_set.get().topo_object
@@ -194,17 +197,23 @@ class PathTest(TestCase):
         self.assertEquals(pa.start_position, 0.0)
         self.assertEquals(pa.end_position, 1.0)
 
-        # PathAgg is splitted in 2 parts for RA
-        self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
+        # PathAgg is splitted for RA
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 2)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
-        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
-        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        rae1a = ra1.restrictedareaedge_set.filter(aggregations__start_position=0).get()
+        rae1b = ra1.restrictedareaedge_set.filter(aggregations__end_position=1).get()
+        pa1a = rae1a.aggregations.get()
+        pa1b = rae1b.aggregations.get()
+        t_ra1a = rae1a.topo_object
+        t_ra1b = rae1b.topo_object
         pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
         t_ra2 = ra2.restrictedareaedge_set.get().topo_object
-        self.assertEquals(pa1.start_position, 0.0)
-        self.assertEquals(pa1.end_position, 0.5)
-        self.assertEquals(pa2.start_position, 0.5)
-        self.assertEquals(pa2.end_position, 1.0)
+        self.assertAlmostEqual(pa1a.start_position, 0.0)
+        self.assertAlmostEqual(pa1a.end_position, 0.5/3)
+        self.assertAlmostEqual(pa1b.start_position, 2.5/3)
+        self.assertAlmostEqual(pa1b.end_position, 1.0)
+        self.assertAlmostEqual(pa2.start_position, 0.5/3)
+        self.assertAlmostEqual(pa2.end_position, 2.5/3)
 
         # Ensure everything is in order after update
         p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
@@ -215,7 +224,9 @@ class PathTest(TestCase):
         self.assertRaises(TopologyMixin.DoesNotExist,
                           TopologyMixin.objects.get, pk=t_c.pk)
         self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_ra1.pk)
+                          TopologyMixin.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(TopologyMixin.DoesNotExist,
+                          TopologyMixin.objects.get, pk=t_ra1b.pk)
         self.assertRaises(TopologyMixin.DoesNotExist,
                           TopologyMixin.objects.get, pk=t_ra2.pk)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
@@ -283,6 +294,36 @@ class PathTest(TestCase):
         PathAggregationFactory.create(topo_object=l, path=p)
 
         self.assertItemsEqual(p.lands, [l])
+
+    def test_delete_cascade(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        t = TrekFactory.create(no_path=True)
+        t.add_path(p1)
+        t.add_path(p2)
+
+        # Everything should be all right before delete
+        self.assertTrue(t.published)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 2)
+
+        # When a path is deleted
+        p1.delete()
+        t = Trek.objects.get(pk=t.pk)
+        self.assertFalse(t.published)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
+
+        # Reset published status
+        t.published = True
+        t.save()
+
+        # When all paths are deleted
+        p2.delete()
+        t = Trek.objects.get(pk=t.pk)
+        self.assertFalse(t.published)
+        self.assertTrue(t.deleted)
+        self.assertEqual(t.aggregations.count(), 0)
 
     def test_geom_update(self):
         # Create a path
@@ -425,21 +466,11 @@ class TopologyMixinTest(TestCase):
         # Reload as the geom of the topology will be build by trigger
         t.reload()
 
-        # Create our objectdict to serialize
-
-        geom = Point(t.geom.coords[0], srid=settings.SRID)
-        start_point = geom.transform(settings.API_SRID, clone=True)
-
-        geom = Point(t.geom.coords[-1], srid=settings.SRID)
-        end_point = geom.transform(settings.API_SRID, clone=True)
-
         test_objdict = dict(kind=t.kind,
                        offset=1,
                        # 0 referencing the index in paths of the only created path
-                       positions={'0': [0.0, 1.0]},
-                       paths=[ path.pk ],
-                       start_point=dict(lng=start_point.x, lat=start_point.y),
-                       end_point=dict(lng=end_point.x, lat=end_point.y),
+                       positions={},
+                       paths=[ path.pk ]
                        )
 
         objdict = simplejson.loads(t.serialize())
@@ -583,3 +614,25 @@ class TopologyMixinTest(TestCase):
         p.save()
         t.reload()
         self.assertEqual(t.geom, LineString((0,2,0), (2,2,0)))
+
+
+class TrailTest(TestCase):
+    def test_helpers(self):
+        t = TrailFactory.create()
+        self.assertEqual(0, len(t.interventions))
+        
+        p = PathFactory.create()
+        t.paths.add(p)
+        
+        topo = TopologyMixinFactory.create(no_path=True)
+        topo.add_path(p)
+        i = InterventionFactory(topology=topo)
+        self.assertEqual(1, len(t.interventions))
+        self.assertEqual([i], t.interventions)
+
+    def test_geom(self):
+        t = TrailFactory.create()
+        self.assertTrue(t.geom is None)
+        p = PathFactory.create()
+        t.paths.add(p)
+        self.assertFalse(t.geom is None)
