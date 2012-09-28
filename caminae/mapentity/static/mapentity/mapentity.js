@@ -30,7 +30,7 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         };
         
         if (!options) options = {};
-        options.indexing = options.indexing ? options.indexing : true;
+        options.indexing = options.indexing !== undefined ? options.indexing : true;
         options.highlight = options.highlight || typeof(options.objectUrl) != 'undefined';
         this._onEachFeature = options.onEachFeature;
         options.onEachFeature = L.Util.bind(onFeatureParse, this);
