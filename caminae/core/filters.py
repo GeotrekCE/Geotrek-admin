@@ -5,27 +5,18 @@ from django_filters import CharFilter
 
 from .models import Path
 
-from caminae.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
-from caminae.land.filters import (
-        TopoFilterPhysicalType, TopoFilterLandType,
-        TopoFilterCompetenceEdge, TopoFilterSignageManagementEdge, TopoFilterWorkManagementEdge
-)
+from caminae.common.filters import OptionalRangeFilter
+from caminae.land.filters import EdgeFilter
 
-class PathFilter(StructureRelatedFilterSet):
+
+class PathFilter(EdgeFilter):
     length = OptionalRangeFilter(label=_('length'))   # TODO: why force ?
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     comments = CharFilter(label=_('Comments'), lookup_type='icontains')
 
-    physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
-    land_type = TopoFilterLandType(label=_('Land type'), required=False)
-
-    competence = TopoFilterCompetenceEdge(label=_('Competence'), required=False)
-    signage = TopoFilterSignageManagementEdge(label=_('Signage management'), required=False)
-    work = TopoFilterWorkManagementEdge(label=_('Work management'), required=False)
-
-    class Meta(StructureRelatedFilterSet.Meta):
+    class Meta(EdgeFilter.Meta):
         model = Path
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = EdgeFilter.Meta.fields + [
                     'length', 'networks', 'trail',
                 ]
 

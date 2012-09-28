@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.gis.geos.geometry import GEOSGeometry, GeometryCollection
+from django.utils.translation import ugettext_lazy as _
 
 from django_filters import ModelChoiceFilter
 
@@ -143,4 +144,15 @@ class TopoFilterWorkManagementEdge(TopoFilter):
         return orga.workmanagementedge_set.all()
 
 
+
+class EdgeFilter(StructureRelatedFilterSet):
+    physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
+    land_type = TopoFilterLandType(label=_('Land type'), required=False)
+
+    competence = TopoFilterCompetenceEdge(label=_('Competence'), required=False)
+    signage = TopoFilterSignageManagementEdge(label=_('Signage management'), required=False)
+    work = TopoFilterWorkManagementEdge(label=_('Work management'), required=False)
+
+    class Meta(StructureRelatedFilterSet.Meta):
+        fields = StructureRelatedFilterSet.Meta.fields
 
