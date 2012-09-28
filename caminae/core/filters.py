@@ -6,17 +6,17 @@ from django_filters import CharFilter
 from .models import Path
 
 from caminae.common.filters import OptionalRangeFilter
-from caminae.land.filters import EdgeFilter
+from caminae.land.filters import EdgeStructureRelatedFilterSet
 
 
-class PathFilter(EdgeFilter):
+class PathFilter(EdgeStructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))   # TODO: why force ?
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     comments = CharFilter(label=_('Comments'), lookup_type='icontains')
 
-    class Meta(EdgeFilter.Meta):
+    class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Path
-        fields = EdgeFilter.Meta.fields + [
+        fields = EdgeStructureRelatedFilterSet.Meta.fields + [
                     'length', 'networks', 'trail',
                 ]
 

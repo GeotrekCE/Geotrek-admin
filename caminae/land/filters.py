@@ -144,8 +144,18 @@ class TopoFilterWorkManagementEdge(TopoFilter):
         return orga.workmanagementedge_set.all()
 
 
+class EdgeFilterSet(MapEntityFilterSet):
+    physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
+    land_type = TopoFilterLandType(label=_('Land type'), required=False)
 
-class EdgeFilter(StructureRelatedFilterSet):
+    competence = TopoFilterCompetenceEdge(label=_('Competence'), required=False)
+    signage = TopoFilterSignageManagementEdge(label=_('Signage management'), required=False)
+    work = TopoFilterWorkManagementEdge(label=_('Work management'), required=False)
+
+    class Meta(MapEntityFilterSet.Meta):
+        fields = MapEntityFilterSet.Meta.fields
+
+class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)
 
@@ -155,4 +165,5 @@ class EdgeFilter(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         fields = StructureRelatedFilterSet.Meta.fields
+
 

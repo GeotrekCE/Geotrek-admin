@@ -5,7 +5,7 @@ from caminae.core.models import TopologyMixin
 from caminae.mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
 from caminae.mapentity.widgets import GeomWidget
 
-from caminae.land.filters import EdgeFilter
+from caminae.land.filters import EdgeStructureRelatedFilterSet
 
 from .models import Intervention, Project
 
@@ -19,23 +19,23 @@ class PolygonTopologyFilter(PolygonFilter):
         return qs.filter(**{'%s__in' % self.name: inner_qs})
 
 
-class InterventionFilter(EdgeFilter):
+class InterventionFilter(EdgeStructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects', widget=GeomWidget)
     year = YearFilter(name='date', widget=Select, label=_(u"Year"))
 
-    class Meta(EdgeFilter.Meta):
+    class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Intervention
-        fields = EdgeFilter.Meta.fields + [
+        fields = EdgeStructureRelatedFilterSet.Meta.fields + [
             'status', 'type', 'stake', # user
         ]
 
 
-class ProjectFilter(EdgeFilter):
+class ProjectFilter(EdgeStructureRelatedFilterSet):
     bbox = PythonPolygonFilter(name='geom', widget=GeomWidget)
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'), widget=Select,
                     label=_(u"Year of activity"))
 
-    class Meta(EdgeFilter.Meta):
+    class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Project
-        fields = EdgeFilter.Meta.fields
+        fields = EdgeStructureRelatedFilterSet.Meta.fields
 
