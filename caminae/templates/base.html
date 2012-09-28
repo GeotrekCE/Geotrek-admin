@@ -31,9 +31,12 @@
                     </div> <!--/row-->
 
                     <a href="#" id="filters-btn" class="btn btn-large"><i class="icon-filter"></i> Filter</a>
-                    <div id="filters-panel" style="display:None">
-                        {% block filters %}
-                        {% endblock filters %}
+                    <div id="filters-popover"></div>
+                    <div id="filters-wrapper" style="display:None">
+                        <div id="filters-panel">
+                            {% block filters %}
+                            {% endblock filters %}
+                        </div>
                     </div>
                     
                     {% block mainlist %}
@@ -59,11 +62,41 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#filters-btn").click(function () {
-                $(this).popover({placement: 'bottom',
-                                 title: '{% trans "Filter list and map" %}',
-                                 content: $("#filters-panel").html()});
-                
+            var div = $('#filters-popover')
+                      .popover({
+                          placement: 'bottom',
+                          title: '{% trans "Filter list and map" %}',
+                          content: ''
+                      });
+
+            var getPopover = function() { return div.data('popover') };
+            var isVisible = function() {
+                var tip = getPopover().$tip;
+                if (!tip)
+                    return false;
+                return tip.hasClass('in');
+            };
+
+            $('#filters-btn').click(function () {
+
+                // if was visible - clone
+                if (isVisible()) {
+                    $('#filters-wrapper').append(
+                        // The whole $tip will be deleted, save the #filters-panel
+                        // and add it to the DOM so the dynamic filters still works.
+                        getPopover().$tip.find('#filters-panel').detach()
+                    );
+                }
+
+                div.popover('toggle');
+
+                if (isVisible()) {
+                   getPopover().$tip
+                      .css('width', 'auto')
+                      .find('.popover-content').empty()
+                      .append($('#filters-wrapper #filters-panel').detach())
+                }
+
             });
         });
     </script>
