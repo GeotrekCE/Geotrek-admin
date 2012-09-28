@@ -109,7 +109,7 @@ function ubuntu_precise {
     sudo apt-get install -y postgresql-client postgis-bin gdal-bin
 
     # topdf conversion
-    sudo apt-get install -y unoconv
+    sudo apt-get install -y libreoffice unoconv
 
     # Default settings if not any
     mkdir -p etc/
