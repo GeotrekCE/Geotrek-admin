@@ -4,12 +4,11 @@
 {% block content %}
         <div id="container" class="container-fluid">
 
-            <!-- Onglets des modules -->
-            <div id="viewport-l4" class="row-fluid">
+            <div class="row-fluid">
 
                 {% block mainpanel %}
 
-                <!-- Liste des modules -->
+                <!-- Modules Panel -->
                 <div class="span1">
                     <ul id="entitylist" class="nav nav-pills nav-stacked">
                         <li class="centered {% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
@@ -22,13 +21,9 @@
                     </ul>
                 </div> <!--/span-->
 
-                <!-- Zone des résultats -->
+                <!-- List Panel -->
                 <div id="results-panel" class="span5">
                 
-                    <!-- Nom du module
-                    <h2>Module 1</h2> -->
-            
-                    <!-- Zone des boutons -->
                     <div class="btn-toolbar">
                         {% block mainactions %}
                         {% endblock mainactions %}
@@ -36,10 +31,10 @@
                     
                     {% block mainlist %}
                     {% endblock mainlist %}
-
+                    
                 </div><!--/span-->
 
-                <!-- Zone de carte -->
+                <!-- Map Panel -->
                 <div id="panelright" class="map-panel span6">
                     {% block mainmap %}
                     {% endblock mainmap %}

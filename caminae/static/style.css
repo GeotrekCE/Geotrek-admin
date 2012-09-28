@@ -147,20 +147,6 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
 	font-size: 10px;
 }
 
-/* Bootstrap quick and dirty */
-.navbar {
-    margin-bottom: 4px;
-}
-
-.nav {
-    margin-bottom: 4px;
-}
-
-.navbar .nav > li > a.btn {
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
 .leaflet-control-draw.enabled a {
  	background-color: #fff;
 }
@@ -185,9 +171,7 @@ tr.selected-row td {
 
 /**** Layout (based on "Conflicting position" trick) ****/
 
-#viewport-l2 {position: absolute; top: -1px; bottom: 0; left: 0; right: 0;}
 #container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
-#viewport-l4 {position: absolute; top: 0; bottom: 0;}
 #panelright {position: absolute; top: 0; bottom: 0; right: 0;}
 #mainmap {position: absolute; top: 0; bottom: 0; left: 0; right: 0;}
 #mainmap-controls {position: absolute; bottom: 0; right: 0;}
@@ -206,11 +190,11 @@ tr.selected-row td {
 .form-panel.poi,            .details-panel.poi            { background: url(images/poi-96.png) no-repeat; }
 
 /* Icons for tabs */
-li.history.path a { padding-left: 20px; background: url(images/path-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.trail a { padding-left: 20px; background: url(images/trail-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.intervention a { padding-left: 20px; background: url(images/intervention-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.project a { padding-left: 20px; background: url(images/project-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.signage a { padding-left: 20px; background: url(images/signage-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.infrastructure a { padding-left: 20px; background: url(images/infrastructure-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.trek a { padding-left: 20px; background: url(images/trek-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
-li.history.poi a { padding-left: 20px; background: url(images/poi-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.path a { padding-right: 5px; padding-left: 20px; background: url(images/path-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trail a { padding-right: 5px; padding-left: 20px; background: url(images/trail-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.intervention a { padding-right: 5px; padding-left: 20px; background: url(images/intervention-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.project a { padding-right: 5px; padding-left: 20px; background: url(images/project-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.signage a { padding-right: 5px; padding-left: 20px; background: url(images/signage-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.infrastructure a { padding-right: 5px; padding-left: 20px; background: url(images/infrastructure-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trek a { padding-right: 5px; padding-left: 20px; background: url(images/trek-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.poi a { padding-right: 5px; padding-left: 20px; background: url(images/poi-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
