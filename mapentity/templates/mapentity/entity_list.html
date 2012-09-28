@@ -152,10 +152,10 @@
             
             $('#filter').click();
 
-            $('#bbox_cities, #bbox_districts #bbox_areas').on('change', function() {
+            $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {
                 if ($(this).val()) {
                     var bbox = $.map($(this).val().split(','), parseFloat); // minx,miny,maxx,maxy
-                    window.maps[0].fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
+                    mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
                 }
             });
         }
