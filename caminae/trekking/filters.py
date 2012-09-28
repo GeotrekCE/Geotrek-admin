@@ -1,15 +1,15 @@
-from caminae.mapentity.filters import MapEntityFilterSet
+from caminae.land.filters import EdgeFilterSet
 
 from .models import Trek, POI
 
 
-class TrekFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class TrekFilter(EdgeFilterSet):
+    class Meta(EdgeFilterSet.Meta):
         model = Trek
-        fields = MapEntityFilterSet.Meta.fields + ['difficulty']
+        fields = EdgeFilterSet.Meta.fields + ['difficulty']
 
 
-class POIFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+class POIFilter(EdgeFilterSet):
+    class Meta(EdgeFilterSet.Meta):
         model = POI
-        fields = MapEntityFilterSet.Meta.fields + ['type']
+        fields = EdgeFilterSet.Meta.fields + ['type']
