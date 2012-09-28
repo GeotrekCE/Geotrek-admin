@@ -26,6 +26,10 @@ body {
     margin-bottom: 15px;
 }
 
+.details-panel {
+    padding: 40px;
+}
+
 
 .details-panel h3 {
 	border-bottom: 1px solid #333333;
