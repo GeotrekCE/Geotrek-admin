@@ -37,7 +37,7 @@ server {
     }
 
     location /convert {
-        proxy_pass  http://conversion_server;
+        proxy_pass  http://conversion_server/;
     }
 
     location / {
