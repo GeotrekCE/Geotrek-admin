@@ -1461,3 +1461,26 @@ Déplacer la carte, décocher des couches, observer que l'image exportée est co
     
     * les objects vectoriels sont décalés sur l'image.
     * l'obtention de l'image est longue, cela est dû au cache qui n'est pas actif pour l'impression.
+
+
+#241 - Filtres sur foncier
+--------------------------
+
+Je peux filtrer de nombreuses entités en fonction de filtre de type foncier.
+
+Types de filtre:
+
+    * Organisme compétent
+    * Organisme en charge de la gestion signalétique
+    * Organisme en charge de la gestion travaux
+
+Entités pouvant être filtrées:
+
+    * Tronçon
+    * Intervention
+    * Projet
+    * Itinéraire
+    * POI
+    * Signage
+    * Infrastructure
+
