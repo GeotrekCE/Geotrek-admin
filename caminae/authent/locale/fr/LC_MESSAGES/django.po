@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 19:34+0200\n"
+"POT-Creation-Date: 2012-09-28 16:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: decorators.py:32
+#: decorators.py:31
 msgid ""
 "Access to the requested resource is restricted to path managers. You have "
 "been redirected."
@@ -25,7 +25,7 @@ msgstr ""
 "L'accès à cette ressource est restreinte aux référants sentiers.Vous avez "
 "été redirigé."
 
-#: decorators.py:38
+#: decorators.py:37
 msgid ""
 "Access to the requested resource is restricted to communication managers. "
 "You have been redirected."
@@ -33,14 +33,14 @@ msgstr ""
 "L'accès à cette ressource est restreinte aux référants communication.Vous "
 "avez été redirigé."
 
-#: decorators.py:44
+#: decorators.py:43
 msgid ""
 "Access to the requested resource is restricted to work editor. You have been "
 "redirected."
 msgstr ""
 "L'accès à cette ressource est restreinte aux éditeurs.Vous avez été redirigé."
 
-#: decorators.py:70
+#: decorators.py:63
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."
@@ -48,47 +48,47 @@ msgstr ""
 "L'accès à cette ressource est restreinte par structure. Vous avez été "
 "redirigé."
 
-#: models.py:24
+#: models.py:23
 msgid "Nom"
 msgstr "Name"
 
-#: models.py:30
+#: models.py:29
 msgid "Structure"
 msgstr "Structure"
 
-#: models.py:31
+#: models.py:30
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:51 models.py:68
+#: models.py:61 models.py:78
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:67
+#: models.py:77
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:77
+#: models.py:87
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:81
+#: models.py:91
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:82
+#: models.py:92
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:85
+#: models.py:95
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
 
-#: tests/tests.py:39 tests/tests.py:49 tests/tests.py:58
+#: tests/tests.py:39 tests/tests.py:49 tests/tests.py:56
 msgid "Logout"
 msgstr ""
 
-#: tests/tests.py:65 tests/tests.py:70
+#: tests/tests.py:63 tests/tests.py:68
 msgid "Admin"
 msgstr ""
