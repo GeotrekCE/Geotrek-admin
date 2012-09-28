@@ -66,18 +66,16 @@
     <div class="navbar">
       <div class="navbar-inner">
         
-          <a class="brand" href="{% url home %}"><i class="icon-home"></i> {{ TITLE }}</a>
+        <a class="brand" href="{% url home %}"><i class="icon-home"></i> {{ TITLE }}</a>
           
-          <div class="nav-collapse">
-          <ul class="nav">
+        <ul id="historylist" class="nav">
           {% block toolbar %}
             <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url home %}">{% trans "Search" %} <span id="nbresults" class="badge">?</span></a></li>
             {% for item in request.session.history %}
-                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:16 }}</a></li>
-            {% endfor %}            
+                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
+            {% endfor %}
           {% endblock toolbar %}
-          </ul>
-          </div>
+        </ul>
 
         <ul class="nav pull-right">
             <li class="divider-vertical"></li>
@@ -104,7 +102,7 @@
     {% endblock navbar %}
 
     {% block body %}
-        <div id="viewport-l2" class="content">
+        <div id="viewport" class="content">
           {% block content %}
           {% endblock content %}
         </div>
@@ -117,6 +115,7 @@
             $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
         
             $('#entitylist a').tooltip({'placement': 'right'});
+            $('#historylist a').tooltip({'placement': 'bottom'});
         });
     </script>
     {% endblock extrabody %}
