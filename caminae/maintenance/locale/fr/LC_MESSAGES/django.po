@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-26 16:53+0200\n"
+"POT-Creation-Date: 2012-09-28 16:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: filters.py:23
+#: filters.py:24
 msgid "Year"
 msgstr "Année"
 
-#: filters.py:35
+#: filters.py:36
 msgid "Year of activity"
 msgstr "Année d'activité"
 
@@ -316,4 +316,3 @@ msgstr "Ajouter un financement"
 #: templates/maintenance/project_list.html:7
 msgid "Add project"
 msgstr "Ajouter un chantier"
-
