@@ -73,15 +73,6 @@ body {
 }
 
 
-/***** SPAN 5 *****/
-
-.row-fluid > .span5 {
-margin-top: 5px;
-	/*border-left: 1px solid #DDDDDD;*/
-	/*margin-left: 18px;*/
-	/*margin-right: -2.5641%;*/
-}
-
 /***** SPAN 6 *****/
 .row-fluid > .span6 > .pull-right {
 	margin-top: 5px;
@@ -113,6 +104,10 @@ h2 {
 
 #module {
 	border-top: 1px solid #DDDDDD;	
+}
+
+#results-panel {
+    margin-left: 10px;
 }
 
 #mainfilter label {
