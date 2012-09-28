@@ -1375,7 +1375,7 @@ Ajout de passage forcés 'à la Google Maps' :
 
 
 #205 - Liste des POI d'un itinéraire au format GeoJSON
----------------------------------------------------
+------------------------------------------------------
 
 Pour un itinéraire, la liste de ses POIs est disponible à l'adresse 
 ``http://server/api/trek/<id>/pois.geojson``. 
@@ -1384,13 +1384,13 @@ Cela servira au portail rando, pour afficher les POIs sur la fiche détail d'un 
 
 
 #224 - Afficher les couches des secteurs et communes
--------------------------------------------------
+----------------------------------------------------
 
 Dans le sélecteur de couches, il est désormais possible d'afficher les secteurs
 et les communes. L'état affiché/caché de chaque couche est conservé d'une session à l'autre.
 
 #66 - Exporter l'itinéraire au format GPX
----------------------------------------
+-----------------------------------------
 
 Pour un itinéraire, sa trace GPX est disponible à l'adresse 
 ``http://server/api/trek/trek-<id>.gpx``. 
@@ -1484,3 +1484,23 @@ Entités pouvant être filtrées:
     * Signage
     * Infrastructure
 
+:notes:
+
+    Problème connu : Les performances sont catastrophiques à cause d'un problème sur notre algorithme.
+
+
+#225 - Minimiser l'espace occupé par les filtres
+------------------------------------------------
+
+*Travail en cours*
+
+Un essai de pop-up a été tenté pour confiner les filtres dans un panneau.
+Si celui-ci ne s'avère pas concluant, nous utiliserons un panneau pliable.
+
+:notes: 
+
+    Problème connu : la popup ne s'affiche pas en face du bouton.
+    
+    Le bouton de filtre devrait changer de couleur quand un filtre est appliqué.
+    
+    Les champs de filtres ne sont pas bien disposés à l'intérieur.
