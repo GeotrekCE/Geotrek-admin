@@ -4,19 +4,22 @@
 {% block nav-list %}active{% endblock nav-list %}
 
 {% block mainmap %}
-    {% leaflet_map "mainmap" %}
+    <div id="bboxfilter">
+        {# ids: bbox_cities bbox_districts #}
+        {% combobox_bbox_land %}
+        {% leaflet_map "mainmap" %}
+    </div>
 {% endblock mainmap %}
 
-{% block mainlist %}
-    {# ids: bbox_cities bbox_districts #}
-    {% combobox_bbox_land %}
-
+{% block filters %}
     <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
         {{ filterform.form.as_p }}
         <input id="reset" type="reset" class="btn" />
         <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
     </form>
+{% endblock filters %}
 
+{% block mainlist %}
     <table id="objects-list" class="table table-striped table-bordered">
         <thead>
             <tr>
@@ -149,10 +152,10 @@
             
             $('#filter').click();
 
-            $('#bbox_cities, #bbox_districts').on('change', function() {
+            $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {
                 if ($(this).val()) {
                     var bbox = $.map($(this).val().split(','), parseFloat); // minx,miny,maxx,maxy
-                    map.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
+                    mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
                 }
             });
         }

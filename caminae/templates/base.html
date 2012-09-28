@@ -2,8 +2,9 @@
 {% load static i18n %}
         
 {% block content %}
+       
         <div id="container" class="container-fluid">
-
+        
             <div class="row-fluid">
 
                 {% block mainpanel %}
@@ -28,6 +29,12 @@
                         {% block mainactions %}
                         {% endblock mainactions %}
                     </div> <!--/row-->
+
+                    <a href="#" id="filters-btn" class="btn btn-large"><i class="icon-filter"></i> Filter</a>
+                    <div id="filters-panel" style="display:None">
+                        {% block filters %}
+                        {% endblock filters %}
+                    </div>
                     
                     {% block mainlist %}
                     {% endblock mainlist %}
@@ -46,3 +53,18 @@
         </div><!--/container-->
 
 {% endblock content %}
+
+{% block extrabody %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#filters-btn").click(function () {
+                $(this).popover({placement: 'bottom',
+                                 title: '{% trans "Filter list and map" %}',
+                                 content: $("#filters-panel").html()});
+                
+            });
+        });
+    </script>
+{% endblock extrabody %}
