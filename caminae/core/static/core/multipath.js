@@ -61,7 +61,7 @@ L.Control.Multipath = L.Control.extend({
         this.multipath_handler = new L.Handler.MultiPath(
             map, graph_layer, dijkstra, markersFactory, this.options.handler
         );
-        this.topologyhandler.on('computed_paths', this.toggle, this);
+        this.multipath_handler.on('computed_paths', this.toggle, this);
     },
 
     toggle: function() {

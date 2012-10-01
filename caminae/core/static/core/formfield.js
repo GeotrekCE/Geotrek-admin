@@ -152,7 +152,7 @@ FormField.makeModule = function(module, module_settings) {
                 // FIXME: static
                 var defaultIconOptions = getDefaultIconOpts();
                 var icon = new L.Icon({
-                    iconUrl: defaultIconOptions.iconUrl.replace('marker-trans.png', 'osrm_markers/marker-drag.png');
+                    iconUrl: defaultIconOptions.iconUrl.replace('marker-trans.png', 'osrm_markers/marker-drag.png'),
                     iconSize: new L.Point(18, 18)
                 });
 
@@ -173,8 +173,9 @@ FormField.makeModule = function(module, module_settings) {
         var markersFactory = module.getMarkers(map, snapObserver);
 
         objectsLayer.on('load', function() {
-            $.getJSON(module_settings.enableMultipath.path_json_graph_url, function(graph) {
 
+            var parseGraph = function (graph) {
+               
                 var dijkstra = {
                     'compute_path': Caminae.compute_path,
                     'graph': graph
@@ -479,6 +480,12 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 }
 
+            };
+            
+            $.getJSON(module_settings.enableMultipath.path_json_graph_url, parseGraph).error(function (jqXHR, textStatus, errorThrown) {
+                $(map._container).addClass('map-error');
+                console.error("Could not load url '" + module_settings.enableMultipath.path_json_graph_url + "': " + textStatus);
+                console.error(errorThrown);
             });
         });
     };

@@ -146,6 +146,10 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
  	background-color: #fff;
 }
 
+.leaflet-control-draw.enabled, .leaflet-control.enabled {
+ 	background-color: rgba(255, 255, 0, 0.6);
+}
+
 .leaflet-control-draw-measure {
 	background-image: url(images/measure-control.png);
 }
