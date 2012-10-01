@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
 
@@ -282,7 +283,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         interventions = Intervention.objects.existing().filter(project=self)
         geoms = [i.geom for i in interventions if i.geom is not None]
         if geoms:
-            return GeometryCollection(*geoms)
+            return GeometryCollection(*geoms, srid=settings.SRID)
         return None
 
     @property

@@ -17,7 +17,8 @@ function {{ mapname }}Init(map, bounds) {
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
     var objectLayer = new MapEntity.ObjectsLayer(geojson, {
-        style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'}
+        style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'},
+        indexing: false
     });
     map.addLayer(objectLayer);
     var objectBounds = {{ object|latlngbounds }},
