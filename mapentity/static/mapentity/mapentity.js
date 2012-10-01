@@ -107,7 +107,7 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
                 bounds.extend(layer._layers[i].getBounds());
             }
         }
-        else if (typeof layer.getBounds == 'function') {
+        else if (typeof layer.getLatLngs == 'function' || layer instanceof L.FeatureGroup) {
             bounds = layer.getBounds();
         }
         else {
