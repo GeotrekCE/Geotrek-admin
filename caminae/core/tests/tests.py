@@ -9,7 +9,7 @@ from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
-    TopologyMixinFactory, StakeFactory, TrailFactory)
+    TopologyMixinFactory, StakeFactory, TrailFactory, ComfortFactory)
 from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 # TODO caminae.core should be self sufficient
@@ -34,6 +34,7 @@ class ViewsTest(MapEntityTest):
             'name': '',
             'structure': default_structure().pk,
             'stake': '',
+            'comfort': ComfortFactory.create().pk,
             'trail': '',
             'comments': '',
             'departure': '',

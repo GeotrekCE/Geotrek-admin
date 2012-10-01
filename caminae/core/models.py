@@ -35,14 +35,10 @@ class Path(MapEntityMixin, StructureRelated):
 
     departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"))
     arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"))
-    """
-    Niveau de confort (bib en 1-N, un seul choix possible pour chaque tronçon). bib_confort
-    Chantiers:
-    Type de chantier (bib en 1-N, un seul choix possible pour chaque tronçon)
-    Domaine d'intervention (bib en 1-N, un seul choix possible pour chaque tronçon)
-    Bib_fonctions:
-    Cout jour (pour pouvoir calculer le cout d'une intervention en HOMMES en multipliant le NB de jour hommes par le cout de la journée de la fonction correspondante).
-    """
+    
+    comfort =  models.ForeignKey('Comfort',
+                                 null=True, blank=True, related_name='paths',
+                                 verbose_name=_("Comfort"))
     # Override default manager
     objects = models.GeoManager()
 
@@ -485,6 +481,19 @@ class Stake(StructureRelated):
 
     def __unicode__(self):
         return self.stake
+
+
+class Comfort(StructureRelated):
+
+    comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50)
+
+    class Meta:
+        db_table = 'bib_confort'
+        verbose_name = _(u"Comfort")
+        verbose_name_plural = _(u"Comforts")
+
+    def __unicode__(self):
+        return self.comfort
 
 
 class Usage(StructureRelated):

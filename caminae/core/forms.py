@@ -57,6 +57,7 @@ class PathForm(CommonForm):
 
     modelfields = ('name',
               'stake',
+              'comfort',
               'trail',
               'departure',
               'arrival',

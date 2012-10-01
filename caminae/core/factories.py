@@ -43,6 +43,12 @@ class TrailFactory(factory.Factory):
     comments =  factory.Sequence(lambda n: u"Comments %s" % n)
 
 
+class ComfortFactory(factory.Factory):
+    FACTORY_FOR = models.Comfort
+
+    comfort =  factory.Sequence(lambda n: u"Comfort %s" % n)
+
+
 class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
@@ -65,6 +71,7 @@ class PathFactory(StructureRelatedDefaultFactory):
 
     # FK that could also be null
     trail = factory.SubFactory(TrailFactory)
+    comfort = factory.SubFactory(ComfortFactory)
     datasource = factory.SubFactory(DatasourceFactory)
     stake = factory.SubFactory(StakeFactory)
 
