@@ -142,7 +142,7 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
 	font-size: 10px;
 }
 
-.leaflet-control-draw.enabled a {
+.leaflet-control-draw.enabled a, .leaflet-control.enabled a {
  	background-color: #fff;
 }
 

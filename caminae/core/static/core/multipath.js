@@ -6,6 +6,17 @@ L.Control.TopologyPoint = L.Control.extend({
     initialize: function (map, options) {
         L.Control.prototype.initialize.call(this, options);
         this.topologyhandler = new L.Handler.TopologyPoint(map);
+        this.topologyhandler.on('added', this.toggle, this);
+    },
+
+    toggle: function() {
+        if (this.topologyhandler.enabled()) {
+            this.topologyhandler.disable.call(this.topologyhandler);
+            L.DomUtil.removeClass(this._container, 'enabled');
+        } else {
+            this.topologyhandler.enable.call(this.topologyhandler);
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
     },
 
     onAdd: function (map) {
@@ -17,9 +28,7 @@ L.Control.TopologyPoint = L.Control.extend({
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', function() {
-                     self.topologyhandler.enable();
-                });
+                .addListener(link, 'click', this.toggle, this);
         return this._container;
     },
 
@@ -52,6 +61,17 @@ L.Control.Multipath = L.Control.extend({
         this.multipath_handler = new L.Handler.MultiPath(
             map, graph_layer, dijkstra, markersFactory, this.options.handler
         );
+        this.topologyhandler.on('computed_paths', this.toggle, this);
+    },
+
+    toggle: function() {
+        if (this.multipath_handler.enabled()) {
+            this.multipath_handler.disable.call(this.multipath_handler);
+            L.DomUtil.removeClass(this._container, 'enabled');
+        } else {
+            this.multipath_handler.enable.call(this.multipath_handler);
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
     },
 
     onAdd: function (map) {
@@ -64,9 +84,7 @@ L.Control.Multipath = L.Control.extend({
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', function() {
-                     self.multipath_handler.enable();
-                });
+                .addListener(link, 'click', this.toggle, this);
 
         return this._container;
     },
