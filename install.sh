@@ -181,7 +181,12 @@ _EOF_
     cd lib/
 
     if [ ! -f /usr/local/bin/phantomjs ]; then
-        wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
+        arch=$(uname -p)
+        if [ "${arch}" == "x86_64" ] ; then
+            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
+        else
+            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-i686.tar.bz2 -O phantomjs.tar.bz2
+        fi
         tar -jxvf phantomjs.tar.bz2
         rm phantomjs.tar.bz2
         cd *phantomjs*
@@ -190,7 +195,7 @@ _EOF_
     fi
 
     if [ ! -f /usr/local/bin/casperjs ]; then
-        wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
+        wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC1 -O casperjs.zip
         unzip -o casperjs.zip > /dev/null
         rm casperjs.zip
         cd *casperjs*
