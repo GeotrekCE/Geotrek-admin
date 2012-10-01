@@ -107,7 +107,20 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
                 bounds.extend(layer._layers[i].getBounds());
             }
         }
-        else if (typeof layer.getBounds == 'function') {
+        else if (layer instanceof L.FeatureGroup) {
+            // Leaflet uses project() in Circle's getBounds() method.
+            // We cannot call it yet, we are adding the feature to the map.
+            // Thus, rewrote that part and switch on Circle.
+            bounds = new L.LatLngBounds();
+            for (var i in layer._layers) {
+                var sublayer = layer._layers[i];
+                if (sublayer instanceof L.Circle)
+                    bounds.extend(sublayer.getLatLng());
+                else
+                    bounds.extend(sublayer.getBounds());
+            }
+        }
+        else if (typeof layer.getLatLngs == 'function') {
             bounds = layer.getBounds();
         }
         else {

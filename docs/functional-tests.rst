@@ -1506,7 +1506,6 @@ Si celui-ci ne s'avère pas concluant, nous utiliserons un panneau pliable.
     Les champs de filtres ne sont pas bien disposés à l'intérieur.
 
 
-
 ========================
 Sprint 6 - Version 0.6.0
 ========================
@@ -1548,3 +1547,9 @@ et sentiers.
 
     Les autres fiches n'affichent pas encore tous les champs (attente specs. Écrins)
     donc ne sont pas (encore) concernées.
+
+
+#318 - [BUG] AMENAGEMENT - La carte ne se charge pas completement et tourne sans arrêt
+--------------------------------------------------------------------------------------
+
+Fixé.
