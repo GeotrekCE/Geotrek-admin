@@ -141,6 +141,10 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
 
     load: function (url) {
         var jsonLoad = function (data) {
+            var features = jQuery.grep(data.features, function(obj, i) {
+                return obj.geometry != null;
+            });
+            data.features = features;
             this.addData(data);
             this.spin(false);
             this.fire('load');
