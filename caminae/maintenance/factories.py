@@ -27,6 +27,7 @@ class InterventionJobFactory(factory.Factory):
     FACTORY_FOR = models.InterventionJob
 
     job = factory.Sequence(lambda n: u"Job %s" % n)
+    cost = 500.0
 
 
 class ManDayFactory(factory.Factory):

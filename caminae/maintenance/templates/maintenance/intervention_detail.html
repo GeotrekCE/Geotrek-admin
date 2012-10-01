@@ -21,6 +21,7 @@
                     {% if forloop.last %}</ul>{% endif %}
                 {% endfor %}
                 <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "day" %}{{ intervention.total_manday|pluralize }}</p>
+                <p>{% trans "Total cost:" %} {{ intervention.total_cost }} &euro;</p>
             </td>
         </tr>
     </table>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from caminae.core.models import (Datasource, Stake, Usage, Network, Trail
+from caminae.core.models import (Datasource, Stake, Usage, Network, Trail,
                                  Comfort,)
 
 

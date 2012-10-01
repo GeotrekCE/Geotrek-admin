@@ -27,17 +27,14 @@ msgid "Land type"
 msgstr "Type foncier"
 
 #: filters.py:151 filters.py:162
-#, fuzzy
 msgid "Competence"
 msgstr "Compétence"
 
 #: filters.py:152 filters.py:163
-#, fuzzy
 msgid "Signage management"
 msgstr "Gestion signalétique"
 
 #: filters.py:153 filters.py:164
-#, fuzzy
 msgid "Work management"
 msgstr "Gestion de travaux"
 

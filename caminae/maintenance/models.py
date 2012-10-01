@@ -136,6 +136,13 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
         return total
 
     @property
+    def total_cost(self):
+        total = 0.0
+        for md in self.manday_set.all():
+            total += (md.nb_days * md.job.cost)
+        return total
+
+    @property
     def geom(self):
         if self.topology:
             return self.topology.geom
@@ -196,6 +203,7 @@ class InterventionDisorder(StructureRelated):
 class InterventionJob(StructureRelated):
 
     job = models.CharField(max_length=128, verbose_name=_(u"Job"))
+    cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
 
     class Meta:
         db_table = 'bib_fonctions'
