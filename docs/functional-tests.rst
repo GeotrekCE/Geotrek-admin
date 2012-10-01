@@ -1504,3 +1504,53 @@ Si celui-ci ne s'avère pas concluant, nous utiliserons un panneau pliable.
     Le bouton de filtre devrait changer de couleur quand un filtre est appliqué.
     
     Les champs de filtres ne sont pas bien disposés à l'intérieur.
+
+
+
+========================
+Sprint 6 - Version 0.6.0
+========================
+
+#280 - Nombre de jour/agent - Décimales
+---------------------------------------
+
+Il est désormais possible de saisir des chiffres avec décimales dans le 
+champ nombre d'homme-jours des interventions.
+
+#203 - Champs a ajouter
+-----------------------
+
+* Tronçons: Départ + Arrivée (défaut: vide)
+
+* Tronçons: Niveau de confort, liste éditable dans l'Admin.
+
+* Chantiers: Type, liste éditable dans l'Admin.
+
+* Chantiers: Domaine, liste éditable dans l'Admin.
+
+* Fonctions: Coût jour, éditable dans l'Admin pour chaque fonction.
+  Le coût total affiche dans la fiche détail d'une intervention utilise ce facteur.
+
+
+#266 - Date de l'intervention
+-----------------------------
+
+Étiquette du champ du formulaire changée.
+
+
+#281 - Fiche tronçon / Commentaire
+----------------------------------
+
+Le commentaire n'est plus écrit en HTML complet sur les fiches tronçons
+et sentiers.
+
+:notes:
+
+    Les autres fiches n'affichent pas encore tous les champs (attente specs. Écrins)
+    donc ne sont pas (encore) concernées.
+
+
+#318 - [BUG] AMENAGEMENT - La carte ne se charge pas completement et tourne sans arrêt
+--------------------------------------------------------------------------------------
+
+Fixé.
