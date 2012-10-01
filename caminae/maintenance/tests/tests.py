@@ -58,7 +58,7 @@ class InterventionViewsTest(MapEntityTest):
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
             
-            'manday_set-0-nb_days': '48',
+            'manday_set-0-nb_days': '48.75',
             'manday_set-0-job': InterventionJobFactory.create().pk,
             'manday_set-0-id': '',
             'manday_set-0-DELETE': '',
@@ -312,5 +312,3 @@ class ExportTest(TestCase):
             self.assertEquals(str(feature['id']), str(proj.pk))
             self.assertEquals(str(feature['it_pk']), str(it_line.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
-
-

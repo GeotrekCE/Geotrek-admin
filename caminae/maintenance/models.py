@@ -130,7 +130,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @property
     def total_manday(self):
-        total = 0
+        total = 0.0
         for md in self.manday_set.all():
             total += md.nb_days
         return total
@@ -208,7 +208,7 @@ class InterventionJob(StructureRelated):
 
 class ManDay(models.Model):
 
-    nb_days = models.IntegerField(verbose_name=_(u"Mandays"))
+    nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention)
     job = models.ForeignKey(InterventionJob)
 

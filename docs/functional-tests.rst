@@ -1504,3 +1504,15 @@ Si celui-ci ne s'avère pas concluant, nous utiliserons un panneau pliable.
     Le bouton de filtre devrait changer de couleur quand un filtre est appliqué.
     
     Les champs de filtres ne sont pas bien disposés à l'intérieur.
+
+
+
+========================
+Sprint 6 - Version 0.6.0
+========================
+
+#280 - Nombre de jour/agent - Décimales
+---------------------------------------
+
+Il est désormais possible de saisir des chiffres avec décimales dans le 
+champ nombre d'homme-jours des interventions.
