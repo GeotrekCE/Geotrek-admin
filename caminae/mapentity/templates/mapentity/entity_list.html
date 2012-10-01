@@ -151,13 +151,6 @@
             });
             
             $('#filter').click();
-
-            $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {
-                if ($(this).val()) {
-                    var bbox = $.map($(this).val().split(','), parseFloat); // minx,miny,maxx,maxy
-                    mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
-                }
-            });
         }
 
         /* Table initialisation */
