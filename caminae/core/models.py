@@ -33,6 +33,16 @@ class Path(MapEntityMixin, StructureRelated):
     name = models.CharField(null=True, blank=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"))
 
+    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"))
+    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"))
+    """
+    Niveau de confort (bib en 1-N, un seul choix possible pour chaque tronçon). bib_confort
+    Chantiers:
+    Type de chantier (bib en 1-N, un seul choix possible pour chaque tronçon)
+    Domaine d'intervention (bib en 1-N, un seul choix possible pour chaque tronçon)
+    Bib_fonctions:
+    Cout jour (pour pouvoir calculer le cout d'une intervention en HOMMES en multipliant le NB de jour hommes par le cout de la journée de la fonction correspondante).
+    """
     # Override default manager
     objects = models.GeoManager()
 
@@ -506,7 +516,7 @@ class Network(StructureRelated):
 class Trail(MapEntityMixin, StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64)
-    departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=64)
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64)
     comments = models.TextField(default="", verbose_name=_(u"Comments"))
 

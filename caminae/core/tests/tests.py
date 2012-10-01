@@ -36,6 +36,8 @@ class ViewsTest(MapEntityTest):
             'stake': '',
             'trail': '',
             'comments': '',
+            'departure': '',
+            'arrival': '',
             'datasource': '',
             'valid': 'on',
             'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',

@@ -50,6 +50,8 @@ class PathFactory(StructureRelatedDefaultFactory):
     geom_cadastre = LineString(Point(5, 5, 0), Point(6, 6, 0), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: u"name %s" % n)
+    departure = factory.Sequence(lambda n: u"departure %s" % n)
+    arrival = factory.Sequence(lambda n: u"arrival %s" % n)
     comments = factory.Sequence(lambda n: u"comment %s" % n)
 
     # Trigger will override :
@@ -165,5 +167,3 @@ class PathAggregationInBoundsRandomGeomFactory(PathAggregationFactory):
 
 class PathAggregationInBoundsExistingGeomFactory(PathAggregationFactory):
     path = factory.SubFactory(PathInBoundsExistingGeomFactory)
-
-
