@@ -1516,3 +1516,17 @@ Sprint 6 - Version 0.6.0
 
 Il est désormais possible de saisir des chiffres avec décimales dans le 
 champ nombre d'homme-jours des interventions.
+
+#203 - Champs a ajouter
+-----------------------
+
+* Tronçons: Départ + Arrivée (défaut: vide)
+
+* Tronçons: Niveau de confort, liste éditable dans l'Admin.
+
+* Chantiers: Type, liste éditable dans l'Admin.
+
+* Chantiers: Domaine, liste éditable dans l'Admin.
+
+* Fonctions: Coût jour, éditable dans l'Admin pour chaque fonction.
+  Le coût total affiche dans la fiche détail d'une intervention utilise ce facteur.
