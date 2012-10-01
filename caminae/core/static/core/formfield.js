@@ -150,9 +150,10 @@ FormField.makeModule = function(module, module_settings) {
             },
             drag: function(latlng, layer, snappable) {
                 // FIXME: static
+                var defaultIconOptions = getDefaultIconOpts();
                 var icon = new L.Icon({
-                    iconUrl: '/static/images/osrm_markers/marker-drag.png'
-                    , iconSize: new L.Point(18, 18)
+                    iconUrl: defaultIconOptions.iconUrl.replace('marker-trans.png', 'osrm_markers/marker-drag.png');
+                    iconSize: new L.Point(18, 18)
                 });
 
                 var marker = new L.Marker(latlng, {'draggable': true, 'icon': icon });
