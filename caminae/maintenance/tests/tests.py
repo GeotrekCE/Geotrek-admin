@@ -107,6 +107,8 @@ class ProjectViewsTest(MapEntityTest):
             'name': 'test',
             'structure': default_structure().pk,
             'stake': '',
+            'type': '',
+            'domain': '',
             'begin_year': '2010',
             'end_year': '2012',
             'constraints': '',

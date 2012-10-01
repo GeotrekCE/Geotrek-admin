@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from caminae.maintenance.models import (
-        Contractor, InterventionStatus, InterventionType, InterventionDisorder
+        Contractor, InterventionStatus, InterventionType, InterventionDisorder,
+        ProjectType, ProjectDomain
 )
 
 class InterventionStatusAdmin(admin.ModelAdmin):
@@ -23,3 +24,5 @@ admin.site.register(Contractor)
 admin.site.register(InterventionStatus, InterventionStatusAdmin)
 admin.site.register(InterventionType, InterventionTypeAdmin)
 admin.site.register(InterventionDisorder, InterventionDisorderAdmin)
+admin.site.register(ProjectType)
+admin.site.register(ProjectDomain)

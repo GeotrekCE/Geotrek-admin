@@ -229,6 +229,11 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True)
     cost = models.FloatField(verbose_name=_(u"Cost"), default=0)
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True)
+    type = models.ForeignKey('ProjectType', null=True, blank=True,
+                             verbose_name=_(u"Project type"))
+    domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
+                             verbose_name=_(u"Project domain"))
+
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
@@ -296,6 +301,32 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
+
+
+class ProjectType(StructureRelated):
+
+    type = models.CharField(max_length=128, verbose_name=_(u"Type"))
+
+    class Meta:
+        db_table = 'bib_projet_type'
+        verbose_name = _(u"Project type")
+        verbose_name_plural = _(u"Project types")
+
+    def __unicode__(self):
+        return self.type
+
+
+class ProjectDomain(StructureRelated):
+
+    domain = models.CharField(max_length=128, verbose_name=_(u"Domain"))
+
+    class Meta:
+        db_table = 'bib_projet_domaine'
+        verbose_name = _(u"Project domain")
+        verbose_name_plural = _(u"Project domains")
+
+    def __unicode__(self):
+        return self.domain
 
 
 class Contractor(StructureRelated):

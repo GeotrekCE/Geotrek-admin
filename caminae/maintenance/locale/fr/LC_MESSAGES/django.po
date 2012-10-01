@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2012-10-01 13:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "Année d'activité"
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
-#: forms.py:137 models.py:323 templates/maintenance/project_detail.html:12
+#: forms.py:139 models.py:354 templates/maintenance/project_detail.html:12
 msgid "Fundings"
 msgstr "Financements"
 
@@ -82,11 +82,11 @@ msgstr "Coût héliportage"
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-#: models.py:33 models.py:233
+#: models.py:33 models.py:238
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:34 models.py:234
+#: models.py:34 models.py:239
 msgid "Update date"
 msgstr "Date de modification"
 
@@ -114,7 +114,7 @@ msgstr "Désordres"
 msgid "Jobs"
 msgstr "Fonctions"
 
-#: models.py:56 models.py:254
+#: models.py:56 models.py:259
 msgid "Project"
 msgstr "Chantier"
 
@@ -134,7 +134,7 @@ msgstr "Suivi"
 msgid "Intervention's statuses"
 msgstr "Suivis"
 
-#: models.py:172
+#: models.py:172 models.py:308
 msgid "Type"
 msgstr ""
 
@@ -190,39 +190,63 @@ msgstr "Contraintes"
 msgid "Cost"
 msgstr "Coût"
 
-#: models.py:238 models.py:308
+#: models.py:233 models.py:312
+#, fuzzy
+msgid "Project type"
+msgstr "Type de chantier"
+
+#: models.py:235 models.py:325
+#, fuzzy
+msgid "Project domain"
+msgstr "Domaine de chantier"
+
+#: models.py:243 models.py:339
 msgid "Contractors"
 msgstr "Prestataires"
 
-#: models.py:241
+#: models.py:246
 msgid "Project owner"
 msgstr "Maître d'ouvrage"
 
-#: models.py:244
+#: models.py:249
 msgid "Project manager"
 msgstr "Maître d'oeuvre"
 
-#: models.py:247
+#: models.py:252
 msgid "Founders"
 msgstr "Financeurs"
 
-#: models.py:255
+#: models.py:260
 msgid "Projects"
 msgstr "Chantiers"
 
-#: models.py:297
+#: models.py:302
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:303 models.py:307
+#: models.py:313
+#, fuzzy
+msgid "Project types"
+msgstr "Types de chantier"
+
+#: models.py:321
+msgid "Domain"
+msgstr "Domaine"
+
+#: models.py:326
+#, fuzzy
+msgid "Project domains"
+msgstr "Domaines de chantier"
+
+#: models.py:334 models.py:338
 msgid "Contractor"
 msgstr "Prestataire"
 
-#: models.py:316
+#: models.py:347
 msgid "Amount"
 msgstr "Montant"
 
-#: models.py:322
+#: models.py:353
 msgid "Funding"
 msgstr "Financement"
 

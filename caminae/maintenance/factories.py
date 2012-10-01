@@ -58,10 +58,24 @@ class ContractorFactory(factory.Factory):
     contractor = factory.Sequence(lambda n: u"Contractor %s" % n)
 
 
+class ProjectTypeFactory(factory.Factory):
+    FACTORY_FOR = models.ProjectType
+
+    type = factory.Sequence(lambda n: u"Type %s" % n)
+
+
+class ProjectDomainFactory(factory.Factory):
+    FACTORY_FOR = models.ProjectDomain
+
+    domain = factory.Sequence(lambda n: u"Domain %s" % n)
+
+
 class ProjectFactory(factory.Factory):
     FACTORY_FOR = models.Project
 
     name = factory.Sequence(lambda n: u"Project %s" % n)
+    type = factory.SubFactory(ProjectTypeFactory)
+    domain = factory.SubFactory(ProjectDomainFactory)
     begin_year = 2010
     end_year = 2012
     project_owner = factory.SubFactory(OrganismFactory)
