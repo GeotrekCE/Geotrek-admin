@@ -1530,3 +1530,9 @@ champ nombre d'homme-jours des interventions.
 
 * Fonctions: Coût jour, éditable dans l'Admin pour chaque fonction.
   Le coût total affiche dans la fiche détail d'une intervention utilise ce facteur.
+
+
+#266 - Date de l'intervention
+-----------------------------
+
+Étiquette du champ du formulaire changée.

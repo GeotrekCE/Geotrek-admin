@@ -14,7 +14,7 @@ from caminae.infrastructure.models import Infrastructure, Signage
 class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Date"))
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"))
     comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
@@ -139,7 +139,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def total_cost(self):
         total = 0.0
         for md in self.manday_set.all():
-            total += (md.nb_days * md.job.cost)
+            total += md.cost
         return total
 
     @property
@@ -224,6 +224,10 @@ class ManDay(models.Model):
         db_table = 'journeeshomme'
         verbose_name = _(u"Manday")
         verbose_name_plural = _(u"Mandays")
+
+    @property
+    def cost(self):
+        return float(self.nb_days * self.job.cost)
 
     def __unicode__(self):
         return self.nb_days

@@ -9,6 +9,10 @@
             <td>{{ intervention.status }}</td>
         </tr>
         <tr>
+            <th>{{ intervention|verbose:"date" }}</th>
+            <td>{{ intervention.date }}</td>
+        </tr>
+        <tr>
             <th>{% trans "Mandays" %}</th>
             <td>
                 {% for md in intervention.manday_set.all %}
@@ -21,7 +25,7 @@
                     {% if forloop.last %}</ul>{% endif %}
                 {% endfor %}
                 <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "day" %}{{ intervention.total_manday|pluralize }}</p>
-                <p>{% trans "Total cost:" %} {{ intervention.total_cost }} &euro;</p>
+                <p>{% trans "Total cost:" %} {{ intervention.total_cost|floatformat:2 }} &euro;</p>
             </td>
         </tr>
     </table>
