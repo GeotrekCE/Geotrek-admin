@@ -1553,3 +1553,13 @@ et sentiers.
 --------------------------------------------------------------------------------------
 
 Fixé.
+
+#285 - Saisie des champs textes multilingues
+--------------------------------------------
+
+Dans la story #168 il est indiqué que si l'utilisateur logué est italien, 
+c'est le champ texte italien qui est stocké. Cela veut dire qu'il ne peut pas saisir la description française ?
+
+    Si évidemment. Il s'agissait juste de la colonne 'description' en base, 
+    qui n'est pas utilisée dans l'application. On utilise les colonnes 
+    traduites (_fr, _en, _it).
