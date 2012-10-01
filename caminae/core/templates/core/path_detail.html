@@ -17,7 +17,7 @@
     
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
-        {{ path.comments|default:_("None") }}
+        {{ path.comments|safe|default:_("None") }}
     </div>
 
     <h3>{% trans "Properties" %}</h3>

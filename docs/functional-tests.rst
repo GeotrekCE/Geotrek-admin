@@ -1536,3 +1536,15 @@ champ nombre d'homme-jours des interventions.
 -----------------------------
 
 Étiquette du champ du formulaire changée.
+
+
+#281 - Fiche tronçon / Commentaire
+----------------------------------
+
+Le commentaire n'est plus écrit en HTML complet sur les fiches tronçons
+et sentiers.
+
+:notes:
+
+    Les autres fiches n'affichent pas encore tous les champs (attente specs. Écrins)
+    donc ne sont pas (encore) concernées.
