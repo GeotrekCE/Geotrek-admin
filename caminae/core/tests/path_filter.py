@@ -32,8 +32,8 @@ class PathFilterTest(TestCase):
             json = simplejson.loads(response.content)
             # The JSON should only contain filtered paths
             self.assertListEqual(
-                    json['map_obj_pk'],
-                    list(queryset.values_list('pk', flat=True)),
+                    sorted(json['map_obj_pk']),
+                    sorted(list(queryset.values_list('pk', flat=True))),
             )
 
         # Simulate ajax call to populate the list
