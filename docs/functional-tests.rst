@@ -1563,3 +1563,9 @@ c'est le champ texte italien qui est stocké. Cela veut dire qu'il ne peut pas s
     Si évidemment. Il s'agissait juste de la colonne 'description' en base, 
     qui n'est pas utilisée dans l'application. On utilise les colonnes 
     traduites (_fr, _en, _it).
+
+
+#191 - [BUG] On ne voit pas bien quand on a sélectionné l’outil DESSIN.
+-----------------------------------------------------------------------
+
+Désormais l'outil sélectionné s'illumine.

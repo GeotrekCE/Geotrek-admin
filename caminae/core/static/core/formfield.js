@@ -41,6 +41,13 @@ FormField.makeModule = function(module, module_settings) {
             }
         });
 
+        // Show control as enabled on activation
+        for (var h in map.drawControl.handlers) {
+            map.drawControl.handlers[h].on('activated', function () {
+                $('.leaflet-control-draw-' + h).parent().addClass('enabled');
+            });
+        }
+
         // Listen to all events of creation, Leaflet.Draw naming inconsistency
         var draw_types = {
             'polyline': 'poly',
@@ -52,6 +59,11 @@ FormField.makeModule = function(module, module_settings) {
             map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
                 console.log('Drawn ' + this.type);
                 var drawn = e[this.type];  // Leaflet.Draw naming inconsistency
+                
+                // Show control as disabled after creation
+                for (var h in map.drawControl.handlers) {
+                    $('.leaflet-control-draw-' + h).parent().removeClass('enabled');
+                }
                 drawncallback(drawn);
             }, {type: draw_type}));
         }
