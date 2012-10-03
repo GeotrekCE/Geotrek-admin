@@ -79,6 +79,16 @@ class TrekGPXDetail(BaseDetailView):
         return response
 
 
+class TrekKMLDetail(BaseDetailView):
+    queryset = Trek.objects.existing().filter(published=True)
+
+    def render_to_response(self, context):
+        trek = self.get_object()
+        response = HttpResponse(trek.kml(), 
+                                content_type = 'application/vnd.google-earth.kml+xml')
+        return response
+
+
 class TrekJsonProfile(BaseDetailView):
     queryset = Trek.objects.existing().filter(published=True)
 

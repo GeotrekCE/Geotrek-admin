@@ -396,6 +396,13 @@ class TopologyMixin(NoDeleteMixin):
         aggrobj.save()
         return topology
 
+    def geom_as_point(self):
+        geom = self.geom
+        if geom.geom_type != 'Point':
+            logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
+            geom = Point(geom.coords[0], srid=settings.SRID)
+        return geom
+
     def serialize(self):
         # Fetch properly ordered aggregations
         aggregations = self.aggregations.all()
@@ -404,10 +411,7 @@ class TopologyMixin(NoDeleteMixin):
 
         # Point topology
         if start == end and len(aggregations) == 1:
-            geom = self.geom
-            if geom.geom_type != 'Point':
-                logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
-                geom = Point(geom.coords[0], srid=settings.SRID)
+            geom = self.geom_as_point()
             point = geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
         else:

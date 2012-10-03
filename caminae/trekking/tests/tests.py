@@ -96,6 +96,12 @@ class TrekCustomViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    def test_kml(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_kml_detail', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_json_translation(self):
         trek = TrekFactory.build()
         trek.name_fr = 'Voie lactee'

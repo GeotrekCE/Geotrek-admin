@@ -1,5 +1,13 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n field_verbose_name %}
+{% load i18n static field_verbose_name %}
+
+
+{% block download %}
+    {{ block.super }}
+    <a class="btn btn-mini" href="{% url trekking:trek_gpx_detail object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-mini" href="{% url trekking:trek_kml_detail object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+{% endblock download %}
+
 
 {% block detailspanel %}
     {{ block.super }}

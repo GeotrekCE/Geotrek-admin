@@ -1,7 +1,12 @@
+from HTMLParser import HTMLParser
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django.utils.html import strip_tags
+
+import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
@@ -138,6 +143,24 @@ class Trek(MapEntityMixin, TopologyMixin):
     @property
     def name_csv_display(self):
         return unicode(self.name)
+
+    def kml(self):
+        """ Exports trek into KML format, add geometry as linestring and POI
+        as place marks """
+        html = HTMLParser()
+        kml = simplekml.Kml()
+        # Main itinerary
+        kml.newlinestring(name=self.name,
+                          description=html.unescape(strip_tags(self.description)),
+                          coords=self.geom.coords)
+        # Place marks
+        for poi in self.pois:
+            place = poi.geom_as_point()
+            place.transform(settings.API_SRID)
+            kml.newpoint(name=poi.name,
+                         description=html.unescape(strip_tags(poi.description)),
+                         coords=[place.coords])
+        return kml._genkml()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)

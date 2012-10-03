@@ -1576,3 +1576,12 @@ Désormais l'outil sélectionné s'illumine.
 
 L'enjeu d'une intervention est bel et calculé si au moins un des tronçons
 a un enjeu.
+
+
+#67 - Exporter l'itinéraire au format KML
+-----------------------------------------
+
+Les itinéraires sont désormais exportables en KML. Des liens sont disponibles
+depuis la fiche détail. 
+
+Le KML contient la ligne de l'itinéraire et les POIs.
