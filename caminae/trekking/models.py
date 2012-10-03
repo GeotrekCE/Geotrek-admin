@@ -1,3 +1,4 @@
+import logging
 from HTMLParser import HTMLParser
 
 from django.conf import settings
@@ -11,6 +12,9 @@ import simplekml
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
 from caminae.common.utils import elevation_profile
+
+
+logger = logging.getLogger(__name__)
 
 
 class Trek(MapEntityMixin, TopologyMixin):
@@ -107,7 +111,6 @@ class Trek(MapEntityMixin, TopologyMixin):
     def serializable_themes(self):
         return [{'id': t.pk,
                  'label': t.label,
-                 'pictogram': t.pictogram.read().encode('base64')
                 } for t in self.themes.all()]
 
     @property
@@ -251,6 +254,7 @@ class Theme(models.Model):
         return self.label
 
 
+
 class TrekRelationshipManager(models.Manager):
 
     def relationships(self, trek):
@@ -326,6 +330,11 @@ class POI(MapEntityMixin, TopologyMixin):
         return unicode(self.name)
 
     @property
+    def serializable_type(self):
+        return {'label': self.type.label,
+                'pictogram': self.type.serializable_pictogram}
+
+    @property
     def treks(self):
         s = []
         for a in self.aggregations.all():
@@ -344,3 +353,11 @@ class POIType(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    @property
+    def serializable_pictogram(self):
+        try:
+            return self.pictogram.read().encode('base64')
+        except (IOError, ValueError), e:
+            logger.warning(e)
+            return ''

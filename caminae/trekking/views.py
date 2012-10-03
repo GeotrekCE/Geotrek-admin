@@ -102,13 +102,15 @@ class TrekJsonProfile(BaseDetailView):
 class TrekPOIGeoJSON(GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
+    fields = ['serializable_type']
+
     def get_queryset(self):
         try:
             trek_pk = self.kwargs.get(self.pk_url_kwarg)
             trek = Trek.objects.get(pk=trek_pk)
         except Trek.DoesNotExist:
             raise Http404
-        return trek.pois
+        return trek.pois.select_related(depth=1)
 
 
 class TrekDetail(MapEntityDetail):
@@ -177,7 +179,6 @@ class POIDetail(MapEntityDetail):
 
 class POIDocument(MapEntityDocument):
     model = POI
-
 
 
 class POICreate(MapEntityCreate):
