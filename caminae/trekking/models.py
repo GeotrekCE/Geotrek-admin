@@ -10,7 +10,6 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
-from caminae.land.models import DistrictEdge
 from caminae.common.utils import elevation_profile
 
 
@@ -95,18 +94,6 @@ class Trek(MapEntityMixin, TopologyMixin):
         return POI.objects.filter(pk__in=[p.pk for p in s])
 
     @property
-    def districts(self):
-        s = []
-        for a in self.aggregations.all():
-            s += [DistrictEdge.objects.get(pk=t.pk).district
-                  for t in a.path.topologymixin_set.existing().filter(
-                      kind=DistrictEdge.KIND,
-                      aggregations__start_position__lte=a.end_position,
-                      aggregations__end_position__gte=a.start_position
-                  )]
-        return list(set(s))
-
-    @property
     def poi_types(self):
         types = [p.type for p in self.pois]
         return set(types)
@@ -127,6 +114,11 @@ class Trek(MapEntityMixin, TopologyMixin):
     def serializable_usages(self):
         return [{'id': u.pk,
                  'label': u.usage} for u in self.usages.all()]
+
+    @property
+    def serializable_districts(self):
+        return [{'id': d.pk,
+                 'name': d.name} for d in self.districts]
 
     @property
     def elevation_profile(self):

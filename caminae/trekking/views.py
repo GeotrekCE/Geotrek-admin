@@ -24,7 +24,7 @@ class TrekLayer(MapEntityLayer):
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
               'duration', 'ascent', 'serializable_themes',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'is_transborder', 'districts']
+              'is_transborder', 'serializable_districts']
 
 
 class TrekList(MapEntityList):
@@ -45,14 +45,15 @@ class TrekJsonDetail(BaseDetailView):
     queryset = Trek.objects.existing().filter(published=True)
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
-              'web_links', 'advice', 'networks', 'ambiance', 'districts']
+              'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts']
 
     def get_context_data(self, **kwargs):
         o = self.object
         ctx = {}
 
         for fname in self.fields:
-            ctx[fname] = getattr(o, fname)
+            prettyname = fname.replace('serializable_', '')
+            ctx[prettyname] = getattr(o, fname)
             try:
                 field = o._meta.get_field_by_name(fname)[0]
             except FieldDoesNotExist: # fname may refer to non-field properties

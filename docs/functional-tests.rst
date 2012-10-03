@@ -1585,3 +1585,8 @@ Les itinéraires sont désormais exportables en KML. Des liens sont disponibles
 depuis la fiche détail. 
 
 Le KML contient la ligne de l'itinéraire et les POIs.
+
+#276 - Attribut districts (liste de pk des secteurs) dans le détail JSON itinéraire
+-----------------------------------------------------------------------------------
+
+Le JSON des itinéraires contient désormais la liste des secteurs traversés (pk + nom)

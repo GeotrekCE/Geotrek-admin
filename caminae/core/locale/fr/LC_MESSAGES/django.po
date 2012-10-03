@@ -241,7 +241,7 @@ msgid "Management"
 msgstr "Gestion"
 
 #: templates/core/path_detail.html:78
-msgid "Land edges"
+msgid "Land"
 msgstr "Foncier"
 
 #: templates/core/path_detail.html:89 templates/core/trail_detail.html:29

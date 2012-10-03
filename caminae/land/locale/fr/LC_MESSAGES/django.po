@@ -68,7 +68,7 @@ msgstr "Tronçon foncier"
 
 #: models.py:69
 msgid "Land edges"
-msgstr "Tronçon foncier"
+msgstr "Tronçons foncier"
 
 #: models.py:81 models.py:99 models.py:117
 msgid "Organism"

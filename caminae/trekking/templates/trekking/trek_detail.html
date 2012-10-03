@@ -33,6 +33,18 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "POIs" %}</th>
+            <td>
+                {% for p in trek.pois %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "POI types" %}</th>
             <td>
                 {% for t in trek.poi_types %}
@@ -60,11 +72,11 @@
                 {% endfor %}
             </td>
         </tr><tr>
-            <th>{% trans "POIs" %}</th>
+            <th>{% trans "Districts" %}</th>
             <td>
-                {% for p in trek.pois %}
+                {% for d in trek.districts %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
+                    <li>{{ d.name }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}

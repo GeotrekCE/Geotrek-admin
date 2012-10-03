@@ -179,6 +179,12 @@ class Path(MapEntityMixin, StructureRelated):
                              kind=land.models.LandEdge.KIND)]))
 
     @property
+    def districts(self):
+        return list(set([land.models.DistrictEdge.objects.get(pk=t.pk).district
+                         for t in self.topologymixin_set.existing().filter(
+                             kind=land.models.DistrictEdge.KIND)]))
+
+    @property
     def signages(self):
         return [inf.models.Signage.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.existing().filter(
@@ -431,6 +437,13 @@ class TopologyMixin(NoDeleteMixin):
                            paths=paths,
                            )
         return simplejson.dumps(objdict)
+
+    @property
+    def districts(self):
+        s = []
+        for p in self.paths.all():
+            s += p.districts
+        return list(set(s))
 
 
 class PathAggregation(models.Model):
