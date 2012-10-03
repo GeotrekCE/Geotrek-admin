@@ -29,6 +29,14 @@ class MapEntityTest(LiveServerTestCase):
     def tearDown(self):
         shutil.rmtree(settings.MEDIA_ROOT)
 
+    def login(self):
+        user = self.userfactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+    def logout(self):
+        self.client.logout()
+
     def get_bad_data(self):
         return {'topology': 'doh!'}, _(u'Topology is not valid.')
 
@@ -68,26 +76,17 @@ class MapEntityTest(LiveServerTestCase):
     def test_basic_format(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        user = self.userfactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-
+        self.login()
         self.modelfactory.create()
-
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
-
-
 
     def test_no_html_in_csv(self):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = self.userfactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
 
         self.modelfactory.create()
 
@@ -107,14 +106,11 @@ class MapEntityTest(LiveServerTestCase):
                 # the col should not contains any html tags
                 self.assertEquals(force_unicode(col), html.strip_tags(col))
 
-
     def test_crud_status(self):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = self.userfactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
         
         obj = self.modelfactory()
         response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))

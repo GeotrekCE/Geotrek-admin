@@ -115,7 +115,14 @@ h2 {
 }
 
 /* Alert messages */
-#alert-box {position: absolute; top: 3px; left: 50%; width: 50%; margin: 0 0 0 -25%;}
+#alert-box {
+	position: absolute; 
+	top: 3px; 
+	left: 50%; 
+	width: 50%; 
+	margin: 0 0 0 -25%;
+	z-index: 1000;
+}
 #alert-box li.alert {list-style-type: none; margin-bottom: 3px;}
 
 /* Maps */

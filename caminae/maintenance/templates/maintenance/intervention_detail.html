@@ -5,8 +5,12 @@
     {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ intervention|verbose:"status" }}</th>
-            <td>{{ intervention.status }}</td>
+            <th>{{ intervention|verbose:"date" }}</th>
+            <td>{{ intervention.date }}</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"stake" }}</th>
+            <td>{{ intervention.stake }}</td>
         </tr>
         <tr>
             <th>{{ intervention|verbose:"date" }}</th>

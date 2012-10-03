@@ -1569,3 +1569,10 @@ c'est le champ texte italien qui est stocké. Cela veut dire qu'il ne peut pas s
 -----------------------------------------------------------------------
 
 Désormais l'outil sélectionné s'illumine.
+
+
+#327 - [BUG] ENJEU - Calcul automatique de l'enjeu des interventions.
+---------------------------------------------------------------------
+
+L'enjeu d'une intervention est bel et calculé si au moins un des tronçons
+a un enjeu.

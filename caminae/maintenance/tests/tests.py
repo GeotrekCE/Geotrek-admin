@@ -70,9 +70,7 @@ class InterventionViewsTest(MapEntityTest):
         }
 
     def test_form_on_infrastructure(self):
-        user = self.userfactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
         
         infra = InfrastructureFactory.create()
         infrastr = u"%s" % infra
@@ -86,6 +84,20 @@ class InterventionViewsTest(MapEntityTest):
         response = self.client.get(infra.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
+
+    def test_form_default_stake(self):
+        self.login()
+        good_data = self.get_good_data()
+        good_data['stake'] = ''
+        good_data['topology'] = """
+        {"offset":0,"positions":{"0":[0.8298653170816073,1],"2":[0,0.04593024777973237]},"paths":[%s,%s,%s]}
+        """ % (PathFactory.create().pk, PathFactory.create().pk, PathFactory.create().pk)
+        response = self.client.post(Intervention.get_add_url(), good_data)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(response._headers['location'][1])
+        self.assertTrue('object' in response.context)
+        intervention = response.context['object']
+        self.assertFalse(intervention.stake is None)
 
 
 class ProjectViewsTest(MapEntityTest):
