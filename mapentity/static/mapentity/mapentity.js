@@ -251,8 +251,9 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
  * source: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
  */
 function getURLParameter(name) {
-    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
-    return decodeURIComponent(paramEncoded);
+    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1],
+        paramDecoded = decodeURIComponent(paramEncoded);
+    return paramDecoded == 'null' ? null : paramDecoded;
 }
 
 
@@ -320,8 +321,10 @@ MapEntity.Context = new function() {
             // If not received from URL, load from LocalStorage
             context = self.__loadFullContext();
         }
-        if (!context)
+        if (!context) {
+            console.warn("No context found.");
             return;  // No context, no restore.
+        }
         
         if (context.print) {
             // Hide controls
