@@ -1596,3 +1596,8 @@ Le JSON des itinéraires contient désormais la liste des secteurs traversés (p
 ----------------------------------------------------------------------
 
 Certains settings, accessibles sur ``api/settings.json`` serviront au portail de l'offre randonnée.
+
+#338 - [BUG] Extent de la carte perdu au changement de type d'objet dans la recherche
+-------------------------------------------------------------------------------------
+
+Fixé.
