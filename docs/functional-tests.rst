@@ -1586,6 +1586,7 @@ depuis la fiche détail.
 
 Le KML contient la ligne de l'itinéraire et les POIs.
 
+
 #276 - Attribut districts (liste de pk des secteurs) dans le détail JSON itinéraire
 -----------------------------------------------------------------------------------
 
@@ -1597,7 +1598,20 @@ Le JSON des itinéraires contient désormais la liste des secteurs traversés (p
 
 Certains settings, accessibles sur ``api/settings.json`` serviront au portail de l'offre randonnée.
 
+
 #338 - [BUG] Extent de la carte perdu au changement de type d'objet dans la recherche
 -------------------------------------------------------------------------------------
 
 Fixé.
+
+
+#29 - Paramétrer le logo de l'application
+-----------------------------------------
+
+Pour l'instant, seuls deux logos sont définis : 
+
+* ``logo-login.png`` : affiché sur la page de connexion
+
+* ``logo-header.png`` : affiché dans la barre d'outils de l'application
+
+Leur emplacement est ``var/media/upload/`` dans l'arborescence du projet.
