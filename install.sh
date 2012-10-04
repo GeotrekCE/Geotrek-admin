@@ -48,7 +48,7 @@ database_exists () {
 }
 
 
-user_exists () {
+user_does_not_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
     if [ -z $1 ]
@@ -133,6 +133,7 @@ function ubuntu_precise {
     #----------------------------------
     dbname=$(ini_value $settingsfile dbname)
     dbhost=$(ini_value $settingsfile dbhost)
+    dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
     
     if [ "${dbhost}" == "localhost" ] ; then
@@ -147,7 +148,7 @@ function ubuntu_precise {
         fi
         
         # Create user if missing
-        if ! user_exists ${dbuser}
+        if user_does_not_exists ${dbuser}
         then
             sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
             sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
