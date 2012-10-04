@@ -62,7 +62,7 @@ user_exists () {
 }
 
 ini_value () {
-    echo $(sed -n "s/.*$2 *= *\([^ ]*.*\)/\1/p" < $1)
+    echo $(sed -n "s/^\s*$2 *= *\([^ ]*.*\)/\1/p" < $1)
 }
 
 migrate_settings () {
