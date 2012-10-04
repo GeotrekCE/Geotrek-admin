@@ -282,7 +282,11 @@ API_SRID = 4326
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 # Let this be defined at instance-level
-LEAFLET_CONFIG = {}
+LEAFLET_CONFIG = {
+    'TILES_URL' : [],
+    'TILES_EXTENT' : None,
+    'SPATIAL_EXTENT' : None
+}
 
 LAYERCOLOR_PATHS = ''      # Hex color for paths
 LAYERCOLOR_LAND = ''       # Hex color for land layers

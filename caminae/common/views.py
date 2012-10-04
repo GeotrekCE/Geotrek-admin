@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 
 class HttpJSONResponse(HttpResponse):
@@ -65,33 +66,6 @@ class JSONListView(JSONResponseMixin, ListView):
     pass
 
 
-# Templates for QUnit testing
-class QUnitView(TemplateView):
-    template_name = "common/qunit/test_base.html"
-    jsfiles = []
-
-    def get_context_data(self, **kwargs):
-        context = super(QUnitView, self).get_context_data(**kwargs)
-        context['jsfiles'] = self.jsfiles
-        return context
-
-
-## Add tests here ##
-qunit_views = dict(
-    dijkstra=QUnitView.as_view(jsfiles=['js/dijkstra.js', 'core/test_dijkstra.js']),
-    utils=QUnitView.as_view(jsfiles=['mapentity/test_utils.js']),
-)
-
-
-# Reversing directly function using qunit_views.values() does not work, eg:
-# [ reverse_lazy(qunit_view) for qunit_view in qunit_views.values() ]
-qunit_views_urls = dict((name, reverse_lazy('common:jstest_%s' % name )) for name in qunit_views.keys())
-
-def qunit_tests_list_json(request):
-    """List all urls that may be test by an headless browser"""
-    return HttpResponse(json_django_dumps(qunit_views_urls), content_type='application/json')
-
-
 class FormsetMixin(object):
     context_name = None
     formset_class = None
@@ -118,3 +92,49 @@ class FormsetMixin(object):
         else:
             context[self.context_name] = self.formset_class(instance=self.object)
         return context
+
+
+# Templates for QUnit testing
+class QUnitView(TemplateView):
+    template_name = "common/qunit/test_base.html"
+    jsfiles = []
+
+    def get_context_data(self, **kwargs):
+        context = super(QUnitView, self).get_context_data(**kwargs)
+        context['jsfiles'] = self.jsfiles
+        return context
+
+
+#
+# Concrete views
+#..............................
+
+
+# Declare JS tests here
+# TODO REFACTOR : this is wrong, common should not depend on other apps
+qunit_views = dict(
+    dijkstra=QUnitView.as_view(jsfiles=['js/dijkstra.js', 'core/test_dijkstra.js']),
+    utils=QUnitView.as_view(jsfiles=['mapentity/test_utils.js']),
+)
+
+
+# Reversing directly function using qunit_views.values() does not work, eg:
+# [ reverse_lazy(qunit_view) for qunit_view in qunit_views.values() ]
+qunit_views_urls = dict((name, reverse_lazy('common:jstest_%s' % name )) for name in qunit_views.keys())
+
+def qunit_tests_list_json(request):
+    """List all urls that may be test by an headless browser"""
+    return HttpResponse(json_django_dumps(qunit_views_urls), content_type='application/json')
+
+
+
+def settings_json(request):
+    dictsettings = {}
+    # 
+    dictsettings['map'] = dict(
+        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT')
+    )
+    # Languages
+    dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
+                                     default=settings.LANGUAGE_CODE)
+    return HttpJSONResponse(json_django_dumps(dictsettings))

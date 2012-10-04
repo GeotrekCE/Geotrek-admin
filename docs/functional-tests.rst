@@ -1590,3 +1590,9 @@ Le KML contient la ligne de l'itinéraire et les POIs.
 -----------------------------------------------------------------------------------
 
 Le JSON des itinéraires contient désormais la liste des secteurs traversés (pk + nom)
+
+
+#312 - Publier certains settings de l'admin en JSON pour portail rando
+----------------------------------------------------------------------
+
+Certains settings, accessibles sur ``api/settings.json`` serviront au portail de l'offre randonnée.
