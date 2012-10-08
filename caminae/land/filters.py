@@ -22,9 +22,9 @@ class PhysicalEdgeFilter(MapEntityFilterSet):
 
 
 class LandEdgeFilter(StructureRelatedFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = LandEdge
-        fields = MapEntityFilterSet.Meta.fields + ['land_type']
+        fields = StructureRelatedFilterSet.Meta.fields + ['land_type']
 
 
 class OrganismFilter(MapEntityFilterSet):
@@ -155,6 +155,7 @@ class EdgeFilterSet(MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         fields = MapEntityFilterSet.Meta.fields
 
+
 class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)
@@ -165,5 +166,3 @@ class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         fields = StructureRelatedFilterSet.Meta.fields
-
-

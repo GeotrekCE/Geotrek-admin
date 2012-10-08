@@ -143,7 +143,7 @@ function ubuntu_precise {
         # Activate PostGIS in database
         if ! database_exists ${dbname}
         then
-            sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};"
+            sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8';"
             sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
         fi
         
