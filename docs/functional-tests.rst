@@ -1615,3 +1615,9 @@ Pour l'instant, seuls deux logos sont définis :
 * ``logo-header.png`` : affiché dans la barre d'outils de l'application
 
 Leur emplacement est ``var/media/upload/`` dans l'arborescence du projet.
+
+
+#305 - Fichiers liés / Nouvel onglet
+------------------------------------
+
+Les fichiers liés s'ouvrent dans un nouvelle fenêtre/onglet.

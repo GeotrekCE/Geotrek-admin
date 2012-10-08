@@ -20,13 +20,13 @@
         {% for att in attachments_list %}
         <tr>
             <td>
-                <a href="{{ att.attachment_file.url }}">
+                <a href="{{ att.attachment_file.url }}" target="_blank">
                     {% if att.is_image %}
                         <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}">
                     {% else %}
                         <img src="{% get_static_prefix %}paperclip/fileicons/{{ att.mimetype.1 }}.png"/>&nbsp;{{ att.title|default:att.filename }}
                     {% endif %}
-                </a>
+                </a> 
             </td>
             <td>{{ att.legend }}</td>
             <td>{{ att.creator }}</td>
