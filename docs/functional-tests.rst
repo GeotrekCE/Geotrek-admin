@@ -1634,3 +1634,9 @@ Elles sont désormais exclusives : le choix sur une désactive les autres.
 
 Il ne s'agissait pas d'un bug des droits, mais d'une erreur de configuration
 au niveau du déploiement.
+
+
+#320 - Nom de la couche sentiers
+--------------------------------
+
+Fixé
