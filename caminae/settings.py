@@ -252,7 +252,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'caminae': {
+        '': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
             'propagate': True,
