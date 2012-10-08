@@ -1627,3 +1627,10 @@ Les fichiers liés s'ouvrent dans un nouvelle fenêtre/onglet.
 --------------------------------------------------------------
 
 Elles sont désormais exclusives : le choix sur une désactive les autres.
+
+
+#290 - [BUG] DROITS lecture
+---------------------------
+
+Il ne s'agissait pas d'un bug des droits, mais d'une erreur de configuration
+au niveau du déploiement.
