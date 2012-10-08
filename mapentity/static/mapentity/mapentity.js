@@ -129,24 +129,31 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this.rtree.insert(this._rtbounds(bounds), layer);
     },
 
-    spin: function (state) {
-        if (!this._map) return;
+    onRemove: function (map) {
+        this.spin(false, map);
+        L.GeoJSON.prototype.onRemove.call(this, map);
+    },
+
+    spin: function (state, map) {
+        var _map = map || this._map;
+        
+        if (!_map) return;
 
         if (state) {
             // start spinning !
-            if (!this._map._spinner) {
-                this._map._spinner = new Spinner().spin(this._map._container);
-                this._map._spinning = 0;
+            if (!_map._spinner) {
+                _map._spinner = new Spinner().spin(_map._container);
+                _map._spinning = 0;
             }
-            this._map._spinning++;
+            _map._spinning++;
         }
         else {
-            this._map._spinning--;
-            if (this._map._spinning == 0) {
+            _map._spinning--;
+            if (_map._spinning == 0) {
                 // end spinning !
-                if (this._map._spinner) {
-                    this._map._spinner.stop();
-                    this._map._spinner = null;
+                if (_map._spinner) {
+                    _map._spinner.stop();
+                    _map._spinner = null;
                 }
             }
         }
@@ -164,8 +171,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         };
         var jsonError = function () {
             this.spin(false);
-            $(this._map._container).addClass('map-error');
             console.error("Could not load url '" + url + "'");
+            if (this._map) $(this._map._container).addClass('map-error');
         };
         this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
