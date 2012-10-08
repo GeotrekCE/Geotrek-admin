@@ -59,11 +59,12 @@ def map_screenshot(request):
         assert len(printcontext) < 512, "Print context is way too big."
         
         # Prepare context, extract and add infos
-        context = simplejson.loads(printcontext)
+        context = simplejson.loads(printcontext.encode("utf-8"))
         map_url = context.pop('url').split('?', 1)[0]
         context['print'] = True
         printcontext = simplejson.dumps(context)
-        
+        logger.debug("Print context received : %s" % printcontext)
+
         # Provide print context to destination
         printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
         contextencoded = urllib2.quote(printcontext)
