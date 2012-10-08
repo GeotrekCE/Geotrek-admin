@@ -18,7 +18,7 @@
 </select>
 
 <select id="bbox_areas" class="input-medium">
-    <option value="" selected>{% trans "Area" %}</li>
+    <option value="" selected>{% trans "Restricted Area" %}</li>
     {% for bbox in bbox_areas %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
@@ -30,10 +30,12 @@
             var mainmap = window.maps[0],
                 bboxval = $(this).val();
             
+            // Clear other filters, but keep this one of course
             var self = this;
             $('#bbox_cities, #bbox_districts, #bbox_areas').each(function() {
                 if (self != this) {
                     $(this).val('');
+                    $(this).removeClass('filter-set');
                 }
             });
             
@@ -41,11 +43,13 @@
             if (bboxval) {
                 var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy
                 mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
+                $(this).addClass('filter-set');
             }
             else {
                 if(mainmap.options.maxBounds) {
                     mainmap.fitBounds(mainmap.options.maxBounds);
                 }
+                $(this).removeClass('filter-set');
             }
         });
     });

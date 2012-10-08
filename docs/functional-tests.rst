@@ -1621,3 +1621,9 @@ Leur emplacement est ``var/media/upload/`` dans l'arborescence du projet.
 ------------------------------------
 
 Les fichiers liés s'ouvrent dans un nouvelle fenêtre/onglet.
+
+
+#310 - [BUG] Synchroniser listes déroulantes "Centrer sur ..."
+--------------------------------------------------------------
+
+Elles sont désormais exclusives : le choix sur une désactive les autres.

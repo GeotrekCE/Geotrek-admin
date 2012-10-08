@@ -175,6 +175,12 @@ tr.selected-row td {
     opacity: 1 !important;
 }
 
+select.filter-set {
+    font-weight: bold;
+    border: 2px solid black;
+    color: black;
+}
+
 #bboxfilter {
     text-align: right;
     padding-top: 3px;
