@@ -133,7 +133,7 @@ msgstr "Liens web"
 
 #: models.py:77
 msgid "Trek"
-msgstr "Itinérarire"
+msgstr "Itinéraire"
 
 #: models.py:78
 msgid "Treks"
