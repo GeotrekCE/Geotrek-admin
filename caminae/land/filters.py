@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.gis.geos.geometry import GEOSGeometry, GeometryCollection
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import ModelChoiceFilter
 
+from caminae.core.models import TopologyMixin
 from caminae.common.models import Organism
 from caminae.common.filters import StructureRelatedFilterSet
 from caminae.mapentity.filters import MapEntityFilterSet
@@ -22,9 +22,9 @@ class PhysicalEdgeFilter(MapEntityFilterSet):
 
 
 class LandEdgeFilter(StructureRelatedFilterSet):
-    class Meta(StructureRelatedFilterSet.Meta):
+    class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
-        fields = StructureRelatedFilterSet.Meta.fields + ['land_type']
+        fields = MapEntityFilterSet.Meta.fields + ['land_type']
 
 
 class OrganismFilter(MapEntityFilterSet):
@@ -47,37 +47,6 @@ class SignageManagementEdgeFilter(OrganismFilter):
         model = SignageManagementEdge
 
 
-#################################
-## Filtering entities on edges ##
-#################################
-
-def break_into_simple_geoms(geom):
-    """Take a geom or a list of geom and return a flat list of simple geom (no collection)"""
-
-    # GeometryCollection iter on their contained geometries
-    if isinstance(geom, (tuple, list, GeometryCollection)):
-        return reduce(lambda acc, x: acc + break_into_simple_geoms(x), geom, [])
-
-    if isinstance(geom, GEOSGeometry):
-        return [ geom ]
-    else:
-        raise ValueError('Current geom is not a valid geometry %r' % geom)
-
-
-# What is the best way to filter topologies between themselves..?
-def filter_by_topologies(iterable, topologies, topo_getter=lambda x: x):
-    for x in iterable:
-        global_geom = getattr(topo_getter(x), 'geom')
-        if not global_geom:
-            continue
-
-        geoms = break_into_simple_geoms(global_geom)
-        for geom in geoms:
-            if topologies.filter(geom__contains=geom).exists():
-                yield x
-                break
-
-
 class TopoFilterPhysicalType(ModelChoiceFilter):
 
     def __init__(self, *args, **kwargs):
@@ -89,9 +58,7 @@ class TopoFilterPhysicalType(ModelChoiceFilter):
             return qs
 
         edges = value_physical_type.physicaledge_set.all()
-        topos = filter_by_topologies(qs, edges)
-
-        return qs.filter(pk__in=[ topo.pk for topo in topos ])
+        return TopologyMixin.overlapping(qs, edges)
 
 
 class TopoFilterLandType(ModelChoiceFilter):
@@ -105,9 +72,7 @@ class TopoFilterLandType(ModelChoiceFilter):
             return qs
 
         edges = value_land_type.landedge_set.all()
-        topos = filter_by_topologies(qs, edges)
-
-        return qs.filter(pk__in=[ topo.pk for topo in topos ])
+        return TopologyMixin.overlapping(qs, edges)
 
 
 class TopoFilter(ModelChoiceFilter):
@@ -121,9 +86,7 @@ class TopoFilter(ModelChoiceFilter):
             return qs
 
         edges = self.orga_to_edges(value_orga)
-        topos = filter_by_topologies(qs, edges)
-
-        return qs.filter(pk__in=[ topo.pk for topo in topos ])
+        return TopologyMixin.overlapping(qs, edges)
 
     def orga_to_edges(self, orga):
         raise NotImplementedError
@@ -131,17 +94,17 @@ class TopoFilter(ModelChoiceFilter):
 
 class TopoFilterCompetenceEdge(TopoFilter):
     def orga_to_edges(self, orga):
-        return orga.competenceedge_set.all()
+        return orga.competenceedge_set.select_related(depth=1).all()
 
 
 class TopoFilterSignageManagementEdge(TopoFilter):
     def orga_to_edges(self, orga):
-        return orga.signagemanagementedge_set.all()
+        return orga.signagemanagementedge_set.select_related(depth=1).all()
 
 
 class TopoFilterWorkManagementEdge(TopoFilter):
     def orga_to_edges(self, orga):
-        return orga.workmanagementedge_set.all()
+        return orga.workmanagementedge_set.select_related(depth=1).all()
 
 
 class EdgeFilterSet(MapEntityFilterSet):

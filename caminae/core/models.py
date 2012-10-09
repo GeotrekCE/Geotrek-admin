@@ -272,6 +272,21 @@ class TopologyMixin(NoDeleteMixin):
     def KIND(cls):
         return cls._meta.object_name.upper()
 
+    @classmethod
+    def overlapping(self, qs, edges):
+        """ Filter specified queryset of TopologyMixin objects if specified
+        edges overlap them.
+        TODO: So far, the algorithm is quite simple, and not precise. Indeed
+        it returns edges that "share" the same paths, and not exactly overlapping.
+        """
+        paths = []
+        for edge in edges:
+            paths.extend(edge.topo_object.paths.select_related(depth=1).all())
+        topos = []
+        for path in set(paths):
+            topos += [aggr.topo_object for aggr in path.aggregations.all()]
+        return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
+
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
