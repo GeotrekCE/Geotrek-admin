@@ -234,16 +234,21 @@ FormField.makeModule = function(module, module_settings) {
                 // TODO: remove drawOnMouseMove
                 var drawOnMouseMove = null;
 
-                onStartOver.on('startover', function() {
-                    markPath.updateGeom(null);
-                    multipath_handler.unmarkAll();
+                onStartOver.on('startover', function(obj) {
+                    // If startover is not trigger by multipath, delete the geom
+                    // Thus, when multipath is called several times, the geom is not deleted
+                    // and may be updated
+                    if (obj.handler !== 'multipath') {
+                        markPath.updateGeom(null);
+                        multipath_handler.unmarkAll();
+                    }
                 });
                 multipath_handler.on('unsnap', function () {
                     markPath.updateGeom(null);
                 });
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
-                    onStartOver.fire('startover');
+                    onStartOver.fire('startover', {'handler': 'multipath'});
                 });
                 multipath_handler.on('disabled', function() {
                     drawOnMouseMove && map.off('mousemove', drawOnMouseMove);

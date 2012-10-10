@@ -187,15 +187,14 @@ L.Handler.MultiPath = L.Handler.extend({
 
         this.graph_layer.on('click', this._onClick, this);
 
-        this.fire('enabled');
-    },
-
-    unmarkAll: function() {
-        var self = this;
-
-        this.steps && $.map(this.steps, function(pop) {
-            self.map.removeLayer(pop.marker);
+        $(this.steps).each(function(i, pop) {
+            if (pop) {
+                pop.toggleActivate(true);
+                pop.marker.activate();
+            }
         });
+
+        this.fire('enabled');
     },
 
     removeHooks: function() {
@@ -212,6 +211,15 @@ L.Handler.MultiPath = L.Handler.extend({
 
         this.fire('disabled');
     },
+
+    unmarkAll: function() {
+        var self = this;
+
+        this.steps && $.map(this.steps, function(pop) {
+            self.map.removeLayer(pop.marker);
+        });
+    },
+
 
     // On click on a layer with the graph
     _onClick: function(e) {
