@@ -61,7 +61,6 @@ L.Control.Multipath = L.Control.extend({
         this.multipath_handler = new L.Handler.MultiPath(
             map, graph_layer, dijkstra, markersFactory, this.options.handler
         );
-        this.multipath_handler.on('computed_paths', this.toggle, this);
     },
 
     toggle: function() {
@@ -315,8 +314,6 @@ L.Handler.MultiPath = L.Handler.extend({
             'marker_source': this.marker_source,
             'marker_dest': this.marker_dest
         });
-
-        this.disable();
     }
 
 });
