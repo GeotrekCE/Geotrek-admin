@@ -128,20 +128,33 @@ FormField.makeModule = function(module, module_settings) {
         function setDragging() { dragging = true; };
         function unsetDragging() { dragging = false; };
         function isDragging() { return dragging; };
+        function activate(marker) {
+            marker.dragging.enable();
+            marker.editing.enable();
+            marker.on('dragstart', setDragging);
+            marker.on('dragend', unsetDragging);
+        }
+        function deactivate(marker) {
+            marker.dragging.disable();
+            marker.editing.disable();
+            marker.off('dragstart', setDragging);
+            marker.off('dragend', unsetDragging);
+        }
 
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
                 marker.editing = new MapEntity.MarkerSnapping(map, marker);
-                marker.editing.enable();
                 snapObserver.add(marker);
-                marker.on('dragstart', setDragging);
-                marker.on('dragend', unsetDragging);
+                marker.activate_cbs.push(activate);
+                marker.deactivate_cbs.push(deactivate);
+
+                marker.activate();
             },
             generic: function (latlng, layer, classname, snappable) {
                 snappable = snappable === undefined ? true : snappable;
 
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
+                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
                 map.addLayer(marker);
 
                 $(marker._icon).addClass(classname);
@@ -164,11 +177,11 @@ FormField.makeModule = function(module, module_settings) {
                 // FIXME: static
                 var defaultIconOptions = getDefaultIconOpts();
                 var icon = new L.Icon({
-                    iconUrl: defaultIconOptions.iconUrl.replace('marker-trans.png', 'osrm_markers/marker-drag.png'),
+                    iconUrl: module_settings.init.iconDragUrl,
                     iconSize: new L.Point(18, 18)
                 });
 
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': icon });
+                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': icon });
 
                 map.addLayer(marker);
                 if (snappable)
@@ -218,13 +231,12 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 })();
 
+                // TODO: remove drawOnMouseMove
                 var drawOnMouseMove = null;
 
                 onStartOver.on('startover', function() {
                     markPath.updateGeom(null);
                     multipath_handler.unmarkAll();
-
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
                 });
                 multipath_handler.on('unsnap', function () {
                     markPath.updateGeom(null);
@@ -232,6 +244,9 @@ FormField.makeModule = function(module, module_settings) {
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
                     onStartOver.fire('startover');
+                });
+                multipath_handler.on('disabled', function() {
+                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
                 });
 
 

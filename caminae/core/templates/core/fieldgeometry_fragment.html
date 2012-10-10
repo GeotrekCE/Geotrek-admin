@@ -36,6 +36,7 @@ var {{ module }}_settings = {
         'layerStoreElemSelector': '#{{ attrs.id }}',
         'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
         'iconUrl': '{% static "images/marker-trans.png" %}',
+        'iconDragUrl': '{% static "images/osrm_markers/marker-drag.png" %}',
         'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}'
     },
     'colors': {

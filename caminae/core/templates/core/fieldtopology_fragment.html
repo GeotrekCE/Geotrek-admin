@@ -38,8 +38,9 @@ var {{ module }}_settings = {
         'topologypoint': {{ is_point|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
         'iconUrl': '{% static "images/marker-trans.png" %}',
+        'iconDragUrl': '{% static "images/osrm_markers/marker-drag.png" %}',
         'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}',
-        
+
         'json': '{{ topologyjson|safe }}',  // If creation, will be empty.
         'objectBounds': {{ topology|latlngbounds }}
     },

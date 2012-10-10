@@ -93,6 +93,38 @@ L.Control.Multipath = L.Control.extend({
 
 });
 
+
+L.ActivableMarker = L.Marker.extend({
+    initialize: function () {
+        L.Marker.prototype.initialize.apply(this, arguments);
+        this._activated = false;
+        // Watch out if a callback is added and we are already in this state.
+        // It won't be called !
+        this.activate_cbs = [];
+        this.deactivate_cbs = [];
+    },
+    'activated': function() {
+        return this._activated;
+    },
+    'activate': function() {
+        if (!this._activated) {
+            for (var i = 0; i < this.activate_cbs.length; i++) {
+                this.activate_cbs[i](this);
+            }
+            this._activated = true;
+        }
+    },
+    'deactivate': function() {
+        if (this._activated) {
+            for (var i = 0; i < this.deactivate_cbs.length; i++) {
+                this.deactivate_cbs[i](this);
+            }
+            this._activated = false;
+        }
+    }
+});
+
+
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
@@ -166,10 +198,19 @@ L.Handler.MultiPath = L.Handler.extend({
         });
     },
 
-    removeHooks: function () {
+    removeHooks: function() {
         var self = this;
         this._container.style.cursor = '';
         this.graph_layer.off('click', this._onClick, this);
+
+        $(this.steps).each(function(i, pop) {
+            if (pop) {
+                pop.toggleActivate(false);
+                pop.marker.deactivate();
+            }
+        });
+
+        this.fire('disabled');
     },
 
     // On click on a layer with the graph
@@ -195,7 +236,10 @@ L.Handler.MultiPath = L.Handler.extend({
             this.marker_dest = marker;
         }
 
-        self.createStep(marker, next_step_idx);
+        var pop = self.createStep(marker, next_step_idx);
+
+        pop.toggleActivate();
+
         // If this was clicked, the marker should be close enought, snap it.
         self.forceMarkerToLayer(marker, layer);
     },
@@ -235,13 +279,19 @@ L.Handler.MultiPath = L.Handler.extend({
         var pop = this.createStep(marker, step_idx);
 
         // remove marker on click
-        marker.on('click', function() {
+        function removeViaStep() {
             self.steps.splice(self.getStepIdx(pop), 1);
-
             self.map.removeLayer(marker);
-
             self.computePaths();
-        });
+        }
+
+        function removeOnClick() { marker.on('click', removeViaStep); }
+        pop.marker.activate_cbs.push(removeOnClick);
+        pop.marker.deactivate_cbs.push(function() { marker.off('click', removeViaStep); });
+
+        // marker is already activated, trigger manually removeOnClick
+        removeOnClick();
+        pop.toggleActivate();
     },
 
     canCompute: function() {
