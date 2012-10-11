@@ -61,15 +61,20 @@ L.Control.Multipath = L.Control.extend({
         this.multipath_handler = new L.Handler.MultiPath(
             map, graph_layer, dijkstra, markersFactory, this.options.handler
         );
+
+        this.multipath_handler.on('enabled', function() {
+            L.DomUtil.addClass(this._container, 'enabled');
+        }, this);
+        this.multipath_handler.on('disabled', function() {
+            L.DomUtil.removeClass(this._container, 'enabled');
+        }, this);
     },
 
     toggle: function() {
         if (this.multipath_handler.enabled()) {
             this.multipath_handler.disable.call(this.multipath_handler);
-            L.DomUtil.removeClass(this._container, 'enabled');
         } else {
             this.multipath_handler.enable.call(this.multipath_handler);
-            L.DomUtil.addClass(this._container, 'enabled');
         }
     },
 
