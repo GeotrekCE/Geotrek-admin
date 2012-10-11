@@ -140,8 +140,9 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // markers
         this.markersFactory = markersFactory;
-        this.marker_source = null;
-        this.marker_dest = null;
+
+        // Init a fresh state
+        this.reset();
 
         this.layerToId = function layerToId(layer) {
             return graph_layer.getPk(layer);
@@ -158,6 +159,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // Ensure we got a fresh start
         this.disable();
+        this.reset();
         this.enable();
 
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
@@ -170,54 +172,53 @@ L.Handler.MultiPath = L.Handler.extend({
         });
     },
 
-    // TODO: when to remove/update links..? what's the behaviour ?
-    addHooks: function () {
+    // Reset the whole state
+    reset: function() {
         var self = this;
 
-        // Clean all previous edges if they exist
-        this.unmarkAll();
+        // remove all markers
+        this.steps && $.each(this.steps, function(pop) {
+            self.map.removeLayer(pop.marker);
+        });
 
-        this.marker_source && this.map.removeLayer(this.marker_source);
-        this.marker_dest && this.map.removeLayer(this.marker_dest);
-
+        // reset state
         this.steps = [];
         this.computed_paths = [];
         this.all_edges = [];
-        this._container.style.cursor = 'w-resize';
 
+        this.marker_source = this.marker_dest = null;
+    },
+
+    // Activate/Deactivate existing steps and markers - mostly about (un)bindings listeners
+    stepsToggleActivate: function(activate) {
+        var cb;
+        // /!\ Order in activation is important, first activate marker then pop
+        // The marker.move listener must be set before the pop.move listener
+        if (activate) {
+            cb = function(pop) { pop.marker.activate(); pop.toggleActivate(true); }
+        } else {
+            cb = function(pop) { pop.marker.deactivate(); pop.toggleActivate(false); }
+        }
+
+        $(this.steps).each(function(i, pop) { pop && cb(pop); });
+    },
+
+    addHooks: function () {
+        this._container.style.cursor = 'w-resize';
         this.graph_layer.on('click', this._onClick, this);
 
-        $(this.steps).each(function(i, pop) {
-            if (pop) {
-                pop.toggleActivate(true);
-                pop.marker.activate();
-            }
-        });
+        this.stepsToggleActivate(true);
 
         this.fire('enabled');
     },
 
     removeHooks: function() {
-        var self = this;
         this._container.style.cursor = '';
         this.graph_layer.off('click', this._onClick, this);
 
-        $(this.steps).each(function(i, pop) {
-            if (pop) {
-                pop.toggleActivate(false);
-                pop.marker.deactivate();
-            }
-        });
+        this.stepsToggleActivate(false);
 
         this.fire('disabled');
-    },
-
-    unmarkAll: function() {
-        var self = this;
-
-        this.steps && $.map(this.steps, function(pop) {
-            self.map.removeLayer(pop.marker);
-        });
     },
 
 
