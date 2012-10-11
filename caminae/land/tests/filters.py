@@ -7,27 +7,46 @@ from caminae.land.factories import (
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
 
-from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds
-from caminae.core.filters import PathFilter
+from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyMixinFactory
 
+class LandFiltersTest(TestCase):
 
-class PathFilteringByLandTest(TestCase):
+    filterclass = None
 
     def create_pair_of_distinct_path(self):
         return PathFactory(), PathFactory(geom=getRandomLineStringInBounds())
 
-    def _filter_by_edge(self, klassedgefactory, key, getvalue):
+    def create_pair_of_distinct_topologies(self, topologyfactoryclass):
+        p1, seek_path = self.create_pair_of_distinct_path()
+
+        topo_1 = TopologyMixinFactory(no_path=True)
+        PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
+
+        seek_topo = TopologyMixinFactory(no_path=True)
+        PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
+
+        useless = topologyfactoryclass.create(topology=topo_1)
+        seek_it = topologyfactoryclass.create(topology=seek_topo)
+
+        return seek_it, seek_path
+
+
+    def _filter_by_edge(self, edgefactoryclass, key, getvalue):
+        if self.filterclass is None:
+            # Do not run abstract tests
+            return
+        
         useless_path, seek_path = self.create_pair_of_distinct_path()
         
-        edge = klassedgefactory(no_path=True)
+        edge = edgefactoryclass(no_path=True)
         PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
         edge.reload()
         data = {key : getvalue(edge)}
         
-        qs = PathFilter().qs
+        qs = self.filterclass().qs
         self.assertEqual(len(qs), 2)
         
-        qs = PathFilter(data=data).qs
+        qs = self.filterclass(data=data).qs
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_path)
 

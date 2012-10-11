@@ -14,6 +14,7 @@ from caminae.authent.models import StructureRelated
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 import caminae.infrastructure as inf
+import caminae.maintenance as maintenance
 import caminae.land as land
 
 
@@ -288,7 +289,24 @@ class TopologyMixin(NoDeleteMixin):
         # In case, we filter on paths
         if qs.model == Path:
             return qs.filter(pk__in=[ path.pk for topo in set(paths) ])
+
+        # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
+        elif issubclass(qs.model, maintenance.models.Intervention):
+            return qs.filter(topology__in=[ topo.pk for topo in set(topos) ])
+        elif issubclass(qs.model, maintenance.models.Project):
+            # Find all interventions overlapping those edges
+            interventions = TopologyMixin.overlapping(maintenance.models.Intervention.objects.existing()\
+                                                                              .select_related(depth=1)\
+                                                                              .filter(project__in=qs), 
+                                                      edges)
+            # Return only the projects concerned by the interventions
+            projects = []
+            for intervention in interventions:
+                projects.append(intervention.project.pk)
+            return qs.filter(pk__in=set(projects))
+
         else:
+            assert isinstance(qs.model, TopologyMixin), "%s is not a TopologyMixin as expected" % qs.model
             return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
 
     def __unicode__(self):
