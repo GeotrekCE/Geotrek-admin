@@ -75,7 +75,7 @@ def map_screenshot(request):
         height = context.get('viewport', {}).get('height')
         response = HttpResponse(mimetype='image/png')
         response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
-        casperjs_capture(response, map_url, width=width, height=height, selector='.map-panel')
+        casperjs_capture(response, map_url, width=width, height=height, selector='#mainmap')
         return response
 
     except Exception, e: 

@@ -1666,3 +1666,9 @@ Fixé, avec le #378.
 
 Je créé un élément de signalétique sur un tronçon, proche d'un croisement. 
 Une fois enregistré, celui-ci est désormais bien positionné au bon endroit.
+
+
+#372 - [BUG] Impression : choix zones visibles sur l'image exportée
+-------------------------------------------------------------------
+
+Les listes déroulantes ne sont plus visibles sur l'image exportée.
