@@ -1654,3 +1654,15 @@ Nouveau comportement:
 - Le multipath est activé automatiquement lors de l'ouverture de la vue d'édition d'une topologie multipath
 
 
+#378 - [BUG] Fiche détail signalétique : les tronçons ne sont uniques dans la liste
+-----------------------------------------------------------------------------------
+
+Fixé.
+
+#288 - [BUG] Saisie topologie point : mauvaise geométrie calculée
+-----------------------------------------------------------------
+
+Fixé, avec le #378.
+
+Je créé un élément de signalétique sur un tronçon, proche d'un croisement. 
+Une fois enregistré, celui-ci est désormais bien positionné au bon endroit.
