@@ -8,7 +8,6 @@
 
 # buildout stuff
 .mr.developer.cfg
-src/
 .installed.cfg
 bin/
 downloads/

@@ -17,10 +17,9 @@ clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;
 
 clean: clean_harmless
-	rm -rf bin/ lib/ local/ include/ *.egg-info/ develop-eggs/ parts/
+	rm -rf bin/ lib/ local/ include/ *.egg-info/
 	rm -rf var/
 	rm -rf etc/init/
-	rm -rf src/appy-archive/
 	rm -f .installed.cfg
 	rm -f install.log
 
