@@ -285,7 +285,11 @@ class TopologyMixin(NoDeleteMixin):
         topos = []
         for path in set(paths):
             topos += [aggr.topo_object for aggr in path.aggregations.all()]
-        return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
+        # In case, we filter on paths
+        if qs.model == Path:
+            return qs.filter(pk__in=[ path.pk for topo in set(paths) ])
+        else:
+            return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
