@@ -3,7 +3,6 @@
 *.tar.gz
 *.mo
 
-/reports/
 /var/
 /etc/
 
