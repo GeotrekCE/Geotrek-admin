@@ -312,6 +312,13 @@ class TopologyMixin(NoDeleteMixin):
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
+    def ispoint(self):
+        for aggr in self.aggregations.all():
+            if aggr.start_position == aggr.end_position:
+                return True
+            break
+        return False
+
     def add_path(self, path, start=0.0, end=1.0):
         """
         Shortcut function to add paths into this topology.
@@ -333,7 +340,12 @@ class TopologyMixin(NoDeleteMixin):
         self.offset = other.offset
         self.save()
         PathAggregation.objects.filter(topo_object=self).delete()
-        for aggr in other.aggregations.all():
+        aggrs = other.aggregations.all()
+        # A point has only one aggregation, except if it is on an intersection.
+        # In this case, the trigger will create them, so ignore them here.
+        if other.ispoint():
+            aggrs = aggrs[:1]
+        for aggr in aggrs:
             self.add_path(aggr.path, aggr.start_position, aggr.end_position)
         if delete:
             other.delete()
@@ -447,19 +459,15 @@ class TopologyMixin(NoDeleteMixin):
         return geom
 
     def serialize(self):
-        # Fetch properly ordered aggregations
-        aggregations = self.aggregations.all()
-        start = aggregations[0].start_position
-        end = aggregations[len(aggregations)-1].end_position
-
         # Point topology
-        if start == end and len(aggregations) == 1:
+        if self.ispoint():
             geom = self.geom_as_point()
             point = geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
-
+            # Fetch properly ordered aggregations
+            aggregations = self.aggregations.all()
             paths = list(aggregations.values_list('path__pk', flat=True))
             # We may filter out aggregations that have default values (0.0 and 1.0)...
             positions = dict(
