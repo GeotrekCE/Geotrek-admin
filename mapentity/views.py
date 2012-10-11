@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import math
 import urllib2
 import logging
 from datetime import datetime
@@ -199,7 +200,9 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         for obj in queryset:
             columns = []
             for field in self.columns:
-                columns.append(getattr(obj, field + '_display', getattr(obj, field)))
+                value = getattr(obj, field + '_display', getattr(obj, field))
+                if isinstance(value, float) and math.isnan(value): value = 0.0
+                columns.append(value)
             data_table_rows.append(columns)
             map_obj_pk.append(obj.pk)
 
