@@ -523,8 +523,8 @@ FormField.makeModule = function(module, module_settings) {
     };
 
     module.enableTopologyPoint = function (map, drawncallback, onStartOver) {
-        var control = new L.Control.TopologyPoint(map);
-            handler = control.topologyhandler;
+        var control = new L.Control.TopologyPoint(map)
+          , handler = control.topologyhandler;
         map.addControl(control);
         
         // Delete current on first clic (start drawing)

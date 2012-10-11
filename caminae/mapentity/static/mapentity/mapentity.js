@@ -470,11 +470,9 @@ MapEntity.MarkerSnapping = L.Handler.extend({
     },
 
     snapMarker: function (marker) {
-        var i=0;
-        for (; i<this._markers.length; i++) {
-            if (this._markers[i] == marker) break;
-        }
-        if (i==this._markers.length) this._markers.push(marker);
+        if (this._markers.indexOf(marker) == -1)
+            this._markers.push(marker);
+
         marker.on('move', this._snapMarker, this);
     },
 
