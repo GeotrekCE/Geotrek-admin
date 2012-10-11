@@ -1640,3 +1640,17 @@ au niveau du déploiement.
 --------------------------------
 
 Fixé
+
+#343 - [BUG] (Javascript) Edition trek : drag point intermédiaire sans activer outil multipath
+----------------------------------------------------------------------------------------------
+
+Corrigé.
+Nouveau comportement:
+- Le multipath doit être désactivé manuellement en cliquant sur le contrôle multipath où le contrôle point.
+  (elle était désactivée de façon buggée à la suite du calcul d'une nouvelle topologie multipath).
+- La désactivation du multipath entraîne la suppression des évènements drag, click etc. sur la topologie multipath.
+- L'activation d'un multipath n'entraîne plus la suppression de la topologie multipath existante si elle existe.
+  Elle réintroduit les évènements drag, click, etc. rendant la topologie modifiable
+- Le multipath est activé automatiquement lors de l'ouverture de la vue d'édition d'une topologie multipath
+
+
