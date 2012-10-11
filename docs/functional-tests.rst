@@ -1672,3 +1672,9 @@ Une fois enregistré, celui-ci est désormais bien positionné au bon endroit.
 -------------------------------------------------------------------
 
 Les listes déroulantes ne sont plus visibles sur l'image exportée.
+
+
+#230 - [BUG] Déploiement écrins : saisie marqueur, image manquante
+------------------------------------------------------------------
+
+Fixé.
