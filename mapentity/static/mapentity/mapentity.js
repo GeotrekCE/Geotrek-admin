@@ -337,6 +337,7 @@ MapEntity.Context = new function() {
             // Hide controls
             $('.leaflet-control').hide();   // Hide all
             $('.leaflet-control-scale').show(); // Show scale
+            $(map._container).removeClass('leaflet-fade-anim');
         }
 
         self.restoreMapView(map, context);
