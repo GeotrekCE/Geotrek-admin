@@ -53,6 +53,12 @@ Soon...
 One day...
 ==========
 
+
+* Idea ? Process .sql files with template engine. Provide small tags 
+  like {% table Path %} {% field Path.geom %}.
+  This would prevent from having hard-coded tablenames.
+  SELECT {% field Path.name %} FROM {% table Path %}
+
 * Docstrings for each model
 * Help text for each model field
 * Test cache (locmem + files + expires)
@@ -68,12 +74,3 @@ One day...
 * Clean-up buildout directory (all in one "env")
 * When changing ``dim`` parameter on a GeometryField, South does not alter nor
   drop/create the field
-
-
-==========
-Ideas...
-==========
-
-* Idea ? Process .sql files with template engine. Provide small tags 
-  like {% tablename Path %} {% fieldname Path.geom %}.
-  This would prevent from having hard-coded tablenames.
