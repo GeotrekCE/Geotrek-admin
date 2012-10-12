@@ -1678,3 +1678,9 @@ Les listes déroulantes ne sont plus visibles sur l'image exportée.
 ------------------------------------------------------------------
 
 Fixé.
+
+
+#374 - [BUG] Impression : parfois certaines tuiles ne sont pas chargées complètement
+------------------------------------------------------------------------------------
+
+Fixé.
