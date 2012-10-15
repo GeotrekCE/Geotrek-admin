@@ -99,11 +99,11 @@ FormField.makeModule = function(module, module_settings) {
     };
 
     module.addObjectsLayer = function(map, modelname) {
-        var object_pk = module.getObjectPk();
         if (!modelname) {
-            console.error('Missing hidden input with model name');
-            return;
+            throw 'Model name is empty';
         }
+        var object_pk = module.getObjectPk();
+
         var exclude_current_object = null;
         if (object_pk) {
             exclude_current_object = function (geojson) {
@@ -470,81 +470,12 @@ FormField.makeModule = function(module, module_settings) {
                 // We should check if the form has an error or not...
                 // core.models#TopologyMixin.serialize
                 if (initialTopology) {
-                    // This topology should contain postgres calculated value (start/end point as latln)
-                    var topo =  JSON.parse(initialTopology)
-                      , paths = topo.paths
-                      , positions = topo.positions;
-
-                    // Only first and last positions
-                    if (paths.length == 1) {
-                        // There is only one path, both positions values are relevant
-                        // and each one represents a marker
-                        var first_pos = positions[0][0];
-                        var last_pos = positions[0][1];
-
-                        var start_layer = objectsLayer.getLayer(paths[0]);
-                        var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
-
-                        var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
-                        var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
-
-                        var state = {
-                            start_ll: start_ll,
-                            end_ll: end_ll,
-                            start_layer: start_layer,
-                            end_layer: end_layer
-                        };
-                        multipath_handler.setState(state);
-
-                    } else {
-
-                        var layer_ll_s = [];
-                        $.each(positions, function(k, pos) {
-                            // default value: this is not supposed to be a marker ?!
-                            if (pos[0] == 0 && pos[1] == 1) {
-                                console.log('Ignored marker ' + pos);
-                                return;
-                            }
-
-                            var path_idx = parseInt(k);
-                            var layer = objectsLayer.getLayer(paths[path_idx]);
-                            // Look for the relevant value:
-                            // 0 is the default in first_position, get the other value
-                            var used_pos = pos[0] == 0 ? pos[1] : pos[0];
-
-                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ]);
-                            if (ll.length < 1) {
-                                return;
-                            }
-
-                            layer_ll_s.push({
-                                layer: layer,
-                                ll: ll[0]
-                            });
-                        });
-
-                        var start_layer_ll = layer_ll_s.shift();
-                        var end_layer_ll = layer_ll_s.pop();
-
-                        var via_markers = $.map(layer_ll_s, function(layer_ll) {
-                            return {
-                                layer: layer_ll.layer,
-                                marker: markersFactory.drag(layer_ll.ll, null, true)
-                            };
-                        });
-
-                        var state = {
-                            start_ll: start_layer_ll.ll,
-                            end_ll: end_layer_ll.ll,
-                            start_layer: start_layer_ll.layer,
-                            end_layer: end_layer_ll.layer,
-                            via_markers: via_markers
-                        };
-
-                        multipath_handler.setState(state);
+                    var topo =  JSON.parse(initialTopology);
+                    // If it is multipath, restore
+                    if (topo.paths && !topo.lat && !topo.lng) {
+                        multipath_handler.restoreTopology(topo);
                     }
                 }
-
             };
             
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, parseGraph).error(function (jqXHR, textStatus, errorThrown) {
