@@ -116,6 +116,7 @@ DROP TRIGGER IF EXISTS evenements_troncons_junction_point_iu_tgr ON evenements_t
 CREATE OR REPLACE FUNCTION ft_evenements_troncons_junction_point_iu() RETURNS trigger AS $$
 DECLARE
     junction geometry;
+    t_count integer;
 BEGIN
     -- Deal with previously connected paths in the case of an UDPATE action
     IF TG_OP = 'UPDATE' THEN
@@ -128,6 +129,16 @@ BEGIN
 
     -- Don't proceed for non-junction points
     IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
+        RETURN NULL;
+    END IF;
+
+    -- Don't proceed for intermediate markers (forced passage) : if this 
+    -- is not the only evenement_troncon, then it's an intermediate marker.
+    SELECT count(*)
+        INTO t_count
+        FROM evenements_troncons et
+        WHERE et.evenement = NEW.evenement;
+    IF t_count > 1 THEN
         RETURN NULL;
     END IF;
 

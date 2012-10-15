@@ -1684,3 +1684,25 @@ Fixé.
 ------------------------------------------------------------------------------------
 
 Fixé.
+
+
+========================
+Sprint 7 - Version 0.7.0
+========================
+
+
+#335, #328 - [BUG] Evenement linéaire différent en édition.
+-----------------------------------------------------------
+
+Le problème était lié au trigger qui calcule la géométrie résultante, lorsque
+des marqueurs intermédiaires étaient placés, ainsi qu'au composant d'édition de topologies, 
+qui ignorait les marqueurs intermédiaires lorsque ceux-ci étaient placés à des intersections (début ou fin à 0.0 ou 1.0).
+
+* Vérifier que les géométries des saisies multi-tronçons sans marqueurs sont bien calculées
+  et sont bien restaurées en édition.
+
+* Vérifier que les saisies avec marqueurs intermédiaires sont bien calculées
+  et restaurées.
+
+* Vérifier que les saisies avec marqueurs sur intersections sont bien calculées 
+  et restaurées.

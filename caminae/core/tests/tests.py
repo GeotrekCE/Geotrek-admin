@@ -603,12 +603,14 @@ class TopologyMixinTest(TestCase):
         p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
         p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
 
+        # Type Point
         t = TopologyMixinFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1,
                                       start_position=0.5, end_position=0.5)
         t = TopologyMixin.objects.get(pk=t.pk)
         self.assertEqual(t.geom, Point((1,1,1)))
 
+        # 50% of path p1, 100% of path p2
         t = TopologyMixinFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1,
                                       start_position=0.5)
@@ -616,15 +618,62 @@ class TopologyMixinTest(TestCase):
         t = TopologyMixin.objects.get(pk=t.pk)
         self.assertEqual(t.geom, LineString((1,1,1), (2,2,2), (2,0,0)))
 
+        # 100% of path p2 and p3, with offset of 1
         t = TopologyMixinFactory.create(no_path=True, offset=1)
         PathAggregationFactory.create(topo_object=t, path=p2)
         PathAggregationFactory.create(topo_object=t, path=p3)
         t.save()
         self.assertEqual(t.geom, LineString((3,2,2), (3,1,0), (4,1,0)))
 
+        # Change offset, geometry is computed again
         t.offset = 0.5
         t.save()
         self.assertEqual(t.geom, LineString((2.5,2,2), (2.5,0.5,0), (4,0.5,0)))
+
+    def test_topology_geom_with_intermediate_markers(self):
+        # Intermediate (forced passage) markers for topologies
+        # Use a bifurcation, make sure computed geometry is correct
+        #       +--p2---+
+        #   +---+-------+---+
+        #     p1   p3     p4
+        p1 = PathFactory.create(geom=LineString((0,0,0), (2,0,0)))
+        p2 = PathFactory.create(geom=LineString((2,0,0), (2,1,0), (4,1,0), (4,0,0)))
+        p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
+        p4 = PathFactory.create(geom=LineString((4,0,0), (6,0,0)))
+        """
+        From p1 to p4, with point in the middle of p3
+        """
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p1)
+        PathAggregationFactory.create(topo_object=t, path=p3, 
+                                      start_position=0.5, end_position=0.5)
+        PathAggregationFactory.create(topo_object=t, path=p4)
+        t.save()
+        self.assertEqual(t.geom, LineString((0,0,0), (2,0,0), (4,0,0), (6,0,0)))
+        """
+        From p1 to p4, through p2
+        """
+        t = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t, path=p1)
+        PathAggregationFactory.create(topo_object=t, path=p2, 
+                                      start_position=0.5, end_position=0.5)
+        PathAggregationFactory.create(topo_object=t, path=p4)
+        t.save()
+        self.assertEqual(t.geom, LineString((0,0,0), (2,0,0), (2,1,0), (4,1,0), (4,0,0), (6,0,0)))
+
+        """
+        From p1 to p4, though p2, but **with start/end at 0.0**
+        """
+        t2 = TopologyMixinFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=t2, path=p1)
+        PathAggregationFactory.create(topo_object=t2, path=p2, 
+                                      start_position=0.0, end_position=0.0)
+        PathAggregationFactory.create(topo_object=t2, path=p4)
+        t2.save()
+        print t2.pk, t2.geom.coords
+        self.assertEqual(t2.geom, t.geom)
+        
+
 
     def test_troncon_geom_update(self):
         p = PathFactory.create(geom=LineString((0,0,0), (2,2,0)))
