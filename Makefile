@@ -10,6 +10,7 @@ bin/buildout:
 	wget http://python-distribute.org/bootstrap.py
 	bin/python bootstrap.py
 	rm bootstrap.py
+	mkdir -p lib/eggs
 
 install: bin/buildout
 
