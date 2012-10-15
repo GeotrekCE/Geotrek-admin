@@ -100,7 +100,10 @@ FormField.makeModule = function(module, module_settings) {
 
     module.addObjectsLayer = function(map, modelname) {
         var object_pk = module.getObjectPk();
-
+        if (!modelname) {
+            console.error('Missing hidden input with model name');
+            return;
+        }
         var exclude_current_object = null;
         if (object_pk) {
             exclude_current_object = function (geojson) {
