@@ -176,8 +176,8 @@ Caminae.TopologyHelper = (function() {
 
         // To which nodes dist start_point/end_point corresponds ?
         // The edge.nodes_id are ordered, it corresponds to polylines: coords[0] and coords[coords.length - 1]
-        var dist_start_point = this.percent_distance * length
-          , dist_end_point = (1 - this.percent_distance) * length
+        var dist_start_point = this.percent_distance * this.length
+          , dist_end_point = (1 - this.percent_distance) * this.length
         ;
 
         var new_node_id = getNextId();

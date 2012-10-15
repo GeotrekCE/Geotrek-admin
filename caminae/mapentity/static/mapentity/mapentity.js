@@ -623,6 +623,7 @@ MapEntity.Utils = (function() {
                 }
             }
 
+            if (res.length < 1) console.warn("Could not get LatLng from position " + pos_list);
             return res;
         },
 

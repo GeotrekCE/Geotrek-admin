@@ -367,20 +367,39 @@ FormField.makeModule = function(module, module_settings) {
 
                     // assemble topologies
                     var positions = data[0].topology.positions
-                      , paths = data[0].topology.paths;
+                      , paths = data[0].topology.paths
+                      , ioffset = paths.length - 1;
 
                     for (var k = 1; k < data.length; k++) {
                         var data_topology = data[k].topology;
-                        // substract one as we delete first position
-                        var offset = paths.length - 1;
-
-                        // avoid the first one
+                        
+                        // Merge paths of sub computed paths, without its first element
                         paths = paths.concat(data_topology.paths.slice(1));
 
                         delete data_topology.positions[0]
-                        $.each(data_topology.positions, function(k, v) {
-                            positions[parseInt(k) + offset] = v;
+                        $.each(data_topology.positions, function(key, pos) {
+                            positions[parseInt(key) + ioffset] = pos;
                         });
+                    }
+            
+                    // All middle computed paths are constraints points
+                    // We want them to have start==end. 
+                    var i = 0;
+                    for (var key in positions) {
+                        if (i > 0 && i < paths.length -1) {
+                            var pos = positions[key];
+                            /* make sure pos will be [X, X]
+                               [0, X] or [X, 1] --> X
+                               [0.0, 1.0] --> 0.0
+                               [1.0, 1.0] --> 1.0 */
+                            var x = -1;
+                            if      (pos[0] == 0.0 && pos[1] == 1.0) x = 0.0;
+                            else if (pos[0] == 1.0 && pos[1] == 1.0) x = 1.0;
+                            else if (pos[1] == 1.0) x = pos[0];
+                            else if (pos[0] == 0.0) x = pos[1];
+                            positions[key] = [x, x];
+                        }
+                        i++;
                     }
 
                     var topology = {
@@ -391,12 +410,18 @@ FormField.makeModule = function(module, module_settings) {
                     layerStore.storeLayerGeomInField(topology);
                 });
 
-                function createTopology(computed_path, from_pop, to_pop, new_edges) {
+                function createTopology(computed_path, from_pop, to_pop, edges) {
+                    /**
+                     * @param computed_path: cf ``_onComputedPaths`` in ``L.Handler.Multipath``
+                     * @param from_pop: start PointOnPolyline
+                     * @param to_pop: end PointOnPolyline
+                     * @param edges: list of edges (cf JSON graph)
+                     */
                     var ll_start = from_pop.ll
                       , ll_end = to_pop.ll;
 
-                    var paths = $.map(new_edges, function(edge) { return edge.id; });
-                    var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
+                    var paths = $.map(edges, function(edge) { return edge.id; });
+                    var layers = $.map(edges, function(edge) { return objectsLayer.getLayer(edge.id); });
 
                     var polyline_start = layers[0];
                     var polyline_end = layers[layers.length -1];
@@ -473,8 +498,10 @@ FormField.makeModule = function(module, module_settings) {
                         var layer_ll_s = [];
                         $.each(positions, function(k, pos) {
                             // default value: this is not supposed to be a marker ?!
-                            if (pos[0] == 0 && pos[1] == 1)
+                            if (pos[0] == 0 && pos[1] == 1) {
+                                console.log('Ignored marker ' + pos);
                                 return;
+                            }
 
                             var path_idx = parseInt(k);
                             var layer = objectsLayer.getLayer(paths[path_idx]);
@@ -482,11 +509,14 @@ FormField.makeModule = function(module, module_settings) {
                             // 0 is the default in first_position, get the other value
                             var used_pos = pos[0] == 0 ? pos[1] : pos[0];
 
-                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ])[0];
+                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ]);
+                            if (ll.length < 1) {
+                                return;
+                            }
 
                             layer_ll_s.push({
                                 layer: layer,
-                                ll: ll
+                                ll: ll[0]
                             });
                         });
 

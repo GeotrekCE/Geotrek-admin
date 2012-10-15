@@ -272,7 +272,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var self = this;
 
         var pop = new Caminae.TopologyHelper.PointOnPolyline(marker);
-        this.steps.splice(idx, 0, pop);
+        this.steps.splice(idx, 0, pop);  // Insert pop at position idx
 
         pop.events.on('valid', function() {
             self.computePaths();
@@ -287,7 +287,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // A via step idx must be inserted between first and last...
         if (! (step_idx >= 1 && step_idx <= this.steps.length - 1)) {
-            throw "NOT";
+            throw "StepIndexError";
         }
 
         var pop = this.createStep(marker, step_idx);
