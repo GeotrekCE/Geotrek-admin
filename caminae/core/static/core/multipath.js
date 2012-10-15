@@ -417,7 +417,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
 
                 var path_idx = parseInt(k);
-                var layer = objectsLayer.getLayer(paths[path_idx]);
+                var layer = this.idToLayer(paths[path_idx]);
                 // Look for the relevant value:
                 // 0 is the default in first_position, get the other value
                 var used_pos = pos[0] == 0 ? pos[1] : pos[0];
