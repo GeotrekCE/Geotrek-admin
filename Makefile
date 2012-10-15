@@ -7,10 +7,10 @@ version=$(shell git describe --tags --abbrev=0)
 
 bin/buildout:
 	virtualenv .
+	mkdir -p lib/eggs
 	wget http://python-distribute.org/bootstrap.py
 	bin/python bootstrap.py
 	rm bootstrap.py
-	mkdir -p lib/eggs
 
 install: bin/buildout
 
