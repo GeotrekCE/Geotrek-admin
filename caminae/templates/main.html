@@ -32,11 +32,11 @@
         {% for lang in LANGUAGES %}
             {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
         {% endfor %}
-    
+
+        {% leaflet_js %}
         <script type="text/javascript">
             L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
         </script>
-        {% leaflet_js %}
 
         <script type="text/javascript" src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
         <script type="text/javascript" src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
