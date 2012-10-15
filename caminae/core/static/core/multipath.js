@@ -381,10 +381,10 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     restoreTopology: function (topo) {
+        var self = this;
         // This topology should contain postgres calculated value (start/end point as latln)
         var paths = topo.paths
           , positions = topo.positions;
-
         // Only first and last positions
         if (paths.length == 1) {
             // There is only one path, both positions values are relevant
@@ -407,7 +407,6 @@ L.Handler.MultiPath = L.Handler.extend({
             this.setState(state);
 
         } else {
-
             var layer_ll_s = [];
             $.each(positions, function(k, pos) {
                 // default value: this is not supposed to be a marker ?!
@@ -417,12 +416,12 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
 
                 var path_idx = parseInt(k);
-                var layer = this.idToLayer(paths[path_idx]);
+                var layer = self.idToLayer(paths[path_idx]);
                 // Look for the relevant value:
                 // 0 is the default in first_position, get the other value
                 var used_pos = pos[0] == 0 ? pos[1] : pos[0];
 
-                var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ]);
+                var ll = MapEntity.Utils.getLatLngFromPos(self.map, layer, [ used_pos ]);
                 if (ll.length < 1) {
                     return;
                 }
@@ -439,7 +438,7 @@ L.Handler.MultiPath = L.Handler.extend({
             var via_markers = $.map(layer_ll_s, function(layer_ll) {
                 return {
                     layer: layer_ll.layer,
-                    marker: this.markersFactory.drag(layer_ll.ll, null, true)
+                    marker: self.markersFactory.drag(layer_ll.ll, null, true)
                 };
             });
 
