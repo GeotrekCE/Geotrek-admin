@@ -537,6 +537,13 @@ class TopologyMixinTest(TestCase):
         self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
 
+        # With intermediate markers
+        # Bad ones (start!=end)
+        self.assertRaises(ValueError, TopologyMixin.deserialize, '{"paths": %s, "positions": {"0": [0.3, 1.0], "1": [0.2, 0.3], "2": [0.0, 0.7]}}' % pks)
+        # Good ones
+        topology = TopologyMixin.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "1": [0.5, 0.5], "2": [0.0, 0.7]}}' % pks)
+        self.assertEqual(len(topology.paths.all()), 3)
+
     def test_deserialize_point(self):
         PathFactory.create()
         # Take a point
