@@ -1506,7 +1506,6 @@ Si celui-ci ne s'avère pas concluant, nous utiliserons un panneau pliable.
     Les champs de filtres ne sont pas bien disposés à l'intérieur.
 
 
-
 ========================
 Sprint 6 - Version 0.6.0
 ========================
@@ -1552,5 +1551,136 @@ et sentiers.
 
 #318 - [BUG] AMENAGEMENT - La carte ne se charge pas completement et tourne sans arrêt
 --------------------------------------------------------------------------------------
+
+Fixé.
+
+#285 - Saisie des champs textes multilingues
+--------------------------------------------
+
+Dans la story #168 il est indiqué que si l'utilisateur logué est italien, 
+c'est le champ texte italien qui est stocké. Cela veut dire qu'il ne peut pas saisir la description française ?
+
+    Si évidemment. Il s'agissait juste de la colonne 'description' en base, 
+    qui n'est pas utilisée dans l'application. On utilise les colonnes 
+    traduites (_fr, _en, _it).
+
+
+#191 - [BUG] On ne voit pas bien quand on a sélectionné l’outil DESSIN.
+-----------------------------------------------------------------------
+
+Désormais l'outil sélectionné s'illumine.
+
+
+#327 - [BUG] ENJEU - Calcul automatique de l'enjeu des interventions.
+---------------------------------------------------------------------
+
+L'enjeu d'une intervention est bel et calculé si au moins un des tronçons
+a un enjeu.
+
+
+#67 - Exporter l'itinéraire au format KML
+-----------------------------------------
+
+Les itinéraires sont désormais exportables en KML. Des liens sont disponibles
+depuis la fiche détail. 
+
+Le KML contient la ligne de l'itinéraire et les POIs.
+
+
+#276 - Attribut districts (liste de pk des secteurs) dans le détail JSON itinéraire
+-----------------------------------------------------------------------------------
+
+Le JSON des itinéraires contient désormais la liste des secteurs traversés (pk + nom)
+
+
+#312 - Publier certains settings de l'admin en JSON pour portail rando
+----------------------------------------------------------------------
+
+Certains settings, accessibles sur ``api/settings.json`` serviront au portail de l'offre randonnée.
+
+
+#338 - [BUG] Extent de la carte perdu au changement de type d'objet dans la recherche
+-------------------------------------------------------------------------------------
+
+Fixé.
+
+
+#29 - Paramétrer le logo de l'application
+-----------------------------------------
+
+Pour l'instant, seuls deux logos sont définis : 
+
+* ``logo-login.png`` : affiché sur la page de connexion
+
+* ``logo-header.png`` : affiché dans la barre d'outils de l'application
+
+Leur emplacement est ``var/media/upload/`` dans l'arborescence du projet.
+
+
+#305 - Fichiers liés / Nouvel onglet
+------------------------------------
+
+Les fichiers liés s'ouvrent dans un nouvelle fenêtre/onglet.
+
+
+#310 - [BUG] Synchroniser listes déroulantes "Centrer sur ..."
+--------------------------------------------------------------
+
+Elles sont désormais exclusives : le choix sur une désactive les autres.
+
+
+#290 - [BUG] DROITS lecture
+---------------------------
+
+Il ne s'agissait pas d'un bug des droits, mais d'une erreur de configuration
+au niveau du déploiement.
+
+
+#320 - Nom de la couche sentiers
+--------------------------------
+
+Fixé
+
+#343 - [BUG] (Javascript) Edition trek : drag point intermédiaire sans activer outil multipath
+----------------------------------------------------------------------------------------------
+
+Corrigé.
+Nouveau comportement:
+- Le multipath doit être désactivé manuellement en cliquant sur le contrôle multipath où le contrôle point.
+  (elle était désactivée de façon buggée à la suite du calcul d'une nouvelle topologie multipath).
+- La désactivation du multipath entraîne la suppression des évènements drag, click etc. sur la topologie multipath.
+- L'activation d'un multipath n'entraîne plus la suppression de la topologie multipath existante si elle existe.
+  Elle réintroduit les évènements drag, click, etc. rendant la topologie modifiable
+- Le multipath est activé automatiquement lors de l'ouverture de la vue d'édition d'une topologie multipath
+
+
+#378 - [BUG] Fiche détail signalétique : les tronçons ne sont uniques dans la liste
+-----------------------------------------------------------------------------------
+
+Fixé.
+
+#288 - [BUG] Saisie topologie point : mauvaise geométrie calculée
+-----------------------------------------------------------------
+
+Fixé, avec le #378.
+
+Je créé un élément de signalétique sur un tronçon, proche d'un croisement. 
+Une fois enregistré, celui-ci est désormais bien positionné au bon endroit.
+
+
+#372 - [BUG] Impression : choix zones visibles sur l'image exportée
+-------------------------------------------------------------------
+
+Les listes déroulantes ne sont plus visibles sur l'image exportée.
+
+
+#230 - [BUG] Déploiement écrins : saisie marqueur, image manquante
+------------------------------------------------------------------
+
+Fixé.
+
+
+#374 - [BUG] Impression : parfois certaines tuiles ne sont pas chargées complètement
+------------------------------------------------------------------------------------
 
 Fixé.

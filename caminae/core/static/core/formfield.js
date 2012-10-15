@@ -41,6 +41,13 @@ FormField.makeModule = function(module, module_settings) {
             }
         });
 
+        // Show control as enabled on activation
+        for (var h in map.drawControl.handlers) {
+            map.drawControl.handlers[h].on('activated', function () {
+                $('.leaflet-control-draw-' + h).parent().addClass('enabled');
+            });
+        }
+
         // Listen to all events of creation, Leaflet.Draw naming inconsistency
         var draw_types = {
             'polyline': 'poly',
@@ -52,6 +59,11 @@ FormField.makeModule = function(module, module_settings) {
             map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
                 console.log('Drawn ' + this.type);
                 var drawn = e[this.type];  // Leaflet.Draw naming inconsistency
+                
+                // Show control as disabled after creation
+                for (var h in map.drawControl.handlers) {
+                    $('.leaflet-control-draw-' + h).parent().removeClass('enabled');
+                }
                 drawncallback(drawn);
             }, {type: draw_type}));
         }
@@ -116,20 +128,33 @@ FormField.makeModule = function(module, module_settings) {
         function setDragging() { dragging = true; };
         function unsetDragging() { dragging = false; };
         function isDragging() { return dragging; };
+        function activate(marker) {
+            marker.dragging.enable();
+            marker.editing.enable();
+            marker.on('dragstart', setDragging);
+            marker.on('dragend', unsetDragging);
+        }
+        function deactivate(marker) {
+            marker.dragging.disable();
+            marker.editing.disable();
+            marker.off('dragstart', setDragging);
+            marker.off('dragend', unsetDragging);
+        }
 
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
                 marker.editing = new MapEntity.MarkerSnapping(map, marker);
-                marker.editing.enable();
                 snapObserver.add(marker);
-                marker.on('dragstart', setDragging);
-                marker.on('dragend', unsetDragging);
+                marker.activate_cbs.push(activate);
+                marker.deactivate_cbs.push(deactivate);
+
+                marker.activate();
             },
             generic: function (latlng, layer, classname, snappable) {
                 snappable = snappable === undefined ? true : snappable;
 
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
+                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
                 map.addLayer(marker);
 
                 $(marker._icon).addClass(classname);
@@ -150,12 +175,13 @@ FormField.makeModule = function(module, module_settings) {
             },
             drag: function(latlng, layer, snappable) {
                 // FIXME: static
+                var defaultIconOptions = getDefaultIconOpts();
                 var icon = new L.Icon({
-                    iconUrl: '/static/images/osrm_markers/marker-drag.png'
-                    , iconSize: new L.Point(18, 18)
+                    iconUrl: module_settings.init.iconDragUrl,
+                    iconSize: new L.Point(18, 18)
                 });
 
-                var marker = new L.Marker(latlng, {'draggable': true, 'icon': icon });
+                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': icon });
 
                 map.addLayer(marker);
                 if (snappable)
@@ -172,8 +198,9 @@ FormField.makeModule = function(module, module_settings) {
         var markersFactory = module.getMarkers(map, snapObserver);
 
         objectsLayer.on('load', function() {
-            $.getJSON(module_settings.enableMultipath.path_json_graph_url, function(graph) {
 
+            var parseGraph = function (graph) {
+               
                 var dijkstra = {
                     'compute_path': Caminae.compute_path,
                     'graph': graph
@@ -204,20 +231,27 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 })();
 
+                // TODO: remove drawOnMouseMove
                 var drawOnMouseMove = null;
 
-                onStartOver.on('startover', function() {
-                    markPath.updateGeom(null);
-                    multipath_handler.unmarkAll();
-
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
+                onStartOver.on('startover', function(obj) {
+                    // If startover is not trigger by multipath, delete the geom
+                    // Thus, when multipath is called several times, the geom is not deleted
+                    // and may be updated
+                    if (obj.handler !== 'multipath') {
+                        markPath.updateGeom(null);
+                        multipath_handler.unmarkAll();
+                    }
                 });
                 multipath_handler.on('unsnap', function () {
                     markPath.updateGeom(null);
                 });
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
-                    onStartOver.fire('startover');
+                    onStartOver.fire('startover', {'handler': 'multipath'});
+                });
+                multipath_handler.on('disabled', function() {
+                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
                 });
 
 
@@ -478,13 +512,19 @@ FormField.makeModule = function(module, module_settings) {
                     }
                 }
 
+            };
+            
+            $.getJSON(module_settings.enableMultipath.path_json_graph_url, parseGraph).error(function (jqXHR, textStatus, errorThrown) {
+                $(map._container).addClass('map-error');
+                console.error("Could not load url '" + module_settings.enableMultipath.path_json_graph_url + "': " + textStatus);
+                console.error(errorThrown);
             });
         });
     };
 
     module.enableTopologyPoint = function (map, drawncallback, onStartOver) {
-        var control = new L.Control.TopologyPoint(map);
-            handler = control.topologyhandler;
+        var control = new L.Control.TopologyPoint(map)
+          , handler = control.topologyhandler;
         map.addControl(control);
         
         // Delete current on first clic (start drawing)

@@ -115,7 +115,14 @@ h2 {
 }
 
 /* Alert messages */
-#alert-box {position: absolute; top: 3px; left: 50%; width: 50%; margin: 0 0 0 -25%;}
+#alert-box {
+	position: absolute; 
+	top: 3px; 
+	left: 50%; 
+	width: 50%; 
+	margin: 0 0 0 -25%;
+	z-index: 1000;
+}
 #alert-box li.alert {list-style-type: none; margin-bottom: 3px;}
 
 /* Maps */
@@ -142,8 +149,12 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
 	font-size: 10px;
 }
 
-.leaflet-control-draw.enabled a {
+.leaflet-control-draw.enabled a, .leaflet-control.enabled a {
  	background-color: #fff;
+}
+
+.leaflet-control-draw.enabled, .leaflet-control.enabled {
+ 	background-color: rgba(255, 255, 0, 0.6);
 }
 
 .leaflet-control-draw-measure {
@@ -162,6 +173,12 @@ tr.selected-row td {
     /* Button green color #5BB75B */
     background-color: #DF8 !important;
     opacity: 1 !important;
+}
+
+select.filter-set {
+    font-weight: bold;
+    border: 2px solid black;
+    color: black;
 }
 
 #bboxfilter {

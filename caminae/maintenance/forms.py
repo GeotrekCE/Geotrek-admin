@@ -126,6 +126,8 @@ class InterventionCreateForm(InterventionForm):
 class ProjectForm(CommonForm):
     modelfields = (
             'name',
+            'type',
+            'domain',
             'begin_year',
             'end_year',
             'constraint',

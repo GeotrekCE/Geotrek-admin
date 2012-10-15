@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
 
@@ -14,7 +15,7 @@ from caminae.infrastructure.models import Infrastructure, Signage
 class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Date"))
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"))
     comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
 
     ## Technical information ##
@@ -130,9 +131,16 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @property
     def total_manday(self):
-        total = 0
+        total = 0.0
         for md in self.manday_set.all():
             total += md.nb_days
+        return total
+
+    @property
+    def total_cost(self):
+        total = 0.0
+        for md in self.manday_set.all():
+            total += md.cost
         return total
 
     @property
@@ -196,6 +204,7 @@ class InterventionDisorder(StructureRelated):
 class InterventionJob(StructureRelated):
 
     job = models.CharField(max_length=128, verbose_name=_(u"Job"))
+    cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
 
     class Meta:
         db_table = 'bib_fonctions'
@@ -208,7 +217,7 @@ class InterventionJob(StructureRelated):
 
 class ManDay(models.Model):
 
-    nb_days = models.IntegerField(verbose_name=_(u"Mandays"))
+    nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention)
     job = models.ForeignKey(InterventionJob)
 
@@ -216,6 +225,10 @@ class ManDay(models.Model):
         db_table = 'journeeshomme'
         verbose_name = _(u"Manday")
         verbose_name_plural = _(u"Mandays")
+
+    @property
+    def cost(self):
+        return float(self.nb_days * self.job.cost)
 
     def __unicode__(self):
         return self.nb_days
@@ -229,6 +242,11 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True)
     cost = models.FloatField(verbose_name=_(u"Cost"), default=0)
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True)
+    type = models.ForeignKey('ProjectType', null=True, blank=True,
+                             verbose_name=_(u"Project type"))
+    domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
+                             verbose_name=_(u"Project domain"))
+
 
     date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
@@ -282,7 +300,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         interventions = Intervention.objects.existing().filter(project=self)
         geoms = [i.geom for i in interventions if i.geom is not None]
         if geoms:
-            return GeometryCollection(*geoms)
+            return GeometryCollection(*geoms, srid=settings.SRID)
         return None
 
     @property
@@ -296,6 +314,32 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
+
+
+class ProjectType(StructureRelated):
+
+    type = models.CharField(max_length=128, verbose_name=_(u"Type"))
+
+    class Meta:
+        db_table = 'bib_projet_type'
+        verbose_name = _(u"Project type")
+        verbose_name_plural = _(u"Project types")
+
+    def __unicode__(self):
+        return self.type
+
+
+class ProjectDomain(StructureRelated):
+
+    domain = models.CharField(max_length=128, verbose_name=_(u"Domain"))
+
+    class Meta:
+        db_table = 'bib_projet_domaine'
+        verbose_name = _(u"Project domain")
+        verbose_name_plural = _(u"Project domains")
+
+    def __unicode__(self):
+        return self.domain
 
 
 class Contractor(StructureRelated):

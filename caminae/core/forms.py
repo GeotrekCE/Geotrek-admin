@@ -57,7 +57,10 @@ class PathForm(CommonForm):
 
     modelfields = ('name',
               'stake',
+              'comfort',
               'trail',
+              'departure',
+              'arrival',
               Field('comments', css_class='input-xlarge'),
               'datasource',
               'networks',

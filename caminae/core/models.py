@@ -14,6 +14,7 @@ from caminae.authent.models import StructureRelated
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 import caminae.infrastructure as inf
+import caminae.maintenance as maintenance
 import caminae.land as land
 
 
@@ -33,6 +34,12 @@ class Path(MapEntityMixin, StructureRelated):
     name = models.CharField(null=True, blank=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"))
 
+    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"))
+    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"))
+    
+    comfort =  models.ForeignKey('Comfort',
+                                 null=True, blank=True, related_name='paths',
+                                 verbose_name=_("Comfort"))
     # Override default manager
     objects = models.GeoManager()
 
@@ -173,6 +180,12 @@ class Path(MapEntityMixin, StructureRelated):
                              kind=land.models.LandEdge.KIND)]))
 
     @property
+    def districts(self):
+        return list(set([land.models.DistrictEdge.objects.get(pk=t.pk).district
+                         for t in self.topologymixin_set.existing().filter(
+                             kind=land.models.DistrictEdge.KIND)]))
+
+    @property
     def signages(self):
         return [inf.models.Signage.objects.get(pk=t.pk)
                 for t in self.topologymixin_set.existing().filter(
@@ -260,8 +273,51 @@ class TopologyMixin(NoDeleteMixin):
     def KIND(cls):
         return cls._meta.object_name.upper()
 
+    @classmethod
+    def overlapping(self, qs, edges):
+        """ Filter specified queryset of TopologyMixin objects if specified
+        edges overlap them.
+        TODO: So far, the algorithm is quite simple, and not precise. Indeed
+        it returns edges that "share" the same paths, and not exactly overlapping.
+        """
+        paths = []
+        for edge in edges:
+            paths.extend(edge.topo_object.paths.select_related(depth=1).all())
+        topos = []
+        for path in set(paths):
+            topos += [aggr.topo_object for aggr in path.aggregations.all()]
+        # In case, we filter on paths
+        if qs.model == Path:
+            return qs.filter(pk__in=[ path.pk for topo in set(paths) ])
+
+        # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
+        elif issubclass(qs.model, maintenance.models.Intervention):
+            return qs.filter(topology__in=[ topo.pk for topo in set(topos) ])
+        elif issubclass(qs.model, maintenance.models.Project):
+            # Find all interventions overlapping those edges
+            interventions = TopologyMixin.overlapping(maintenance.models.Intervention.objects.existing()\
+                                                                              .select_related(depth=1)\
+                                                                              .filter(project__in=qs), 
+                                                      edges)
+            # Return only the projects concerned by the interventions
+            projects = []
+            for intervention in interventions:
+                projects.append(intervention.project.pk)
+            return qs.filter(pk__in=set(projects))
+
+        else:
+            assert isinstance(qs.model, TopologyMixin), "%s is not a TopologyMixin as expected" % qs.model
+            return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
+
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
+
+    def ispoint(self):
+        for aggr in self.aggregations.all():
+            if aggr.start_position == aggr.end_position:
+                return True
+            break
+        return False
 
     def add_path(self, path, start=0.0, end=1.0):
         """
@@ -284,7 +340,12 @@ class TopologyMixin(NoDeleteMixin):
         self.offset = other.offset
         self.save()
         PathAggregation.objects.filter(topo_object=self).delete()
-        for aggr in other.aggregations.all():
+        aggrs = other.aggregations.all()
+        # A point has only one aggregation, except if it is on an intersection.
+        # In this case, the trigger will create them, so ignore them here.
+        if other.ispoint():
+            aggrs = aggrs[:1]
+        for aggr in aggrs:
             self.add_path(aggr.path, aggr.start_position, aggr.end_position)
         if delete:
             other.delete()
@@ -390,23 +451,23 @@ class TopologyMixin(NoDeleteMixin):
         aggrobj.save()
         return topology
 
-    def serialize(self):
-        # Fetch properly ordered aggregations
-        aggregations = self.aggregations.all()
-        start = aggregations[0].start_position
-        end = aggregations[len(aggregations)-1].end_position
+    def geom_as_point(self):
+        geom = self.geom
+        if geom.geom_type != 'Point':
+            logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
+            geom = Point(geom.coords[0], srid=settings.SRID)
+        return geom
 
+    def serialize(self):
         # Point topology
-        if start == end and len(aggregations) == 1:
-            geom = self.geom
-            if geom.geom_type != 'Point':
-                logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
-                geom = Point(geom.coords[0], srid=settings.SRID)
+        if self.ispoint():
+            geom = self.geom_as_point()
             point = geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
-
+            # Fetch properly ordered aggregations
+            aggregations = self.aggregations.all()
             paths = list(aggregations.values_list('path__pk', flat=True))
             # We may filter out aggregations that have default values (0.0 and 1.0)...
             positions = dict(
@@ -421,6 +482,13 @@ class TopologyMixin(NoDeleteMixin):
                            paths=paths,
                            )
         return simplejson.dumps(objdict)
+
+    @property
+    def districts(self):
+        s = []
+        for p in self.paths.all():
+            s += p.districts
+        return list(set(s))
 
 
 class PathAggregation(models.Model):
@@ -477,6 +545,19 @@ class Stake(StructureRelated):
         return self.stake
 
 
+class Comfort(StructureRelated):
+
+    comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50)
+
+    class Meta:
+        db_table = 'bib_confort'
+        verbose_name = _(u"Comfort")
+        verbose_name_plural = _(u"Comforts")
+
+    def __unicode__(self):
+        return self.comfort
+
+
 class Usage(StructureRelated):
 
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
@@ -506,7 +587,7 @@ class Network(StructureRelated):
 class Trail(MapEntityMixin, StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64)
-    departure = models.CharField(verbose_name=_(u"Name"), max_length=64)
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=64)
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64)
     comments = models.TextField(default="", verbose_name=_(u"Comments"))
 

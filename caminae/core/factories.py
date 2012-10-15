@@ -43,6 +43,12 @@ class TrailFactory(factory.Factory):
     comments =  factory.Sequence(lambda n: u"Comments %s" % n)
 
 
+class ComfortFactory(factory.Factory):
+    FACTORY_FOR = models.Comfort
+
+    comfort =  factory.Sequence(lambda n: u"Comfort %s" % n)
+
+
 class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
@@ -50,6 +56,8 @@ class PathFactory(StructureRelatedDefaultFactory):
     geom_cadastre = LineString(Point(5, 5, 0), Point(6, 6, 0), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: u"name %s" % n)
+    departure = factory.Sequence(lambda n: u"departure %s" % n)
+    arrival = factory.Sequence(lambda n: u"arrival %s" % n)
     comments = factory.Sequence(lambda n: u"comment %s" % n)
 
     # Trigger will override :
@@ -63,6 +71,7 @@ class PathFactory(StructureRelatedDefaultFactory):
 
     # FK that could also be null
     trail = factory.SubFactory(TrailFactory)
+    comfort = factory.SubFactory(ComfortFactory)
     datasource = factory.SubFactory(DatasourceFactory)
     stake = factory.SubFactory(StakeFactory)
 
@@ -165,5 +174,3 @@ class PathAggregationInBoundsRandomGeomFactory(PathAggregationFactory):
 
 class PathAggregationInBoundsExistingGeomFactory(PathAggregationFactory):
     path = factory.SubFactory(PathInBoundsExistingGeomFactory)
-
-

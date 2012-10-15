@@ -109,39 +109,52 @@ Caminae.TopologyHelper = (function() {
         this.polyline = null;
         this.length = null;
         this.percent_distance = null;
+        this._activated = false;
 
         this.events = L.Util.extend({}, L.Mixin.Events);
 
-        this.bindMarker(marker);
-    }
+        this.markerEvents = {
+            'move': function onMove (e) {
+                var marker = e.target;
+                if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
+            },
+            'snap': function onSnap(e) {
+                this.ll = e.location;
+                this.polyline = e.object;
 
-    PointOnPolyline.prototype.bindMarker = function() {
-        // ?
-        function onMove (e) {
-            var marker = e.target;
-            if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
-        }
+                this.length = MapEntity.Utils.length(this.polyline.getLatLngs());
+                this.percent_distance = MapEntity.Utils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
 
-        function onSnap(e) {
-            this.ll = e.location;
-            this.polyline = e.object;
+                this.events.fire('valid'); // self
+            },
+            'unsnap': function onUnsnap(e) {
+                this.ll = null;
+                this.polyline = null;
+                this.events.fire('invalid');
+            }
+        };
+    };
 
-            this.length = MapEntity.Utils.length(this.polyline.getLatLngs());
-            this.percent_distance = MapEntity.Utils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
+    PointOnPolyline.prototype.activated = function() {
+        return this._activated;
+    };
 
-            this.events.fire('valid'); // self
-        }
+    PointOnPolyline.prototype.toggleActivate = function(activate) {
+        activate = activate === undefined ? true : activate;
 
-        function onUnsnap(e) {
-            this.ll = null;
-            this.polyline = null;
-            this.events.fire('invalid');
-        }
+        if ((activate && this._activated) || (!activate && !this._activated))
+            return;
 
-        var marker = this.marker;
-        marker.on('move', onMove, this);
-        marker.on('snap', onSnap, this);
-        marker.on('unsnap', onUnsnap, this);
+        this._activated = activate;
+
+        var method = activate ? 'on' : 'off';
+
+        var marker = this.marker
+          , markerEvents = this.markerEvents;
+
+        marker[method]('move', markerEvents.move, this);
+        marker[method]('snap', markerEvents.snap, this);
+        marker[method]('unsnap', markerEvents.unsnap, this);
     };
 
     PointOnPolyline.prototype.isValid = function(graph) {

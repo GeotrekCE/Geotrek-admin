@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="offset1 span8">
-    <img src="{% static "images/logo-200.png" %}" />
+    <img src="{{ MEDIA_URL }}upload/logo-login.png" />
 
     <form action="{% url login %}" method="post" class="form-horizontal">
         {% csrf_token %}

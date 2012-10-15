@@ -6,6 +6,17 @@ L.Control.TopologyPoint = L.Control.extend({
     initialize: function (map, options) {
         L.Control.prototype.initialize.call(this, options);
         this.topologyhandler = new L.Handler.TopologyPoint(map);
+        this.topologyhandler.on('added', this.toggle, this);
+    },
+
+    toggle: function() {
+        if (this.topologyhandler.enabled()) {
+            this.topologyhandler.disable.call(this.topologyhandler);
+            L.DomUtil.removeClass(this._container, 'enabled');
+        } else {
+            this.topologyhandler.enable.call(this.topologyhandler);
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
     },
 
     onAdd: function (map) {
@@ -17,9 +28,7 @@ L.Control.TopologyPoint = L.Control.extend({
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', function() {
-                     self.topologyhandler.enable();
-                });
+                .addListener(link, 'click', this.toggle, this);
         return this._container;
     },
 
@@ -52,6 +61,21 @@ L.Control.Multipath = L.Control.extend({
         this.multipath_handler = new L.Handler.MultiPath(
             map, graph_layer, dijkstra, markersFactory, this.options.handler
         );
+
+        this.multipath_handler.on('enabled', function() {
+            L.DomUtil.addClass(this._container, 'enabled');
+        }, this);
+        this.multipath_handler.on('disabled', function() {
+            L.DomUtil.removeClass(this._container, 'enabled');
+        }, this);
+    },
+
+    toggle: function() {
+        if (this.multipath_handler.enabled()) {
+            this.multipath_handler.disable.call(this.multipath_handler);
+        } else {
+            this.multipath_handler.enable.call(this.multipath_handler);
+        }
     },
 
     onAdd: function (map) {
@@ -64,9 +88,7 @@ L.Control.Multipath = L.Control.extend({
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', function() {
-                     self.multipath_handler.enable();
-                });
+                .addListener(link, 'click', this.toggle, this);
 
         return this._container;
     },
@@ -75,6 +97,38 @@ L.Control.Multipath = L.Control.extend({
     }
 
 });
+
+
+L.ActivableMarker = L.Marker.extend({
+    initialize: function () {
+        L.Marker.prototype.initialize.apply(this, arguments);
+        this._activated = false;
+        // Watch out if a callback is added and we are already in this state.
+        // It won't be called !
+        this.activate_cbs = [];
+        this.deactivate_cbs = [];
+    },
+    'activated': function() {
+        return this._activated;
+    },
+    'activate': function() {
+        if (!this._activated) {
+            for (var i = 0; i < this.activate_cbs.length; i++) {
+                this.activate_cbs[i](this);
+            }
+            this._activated = true;
+        }
+    },
+    'deactivate': function() {
+        if (this._activated) {
+            for (var i = 0; i < this.deactivate_cbs.length; i++) {
+                this.deactivate_cbs[i](this);
+            }
+            this._activated = false;
+        }
+    }
+});
+
 
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
@@ -91,8 +145,9 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // markers
         this.markersFactory = markersFactory;
-        this.marker_source = null;
-        this.marker_dest = null;
+
+        // Init a fresh state
+        this.reset();
 
         this.layerToId = function layerToId(layer) {
             return graph_layer.getPk(layer);
@@ -109,6 +164,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // Ensure we got a fresh start
         this.disable();
+        this.reset();
         this.enable();
 
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
@@ -121,39 +177,55 @@ L.Handler.MultiPath = L.Handler.extend({
         });
     },
 
-    // TODO: when to remove/update links..? what's the behaviour ?
-    addHooks: function () {
+    // Reset the whole state
+    reset: function() {
         var self = this;
 
-        // Clean all previous edges if they exist
-        this.unmarkAll();
+        // remove all markers
+        this.steps && $.each(this.steps, function(pop) {
+            self.map.removeLayer(pop.marker);
+        });
 
-        this.marker_source && this.map.removeLayer(this.marker_source);
-        this.marker_dest && this.map.removeLayer(this.marker_dest);
-
+        // reset state
         this.steps = [];
         this.computed_paths = [];
         this.all_edges = [];
-        this._container.style.cursor = 'w-resize';
 
+        this.marker_source = this.marker_dest = null;
+    },
+
+    // Activate/Deactivate existing steps and markers - mostly about (un)bindings listeners
+    stepsToggleActivate: function(activate) {
+        var cb;
+        // /!\ Order in activation is important, first activate marker then pop
+        // The marker.move listener must be set before the pop.move listener
+        if (activate) {
+            cb = function(pop) { pop.marker.activate(); pop.toggleActivate(true); }
+        } else {
+            cb = function(pop) { pop.marker.deactivate(); pop.toggleActivate(false); }
+        }
+
+        $(this.steps).each(function(i, pop) { pop && cb(pop); });
+    },
+
+    addHooks: function () {
+        this._container.style.cursor = 'w-resize';
         this.graph_layer.on('click', this._onClick, this);
+
+        this.stepsToggleActivate(true);
 
         this.fire('enabled');
     },
 
-    unmarkAll: function() {
-        var self = this;
-
-        this.steps && $.map(this.steps, function(pop) {
-            self.map.removeLayer(pop.marker);
-        });
-    },
-
-    removeHooks: function () {
-        var self = this;
+    removeHooks: function() {
         this._container.style.cursor = '';
         this.graph_layer.off('click', this._onClick, this);
+
+        this.stepsToggleActivate(false);
+
+        this.fire('disabled');
     },
+
 
     // On click on a layer with the graph
     _onClick: function(e) {
@@ -178,7 +250,10 @@ L.Handler.MultiPath = L.Handler.extend({
             this.marker_dest = marker;
         }
 
-        self.createStep(marker, next_step_idx);
+        var pop = self.createStep(marker, next_step_idx);
+
+        pop.toggleActivate();
+
         // If this was clicked, the marker should be close enought, snap it.
         self.forceMarkerToLayer(marker, layer);
     },
@@ -218,13 +293,19 @@ L.Handler.MultiPath = L.Handler.extend({
         var pop = this.createStep(marker, step_idx);
 
         // remove marker on click
-        marker.on('click', function() {
+        function removeViaStep() {
             self.steps.splice(self.getStepIdx(pop), 1);
-
             self.map.removeLayer(marker);
-
             self.computePaths();
-        });
+        }
+
+        function removeOnClick() { marker.on('click', removeViaStep); }
+        pop.marker.activate_cbs.push(removeOnClick);
+        pop.marker.deactivate_cbs.push(function() { marker.off('click', removeViaStep); });
+
+        // marker is already activated, trigger manually removeOnClick
+        removeOnClick();
+        pop.toggleActivate();
     },
 
     canCompute: function() {
@@ -297,8 +378,6 @@ L.Handler.MultiPath = L.Handler.extend({
             'marker_source': this.marker_source,
             'marker_dest': this.marker_dest
         });
-
-        this.disable();
     }
 
 });

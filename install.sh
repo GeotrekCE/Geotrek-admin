@@ -48,7 +48,7 @@ database_exists () {
 }
 
 
-user_exists () {
+user_does_not_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
     if [ -z $1 ]
@@ -62,7 +62,7 @@ user_exists () {
 }
 
 ini_value () {
-    echo $(sed -n "s/.*$2 *= *\([^ ]*.*\)/\1/p" < $1)
+    echo $(sed -n "s/^\s*$2 *= *\([^ ]*.*\)/\1/p" < $1)
 }
 
 migrate_settings () {
@@ -133,6 +133,7 @@ function ubuntu_precise {
     #----------------------------------
     dbname=$(ini_value $settingsfile dbname)
     dbhost=$(ini_value $settingsfile dbhost)
+    dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
     
     if [ "${dbhost}" == "localhost" ] ; then
@@ -142,12 +143,12 @@ function ubuntu_precise {
         # Activate PostGIS in database
         if ! database_exists ${dbname}
         then
-            sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};"
+            sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8';"
             sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
         fi
         
         # Create user if missing
-        if ! user_exists ${dbuser}
+        if user_does_not_exists ${dbuser}
         then
             sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
             sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
@@ -181,7 +182,12 @@ _EOF_
     cd lib/
 
     if [ ! -f /usr/local/bin/phantomjs ]; then
-        wget http://phantomjs.googlecode.com/files/phantomjs-1.6.0-linux-x86_64-dynamic.tar.bz2 -O phantomjs.tar.bz2
+        arch=$(uname -p)
+        if [ "${arch}" == "x86_64" ] ; then
+            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
+        else
+            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-i686.tar.bz2 -O phantomjs.tar.bz2
+        fi
         tar -jxvf phantomjs.tar.bz2
         rm phantomjs.tar.bz2
         cd *phantomjs*
@@ -190,7 +196,7 @@ _EOF_
     fi
 
     if [ ! -f /usr/local/bin/casperjs ]; then
-        wget https://github.com/n1k0/casperjs/zipball/0.6.10 -O casperjs.zip
+        wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC1 -O casperjs.zip
         unzip -o casperjs.zip > /dev/null
         rm casperjs.zip
         cd *casperjs*

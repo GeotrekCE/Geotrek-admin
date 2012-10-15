@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2012-10-01 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,11 +25,11 @@ msgstr "La topology n'est pas valide."
 msgid "length"
 msgstr "Longueur"
 
-#: filters.py:14 models.py:33 models.py:508 models.py:509
+#: filters.py:14 models.py:33 models.py:527
 msgid "Name"
 msgstr "Nom"
 
-#: filters.py:15 models.py:34 models.py:511
+#: filters.py:15 models.py:34 models.py:530
 msgid "Comments"
 msgstr "Commentaires"
 
@@ -45,63 +45,75 @@ msgstr "Le tronçon sera inversé une fois sauvegardé."
 msgid "Validity"
 msgstr "Validité"
 
-#: models.py:40 models.py:243
+#: models.py:36 models.py:528
+msgid "Departure"
+msgstr "Départ"
+
+#: models.py:37 models.py:529
+msgid "Arrival"
+msgstr "Arrivée"
+
+#: models.py:41 models.py:488 models.py:492
+msgid "Comfort"
+msgstr "Confort"
+
+#: models.py:46 models.py:249
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:41 models.py:244
+#: models.py:47 models.py:250
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:42 models.py:245
+#: models.py:48 models.py:251
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:44
+#: models.py:50
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:46
+#: models.py:52
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:48
+#: models.py:54
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:50
+#: models.py:56
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:55
+#: models.py:61
 msgid "Trail"
 msgstr "Sentier"
 
-#: models.py:58 models.py:457
+#: models.py:64 models.py:463
 msgid "Datasource"
 msgstr "Source de données"
 
-#: models.py:61 models.py:466 models.py:470
+#: models.py:67 models.py:472 models.py:476
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:64 models.py:487
+#: models.py:70 models.py:506
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:67 models.py:500
+#: models.py:73 models.py:519
 msgid "Networks"
 msgstr "Réseaux"
 
-#: models.py:74 models.py:235 models.py:428
+#: models.py:80 models.py:241 models.py:434
 msgid "Path"
 msgstr "Tronçon"
 
-#: models.py:75 templates/core/trail_detail.html:22
+#: models.py:81 templates/core/trail_detail.html:22
 msgid "Paths"
 msgstr "Tronçons"
 
-#: models.py:148 models.py:154 templates/core/path_detail.html:20
+#: models.py:154 models.py:160 templates/core/path_detail.html:20
 #: templates/core/path_detail.html.py:50 templates/core/path_detail.html:53
 #: templates/core/path_detail.html.py:63 templates/core/path_detail.html:74
 #: templates/core/path_detail.html.py:85 templates/core/path_detail.html:99
@@ -110,77 +122,77 @@ msgstr "Tronçons"
 msgid "None"
 msgstr "Aucun(e)"
 
-#: models.py:211
+#: models.py:217
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:236
+#: models.py:242
 msgid "Offset"
 msgstr "Décalage"
 
-#: models.py:237
+#: models.py:243
 msgid "Kind"
 msgstr "Type de topologie"
 
-#: models.py:251 models.py:264 models.py:432
+#: models.py:257 models.py:270 models.py:438
 msgid "Topology"
 msgstr "Topologie"
 
-#: models.py:252
+#: models.py:258
 msgid "Topologies"
 msgstr "Topologies"
 
-#: models.py:334
+#: models.py:340
 #, python-format
 msgid "Invalid serialization: %s"
 msgstr "Sérialisation invalide: %s"
 
-#: models.py:353
+#: models.py:359
 #, python-format
 msgid "Paths are not unique : %s"
 msgstr "Les tronçons ne sont pas uniques: %s"
 
-#: models.py:433
+#: models.py:439
 msgid "Start position"
 msgstr "Position de début"
 
-#: models.py:434
+#: models.py:440
 msgid "End position"
 msgstr "Position de fin"
 
-#: models.py:440 models.py:444
+#: models.py:446 models.py:450
 msgid "Path aggregation"
 msgstr "Aggrégation de tronçons"
 
-#: models.py:445
+#: models.py:451
 msgid "Path aggregations"
 msgstr "Aggrégations de tronçons"
 
-#: models.py:453
+#: models.py:459
 msgid "Source"
 msgstr "Source"
 
-#: models.py:458
+#: models.py:464
 msgid "Datasources"
 msgstr "Source de données"
 
-#: models.py:471
+#: models.py:477
 msgid "Stakes"
 msgstr "Enjeux"
 
-#: models.py:482 models.py:486
+#: models.py:493
+msgid "Comforts"
+msgstr "Conforts"
+
+#: models.py:501 models.py:505
 msgid "Usage"
 msgstr "Usage"
 
-#: models.py:495 models.py:499
+#: models.py:514 models.py:518
 msgid "Network"
 msgstr "Réseau"
 
-#: models.py:510
-msgid "Arrival"
-msgstr "Arrivée"
-
-#: models.py:515 models.py:516
+#: models.py:534 models.py:535
 msgid "Trails"
 msgstr "Sentiers"
 
@@ -229,7 +241,7 @@ msgid "Management"
 msgstr "Gestion"
 
 #: templates/core/path_detail.html:78
-msgid "Land edges"
+msgid "Land"
 msgstr "Foncier"
 
 #: templates/core/path_detail.html:89 templates/core/trail_detail.html:29

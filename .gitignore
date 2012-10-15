@@ -3,13 +3,11 @@
 *.tar.gz
 *.mo
 
-/reports/
 /var/
 /etc/
 
 # buildout stuff
 .mr.developer.cfg
-src/
 .installed.cfg
 bin/
 downloads/

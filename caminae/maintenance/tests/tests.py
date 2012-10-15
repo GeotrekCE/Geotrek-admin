@@ -58,7 +58,7 @@ class InterventionViewsTest(MapEntityTest):
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
             
-            'manday_set-0-nb_days': '48',
+            'manday_set-0-nb_days': '48.75',
             'manday_set-0-job': InterventionJobFactory.create().pk,
             'manday_set-0-id': '',
             'manday_set-0-DELETE': '',
@@ -70,9 +70,7 @@ class InterventionViewsTest(MapEntityTest):
         }
 
     def test_form_on_infrastructure(self):
-        user = self.userfactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
         
         infra = InfrastructureFactory.create()
         infrastr = u"%s" % infra
@@ -86,6 +84,20 @@ class InterventionViewsTest(MapEntityTest):
         response = self.client.get(infra.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
+
+    def test_form_default_stake(self):
+        self.login()
+        good_data = self.get_good_data()
+        good_data['stake'] = ''
+        good_data['topology'] = """
+        {"offset":0,"positions":{"0":[0.8298653170816073,1],"2":[0,0.04593024777973237]},"paths":[%s,%s,%s]}
+        """ % (PathFactory.create().pk, PathFactory.create().pk, PathFactory.create().pk)
+        response = self.client.post(Intervention.get_add_url(), good_data)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(response._headers['location'][1])
+        self.assertTrue('object' in response.context)
+        intervention = response.context['object']
+        self.assertFalse(intervention.stake is None)
 
 
 class ProjectViewsTest(MapEntityTest):
@@ -107,6 +119,8 @@ class ProjectViewsTest(MapEntityTest):
             'name': 'test',
             'structure': default_structure().pk,
             'stake': '',
+            'type': '',
+            'domain': '',
             'begin_year': '2010',
             'end_year': '2012',
             'constraints': '',
@@ -312,5 +326,3 @@ class ExportTest(TestCase):
             self.assertEquals(str(feature['id']), str(proj.pk))
             self.assertEquals(str(feature['it_pk']), str(it_line.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
-
-

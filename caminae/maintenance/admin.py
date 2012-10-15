@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from caminae.maintenance.models import (
-        Contractor, InterventionStatus, InterventionType, InterventionDisorder
+        Contractor, InterventionStatus, InterventionType, InterventionDisorder,
+        ProjectType, ProjectDomain, InterventionJob,
 )
 
 class InterventionStatusAdmin(admin.ModelAdmin):
@@ -19,7 +20,15 @@ class InterventionDisorderAdmin(admin.ModelAdmin):
     search_fields = ('disorder',)
 
 
+class InterventionJobAdmin(admin.ModelAdmin):
+    list_display = ('job', 'cost',)
+    search_fields = ('job',)
+
+
 admin.site.register(Contractor)
 admin.site.register(InterventionStatus, InterventionStatusAdmin)
 admin.site.register(InterventionType, InterventionTypeAdmin)
 admin.site.register(InterventionDisorder, InterventionDisorderAdmin)
+admin.site.register(InterventionJob, InterventionJobAdmin)
+admin.site.register(ProjectType)
+admin.site.register(ProjectDomain)

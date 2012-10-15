@@ -32,8 +32,11 @@
         {% for lang in LANGUAGES %}
             {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
         {% endfor %}
-     
+
         {% leaflet_js %}
+        <script type="text/javascript">
+            L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
+        </script>
 
         <script type="text/javascript" src="{% static "dataTables/js/jquery.dataTables.js" %}"></script>
         <script type="text/javascript" src="{% static "dataTables/js/dataTables.ajax_list.js" %}"></script>
@@ -66,11 +69,13 @@
     <div class="navbar">
       <div class="navbar-inner">
         
-        <a class="brand" href="{% url home %}"><i class="icon-home"></i> {{ TITLE }}</a>
+        <a class="brand" href="{% url home %}"><img src="{{ MEDIA_URL }}upload/logo-header.png" /> {{ TITLE }}</a>
           
         <ul id="historylist" class="nav">
           {% block toolbar %}
+            {% if request.user.is_authenticated %}
             <li class="{% block nav-list %}{% endblock nav-list %}"><a href="{% url home %}">{% trans "Search" %} <span id="nbresults" class="badge">?</span></a></li>
+            {% endif %}
             {% for item in request.session.history %}
                 <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
             {% endfor %}
@@ -78,10 +83,10 @@
         </ul>
 
         <ul class="nav pull-right">
+            {% if request.user.is_authenticated %}
             <li class="divider-vertical"></li>
             <li class="pull-right {% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
             
-            {% if request.user.is_authenticated %}
             <li class="divider-vertical"></li>
             <li class="dropdown">
                <a href="#" class="dropdown-toggle" data-toggle="dropdown">

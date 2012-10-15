@@ -1,5 +1,13 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n field_verbose_name %}
+{% load i18n static field_verbose_name %}
+
+
+{% block download %}
+    {{ block.super }}
+    <a class="btn btn-mini" href="{% url trekking:trek_gpx_detail object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-mini" href="{% url trekking:trek_kml_detail object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+{% endblock download %}
+
 
 {% block detailspanel %}
     {{ block.super }}
@@ -18,6 +26,18 @@
                     {% else %}
                         <li><strong>{{ t }}</strong><i class="icon-star"></i></li>
                     {% endif %}
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    {% trans "None" %}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "POIs" %}</th>
+            <td>
+                {% for p in trek.pois %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ p.name_display|safe }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}
@@ -52,11 +72,11 @@
                 {% endfor %}
             </td>
         </tr><tr>
-            <th>{% trans "POIs" %}</th>
+            <th>{% trans "Districts" %}</th>
             <td>
-                {% for p in trek.pois %}
+                {% for d in trek.districts %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
+                    <li>{{ d.name }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     {% trans "None" %}

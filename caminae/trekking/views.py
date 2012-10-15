@@ -24,7 +24,7 @@ class TrekLayer(MapEntityLayer):
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
               'duration', 'ascent', 'serializable_themes',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'is_transborder', 'districts']
+              'is_transborder', 'serializable_districts']
 
 
 class TrekList(MapEntityList):
@@ -45,14 +45,15 @@ class TrekJsonDetail(BaseDetailView):
     queryset = Trek.objects.existing().filter(published=True)
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
-              'web_links', 'advice', 'networks', 'ambiance', 'districts']
+              'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts']
 
     def get_context_data(self, **kwargs):
         o = self.object
         ctx = {}
 
         for fname in self.fields:
-            ctx[fname] = getattr(o, fname)
+            prettyname = fname.replace('serializable_', '')
+            ctx[prettyname] = getattr(o, fname)
             try:
                 field = o._meta.get_field_by_name(fname)[0]
             except FieldDoesNotExist: # fname may refer to non-field properties
@@ -79,6 +80,16 @@ class TrekGPXDetail(BaseDetailView):
         return response
 
 
+class TrekKMLDetail(BaseDetailView):
+    queryset = Trek.objects.existing().filter(published=True)
+
+    def render_to_response(self, context):
+        trek = self.get_object()
+        response = HttpResponse(trek.kml(), 
+                                content_type = 'application/vnd.google-earth.kml+xml')
+        return response
+
+
 class TrekJsonProfile(BaseDetailView):
     queryset = Trek.objects.existing().filter(published=True)
 
@@ -91,13 +102,15 @@ class TrekJsonProfile(BaseDetailView):
 class TrekPOIGeoJSON(GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
+    fields = ['serializable_type']
+
     def get_queryset(self):
         try:
             trek_pk = self.kwargs.get(self.pk_url_kwarg)
             trek = Trek.objects.get(pk=trek_pk)
         except Trek.DoesNotExist:
             raise Http404
-        return trek.pois
+        return trek.pois.select_related(depth=1)
 
 
 class TrekDetail(MapEntityDetail):
@@ -166,7 +179,6 @@ class POIDetail(MapEntityDetail):
 
 class POIDocument(MapEntityDocument):
     model = POI
-
 
 
 class POICreate(MapEntityCreate):

@@ -1,8 +1,3 @@
-================
-In this sprint 3
-================
-
-* Improve pylint score http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/violations/
 * Check form non field error
 
 ==============
@@ -12,8 +7,6 @@ Known problems
 * ``dumpdata`` management command will not output the Z coordinates when
   present. Chaining dumpdata and loaddata will therefore not work.
 * If map view is to wide, no background layer is displayed (c.f. WMS écrins)
-* No orthophoto
-* CSS Fluid rows ignore offset (cf. future bootstrap 2.1.0)
 * Breakpoints on onLayerAdd and onLayerRemove triggered twice at page load which
   seems to indicate that some layers (or features?) are unecessarily loaded. To
   further investigated.
@@ -22,6 +15,10 @@ Known problems
 ==========
 Soon...
 ==========
+
+* Refactor TopologyMixin.overlapping() : should not receive queryset
+
+* Should not be necessary to call "existing()" on each manager
 
 * Split and simplify formfield.js
 
@@ -56,6 +53,12 @@ Soon...
 One day...
 ==========
 
+
+* Idea ? Process .sql files with template engine. Provide small tags 
+  like {% table Path %} {% field Path.geom %}.
+  This would prevent from having hard-coded tablenames.
+  SELECT {% field Path.name %} FROM {% table Path %}
+
 * Docstrings for each model
 * Help text for each model field
 * Test cache (locmem + files + expires)
@@ -71,12 +74,3 @@ One day...
 * Clean-up buildout directory (all in one "env")
 * When changing ``dim`` parameter on a GeometryField, South does not alter nor
   drop/create the field
-
-
-==========
-Ideas...
-==========
-
-* Idea ? Process .sql files with template engine. Provide small tags 
-  like {% tablename Path %} {% fieldname Path.geom %}.
-  This would prevent from having hard-coded tablenames.

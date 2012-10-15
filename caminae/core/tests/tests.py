@@ -9,7 +9,7 @@ from caminae.common.utils import dbnow, almostequal
 from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from caminae.authent.models import Structure, default_structure
 from caminae.core.factories import (PathFactory, PathAggregationFactory, 
-    TopologyMixinFactory, StakeFactory, TrailFactory)
+    TopologyMixinFactory, StakeFactory, TrailFactory, ComfortFactory)
 from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 # TODO caminae.core should be self sufficient
@@ -34,8 +34,11 @@ class ViewsTest(MapEntityTest):
             'name': '',
             'structure': default_structure().pk,
             'stake': '',
+            'comfort': ComfortFactory.create().pk,
             'trail': '',
             'comments': '',
+            'departure': '',
+            'arrival': '',
             'datasource': '',
             'valid': 'on',
             'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
@@ -453,6 +456,25 @@ class TopologyMixinTest(TestCase):
         topology1.mutate(topology3, delete=False)
         # topology3 still exists
         self.assertEqual(len(TopologyMixin.objects.filter(pk=topology3.pk)), 1)
+
+    def test_mutate_intersection(self):
+        # Mutate a Point topology at an intersection, and make sure its aggregations
+        # are not duplicated (c.f. SQL triggers)
+        
+        # Create a 3 paths intersection
+        p1 = PathFactory.create(geom=LineString((0,0,0), (1,0,0)))
+        p2 = PathFactory.create(geom=LineString((1,0,0), (2,0,0)))
+        p3 = PathFactory.create(geom=LineString((1,0,0), (1,1,0)))
+        # Create a topology point at this intersection
+        topology = TopologyMixinFactory.create(no_path=True)
+        topology.add_path(p2, start=0.0, end=0.0)
+        # Make sure, the trigger worked, and linked to 3 paths
+        self.assertEqual(len(topology.paths.all()), 3)
+        # Mutate it to another one !
+        topology2 = TopologyMixinFactory.create(no_path=True)
+        self.assertEqual(len(topology2.paths.all()), 0)
+        topology2.mutate(topology)
+        self.assertEqual(len(topology2.paths.all()), 3)
 
     def test_serialize(self):
         # At least two path are required

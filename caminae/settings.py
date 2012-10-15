@@ -235,6 +235,11 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
@@ -243,7 +248,8 @@ LOGGING = {
         },
         'console':{
             'level':'DEBUG',
-            'class':'logging.StreamHandler'
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
         },
     },
     'loggers': {
@@ -252,9 +258,13 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'caminae': {
+        'django.db.backends': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        '': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
             'propagate': True,
         },
     }
@@ -282,7 +292,11 @@ API_SRID = 4326
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 # Let this be defined at instance-level
-LEAFLET_CONFIG = {}
+LEAFLET_CONFIG = {
+    'TILES_URL' : [],
+    'TILES_EXTENT' : None,
+    'SPATIAL_EXTENT' : None
+}
 
 LAYERCOLOR_PATHS = ''      # Hex color for paths
 LAYERCOLOR_LAND = ''       # Hex color for land layers

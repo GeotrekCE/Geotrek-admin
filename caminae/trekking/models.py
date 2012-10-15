@@ -1,12 +1,20 @@
+import logging
+from HTMLParser import HTMLParser
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django.utils.html import strip_tags
+
+import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import TopologyMixin
-from caminae.land.models import DistrictEdge
 from caminae.common.utils import elevation_profile
+
+
+logger = logging.getLogger(__name__)
 
 
 class Trek(MapEntityMixin, TopologyMixin):
@@ -90,18 +98,6 @@ class Trek(MapEntityMixin, TopologyMixin):
         return POI.objects.filter(pk__in=[p.pk for p in s])
 
     @property
-    def districts(self):
-        s = []
-        for a in self.aggregations.all():
-            s += [DistrictEdge.objects.get(pk=t.pk).district
-                  for t in a.path.topologymixin_set.existing().filter(
-                      kind=DistrictEdge.KIND,
-                      aggregations__start_position__lte=a.end_position,
-                      aggregations__end_position__gte=a.start_position
-                  )]
-        return list(set(s))
-
-    @property
     def poi_types(self):
         types = [p.type for p in self.pois]
         return set(types)
@@ -115,13 +111,17 @@ class Trek(MapEntityMixin, TopologyMixin):
     def serializable_themes(self):
         return [{'id': t.pk,
                  'label': t.label,
-                 'pictogram': t.pictogram.read().encode('base64')
                 } for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
                  'label': u.usage} for u in self.usages.all()]
+
+    @property
+    def serializable_districts(self):
+        return [{'id': d.pk,
+                 'name': d.name} for d in self.districts]
 
     @property
     def elevation_profile(self):
@@ -138,6 +138,24 @@ class Trek(MapEntityMixin, TopologyMixin):
     @property
     def name_csv_display(self):
         return unicode(self.name)
+
+    def kml(self):
+        """ Exports trek into KML format, add geometry as linestring and POI
+        as place marks """
+        html = HTMLParser()
+        kml = simplekml.Kml()
+        # Main itinerary
+        kml.newlinestring(name=self.name,
+                          description=html.unescape(strip_tags(self.description)),
+                          coords=self.geom.coords)
+        # Place marks
+        for poi in self.pois:
+            place = poi.geom_as_point()
+            place.transform(settings.API_SRID)
+            kml.newpoint(name=poi.name,
+                         description=html.unescape(strip_tags(poi.description)),
+                         coords=[place.coords])
+        return kml._genkml()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -236,6 +254,7 @@ class Theme(models.Model):
         return self.label
 
 
+
 class TrekRelationshipManager(models.Manager):
 
     def relationships(self, trek):
@@ -311,6 +330,11 @@ class POI(MapEntityMixin, TopologyMixin):
         return unicode(self.name)
 
     @property
+    def serializable_type(self):
+        return {'label': self.type.label,
+                'pictogram': self.type.serializable_pictogram}
+
+    @property
     def treks(self):
         s = []
         for a in self.aggregations.all():
@@ -329,3 +353,11 @@ class POIType(models.Model):
 
     def __unicode__(self):
         return self.label
+
+    @property
+    def serializable_pictogram(self):
+        try:
+            return self.pictogram.read().encode('base64')
+        except (IOError, ValueError), e:
+            logger.warning(e)
+            return ''

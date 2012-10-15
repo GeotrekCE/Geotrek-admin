@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import math
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -122,7 +123,8 @@ def get_graph_json(request):
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
     def path_modifier(path):
-        return { "id": path.pk, "length": path.length }
+        l = 0.0 if math.isnan(path.length) else path.length
+        return { "id": path.pk, "length": l}
 
     graph = graph_lib.graph_edges_nodes_of_qs(
                 Path.objects.all(),

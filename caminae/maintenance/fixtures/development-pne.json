@@ -320,6 +320,38 @@
         }
     },
 
+    {
+        "pk": 1,
+        "model": "maintenance.projecttype",
+        "fields": {
+            "structure": 1,
+            "type": "Type projet 1"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.projecttype",
+        "fields": {
+            "structure": 1,
+            "type": "Type projet 2"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.projectdomain",
+        "fields": {
+            "structure": 1,
+            "domain": "Domaine projet 1"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.projectdomain",
+        "fields": {
+            "structure": 1,
+            "domain": "Domaine projet 1"
+        }
+    },
 
 
 

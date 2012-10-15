@@ -1,6 +1,14 @@
 from django.test import TestCase
+from django.core.urlresolvers import reverse
 
 from .utils import almostequal, smart_urljoin
+
+
+class ViewsTest(TestCase):
+    def test_settings_json(self):
+        url = reverse('common:settings_json')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class UtilsTest(TestCase):
