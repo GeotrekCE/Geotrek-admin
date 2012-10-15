@@ -107,7 +107,20 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
                 bounds.extend(layer._layers[i].getBounds());
             }
         }
-        else if (typeof layer.getLatLngs == 'function' || layer instanceof L.FeatureGroup) {
+        else if (layer instanceof L.FeatureGroup) {
+            // Leaflet uses project() in Circle's getBounds() method.
+            // We cannot call it yet, we are adding the feature to the map.
+            // Thus, rewrote that part and switch on Circle.
+            bounds = new L.LatLngBounds();
+            for (var i in layer._layers) {
+                var sublayer = layer._layers[i];
+                if (sublayer instanceof L.Circle)
+                    bounds.extend(sublayer.getLatLng());
+                else
+                    bounds.extend(sublayer.getBounds());
+            }
+        }
+        else if (typeof layer.getLatLngs == 'function') {
             bounds = layer.getBounds();
         }
         else {
@@ -116,24 +129,31 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         this.rtree.insert(this._rtbounds(bounds), layer);
     },
 
-    spin: function (state) {
-        if (!this._map) return;
+    onRemove: function (map) {
+        this.spin(false, map);
+        L.GeoJSON.prototype.onRemove.call(this, map);
+    },
+
+    spin: function (state, map) {
+        var _map = map || this._map;
+        
+        if (!_map) return;
 
         if (state) {
             // start spinning !
-            if (!this._map._spinner) {
-                this._map._spinner = new Spinner().spin(this._map._container);
-                this._map._spinning = 0;
+            if (!_map._spinner) {
+                _map._spinner = new Spinner().spin(_map._container);
+                _map._spinning = 0;
             }
-            this._map._spinning++;
+            _map._spinning++;
         }
         else {
-            this._map._spinning--;
-            if (this._map._spinning == 0) {
+            _map._spinning--;
+            if (_map._spinning == 0) {
                 // end spinning !
-                if (this._map._spinner) {
-                    this._map._spinner.stop();
-                    this._map._spinner = null;
+                if (_map._spinner) {
+                    _map._spinner.stop();
+                    _map._spinner = null;
                 }
             }
         }
@@ -151,8 +171,8 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
         };
         var jsonError = function () {
             this.spin(false);
-            $(this._map._container).addClass('map-error');
             console.error("Could not load url '" + url + "'");
+            if (this._map) $(this._map._container).addClass('map-error');
         };
         this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
@@ -238,8 +258,9 @@ MapEntity.ObjectsLayer = L.GeoJSON.extend({
  * source: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
  */
 function getURLParameter(name) {
-    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
-    return decodeURIComponent(paramEncoded);
+    var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1],
+        paramDecoded = decodeURIComponent(paramEncoded);
+    return paramDecoded == 'null' ? null : paramDecoded;
 }
 
 
@@ -307,13 +328,16 @@ MapEntity.Context = new function() {
             // If not received from URL, load from LocalStorage
             context = self.__loadFullContext();
         }
-        if (!context)
+        if (!context) {
+            console.warn("No context found.");
             return;  // No context, no restore.
+        }
         
         if (context.print) {
             // Hide controls
             $('.leaflet-control').hide();   // Hide all
             $('.leaflet-control-scale').show(); // Show scale
+            $(map._container).removeClass('leaflet-fade-anim');
         }
 
         self.restoreMapView(map, context);
@@ -447,11 +471,9 @@ MapEntity.MarkerSnapping = L.Handler.extend({
     },
 
     snapMarker: function (marker) {
-        var i=0;
-        for (; i<this._markers.length; i++) {
-            if (this._markers[i] == marker) break;
-        }
-        if (i==this._markers.length) this._markers.push(marker);
+        if (this._markers.indexOf(marker) == -1)
+            this._markers.push(marker);
+
         marker.on('move', this._snapMarker, this);
     },
 

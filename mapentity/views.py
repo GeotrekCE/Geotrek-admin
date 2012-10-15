@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import math
 import urllib2
 import logging
 from datetime import datetime
@@ -59,11 +60,12 @@ def map_screenshot(request):
         assert len(printcontext) < 512, "Print context is way too big."
         
         # Prepare context, extract and add infos
-        context = simplejson.loads(printcontext)
+        context = simplejson.loads(printcontext.encode("utf-8"))
         map_url = context.pop('url').split('?', 1)[0]
         context['print'] = True
         printcontext = simplejson.dumps(context)
-        
+        logger.debug("Print context received : %s" % printcontext)
+
         # Provide print context to destination
         printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
         contextencoded = urllib2.quote(printcontext)
@@ -73,7 +75,7 @@ def map_screenshot(request):
         height = context.get('viewport', {}).get('height')
         response = HttpResponse(mimetype='image/png')
         response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
-        casperjs_capture(response, map_url, width=width, height=height, selector='.map-panel')
+        casperjs_capture(response, map_url, width=width, height=height, selector='#mainmap')
         return response
 
     except Exception, e: 
@@ -198,7 +200,9 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         for obj in queryset:
             columns = []
             for field in self.columns:
-                columns.append(getattr(obj, field + '_display', getattr(obj, field)))
+                value = getattr(obj, field + '_display', getattr(obj, field))
+                if isinstance(value, float) and math.isnan(value): value = 0.0
+                columns.append(value)
             data_table_rows.append(columns)
             map_obj_pk.append(obj.pk)
 
@@ -273,7 +277,10 @@ class MapEntityDocument(DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
         # ODT template requires absolute URL for images insertion
+        context['datetime'] = datetime.now()
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
+        context['MEDIA_URL'] = self.request.build_absolute_uri(settings.MEDIA_URL)[:-1]
+        context['MEDIA_ROOT'] = settings.MEDIA_ROOT
         return context
 
     def dispatch(self, *args, **kwargs):
