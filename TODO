@@ -24,6 +24,8 @@ Soon...
 
 * Release Leaflet.measure
 
+* Set ON DELETE on tables https://docs.djangoproject.com/en/1.4/ref/models/fields/#django.db.models.ForeignKey.on_delete
+
 * Make application optional (ex: remove dependancies from core)
 
 * Make mapentity generic : no notion of Caminae (move templates to common/, move attachments)
