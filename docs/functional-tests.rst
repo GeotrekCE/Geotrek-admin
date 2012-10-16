@@ -1729,3 +1729,8 @@ Pour vérifier que le comportement est conservé :
 
 * Éditer un objet existant, vérifier que la carte est positionnée sur l'objet
 
+
+#314 - [BUG] Itinéraires - affichage sur la carte
+-------------------------------------------------
+
+Fixé.
