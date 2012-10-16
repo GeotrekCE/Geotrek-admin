@@ -1685,7 +1685,6 @@ Fixé.
 
 Fixé.
 
-
 ========================
 Sprint 7 - Version 0.7.0
 ========================
@@ -1706,3 +1705,27 @@ qui ignorait les marqueurs intermédiaires lorsque ceux-ci étaient placés à d
 
 * Vérifier que les saisies avec marqueurs sur intersections sont bien calculées 
   et restaurées.
+
+
+#379 - [BUG] Édition topologie point à un croisement : mauvais marqueur utilisé pour l'edition
+---------------------------------------------------------------------------------------
+
+Fixé.
+
+
+#375 - [BUG] (Javascript) Ajouter une signalétique, la carte ne s'affiche pas
+----------------------------------------------------------------------
+
+* Vider le cache du navigateur (localstorage inclus)
+
+* Accéder au formulaire d'ajout directement (ex: ``path/add/`` ou ``signage/add/``)
+
+* La carte s'affiche bien sur la zone globale du parc
+
+
+Pour vérifier que le comportement est conservé :
+
+* Retourner sur la vue liste, zoomer, aller sur ajout : la carte est positionnée sur la zone
+
+* Éditer un objet existant, vérifier que la carte est positionnée sur l'objet
+

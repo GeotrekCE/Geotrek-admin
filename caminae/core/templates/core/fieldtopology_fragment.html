@@ -60,10 +60,11 @@ FormField.makeModule({{ module }}, {{ module }}_settings);
 
     // We are displaying a form - if no object instance, restore previous map view
     if (! module.getObjectPk()) {
-        MapEntity.Context.restoreMapView(map);
-        bounds = map.getBounds();
-        // We just changed the map bounds, avoid resetting them...
-        fitToBounds = false;
+        if (MapEntity.Context.restoreMapView(map)) {
+            bounds = map.getBounds();
+            // We just changed the map bounds, avoid resetting them...
+            fitToBounds = false;
+        }
     }
     module.init(map, bounds, fitToBounds);
 };

@@ -316,7 +316,9 @@ MapEntity.Context = new function() {
         if (!context) context = self.__loadFullContext();
         if (context && context.mapview) {
             map.setView(L.latLng(context.mapview.lat, context.mapview.lng), context.mapview.zoom);
+            return true;
         }
+        return false;
     };
 
     self.restoreFullContext = function(map, filter, datatable, objectsname) {
