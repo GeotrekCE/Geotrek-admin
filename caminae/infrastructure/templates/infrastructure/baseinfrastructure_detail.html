@@ -9,14 +9,6 @@
             <td>{{ object.name }}</td>
         </tr>
     </table>
-    <h2>{% trans "Interventions" %}</h2>
-    <a class="btn btn-success" href="{% url maintenance:intervention_add %}?infrastructure={{ object.pk }}"><i class="icon-plus"></i> {% trans "Add intervention" %}</a>
-    <ul>
-        {% for intervention in object.interventions.all %}
-        <li><a href="{{ intervention.get_detail_url }}">{{ intervention }}</a></li>
-        {% endfor %}
-    </ul>
-
     <h3>{% trans "Management" %}</h3>
     <table class="table">
         <tr>
@@ -33,6 +25,9 @@
         </tr><tr>
             <th>{% trans "Interventions" %}</th>
             <td>
+                <p><a href="{% url maintenance:intervention_add %}" class="btn btn-mini btn-success">
+                    <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}
+                </a></p>
                 {% for i in object.interventions.all %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li>{{ i.name_display|safe }}</li>
