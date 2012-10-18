@@ -206,7 +206,6 @@ FormField.makeModule = function(module, module_settings) {
 
                 var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, markersFactory)
                   , multipath_handler = multipath_control.multipath_handler
-                  , cameleon = multipath_handler.cameleon
                 ;
 
                 // TODO: remove drawOnMouseMove
@@ -260,35 +259,10 @@ FormField.makeModule = function(module, module_settings) {
                 })();
 
                 multipath_handler.on('computed_paths', function(data) {
-                    var computed_paths = data['computed_paths']
-                      , new_edges = data['new_edges'];
-
-                    var cpath, data = [], topo;
-                    for (var i = 0; i < computed_paths.length; i++ ) {
-                        cpath = computed_paths[i];
-                        topo = createTopology(cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
-                        topo.from_pop = cpath.from_pop;
-                        topo.to_pop = cpath.to_pop;
-                        data.push(topo);
-                    }
-
-                    var group_layers = $.map(data, function(topo, idx) {
-                        var polylines = $.map(topo.array_lls, function(lls) {
-                            return new L.Polyline(lls);
-                        });
-                        // var group_layer = new L.FeatureGroup(polylines);
-                        // var group_layer = new L.MultiPolyline(polylines);
-                        var group_layer = new L.FeatureGroup(polylines);
-
-                        group_layer.from_pop = topo.from_pop;
-                        group_layer.to_pop = topo.to_pop;
-                        group_layer.step_idx = idx;
-
-                        return group_layer;
-                    });
-
-                    var super_layer = new L.FeatureGroup(group_layers);
-                    multipath_handler.showPathGeom(super_layer);
+                    
+                    var topology = Caminae.TopologyHelper.buildTopologyFromComputedPath(objectsLayer, data);
+                    multipath_handler.showPathGeom(topology.layer);
+                    layerStore.storeLayerGeomInField(topology.serialized);
 
                     // ## ONCE ##
                     drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
@@ -324,7 +298,7 @@ FormField.makeModule = function(module, module_settings) {
                           , closest_point = null
                           , matching_group_layer = null;
 
-                        super_layer.eachLayer(function(group_layer) {
+                        topology.layer.eachLayer(function(group_layer) {
                             group_layer.eachLayer(function(layer) {
                                 var p = layer.closestLayerPoint(layerPoint);
                                 if (p && p.distance < min_dist && p.distance < MIN_DIST) {
@@ -345,101 +319,7 @@ FormField.makeModule = function(module, module_settings) {
                     };
 
                     map.on('mousemove', drawOnMouseMove);
-
-                    // assemble topologies
-                    var positions = data[0].topology.positions
-                      , paths = data[0].topology.paths
-                      , ioffset = paths.length - 1;
-
-                    for (var k = 1; k < data.length; k++) {
-                        var data_topology = data[k].topology;
-                        
-                        // Merge paths of sub computed paths, without its first element
-                        paths = paths.concat(data_topology.paths.slice(1));
-
-                        delete data_topology.positions[0]
-                        $.each(data_topology.positions, function(key, pos) {
-                            positions[parseInt(key) + ioffset] = pos;
-                        });
-                    }
-            
-                    // All middle computed paths are constraints points
-                    // We want them to have start==end. 
-                    var i = 0;
-                    for (var key in positions) {
-                        if (i > 0 && i < paths.length -1) {
-                            var pos = positions[key];
-                            /* make sure pos will be [X, X]
-                               [0, X] or [X, 1] --> X
-                               [0.0, 1.0] --> 0.0
-                               [1.0, 1.0] --> 1.0 */
-                            var x = -1;
-                            if      (pos[0] == 0.0 && pos[1] == 1.0) x = 0.0;
-                            else if (pos[0] == 1.0 && pos[1] == 1.0) x = 1.0;
-                            else if (pos[1] == 1.0) x = pos[0];
-                            else if (pos[0] == 0.0) x = pos[1];
-                            positions[key] = [x, x];
-                        }
-                        i++;
-                    }
-
-                    var topology = {
-                        offset: 0,  // TODO: input for offset
-                        positions: positions,
-                        paths: paths
-                    };
-                    layerStore.storeLayerGeomInField(topology);
                 });
-
-                function createTopology(computed_path, from_pop, to_pop, edges) {
-                    /**
-                     * @param computed_path: cf ``_onComputedPaths`` in ``L.Handler.Multipath``
-                     * @param from_pop: start PointOnPolyline
-                     * @param to_pop: end PointOnPolyline
-                     * @param edges: list of edges (cf JSON graph)
-                     */
-                    var ll_start = from_pop.ll
-                      , ll_end = to_pop.ll;
-
-                    var paths = $.map(edges, function(edge) { return edge.id; });
-                    var layers = $.map(edges, function(edge) { return objectsLayer.getLayer(edge.id); });
-
-                    var polyline_start = layers[0];
-                    var polyline_end = layers[layers.length -1];
-
-                    var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
-
-                    var start = percentageDistance(ll_start, polyline_start)
-                      , end = percentageDistance(ll_end, polyline_end);
-
-                    if (!start || !end)
-                        return;  // TODO: clean-up before give-up ?
-
-                    var new_topology = Caminae.TopologyHelper.buildTopologyGeom(layers, ll_start, ll_end, start, end);
-
-                    if (new_topology.is_single_path) {
-                        if (paths.length > 1) {
-                            // Only get the first one
-                            paths = paths.slice(0, 1);
-                        }
-                    }
-
-                    var sorted_positions = {};
-                    $.each(new_topology.positions, function(k, v) {
-                        sorted_positions[k] = v.sort()
-                    });
-
-                    var topology = {
-                        offset: 0,  // TODO: input for offset
-                        positions: sorted_positions,
-                        paths: paths
-                    };
-
-                    return {
-                        topology: topology
-                      , array_lls: new_topology.latlngs
-                    };
-                }
 
                 map.addControl(multipath_control);
 

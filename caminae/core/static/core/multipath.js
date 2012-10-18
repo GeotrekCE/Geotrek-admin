@@ -460,8 +460,8 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     showPathGeom: function (layer) {
-        // This piece of code was taken from formfield, its place is here,
-        // not around control instantiation. Of course not very elegant.
+        // This piece of code was moved from formfield.js, its place is here,
+        // not around control instantiation. Of course this is not very elegant.
         var self = this;
         if (!this.markPath)
             this.markPath = (function() {
