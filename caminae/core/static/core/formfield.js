@@ -124,14 +124,16 @@ FormField.makeModule = function(module, module_settings) {
     module.enableMultipath = function(map, snapObserver, layerStore, onStartOver) {
         var objectsLayer = snapObserver.guidesLayer();
 
-        var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, snapObserver, {
+        var multipath_control = new L.Control.Multipath(map, objectsLayer, snapObserver, {
             handler: {
                 'iconUrl': module_settings.init.iconUrl,
                 'shadowUrl': module_settings.init.shadowUrl,
                 'iconDragUrl': module_settings.init.iconDragUrl,
             }
         }),
-        multipath_handler = multipath_control.multipath_handler;
+        multipath_handler = multipath_control.handler;
+        // Add control to the map
+        map.addControl(multipath_control);
 
         onStartOver.on('startover', function(obj) {
             // If startover is not trigger by multipath, delete the geom
@@ -155,14 +157,11 @@ FormField.makeModule = function(module, module_settings) {
         multipath_handler.on('computed_topology', function (e) {
             layerStore.storeLayerGeomInField(e.topology);
         });
-
-
+        
         objectsLayer.on('load', function() {
-            // Load graph
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, function (graph) {
-
-                // Add control to the map
-                map.addControl(multipath_control);
+                // Load graph
+                multipath_control.setGraph(graph);
 
                 // We should check if the form has an error or not...
                 // core.models#TopologyMixin.serialize
@@ -181,19 +180,20 @@ FormField.makeModule = function(module, module_settings) {
                 console.error(errorThrown);
             });
         });
+        
+        return multipath_control;
     };
 
     module.enableTopologyPoint = function (map, layerStore, drawncallback, onStartOver) {
-        var control = new L.Control.TopologyPoint(map)
-          , handler = control.topologyhandler;
+        var control = new L.Control.TopologyPoint(map);
         map.addControl(control);
         
         // Delete current on first clic (start drawing)
-        handler.on('enabled', function (e) {
+        control.handler.on('enabled', function (e) {
             onStartOver.fire('startover', {'handler': 'topologypoint'});
         });
 
-        handler.on('added', function (e) { 
+        control.handler.on('added', function (e) { 
             drawncallback(e.marker);
         });
         
@@ -205,6 +205,8 @@ FormField.makeModule = function(module, module_settings) {
                 drawncallback(L.marker(new L.LatLng(point.lat, point.lng)));
             }
         }
+        
+        return control;
     };
     
     module.init = function(map, bounds, fitToBounds) {
@@ -324,12 +326,18 @@ FormField.makeModule = function(module, module_settings) {
             module.enableDrawing(map, onDrawn, removeLayerFromLayerStore);
         }
 
+        // This will make sure that we can't activate a control, while the
+        // other is being used.
+        var exclusive = new L.Control.ExclusiveActivation();
+
         if (module_settings.init.multipath) {
-            module.enableMultipath(map, snapObserver, layerStore, onStartOver);
+            var control = module.enableMultipath(map, snapObserver, layerStore, onStartOver);
+            exclusive.add(control);
         }
         
         if (module_settings.init.topologypoint) {
-            module.enableTopologyPoint(map, layerStore, onDrawn, onStartOver);
+            var control = module.enableTopologyPoint(map, layerStore, onDrawn, onStartOver);
+            exclusive.add(control);
         }
     };
 

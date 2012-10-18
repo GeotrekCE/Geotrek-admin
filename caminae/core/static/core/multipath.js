@@ -1,24 +1,78 @@
+L.Mixin.ActivableControl = {
+    activable: function (state) {
+        /**
+         * Allow to prevent user to activate the control.
+         * (it is like setEnable(state), but ``enable`` word is used
+         *  for handler already)
+         */
+        this._activable = state;
+        if (this._container) {
+            if (state)
+                L.DomUtil.removeClass(this._container, 'disabled');
+            else
+                L.DomUtil.addClass(this._container, 'disabled');
+        }
+    },
+
+    toggle: function() {
+        this._activable = !!this._activable;  // from undefined to false :)
+        
+        if (!this._activable)
+            return;  // do nothing if not activable
+
+        if (this.handler.enabled()) {
+            this.handler.disable.call(this.handler);
+            this.handler.fire('disabled');
+            L.DomUtil.removeClass(this._container, 'enabled');
+        } else {
+            this.handler.enable.call(this.handler);
+            this.handler.fire('enabled');
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
+    },
+};
+
+
+L.Control.ExclusiveActivation = L.Class.extend({
+    initialize: function () {
+        this._controls = [];
+    },
+
+    add: function (control) {
+        this._controls.push(control);
+        var self = this;
+        control.handler.on('enabled', function (e) {
+            // When this control is enabled, disable the others !
+            $.each(self._controls, function (i, c) {
+                if (c != control) {
+                    c.activable(false);
+                }
+            });
+        }, this);
+        
+        control.handler.on('disabled', function (e) {
+            // When this control is disabled, re-enable the others !
+            // Careful, this will not take care of previous state :)
+            $.each(self._controls, function (i, c) {
+                c.activable(true);
+            });
+        }, this);
+    },
+});
+
+
 L.Control.TopologyPoint = L.Control.extend({
+    includes: L.Mixin.ActivableControl,
+
     options: {
         position: 'topright',
     },
 
     initialize: function (map, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.topologyhandler = new L.Handler.TopologyPoint(map);
-        this.topologyhandler.on('added', this.toggle, this);
-    },
-
-    toggle: function() {
-        if (this.topologyhandler.enabled()) {
-            this.topologyhandler.disable.call(this.topologyhandler);
-            this.topologyhandler.fire('disabled');
-            L.DomUtil.removeClass(this._container, 'enabled');
-        } else {
-            this.topologyhandler.enable.call(this.topologyhandler);
-            this.topologyhandler.fire('enabled');
-            L.DomUtil.addClass(this._container, 'enabled');
-        }
+        this.handler = new L.Handler.TopologyPoint(map);
+        // Deactivate control once point is added
+        this.handler.on('added', this.toggle, this);
     },
 
     onAdd: function (map) {
@@ -39,7 +93,6 @@ L.Control.TopologyPoint = L.Control.extend({
 });
 
 
-
 L.Handler.TopologyPoint = L.Marker.Draw.extend({
     initialize: function (map, options) {
         L.Marker.Draw.prototype.initialize.call(this, map, options);
@@ -52,35 +105,25 @@ L.Handler.TopologyPoint = L.Marker.Draw.extend({
 
 
 L.Control.Multipath = L.Control.extend({
+    includes: L.Mixin.ActivableControl,
+
     options: {
         position: 'topright',
     },
 
-    /* dijkstra */
-    initialize: function (map, graph_layer, graph, snapObserver, options) {
+    initialize: function (map, graph_layer, snapObserver, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.dijkstra = {
-            'compute_path': Caminae.compute_path,
-            'graph': graph
-        };
-        this.multipath_handler = new L.Handler.MultiPath(
-            map, graph_layer, this.dijkstra, snapObserver, this.options.handler
+        this.handler = new L.Handler.MultiPath(
+            map, graph_layer, snapObserver, this.options.handler
         );
-
-        this.multipath_handler.on('enabled', function() {
-            L.DomUtil.addClass(this._container, 'enabled');
-        }, this);
-        this.multipath_handler.on('disabled', function() {
-            L.DomUtil.removeClass(this._container, 'enabled');
-        }, this);
     },
 
-    toggle: function() {
-        if (this.multipath_handler.enabled()) {
-            this.multipath_handler.disable.call(this.multipath_handler);
-        } else {
-            this.multipath_handler.enable.call(this.multipath_handler);
-        }
+    setGraph: function (graph) {
+        /**
+         * Set the Dikjstra graph
+         */
+        this.handler.setGraph(graph);
+        this.activable(true);
     },
 
     onAdd: function (map) {
@@ -94,6 +137,9 @@ L.Control.Multipath = L.Control.extend({
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
                 .addListener(link, 'click', this.toggle, this);
+
+        // Control is not activable until paths and graph are loaded
+        this.activable(false);
 
         return this._container;
     },
@@ -113,10 +159,12 @@ L.ActivableMarker = L.Marker.extend({
         this.activate_cbs = [];
         this.deactivate_cbs = [];
     },
-    'activated': function() {
+    
+    activated: function() {
         return this._activated;
     },
-    'activate': function() {
+
+    activate: function() {
         if (!this._activated) {
             for (var i = 0; i < this.activate_cbs.length; i++) {
                 this.activate_cbs[i](this);
@@ -124,7 +172,8 @@ L.ActivableMarker = L.Marker.extend({
             this._activated = true;
         }
     },
-    'deactivate': function() {
+    
+    deactivate: function() {
         if (this._activated) {
             for (var i = 0; i < this.deactivate_cbs.length; i++) {
                 this.deactivate_cbs[i](this);
@@ -138,7 +187,7 @@ L.ActivableMarker = L.Marker.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, dijkstra, snapObserver, options) {
+    initialize: function (map, graph_layer, snapObserver, options) {
         this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
@@ -146,9 +195,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.cameleon = this.graph_layer._cameleon;
         this.options = options;
 
-        // .graph .algo ?
-        this.dijkstra = dijkstra;
-        this.graph = dijkstra.graph;
+        this.graph = null;
 
         // markers
         this.markersFactory = this.getMarkers();
@@ -202,6 +249,10 @@ L.Handler.MultiPath = L.Handler.extend({
         })();
 
         this.on('computed_paths', this.onComputedPaths, this);
+    },
+
+    setGraph: function (graph) {
+        this.graph = graph;
     },
 
     setState: function(state, autocompute) {
@@ -361,6 +412,9 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     canCompute: function() {
+        if (!this.graph)
+            return false;
+
         if (this.steps.length < 2)
             return false;
 
@@ -386,7 +440,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     computePaths: function() {
         if (this.canCompute()) {
-            var computed_paths = this.dijkstra.compute_path(this.graph, this.steps)
+            var computed_paths = Caminae.compute_path(this.graph, this.steps)
             this._onComputedPaths(computed_paths);
         }
     },

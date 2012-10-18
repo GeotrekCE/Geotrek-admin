@@ -1759,3 +1759,10 @@ Sur un formulaire d'édition :
 * Si l'objet est un chemin, les marqueurs sont déplaçables, l'outil topologie est activé.
 
 * Le fonctionnement du formulaire d'ajout s'applique.
+
+
+#340 - Topologies : Sélectionner l'outil multipath devrait désactiver l'outil point
+-----------------------------------------------------------------------------------
+
+Désormais il n'est plus possible d'activer l'outil point lorsque l'on est
+en train de saisir une ligne multi-tronçons.
