@@ -1754,4 +1754,8 @@ Sur un formulaire d'ajout (ex: signalétique)
 
 Sur un formulaire d'édition :
 
-* Si l'objet est un point
+* Si l'objet est un point, le marqueur est déplaçable au chargement de la page
+
+* Si l'objet est un chemin, les marqueurs sont déplaçables, l'outil topologie est activé.
+
+* Le fonctionnement du formulaire d'ajout s'applique.
