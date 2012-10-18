@@ -1,17 +1,6 @@
 if (! FormField); var FormField = {};
 
 FormField.makeModule = function(module, module_settings) {
-    function getDefaultIconOpts() {
-        return {
-            iconUrl: module_settings.init.iconUrl,
-            shadowUrl: module_settings.init.shadowUrl,
-            iconSize: new L.Point(25, 41),
-            iconAnchor: new L.Point(13, 41),
-            popupAnchor: new L.Point(1, -34),
-            shadowSize: new L.Point(41, 41)
-        };
-    };
-
     module.enableDrawing = function(map, drawncallback, startovercallback) {
         var drawControl = new L.Control.Draw({
             position: 'topright',
@@ -124,92 +113,20 @@ FormField.makeModule = function(module, module_settings) {
         return objectsLayer;
     };
 
-    module.getMarkers = function(map, snapObserver) {
-        // snapObserver and map are required to setup snappable markers
-        // returns marker with an on('snap' possibility ?
-        var dragging = false;
-        function setDragging() { dragging = true; };
-        function unsetDragging() { dragging = false; };
-        function isDragging() { return dragging; };
-        function activate(marker) {
-            marker.dragging.enable();
-            marker.editing.enable();
-            marker.on('dragstart', setDragging);
-            marker.on('dragend', unsetDragging);
-        }
-        function deactivate(marker) {
-            marker.dragging.disable();
-            marker.editing.disable();
-            marker.off('dragstart', setDragging);
-            marker.off('dragend', unsetDragging);
-        }
-
-        var markersFactory = {
-            isDragging: isDragging,
-            makeSnappable: function(marker) {
-                marker.editing = new MapEntity.MarkerSnapping(map, marker);
-                snapObserver.add(marker);
-                marker.activate_cbs.push(activate);
-                marker.deactivate_cbs.push(deactivate);
-
-                marker.activate();
-            },
-            generic: function (latlng, layer, classname, snappable) {
-                snappable = snappable === undefined ? true : snappable;
-
-                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
-                map.addLayer(marker);
-
-                $(marker._icon).addClass(classname);
-
-                if (snappable)
-                    this.makeSnappable(marker);
-
-                return marker;
-            },
-            source: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-source');
-            },
-            dest: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-target');
-            },
-            via: function(latlng, layer, snappable) {
-                return this.generic(latlng, layer, 'marker-via', snappable);
-            },
-            drag: function(latlng, layer, snappable) {
-                // FIXME: static
-                var defaultIconOptions = getDefaultIconOpts();
-                var icon = new L.Icon({
-                    iconUrl: module_settings.init.iconDragUrl,
-                    iconSize: new L.Point(18, 18)
-                });
-
-                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': icon });
-
-                map.addLayer(marker);
-                if (snappable)
-                    this.makeSnappable(marker);
-
-                return marker;
-            }
-        };
-
-        return markersFactory;
-    };
-
     module.enableMultipath = function(map, objectsLayer, layerStore, onStartOver, snapObserver) {
-        var markersFactory = module.getMarkers(map, snapObserver);
-
         objectsLayer.on('load', function() {
 
             var parseGraph = function (graph) {
 
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, markersFactory)
+                var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, snapObserver, {
+                        handler: {
+                            'iconUrl': module_settings.init.iconUrl,
+                            'shadowUrl': module_settings.init.shadowUrl,
+                            'iconDragUrl': module_settings.init.iconDragUrl,
+                        }
+                    })
                   , multipath_handler = multipath_control.multipath_handler
                 ;
-
-                // TODO: remove drawOnMouseMove
-                var drawOnMouseMove = null;
 
                 onStartOver.on('startover', function(obj) {
                     // If startover is not trigger by multipath, delete the geom
@@ -220,107 +137,19 @@ FormField.makeModule = function(module, module_settings) {
                     }
                     if (obj.handler == 'topologypoint') {
                         // Disable multipath
+                        multipath_handler.reset();
                         if (multipath_handler.enabled()) multipath_control.toggle();
                     }
-                });
-                multipath_handler.on('unsnap', function () {
-                    multipath_handler.showPathGeom(null);
                 });
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
                     onStartOver.fire('startover', {'handler': 'multipath'});
                 });
-                multipath_handler.on('disabled', function() {
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
+
+                multipath_handler.on('computed_topology', function (e) {
+                    layerStore.storeLayerGeomInField(e.topology);
                 });
-
-
-                // Draggable marker initialisation and step creation
-                var draggable_marker = null;
-                (function() {
-                    function dragstart(e) {
-                        var next_step_idx = draggable_marker.group_layer.step_idx + 1;
-                        multipath_handler.addViaStep(draggable_marker, next_step_idx);
-                    }
-                    function dragend(e) {
-                        draggable_marker.off('dragstart', dragstart);
-                        draggable_marker.off('dragend', dragend);
-                        init();
-                    }
-                    function init() {
-                        draggable_marker = markersFactory.drag(new L.LatLng(0, 0), null, true);
-
-                        draggable_marker.on('dragstart', dragstart);
-                        draggable_marker.on('dragend', dragend);
-                        map.removeLayer(draggable_marker);
-                    }
-
-                    init();
-                })();
-
-                multipath_handler.on('computed_paths', function(data) {
-                    
-                    var topology = Caminae.TopologyHelper.buildTopologyFromComputedPath(objectsLayer, data);
-                    multipath_handler.showPathGeom(topology.layer);
-                    layerStore.storeLayerGeomInField(topology.serialized);
-
-                    // ## ONCE ##
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
-
-                    var dragTimer = new Date();
-                    drawOnMouseMove = function(a) {
-                        var date = new Date();
-                        if ((date - dragTimer) < 25) {
-                            return;
-                        }
-                        if (markersFactory.isDragging()) {
-                            return;
-                        }
-
-                        dragTimer = date;
-
-
-                        for (var i = 0; i < multipath_handler.steps.length; i++) {
-                            // Compare point rather than ll
-                            var marker_ll = multipath_handler.steps[i].marker.getLatLng();
-                            var marker_p = map.latLngToLayerPoint(marker_ll);
-
-                            if (marker_p.distanceTo(a.layerPoint) < 10) {
-                                map.removeLayer(draggable_marker);
-                                return;
-                            }
-                        }
-
-                        var MIN_DIST = 30;
-
-                        var layerPoint = a.layerPoint
-                          , min_dist = Number.MAX_VALUE
-                          , closest_point = null
-                          , matching_group_layer = null;
-
-                        topology.layer.eachLayer(function(group_layer) {
-                            group_layer.eachLayer(function(layer) {
-                                var p = layer.closestLayerPoint(layerPoint);
-                                if (p && p.distance < min_dist && p.distance < MIN_DIST) {
-                                    min_dist = p.distance;
-                                    closest_point = p;
-                                    matching_group_layer = group_layer;
-                                }
-                            });
-                        });
-
-                        if (closest_point) {
-                            draggable_marker.setLatLng(map.layerPointToLatLng(closest_point));
-                            draggable_marker.addTo(map);
-                            draggable_marker.group_layer = matching_group_layer;
-                        } else {
-                            map.removeLayer(draggable_marker);
-                        }
-                    };
-
-                    map.on('mousemove', drawOnMouseMove);
-                });
-
+                
                 map.addControl(multipath_control);
 
                 var initialTopology = layerStore.getSerialized();
@@ -416,7 +245,14 @@ FormField.makeModule = function(module, module_settings) {
             if (new_layer instanceof L.Marker) {
                 currentBounds = map.getBounds(); // A point has no bounds, take map bounds
                 // Set custom icon, using CSS instead of JS
-                new_layer.setIcon(new L.Icon(getDefaultIconOpts()));
+                new_layer.setIcon(new L.Icon({
+                        iconUrl: module_settings.init.iconUrl,
+                        shadowUrl: module_settings.init.shadowUrl,
+                        iconSize: new L.Point(25, 41),
+                        iconAnchor: new L.Point(13, 41),
+                        popupAnchor: new L.Point(1, -34),
+                        shadowSize: new L.Point(41, 41)
+                    }));
                 $(new_layer._icon).addClass('marker-add');
                 
             }

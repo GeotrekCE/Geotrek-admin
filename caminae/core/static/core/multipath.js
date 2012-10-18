@@ -57,14 +57,14 @@ L.Control.Multipath = L.Control.extend({
     },
 
     /* dijkstra */
-    initialize: function (map, graph_layer, graph, markersFactory, options) {
+    initialize: function (map, graph_layer, graph, snapObserver, options) {
         L.Control.prototype.initialize.call(this, options);
         this.dijkstra = {
             'compute_path': Caminae.compute_path,
             'graph': graph
         };
         this.multipath_handler = new L.Handler.MultiPath(
-            map, graph_layer, this.dijkstra, markersFactory, this.options.handler
+            map, graph_layer, this.dijkstra, snapObserver, this.options.handler
         );
 
         this.multipath_handler.on('enabled', function() {
@@ -138,18 +138,20 @@ L.ActivableMarker = L.Marker.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+    initialize: function (map, graph_layer, dijkstra, snapObserver, options) {
         this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
+        this.snapObserver = snapObserver;
         this.cameleon = this.graph_layer._cameleon;
+        this.options = options;
 
         // .graph .algo ?
         this.dijkstra = dijkstra;
         this.graph = dijkstra.graph;
 
         // markers
-        this.markersFactory = markersFactory;
+        this.markersFactory = this.getMarkers();
 
         // Init a fresh state
         this.reset();
@@ -161,6 +163,45 @@ L.Handler.MultiPath = L.Handler.extend({
         this.idToLayer = function(id) {
             return graph_layer.getLayer(id);
         };
+        
+        
+        /*
+         * Draggable via steps
+         * 
+         * The following piece of code was also taken from formfield.js
+         * It place is here, but needs refactoring to become elegant.
+         */
+        this.drawOnMouseMove = null;
+
+        this.on('disabled', function() {
+            this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+        }, this);
+
+        // Draggable marker initialisation and step creation
+        var draggable_marker = null;
+        var self = this;
+        (function() {
+            function dragstart(e) {
+                var next_step_idx = self.draggable_marker.group_layer.step_idx + 1;
+                self.addViaStep(self.draggable_marker, next_step_idx);
+            }
+            function dragend(e) {
+                self.draggable_marker.off('dragstart', dragstart);
+                self.draggable_marker.off('dragend', dragend);
+                init();
+            }
+            function init() {
+                self.draggable_marker = self.markersFactory.drag(new L.LatLng(0, 0), null, true);
+
+                self.draggable_marker.on('dragstart', dragstart);
+                self.draggable_marker.on('dragend', dragend);
+                self.map.removeLayer(self.draggable_marker);
+            }
+
+            init();
+        })();
+
+        this.on('computed_paths', this.onComputedPaths, this);
     },
 
     setState: function(state, autocompute) {
@@ -186,8 +227,8 @@ L.Handler.MultiPath = L.Handler.extend({
     reset: function() {
         var self = this;
 
-        // remove all markers
-        this.steps && $.each(this.steps, function(pop) {
+        // remove all markers from PointOnPolyline objects
+        this.steps && $.each(this.steps, function(i, pop) {
             self.map.removeLayer(pop.marker);
         });
 
@@ -248,10 +289,16 @@ L.Handler.MultiPath = L.Handler.extend({
         if (next_step_idx == 0) {
             this._container.style.cursor = 'e-resize';
             marker = this.markersFactory.source(latlng)
+            marker.on('unsnap', function () {
+                this.showPathGeom(null);
+            }, this);
             this.marker_source = marker;
         } else {
             this._container.style.cursor = '';
             marker = this.markersFactory.dest(latlng)
+            marker.on('unsnap', function () {
+                this.showPathGeom(null);
+            }, this);
             this.marker_dest = marker;
         }
 
@@ -484,6 +531,156 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
             })();
         this.markPath.updateGeom(layer);
+    },
+
+    getMarkers: function() {
+        var self = this;
+        
+        var map = this.map, 
+            snapObserver = this.snapObserver;
+        
+        // snapObserver and map are required to setup snappable markers
+        // returns marker with an on('snap' possibility ?
+        var dragging = false;
+        function setDragging() { dragging = true; };
+        function unsetDragging() { dragging = false; };
+        function isDragging() { return dragging; };
+        function activate(marker) {
+            marker.dragging.enable();
+            marker.editing.enable();
+            marker.on('dragstart', setDragging);
+            marker.on('dragend', unsetDragging);
+        }
+        function deactivate(marker) {
+            marker.dragging.disable();
+            marker.editing.disable();
+            marker.off('dragstart', setDragging);
+            marker.off('dragend', unsetDragging);
+        }
+
+        var markersFactory = {
+            isDragging: isDragging,
+            makeSnappable: function(marker) {
+                marker.editing = new MapEntity.MarkerSnapping(map, marker);
+                snapObserver.add(marker);
+                marker.activate_cbs.push(activate);
+                marker.deactivate_cbs.push(deactivate);
+
+                marker.activate();
+            },
+            generic: function (latlng, layer, classname, snappable) {
+                snappable = snappable === undefined ? true : snappable;
+                
+                var marker = new L.ActivableMarker(latlng, {
+                    'draggable': true, 
+                    'icon': new L.Icon({
+                        iconUrl: self.options.iconUrl,
+                        shadowUrl: self.options.shadowUrl,
+                        iconSize: new L.Point(25, 41),
+                        iconAnchor: new L.Point(13, 41),
+                        popupAnchor: new L.Point(1, -34),
+                        shadowSize: new L.Point(41, 41)
+                    })
+                });
+                map.addLayer(marker);
+
+                $(marker._icon).addClass(classname);
+
+                if (snappable)
+                    this.makeSnappable(marker);
+
+                return marker;
+            },
+            source: function(latlng, layer) {
+                return this.generic(latlng, layer, 'marker-source');
+            },
+            dest: function(latlng, layer) {
+                return this.generic(latlng, layer, 'marker-target');
+            },
+            via: function(latlng, layer, snappable) {
+                return this.generic(latlng, layer, 'marker-via', snappable);
+            },
+            drag: function(latlng, layer, snappable) {
+                var marker = new L.ActivableMarker(latlng, {
+                    'draggable': true,
+                    'icon': new L.Icon({
+                        iconUrl: self.options.iconDragUrl,
+                        iconSize: new L.Point(18, 18)
+                    })
+                });
+
+                map.addLayer(marker);
+                if (snappable)
+                    this.makeSnappable(marker);
+
+                return marker;
+            }
+        };
+
+        return markersFactory;
+    },
+
+    onComputedPaths: function(data) {
+        var self = this;
+        var topology = Caminae.TopologyHelper.buildTopologyFromComputedPath(this.idToLayer, data);
+        this.showPathGeom(topology.layer);
+        this.fire('computed_topology', {topology:topology.serialized});
+
+        // ## ONCE ##
+        this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+
+        var dragTimer = new Date();
+        this.drawOnMouseMove = function(a) {
+            var date = new Date();
+            if ((date - dragTimer) < 25) {
+                return;
+            }
+            if (self.markersFactory.isDragging()) {
+                return;
+            }
+
+            dragTimer = date;
+
+
+            for (var i = 0; i < self.steps.length; i++) {
+                // Compare point rather than ll
+                var marker_ll = self.steps[i].marker.getLatLng();
+                var marker_p = self.map.latLngToLayerPoint(marker_ll);
+
+                if (marker_p.distanceTo(a.layerPoint) < 10) {
+                    self.map.removeLayer(self.draggable_marker);
+                    return;
+                }
+            }
+
+            var MIN_DIST = 30;
+
+            var layerPoint = a.layerPoint
+              , min_dist = Number.MAX_VALUE
+              , closest_point = null
+              , matching_group_layer = null;
+
+            topology.layer.eachLayer(function(group_layer) {
+                group_layer.eachLayer(function(layer) {
+                    var p = layer.closestLayerPoint(layerPoint);
+                    if (p && p.distance < min_dist && p.distance < MIN_DIST) {
+                        min_dist = p.distance;
+                        closest_point = p;
+                        matching_group_layer = group_layer;
+                    }
+                });
+            });
+
+            if (closest_point) {
+                self.draggable_marker.setLatLng(self.map.layerPointToLatLng(closest_point));
+                self.draggable_marker.addTo(self.map);
+                self.draggable_marker.group_layer = matching_group_layer;
+            } else {
+                self.map.removeLayer(self.draggable_marker);
+            }
+        };
+
+        this.map.on('mousemove', this.drawOnMouseMove);
     }
 
 });

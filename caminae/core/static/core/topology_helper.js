@@ -95,7 +95,7 @@ Caminae.TopologyHelper = (function() {
     }
 
 
-    function buildTopologyFromComputedPath(objectsLayer, data) {
+    function buildTopologyFromComputedPath(idToLayer, data) {
         // This piece of code was moved from formfield.js, its place is here,
         // not around control instantiation. Of course this is not very elegant.
 
@@ -105,7 +105,7 @@ Caminae.TopologyHelper = (function() {
         var cpath, data = [], topo;
         for (var i = 0; i < computed_paths.length; i++ ) {
             cpath = computed_paths[i];
-            topo = createTopology(objectsLayer, cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
+            topo = createTopology(idToLayer, cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
             topo.from_pop = cpath.from_pop;
             topo.to_pop = cpath.to_pop;
             data.push(topo);
@@ -176,7 +176,7 @@ Caminae.TopologyHelper = (function() {
         }
     }
 
-    function createTopology(objectsLayer, computed_path, from_pop, to_pop, edges) {
+    function createTopology(idToLayer, computed_path, from_pop, to_pop, edges) {
         /**
          * @param computed_path: cf ``_onComputedPaths`` in ``L.Handler.Multipath``
          * @param from_pop: start PointOnPolyline
@@ -187,7 +187,7 @@ Caminae.TopologyHelper = (function() {
           , ll_end = to_pop.ll;
 
         var paths = $.map(edges, function(edge) { return edge.id; });
-        var layers = $.map(edges, function(edge) { return objectsLayer.getLayer(edge.id); });
+        var layers = $.map(edges, function(edge) { return idToLayer(edge.id); });
 
         var polyline_start = layers[0];
         var polyline_end = layers[layers.length -1];
