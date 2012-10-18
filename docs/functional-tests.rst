@@ -1734,3 +1734,24 @@ Pour vérifier que le comportement est conservé :
 -------------------------------------------------
 
 Fixé.
+
+
+#329 - [BUG] (Javascript) Edition Topology : ajout d'un point n'efface pas le précédent
+---------------------------------------------------------------------------------------
+
+Sur un formulaire d'ajout (ex: signalétique)
+
+* Ajouter un point
+
+* Ajouter un autre point : le premier point est effacé. Le second est ajouté.
+
+* Ajouter un point;
+
+* Ajouter une topologie ligne : le point précédent est effacé, la ligne est ajoutée.
+
+* Ajouter un point : la topologie ligne précédente est effacée.
+
+
+Sur un formulaire d'édition :
+
+* Si l'objet est un point

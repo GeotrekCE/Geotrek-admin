@@ -203,36 +203,11 @@ FormField.makeModule = function(module, module_settings) {
         objectsLayer.on('load', function() {
 
             var parseGraph = function (graph) {
-               
-                var dijkstra = {
-                    'compute_path': Caminae.compute_path,
-                    'graph': graph
-                };
 
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra, markersFactory)
+                var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, markersFactory)
                   , multipath_handler = multipath_control.multipath_handler
                   , cameleon = multipath_handler.cameleon
                 ;
-
-                var markPath = (function() {
-                    var current_path_layer = null;
-                    return {
-                        'updateGeom': function(new_path_layer) {
-                            var prev_path_layer = current_path_layer;
-                            current_path_layer = new_path_layer;
-
-                            if (prev_path_layer) {
-                                map.removeLayer(prev_path_layer);
-                                cameleon.deactivate('dijkstra_computed', prev_path_layer);
-                            }
-
-                            if (new_path_layer) {
-                                map.addLayer(new_path_layer);
-                                cameleon.activate('dijkstra_computed', new_path_layer);
-                            }
-                        }
-                    }
-                })();
 
                 // TODO: remove drawOnMouseMove
                 var drawOnMouseMove = null;
@@ -242,12 +217,15 @@ FormField.makeModule = function(module, module_settings) {
                     // Thus, when multipath is called several times, the geom is not deleted
                     // and may be updated
                     if (obj.handler !== 'multipath') {
-                        markPath.updateGeom(null);
-                        multipath_handler.unmarkAll();
+                        multipath_handler.showPathGeom(null);
+                    }
+                    if (obj.handler == 'topologypoint') {
+                        // Disable multipath
+                        if (multipath_handler.enabled()) multipath_control.toggle();
                     }
                 });
                 multipath_handler.on('unsnap', function () {
-                    markPath.updateGeom(null);
+                    multipath_handler.showPathGeom(null);
                 });
                 // Delete previous geom
                 multipath_handler.on('enabled', function() {
@@ -310,7 +288,7 @@ FormField.makeModule = function(module, module_settings) {
                     });
 
                     var super_layer = new L.FeatureGroup(group_layers);
-                    markPath.updateGeom(super_layer);
+                    multipath_handler.showPathGeom(super_layer);
 
                     // ## ONCE ##
                     drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
@@ -492,14 +470,13 @@ FormField.makeModule = function(module, module_settings) {
         map.addControl(control);
         
         // Delete current on first clic (start drawing)
-        map.on('click', function (e) {
-            if (handler.enabled()) {
-                onStartOver.fire('startover');
-                return;
-            }
+        handler.on('enabled', function (e) {
+            onStartOver.fire('startover', {'handler': 'topologypoint'});
         });
 
-        handler.on('added', function (e) { drawncallback(e.marker) });
+        handler.on('added', function (e) { 
+            drawncallback(e.marker);
+        });
     };
     
     module.init = function(map, bounds, fitToBounds) {
@@ -585,21 +562,6 @@ FormField.makeModule = function(module, module_settings) {
             });
             map.addLayer(objectLayer);
         }
-        else {
-            // If no geojson is provided, we may be editing a topology
-            var topology = $(module_settings.init.layerStoreElemSelector).val();
-            if (topology) {
-                var point = JSON.parse(topology);
-                // Point topology
-                if (point.lat && point.lng) {
-                    var existing = new L.Marker(new L.LatLng(point.lat, point.lng)).addTo(map)
-                    onNewLayer(existing);
-                }
-                else {
-                    //TODO : line topology !
-                }
-            }
-        }
 
         /*** </objectLayer> ***/
 
@@ -610,10 +572,7 @@ FormField.makeModule = function(module, module_settings) {
             onNewLayer(drawn_layer);
         };
 
-        var onStartOver = L.Util.extend({}, L.Mixin.Events);
-        onStartOver.on('startover', removeLayerFromLayerStore);
-
-        function removeLayerFromLayerStore() {
+        var removeLayerFromLayerStore = function () {
             var old_layer = layerStore.getLayer();
             if (old_layer) {
                 map.removeLayer(old_layer);
@@ -622,6 +581,9 @@ FormField.makeModule = function(module, module_settings) {
                 layerStore.storeLayerGeomInField(null);
             }
         };
+
+        var onStartOver = L.Util.extend({}, L.Mixin.Events);
+        onStartOver.on('startover', removeLayerFromLayerStore);
         
         if (module_settings.init.enableDrawing) {
             module.enableDrawing(map, onDrawn, removeLayerFromLayerStore);

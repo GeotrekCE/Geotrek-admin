@@ -12,9 +12,11 @@ L.Control.TopologyPoint = L.Control.extend({
     toggle: function() {
         if (this.topologyhandler.enabled()) {
             this.topologyhandler.disable.call(this.topologyhandler);
+            this.topologyhandler.fire('disabled');
             L.DomUtil.removeClass(this._container, 'enabled');
         } else {
             this.topologyhandler.enable.call(this.topologyhandler);
+            this.topologyhandler.fire('enabled');
             L.DomUtil.addClass(this._container, 'enabled');
         }
     },
@@ -55,11 +57,14 @@ L.Control.Multipath = L.Control.extend({
     },
 
     /* dijkstra */
-    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+    initialize: function (map, graph_layer, graph, markersFactory, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.dijkstra = dijkstra;
+        this.dijkstra = {
+            'compute_path': Caminae.compute_path,
+            'graph': graph
+        };
         this.multipath_handler = new L.Handler.MultiPath(
-            map, graph_layer, dijkstra, markersFactory, this.options.handler
+            map, graph_layer, this.dijkstra, markersFactory, this.options.handler
         );
 
         this.multipath_handler.on('enabled', function() {
@@ -452,6 +457,33 @@ L.Handler.MultiPath = L.Handler.extend({
 
             this.setState(state);
         }
+    },
+
+    showPathGeom: function (layer) {
+        // This piece of code was taken from formfield, its place is here,
+        // not around control instantiation. Of course not very elegant.
+        var self = this;
+        if (!this.markPath)
+            this.markPath = (function() {
+                var current_path_layer = null;
+                return {
+                    'updateGeom': function(new_path_layer) {
+                        var prev_path_layer = current_path_layer;
+                        current_path_layer = new_path_layer;
+
+                        if (prev_path_layer) {
+                            self.map.removeLayer(prev_path_layer);
+                            self.cameleon.deactivate('dijkstra_computed', prev_path_layer);
+                        }
+
+                        if (new_path_layer) {
+                            self.map.addLayer(new_path_layer);
+                            self.cameleon.activate('dijkstra_computed', new_path_layer);
+                        }
+                    }
+                }
+            })();
+        this.markPath.updateGeom(layer);
     }
 
 });
