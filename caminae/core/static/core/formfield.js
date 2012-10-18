@@ -87,6 +87,14 @@ FormField.makeModule = function(module, module_settings) {
         return $('form input[name="pk"]').val() || null;
     };
 
+    module.getModelName = function() {
+        // Expect failure if null
+        var m = $('form input[name="model"]').val() || null;
+        if (!m)
+            throw "No model name in form";
+        return m;
+    };
+
     module.addObjectsLayer = function(map, modelname) {
         if (!modelname) {
             throw 'Model name is empty';
@@ -113,49 +121,52 @@ FormField.makeModule = function(module, module_settings) {
         return objectsLayer;
     };
 
-    module.enableMultipath = function(map, objectsLayer, layerStore, onStartOver, snapObserver) {
+    module.enableMultipath = function(map, snapObserver, layerStore, onStartOver) {
+        var objectsLayer = snapObserver.guidesLayer();
+
+        var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, snapObserver, {
+            handler: {
+                'iconUrl': module_settings.init.iconUrl,
+                'shadowUrl': module_settings.init.shadowUrl,
+                'iconDragUrl': module_settings.init.iconDragUrl,
+            }
+        }),
+        multipath_handler = multipath_control.multipath_handler;
+
+        onStartOver.on('startover', function(obj) {
+            // If startover is not trigger by multipath, delete the geom
+            // Thus, when multipath is called several times, the geom is not deleted
+            // and may be updated
+            if (obj.handler !== 'multipath') {
+                multipath_handler.showPathGeom(null);
+            }
+            if (obj.handler == 'topologypoint') {
+                // Disable multipath
+                multipath_handler.reset();
+                if (multipath_handler.enabled()) multipath_control.toggle();
+            }
+        });
+
+        // Delete previous geom
+        multipath_handler.on('enabled', function() {
+            onStartOver.fire('startover', {'handler': 'multipath'});
+        });
+
+        multipath_handler.on('computed_topology', function (e) {
+            layerStore.storeLayerGeomInField(e.topology);
+        });
+
+
         objectsLayer.on('load', function() {
+            // Load graph
+            $.getJSON(module_settings.enableMultipath.path_json_graph_url, function (graph) {
 
-            var parseGraph = function (graph) {
-
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, graph, snapObserver, {
-                        handler: {
-                            'iconUrl': module_settings.init.iconUrl,
-                            'shadowUrl': module_settings.init.shadowUrl,
-                            'iconDragUrl': module_settings.init.iconDragUrl,
-                        }
-                    })
-                  , multipath_handler = multipath_control.multipath_handler
-                ;
-
-                onStartOver.on('startover', function(obj) {
-                    // If startover is not trigger by multipath, delete the geom
-                    // Thus, when multipath is called several times, the geom is not deleted
-                    // and may be updated
-                    if (obj.handler !== 'multipath') {
-                        multipath_handler.showPathGeom(null);
-                    }
-                    if (obj.handler == 'topologypoint') {
-                        // Disable multipath
-                        multipath_handler.reset();
-                        if (multipath_handler.enabled()) multipath_control.toggle();
-                    }
-                });
-                // Delete previous geom
-                multipath_handler.on('enabled', function() {
-                    onStartOver.fire('startover', {'handler': 'multipath'});
-                });
-
-                multipath_handler.on('computed_topology', function (e) {
-                    layerStore.storeLayerGeomInField(e.topology);
-                });
-                
+                // Add control to the map
                 map.addControl(multipath_control);
-
-                var initialTopology = layerStore.getSerialized();
 
                 // We should check if the form has an error or not...
                 // core.models#TopologyMixin.serialize
+                var initialTopology = layerStore.getSerialized();
                 if (initialTopology) {
                     var topo =  JSON.parse(initialTopology);
                     // If it is multipath, restore
@@ -163,9 +174,8 @@ FormField.makeModule = function(module, module_settings) {
                         multipath_handler.restoreTopology(topo);
                     }
                 }
-            };
-            
-            $.getJSON(module_settings.enableMultipath.path_json_graph_url, parseGraph).error(function (jqXHR, textStatus, errorThrown) {
+            })
+            .error(function (jqXHR, textStatus, errorThrown) {
                 $(map._container).addClass('map-error');
                 console.error("Could not load url '" + module_settings.enableMultipath.path_json_graph_url + "': " + textStatus);
                 console.error(errorThrown);
@@ -173,7 +183,7 @@ FormField.makeModule = function(module, module_settings) {
         });
     };
 
-    module.enableTopologyPoint = function (map, drawncallback, onStartOver) {
+    module.enableTopologyPoint = function (map, layerStore, drawncallback, onStartOver) {
         var control = new L.Control.TopologyPoint(map)
           , handler = control.topologyhandler;
         map.addControl(control);
@@ -186,6 +196,15 @@ FormField.makeModule = function(module, module_settings) {
         handler.on('added', function (e) { 
             drawncallback(e.marker);
         });
+        
+        var initialTopology = layerStore.getSerialized();
+        if (initialTopology) {
+            var point =  JSON.parse(initialTopology);
+            // If it is multipath, restore
+            if (point.lat && point.lng) {
+                drawncallback(L.marker(new L.LatLng(point.lat, point.lng)));
+            }
+        }
     };
     
     module.init = function(map, bounds, fitToBounds) {
@@ -213,7 +232,7 @@ FormField.makeModule = function(module, module_settings) {
         map.addControl(new L.Control.Scale());
 
         // Show other objects of same type
-        var modelname = $('form input[name="model"]').val(),
+        var modelname = module.getModelName(),
             objectsLayer = module.addObjectsLayer(map, modelname);
 
         // Enable snapping ? Multipath need path snapping too !
@@ -306,11 +325,11 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         if (module_settings.init.multipath) {
-            module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver, snapObserver);
+            module.enableMultipath(map, snapObserver, layerStore, onStartOver);
         }
         
         if (module_settings.init.topologypoint) {
-            module.enableTopologyPoint(map, onDrawn, onStartOver);
+            module.enableTopologyPoint(map, layerStore, onDrawn, onStartOver);
         }
     };
 
