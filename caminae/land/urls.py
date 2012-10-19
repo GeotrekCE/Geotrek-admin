@@ -1,38 +1,24 @@
 from django.conf.urls import patterns, url
 
-from .views import (
-    PhysicalEdgeLayer, PhysicalEdgeList, PhysicalEdgeDetail, PhysicalEdgeDocument, PhysicalEdgeCreate,
-    PhysicalEdgeUpdate, PhysicalEdgeDelete, PhysicalEdgeJsonList, PhysicalEdgeFormatList,
-    LandEdgeLayer, LandEdgeList, LandEdgeDetail, LandEdgeDocument, LandEdgeCreate,
-    LandEdgeUpdate, LandEdgeDelete, LandEdgeJsonList, LandEdgeFormatList,
-    CompetenceEdgeLayer, CompetenceEdgeList, CompetenceEdgeDetail, CompetenceEdgeDocument, CompetenceEdgeCreate,
-    CompetenceEdgeUpdate, CompetenceEdgeDelete, CompetenceEdgeJsonList, CompetenceEdgeFormatList,
-    WorkManagementEdgeLayer, WorkManagementEdgeList, WorkManagementEdgeDetail, WorkManagementEdgeDocument, WorkManagementEdgeCreate,
-    WorkManagementEdgeUpdate, WorkManagementEdgeDelete, WorkManagementEdgeJsonList, WorkManagementEdgeFormatList,
-    SignageManagementEdgeLayer, SignageManagementEdgeList, SignageManagementEdgeDetail, SignageManagementEdgeDocument, SignageManagementEdgeCreate,
-    SignageManagementEdgeUpdate, SignageManagementEdgeDelete, SignageManagementEdgeJsonList, SignageManagementEdgeFormatList,
-    
-    CityGeoJSONLayer, RestrictedAreaGeoJSONLayer, DistrictGeoJSONLayer,
-)
-
+from . import views
 from caminae.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',
-    url(r'^api/city/city.geojson$', CityGeoJSONLayer.as_view(), name="city_layer"), 
-    url(r'^api/restrictedarea/restrictedarea.geojson$', RestrictedAreaGeoJSONLayer.as_view(), name="restrictedarea_layer"), 
-    url(r'^api/district/district.geojson$', DistrictGeoJSONLayer.as_view(), name="district_layer"), 
+    url(r'^api/city/city.geojson$', views.CityGeoJSONLayer.as_view(), name="city_layer"), 
+    url(r'^api/restrictedarea/restrictedarea.geojson$', views.RestrictedAreaGeoJSONLayer.as_view(), name="restrictedarea_layer"), 
+    url(r'^api/district/district.geojson$', views.DistrictGeoJSONLayer.as_view(), name="district_layer"), 
     
     *view_classes_to_url(
-        PhysicalEdgeLayer, PhysicalEdgeList, PhysicalEdgeDetail, PhysicalEdgeDocument, PhysicalEdgeCreate,
-        PhysicalEdgeUpdate, PhysicalEdgeDelete, PhysicalEdgeJsonList, PhysicalEdgeFormatList,
-        LandEdgeLayer, LandEdgeList, LandEdgeDetail, LandEdgeDocument, LandEdgeCreate,
-        LandEdgeUpdate, LandEdgeDelete, LandEdgeJsonList, LandEdgeFormatList,
-        CompetenceEdgeLayer, CompetenceEdgeList, CompetenceEdgeDetail, CompetenceEdgeDocument, CompetenceEdgeCreate,
-        CompetenceEdgeUpdate, CompetenceEdgeDelete, CompetenceEdgeJsonList, CompetenceEdgeFormatList,
-        WorkManagementEdgeLayer, WorkManagementEdgeList, WorkManagementEdgeDetail, WorkManagementEdgeDocument, WorkManagementEdgeCreate,
-        WorkManagementEdgeUpdate, WorkManagementEdgeDelete, WorkManagementEdgeJsonList, WorkManagementEdgeFormatList,
-        SignageManagementEdgeLayer, SignageManagementEdgeList, SignageManagementEdgeDetail, SignageManagementEdgeDocument, SignageManagementEdgeCreate,
-        SignageManagementEdgeUpdate, SignageManagementEdgeDelete, SignageManagementEdgeJsonList, SignageManagementEdgeFormatList,
+        views.PhysicalEdgeLayer, views.PhysicalEdgeList, views.PhysicalEdgeDetail, views.PhysicalEdgeDocument, views.PhysicalEdgeCreate,
+        views.PhysicalEdgeUpdate, views.PhysicalEdgeDelete, views.PhysicalEdgeJsonList, views.PhysicalEdgeFormatList,
+        views.LandEdgeLayer, views.LandEdgeList, views.LandEdgeDetail, views.LandEdgeDocument, views.LandEdgeCreate,
+        views.LandEdgeUpdate, views.LandEdgeDelete, views.LandEdgeJsonList, views.LandEdgeFormatList,
+        views.CompetenceEdgeLayer, views.CompetenceEdgeList, views.CompetenceEdgeDetail, views.CompetenceEdgeDocument, views.CompetenceEdgeCreate,
+        views.CompetenceEdgeUpdate, views.CompetenceEdgeDelete, views.CompetenceEdgeJsonList, views.CompetenceEdgeFormatList,
+        views.WorkManagementEdgeLayer, views.WorkManagementEdgeList, views.WorkManagementEdgeDetail, views.WorkManagementEdgeDocument, views.WorkManagementEdgeCreate,
+        views.WorkManagementEdgeUpdate, views.WorkManagementEdgeDelete, views.WorkManagementEdgeJsonList, views.WorkManagementEdgeFormatList,
+        views.SignageManagementEdgeLayer, views.SignageManagementEdgeList, views.SignageManagementEdgeDetail, views.SignageManagementEdgeDocument, views.SignageManagementEdgeCreate,
+        views.SignageManagementEdgeUpdate, views.SignageManagementEdgeDelete, views.SignageManagementEdgeJsonList, views.SignageManagementEdgeFormatList,
     )
 )
