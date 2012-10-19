@@ -21,7 +21,7 @@ casper.waitForSelector("form",
 // Used to calculate start_position and end_position for topology
 casper.thenOpen(baseurl + '/intervention/add/', function() {
     var p = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistance(
+        return L.GeomUtils.getPercentageDistance(
             L.point(2, 2), [ L.point(1, 1), L.point(3, 3) ]
         );
     });
@@ -29,7 +29,7 @@ casper.thenOpen(baseurl + '/intervention/add/', function() {
     this.test.assert(p.closest.x == 1 && p.closest.y == 1);
 
     var p = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistance(
+        return L.GeomUtils.getPercentageDistance(
             L.point(2, 2), [ L.point(1, 1), L.point(3, 3), L.point(4, 4) ]
         );
     });
@@ -37,7 +37,7 @@ casper.thenOpen(baseurl + '/intervention/add/', function() {
     this.test.assert(p.closest.x == 1 && p.closest.y == 1);
 
     var p = this.evaluate(function() {
-        return MapEntity.Utils.getPercentageDistance(
+        return L.GeomUtils.getPercentageDistance(
             L.point(2, 2), [ L.point(4, 4), L.point(3, 3), L.point(1, 1) ]
         );
     });

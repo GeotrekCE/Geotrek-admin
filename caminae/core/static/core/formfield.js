@@ -65,16 +65,16 @@ FormField.makeModule = function(module, module_settings) {
         // since snapping will then be on objects layer.
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
-            var pathsLayer = new MapEntity.ObjectsLayer(null, {
+            var pathsLayer = new L.ObjectsLayer(null, {
                 style: {weight: 2, clickable: true, color: module_settings.colors.paths},
             });
             map.addLayer(pathsLayer);
-            snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
+            snapObserver = new L.SnapObserver(map, pathsLayer);
             // Start ajax loading at last
             pathsLayer.load(module_settings.enablePathSnapping.pathsLayer_url);
         }
         else {
-            snapObserver = new MapEntity.SnapObserver(map, objectsLayer);
+            snapObserver = new L.SnapObserver(map, objectsLayer);
         }
         return snapObserver;
     };
@@ -111,7 +111,7 @@ FormField.makeModule = function(module, module_settings) {
 
         // Start loading all objects, readonly
         var color = modelname == 'path' ? module_settings.colors.paths : module_settings.colors.others;
-        var objectsLayer = new MapEntity.ObjectsLayer(null, {
+        var objectsLayer = new L.ObjectsLayer(null, {
             style: {weight: 2, clickable: true, 'color': color},
                 filter: exclude_current_object
             }),
@@ -242,7 +242,7 @@ FormField.makeModule = function(module, module_settings) {
             snapObserver = null;
 
         if (path_snapping) {
-            MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
+            L.Handler.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
@@ -256,7 +256,7 @@ FormField.makeModule = function(module, module_settings) {
             if (path_snapping) {
                 edit_handler = L.Handler.SnappedEdit;
                 if (layer instanceof L.Marker) {
-                    edit_handler =  MapEntity.MarkerSnapping;
+                    edit_handler =  L.Handler.MarkerSnapping;
                 }
             }
             else {

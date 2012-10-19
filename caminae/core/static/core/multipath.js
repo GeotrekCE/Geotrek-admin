@@ -50,6 +50,12 @@ L.Control.Multipath = L.Control.extend({
 
     initialize: function (map, graph_layer, snapObserver, options) {
         L.Control.prototype.initialize.call(this, options);
+
+        graph_layer.registerStyle('dijkstra_from', 10, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_to', 11, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_step', 9, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_computed', 8, {'color': 'yellow', 'weight': 5, 'opacity': 1});
+
         this.handler = new L.Handler.MultiPath(
             map, graph_layer, snapObserver, this.options.handler
         );
@@ -304,7 +310,7 @@ L.Handler.MultiPath = L.Handler.extend({
         // Restrict snaplist to layer and snapdistance to max_value
         // will ensure this get snapped and to the layer clicked
         var snapdistance = Number.MAX_VALUE;
-        var closest = MapEntity.Utils.closest(self.map, marker, [ layer ], snapdistance);
+        var closest = L.GeomUtils.closest(self.map, marker, [ layer ], snapdistance);
         marker.editing.updateClosest(marker, closest);
     },
 
@@ -438,8 +444,8 @@ L.Handler.MultiPath = L.Handler.extend({
             var start_layer = this.idToLayer(paths[0]);
             var end_layer = this.idToLayer(paths[paths.length - 1]);
 
-            var start_ll = MapEntity.Utils.getLatLngFromPos(this.map, start_layer, [ first_pos ])[0];
-            var end_ll = MapEntity.Utils.getLatLngFromPos(this.map, end_layer, [ last_pos ])[0];
+            var start_ll = L.GeomUtils.getLatLngFromPos(this.map, start_layer, [ first_pos ])[0];
+            var end_ll = L.GeomUtils.getLatLngFromPos(this.map, end_layer, [ last_pos ])[0];
 
             var state = {
                 start_ll: start_ll,
@@ -464,7 +470,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 // 0 is the default in first_position, get the other value
                 var used_pos = pos[0] == 0 ? pos[1] : pos[0];
 
-                var ll = MapEntity.Utils.getLatLngFromPos(self.map, layer, [ used_pos ]);
+                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
                 if (ll.length < 1) {
                     return;
                 }
@@ -552,7 +558,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
-                marker.editing = new MapEntity.MarkerSnapping(map, marker);
+                marker.editing = new L.Handler.MarkerSnapping(map, marker);
                 snapObserver.add(marker);
                 marker.activate_cbs.push(activate);
                 marker.deactivate_cbs.push(deactivate);

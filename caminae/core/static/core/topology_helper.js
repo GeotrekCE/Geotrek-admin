@@ -192,7 +192,7 @@ Caminae.TopologyHelper = (function() {
         var polyline_start = layers[0];
         var polyline_end = layers[layers.length -1];
 
-        var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
+        var percentageDistance = L.GeomUtils.getPercentageDistanceFromPolyline;
 
         var start = percentageDistance(ll_start, polyline_start)
           , end = percentageDistance(ll_end, polyline_end);
@@ -255,8 +255,8 @@ Caminae.TopologyHelper = (function() {
                 this.ll = e.location;
                 this.polyline = e.object;
 
-                this.length = MapEntity.Utils.length(this.polyline.getLatLngs());
-                this.percent_distance = MapEntity.Utils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
+                this.length = L.GeomUtils.length(this.polyline.getLatLngs());
+                this.percent_distance = L.GeomUtils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
 
                 this.events.fire('valid'); // self
             },
