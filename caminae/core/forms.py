@@ -9,7 +9,7 @@ from crispy_forms.layout import Field
 from caminae.common.forms import CommonForm
 from .models import Path
 from .fields import TopologyField
-from .widgets import LineStringWidget
+from .widgets import SnappedLineStringWidget
 
 
 class TopologyMixinForm(CommonForm):
@@ -47,7 +47,7 @@ class TopologyMixinForm(CommonForm):
 
 
 class PathForm(CommonForm):
-    geom = forms.gis.LineStringField(widget=LineStringWidget)
+    geom = forms.gis.LineStringField(widget=SnappedLineStringWidget)
 
     reverse_geom = forms.BooleanField(
            required=False,

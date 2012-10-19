@@ -240,9 +240,9 @@ FormField.makeModule = function(module, module_settings) {
         // Enable snapping ? Multipath need path snapping too !
         var path_snapping = module_settings.init.pathsnapping || module_settings.init.multipath,
             snapObserver = null;
-        MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
 
         if (path_snapping) {
+            MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
@@ -252,14 +252,24 @@ FormField.makeModule = function(module, module_settings) {
         /*** <objectLayer> ***/
 
         function _edit_handler(map, layer) {
-            var edit_handler = L.Handler.PolyEdit;
+            var edit_handler=null;
             if (path_snapping) {
                 edit_handler = L.Handler.SnappedEdit;
                 if (layer instanceof L.Marker) {
                     edit_handler =  MapEntity.MarkerSnapping;
                 }
             }
-            return new edit_handler(map, layer);
+            else {
+                edit_handler = L.Handler.PolyEdit;
+                if (layer instanceof L.Marker) {
+                    layer.dragging = new L.Handler.MarkerDrag(layer);
+                    layer.dragging.enable();
+                }
+            }
+            if (edit_handler) {
+                layer.editing = new edit_handler(map, layer);
+                layer.editing.enable();
+            }
         };
 
         function onNewLayer(new_layer) {
@@ -280,8 +290,7 @@ FormField.makeModule = function(module, module_settings) {
             else {
                 currentBounds = new_layer.getBounds();
             }
-            new_layer.editing = _edit_handler(map, new_layer);
-            new_layer.editing.enable();
+            _edit_handler(map, new_layer);
             new_layer.on('move edit', function (e) {
                 layerStore.storeLayerGeomInField(e.target);
             });
@@ -293,11 +302,11 @@ FormField.makeModule = function(module, module_settings) {
         if (geojson) {
             var objectLayer = new L.GeoJSON(geojson, {
                 style: {weight: 5, opacity: 1, clickable: true},
-                onEachFeature: function (feature, layer) {
-                    onNewLayer(layer);
-                }
             });
             map.addLayer(objectLayer);
+            objectLayer.eachLayer(function (layer) {
+                onNewLayer(layer);
+            });
         }
 
         /*** </objectLayer> ***/

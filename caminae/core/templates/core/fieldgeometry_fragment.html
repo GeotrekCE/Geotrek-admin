@@ -20,10 +20,12 @@ var {{ module }}_settings = {
         'is_marker': {{ is_point|yesno:"true,false" }},
         'is_polyline': {{ is_linestring|yesno:"true,false" }}
     },
+    {% if path_snapping %}
     'enablePathSnapping': {
         'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
     },
+    {% endif %}
     'addObjectsLayer': {
         'getUrl': function(modelname) {
             return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
