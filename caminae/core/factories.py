@@ -113,8 +113,8 @@ class PathInBoundsExistingGeomFactory(PathFactory):
     geom = factory.Sequence(getExistingLineStringInBounds)
 
 
-class TopologyMixinFactory(factory.Factory):
-    FACTORY_FOR = models.TopologyMixin
+class TopologyFactory(factory.Factory):
+    FACTORY_FOR = models.Topology
 
     # Factory
     # troncons (M2M)
@@ -137,7 +137,7 @@ class TopologyMixinFactory(factory.Factory):
         """
 
         no_path = kwargs.pop('no_path', False)
-        topo_mixin = super(TopologyMixinFactory, cls)._prepare(create, **kwargs)
+        topo_mixin = super(TopologyFactory, cls)._prepare(create, **kwargs)
 
         if not no_path and create:
             cls.create_pathaggregation_from_topo(topo_mixin)
@@ -146,13 +146,13 @@ class TopologyMixinFactory(factory.Factory):
         return topo_mixin
 
 
-class TopologyMixinInBoundsRandomGeomFactory(TopologyMixinFactory):
+class TopologyInBoundsRandomGeomFactory(TopologyFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
         return PathAggregationInBoundsRandomGeomFactory.create(topo_object=topo_mixin)
 
 
-class TopologyMixinInBoundsExistingGeomFactory(TopologyMixinFactory):
+class TopologyInBoundsExistingGeomFactory(TopologyFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
         return PathAggregationInBoundsExistingGeomFactory.create(topo_object=topo_mixin)
@@ -162,7 +162,7 @@ class PathAggregationFactory(factory.Factory):
     FACTORY_FOR = models.PathAggregation
 
     path = factory.SubFactory(PathFactory)
-    topo_object = factory.SubFactory(TopologyMixinFactory)
+    topo_object = factory.SubFactory(TopologyFactory)
 
     start_position = 0.0
     end_position = 1.0

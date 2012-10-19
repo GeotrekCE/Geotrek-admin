@@ -1,10 +1,10 @@
 from django import forms
-from caminae.core.forms import TopologyMixinForm
+from caminae.core.forms import TopologyForm
 
 from .models import Infrastructure, InfrastructureType, Signage
 
 
-class BaseInfrastructureForm(TopologyMixinForm):
+class BaseInfrastructureForm(TopologyForm):
     modelfields = (
             'name',
             'description',

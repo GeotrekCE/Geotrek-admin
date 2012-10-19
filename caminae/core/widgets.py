@@ -18,7 +18,7 @@ from django.conf import settings
 import floppyforms as forms
 
 from caminae.mapentity.widgets import LineStringWidget
-from .models import TopologyMixin
+from .models import Topology
 
 
 class SnappedLineStringWidget(LineStringWidget):
@@ -49,7 +49,7 @@ class BaseTopologyWidget(forms.Textarea):
                 topologyjson = value
             else:
                 if isinstance(value, int):
-                    value = TopologyMixin.objects.get(pk=value)
+                    value = Topology.objects.get(pk=value)
                 topologyjson = value.serialize()
         context = super(BaseTopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')

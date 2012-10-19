@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms
 
-from .models import TopologyMixin
+from .models import Topology
 from .widgets import BaseTopologyWidget, PointLineTopologyWidget
 
 
@@ -22,6 +22,6 @@ class TopologyField(forms.CharField):
         if value in validators.EMPTY_VALUES:
             return None
         try:
-            return TopologyMixin.deserialize(value)
+            return Topology.deserialize(value)
         except ValueError:
             raise ValidationError(self.error_messages['invalid_topology'])

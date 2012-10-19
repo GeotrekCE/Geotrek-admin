@@ -16,7 +16,7 @@ Known problems
 Soon...
 ==========
 
-* Refactor TopologyMixin.overlapping() : should not receive queryset
+* Refactor Topology.overlapping() : should not receive queryset
 
 * Should not be necessary to call "existing()" on each manager
 

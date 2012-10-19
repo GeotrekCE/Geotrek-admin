@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'PhysicalEdge'
         db.create_table('nature', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('physical_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.PhysicalType'])),
         ))
         db.send_create_signal('land', ['PhysicalEdge'])
@@ -36,28 +36,28 @@ class Migration(SchemaMigration):
 
         # Adding model 'LandEdge'
         db.create_table('foncier', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('land_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.LandType'])),
         ))
         db.send_create_signal('land', ['LandEdge'])
 
         # Adding model 'CompetenceEdge'
         db.create_table('competence', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Organism'])),
         ))
         db.send_create_signal('land', ['CompetenceEdge'])
 
         # Adding model 'WorkManagementEdge'
         db.create_table('gestion_travaux', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Organism'])),
         ))
         db.send_create_signal('land', ['WorkManagementEdge'])
 
         # Adding model 'SignageManagementEdge'
         db.create_table('gestion_signaletique', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Organism'])),
         ))
         db.send_create_signal('land', ['SignageManagementEdge'])
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'RestrictedAreaEdge'
         db.create_table('zonage', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('restricted_area', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.RestrictedArea'])),
         ))
         db.send_create_signal('land', ['RestrictedAreaEdge'])
@@ -88,7 +88,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'CityEdge'
         db.create_table('commune', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.City'])),
         ))
         db.send_create_signal('land', ['CityEdge'])
@@ -103,7 +103,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'DistrictEdge'
         db.create_table('secteur', (
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement')),
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
             ('district', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['land.District'])),
         ))
         db.send_create_signal('land', ['DistrictEdge'])
@@ -204,7 +204,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.Path']", 'db_column': "'troncon'"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixin']", 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.Topology']", 'db_column': "'evenement'"})
         },
         'core.pathmanagement': {
             'Meta': {'object_name': 'PathManagement', 'db_table': "'gestion_sentier'"},
@@ -214,20 +214,20 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
         },
-        'core.topologymixin': {
-            'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
+        'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
+            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'troncons': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'symmetrical': 'False'})
         },
-        'core.topologymixinkind': {
-            'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
+        'core.topologykind': {
+            'Meta': {'object_name': 'TopologyKind', 'db_table': "'type_evenements'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
@@ -243,14 +243,14 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'commune'"})
         },
         'land.cityedge': {
-            'Meta': {'object_name': 'CityEdge', 'db_table': "'commune'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'CityEdge', 'db_table': "'commune'", '_ormbases': ['core.Topology']},
             'city': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['land.City']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.competenceedge': {
-            'Meta': {'object_name': 'CompetenceEdge', 'db_table': "'competence'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'CompetenceEdge', 'db_table': "'competence'", '_ormbases': ['core.Topology']},
             'organization': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Organism']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.district': {
             'Meta': {'object_name': 'District', 'db_table': "'couche_secteurs'"},
@@ -259,14 +259,14 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'secteur'"})
         },
         'land.districtedge': {
-            'Meta': {'object_name': 'DistrictEdge', 'db_table': "'secteur'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'DistrictEdge', 'db_table': "'secteur'", '_ormbases': ['core.Topology']},
             'district': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['land.District']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.landedge': {
-            'Meta': {'object_name': 'LandEdge', 'db_table': "'foncier'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'LandEdge', 'db_table': "'foncier'", '_ormbases': ['core.Topology']},
             'land_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['land.LandType']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.landtype': {
             'Meta': {'object_name': 'LandType', 'db_table': "'type_foncier'"},
@@ -276,9 +276,9 @@ class Migration(SchemaMigration):
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'land.physicaledge': {
-            'Meta': {'object_name': 'PhysicalEdge', 'db_table': "'nature'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'PhysicalEdge', 'db_table': "'nature'", '_ormbases': ['core.Topology']},
             'physical_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['land.PhysicalType']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.physicaltype': {
             'Meta': {'object_name': 'PhysicalType', 'db_table': "'nature_sentier'"},
@@ -296,19 +296,19 @@ class Migration(SchemaMigration):
             'order': ('django.db.models.fields.IntegerField', [], {'db_column': "'order'"})
         },
         'land.restrictedareaedge': {
-            'Meta': {'object_name': 'RestrictedAreaEdge', 'db_table': "'zonage'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'RestrictedAreaEdge', 'db_table': "'zonage'", '_ormbases': ['core.Topology']},
             'restricted_area': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['land.RestrictedArea']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.signagemanagementedge': {
-            'Meta': {'object_name': 'SignageManagementEdge', 'db_table': "'gestion_signaletique'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'SignageManagementEdge', 'db_table': "'gestion_signaletique'", '_ormbases': ['core.Topology']},
             'organization': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Organism']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.workmanagementedge': {
-            'Meta': {'object_name': 'WorkManagementEdge', 'db_table': "'gestion_travaux'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'WorkManagementEdge', 'db_table': "'gestion_travaux'", '_ormbases': ['core.Topology']},
             'organization': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['common.Organism']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         }
     }
 

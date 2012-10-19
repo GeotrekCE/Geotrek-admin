@@ -5,7 +5,7 @@ import factory
 from django.conf import settings
 from django.contrib.gis.geos import Polygon, MultiPolygon
 
-from caminae.core.factories import TopologyMixinFactory
+from caminae.core.factories import TopologyFactory
 from caminae.common.factories import OrganismFactory
 from caminae.mapentity.helpers import bbox_split_srid_2154
 
@@ -18,7 +18,7 @@ class PhysicalTypeFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"PhysicalType %s" % n)
 
 
-class PhysicalEdgeFactory(TopologyMixinFactory):
+class PhysicalEdgeFactory(TopologyFactory):
     FACTORY_FOR = models.PhysicalEdge
 
     physical_type = factory.SubFactory(PhysicalTypeFactory)
@@ -31,25 +31,25 @@ class LandTypeFactory(factory.Factory):
     right_of_way = True
 
 
-class LandEdgeFactory(TopologyMixinFactory):
+class LandEdgeFactory(TopologyFactory):
     FACTORY_FOR = models.LandEdge
 
     land_type = factory.SubFactory(LandTypeFactory)
 
 
-class CompetenceEdgeFactory(TopologyMixinFactory):
+class CompetenceEdgeFactory(TopologyFactory):
     FACTORY_FOR = models.CompetenceEdge
 
     organization = factory.SubFactory(OrganismFactory)
 
 
-class WorkManagementEdgeFactory(TopologyMixinFactory):
+class WorkManagementEdgeFactory(TopologyFactory):
     FACTORY_FOR = models.WorkManagementEdge
 
     organization = factory.SubFactory(OrganismFactory)
 
 
-class SignageManagementEdgeFactory(TopologyMixinFactory):
+class SignageManagementEdgeFactory(TopologyFactory):
     FACTORY_FOR = models.SignageManagementEdge
 
     organization = factory.SubFactory(OrganismFactory)
@@ -75,7 +75,7 @@ class DistrictFactory(factory.Factory):
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_district_iter.next()), srid=settings.SRID))
 
 
-class DistrictEdgeFactory(TopologyMixinFactory):
+class DistrictEdgeFactory(TopologyFactory):
 
     FACTORY_FOR = models.DistrictEdge
 

@@ -10,14 +10,14 @@ from django.utils.html import strip_tags
 import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology
 from caminae.common.utils import elevation_profile
 
 
 logger = logging.getLogger(__name__)
 
 
-class Trek(MapEntityMixin, TopologyMixin):
+class Trek(MapEntityMixin, Topology):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
@@ -69,7 +69,7 @@ class Trek(MapEntityMixin, TopologyMixin):
             verbose_name=_(u"Web links"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     ## relationships helpers ##
     # TODO: can not be have an intermediary table and be "symmetrical" at the same time
@@ -90,7 +90,7 @@ class Trek(MapEntityMixin, TopologyMixin):
         s = []
         for a in self.aggregations.all():
             s += [POI.objects.get(pk=t.pk)
-                  for t in a.path.topologymixin_set.existing().filter(
+                  for t in a.path.topology_set.existing().filter(
                       kind=POI.KIND,
                       aggregations__start_position__gte=a.start_position,
                       aggregations__end_position__lte=a.end_position
@@ -304,15 +304,15 @@ class TrekRelationship(models.Model):
 
 
 
-class POI(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class POI(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     def __unicode__(self):
         return self.name
@@ -339,7 +339,7 @@ class POI(MapEntityMixin, TopologyMixin):
         s = []
         for a in self.aggregations.all():
             s += [Trek.objects.get(pk=t.pk)
-                  for t in a.path.topologymixin_set.existing().filter(
+                  for t in a.path.topology_set.existing().filter(
                       kind=Trek.KIND,
                       aggregations__start_position__lte=a.end_position,
                       aggregations__end_position__gte=a.start_position

@@ -400,7 +400,7 @@
     },
     {
         "pk": 100000,
-        "model": "core.topologymixin",
+        "model": "core.topology",
         "fields": {
             "kind": "INFRASTRUCTURE",
             "deleted": false,
@@ -413,7 +413,7 @@
     },
     {
         "pk": 200000,
-        "model": "core.topologymixin",
+        "model": "core.topology",
         "fields": {
             "kind": "INFRASTRUCTURE",
             "deleted": false,

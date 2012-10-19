@@ -7,7 +7,7 @@ from django.contrib.gis.geos import LineString, Point
 
 from caminae.common.views import FormsetMixin
 from caminae.authent.decorators import same_structure_required, path_manager_required
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from caminae.infrastructure.models import Infrastructure, Signage
@@ -38,7 +38,7 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
     def get_geom_info(self, model):
-        get_geom, geom_type, srid = super(InterventionFormatList, self).get_geom_info(TopologyMixin)
+        get_geom, geom_type, srid = super(InterventionFormatList, self).get_geom_info(Topology)
         # get_geom returns how to get a geom from a topology, so we give him if we got one
         new_get_geom = lambda obj: get_geom(obj.topology) if obj.topology else None
 
@@ -153,7 +153,7 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
         return gen_from_geom(Point), gen_from_geom(LineString)
 
     def get_geom_info(self, model):
-        get_geom, geom_type, srid = super(ProjectFormatList, self).get_geom_info(TopologyMixin)
+        get_geom, geom_type, srid = super(ProjectFormatList, self).get_geom_info(Topology)
 
         # project_it being: (project, it)
         new_get_geom = lambda project_it: get_geom(project_it[1].topology) if project_it[1].topology else None

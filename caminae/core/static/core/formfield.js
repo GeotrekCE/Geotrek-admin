@@ -164,7 +164,7 @@ FormField.makeModule = function(module, module_settings) {
                 multipath_control.setGraph(graph);
 
                 // We should check if the form has an error or not...
-                // core.models#TopologyMixin.serialize
+                // core.models#Topology.serialize
                 var initialTopology = layerStore.getSerialized();
                 if (initialTopology) {
                     var topo =  JSON.parse(initialTopology);

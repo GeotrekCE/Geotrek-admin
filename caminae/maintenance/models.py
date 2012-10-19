@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import NoDeleteMixin, TopologyMixin, Path, Trail
+from caminae.core.models import NoDeleteMixin, Topology, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.infrastructure.models import Infrastructure, Signage
@@ -36,7 +36,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
     """ Topology can be of type Infrastructure or of own type Intervention """
-    topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
+    topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
 
@@ -58,7 +58,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Project"))
 
     # Special manager
-    objects = TopologyMixin.get_manager_cls()()
+    objects = Topology.get_manager_cls()()
 
     class Meta:
         db_table = 'interventions'
@@ -164,7 +164,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     @classmethod
     def path_interventions(cls, path):
         s = []
-        for t in path.topologymixin_set.existing():
+        for t in path.topology_set.existing():
             s += t.interventions.all()
         return list(set(s))
 
@@ -284,7 +284,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Founders"))
 
     # Special manager
-    objects = TopologyMixin.get_manager_cls()()
+    objects = Topology.get_manager_cls()()
 
     class Meta:
         db_table = 'chantiers'

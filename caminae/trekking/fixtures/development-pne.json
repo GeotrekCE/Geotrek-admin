@@ -122,7 +122,7 @@
     },
     {
         "pk": 800000,
-        "model": "core.topologymixin",
+        "model": "core.topology",
         "fields": {
             "kind": "TREK",
             "deleted": false,
@@ -277,7 +277,7 @@
 
     {
         "pk": 900000,
-        "model": "core.topologymixin",
+        "model": "core.topology",
         "fields": {
             "kind": "POI",
             "deleted": false,

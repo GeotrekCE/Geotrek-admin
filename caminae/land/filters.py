@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_filters import ModelChoiceFilter
 
-from caminae.core.models import TopologyMixin, Path
+from caminae.core.models import Topology, Path
 from caminae.common.models import Organism
 from caminae.common.filters import StructureRelatedFilterSet
 from caminae.mapentity.filters import MapEntityFilterSet
@@ -24,7 +24,7 @@ def filter(qs, edges):
     # TODO: this is wrong, land should not depend on maintenance
     import caminae.maintenance as maintenance
     
-    overlapping = set(TopologyMixin.overlapping(edges))
+    overlapping = set(Topology.overlapping(edges))
 
     paths = []
     for o in overlapping:
@@ -50,7 +50,7 @@ def filter(qs, edges):
         return qs.filter(pk__in=set(projects))
 
     else:
-        assert isinstance(qs.model, TopologyMixin), "%s is not a TopologyMixin as expected" % qs.model
+        assert isinstance(qs.model, Topology), "%s is not a Topology as expected" % qs.model
         return qs.filter(pk__in=[ topo.pk for topo in overlapping ])
 
 

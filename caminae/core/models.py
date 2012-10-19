@@ -182,7 +182,7 @@ class NoDeleteMixin(models.Model):
         return NoDeleteManager
 
 
-class TopologyMixin(NoDeleteMixin):
+class Topology(NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -203,7 +203,7 @@ class TopologyMixin(NoDeleteMixin):
         verbose_name_plural = _(u"Topologies")
 
     def __init__(self, *args, **kwargs):
-        super(TopologyMixin, self).__init__(*args, **kwargs)
+        super(Topology, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
 
@@ -219,7 +219,7 @@ class TopologyMixin(NoDeleteMixin):
 
     @classmethod
     def overlapping(self, edges):
-        """ Return a list of TopologyMixin objects if specified edges overlap them.
+        """ Return a list of Topology objects if specified edges overlap them.
         TODO: So far, the algorithm is quite simple, and not precise. Indeed
         it returns edges that "share" the same paths, and not exactly overlapping.
         """
@@ -303,12 +303,12 @@ class TopologyMixin(NoDeleteMixin):
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.__class__.KIND
 
-        super(TopologyMixin, self).save(*args, **kwargs)
+        super(Topology, self).save(*args, **kwargs)
         self.reload()
 
     @classmethod
     def deserialize(cls, serialized):
-        from .factories import TopologyMixinFactory
+        from .factories import TopologyFactory
         objdict = serialized
         if isinstance(serialized, basestring):
             try:
@@ -323,7 +323,7 @@ class TopologyMixin(NoDeleteMixin):
             return cls._topologypoint(lng, lat, kind)
 
         # Path aggregation
-        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
+        topology = TopologyFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
 
         # Start repopulating from serialized data
@@ -361,14 +361,14 @@ class TopologyMixin(NoDeleteMixin):
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
         """
-        from .factories import TopologyMixinFactory
+        from .factories import TopologyFactory
         # Find closest path
         point = Point((lng, lat), srid=settings.API_SRID)
         point.transform(settings.SRID)
         closest = Path.closest(point)
         position, offset = closest.interpolate(point)
         # We can now instantiante a Topology object
-        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=offset)
+        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
         aggrobj = PathAggregation(topo_object=topology,
                                   start_position=position,
                                   end_position=position,
@@ -414,7 +414,7 @@ class PathAggregation(models.Model):
                              verbose_name=_(u"Path"),
                              related_name="aggregations",
                              on_delete=models.DO_NOTHING) # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
-    topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="aggregations",
+    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
     end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
@@ -429,7 +429,7 @@ class PathAggregation(models.Model):
         db_table = 'evenements_troncons'
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
-        # Important - represent the order of the path in the TopologyMixin path list
+        # Important - represent the order of the path in the Topology path list
         ordering = ['id', ]
 
 

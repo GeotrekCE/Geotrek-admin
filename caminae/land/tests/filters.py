@@ -7,7 +7,7 @@ from caminae.land.factories import (
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
 
-from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyMixinFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
 class LandFiltersTest(TestCase):
 
@@ -19,10 +19,10 @@ class LandFiltersTest(TestCase):
     def create_pair_of_distinct_topologies(self, topologyfactoryclass):
         p1, seek_path = self.create_pair_of_distinct_path()
 
-        topo_1 = TopologyMixinFactory(no_path=True)
+        topo_1 = TopologyFactory(no_path=True)
         PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
 
-        seek_topo = TopologyMixinFactory(no_path=True)
+        seek_topo = TopologyFactory(no_path=True)
         PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
 
         useless = topologyfactoryclass.create(topology=topo_1)

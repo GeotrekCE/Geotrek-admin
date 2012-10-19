@@ -11,7 +11,7 @@ from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.models import default_structure
 from caminae.authent.factories import PathManagerFactory
 from caminae.core.factories import StakeFactory
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology
 from caminae.common.factories import OrganismFactory
 
 from caminae.mapentity import shape_exporter
@@ -19,7 +19,7 @@ from caminae.mapentity import shape_exporter
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
 from caminae.maintenance.views import ProjectFormatList
 from caminae.core.factories import (PathFactory, PathAggregationFactory,
-                                   TopologyMixinFactory, TrailFactory)
+                                   TopologyFactory, TrailFactory)
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.maintenance.factories import (InterventionFactory, 
     InterventionDisorderFactory, InterventionStatusFactory,
@@ -167,7 +167,7 @@ class ProjectViewsTest(MapEntityTest):
         ProjectFactory.create()
         ProjectFactory.create()
         
-        t = TopologyMixinFactory.create()
+        t = TopologyFactory.create()
         InterventionFactory.create(project=p1, topology=t)
         
         def jsonlist(bbox):
@@ -223,7 +223,7 @@ class InterventionTest(TestCase):
         p = PathFactory.create()
         t.paths.add(p)
         
-        topo = TopologyMixinFactory.create(no_path=True)
+        topo = TopologyFactory.create(no_path=True)
         topo.add_path(p)
         i = InterventionFactory(topology=topo)
         self.assertEqual(1, len(t.interventions))
@@ -279,7 +279,7 @@ class ProjectTest(TestCase):
         i2.set_infrastructure(infra)
         p2 = infra.paths.get()
 
-        t = TopologyMixinFactory.create(no_path=True)
+        t = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1)
         i3.topology = t
 
@@ -314,7 +314,7 @@ class ExportTest(TestCase):
         """
 
         # Create topology line
-        topo_line = TopologyMixinFactory.create(no_path=True)
+        topo_line = TopologyFactory.create(no_path=True)
         line = PathFactory.create(geom=LineString(Point(10,10,0), Point(11, 10, 0)))
         PathAggregationFactory.create(topo_object=topo_line, path=line)
 
@@ -322,7 +322,7 @@ class ExportTest(TestCase):
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0, 0), Point(1, 0, 0), srid=settings.SRID))
-        topo_point = TopologyMixin._topologypoint(lng, lat, None).reload()
+        topo_point = Topology._topologypoint(lng, lat, None).reload()
 
         self.assertEquals(topo_point.paths.get(), closest_path)
 

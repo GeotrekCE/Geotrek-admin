@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import PathManagerFactory
 
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology
 from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.common.factories import OrganismFactory
 from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
@@ -175,7 +175,7 @@ class CouchesSIGTest(TestCase):
 
         # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
         self.assertEquals(p.aggregations.count(), 4)
-        self.assertEquals(p.topologymixin_set.count(), 4)
+        self.assertEquals(p.topology_set.count(), 4)
 
         # PathAgg is plain for City
         t_c = c.cityedge_set.get().topo_object
@@ -205,35 +205,35 @@ class CouchesSIGTest(TestCase):
         p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
         p.save()
         self.assertEquals(p.aggregations.count(), 2)
-        self.assertEquals(p.topologymixin_set.count(), 2)
-        # TopologyMixin are re-created at DB-level after any update
-        self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_c.pk)
-        self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_ra1a.pk)
-        self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_ra1b.pk)
-        self.assertRaises(TopologyMixin.DoesNotExist,
-                          TopologyMixin.objects.get, pk=t_ra2.pk)
+        self.assertEquals(p.topology_set.count(), 2)
+        # Topology are re-created at DB-level after any update
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_c.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1b.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra2.pk)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
         # a new association exists for C
         t_c = c.cityedge_set.get().topo_object
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_c.pk).count(), 1)
+        self.assertEquals(Topology.objects.filter(pk=t_c.pk).count(), 1)
         # a new association exists for RA1
         t_ra1 = ra1.restrictedareaedge_set.get().topo_object
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra1.pk).count(), 1)
+        self.assertEquals(Topology.objects.filter(pk=t_ra1.pk).count(), 1)
         pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
         self.assertEquals(pa1.start_position, 0.0)
         self.assertEquals(pa1.end_position, 1.0)
         # RA2 is not connected anymore
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra2.pk).count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
 
         # All intermediary objects should be cleaned on delete
         p.delete()
         self.assertEquals(c.cityedge_set.count(), 0)
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_c.pk).count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_c.pk).count(), 0)
         self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra1.pk).count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra1.pk).count(), 0)
         self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
-        self.assertEquals(TopologyMixin.objects.filter(pk=t_ra2.pk).count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
