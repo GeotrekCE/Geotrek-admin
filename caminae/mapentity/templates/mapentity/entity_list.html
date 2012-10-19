@@ -8,7 +8,7 @@
         {# ids: bbox_cities bbox_districts #}
         {% combobox_bbox_land %}
     </div>
-    {% leaflet_map "mainmap" %}
+    {% leaflet_map "mainmap" fitextent=False %}
 {% endblock mainmap %}
 
 {% block filters %}
@@ -85,6 +85,8 @@
             
             {% if DEBUG %}
             mainmap.on('viewreset moveend', function () {
+                if (!mainmap._loaded)
+                    return;
                 var n = objectsLayer.search(mainmap.getBounds()).length;
                 objectsLayer.fire('info', {info : n + ' objects shown'});
             });
@@ -287,15 +289,32 @@
                 return false;
             });
 
-            // Store the map bounds as WKT in the bbox field
-            function storeBoundsToField($field, bounds) {
-                var rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-                $field.val(L.Util.getWKT(rect));
+            /*
+             * Store initial map bounds, used for reset
+             */
+            var initial_map_bounds = null;
+            if (map._loaded) {
+                initial_map_bounds = map.getBounds();
             }
-
-            var initial_map_bounds = map.getBounds();
-            var bbox_field = $('#id_bbox');
-            var storeCurrentMapBoundsToField = function() { storeBoundsToField(bbox_field, map.getBounds()); };
+            else {
+                map.on('load', function () {
+                    initial_map_bounds = map.getBounds();
+                }, map);
+            }
+            
+            var storeCurrentMapBoundsToField = function() {
+                // Store the map bounds as WKT in the bbox field
+                var bbox_field = $('#id_bbox');
+                var storeBounds = function () {
+                    var bounds = map.getBounds(),
+                        rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
+                    bbox_field.val(L.Util.getWKT(rect));
+                };
+                if (map._loaded)
+                    storeBounds(); 
+                else
+                    map.on('load', storeBounds);
+            };
 
             // Restore initial map bounds on trigger
             submitbutton.click(ajaxMapObjectsUpdateOnly);
@@ -334,7 +353,7 @@
 
             function listenMapBoundsUpdate(on) {
                 on = on === undefined ? true: on;
-                map[on ? 'on': 'off']('moveend', ajaxMapBoundsUpdateOnly);
+                map[on ? 'on': 'off']('load moveend viewreset', ajaxMapBoundsUpdateOnly);
             }
 
             listenMapBoundsUpdate(true);
