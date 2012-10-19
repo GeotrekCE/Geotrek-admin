@@ -14,7 +14,6 @@ from caminae.authent.models import StructureRelated
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 
-import caminae.infrastructure as inf
 import caminae.maintenance as maintenance
 import caminae.land as land
 
@@ -162,19 +161,6 @@ class Path(MapEntityMixin, StructureRelated):
         return _("None")
 
     @property
-    def interventions(self):
-        s = []
-        for t in self.topologymixin_set.existing():
-            s += t.interventions.all()
-        return list(set(s))
-
-    @property
-    def projects(self):
-        return list(set([i.project
-                         for i in self.interventions
-                         if i.in_project]))
-
-    @property
     def lands(self):
         return list(set([land.models.LandEdge.objects.get(pk=t.pk)
                          for t in self.topologymixin_set.existing().filter(
@@ -185,18 +171,6 @@ class Path(MapEntityMixin, StructureRelated):
         return list(set([land.models.DistrictEdge.objects.get(pk=t.pk).district
                          for t in self.topologymixin_set.existing().filter(
                              kind=land.models.DistrictEdge.KIND)]))
-
-    @property
-    def signages(self):
-        return [inf.models.Signage.objects.get(pk=t.pk)
-                for t in self.topologymixin_set.existing().filter(
-                    kind=inf.models.Signage.KIND)]
-
-    @property
-    def infrastructures(self):
-        return [inf.models.Infrastructure.objects.get(pk=t.pk)
-                for t in self.topologymixin_set.existing().filter(
-                    kind=inf.models.Infrastructure.KIND)]
 
 
 class NoDeleteMixin(models.Model):
@@ -590,11 +564,3 @@ class Trail(MapEntityMixin, StructureRelated):
             else:
                 geom = geom.union(p.geom)
         return geom
-
-    @property
-    def interventions(self):
-        """ Interventions of a trail is the union of interventions on all its paths """
-        s = []
-        for p in self.paths.all():
-            s.extend(p.interventions)
-        return list(set(s))

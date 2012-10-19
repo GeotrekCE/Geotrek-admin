@@ -4,7 +4,7 @@ from django.contrib.gis.db import models as gismodels
 
 from extended_choices import Choices
 
-from caminae.core.models import TopologyMixin
+from caminae.core.models import TopologyMixin, Path
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelatedManager, StructureRelated
 
@@ -101,6 +101,14 @@ class Infrastructure(BaseInfrastructure):
     class Meta:
         proxy = True
 
+    @classmethod
+    def path_infrastructures(cls, path):
+        return [Infrastructure.objects.get(pk=t.pk)
+                for t in path.topologymixin_set.existing().filter(
+                    kind=Infrastructure.KIND)]
+
+    Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self))
+
 
 class SignageGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
@@ -120,3 +128,11 @@ class Signage(BaseInfrastructure):
     in_structure = SignageStructureManager()
     class Meta:
         proxy = True
+
+    @classmethod
+    def path_signages(cls, path):
+        return [Signage.objects.get(pk=t.pk)
+                for t in path.topologymixin_set.existing().filter(
+                    kind=Signage.KIND)]
+
+Path.add_property('signages', lambda self: Signage.path_signages(self))

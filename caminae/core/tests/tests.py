@@ -14,10 +14,8 @@ from caminae.core.models import Path, TopologyMixin, PathAggregation
 
 # TODO caminae.core should be self sufficient
 from caminae.land.models import (City, RestrictedArea, LandEdge)
-from caminae.maintenance.factories import InterventionFactory, ProjectFactory
 from caminae.trekking.models import Trek
 from caminae.trekking.factories import TrekFactory
-from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.land.factories import LandEdgeFactory
 
 
@@ -258,40 +256,7 @@ class PathTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        self.assertEquals(len(p.interventions), 0)
-        self.assertEquals(len(p.projects), 0)
         self.assertEquals(len(p.lands), 0)
-        self.assertEquals(len(p.signages), 0)
-        self.assertEquals(len(p.infrastructures), 0)
-
-        sign = SignageFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=sign, path=p,
-                                      start_position=0.5, end_position=0.5)
-
-        self.assertItemsEqual(p.signages, [sign])
-
-        infra = InfrastructureFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=infra, path=p)
-
-        self.assertItemsEqual(p.infrastructures, [infra])
-
-        i1 = InterventionFactory.create()
-        i1.set_infrastructure(sign)
-        i1.save()
-
-        self.assertItemsEqual(p.interventions, [i1])
-
-        i2 = InterventionFactory.create()
-        i2.set_infrastructure(infra)
-        i2.save()
-
-        self.assertItemsEqual(p.interventions, [i1, i2])
-
-        proj = ProjectFactory.create()
-        proj.interventions.add(i1)
-        proj.interventions.add(i2)
-
-        self.assertItemsEqual(p.projects, [proj])
 
         l = LandEdgeFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=l, path=p)
@@ -695,18 +660,6 @@ class TopologyMixinTest(TestCase):
 
 
 class TrailTest(TestCase):
-    def test_helpers(self):
-        t = TrailFactory.create()
-        self.assertEqual(0, len(t.interventions))
-        
-        p = PathFactory.create()
-        t.paths.add(p)
-        
-        topo = TopologyMixinFactory.create(no_path=True)
-        topo.add_path(p)
-        i = InterventionFactory(topology=topo)
-        self.assertEqual(1, len(t.interventions))
-        self.assertEqual([i], t.interventions)
 
     def test_geom(self):
         t = TrailFactory.create()
