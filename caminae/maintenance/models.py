@@ -176,9 +176,8 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             s.extend(p.interventions)
         return list(set(s))
 
-    Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
-    Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
-
+Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
+Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
 
 
 class InterventionStatus(StructureRelated):
