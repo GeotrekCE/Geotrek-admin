@@ -1766,3 +1766,10 @@ Sur un formulaire d'édition :
 
 Désormais il n'est plus possible d'activer l'outil point lorsque l'on est
 en train de saisir une ligne multi-tronçons.
+
+
+#341 - [BUG] Edition trek : Cannot read property '_leaflet_mousedown1' 
+----------------------------------------------------------------------
+
+Erreur liée au marqueur du champ parking, désormais fixée. Le marqueur de parking
+est bien restauré en édition.
