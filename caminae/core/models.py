@@ -15,7 +15,6 @@ from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 
 import caminae.maintenance as maintenance
-import caminae.land as land
 
 
 logger = logging.getLogger(__name__)
@@ -160,18 +159,6 @@ class Path(MapEntityMixin, StructureRelated):
             return unicode(self.trail)
         return _("None")
 
-    @property
-    def lands(self):
-        return list(set([land.models.LandEdge.objects.get(pk=t.pk)
-                         for t in self.topologymixin_set.existing().filter(
-                             kind=land.models.LandEdge.KIND)]))
-
-    @property
-    def districts(self):
-        return list(set([land.models.DistrictEdge.objects.get(pk=t.pk).district
-                         for t in self.topologymixin_set.existing().filter(
-                             kind=land.models.DistrictEdge.KIND)]))
-
 
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
@@ -221,6 +208,12 @@ class TopologyMixin(NoDeleteMixin):
         super(TopologyMixin, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
+
+    @classmethod
+    def add_property(cls, name, func):
+        if hasattr(cls, name):
+            raise AttributeError("%s has already an attribute %s" % (cls, name))
+        setattr(cls, name, property(func))
 
     @classproperty
     def KIND(cls):
@@ -438,13 +431,6 @@ class TopologyMixin(NoDeleteMixin):
                            paths=paths,
                            )
         return simplejson.dumps(objdict)
-
-    @property
-    def districts(self):
-        s = []
-        for p in self.paths.all():
-            s += p.districts
-        return list(set(s))
 
 
 class PathAggregation(models.Model):

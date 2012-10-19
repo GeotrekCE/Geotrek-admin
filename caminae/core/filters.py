@@ -10,7 +10,7 @@ from caminae.land.filters import EdgeStructureRelatedFilterSet
 
 
 class PathFilter(EdgeStructureRelatedFilterSet):
-    length = OptionalRangeFilter(label=_('length'))   # TODO: why force ?
+    length = OptionalRangeFilter(label=_('length'))
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     comments = CharFilter(label=_('Comments'), lookup_type='icontains')
 
@@ -19,5 +19,3 @@ class PathFilter(EdgeStructureRelatedFilterSet):
         fields = EdgeStructureRelatedFilterSet.Meta.fields + [
                     'length', 'networks', 'trail',
                 ]
-
-

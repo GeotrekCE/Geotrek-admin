@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelated
-from caminae.core.models import TopologyMixin
+from caminae.core.models import TopologyMixin, Path
 from caminae.common.models import Organism
 
 
@@ -71,6 +71,16 @@ class LandEdge(MapEntityMixin, TopologyMixin):
     @property
     def land_type_display(self):
         return unicode(self.land_type)
+
+    @classmethod
+    def path_lands(self, path):
+        return list(set([LandEdge.objects.get(pk=t.pk)
+                         for t in path.topologymixin_set.existing().filter(
+                             kind=LandEdge.KIND)]))
+
+Path.add_property('lands', lambda self: LandEdge.path_lands(self))
+
+
 
 
 # Interaction with external structures
@@ -222,3 +232,19 @@ class DistrictEdge(TopologyMixin):
         db_table = 'secteur'
         verbose_name = _(u"District edge")
         verbose_name_plural = _(u"District edges")
+
+    @classmethod
+    def path_districts(self, path):
+        return list(set([DistrictEdge.objects.get(pk=t.pk).district
+                         for t in path.topologymixin_set.existing().filter(
+                             kind=DistrictEdge.KIND)]))
+
+    @classmethod
+    def topology_districts(self, topology):
+        s = []
+        for p in topology.paths.all():
+            s += p.districts
+        return list(set(s))
+
+Path.add_property('districts', lambda self: DistrictEdge.path_districts(self))
+TopologyMixin.add_property('districts', lambda self: DistrictEdge.topology_districts(self))

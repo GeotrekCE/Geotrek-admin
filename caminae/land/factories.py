@@ -74,3 +74,9 @@ class DistrictFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"District name %s" % n)
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_district_iter.next()), srid=settings.SRID))
 
+
+class DistrictEdgeFactory(TopologyMixinFactory):
+
+    FACTORY_FOR = models.DistrictEdge
+
+    district = factory.SubFactory(DistrictFactory)
