@@ -34,6 +34,12 @@ class MapImageError(Exception):
 class MapEntityMixin(object):
 
     @classmethod
+    def add_property(cls, name, func):
+        if hasattr(cls, name):
+            raise AttributeError("%s has already an attribute %s" % (cls, name))
+        setattr(cls, name, property(func))
+
+    @classmethod
     def latest_updated(cls):
         try:
             return cls.objects.latest("date_update").date_update
