@@ -14,8 +14,6 @@ from caminae.authent.models import StructureRelated
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
 
-import caminae.maintenance as maintenance
-
 
 logger = logging.getLogger(__name__)
 
@@ -220,9 +218,8 @@ class TopologyMixin(NoDeleteMixin):
         return cls._meta.object_name.upper()
 
     @classmethod
-    def overlapping(self, qs, edges):
-        """ Filter specified queryset of TopologyMixin objects if specified
-        edges overlap them.
+    def overlapping(self, edges):
+        """ Return a list of TopologyMixin objects if specified edges overlap them.
         TODO: So far, the algorithm is quite simple, and not precise. Indeed
         it returns edges that "share" the same paths, and not exactly overlapping.
         """
@@ -231,29 +228,8 @@ class TopologyMixin(NoDeleteMixin):
             paths.extend(edge.topo_object.paths.select_related(depth=1).all())
         topos = []
         for path in set(paths):
-            topos += [aggr.topo_object for aggr in path.aggregations.all()]
-        # In case, we filter on paths
-        if qs.model == Path:
-            return qs.filter(pk__in=[ path.pk for topo in set(paths) ])
-
-        # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
-        elif issubclass(qs.model, maintenance.models.Intervention):
-            return qs.filter(topology__in=[ topo.pk for topo in set(topos) ])
-        elif issubclass(qs.model, maintenance.models.Project):
-            # Find all interventions overlapping those edges
-            interventions = TopologyMixin.overlapping(maintenance.models.Intervention.objects.existing()\
-                                                                              .select_related(depth=1)\
-                                                                              .filter(project__in=qs), 
-                                                      edges)
-            # Return only the projects concerned by the interventions
-            projects = []
-            for intervention in interventions:
-                projects.append(intervention.project.pk)
-            return qs.filter(pk__in=set(projects))
-
-        else:
-            assert isinstance(qs.model, TopologyMixin), "%s is not a TopologyMixin as expected" % qs.model
-            return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
+            topos += [aggr.topo_object for aggr in path.aggregations.select_related(depth=1).all()]
+        return topos
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
