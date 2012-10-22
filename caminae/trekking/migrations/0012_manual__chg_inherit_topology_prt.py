@@ -8,7 +8,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.rename_column('itineraire', 'topologymixin_ptr_id', 'topology_ptr_id')
+        try:
+            db.rename_column('itineraire', 'topologymixin_ptr_id', 'topology_ptr_id')
+        except:
+            print "Ignore column rename `topologymixin_ptr_id`"
 
     def backwards(self, orm):
         db.rename_column('itineraire', 'topology_ptr_id', 'topologymixin_ptr_id')
