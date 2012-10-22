@@ -26,14 +26,21 @@ class SplitPathTest(TestCase):
                +      AB exists. Add CD.
                D      
         """
-        ab = PathFactory.create(geom=LineString((0,0,0),(4,0,0)))
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
         self.assertEqual(ab.length, 4)
         cd = PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
         self.assertEqual(cd.length, 2)
         
         # Make sure AB was split :
         ab.reload()
-        self.assertEqual(ab.length, 2)
+        self.assertEqual(ab.geom, LineString((0,0,0),(2,0,0)))
+        self.assertEqual(ab.length, 2)  # Length was also updated
+        # And a clone of AB was created
+        clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
+        self.assertEqual(len(clones), 1)
+        ab_2 = clones[0]
+        self.assertEqual(ab_2.geom, LineString((2,0,0),(4,0,0)))
+        self.assertEqual(ab_2.length, 2)  # Length was also updated
 
 """
 

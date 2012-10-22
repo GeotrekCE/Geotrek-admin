@@ -8,6 +8,7 @@ CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger 
 DECLARE
     troncon record;
     tid integer;
+    tid_clone integer;
     
     pk float;  -- "P"oint "K"ilometrique
     a float;
@@ -61,7 +62,32 @@ BEGIN
                     -- First segment : shrink it !
                     UPDATE troncons SET geom = segment WHERE id = troncon.id;
                 ELSE
-                    
+                    -- Next ones : create clones !
+                    INSERT INTO troncons (structure_id, 
+                                          troncon_valide,
+                                          nom_troncon, 
+                                          remarques,
+                                          trail_id,
+                                          datasource_id,
+                                          stake_id,
+                                          geom_cadastre,
+                                          depart,
+                                          arrivee,
+                                          comfort_id,
+                                          geom) 
+                        VALUES (troncon.structure_id,
+                                troncon.troncon_valide,
+                                troncon.nom_troncon,
+                                troncon.remarques,
+                                troncon.trail_id,
+                                troncon.datasource_id,
+                                troncon.stake_id,
+                                troncon.geom_cadastre,
+                                troncon.depart,
+                                troncon.arrivee,
+                                troncon.comfort_id,
+                                segment)
+                        RETURNING id INTO tid_clone;
                 END IF;
             END LOOP;
         END IF;
