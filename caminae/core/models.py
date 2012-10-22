@@ -4,6 +4,7 @@ import logging
 import collections
 
 from django.contrib.gis.db import models
+from django.db import connection
 from django.db.models import Manager as DefaultManager
 from django.utils import simplejson
 from django.conf import settings
@@ -94,7 +95,6 @@ class Path(MapEntityMixin, StructureRelated):
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        from django.db import connection
         from string import Template
         if not self.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
@@ -117,9 +117,7 @@ class Path(MapEntityMixin, StructureRelated):
         result = cursor.fetchall()
         return result[0]
 
-    def save(self, *args, **kwargs):
-        super(Path, self).save(*args, **kwargs)
-
+    def reload(self):
         # Update object's computed values (reload from database)
         tmp = self.__class__.objects.get(pk=self.pk)
         self.date_insert = tmp.date_insert
@@ -130,6 +128,14 @@ class Path(MapEntityMixin, StructureRelated):
         self.min_elevation = tmp.min_elevation
         self.max_elevation = tmp.max_elevation
         self.geom = tmp.geom
+
+    def save(self, *args, **kwargs):
+        before = len(connection.connection.notices)
+        super(Path, self).save(*args, **kwargs)
+        self.reload()
+        # Show triggers output
+        for notice in connection.connection.notices[before:]:
+            print notice
 
     def get_elevation_profile(self):
         """
