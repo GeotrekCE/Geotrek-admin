@@ -131,11 +131,13 @@ class Path(MapEntityMixin, StructureRelated):
 
     def save(self, *args, **kwargs):
         before = len(connection.connection.notices)
-        super(Path, self).save(*args, **kwargs)
-        self.reload()
-        # Show triggers output
-        for notice in connection.connection.notices[before:]:
-            print notice
+        try:
+            super(Path, self).save(*args, **kwargs)
+            self.reload()
+        finally:
+            # Show triggers output
+            for notice in connection.connection.notices[before:]:
+                print notice
 
     def get_elevation_profile(self):
         """
