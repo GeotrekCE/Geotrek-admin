@@ -5,15 +5,17 @@
     {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>
 
-<script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
+{% block requirements %}
+    <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
+{% endblock requirements %}
 
-
-{% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
+{% if display_wkt %}<p> Geom debugging window:</p>{% endif %}
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
 if (! {{ module }}); var {{ module }} = {};
 
+{% block settings %}
 var {{ module }}_settings = {
     'enableDrawing': {
         'is_polygon': {{ is_polygone|yesno:"true,false" }},
@@ -47,6 +49,7 @@ var {{ module }}_settings = {
         'others': '{{ LAYERCOLOR_OTHERS }}',
     }
 };
+{% endblock settings %}
 
 FormField.makeModule({{ module }}, {{ module }}_settings);
 

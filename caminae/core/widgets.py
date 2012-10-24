@@ -53,7 +53,7 @@ class BaseTopologyWidget(forms.Textarea):
                 topologyjson = value.serialize()
         context = super(BaseTopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
         context['module'] = 'map_%s' % name.replace('-', '_')
-        context['display_json'] = self.display_json
+        context['display_wkt'] = self.display_json   # called wkt because inherit field geometry
         context['is_multipath'] = self.is_multipath
         context['is_point'] = self.is_point
         context['update'] = bool(value)
