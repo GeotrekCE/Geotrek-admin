@@ -17,6 +17,8 @@ DECLARE
     
     intersections_on_new float[];
     intersections_on_current float[];
+    
+    debugrec record;
 BEGIN
 
     -- Copy original geometry
@@ -112,6 +114,14 @@ BEGIN
                     
                     -- Copy topologies matching pk start/end
                     RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;                    
+
+                    FOR debugrec IN SELECT a, b, et.evenement, pk_debut, pk_fin FROM evenements_troncons et
+                        WHERE et.troncon = troncon.id 
+                              AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
+                                   (pk_debut = pk_fin AND pk_debut = a))
+                    LOOP
+                        RAISE NOTICE '%', debugrec;
+                    END LOOP;
                     INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
                         SELECT
                             tid_clone,
@@ -122,7 +132,6 @@ BEGIN
                         WHERE et.troncon = troncon.id 
                               AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
                                    (pk_debut = pk_fin AND pk_debut = a)); -- Point
-
                     -- Special case : point topology at the end of path
                     IF b = 1 THEN
                         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
@@ -131,6 +140,15 @@ BEGIN
                             WHERE et.troncon = troncon.id AND 
                                   pk_debut = pk_fin AND 
                                   pk_debut = 1;
+                    END IF;
+                    -- Special case : point topology exactly where NEW path intersects
+                    IF a > 0 THEN
+                        pk := ST_Line_Locate_Point(NEW.geom, ST_Line_Substring(troncon.geom, a, a));
+                        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                            SELECT NEW.id, et.evenement, pk, pk
+                            FROM evenements_troncons et
+                            WHERE et.troncon = troncon.id 
+                              AND pk_debut = pk_fin AND pk_debut = a;
                     END IF;
                 END IF;
             END LOOP;

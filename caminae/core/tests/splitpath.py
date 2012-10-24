@@ -137,7 +137,7 @@ class SplitPathTest(TestCase):
 
 
 
-class SplitPathTopologyTest(TestCase):
+class SplitPathLineTopologyTest(TestCase):
 
     def test_split_tee_1(self):
         """
@@ -261,3 +261,113 @@ class SplitPathTopologyTest(TestCase):
         aggr_ce = ce.aggregations.all()[0]
         self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
         self.assertEqual((0.0, 1.0), (aggr_ce.start_position, aggr_ce.end_position))
+
+
+class SplitPathPointTopologyTest(TestCase):
+
+    def test_split_tee_1(self):
+        """
+                C
+        A +-----X----+ B
+                |   
+                +    AB exists with topology at C.
+                D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.5, end=0.5)
+        self.assertEqual(len(topology.paths.all()), 1)
+        
+        cd = PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        
+        self.assertEqual(len(topology.paths.all()), 3)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        aggr_ab = ab.aggregations.all()[0]
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        aggr_cb = cb.aggregations.all()[0]
+        self.assertEqual(len(cd.aggregations.all()), 1)
+        aggr_cd = cd.aggregations.all()[0]
+        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
+        self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+
+    def test_split_tee_2(self):
+        """
+                C
+        A +--X--+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.25, end=0.25)
+        self.assertEqual(len(topology.paths.all()), 1)
+        PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        aggr_ab = ab.aggregations.all()[0]
+        self.assertEqual((0.5, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
+
+    def test_split_tee_3(self):
+        """
+                C
+        A +-----+--X--+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.75, end=0.75)
+        self.assertEqual(len(topology.paths.all()), 1)
+        PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 0)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        aggr_cb = cb.aggregations.all()[0]
+        self.assertEqual((0.5, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
+
+    def test_split_tee_4(self):
+        """
+                C
+        A X-----+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.0, end=0.0)
+        self.assertEqual(len(topology.paths.all()), 1)
+        PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(cb.aggregations.all()), 0)
+        aggr_ab = ab.aggregations.all()[0]
+        self.assertEqual((0.0, 0.0), (aggr_ab.start_position, aggr_ab.end_position))
+
+    def test_split_tee_5(self):
+        """
+                C
+        A +-----+----X B
+                |   
+                +    AB exists.
+                D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=1.0, end=1.0)
+        self.assertEqual(len(topology.paths.all()), 1)
+        PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 0)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        aggr_cb = cb.aggregations.all()[0]
+        self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
