@@ -8,7 +8,7 @@ from caminae.common.utils import wkt_to_geom
 
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
-    template_name = 'core/fieldgeometry_fragment.html'
+    template_name = 'mapentity/fieldgeometry_fragment.html'
     display_wkt = settings.DEBUG
 
     def get_context(self, name, value, attrs=None, extra_context={}):
