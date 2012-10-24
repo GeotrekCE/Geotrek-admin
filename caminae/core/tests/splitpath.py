@@ -132,3 +132,63 @@ class SplitPathTest(TestCase):
         self.assertEqual(cd_clones[0].geom, LineString((1,0,0),(1,-2,0),
                                                        (3,-2,0),(3,0,0)))
         self.assertEqual(cd_clones[1].geom, LineString((3,0,0),(3,2,0)))
+
+
+
+
+
+class SplitPathTopologyTest(TestCase):
+
+    def test_split_tee_1(self):
+        """
+               C
+        A +---===+===---+ B
+             A'  |  B'
+                 +      AB exists with topology A'B'.
+                 D      Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        # Create a topology
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.25, end=0.75)
+        # Topology covers 1 path
+        self.assertEqual(len(topology.paths.all()), 1)
+        cd = PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        # Topology now covers 2 paths
+        self.assertEqual(len(topology.paths.all()), 2)
+        # AB and AB2 has one topology each
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(ab_2.aggregations.all()), 1)
+        # Topology position became proportional
+        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab_2 = ab_2.aggregations.all()[0]
+        self.assertEqual((aggr_ab.start_position, aggr_ab.end_position), (0.5, 1))
+        self.assertEqual((aggr_ab_2.start_position, aggr_ab_2.end_position), (0.0, 0.5))
+        
+
+    def test_split_tee_2(self):
+        """
+               C
+        A +---+---=====--+ B
+              |   A'  B'
+              +           AB exists with topology A'B'.
+              D           Add CD. No effect.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        # Create a topology
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.5, end=0.75)
+        # Topology covers 1 path
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.paths.all()[0], ab)
+        cd = PathFactory.create(geom=LineString((1,0,0),(1,2,0)))
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        
+        # AB has no topology anymore
+        self.assertEqual(len(ab.aggregations.all()), 0)
+        # Topology now still covers 1 path, but the new one
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab_2.aggregations.all()), 1)
+        self.assertEqual(topology.paths.all()[0].pk, ab_2.pk)

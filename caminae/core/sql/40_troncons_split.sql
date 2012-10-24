@@ -7,7 +7,6 @@ DROP TRIGGER IF EXISTS troncons_split_geom_iu_tgr ON troncons;
 CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
     troncon record;
-    tid integer;
     tid_clone integer;
     
     pk float;  -- "P"oint "K"ilometrique
@@ -19,22 +18,22 @@ DECLARE
     intersections_on_new float[];
     intersections_on_current float[];
 
+    debugrec record;  -- debug purposes
 BEGIN
 
     -- Copy original geometry
     newgeom := NEW.geom;
 
     -- Iterate paths intersecting, excluding those touching by extremities
-    FOR tid IN SELECT t.id
-               FROM troncons t
-               WHERE id != NEW.id 
-                     AND ST_Intersects(geom, NEW.geom) 
-                     AND NOT ST_Relate(geom, NEW.geom, 'FF*F*****')
-                     AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
+    FOR troncon IN SELECT *
+                   FROM troncons t
+                   WHERE id != NEW.id 
+                         AND ST_Intersects(geom, NEW.geom) 
+                         AND NOT ST_Relate(geom, NEW.geom, 'FF*F*****')
+                         AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
-        SELECT * FROM troncons WHERE id = tid INTO troncon;
 
-        RAISE NOTICE '% intersects % : %', NEW.id, tid, ST_AsEWKT(ST_Intersection(troncon.geom, NEW.geom));
+        RAISE NOTICE '% intersects % : %', NEW.id, troncon.id, ST_AsEWKT(ST_Intersection(troncon.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
         intersections_on_new := ARRAY[0::float];
@@ -64,13 +63,14 @@ BEGIN
             -- If both intersects, one is enough, since split trigger will be applied recursively.
             intersections_on_new := ARRAY[]::integer[];
         END IF;
+
     --------------------------------------------------------------------
     -- 1. Handle paths intersecting with NEW (will handle NEW later)
     --------------------------------------------------------------------
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
-            RAISE NOTICE '% intersecting on current % : %', NEW.id, tid, intersections_on_current;
+            RAISE NOTICE '% intersecting on current % : %', NEW.id, troncon.id, intersections_on_current;
             
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
             LOOP
@@ -111,8 +111,59 @@ BEGIN
                                 troncon.comfort_id,
                                 segment)
                         RETURNING id INTO tid_clone;
+                    
+                    -- Copy topologies matching pk start/end
+                    RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;
+                    FOR debugrec IN SELECT
+                            tid_clone,
+                            et.evenement,
+                            pk_debut, pk_fin,
+                            (greatest(a, pk_debut) - a) / (b - a),
+                            (least(b, pk_fin) - a) / (b - a)
+                        FROM evenements_troncons et
+                        WHERE et.troncon = troncon.id 
+                              AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
+                                   (pk_debut = pk_fin AND pk_debut = a))
+                    LOOP
+                        RAISE NOTICE '%', debugrec;
+                    END LOOP;
+                    
+                    INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                        SELECT
+                            tid_clone,
+                            et.evenement,
+                            (greatest(a, pk_debut) - a) / (b - a),
+                            (least(b, pk_fin) - a) / (b - a)
+                        FROM evenements_troncons et
+                        WHERE et.troncon = troncon.id 
+                              AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
+                                   (pk_debut = pk_fin AND pk_debut = a)); -- Point
+
+                    -- Special case : point topology at the end of path
+                    IF b = 1 THEN
+                        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                            SELECT tid_clone, evenement, pk_debut, pk_fin
+                            FROM evenements_troncons et
+                            WHERE et.troncon = troncon.id AND 
+                                  pk_debut = pk_fin AND 
+                                  pk_debut = 1;
+                    END IF;
                 END IF;
             END LOOP;
+            
+            -- Now handle first path topologies
+            a := intersections_on_current[1];
+            b := intersections_on_current[2];
+            RAISE NOTICE 'Current: Remove topologies of % on [% ; %]', troncon.id, a, b;
+            DELETE FROM evenements_troncons et WHERE et.troncon = troncon.id
+                                               AND (pk_debut > b OR pk_fin < a);
+
+            -- Update topologies overlapping
+            RAISE NOTICE 'Current: Update topologies of % on [% ; %]', troncon.id, a, b;
+            UPDATE evenements_troncons et SET pk_debut = pk_debut / (b - a),
+                                              pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
+                WHERE et.troncon = troncon.id
+                AND pk_debut <= b AND pk_fin >= a; 
         END IF;
         
 
