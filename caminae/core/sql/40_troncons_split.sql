@@ -17,8 +17,6 @@ DECLARE
     
     intersections_on_new float[];
     intersections_on_current float[];
-
-    debugrec record;  -- debug purposes
 BEGIN
 
     -- Copy original geometry
@@ -113,21 +111,7 @@ BEGIN
                         RETURNING id INTO tid_clone;
                     
                     -- Copy topologies matching pk start/end
-                    RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;
-                    FOR debugrec IN SELECT
-                            tid_clone,
-                            et.evenement,
-                            pk_debut, pk_fin,
-                            (greatest(a, pk_debut) - a) / (b - a),
-                            (least(b, pk_fin) - a) / (b - a)
-                        FROM evenements_troncons et
-                        WHERE et.troncon = troncon.id 
-                              AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
-                                   (pk_debut = pk_fin AND pk_debut = a))
-                    LOOP
-                        RAISE NOTICE '%', debugrec;
-                    END LOOP;
-                    
+                    RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;                    
                     INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
                         SELECT
                             tid_clone,

@@ -222,3 +222,42 @@ class SplitPathTopologyTest(TestCase):
         # But start/end have changed
         aggr_ab = ab.aggregations.all()[0]
         self.assertEqual((0.4, 0.8), (aggr_ab.start_position, aggr_ab.end_position))
+
+
+    def test_split_tee_4(self):
+        """
+                B   C   E
+        A +--===+===+===+===--+ F
+                    |   
+                    +    AB, BE, EF exist.
+                    D    Add CD.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(2,0,0)))
+        be = PathFactory.create(name="BE", geom=LineString((2,0,0),(4,0,0)))
+        ef = PathFactory.create(name="EF", geom=LineString((4,0,0),(6,0,0)))
+        # Create a topology
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.5, end=1)
+        topology.add_path(be, start=0, end=1)
+        topology.add_path(ef, start=0.0, end=0.5)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(be.aggregations.all()), 1)
+        self.assertEqual(len(ef.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 3)
+        # Create CD
+        cd = PathFactory.create(geom=LineString((3,0,0),(3,2,0)))
+        # Topology still now covers 4 paths
+        self.assertEqual(len(topology.paths.all()), 4)
+        # AB and EF have still their topology
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(ef.aggregations.all()), 1)
+        
+        # BE and CE have one topology from 0.0 to 1.0
+        bc = Path.objects.filter(pk=be.pk)[0]
+        ce = Path.objects.filter(name="BE").exclude(pk=be.pk)[0]
+        self.assertEqual(len(bc.aggregations.all()), 1)
+        self.assertEqual(len(ce.aggregations.all()), 1)
+        aggr_bc = bc.aggregations.all()[0]
+        aggr_ce = ce.aggregations.all()[0]
+        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
+        self.assertEqual((0.0, 1.0), (aggr_ce.start_position, aggr_ce.end_position))
