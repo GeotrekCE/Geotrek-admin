@@ -83,9 +83,9 @@ class SplitPathTest(TestCase):
         """
         
                + E
-
+               :
         A +----+----+ B
-
+               :
         C +----+ D    AB and CD exist. CD updated into CE.
         
         """
@@ -141,7 +141,7 @@ class SplitPathTopologyTest(TestCase):
 
     def test_split_tee_1(self):
         """
-               C
+                 C
         A +---===+===---+ B
              A'  |  B'
                  +      AB exists with topology A'B'.
@@ -154,18 +154,18 @@ class SplitPathTopologyTest(TestCase):
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
         cd = PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
-        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         # Topology now covers 2 paths
         self.assertEqual(len(topology.paths.all()), 2)
         # AB and AB2 has one topology each
         self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(ab_2.aggregations.all()), 1)
+        self.assertEqual(len(cb.aggregations.all()), 1)
         # Topology position became proportional
         aggr_ab = ab.aggregations.all()[0]
-        aggr_ab_2 = ab_2.aggregations.all()[0]
-        self.assertEqual((aggr_ab.start_position, aggr_ab.end_position), (0.5, 1))
-        self.assertEqual((aggr_ab_2.start_position, aggr_ab_2.end_position), (0.0, 0.5))
-        
+        aggr_cb = cb.aggregations.all()[0]
+        self.assertEqual((0.5, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertEqual((0.0, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
+
 
     def test_split_tee_2(self):
         """
@@ -173,7 +173,7 @@ class SplitPathTopologyTest(TestCase):
         A +---+---=====--+ B
               |   A'  B'
               +           AB exists with topology A'B'.
-              D           Add CD. No effect.
+              D           Add CD
         """
         ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
         # Create a topology
@@ -184,11 +184,41 @@ class SplitPathTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.paths.all()[0], ab)
         cd = PathFactory.create(geom=LineString((1,0,0),(1,2,0)))
-        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        # CB was just created
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         
         # AB has no topology anymore
         self.assertEqual(len(ab.aggregations.all()), 0)
         # Topology now still covers 1 path, but the new one
         self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab_2.aggregations.all()), 1)
-        self.assertEqual(topology.paths.all()[0].pk, ab_2.pk)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        self.assertEqual(topology.paths.all()[0].pk, cb.pk)
+
+
+    def test_split_tee_3(self):
+        """
+                    C
+        A +--=====--+---+ B
+             A'  B' |   
+                    +    AB exists with topology A'B'.
+                    D    Add CD
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        # Create a topology
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.3, end=0.6)
+        # Topology covers 1 path
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.paths.all()[0], ab)
+        cd = PathFactory.create(geom=LineString((3,0,0),(3,2,0)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        
+        # CB does not have any
+        self.assertEqual(len(cb.aggregations.all()), 0)
+        
+        # AB has still its topology
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        # But start/end have changed
+        aggr_ab = ab.aggregations.all()[0]
+        self.assertEqual((0.4, 0.8), (aggr_ab.start_position, aggr_ab.end_position))
