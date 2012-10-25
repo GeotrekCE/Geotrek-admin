@@ -130,14 +130,8 @@ class Path(MapEntityMixin, StructureRelated):
         self.geom = tmp.geom
 
     def save(self, *args, **kwargs):
-        before = len(connection.connection.notices)
-        try:
-            super(Path, self).save(*args, **kwargs)
-            self.reload()
-        finally:
-            # Show triggers output
-            for notice in connection.connection.notices[before:]:
-                print notice
+        super(Path, self).save(*args, **kwargs)
+        self.reload()
 
     def get_elevation_profile(self):
         """
