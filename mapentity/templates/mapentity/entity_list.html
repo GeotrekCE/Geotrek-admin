@@ -93,6 +93,7 @@
             mainmap.addControl(new L.Control.Information());
             {% endif %}
 
+            mainmap.addControl(new L.Control.ResetView(bounds));
             mainmap.addControl(new L.Control.Measurement());
             
             // Always show the path layer, except if model is path
