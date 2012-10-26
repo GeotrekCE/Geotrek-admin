@@ -5,6 +5,8 @@
 import logging
 import traceback
 
+from django.conf import settings
+
 from south.signals import post_migrate
 
 logger = logging.getLogger(__name__)
@@ -33,7 +35,10 @@ def run_initial_sql(sender, **kwargs):
             f = open(sql_file)
             sql = f.read()
             f.close()
-            cursor.execute(sql.replace('%', '%%'))
+            if not settings.TEST:
+                # TODO: this is the ugliest driver hack ever
+                sql = sql.replace('%', '%%')
+            cursor.execute(sql)
         except Exception, e:
             logger.error("Failed to install custom SQL file '%s': %s\n" %
                          (sql_file, e))
