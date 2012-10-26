@@ -1,4 +1,5 @@
 import os
+import sys
 
 from django.contrib.messages import constants as messages
 
@@ -9,6 +10,7 @@ PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+TEST = 'test' in sys.argv
 
 ADMINS = (
     ('Makina Corpus', 'geobi@makina-corpus.com'),
@@ -263,8 +265,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        '': {
+        'caminae': {
             'handlers': ['console', 'mail_admins'],
+            'level': 'WARNING',
             'propagate': True,
         },
     }
