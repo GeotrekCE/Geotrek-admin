@@ -1,13 +1,13 @@
 (function() {
 
 var percentageDistance = function(ll, polyline) {
-    return MapEntity.Utils.getPercentageDistance(
+    return L.GeomUtils.getPercentageDistance(
         ll, polyline.getLatLngs(), 1000 /* in meters */, true
     );
 }
 
 var getLatLngFromPos = function() {
-    return MapEntity.Utils.getLatLngFromPos.apply(null,
+    return L.GeomUtils.getLatLngFromPos.apply(null,
         [].slice.call(arguments).concat([ 2000 /* meters */ ])
     );
 }
@@ -207,4 +207,3 @@ test('Testing, reverse geom, non-existing/non-existing 0.3 0.7', function() {
 });
 
 })();
-

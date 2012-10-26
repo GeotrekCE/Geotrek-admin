@@ -16,7 +16,7 @@ function {{ mapname }}Init(map, bounds) {
     
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
-    var objectLayer = new MapEntity.ObjectsLayer(geojson, {
+    var objectLayer = new L.ObjectsLayer(geojson, {
         style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'},
         indexing: false
     });
@@ -24,10 +24,9 @@ function {{ mapname }}Init(map, bounds) {
     var objectBounds = {{ object|latlngbounds }},
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
-    map.addControl(new L.Control.Scale());
     
     // Paths layer (TODO: should we show objectsLayers ?)
-    var pathsLayer = new MapEntity.ObjectsLayer(null, {
+    var pathsLayer = new L.ObjectsLayer(null, {
         style: {weight: 2, opacity: 0.7, clickable: false, color: '{{ LAYERCOLOR_PATHS }}'}
     });
     map.addLayer(pathsLayer);
