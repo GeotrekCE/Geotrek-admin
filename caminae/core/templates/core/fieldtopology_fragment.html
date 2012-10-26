@@ -1,4 +1,6 @@
-{% extends mapentity/fieldgeometry_fragment.html %}
+{% extends "mapentity/fieldgeometry_fragment.html" %}
+{% load static maps %}
+
 
 {% block requirements %}
 
@@ -18,19 +20,17 @@
 
     {{ block.super }}
 
-    var topology_settings = {
-        'enableMultipath': {
-            'path_json_graph_url': '{% url core:path_json_graph %}'
-        },
-    };
-
     delete {{ module }}_settings.enableDrawing; 
     
     {{ module }}_settings['enablePathSnapping'] = {
         'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
     };
-    
+
+    {{ module }}_settings['enableMultipath'] = {
+        'path_json_graph_url': '{% url core:path_json_graph %}'
+    };
+
     {{ module }}_settings.init = {
         'pathsnapping': true,
         'multipath': {{ is_multipath|yesno:"true,false" }},

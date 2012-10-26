@@ -620,6 +620,7 @@ L.Handler.MultiPath = L.Handler.extend({
     onComputedPaths: function(data) {
         var self = this;
         var topology = Caminae.TopologyHelper.buildTopologyFromComputedPath(this.idToLayer, data);
+        
         this.showPathGeom(topology.layer);
         this.fire('computed_topology', {topology:topology.serialized});
 
@@ -657,7 +658,7 @@ L.Handler.MultiPath = L.Handler.extend({
               , closest_point = null
               , matching_group_layer = null;
 
-            topology.layer.eachLayer(function(group_layer) {
+            topology.layer && topology.layer.eachLayer(function(group_layer) {
                 group_layer.eachLayer(function(layer) {
                     var p = layer.closestLayerPoint(layerPoint);
                     if (p && p.distance < min_dist && p.distance < MIN_DIST) {
@@ -673,7 +674,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 self.draggable_marker.addTo(self.map);
                 self.draggable_marker.group_layer = matching_group_layer;
             } else {
-                self.map.removeLayer(self.draggable_marker);
+                self.draggable_marker && self.map.removeLayer(self.draggable_marker);
             }
         };
 
@@ -713,6 +714,10 @@ Caminae.compute_path = (function() {
     }
 
     function computePaths(graph, steps) {
+        /*
+         *  Returns list of paths, and null if not found.
+         */
+
         /*
         if (steps.length < 2) {
             return null;

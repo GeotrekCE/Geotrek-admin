@@ -231,7 +231,6 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         map.addControl(new L.Control.ResetView(getBounds));
-        map.addControl(new L.Control.Scale());
 
         // Show other objects of same type
         var modelname = module.getModelName(),

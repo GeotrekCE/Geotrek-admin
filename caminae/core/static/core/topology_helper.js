@@ -98,7 +98,12 @@ Caminae.TopologyHelper = (function() {
     function buildTopologyFromComputedPath(idToLayer, data) {
         // This piece of code was moved from formfield.js, its place is here,
         // not around control instantiation. Of course this is not very elegant.
-
+        if (!data.computed_paths) {
+            return {
+                layer: null,
+                serialized: null
+            }
+        }
         var computed_paths = data['computed_paths']
           , new_edges = data['new_edges'];
 
