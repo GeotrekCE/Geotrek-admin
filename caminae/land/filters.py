@@ -4,15 +4,55 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_filters import ModelChoiceFilter
 
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology, Path
 from caminae.common.models import Organism
 from caminae.common.filters import StructureRelatedFilterSet
 from caminae.mapentity.filters import MapEntityFilterSet
+
 
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
     SignageManagementEdge, WorkManagementEdge
 )
+
+
+def filter(qs, edges):
+    """
+    This piece of code was moved from core, and should be rewritten nicely
+    with managers : TODO !
+    """
+    # TODO: this is wrong, land should not depend on maintenance
+    import caminae.maintenance as maintenance
+    
+    overlapping = set(Topology.overlapping(edges))
+
+    paths = []
+    for o in overlapping:
+        paths.extend(o.paths.all())
+
+    # In case, we filter on paths
+    if qs.model == Path:
+        return qs.filter(pk__in=[ path.pk for path in set(paths) ])
+
+    # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
+    elif issubclass(qs.model, maintenance.models.Intervention):
+        return qs.filter(topology__in=[ topo.pk for topo in overlapping ])
+    elif issubclass(qs.model, maintenance.models.Project):
+        # Find all interventions overlapping those edges
+        interventions = filter(maintenance.models.Intervention.objects.existing()\
+                                                              .select_related(depth=1)\
+                                                              .filter(project__in=qs), 
+                               edges)
+        # Return only the projects concerned by the interventions
+        projects = []
+        for intervention in interventions:
+            projects.append(intervention.project.pk)
+        return qs.filter(pk__in=set(projects))
+
+    else:
+        assert isinstance(qs.model, Topology), "%s is not a Topology as expected" % qs.model
+        return qs.filter(pk__in=[ topo.pk for topo in overlapping ])
+
 
 
 class PhysicalEdgeFilter(MapEntityFilterSet):
@@ -58,7 +98,7 @@ class TopoFilterPhysicalType(ModelChoiceFilter):
             return qs
 
         edges = value_physical_type.physicaledge_set.all()
-        return TopologyMixin.overlapping(qs, edges)
+        return filter(qs, edges)
 
 
 class TopoFilterLandType(ModelChoiceFilter):
@@ -72,7 +112,7 @@ class TopoFilterLandType(ModelChoiceFilter):
             return qs
 
         edges = value_land_type.landedge_set.all()
-        return TopologyMixin.overlapping(qs, edges)
+        return filter(qs, edges)
 
 
 class TopoFilter(ModelChoiceFilter):
@@ -86,7 +126,7 @@ class TopoFilter(ModelChoiceFilter):
             return qs
 
         edges = self.orga_to_edges(value_orga)
-        return TopologyMixin.overlapping(qs, edges)
+        return filter(qs, edges)
 
     def orga_to_edges(self, orga):
         raise NotImplementedError

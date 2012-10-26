@@ -16,13 +16,15 @@ Known problems
 Soon...
 ==========
 
-* Refactor TopologyMixin.overlapping() : should not receive queryset
+* Refactor Topology.overlapping() : should not receive queryset
 
 * Should not be necessary to call "existing()" on each manager
 
 * Split and simplify formfield.js
 
 * Release Leaflet.measure
+
+* Set ON DELETE on tables https://docs.djangoproject.com/en/1.4/ref/models/fields/#django.db.models.ForeignKey.on_delete
 
 * Make application optional (ex: remove dependancies from core)
 

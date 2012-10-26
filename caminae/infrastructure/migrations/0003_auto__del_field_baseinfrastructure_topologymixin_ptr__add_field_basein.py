@@ -8,19 +8,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'BaseInfrastructure.topologymixin_ptr'
-        db.delete_column('amenagement', 'topologymixin_ptr_id')
+        # Deleting field 'BaseInfrastructure.topology_ptr'
+        db.delete_column('amenagement', 'topology_ptr_id')
 
         # Adding field 'BaseInfrastructure.topo_object'
         db.add_column('amenagement', 'topo_object',
-                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.TopologyMixin'], unique=True, primary_key=True, db_column='evenement'),
+                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement'),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Adding field 'BaseInfrastructure.topologymixin_ptr'
-        db.add_column('amenagement', 'topologymixin_ptr',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default='NULL', to=orm['core.TopologyMixin'], unique=True, primary_key=True),
+        # Adding field 'BaseInfrastructure.topology_ptr'
+        db.add_column('amenagement', 'topology_ptr',
+                      self.gf('django.db.models.fields.related.OneToOneField')(default='NULL', to=orm['core.Topology'], unique=True, primary_key=True),
                       keep_default=False)
 
         # Deleting field 'BaseInfrastructure.topo_object'
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.TopologyMixin']"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.Topology']"})
         },
         'core.stake': {
             'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
@@ -81,20 +81,20 @@ class Migration(SchemaMigration):
             'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'core.topologymixin': {
-            'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
+        'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
+            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'troncons': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'symmetrical': 'False'})
         },
-        'core.topologymixinkind': {
-            'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
+        'core.topologykind': {
+            'Meta': {'object_name': 'TopologyKind', 'db_table': "'type_evenements'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
@@ -114,11 +114,11 @@ class Migration(SchemaMigration):
             'usage': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'infrastructure.baseinfrastructure': {
-            'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'amenagement'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'amenagement'", '_ormbases': ['core.Topology']},
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['infrastructure.InfrastructureType']"})
         },
         'infrastructure.infrastructuretype': {

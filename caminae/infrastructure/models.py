@@ -4,7 +4,7 @@ from django.contrib.gis.db import models as gismodels
 
 from extended_choices import Choices
 
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology, Path
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelatedManager, StructureRelated
 
@@ -52,9 +52,9 @@ class InfrastructureType(StructureRelated):
         return self.label
 
 
-class BaseInfrastructure(MapEntityMixin, TopologyMixin, StructureRelated):
+class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                       db_column='evenement')
     
     name = models.CharField(db_column="nom", max_length=128)
@@ -101,6 +101,14 @@ class Infrastructure(BaseInfrastructure):
     class Meta:
         proxy = True
 
+    @classmethod
+    def path_infrastructures(cls, path):
+        return [Infrastructure.objects.get(pk=t.pk)
+                for t in path.topology_set.existing().filter(
+                    kind=Infrastructure.KIND)]
+
+    Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self))
+
 
 class SignageGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
@@ -120,3 +128,11 @@ class Signage(BaseInfrastructure):
     in_structure = SignageStructureManager()
     class Meta:
         proxy = True
+
+    @classmethod
+    def path_signages(cls, path):
+        return [Signage.objects.get(pk=t.pk)
+                for t in path.topology_set.existing().filter(
+                    kind=Signage.KIND)]
+
+Path.add_property('signages', lambda self: Signage.path_signages(self))

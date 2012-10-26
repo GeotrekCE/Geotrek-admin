@@ -31,7 +31,7 @@ from screamshot.decorators import login_required_capturable
 from screamshot.utils import casperjs_capture
 
 from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
-from caminae.core.models import split_bygeom # TODO
+from caminae.common.utils import split_bygeom # TODO
 
 from . import models as mapentity_models
 from . import shape_exporter

@@ -46,31 +46,31 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('troncons_networks', ['path_id', 'network_id'])
 
-        # Adding model 'TopologyMixin'
+        # Adding model 'Topology'
         db.create_table('evenements', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('offset', self.gf('django.db.models.fields.IntegerField')(default=0, db_column='decallage')),
-            ('kind', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyMixinKind'])),
+            ('kind', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyKind'])),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='supprime')),
             ('date_insert', self.gf('django.db.models.fields.DateTimeField')()),
             ('date_update', self.gf('django.db.models.fields.DateTimeField')()),
             ('length', self.gf('django.db.models.fields.FloatField')(default=0.0, db_column='longueur')),
             ('geom', self.gf('django.contrib.gis.db.models.fields.GeometryField')(srid=2154, dim=3, spatial_index=False)),
         ))
-        db.send_create_signal('core', ['TopologyMixin'])
+        db.send_create_signal('core', ['Topology'])
 
-        # Adding model 'TopologyMixinKind'
+        # Adding model 'TopologyKind'
         db.create_table('type_evenements', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('kind', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
-        db.send_create_signal('core', ['TopologyMixinKind'])
+        db.send_create_signal('core', ['TopologyKind'])
 
         # Adding model 'PathAggregation'
         db.create_table('evenements_troncons', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('path', self.gf('django.db.models.fields.related.ForeignKey')(related_name='aggregations', db_column='troncon', to=orm['core.Path'])),
-            ('topo_object', self.gf('django.db.models.fields.related.ForeignKey')(related_name='aggregations', db_column='evenement', to=orm['core.TopologyMixin'])),
+            ('topo_object', self.gf('django.db.models.fields.related.ForeignKey')(related_name='aggregations', db_column='evenement', to=orm['core.Topology'])),
             ('start_position', self.gf('django.db.models.fields.FloatField')(db_column='pk_debut')),
             ('end_position', self.gf('django.db.models.fields.FloatField')(db_column='pk_fin')),
         ))
@@ -130,10 +130,10 @@ class Migration(SchemaMigration):
         # Removing M2M table for field networks on 'Path'
         db.delete_table('troncons_networks')
 
-        # Deleting model 'TopologyMixin'
+        # Deleting model 'Topology'
         db.delete_table('evenements')
 
-        # Deleting model 'TopologyMixinKind'
+        # Deleting model 'TopologyKind'
         db.delete_table('type_evenements')
 
         # Deleting model 'PathAggregation'
@@ -201,7 +201,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.TopologyMixin']"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.Topology']"})
         },
         'core.stake': {
             'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
@@ -209,20 +209,20 @@ class Migration(SchemaMigration):
             'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'core.topologymixin': {
-            'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
+        'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
+            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'db_column': "'longueur'"}),
             'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'db_column': "'troncons'", 'symmetrical': 'False'})
         },
-        'core.topologymixinkind': {
-            'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
+        'core.topologykind': {
+            'Meta': {'object_name': 'TopologyKind', 'db_table': "'type_evenements'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },

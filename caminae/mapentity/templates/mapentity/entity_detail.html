@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n static field_verbose_name maps convert_tags %}
+{% load i18n static field_verbose_name mapentity maps convert_tags %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
 
@@ -8,7 +8,6 @@
 
     {% block detailspanel %}
         <h2>
-            
             {% if object.structure %}
                 <span class="badge badge-info">{{ object.structure }}</span>
             {% endif %}
@@ -28,6 +27,8 @@
             </div>
         </h2>
     {% endblock detailspanel %}
+
+    {% smart_include object "detail" %}
 
     {% block attachmentpanel %}
     <div class="file-attachment file-attachment-detail">

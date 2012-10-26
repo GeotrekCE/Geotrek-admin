@@ -9,23 +9,23 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Renaming column for 'TopologyMixin.kind' to match new field type.
+        # Renaming column for 'Topology.kind' to match new field type.
         db.rename_column('evenements', 'kind_id', 'kind')
-        # Changing field 'TopologyMixin.kind'
+        # Changing field 'Topology.kind'
         db.alter_column('evenements', 'kind', self.gf('django.db.models.fields.CharField')(max_length=32))
-        # Removing index on 'TopologyMixin', fields ['kind']
+        # Removing index on 'Topology', fields ['kind']
         db.delete_index('evenements', ['kind_id'])
 
 
     def backwards(self, orm):
-        # Adding index on 'TopologyMixin', fields ['kind']
+        # Adding index on 'Topology', fields ['kind']
         db.create_index('evenements', ['kind_id'])
 
 
-        # Renaming column for 'TopologyMixin.kind' to match new field type.
+        # Renaming column for 'Topology.kind' to match new field type.
         db.rename_column('evenements', 'kind', 'kind_id')
-        # Changing field 'TopologyMixin.kind'
-        db.alter_column('evenements', 'kind_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyMixinKind']))
+        # Changing field 'Topology.kind'
+        db.alter_column('evenements', 'kind_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.TopologyKind']))
 
     models = {
         'authent.structure': {
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.TopologyMixin']"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.Topology']"})
         },
         'core.stake': {
             'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
@@ -81,8 +81,8 @@ class Migration(SchemaMigration):
             'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'core.topologymixin': {
-            'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
+        'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
@@ -93,8 +93,8 @@ class Migration(SchemaMigration):
             'offset': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'db_column': "'decallage'"}),
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'db_column': "'troncons'", 'symmetrical': 'False'})
         },
-        'core.topologymixinkind': {
-            'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
+        'core.topologykind': {
+            'Meta': {'object_name': 'TopologyKind', 'db_table': "'type_evenements'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },

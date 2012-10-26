@@ -9,10 +9,10 @@ from crispy_forms.layout import Field
 from caminae.common.forms import CommonForm
 from .models import Path
 from .fields import TopologyField
-from .widgets import LineStringWidget
+from .widgets import SnappedLineStringWidget
 
 
-class TopologyMixinForm(CommonForm):
+class TopologyForm(CommonForm):
     """
     This form is a bit specific : 
     
@@ -26,19 +26,19 @@ class TopologyMixinForm(CommonForm):
     geomfields = ('topology', )
 
     def __init__(self, *args, **kwargs):
-        super(TopologyMixinForm, self).__init__(*args, **kwargs)
+        super(TopologyForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['topology'].initial = self.instance
 
     def clean(self, *args, **kwargs):
-        data = super(TopologyMixinForm, self).clean()
+        data = super(TopologyForm, self).clean()
         if 'geom' in self.errors:
             del self.errors['geom']
         return data
 
     def save(self, *args, **kwargs):
         topology = self.cleaned_data.pop('topology')
-        instance = super(TopologyMixinForm, self).save(*args, **kwargs)
+        instance = super(TopologyForm, self).save(*args, **kwargs)
         instance.mutate(topology)
         return instance
 
@@ -47,7 +47,7 @@ class TopologyMixinForm(CommonForm):
 
 
 class PathForm(CommonForm):
-    geom = forms.gis.LineStringField(widget=LineStringWidget)
+    geom = forms.gis.LineStringField(widget=SnappedLineStringWidget)
 
     reverse_geom = forms.BooleanField(
            required=False,

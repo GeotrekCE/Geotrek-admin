@@ -3,9 +3,9 @@
 import factory
 
 from caminae.core.factories import (
-    TopologyMixinFactory,
-    TopologyMixinInBoundsRandomGeomFactory,
-    TopologyMixinInBoundsExistingGeomFactory,
+    TopologyFactory,
+    TopologyInBoundsRandomGeomFactory,
+    TopologyInBoundsExistingGeomFactory,
 )
 
 from . import models
@@ -20,7 +20,7 @@ class InfrastructureTypeFactory(factory.Factory):
 
 ## Infrastructure ##
 
-class InfrastructureFactory(TopologyMixinFactory):
+class InfrastructureFactory(TopologyFactory):
     FACTORY_FOR = models.Infrastructure
     name = factory.Sequence(lambda n: u"Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory)
@@ -29,18 +29,18 @@ class InfrastructureFactory(TopologyMixinFactory):
 class InfrastructureInBoundsRandomGeomFactory(InfrastructureFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
-        return TopologyMixinInBoundsRandomGeomFactory.create_pathaggregation_from_topo(topo_mixin)
+        return TopologyInBoundsRandomGeomFactory.create_pathaggregation_from_topo(topo_mixin)
 
 
 class InfrastructureInBoundsExistingGeomFactory(InfrastructureFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
-        return TopologyMixinInBoundsExistingGeomFactory.create_pathaggregation_from_topo(topo_mixin)
+        return TopologyInBoundsExistingGeomFactory.create_pathaggregation_from_topo(topo_mixin)
 
 
 ## Signage ##
 
-class SignageFactory(TopologyMixinFactory):
+class SignageFactory(TopologyFactory):
     FACTORY_FOR = models.Signage
 
     name = factory.Sequence(lambda n: u"Signage %s" % n)
@@ -50,11 +50,11 @@ class SignageFactory(TopologyMixinFactory):
 class SignageInBoundsExistingGeomFactory(SignageFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
-        return TopologyMixinInBoundsExistingGeomFactory.create_pathaggregation_from_topo(topo_mixin)
+        return TopologyInBoundsExistingGeomFactory.create_pathaggregation_from_topo(topo_mixin)
 
 
 class SignageInBoundsRandomGeomFactory(SignageFactory):
     @classmethod
     def create_pathaggregation_from_topo(cls, topo_mixin):
-        return TopologyMixinInBoundsRandomGeomFactory.create_pathaggregation_from_topo(topo_mixin)
+        return TopologyInBoundsRandomGeomFactory.create_pathaggregation_from_topo(topo_mixin)
 

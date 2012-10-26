@@ -6,7 +6,7 @@ from caminae.land.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
-from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyMixinFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
 from caminae.maintenance.filters import ProjectFilter, InterventionFilter
 from caminae.maintenance.factories import InterventionFactory, ProjectFactory
@@ -19,10 +19,10 @@ class InterventionFilteringByLandTest(TestCase):
     def create_pair_of_distinct_by_topo_intervention(self):
         p1, seek_path = self.create_pair_of_distinct_path()
 
-        topo_1 = TopologyMixinFactory.create(no_path=True)
+        topo_1 = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
 
-        seek_topo = TopologyMixinFactory.create(no_path=True)
+        seek_topo = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
 
         it_p1 = InterventionFactory.create(topology=topo_1)
@@ -115,10 +115,10 @@ class ProjectFilteringByLandTest(TestCase):
     def create_pair_of_distinct_by_topo_project(self):
         p1, seek_path = self.create_pair_of_distinct_path()
 
-        topo_1 = TopologyMixinFactory.create(no_path=True)
+        topo_1 = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
 
-        seek_topo = TopologyMixinFactory.create(no_path=True)
+        seek_topo = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
 
         it_p1 = InterventionFactory.create(topology=topo_1)

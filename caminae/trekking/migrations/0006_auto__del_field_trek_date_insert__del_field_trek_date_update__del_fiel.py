@@ -26,9 +26,9 @@ class Migration(SchemaMigration):
         # Deleting field 'Trek.length'
         db.delete_column('itineraire', 'length')
 
-        # Adding field 'Trek.topologymixin_ptr'
-        db.add_column('itineraire', 'topologymixin_ptr',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default=1, to=orm['core.TopologyMixin'], unique=True, primary_key=True),
+        # Adding field 'Trek.topology_ptr'
+        db.add_column('itineraire', 'topology_ptr',
+                      self.gf('django.db.models.fields.related.OneToOneField')(default=1, to=orm['core.Topology'], unique=True, primary_key=True),
                       keep_default=False)
 
         # Removing M2M table for field paths on 'Trek'
@@ -66,8 +66,8 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.FloatField')(default=0.0),
                       keep_default=False)
 
-        # Deleting field 'Trek.topologymixin_ptr'
-        db.delete_column('itineraire', 'topologymixin_ptr_id')
+        # Deleting field 'Trek.topology_ptr'
+        db.delete_column('itineraire', 'topology_ptr_id')
 
         # Adding M2M table for field paths on 'Trek'
         db.create_table('itineraire_paths', (
@@ -124,7 +124,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
             'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'"}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.TopologyMixin']"})
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': "orm['core.Topology']"})
         },
         'core.stake': {
             'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
@@ -132,20 +132,20 @@ class Migration(SchemaMigration):
             'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
-        'core.topologymixin': {
-            'Meta': {'object_name': 'TopologyMixin', 'db_table': "'evenements'"},
+        'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyMixinKind']"}),
+            'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'offset': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'decallage'"}),
             'troncons': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['core.Path']", 'through': "orm['core.PathAggregation']", 'symmetrical': 'False'})
         },
-        'core.topologymixinkind': {
-            'Meta': {'object_name': 'TopologyMixinKind', 'db_table': "'type_evenements'"},
+        'core.topologykind': {
+            'Meta': {'object_name': 'TopologyKind', 'db_table': "'type_evenements'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
@@ -182,7 +182,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'trekking.poi': {
-            'Meta': {'object_name': 'POI', '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'POI', '_ormbases': ['core.Topology']},
             'description': ('django.db.models.fields.TextField', [], {}),
             'description_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'description_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -191,7 +191,7 @@ class Migration(SchemaMigration):
             'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pois'", 'to': "orm['trekking.POIType']"})
         },
         'trekking.poitype': {
@@ -212,7 +212,7 @@ class Migration(SchemaMigration):
             'route_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
         },
         'trekking.trek': {
-            'Meta': {'object_name': 'Trek', 'db_table': "'itineraire'", '_ormbases': ['core.TopologyMixin']},
+            'Meta': {'object_name': 'Trek', 'db_table': "'itineraire'", '_ormbases': ['core.Topology']},
             'advice': ('django.db.models.fields.TextField', [], {}),
             'advice_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'advice_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -259,7 +259,7 @@ class Migration(SchemaMigration):
             'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '2154', 'spatial_index': 'False'}),
             'public_transport': ('django.db.models.fields.TextField', [], {}),
             'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Route']"}),
-            'topologymixin_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.TopologyMixin']", 'unique': 'True', 'primary_key': 'True'}),
+            'topology_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True'}),
             'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.Usage']"}),
             'validated': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'web_links': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.WebLink']"})

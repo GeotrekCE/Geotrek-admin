@@ -1684,3 +1684,313 @@ Fixé.
 ------------------------------------------------------------------------------------
 
 Fixé.
+
+========================
+Sprint 7 - Version 0.7.0
+========================
+
+
+#335, #328 - [BUG] Evenement linéaire différent en édition.
+-----------------------------------------------------------
+
+Le problème était lié au trigger qui calcule la géométrie résultante, lorsque
+des marqueurs intermédiaires étaient placés, ainsi qu'au composant d'édition de topologies, 
+qui ignorait les marqueurs intermédiaires lorsque ceux-ci étaient placés à des intersections (début ou fin à 0.0 ou 1.0).
+
+* Vérifier que les géométries des saisies multi-tronçons sans marqueurs sont bien calculées
+  et sont bien restaurées en édition.
+
+* Vérifier que les saisies avec marqueurs intermédiaires sont bien calculées
+  et restaurées.
+
+* Vérifier que les saisies avec marqueurs sur intersections sont bien calculées 
+  et restaurées.
+
+
+#379 - [BUG] Édition topologie point à un croisement : mauvais marqueur utilisé pour l'edition
+---------------------------------------------------------------------------------------
+
+Fixé.
+
+
+#375 - [BUG] (Javascript) Ajouter une signalétique, la carte ne s'affiche pas
+----------------------------------------------------------------------
+
+* Vider le cache du navigateur (localstorage inclus)
+
+* Accéder au formulaire d'ajout directement (ex: ``path/add/`` ou ``signage/add/``)
+
+* La carte s'affiche bien sur la zone globale du parc
+
+
+Pour vérifier que le comportement est conservé :
+
+* Retourner sur la vue liste, zoomer, aller sur ajout : la carte est positionnée sur la zone
+
+* Éditer un objet existant, vérifier que la carte est positionnée sur l'objet
+
+
+#314 - [BUG] Itinéraires - affichage sur la carte
+-------------------------------------------------
+
+Fixé.
+
+
+#329 - [BUG] (Javascript) Edition Topology : ajout d'un point n'efface pas le précédent
+---------------------------------------------------------------------------------------
+
+Sur un formulaire d'ajout (ex: signalétique)
+
+* Ajouter un point
+
+* Ajouter un autre point : le premier point est effacé. Le second est ajouté.
+
+* Ajouter un point;
+
+* Ajouter une topologie ligne : le point précédent est effacé, la ligne est ajoutée.
+
+* Ajouter un point : la topologie ligne précédente est effacée.
+
+
+Sur un formulaire d'édition :
+
+* Si l'objet est un point, le marqueur est déplaçable au chargement de la page
+
+* Si l'objet est un chemin, les marqueurs sont déplaçables, l'outil topologie est activé.
+
+* Le fonctionnement du formulaire d'ajout s'applique.
+
+
+#340 - Topologies : Sélectionner l'outil multipath devrait désactiver l'outil point
+-----------------------------------------------------------------------------------
+
+Désormais il n'est plus possible d'activer l'outil point lorsque l'on est
+en train de saisir une ligne multi-tronçons.
+
+
+#341 - [BUG] Edition trek : Cannot read property '_leaflet_mousedown1' 
+----------------------------------------------------------------------
+
+Erreur liée au marqueur du champ parking, désormais fixée. Le marqueur de parking
+est bien restauré en édition.
+
+
+#279, #331 - Découpage de tronçons et association des évènements
+----------------------------------------------------------------
+
+Voici la liste des cas qui sont gérés et testés.
+Les cas qui ne sont pas supportés sont explicités plus bas.
+
+::
+
+               C
+        A +----+----+ B
+               |
+               +      AB exists. Add CD.
+               D      or CD exists and add AB.
+
+               C
+               +
+               |
+        A +----+----+ B
+               |
+               +      AB exists. Add CD.
+               D      
+
+             C   D
+             +   +
+             |   |
+        A +--+---+--+ B
+             |   |
+             +---+ 
+
+
+             C   E   G   I
+             +   +   +   +
+             |   |   |   |
+        A +--+---+----------+ B
+             |   |   |   |
+             +   +   +   +
+             D   F   H   J
+
+                                       + E
+                                       :
+        A +----+----+ B         A +----+----+ B
+                                       :
+        C +----+ D              C +----+ D
+        
+                                    AB and CD exist.
+                                    CD updated into CE.
+        
+
+Avec des évènements linéaires sur les tronçons :
+
+::
+
+                 C
+        A +---===+===---+ B
+             A'  |  B'
+                 +      AB exists with topology A'B'.
+                 D      Add CD.
+                 
+                     C
+        A +---+---=====--+ B
+              |   A'  B'
+              +           AB exists with topology A'B'.
+              D           Add CD          
+                 
+
+                    C
+        A +--=====--+---+ B
+             A'  B' |   
+                    +    AB exists with topology A'B'.
+                    D    Add CD
+
+                B   C   E
+        A +--===+===+===+===--+ F
+                    |   
+                    +    AB, BE, EF exist.
+                    D    Add CD.
+
+             C   D
+             +   +
+             |   |
+      A +--==+===+==--+ B
+             |   |
+             +---+ 
+
+Et lors de la mise à jour :
+
+::
+                                          + E
+                                          :
+                                         ||
+        A +-----------+ B         A +----++---+ B
+                                         ||
+        C +-====-+ D              C +--===+ D
+             
+                                          + E
+                                          :
+                                          :
+        A +-----------+ B         A +-----+---+ B
+                                          :
+        C +-==------+ D           C +--===+ D
+
+                                           + E
+                                          ||
+                                          ||
+        A +-----------+ B         A +-----+---+ B
+                                          :
+        C +------==-+ D           C +-----+ D
+
+
+Avec des évènements ponctuels :
+
+::
+
+                C
+        A +-----X----+ B
+                |   
+                +    AB exists with topology at C.
+                D    Add CD.
+                C
+    
+        A +--X--+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+                C
+    
+        A +-----+--X--+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+                C
+    
+        A X-----+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+    
+                C
+        A +-----+----X B
+                |   
+                +    AB exists.
+                D    Add CD.
+    
+
+Et lors de la mise à jour :
+
+::
+
+                                      + E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-X-----+ D              C +--X-+ D
+    
+                                      + E
+                                      X
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-----X-+ D              C +----+ D
+
+                                      + E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C X-------+ D              C X----+ D
+
+                                      X E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-------X D              C +----+ D
+
+
+Les cas suivants sont mal supportés :
+
+::
+    
+    BUG: AF segment not associated to X
+    
+                                      + E
+                                      :
+                                     F:
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +---X---+ D              C +----+ D
+    
+    
+    BUG: AD,DB segment not associated to X
+    
+                                      D
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +-------X D                     :
+                                      +
+                                      C
+                
+    BUG: AC,CB segment not associated to X
+          
+                                      C
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C X-------+ D                     :
+                                      + D
+
+Le cas suivant n'est pas géré volontairement :
+
+::
+
+    AB et CD se superposent. Seuls les intersections ponctuelles sont gérées.
+    
+    C +---+
+          |      
+    A +---+---+---+ B
+              |      
+              +---+ D

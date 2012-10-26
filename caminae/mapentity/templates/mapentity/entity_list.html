@@ -8,7 +8,7 @@
         {# ids: bbox_cities bbox_districts #}
         {% combobox_bbox_land %}
     </div>
-    {% leaflet_map "mainmap" %}
+    {% leaflet_map "mainmap" fitextent=False %}
 {% endblock mainmap %}
 
 {% block filters %}
@@ -85,18 +85,21 @@
             
             {% if DEBUG %}
             mainmap.on('viewreset moveend', function () {
+                if (!mainmap._loaded)
+                    return;
                 var n = objectsLayer.search(mainmap.getBounds()).length;
                 objectsLayer.fire('info', {info : n + ' objects shown'});
             });
             mainmap.addControl(new L.Control.Information());
             {% endif %}
 
+            mainmap.addControl(new L.Control.ResetView(bounds));
             mainmap.addControl(new L.Control.Measurement());
             
             // Always show the path layer, except if model is path
             // TODO: this is not supposed to be in mapentity --> caminae.common
             if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
-                var paths = new MapEntity.ObjectsLayer(null, {
+                var paths = new L.ObjectsLayer(null, {
                     indexing: false,
                     style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
                 });
@@ -110,7 +113,7 @@
                               {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}'}];
             for (var i=0; i<landLayers.length; i++) {
                 var landLayer = landLayers[i];
-                var layer = new MapEntity.ObjectsLayer(null, {
+                var layer = new L.ObjectsLayer(null, {
                     indexing: false,
                     style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
                 });
@@ -124,7 +127,7 @@
                 return "{{ model.get_generic_detail_url }}".replace('0', properties.pk);
             };
             
-            var objectsLayer = new MapEntity.ObjectsLayer(null, {
+            var objectsLayer = new L.ObjectsLayer(null, {
                 objectUrl: getUrl,
                 style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
             });
@@ -287,15 +290,32 @@
                 return false;
             });
 
-            // Store the map bounds as WKT in the bbox field
-            function storeBoundsToField($field, bounds) {
-                var rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-                $field.val(MapEntity.getWKT(rect));
+            /*
+             * Store initial map bounds, used for reset
+             */
+            var initial_map_bounds = null;
+            if (map._loaded) {
+                initial_map_bounds = map.getBounds();
             }
-
-            var initial_map_bounds = map.getBounds();
-            var bbox_field = $('#id_bbox');
-            var storeCurrentMapBoundsToField = function() { storeBoundsToField(bbox_field, map.getBounds()); };
+            else {
+                map.on('load', function () {
+                    initial_map_bounds = map.getBounds();
+                }, map);
+            }
+            
+            var storeCurrentMapBoundsToField = function() {
+                // Store the map bounds as WKT in the bbox field
+                var bbox_field = $('#id_bbox');
+                var storeBounds = function () {
+                    var bounds = map.getBounds(),
+                        rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
+                    bbox_field.val(L.Util.getWKT(rect));
+                };
+                if (map._loaded)
+                    storeBounds(); 
+                else
+                    map.on('load', storeBounds);
+            };
 
             // Restore initial map bounds on trigger
             submitbutton.click(ajaxMapObjectsUpdateOnly);
@@ -334,7 +354,7 @@
 
             function listenMapBoundsUpdate(on) {
                 on = on === undefined ? true: on;
-                map[on ? 'on': 'off']('moveend', ajaxMapBoundsUpdateOnly);
+                map[on ? 'on': 'off']('load moveend viewreset', ajaxMapBoundsUpdateOnly);
             }
 
             listenMapBoundsUpdate(true);

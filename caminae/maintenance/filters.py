@@ -1,7 +1,7 @@
 from django.forms.widgets import Select
 from django.utils.translation import ugettext_lazy as _
 
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology
 from caminae.mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
 from caminae.mapentity.widgets import GeomWidget
 
@@ -15,7 +15,7 @@ class PolygonTopologyFilter(PolygonFilter):
         if not value:
             return qs
         lookup = self.lookup_type
-        inner_qs = TopologyMixin.objects.filter(**{'geom__%s' % lookup: value})
+        inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
         return qs.filter(**{'%s__in' % self.name: inner_qs})
 
 

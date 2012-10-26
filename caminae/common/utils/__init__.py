@@ -4,7 +4,7 @@ from urlparse import urljoin
 from django.db import connection
 from django.conf import settings
 from django.utils.timezone import utc
-from django.contrib.gis.geos import GEOSException, fromstr
+from django.contrib.gis.geos import GEOSException, fromstr, LineString, Point
 
 
 def dbnow():
@@ -70,3 +70,20 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
+
+
+def split_bygeom(iterable, geom_getter=lambda x: x.geom):
+    """Split an iterable in two list (points, linestring)"""
+    points, linestrings = [], []
+    
+    for x in iterable:
+        geom = geom_getter(x)
+        if geom is None:
+            pass
+        elif isinstance(geom, Point):
+            points.append(x)
+        elif isinstance(geom, LineString):
+            linestrings.append(x)
+        else:
+            raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
+    return points, linestrings

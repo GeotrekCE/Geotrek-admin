@@ -1,22 +1,15 @@
 L.Control.TopologyPoint = L.Control.extend({
+    includes: L.Mixin.ActivableControl,
+
     options: {
         position: 'topright',
     },
 
     initialize: function (map, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.topologyhandler = new L.Handler.TopologyPoint(map);
-        this.topologyhandler.on('added', this.toggle, this);
-    },
-
-    toggle: function() {
-        if (this.topologyhandler.enabled()) {
-            this.topologyhandler.disable.call(this.topologyhandler);
-            L.DomUtil.removeClass(this._container, 'enabled');
-        } else {
-            this.topologyhandler.enable.call(this.topologyhandler);
-            L.DomUtil.addClass(this._container, 'enabled');
-        }
+        this.handler = new L.Handler.TopologyPoint(map);
+        // Deactivate control once point is added
+        this.handler.on('added', this.toggle, this);
     },
 
     onAdd: function (map) {
@@ -37,7 +30,6 @@ L.Control.TopologyPoint = L.Control.extend({
 });
 
 
-
 L.Handler.TopologyPoint = L.Marker.Draw.extend({
     initialize: function (map, options) {
         L.Marker.Draw.prototype.initialize.call(this, map, options);
@@ -50,32 +42,31 @@ L.Handler.TopologyPoint = L.Marker.Draw.extend({
 
 
 L.Control.Multipath = L.Control.extend({
+    includes: L.Mixin.ActivableControl,
+
     options: {
         position: 'topright',
     },
 
-    /* dijkstra */
-    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+    initialize: function (map, graph_layer, snapObserver, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.dijkstra = dijkstra;
-        this.multipath_handler = new L.Handler.MultiPath(
-            map, graph_layer, dijkstra, markersFactory, this.options.handler
-        );
 
-        this.multipath_handler.on('enabled', function() {
-            L.DomUtil.addClass(this._container, 'enabled');
-        }, this);
-        this.multipath_handler.on('disabled', function() {
-            L.DomUtil.removeClass(this._container, 'enabled');
-        }, this);
+        graph_layer.registerStyle('dijkstra_from', 10, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_to', 11, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_step', 9, {'color': 'yellow', 'weight': 5, 'opacity': 1})
+                   .registerStyle('dijkstra_computed', 8, {'color': 'yellow', 'weight': 5, 'opacity': 1});
+
+        this.handler = new L.Handler.MultiPath(
+            map, graph_layer, snapObserver, this.options.handler
+        );
     },
 
-    toggle: function() {
-        if (this.multipath_handler.enabled()) {
-            this.multipath_handler.disable.call(this.multipath_handler);
-        } else {
-            this.multipath_handler.enable.call(this.multipath_handler);
-        }
+    setGraph: function (graph) {
+        /**
+         * Set the Dikjstra graph
+         */
+        this.handler.setGraph(graph);
+        this.activable(true);
     },
 
     onAdd: function (map) {
@@ -89,6 +80,9 @@ L.Control.Multipath = L.Control.extend({
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
                 .addListener(link, 'click', L.DomEvent.preventDefault)
                 .addListener(link, 'click', this.toggle, this);
+
+        // Control is not activable until paths and graph are loaded
+        this.activable(false);
 
         return this._container;
     },
@@ -108,10 +102,12 @@ L.ActivableMarker = L.Marker.extend({
         this.activate_cbs = [];
         this.deactivate_cbs = [];
     },
-    'activated': function() {
+    
+    activated: function() {
         return this._activated;
     },
-    'activate': function() {
+
+    activate: function() {
         if (!this._activated) {
             for (var i = 0; i < this.activate_cbs.length; i++) {
                 this.activate_cbs[i](this);
@@ -119,7 +115,8 @@ L.ActivableMarker = L.Marker.extend({
             this._activated = true;
         }
     },
-    'deactivate': function() {
+    
+    deactivate: function() {
         if (this._activated) {
             for (var i = 0; i < this.deactivate_cbs.length; i++) {
                 this.deactivate_cbs[i](this);
@@ -133,18 +130,18 @@ L.ActivableMarker = L.Marker.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, dijkstra, markersFactory, options) {
+    initialize: function (map, graph_layer, snapObserver, options) {
         this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
+        this.snapObserver = snapObserver;
         this.cameleon = this.graph_layer._cameleon;
+        this.options = options;
 
-        // .graph .algo ?
-        this.dijkstra = dijkstra;
-        this.graph = dijkstra.graph;
+        this.graph = null;
 
         // markers
-        this.markersFactory = markersFactory;
+        this.markersFactory = this.getMarkers();
 
         // Init a fresh state
         this.reset();
@@ -156,6 +153,49 @@ L.Handler.MultiPath = L.Handler.extend({
         this.idToLayer = function(id) {
             return graph_layer.getLayer(id);
         };
+        
+        
+        /*
+         * Draggable via steps
+         * 
+         * The following piece of code was also taken from formfield.js
+         * It place is here, but needs refactoring to become elegant.
+         */
+        this.drawOnMouseMove = null;
+
+        this.on('disabled', function() {
+            this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+        }, this);
+
+        // Draggable marker initialisation and step creation
+        var draggable_marker = null;
+        var self = this;
+        (function() {
+            function dragstart(e) {
+                var next_step_idx = self.draggable_marker.group_layer.step_idx + 1;
+                self.addViaStep(self.draggable_marker, next_step_idx);
+            }
+            function dragend(e) {
+                self.draggable_marker.off('dragstart', dragstart);
+                self.draggable_marker.off('dragend', dragend);
+                init();
+            }
+            function init() {
+                self.draggable_marker = self.markersFactory.drag(new L.LatLng(0, 0), null, true);
+
+                self.draggable_marker.on('dragstart', dragstart);
+                self.draggable_marker.on('dragend', dragend);
+                self.map.removeLayer(self.draggable_marker);
+            }
+
+            init();
+        })();
+
+        this.on('computed_paths', this.onComputedPaths, this);
+    },
+
+    setGraph: function (graph) {
+        this.graph = graph;
     },
 
     setState: function(state, autocompute) {
@@ -181,8 +221,8 @@ L.Handler.MultiPath = L.Handler.extend({
     reset: function() {
         var self = this;
 
-        // remove all markers
-        this.steps && $.each(this.steps, function(pop) {
+        // remove all markers from PointOnPolyline objects
+        this.steps && $.each(this.steps, function(i, pop) {
             self.map.removeLayer(pop.marker);
         });
 
@@ -243,10 +283,16 @@ L.Handler.MultiPath = L.Handler.extend({
         if (next_step_idx == 0) {
             this._container.style.cursor = 'e-resize';
             marker = this.markersFactory.source(latlng)
+            marker.on('unsnap', function () {
+                this.showPathGeom(null);
+            }, this);
             this.marker_source = marker;
         } else {
             this._container.style.cursor = '';
             marker = this.markersFactory.dest(latlng)
+            marker.on('unsnap', function () {
+                this.showPathGeom(null);
+            }, this);
             this.marker_dest = marker;
         }
 
@@ -264,7 +310,7 @@ L.Handler.MultiPath = L.Handler.extend({
         // Restrict snaplist to layer and snapdistance to max_value
         // will ensure this get snapped and to the layer clicked
         var snapdistance = Number.MAX_VALUE;
-        var closest = MapEntity.Utils.closest(self.map, marker, [ layer ], snapdistance);
+        var closest = L.GeomUtils.closest(self.map, marker, [ layer ], snapdistance);
         marker.editing.updateClosest(marker, closest);
     },
 
@@ -272,7 +318,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var self = this;
 
         var pop = new Caminae.TopologyHelper.PointOnPolyline(marker);
-        this.steps.splice(idx, 0, pop);
+        this.steps.splice(idx, 0, pop);  // Insert pop at position idx
 
         pop.events.on('valid', function() {
             self.computePaths();
@@ -287,7 +333,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         // A via step idx must be inserted between first and last...
         if (! (step_idx >= 1 && step_idx <= this.steps.length - 1)) {
-            throw "NOT";
+            throw "StepIndexError";
         }
 
         var pop = this.createStep(marker, step_idx);
@@ -309,6 +355,9 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     canCompute: function() {
+        if (!this.graph)
+            return false;
+
         if (this.steps.length < 2)
             return false;
 
@@ -334,7 +383,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     computePaths: function() {
         if (this.canCompute()) {
-            var computed_paths = this.dijkstra.compute_path(this.graph, this.steps)
+            var computed_paths = Caminae.compute_path(this.graph, this.steps)
             this._onComputedPaths(computed_paths);
         }
     },
@@ -378,6 +427,258 @@ L.Handler.MultiPath = L.Handler.extend({
             'marker_source': this.marker_source,
             'marker_dest': this.marker_dest
         });
+    },
+
+    restoreTopology: function (topo) {
+        var self = this;
+        // This topology should contain postgres calculated value (start/end point as latln)
+        var paths = topo.paths
+          , positions = topo.positions;
+        // Only first and last positions
+        if (paths.length == 1) {
+            // There is only one path, both positions values are relevant
+            // and each one represents a marker
+            var first_pos = positions[0][0];
+            var last_pos = positions[0][1];
+
+            var start_layer = this.idToLayer(paths[0]);
+            var end_layer = this.idToLayer(paths[paths.length - 1]);
+
+            var start_ll = L.GeomUtils.getLatLngFromPos(this.map, start_layer, [ first_pos ])[0];
+            var end_ll = L.GeomUtils.getLatLngFromPos(this.map, end_layer, [ last_pos ])[0];
+
+            var state = {
+                start_ll: start_ll,
+                end_ll: end_ll,
+                start_layer: start_layer,
+                end_layer: end_layer
+            };
+            this.setState(state);
+
+        } else {
+            var layer_ll_s = [];
+            $.each(positions, function(k, pos) {
+                // default value: this is not supposed to be a marker ?!
+                if (pos[0] == 0 && pos[1] == 1) {
+                    console.log('Ignored marker ' + pos);
+                    return;
+                }
+
+                var path_idx = parseInt(k);
+                var layer = self.idToLayer(paths[path_idx]);
+                // Look for the relevant value:
+                // 0 is the default in first_position, get the other value
+                var used_pos = pos[0] == 0 ? pos[1] : pos[0];
+
+                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
+                if (ll.length < 1) {
+                    return;
+                }
+
+                layer_ll_s.push({
+                    layer: layer,
+                    ll: ll[0]
+                });
+            });
+
+            var start_layer_ll = layer_ll_s.shift();
+            var end_layer_ll = layer_ll_s.pop();
+
+            var via_markers = $.map(layer_ll_s, function(layer_ll) {
+                return {
+                    layer: layer_ll.layer,
+                    marker: self.markersFactory.drag(layer_ll.ll, null, true)
+                };
+            });
+
+            var state = {
+                start_ll: start_layer_ll.ll,
+                end_ll: end_layer_ll.ll,
+                start_layer: start_layer_ll.layer,
+                end_layer: end_layer_ll.layer,
+                via_markers: via_markers
+            };
+
+            this.setState(state);
+        }
+    },
+
+    showPathGeom: function (layer) {
+        // This piece of code was moved from formfield.js, its place is here,
+        // not around control instantiation. Of course this is not very elegant.
+        var self = this;
+        if (!this.markPath)
+            this.markPath = (function() {
+                var current_path_layer = null;
+                return {
+                    'updateGeom': function(new_path_layer) {
+                        var prev_path_layer = current_path_layer;
+                        current_path_layer = new_path_layer;
+
+                        if (prev_path_layer) {
+                            self.map.removeLayer(prev_path_layer);
+                            self.cameleon.deactivate('dijkstra_computed', prev_path_layer);
+                        }
+
+                        if (new_path_layer) {
+                            self.map.addLayer(new_path_layer);
+                            self.cameleon.activate('dijkstra_computed', new_path_layer);
+                        }
+                    }
+                }
+            })();
+        this.markPath.updateGeom(layer);
+    },
+
+    getMarkers: function() {
+        var self = this;
+        
+        var map = this.map, 
+            snapObserver = this.snapObserver;
+        
+        // snapObserver and map are required to setup snappable markers
+        // returns marker with an on('snap' possibility ?
+        var dragging = false;
+        function setDragging() { dragging = true; };
+        function unsetDragging() { dragging = false; };
+        function isDragging() { return dragging; };
+        function activate(marker) {
+            marker.dragging.enable();
+            marker.editing.enable();
+            marker.on('dragstart', setDragging);
+            marker.on('dragend', unsetDragging);
+        }
+        function deactivate(marker) {
+            marker.dragging.disable();
+            marker.editing.disable();
+            marker.off('dragstart', setDragging);
+            marker.off('dragend', unsetDragging);
+        }
+
+        var markersFactory = {
+            isDragging: isDragging,
+            makeSnappable: function(marker) {
+                marker.editing = new L.Handler.MarkerSnapping(map, marker);
+                snapObserver.add(marker);
+                marker.activate_cbs.push(activate);
+                marker.deactivate_cbs.push(deactivate);
+
+                marker.activate();
+            },
+            generic: function (latlng, layer, classname, snappable) {
+                snappable = snappable === undefined ? true : snappable;
+                
+                var marker = new L.ActivableMarker(latlng, {
+                    'draggable': true, 
+                    'icon': new L.Icon({
+                        iconUrl: self.options.iconUrl,
+                        shadowUrl: self.options.shadowUrl,
+                        iconSize: new L.Point(25, 41),
+                        iconAnchor: new L.Point(13, 41),
+                        popupAnchor: new L.Point(1, -34),
+                        shadowSize: new L.Point(41, 41)
+                    })
+                });
+                map.addLayer(marker);
+
+                $(marker._icon).addClass(classname);
+
+                if (snappable)
+                    this.makeSnappable(marker);
+
+                return marker;
+            },
+            source: function(latlng, layer) {
+                return this.generic(latlng, layer, 'marker-source');
+            },
+            dest: function(latlng, layer) {
+                return this.generic(latlng, layer, 'marker-target');
+            },
+            via: function(latlng, layer, snappable) {
+                return this.generic(latlng, layer, 'marker-via', snappable);
+            },
+            drag: function(latlng, layer, snappable) {
+                var marker = new L.ActivableMarker(latlng, {
+                    'draggable': true,
+                    'icon': new L.Icon({
+                        iconUrl: self.options.iconDragUrl,
+                        iconSize: new L.Point(18, 18)
+                    })
+                });
+
+                map.addLayer(marker);
+                if (snappable)
+                    this.makeSnappable(marker);
+
+                return marker;
+            }
+        };
+
+        return markersFactory;
+    },
+
+    onComputedPaths: function(data) {
+        var self = this;
+        var topology = Caminae.TopologyHelper.buildTopologyFromComputedPath(this.idToLayer, data);
+        
+        this.showPathGeom(topology.layer);
+        this.fire('computed_topology', {topology:topology.serialized});
+
+        // ## ONCE ##
+        this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+
+        var dragTimer = new Date();
+        this.drawOnMouseMove = function(a) {
+            var date = new Date();
+            if ((date - dragTimer) < 25) {
+                return;
+            }
+            if (self.markersFactory.isDragging()) {
+                return;
+            }
+
+            dragTimer = date;
+
+
+            for (var i = 0; i < self.steps.length; i++) {
+                // Compare point rather than ll
+                var marker_ll = self.steps[i].marker.getLatLng();
+                var marker_p = self.map.latLngToLayerPoint(marker_ll);
+
+                if (marker_p.distanceTo(a.layerPoint) < 10) {
+                    self.map.removeLayer(self.draggable_marker);
+                    return;
+                }
+            }
+
+            var MIN_DIST = 30;
+
+            var layerPoint = a.layerPoint
+              , min_dist = Number.MAX_VALUE
+              , closest_point = null
+              , matching_group_layer = null;
+
+            topology.layer && topology.layer.eachLayer(function(group_layer) {
+                group_layer.eachLayer(function(layer) {
+                    var p = layer.closestLayerPoint(layerPoint);
+                    if (p && p.distance < min_dist && p.distance < MIN_DIST) {
+                        min_dist = p.distance;
+                        closest_point = p;
+                        matching_group_layer = group_layer;
+                    }
+                });
+            });
+
+            if (closest_point) {
+                self.draggable_marker.setLatLng(self.map.layerPointToLatLng(closest_point));
+                self.draggable_marker.addTo(self.map);
+                self.draggable_marker.group_layer = matching_group_layer;
+            } else {
+                self.draggable_marker && self.map.removeLayer(self.draggable_marker);
+            }
+        };
+
+        this.map.on('mousemove', this.drawOnMouseMove);
     }
 
 });
@@ -413,6 +714,10 @@ Caminae.compute_path = (function() {
     }
 
     function computePaths(graph, steps) {
+        /*
+         *  Returns list of paths, and null if not found.
+         */
+
         /*
         if (steps.length < 2) {
             return null;

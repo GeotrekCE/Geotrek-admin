@@ -22,39 +22,6 @@ $$;
 -- Now re-create the FK with cascade option
 ALTER TABLE evenements_troncons ADD FOREIGN KEY (troncon) REFERENCES troncons(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
--------------------------------------------------------------------------------
--- Automatic link between Troncon and Commune/Zonage/Secteur
--------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON evenements_troncons;
-
-CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
-DECLARE
-    tab varchar;
-    eid integer;
-BEGIN
-    FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
-    LOOP
-        -- Delete related object in association tables
-        -- /!\ This query is executed for any kind of evenement, but it will
-        -- return an eid only if the evenement is involved in an association
-        -- table with commune, secteur or zonage. It returns NULL otherwise.
-        EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' WHERE evenement = $1 RETURNING evenement' INTO eid USING OLD.evenement;
-
-        -- Delete the evenement itself
-        IF eid IS NOT NULL THEN
-            DELETE FROM evenements WHERE id = eid;
-        END IF;
-    END LOOP;
-
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER troncons_couches_sig_d_tgr
-AFTER DELETE ON evenements_troncons
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
-
 
 -------------------------------------------------------------------------------
 -- Evenements utilities
@@ -116,6 +83,7 @@ DROP TRIGGER IF EXISTS evenements_troncons_junction_point_iu_tgr ON evenements_t
 CREATE OR REPLACE FUNCTION ft_evenements_troncons_junction_point_iu() RETURNS trigger AS $$
 DECLARE
     junction geometry;
+    t_count integer;
 BEGIN
     -- Deal with previously connected paths in the case of an UDPATE action
     IF TG_OP = 'UPDATE' THEN
@@ -128,6 +96,16 @@ BEGIN
 
     -- Don't proceed for non-junction points
     IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
+        RETURN NULL;
+    END IF;
+
+    -- Don't proceed for intermediate markers (forced passage) : if this 
+    -- is not the only evenement_troncon, then it's an intermediate marker.
+    SELECT count(*)
+        INTO t_count
+        FROM evenements_troncons et
+        WHERE et.evenement = NEW.evenement;
+    IF t_count > 1 THEN
         RETURN NULL;
     END IF;
 

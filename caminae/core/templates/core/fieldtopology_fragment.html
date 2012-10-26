@@ -1,38 +1,37 @@
-{% load maps leaflet_tags geojson_tags static %}
-
-{% leaflet_map module fitextent=False %}
-<style type="text/css">
-    {% if not display_json %}#{{ attrs.id }} { display: none; }{% endif %}
-</style>
-
-<script type="text/javascript" src="{% static "js/dijkstra.js" %}"></script>
-<script type="text/javascript" src="{% static "core/multipath.js" %}"></script>
-<script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
-<script type="text/javascript" src="{% static "core/topology_helper.js" %}"></script>
-{# keep this for development - provides helper #}
-<script type="text/javascript" src="{% static "core/debugging.js" %}"></script>
+{% extends "mapentity/fieldgeometry_fragment.html" %}
+{% load static maps %}
 
 
-{% if display_json %}<p> JSON debugging window:</p>{% endif %}
-{% include "floppyforms/textarea.html" %}
+{% block requirements %}
 
-<script type="text/javascript">
-if (! {{ module }}); var {{ module }} = {};
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "js/dijkstra.js" %}"></script>
+    <script type="text/javascript" src="{% static "core/multipath.js" %}"></script>
+    <script type="text/javascript" src="{% static "core/topology_helper.js" %}"></script>
+    {# keep this for development - provides helper #}
 
-var {{ module }}_settings = {
-    'enablePathSnapping': {
+    <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
+    <script type="text/javascript" src="{% static "core/debugging.js" %}"></script>
+
+{% endblock requirements %}
+
+
+{% block settings %}
+
+    {{ block.super }}
+
+    delete {{ module }}_settings.enableDrawing; 
+    
+    {{ module }}_settings['enablePathSnapping'] = {
         'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
-    },
-    'addObjectsLayer': {
-        'getUrl': function(modelname) {
-            return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
-        }
-    },
-    'enableMultipath': {
+    };
+
+    {{ module }}_settings['enableMultipath'] = {
         'path_json_graph_url': '{% url core:path_json_graph %}'
-    },
-    'init': {
+    };
+
+    {{ module }}_settings.init = {
         'pathsnapping': true,
         'multipath': {{ is_multipath|yesno:"true,false" }},
         'topologypoint': {{ is_point|yesno:"true,false" }},
@@ -43,29 +42,5 @@ var {{ module }}_settings = {
 
         'json': '{{ topologyjson|safe }}',  // If creation, will be empty.
         'objectBounds': {{ topology|latlngbounds }}
-    },
-    'colors': {
-        'paths': '{{ LAYERCOLOR_PATHS }}',
-        'land': '{{ LAYERCOLOR_LAND }}',
-        'others': '{{ LAYERCOLOR_OTHERS }}',
-    }
-};
-
-FormField.makeModule({{ module }}, {{ module }}_settings);
-
-// Callback
-{{ module }}Init = function (map, bounds) {
-    var module = {{ module }};
-    var fitToBounds = true;
-
-    // We are displaying a form - if no object instance, restore previous map view
-    if (! module.getObjectPk()) {
-        MapEntity.Context.restoreMapView(map);
-        bounds = map.getBounds();
-        // We just changed the map bounds, avoid resetting them...
-        fitToBounds = false;
-    }
-    module.init(map, bounds, fitToBounds);
-};
-
-</script>
+    };
+{% endblock settings %}

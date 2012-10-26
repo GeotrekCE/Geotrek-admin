@@ -4,6 +4,7 @@ import logging
 import collections
 
 from django.contrib.gis.db import models
+from django.db import connection
 from django.db.models import Manager as DefaultManager
 from django.utils import simplejson
 from django.conf import settings
@@ -13,9 +14,6 @@ from django.contrib.gis.geos import LineString, Point
 from caminae.authent.models import StructureRelated
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.mapentity.models import MapEntityMixin
-import caminae.infrastructure as inf
-import caminae.maintenance as maintenance
-import caminae.land as land
 
 
 logger = logging.getLogger(__name__)
@@ -97,7 +95,6 @@ class Path(MapEntityMixin, StructureRelated):
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        from django.db import connection
         from string import Template
         if not self.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
@@ -120,9 +117,7 @@ class Path(MapEntityMixin, StructureRelated):
         result = cursor.fetchall()
         return result[0]
 
-    def save(self, *args, **kwargs):
-        super(Path, self).save(*args, **kwargs)
-
+    def reload(self):
         # Update object's computed values (reload from database)
         tmp = self.__class__.objects.get(pk=self.pk)
         self.date_insert = tmp.date_insert
@@ -133,6 +128,17 @@ class Path(MapEntityMixin, StructureRelated):
         self.min_elevation = tmp.min_elevation
         self.max_elevation = tmp.max_elevation
         self.geom = tmp.geom
+
+    def save(self, *args, **kwargs):
+        before = len(connection.connection.notices) if connection.connection else 0
+        try:
+            super(Path, self).save(*args, **kwargs)
+            self.reload()
+        finally:
+            # Show triggers output
+            if connection.connection:
+                for notice in connection.connection.notices[before:]:
+                    logger.debug(notice)
 
     def get_elevation_profile(self):
         """
@@ -160,65 +166,6 @@ class Path(MapEntityMixin, StructureRelated):
             return unicode(self.trail)
         return _("None")
 
-    @property
-    def interventions(self):
-        s = []
-        for t in self.topologymixin_set.existing():
-            s += t.interventions.all()
-        return list(set(s))
-
-    @property
-    def projects(self):
-        return list(set([i.project
-                         for i in self.interventions
-                         if i.in_project]))
-
-    @property
-    def lands(self):
-        return list(set([land.models.LandEdge.objects.get(pk=t.pk)
-                         for t in self.topologymixin_set.existing().filter(
-                             kind=land.models.LandEdge.KIND)]))
-
-    @property
-    def districts(self):
-        return list(set([land.models.DistrictEdge.objects.get(pk=t.pk).district
-                         for t in self.topologymixin_set.existing().filter(
-                             kind=land.models.DistrictEdge.KIND)]))
-
-    @property
-    def signages(self):
-        return [inf.models.Signage.objects.get(pk=t.pk)
-                for t in self.topologymixin_set.existing().filter(
-                    kind=inf.models.Signage.KIND)]
-
-    @property
-    def infrastructures(self):
-        return [inf.models.Infrastructure.objects.get(pk=t.pk)
-                for t in self.topologymixin_set.existing().filter(
-                    kind=inf.models.Infrastructure.KIND)]
-
-
-def split_bygeom_cb(iterable, geom_getter=lambda x: x.geom, point_cb=lambda x: None, linestring_cb=lambda x: None, none_cb=lambda x: None):
-    # Faster implems may exist (eg: postgres ST_GeometryType)
-    for x in iterable:
-        geom = geom_getter(x)
-        if geom is None:
-            none_cb(x)
-        elif isinstance(geom, Point):
-            point_cb(x)
-        elif isinstance(geom, LineString):
-            linestring_cb(x)
-        else:
-            raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
-
-def split_bygeom(iterable, **kwargs):
-    """Split an iterable in two list (points, linestring)"""
-    points, linestrings = [], []
-    kwargs.update(dict(point_cb=points.append, linestring_cb=linestrings.append))
-
-    split_bygeom_cb(iterable, **kwargs)
-    return points, linestrings
-
 
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
@@ -244,7 +191,7 @@ class NoDeleteMixin(models.Model):
         return NoDeleteManager
 
 
-class TopologyMixin(NoDeleteMixin):
+class Topology(NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -265,18 +212,23 @@ class TopologyMixin(NoDeleteMixin):
         verbose_name_plural = _(u"Topologies")
 
     def __init__(self, *args, **kwargs):
-        super(TopologyMixin, self).__init__(*args, **kwargs)
+        super(Topology, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
+
+    @classmethod
+    def add_property(cls, name, func):
+        if hasattr(cls, name):
+            raise AttributeError("%s has already an attribute %s" % (cls, name))
+        setattr(cls, name, property(func))
 
     @classproperty
     def KIND(cls):
         return cls._meta.object_name.upper()
 
     @classmethod
-    def overlapping(self, qs, edges):
-        """ Filter specified queryset of TopologyMixin objects if specified
-        edges overlap them.
+    def overlapping(self, edges):
+        """ Return a list of Topology objects if specified edges overlap them.
         TODO: So far, the algorithm is quite simple, and not precise. Indeed
         it returns edges that "share" the same paths, and not exactly overlapping.
         """
@@ -285,29 +237,8 @@ class TopologyMixin(NoDeleteMixin):
             paths.extend(edge.topo_object.paths.select_related(depth=1).all())
         topos = []
         for path in set(paths):
-            topos += [aggr.topo_object for aggr in path.aggregations.all()]
-        # In case, we filter on paths
-        if qs.model == Path:
-            return qs.filter(pk__in=[ path.pk for topo in set(paths) ])
-
-        # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
-        elif issubclass(qs.model, maintenance.models.Intervention):
-            return qs.filter(topology__in=[ topo.pk for topo in set(topos) ])
-        elif issubclass(qs.model, maintenance.models.Project):
-            # Find all interventions overlapping those edges
-            interventions = TopologyMixin.overlapping(maintenance.models.Intervention.objects.existing()\
-                                                                              .select_related(depth=1)\
-                                                                              .filter(project__in=qs), 
-                                                      edges)
-            # Return only the projects concerned by the interventions
-            projects = []
-            for intervention in interventions:
-                projects.append(intervention.project.pk)
-            return qs.filter(pk__in=set(projects))
-
-        else:
-            assert isinstance(qs.model, TopologyMixin), "%s is not a TopologyMixin as expected" % qs.model
-            return qs.filter(pk__in=[ topo.pk for topo in set(topos) ])
+            topos += [aggr.topo_object for aggr in path.aggregations.select_related(depth=1).all()]
+        return topos
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
@@ -381,12 +312,12 @@ class TopologyMixin(NoDeleteMixin):
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.__class__.KIND
 
-        super(TopologyMixin, self).save(*args, **kwargs)
+        super(Topology, self).save(*args, **kwargs)
         self.reload()
 
     @classmethod
     def deserialize(cls, serialized):
-        from .factories import TopologyMixinFactory
+        from .factories import TopologyFactory
         objdict = serialized
         if isinstance(serialized, basestring):
             try:
@@ -401,7 +332,7 @@ class TopologyMixin(NoDeleteMixin):
             return cls._topologypoint(lng, lat, kind)
 
         # Path aggregation
-        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
+        topology = TopologyFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
         PathAggregation.objects.filter(topo_object=topology).delete()
 
         # Start repopulating from serialized data
@@ -421,11 +352,14 @@ class TopologyMixin(NoDeleteMixin):
                 raise ValueError(str(e))
             # Javascript hash keys are parsed as a string
             # Provides default values
-            start_position, end_position = positions.get(str(i), (0.0, 1.0))
+            start_position, end_position = positions.get(str(i), (False, False))
+            if start_position != end_position \
+               and i > 0 and i < len(paths) -1:
+                raise ValueError(_("Invalid serialization of intermediate markers"))
 
             aggrobj = PathAggregation(topo_object=topology,
-                                      start_position=start_position,
-                                      end_position=end_position,
+                                      start_position=start_position or 0.0,
+                                      end_position=end_position or 1.0,
                                       path=path)
             aggrobj.save()
         return topology
@@ -436,14 +370,14 @@ class TopologyMixin(NoDeleteMixin):
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
         """
-        from .factories import TopologyMixinFactory
+        from .factories import TopologyFactory
         # Find closest path
         point = Point((lng, lat), srid=settings.API_SRID)
         point.transform(settings.SRID)
         closest = Path.closest(point)
         position, offset = closest.interpolate(point)
         # We can now instantiante a Topology object
-        topology = TopologyMixinFactory.create(no_path=True, kind=kind, offset=offset)
+        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
         aggrobj = PathAggregation(topo_object=topology,
                                   start_position=position,
                                   end_position=position,
@@ -483,20 +417,13 @@ class TopologyMixin(NoDeleteMixin):
                            )
         return simplejson.dumps(objdict)
 
-    @property
-    def districts(self):
-        s = []
-        for p in self.paths.all():
-            s += p.districts
-        return list(set(s))
-
 
 class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon',
                              verbose_name=_(u"Path"),
                              related_name="aggregations",
                              on_delete=models.DO_NOTHING) # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
-    topo_object = models.ForeignKey(TopologyMixin, null=False, related_name="aggregations",
+    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
     end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
@@ -511,7 +438,7 @@ class PathAggregation(models.Model):
         db_table = 'evenements_troncons'
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
-        # Important - represent the order of the path in the TopologyMixin path list
+        # Important - represent the order of the path in the Topology path list
         ordering = ['id', ]
 
 
@@ -608,11 +535,3 @@ class Trail(MapEntityMixin, StructureRelated):
             else:
                 geom = geom.union(p.geom)
         return geom
-
-    @property
-    def interventions(self):
-        """ Interventions of a trail is the union of interventions on all its paths """
-        s = []
-        for p in self.paths.all():
-            s.extend(p.interventions)
-        return list(set(s))

@@ -6,13 +6,36 @@ from django.core.urlresolvers import reverse
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import PathManagerFactory
 
-from caminae.core.factories import PathFactory
+from caminae.core.models import Topology
+from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.common.factories import OrganismFactory
 from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
-    WorkManagementEdge, SignageManagementEdge, City)
-from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, 
+    WorkManagementEdge, SignageManagementEdge, City, RestrictedArea)
+
+
+from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory,
     CompetenceEdgeFactory, WorkManagementEdgeFactory, SignageManagementEdgeFactory, 
     PhysicalTypeFactory, LandTypeFactory)
+
+
+class LandEdgeTest(TestCase):
+    
+    def test_helpers(self):
+        p = PathFactory.create()
+        self.assertEquals(len(p.lands), 0)
+        l = LandEdgeFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=l, path=p)
+        self.assertItemsEqual(p.lands, [l])
+
+
+class DistrictEdgeTest(TestCase):
+    
+    def test_helpers(self):
+        p = PathFactory.create()
+        self.assertEquals(len(p.districts), 0)
+        d = DistrictEdgeFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=d, path=p)
+        self.assertItemsEqual(p.districts, [d.district])
 
 
 class PhysicalEdgeViewsTest(MapEntityTest):
@@ -80,6 +103,7 @@ class SignageManagementEdgeViewsTest(MapEntityTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+
 class CouchesSIGTest(TestCase):
 
     def test_views_status(self):
@@ -129,3 +153,87 @@ class CouchesSIGTest(TestCase):
         self.assertEquals(p2.aggregations.count(), 1)
         self.assertEquals(p3.aggregations.count(), 1)
         self.assertEquals(p4.aggregations.count(), 2)
+
+    def test_couches_sig_link(self):
+        # Fake restricted areas
+        ra1 = RestrictedArea(name='Zone 1', order=1, geom=MultiPolygon(
+            Polygon(((0,0), (2,0), (2,1), (0,1), (0,0)))))
+        ra1.save()
+        ra2 = RestrictedArea(name='Zone 2', order=1, geom=MultiPolygon(
+            Polygon(((0,1), (2,1), (2,2), (0,2), (0,1)))))
+        ra2.save()
+
+        # Fake city
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0,0), (2,0), (2,2), (0,2), (0,0)),
+                              srid=settings.SRID)))
+        c.save()
+
+        # Fake paths in these areas
+        p = PathFactory(geom=LineString((0.5,0.5,0), (0.5,1.5,0), (1.5,1.5,0), (1.5,0.5,0)))
+        p.save()
+
+        # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
+        self.assertEquals(p.aggregations.count(), 4)
+        self.assertEquals(p.topology_set.count(), 4)
+
+        # PathAgg is plain for City
+        t_c = c.cityedge_set.get().topo_object
+        pa = c.cityedge_set.get().aggregations.get()
+        self.assertEquals(pa.start_position, 0.0)
+        self.assertEquals(pa.end_position, 1.0)
+
+        # PathAgg is splitted for RA
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 2)
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 1)
+        rae1a = ra1.restrictedareaedge_set.filter(aggregations__start_position=0).get()
+        rae1b = ra1.restrictedareaedge_set.filter(aggregations__end_position=1).get()
+        pa1a = rae1a.aggregations.get()
+        pa1b = rae1b.aggregations.get()
+        t_ra1a = rae1a.topo_object
+        t_ra1b = rae1b.topo_object
+        pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
+        t_ra2 = ra2.restrictedareaedge_set.get().topo_object
+        self.assertAlmostEqual(pa1a.start_position, 0.0)
+        self.assertAlmostEqual(pa1a.end_position, 0.5/3)
+        self.assertAlmostEqual(pa1b.start_position, 2.5/3)
+        self.assertAlmostEqual(pa1b.end_position, 1.0)
+        self.assertAlmostEqual(pa2.start_position, 0.5/3)
+        self.assertAlmostEqual(pa2.end_position, 2.5/3)
+
+        # Ensure everything is in order after update
+        p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
+        p.save()
+        self.assertEquals(p.aggregations.count(), 2)
+        self.assertEquals(p.topology_set.count(), 2)
+        # Topology are re-created at DB-level after any update
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_c.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1b.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra2.pk)
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 1)
+        # a new association exists for C
+        t_c = c.cityedge_set.get().topo_object
+        self.assertEquals(Topology.objects.filter(pk=t_c.pk).count(), 1)
+        # a new association exists for RA1
+        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        self.assertEquals(Topology.objects.filter(pk=t_ra1.pk).count(), 1)
+        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
+        self.assertEquals(pa1.start_position, 0.0)
+        self.assertEquals(pa1.end_position, 1.0)
+        # RA2 is not connected anymore
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
+        # All intermediary objects should be cleaned on delete
+        p.delete()
+        self.assertEquals(c.cityedge_set.count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_c.pk).count(), 0)
+        self.assertEquals(ra1.restrictedareaedge_set.count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra1.pk).count(), 0)
+        self.assertEquals(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEquals(Topology.objects.filter(pk=t_ra2.pk).count(), 0)

@@ -4,7 +4,7 @@ import factory
 from django.contrib.gis.geos import Point
 
 from . import models
-from caminae.core.factories import TopologyMixinFactory
+from caminae.core.factories import TopologyFactory
 from caminae.common.utils.testdata import get_dummy_uploaded_image
 
 
@@ -60,7 +60,7 @@ class WebLinkFactory(factory.Factory):
     thumbnail = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TrekFactory(TopologyMixinFactory):
+class TrekFactory(TopologyFactory):
     FACTORY_FOR = models.Trek
 
     name = factory.Sequence(lambda n: u"name %s" % n)
@@ -113,7 +113,7 @@ class POITypeFactory(factory.Factory):
     pictogram =  dummy_filefield_as_sequence('pictogram %s')
 
 
-class POIFactory(TopologyMixinFactory):
+class POIFactory(TopologyFactory):
     FACTORY_FOR = models.POI
 
     name = factory.Sequence(lambda n: u"POI %s" % n)

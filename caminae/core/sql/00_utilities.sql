@@ -139,9 +139,6 @@ BEGIN
     IF t_count = 0 THEN
         -- No more troncons, close this topology
         UPDATE evenements SET geom = ST_GeomFromText('POINTZ EMPTY', 2154), longueur = 0 WHERE id = eid;
-    ELSIF NOT lines_only AND t_count > 1 THEN
-        -- FIXME: This is an invalid case (a multi-point topology or a
-        -- mixed points/lines topology), how to handle it?
     ELSIF NOT lines_only AND t_count = 1 THEN
         -- Special case: the topology describe a point on the path
         -- Note: We are faking a M-geometry in order to use LocateAlong.
@@ -162,7 +159,12 @@ BEGIN
         -- FIXME: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point.
-        SELECT ST_Force_3DZ(ST_GeometryN(ST_LocateBetween(ST_AddMeasure(ST_LineMerge(ST_Collect(ST_Line_Substring(t.geom, et.pk_debut, et.pk_fin))), 0, 1), 0, 1, e.decallage), 1))
+        SELECT ST_Force_3DZ(ST_GeometryN(ST_LocateBetween(ST_AddMeasure(ST_LineMerge(
+                ST_Collect(
+                    -- Intermediate (forced passage) markers for topologies will be stored like points
+                    -- Ignore them in geometry computation, they are used in UI only.
+                    CASE WHEN et.pk_debut != et.pk_fin THEN ST_Line_Substring(t.geom, et.pk_debut, et.pk_fin) ELSE t.geom END
+                )), 0, 1), 0, 1, e.decallage), 1))
             INTO egeom
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id

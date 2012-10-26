@@ -6,13 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import NoDeleteMixin, TopologyMixin
+from caminae.core.models import NoDeleteMixin, Topology, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
 class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
+
     in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"))
@@ -35,7 +36,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
 
     """ Topology can be of type Infrastructure or of own type Intervention """
-    topology = models.ForeignKey(TopologyMixin, null=True,  #TODO: why null ?
+    topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
 
@@ -57,7 +58,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Project"))
 
     # Special manager
-    objects = TopologyMixin.get_manager_cls()()
+    objects = Topology.get_manager_cls()()
 
     class Meta:
         db_table = 'interventions'
@@ -159,6 +160,24 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.date)
+
+    @classmethod
+    def path_interventions(cls, path):
+        s = []
+        for t in path.topology_set.existing():
+            s += t.interventions.all()
+        return list(set(s))
+
+    @classmethod
+    def trail_interventions(cls, trail):
+        """ Interventions of a trail is the union of interventions on all its paths """
+        s = []
+        for p in trail.paths.all():
+            s.extend(p.interventions)
+        return list(set(s))
+
+Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
+Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
 
 
 class InterventionStatus(StructureRelated):
@@ -265,7 +284,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Founders"))
 
     # Special manager
-    objects = TopologyMixin.get_manager_cls()()
+    objects = Topology.get_manager_cls()()
 
     class Meta:
         db_table = 'chantiers'
@@ -314,6 +333,14 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
+
+    @classmethod
+    def path_projects(self, path):
+        return list(set([i.project
+                         for i in path.interventions
+                         if i.in_project]))
+
+Path.add_property('projects', lambda self: Project.path_projects(self))
 
 
 class ProjectType(StructureRelated):

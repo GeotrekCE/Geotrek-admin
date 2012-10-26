@@ -8,19 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding M2M table for field main_themes on 'Trek'
-        db.create_table('itineraire_main_themes', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('trek', models.ForeignKey(orm['trekking.trek'], null=False)),
-            ('theme', models.ForeignKey(orm['trekking.theme'], null=False))
-        ))
-        db.create_unique('itineraire_main_themes', ['trek_id', 'theme_id'])
-
+        try:
+            db.rename_column('itineraire', 'topologymixin_ptr_id', 'topology_ptr_id')
+        except:
+            print "Ignore column rename `topologymixin_ptr_id`"
 
     def backwards(self, orm):
-        # Removing M2M table for field main_themes on 'Trek'
-        db.delete_table('itineraire_main_themes')
-
+        db.rename_column('itineraire', 'topology_ptr_id', 'topologymixin_ptr_id')
 
     models = {
         'authent.structure': {
@@ -246,7 +240,7 @@ class Migration(SchemaMigration):
             'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'thumbnail': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'thumbnail': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '128'})
         }
     }

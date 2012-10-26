@@ -1,17 +1,6 @@
 if (! FormField); var FormField = {};
 
 FormField.makeModule = function(module, module_settings) {
-    function getDefaultIconOpts() {
-        return {
-            iconUrl: module_settings.init.iconUrl,
-            shadowUrl: module_settings.init.shadowUrl,
-            iconSize: new L.Point(25, 41),
-            iconAnchor: new L.Point(13, 41),
-            popupAnchor: new L.Point(1, -34),
-            shadowSize: new L.Point(41, 41)
-        };
-    };
-
     module.enableDrawing = function(map, drawncallback, startovercallback) {
         var drawControl = new L.Control.Draw({
             position: 'topright',
@@ -76,16 +65,16 @@ FormField.makeModule = function(module, module_settings) {
         // since snapping will then be on objects layer.
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
-            var pathsLayer = new MapEntity.ObjectsLayer(null, {
+            var pathsLayer = new L.ObjectsLayer(null, {
                 style: {weight: 2, clickable: true, color: module_settings.colors.paths},
             });
             map.addLayer(pathsLayer);
-            snapObserver = new MapEntity.SnapObserver(map, pathsLayer);
+            snapObserver = new L.SnapObserver(map, pathsLayer);
             // Start ajax loading at last
             pathsLayer.load(module_settings.enablePathSnapping.pathsLayer_url);
         }
         else {
-            snapObserver = new MapEntity.SnapObserver(map, objectsLayer);
+            snapObserver = new L.SnapObserver(map, objectsLayer);
         }
         return snapObserver;
     };
@@ -98,7 +87,18 @@ FormField.makeModule = function(module, module_settings) {
         return $('form input[name="pk"]').val() || null;
     };
 
+    module.getModelName = function() {
+        // Expect failure if null
+        var m = $('form input[name="model"]').val() || null;
+        if (!m)
+            throw "No model name in form";
+        return m;
+    };
+
     module.addObjectsLayer = function(map, modelname) {
+        if (!modelname) {
+            throw 'Model name is empty';
+        }
         var object_pk = module.getObjectPk();
 
         var exclude_current_object = null;
@@ -111,7 +111,7 @@ FormField.makeModule = function(module, module_settings) {
 
         // Start loading all objects, readonly
         var color = modelname == 'path' ? module_settings.colors.paths : module_settings.colors.others;
-        var objectsLayer = new MapEntity.ObjectsLayer(null, {
+        var objectsLayer = new L.ObjectsLayer(null, {
             style: {weight: 2, clickable: true, 'color': color},
                 filter: exclude_current_object
             }),
@@ -121,421 +121,92 @@ FormField.makeModule = function(module, module_settings) {
         return objectsLayer;
     };
 
-    module.getMarkers = function(map, snapObserver) {
-        // snapObserver and map are required to setup snappable markers
-        // returns marker with an on('snap' possibility ?
-        var dragging = false;
-        function setDragging() { dragging = true; };
-        function unsetDragging() { dragging = false; };
-        function isDragging() { return dragging; };
-        function activate(marker) {
-            marker.dragging.enable();
-            marker.editing.enable();
-            marker.on('dragstart', setDragging);
-            marker.on('dragend', unsetDragging);
-        }
-        function deactivate(marker) {
-            marker.dragging.disable();
-            marker.editing.disable();
-            marker.off('dragstart', setDragging);
-            marker.off('dragend', unsetDragging);
-        }
+    module.enableMultipath = function(map, snapObserver, layerStore, onStartOver) {
+        var objectsLayer = snapObserver.guidesLayer();
 
-        var markersFactory = {
-            isDragging: isDragging,
-            makeSnappable: function(marker) {
-                marker.editing = new MapEntity.MarkerSnapping(map, marker);
-                snapObserver.add(marker);
-                marker.activate_cbs.push(activate);
-                marker.deactivate_cbs.push(deactivate);
-
-                marker.activate();
-            },
-            generic: function (latlng, layer, classname, snappable) {
-                snappable = snappable === undefined ? true : snappable;
-
-                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': new L.Icon(getDefaultIconOpts())});
-                map.addLayer(marker);
-
-                $(marker._icon).addClass(classname);
-
-                if (snappable)
-                    this.makeSnappable(marker);
-
-                return marker;
-            },
-            source: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-source');
-            },
-            dest: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-target');
-            },
-            via: function(latlng, layer, snappable) {
-                return this.generic(latlng, layer, 'marker-via', snappable);
-            },
-            drag: function(latlng, layer, snappable) {
-                // FIXME: static
-                var defaultIconOptions = getDefaultIconOpts();
-                var icon = new L.Icon({
-                    iconUrl: module_settings.init.iconDragUrl,
-                    iconSize: new L.Point(18, 18)
-                });
-
-                var marker = new L.ActivableMarker(latlng, {'draggable': true, 'icon': icon });
-
-                map.addLayer(marker);
-                if (snappable)
-                    this.makeSnappable(marker);
-
-                return marker;
+        var multipath_control = new L.Control.Multipath(map, objectsLayer, snapObserver, {
+            handler: {
+                'iconUrl': module_settings.init.iconUrl,
+                'shadowUrl': module_settings.init.shadowUrl,
+                'iconDragUrl': module_settings.init.iconDragUrl,
             }
-        };
+        }),
+        multipath_handler = multipath_control.handler;
+        // Add control to the map
+        map.addControl(multipath_control);
 
-        return markersFactory;
-    };
+        onStartOver.on('startover', function(obj) {
+            // If startover is not trigger by multipath, delete the geom
+            // Thus, when multipath is called several times, the geom is not deleted
+            // and may be updated
+            if (obj.handler !== 'multipath') {
+                multipath_handler.showPathGeom(null);
+            }
+            if (obj.handler == 'topologypoint') {
+                // Disable multipath
+                multipath_handler.reset();
+                if (multipath_handler.enabled()) multipath_control.toggle();
+            }
+        });
 
-    module.enableMultipath = function(map, objectsLayer, layerStore, onStartOver, snapObserver) {
-        var markersFactory = module.getMarkers(map, snapObserver);
+        // Delete previous geom
+        multipath_handler.on('enabled', function() {
+            onStartOver.fire('startover', {'handler': 'multipath'});
+        });
 
+        multipath_handler.on('computed_topology', function (e) {
+            layerStore.storeLayerGeomInField(e.topology);
+        });
+        
         objectsLayer.on('load', function() {
-
-            var parseGraph = function (graph) {
-               
-                var dijkstra = {
-                    'compute_path': Caminae.compute_path,
-                    'graph': graph
-                };
-
-                var multipath_control = new L.Control.Multipath(map, objectsLayer, dijkstra, markersFactory)
-                  , multipath_handler = multipath_control.multipath_handler
-                  , cameleon = multipath_handler.cameleon
-                ;
-
-                var markPath = (function() {
-                    var current_path_layer = null;
-                    return {
-                        'updateGeom': function(new_path_layer) {
-                            var prev_path_layer = current_path_layer;
-                            current_path_layer = new_path_layer;
-
-                            if (prev_path_layer) {
-                                map.removeLayer(prev_path_layer);
-                                cameleon.deactivate('dijkstra_computed', prev_path_layer);
-                            }
-
-                            if (new_path_layer) {
-                                map.addLayer(new_path_layer);
-                                cameleon.activate('dijkstra_computed', new_path_layer);
-                            }
-                        }
-                    }
-                })();
-
-                // TODO: remove drawOnMouseMove
-                var drawOnMouseMove = null;
-
-                onStartOver.on('startover', function(obj) {
-                    // If startover is not trigger by multipath, delete the geom
-                    // Thus, when multipath is called several times, the geom is not deleted
-                    // and may be updated
-                    if (obj.handler !== 'multipath') {
-                        markPath.updateGeom(null);
-                        multipath_handler.unmarkAll();
-                    }
-                });
-                multipath_handler.on('unsnap', function () {
-                    markPath.updateGeom(null);
-                });
-                // Delete previous geom
-                multipath_handler.on('enabled', function() {
-                    onStartOver.fire('startover', {'handler': 'multipath'});
-                });
-                multipath_handler.on('disabled', function() {
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
-                });
-
-
-                // Draggable marker initialisation and step creation
-                var draggable_marker = null;
-                (function() {
-                    function dragstart(e) {
-                        var next_step_idx = draggable_marker.group_layer.step_idx + 1;
-                        multipath_handler.addViaStep(draggable_marker, next_step_idx);
-                    }
-                    function dragend(e) {
-                        draggable_marker.off('dragstart', dragstart);
-                        draggable_marker.off('dragend', dragend);
-                        init();
-                    }
-                    function init() {
-                        draggable_marker = markersFactory.drag(new L.LatLng(0, 0), null, true);
-
-                        draggable_marker.on('dragstart', dragstart);
-                        draggable_marker.on('dragend', dragend);
-                        map.removeLayer(draggable_marker);
-                    }
-
-                    init();
-                })();
-
-                multipath_handler.on('computed_paths', function(data) {
-                    var computed_paths = data['computed_paths']
-                      , new_edges = data['new_edges'];
-
-                    var cpath, data = [], topo;
-                    for (var i = 0; i < computed_paths.length; i++ ) {
-                        cpath = computed_paths[i];
-                        topo = createTopology(cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
-                        topo.from_pop = cpath.from_pop;
-                        topo.to_pop = cpath.to_pop;
-                        data.push(topo);
-                    }
-
-                    var group_layers = $.map(data, function(topo, idx) {
-                        var polylines = $.map(topo.array_lls, function(lls) {
-                            return new L.Polyline(lls);
-                        });
-                        // var group_layer = new L.FeatureGroup(polylines);
-                        // var group_layer = new L.MultiPolyline(polylines);
-                        var group_layer = new L.FeatureGroup(polylines);
-
-                        group_layer.from_pop = topo.from_pop;
-                        group_layer.to_pop = topo.to_pop;
-                        group_layer.step_idx = idx;
-
-                        return group_layer;
-                    });
-
-                    var super_layer = new L.FeatureGroup(group_layers);
-                    markPath.updateGeom(super_layer);
-
-                    // ## ONCE ##
-                    drawOnMouseMove && map.off('mousemove', drawOnMouseMove);
-
-                    var dragTimer = new Date();
-                    drawOnMouseMove = function(a) {
-                        var date = new Date();
-                        if ((date - dragTimer) < 25) {
-                            return;
-                        }
-                        if (markersFactory.isDragging()) {
-                            return;
-                        }
-
-                        dragTimer = date;
-
-
-                        for (var i = 0; i < multipath_handler.steps.length; i++) {
-                            // Compare point rather than ll
-                            var marker_ll = multipath_handler.steps[i].marker.getLatLng();
-                            var marker_p = map.latLngToLayerPoint(marker_ll);
-
-                            if (marker_p.distanceTo(a.layerPoint) < 10) {
-                                map.removeLayer(draggable_marker);
-                                return;
-                            }
-                        }
-
-                        var MIN_DIST = 30;
-
-                        var layerPoint = a.layerPoint
-                          , min_dist = Number.MAX_VALUE
-                          , closest_point = null
-                          , matching_group_layer = null;
-
-                        super_layer.eachLayer(function(group_layer) {
-                            group_layer.eachLayer(function(layer) {
-                                var p = layer.closestLayerPoint(layerPoint);
-                                if (p && p.distance < min_dist && p.distance < MIN_DIST) {
-                                    min_dist = p.distance;
-                                    closest_point = p;
-                                    matching_group_layer = group_layer;
-                                }
-                            });
-                        });
-
-                        if (closest_point) {
-                            draggable_marker.setLatLng(map.layerPointToLatLng(closest_point));
-                            draggable_marker.addTo(map);
-                            draggable_marker.group_layer = matching_group_layer;
-                        } else {
-                            map.removeLayer(draggable_marker);
-                        }
-                    };
-
-                    map.on('mousemove', drawOnMouseMove);
-
-                    // assemble topologies
-                    var positions = data[0].topology.positions
-                      , paths = data[0].topology.paths;
-
-                    for (var k = 1; k < data.length; k++) {
-                        var data_topology = data[k].topology;
-                        // substract one as we delete first position
-                        var offset = paths.length - 1;
-
-                        // avoid the first one
-                        paths = paths.concat(data_topology.paths.slice(1));
-
-                        delete data_topology.positions[0]
-                        $.each(data_topology.positions, function(k, v) {
-                            positions[parseInt(k) + offset] = v;
-                        });
-                    }
-
-                    var topology = {
-                        offset: 0,  // TODO: input for offset
-                        positions: positions,
-                        paths: paths
-                    };
-                    layerStore.storeLayerGeomInField(topology);
-                });
-
-                function createTopology(computed_path, from_pop, to_pop, new_edges) {
-                    var ll_start = from_pop.ll
-                      , ll_end = to_pop.ll;
-
-                    var paths = $.map(new_edges, function(edge) { return edge.id; });
-                    var layers = $.map(new_edges, function(edge) { return objectsLayer.getLayer(edge.id); });
-
-                    var polyline_start = layers[0];
-                    var polyline_end = layers[layers.length -1];
-
-                    var percentageDistance = MapEntity.Utils.getPercentageDistanceFromPolyline;
-
-                    var start = percentageDistance(ll_start, polyline_start)
-                      , end = percentageDistance(ll_end, polyline_end);
-
-                    if (!start || !end)
-                        return;  // TODO: clean-up before give-up ?
-
-                    var new_topology = Caminae.TopologyHelper.buildTopologyGeom(layers, ll_start, ll_end, start, end);
-
-                    if (new_topology.is_single_path) {
-                        if (paths.length > 1) {
-                            // Only get the first one
-                            paths = paths.slice(0, 1);
-                        }
-                    }
-
-                    var sorted_positions = {};
-                    $.each(new_topology.positions, function(k, v) {
-                        sorted_positions[k] = v.sort()
-                    });
-
-                    var topology = {
-                        offset: 0,  // TODO: input for offset
-                        positions: sorted_positions,
-                        paths: paths
-                    };
-
-                    return {
-                        topology: topology
-                      , array_lls: new_topology.latlngs
-                    };
-                }
-
-                map.addControl(multipath_control);
-
-                var initialTopology = layerStore.getSerialized();
+            $.getJSON(module_settings.enableMultipath.path_json_graph_url, function (graph) {
+                // Load graph
+                multipath_control.setGraph(graph);
 
                 // We should check if the form has an error or not...
-                // core.models#TopologyMixin.serialize
+                // core.models#Topology.serialize
+                var initialTopology = layerStore.getSerialized();
                 if (initialTopology) {
-                    // This topology should contain postgres calculated value (start/end point as latln)
-                    var topo =  JSON.parse(initialTopology)
-                      , paths = topo.paths
-                      , positions = topo.positions;
-
-                    // Only first and last positions
-                    if (paths.length == 1) {
-                        // There is only one path, both positions values are relevant
-                        // and each one represents a marker
-                        var first_pos = positions[0][0];
-                        var last_pos = positions[0][1];
-
-                        var start_layer = objectsLayer.getLayer(paths[0]);
-                        var end_layer = objectsLayer.getLayer(paths[paths.length - 1]);
-
-                        var start_ll = MapEntity.Utils.getLatLngFromPos(map, start_layer, [ first_pos ])[0];
-                        var end_ll = MapEntity.Utils.getLatLngFromPos(map, end_layer, [ last_pos ])[0];
-
-                        var state = {
-                            start_ll: start_ll,
-                            end_ll: end_ll,
-                            start_layer: start_layer,
-                            end_layer: end_layer
-                        };
-                        multipath_handler.setState(state);
-
-                    } else {
-
-                        var layer_ll_s = [];
-                        $.each(positions, function(k, pos) {
-                            // default value: this is not supposed to be a marker ?!
-                            if (pos[0] == 0 && pos[1] == 1)
-                                return;
-
-                            var path_idx = parseInt(k);
-                            var layer = objectsLayer.getLayer(paths[path_idx]);
-                            // Look for the relevant value:
-                            // 0 is the default in first_position, get the other value
-                            var used_pos = pos[0] == 0 ? pos[1] : pos[0];
-
-                            var ll = MapEntity.Utils.getLatLngFromPos(map, layer, [ used_pos ])[0];
-
-                            layer_ll_s.push({
-                                layer: layer,
-                                ll: ll
-                            });
-                        });
-
-                        var start_layer_ll = layer_ll_s.shift();
-                        var end_layer_ll = layer_ll_s.pop();
-
-                        var via_markers = $.map(layer_ll_s, function(layer_ll) {
-                            return {
-                                layer: layer_ll.layer,
-                                marker: markersFactory.drag(layer_ll.ll, null, true)
-                            };
-                        });
-
-                        var state = {
-                            start_ll: start_layer_ll.ll,
-                            end_ll: end_layer_ll.ll,
-                            start_layer: start_layer_ll.layer,
-                            end_layer: end_layer_ll.layer,
-                            via_markers: via_markers
-                        };
-
-                        multipath_handler.setState(state);
+                    var topo =  JSON.parse(initialTopology);
+                    // If it is multipath, restore
+                    if (topo.paths && !topo.lat && !topo.lng) {
+                        multipath_handler.restoreTopology(topo);
                     }
                 }
-
-            };
-            
-            $.getJSON(module_settings.enableMultipath.path_json_graph_url, parseGraph).error(function (jqXHR, textStatus, errorThrown) {
+            })
+            .error(function (jqXHR, textStatus, errorThrown) {
                 $(map._container).addClass('map-error');
                 console.error("Could not load url '" + module_settings.enableMultipath.path_json_graph_url + "': " + textStatus);
                 console.error(errorThrown);
             });
         });
+        
+        return multipath_control;
     };
 
-    module.enableTopologyPoint = function (map, drawncallback, onStartOver) {
-        var control = new L.Control.TopologyPoint(map)
-          , handler = control.topologyhandler;
+    module.enableTopologyPoint = function (map, layerStore, drawncallback, onStartOver) {
+        var control = new L.Control.TopologyPoint(map);
         map.addControl(control);
         
         // Delete current on first clic (start drawing)
-        map.on('click', function (e) {
-            if (handler.enabled()) {
-                onStartOver.fire('startover');
-                return;
-            }
+        control.handler.on('enabled', function (e) {
+            onStartOver.fire('startover', {'handler': 'topologypoint'});
         });
 
-        handler.on('added', function (e) { drawncallback(e.marker) });
+        control.handler.on('added', function (e) { 
+            drawncallback(e.marker);
+        });
+        
+        var initialTopology = layerStore.getSerialized();
+        if (initialTopology) {
+            var point =  JSON.parse(initialTopology);
+            // If it is multipath, restore
+            if (point.lat && point.lng) {
+                drawncallback(L.marker(new L.LatLng(point.lat, point.lng)));
+            }
+        }
+        
+        return control;
     };
     
     module.init = function(map, bounds, fitToBounds) {
@@ -560,18 +231,17 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         map.addControl(new L.Control.ResetView(getBounds));
-        map.addControl(new L.Control.Scale());
 
         // Show other objects of same type
-        var modelname = $('form input[name="model"]').val(),
+        var modelname = module.getModelName(),
             objectsLayer = module.addObjectsLayer(map, modelname);
 
         // Enable snapping ? Multipath need path snapping too !
         var path_snapping = module_settings.init.pathsnapping || module_settings.init.multipath,
             snapObserver = null;
-        MapEntity.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
 
         if (path_snapping) {
+            L.Handler.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
@@ -581,29 +251,45 @@ FormField.makeModule = function(module, module_settings) {
         /*** <objectLayer> ***/
 
         function _edit_handler(map, layer) {
-            var edit_handler = L.Handler.PolyEdit;
+            var edit_handler=null;
             if (path_snapping) {
                 edit_handler = L.Handler.SnappedEdit;
                 if (layer instanceof L.Marker) {
-                    edit_handler =  MapEntity.MarkerSnapping;
+                    edit_handler =  L.Handler.MarkerSnapping;
                 }
             }
-            return new edit_handler(map, layer);
+            else {
+                edit_handler = L.Handler.PolyEdit;
+                if (layer instanceof L.Marker) {
+                    layer.dragging = new L.Handler.MarkerDrag(layer);
+                    layer.dragging.enable();
+                }
+            }
+            if (edit_handler) {
+                layer.editing = new edit_handler(map, layer);
+                layer.editing.enable();
+            }
         };
 
         function onNewLayer(new_layer) {
             if (new_layer instanceof L.Marker) {
                 currentBounds = map.getBounds(); // A point has no bounds, take map bounds
                 // Set custom icon, using CSS instead of JS
-                new_layer.setIcon(new L.Icon(getDefaultIconOpts()));
+                new_layer.setIcon(new L.Icon({
+                        iconUrl: module_settings.init.iconUrl,
+                        shadowUrl: module_settings.init.shadowUrl,
+                        iconSize: new L.Point(25, 41),
+                        iconAnchor: new L.Point(13, 41),
+                        popupAnchor: new L.Point(1, -34),
+                        shadowSize: new L.Point(41, 41)
+                    }));
                 $(new_layer._icon).addClass('marker-add');
                 
             }
             else {
                 currentBounds = new_layer.getBounds();
             }
-            new_layer.editing = _edit_handler(map, new_layer);
-            new_layer.editing.enable();
+            _edit_handler(map, new_layer);
             new_layer.on('move edit', function (e) {
                 layerStore.storeLayerGeomInField(e.target);
             });
@@ -615,26 +301,11 @@ FormField.makeModule = function(module, module_settings) {
         if (geojson) {
             var objectLayer = new L.GeoJSON(geojson, {
                 style: {weight: 5, opacity: 1, clickable: true},
-                onEachFeature: function (feature, layer) {
-                    onNewLayer(layer);
-                }
             });
             map.addLayer(objectLayer);
-        }
-        else {
-            // If no geojson is provided, we may be editing a topology
-            var topology = $(module_settings.init.layerStoreElemSelector).val();
-            if (topology) {
-                var point = JSON.parse(topology);
-                // Point topology
-                if (point.lat && point.lng) {
-                    var existing = new L.Marker(new L.LatLng(point.lat, point.lng)).addTo(map)
-                    onNewLayer(existing);
-                }
-                else {
-                    //TODO : line topology !
-                }
-            }
+            objectLayer.eachLayer(function (layer) {
+                onNewLayer(layer);
+            });
         }
 
         /*** </objectLayer> ***/
@@ -646,10 +317,7 @@ FormField.makeModule = function(module, module_settings) {
             onNewLayer(drawn_layer);
         };
 
-        var onStartOver = L.Util.extend({}, L.Mixin.Events);
-        onStartOver.on('startover', removeLayerFromLayerStore);
-
-        function removeLayerFromLayerStore() {
+        var removeLayerFromLayerStore = function () {
             var old_layer = layerStore.getLayer();
             if (old_layer) {
                 map.removeLayer(old_layer);
@@ -658,17 +326,26 @@ FormField.makeModule = function(module, module_settings) {
                 layerStore.storeLayerGeomInField(null);
             }
         };
+
+        var onStartOver = L.Util.extend({}, L.Mixin.Events);
+        onStartOver.on('startover', removeLayerFromLayerStore);
         
         if (module_settings.init.enableDrawing) {
             module.enableDrawing(map, onDrawn, removeLayerFromLayerStore);
         }
 
+        // This will make sure that we can't activate a control, while the
+        // other is being used.
+        var exclusive = new L.Control.ExclusiveActivation();
+
         if (module_settings.init.multipath) {
-            module.enableMultipath(map, snapObserver.guidesLayer(), layerStore, onStartOver, snapObserver);
+            var control = module.enableMultipath(map, snapObserver, layerStore, onStartOver);
+            exclusive.add(control);
         }
         
         if (module_settings.init.topologypoint) {
-            module.enableTopologyPoint(map, onDrawn, onStartOver);
+            var control = module.enableTopologyPoint(map, layerStore, onDrawn, onStartOver);
+            exclusive.add(control);
         }
     };
 

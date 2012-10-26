@@ -11,10 +11,27 @@ from caminae.maintenance.factories import InterventionFactory
 
 from caminae.infrastructure.models import (Infrastructure, InfrastructureType,
     Signage, INFRASTRUCTURE_TYPES)
-from caminae.core.factories import PathFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.infrastructure.factories import (SignageFactory,
     InfrastructureFactory, InfrastructureTypeFactory)
 from caminae.infrastructure.filters import SignageFilter, InfrastructureFilter
+
+
+class InfrastructureTest(TestCase):
+    def test_helpers(self):
+        p = PathFactory.create()
+
+        self.assertEquals(len(p.infrastructures), 0)
+        sign = SignageFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=sign, path=p,
+                                      start_position=0.5, end_position=0.5)
+
+        self.assertItemsEqual(p.signages, [sign])
+
+        infra = InfrastructureFactory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=infra, path=p)
+
+        self.assertItemsEqual(p.infrastructures, [infra])
 
 
 class InfrastructureViewsTest(MapEntityTest):
@@ -99,6 +116,7 @@ class InfraFilterTestMixin():
 class SignageFilterTest(InfraFilterTestMixin, TestCase):
     factory = SignageFactory
     filterset = SignageFilter
+
 
 class InfrastructureFilterTest(InfraFilterTestMixin, TestCase):
     factory = InfrastructureFactory

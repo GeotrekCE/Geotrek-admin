@@ -186,7 +186,7 @@ BEGIN
     UPDATE itineraire i
         SET published = FALSE
         FROM evenements_troncons et
-        WHERE et.evenement = i.topologymixin_ptr_id AND et.troncon = OLD.id;
+        WHERE et.evenement = i.topology_ptr_id AND et.troncon = OLD.id;
 
     -- Mark empty topologies as deleted
     UPDATE evenements e

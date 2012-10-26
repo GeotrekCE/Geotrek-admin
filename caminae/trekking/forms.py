@@ -6,14 +6,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML
 
-from caminae.core.forms import TopologyMixinForm
-from caminae.core.widgets import PointWidget, LineTopologyWidget, PointTopologyWidget
+from caminae.core.forms import TopologyForm
+from caminae.mapentity.widgets import PointWidget
+from caminae.core.widgets import LineTopologyWidget, PointTopologyWidget
 from caminae.mapentity.widgets import SelectMultipleWithPop
 
 from .models import Trek, POI, WebLink
 
 
-class TrekForm(TopologyMixinForm):
+class TrekForm(TopologyForm):
     parking_location = forms.gis.GeometryField(widget=PointWidget)
 
     modelfields = (
@@ -46,14 +47,14 @@ class TrekForm(TopologyMixinForm):
         super(TrekForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = LineTopologyWidget()
         self.fields['web_links'].widget = SelectMultipleWithPop(
-												choices=self.fields['web_links'].choices, 
-												add_url=WebLink.get_add_url())
+                                                choices=self.fields['web_links'].choices, 
+                                                add_url=WebLink.get_add_url())
 
-    class Meta(TopologyMixinForm.Meta):
+    class Meta(TopologyForm.Meta):
         model = Trek
 
 
-class POIForm(TopologyMixinForm):
+class POIForm(TopologyForm):
     modelfields = (
             'name',
             'description',
@@ -64,7 +65,7 @@ class POIForm(TopologyMixinForm):
         super(POIForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = PointTopologyWidget()
 
-    class Meta(TopologyMixinForm.Meta):
+    class Meta(TopologyForm.Meta):
         model = POI
 
 

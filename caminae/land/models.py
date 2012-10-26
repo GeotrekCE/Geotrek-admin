@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelated
-from caminae.core.models import TopologyMixin
+from caminae.core.models import Topology, Path
 from caminae.common.models import Organism
 
 
@@ -22,13 +22,13 @@ class PhysicalType(models.Model):
         return self.name
 
 
-class PhysicalEdge(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class PhysicalEdge(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'nature'
@@ -55,13 +55,13 @@ class LandType(StructureRelated):
         return self.name
 
 
-class LandEdge(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class LandEdge(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'foncier'
@@ -72,16 +72,26 @@ class LandEdge(MapEntityMixin, TopologyMixin):
     def land_type_display(self):
         return unicode(self.land_type)
 
+    @classmethod
+    def path_lands(self, path):
+        return list(set([LandEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=LandEdge.KIND)]))
+
+Path.add_property('lands', lambda self: LandEdge.path_lands(self))
+
+
+
 
 # Interaction with external structures
 
-class CompetenceEdge(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class CompetenceEdge(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'competence'
@@ -93,13 +103,13 @@ class CompetenceEdge(MapEntityMixin, TopologyMixin):
         return unicode(self.organization)
 
 
-class WorkManagementEdge(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class WorkManagementEdge(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'gestion_travaux'
@@ -111,13 +121,13 @@ class WorkManagementEdge(MapEntityMixin, TopologyMixin):
         return unicode(self.organization)
 
 
-class SignageManagementEdge(MapEntityMixin, TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class SignageManagementEdge(MapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'gestion_signaletique'
@@ -148,13 +158,13 @@ class RestrictedArea(models.Model):
         return self.name
 
 
-class RestrictedAreaEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class RestrictedAreaEdge(Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'zonage'
@@ -179,14 +189,14 @@ class City(models.Model):
         return self.name
 
 
-class CityEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class CityEdge(Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
 
     city = models.ForeignKey(City, verbose_name=_(u"City"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'commune'
@@ -210,15 +220,31 @@ class District(models.Model):
         return self.name
 
 
-class DistrictEdge(TopologyMixin):
-    topo_object = models.OneToOneField(TopologyMixin, parent_link=True,
+class DistrictEdge(Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     district = models.ForeignKey(District, verbose_name=_(u"District"))
 
     # Override default manager
-    objects = TopologyMixin.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 'secteur'
         verbose_name = _(u"District edge")
         verbose_name_plural = _(u"District edges")
+
+    @classmethod
+    def path_districts(self, path):
+        return list(set([DistrictEdge.objects.get(pk=t.pk).district
+                         for t in path.topology_set.existing().filter(
+                             kind=DistrictEdge.KIND)]))
+
+    @classmethod
+    def topology_districts(self, topology):
+        s = []
+        for p in topology.paths.all():
+            s += p.districts
+        return list(set(s))
+
+Path.add_property('districts', lambda self: DistrictEdge.path_districts(self))
+Topology.add_property('districts', lambda self: DistrictEdge.topology_districts(self))

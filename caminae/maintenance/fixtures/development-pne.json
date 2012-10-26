@@ -391,7 +391,7 @@
     },
     {
         "pk": 300000,
-        "model": "core.topologymixin",
+        "model": "core.topology",
         "fields": {
             "kind": "INTERVENTION",
             "deleted": false,

@@ -1,11 +1,11 @@
 from caminae.core.widgets import LineTopologyWidget
-from caminae.core.forms import TopologyMixinForm
+from caminae.core.forms import TopologyForm
 
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge,
                     SignageManagementEdge)
 
 
-class EdgeForm(TopologyMixinForm):
+class EdgeForm(TopologyForm):
     def __init__(self, *args, **kwargs):
         super(EdgeForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = LineTopologyWidget()

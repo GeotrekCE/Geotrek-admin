@@ -5,25 +5,29 @@
     {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>
 
-<script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
+{% block requirements %}
+    <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
+{% endblock requirements %}
 
-
-{% if display_wkt %}<p> WKT debugging window:</p>{% endif %}
+{% if display_wkt %}<p> Geom debugging window:</p>{% endif %}
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
 if (! {{ module }}); var {{ module }} = {};
 
+{% block settings %}
 var {{ module }}_settings = {
     'enableDrawing': {
         'is_polygon': {{ is_polygone|yesno:"true,false" }},
         'is_marker': {{ is_point|yesno:"true,false" }},
         'is_polyline': {{ is_linestring|yesno:"true,false" }}
     },
+    {% if path_snapping %}
     'enablePathSnapping': {
         'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
     },
+    {% endif %}
     'addObjectsLayer': {
         'getUrl': function(modelname) {
             return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
@@ -45,6 +49,7 @@ var {{ module }}_settings = {
         'others': '{{ LAYERCOLOR_OTHERS }}',
     }
 };
+{% endblock settings %}
 
 FormField.makeModule({{ module }}, {{ module }}_settings);
 
@@ -55,10 +60,11 @@ FormField.makeModule({{ module }}, {{ module }}_settings);
 
     // We are displaying a form - if no object instance, restore previous map view
     if (! module.getObjectPk()) {
-        MapEntity.Context.restoreMapView(map);
-        bounds = map.getBounds();
-        // We just changed the map bounds, avoid resetting them...
-        fitToBounds = false;
+        if (MapEntity.Context.restoreMapView(map)) {
+            bounds = map.getBounds();
+            // We just changed the map bounds, avoid resetting them...
+            fitToBounds = false;
+        }
     }
     module.init(map, bounds, fitToBounds);
 };
