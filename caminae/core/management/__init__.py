@@ -33,12 +33,13 @@ def run_initial_sql(sender, **kwargs):
             f = open(sql_file)
             sql = f.read()
             f.close()
-            cursor.execute(sql)
+            cursor.execute(sql.replace('%', '%%'))
         except Exception, e:
             logger.error("Failed to install custom SQL file '%s': %s\n" %
                          (sql_file, e))
             traceback.print_exc()
             transaction.rollback_unless_managed()
+            raise e
         else:
             transaction.commit_unless_managed()
 post_migrate.connect(run_initial_sql)
