@@ -154,6 +154,25 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="GH")), 2)
         self.assertEqual(len(Path.objects.filter(name="IJ")), 2)
 
+    def test_split_multiple_2(self):
+        """
+              C              D
+               +            +
+             E  \          /  F
+        A +---+--+--------+--+---+ B
+               \  \      /  /
+                \  \    /  /
+                 +--+--+--+ 
+                     \/
+        """
+        PathFactory.create(name="AB", geom=LineString((0,0,0),(10,0,0)))
+        PathFactory.create(name="EF", geom=LineString((2,0,0),(2,-1,0),(6,-1,0),(6,0,0)))
+        
+        PathFactory.create(name="CD", geom=LineString((4,1,0),(5,-2,0),(6,1,0)))
+        
+        self.assertEqual(len(Path.objects.filter(name="AB")), 5)
+        self.assertEqual(len(Path.objects.filter(name="EF")), 5)
+        self.assertEqual(len(Path.objects.filter(name="CD")), 5)
 
 
 class SplitPathLineTopologyTest(TestCase):

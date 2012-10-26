@@ -130,7 +130,7 @@ class Path(MapEntityMixin, StructureRelated):
         self.geom = tmp.geom
 
     def save(self, *args, **kwargs):
-        before = len(connection.connection.notices)
+        before = len(connection.connection.notices) if connection.connection else 0
         try:
             super(Path, self).save(*args, **kwargs)
             self.reload()
