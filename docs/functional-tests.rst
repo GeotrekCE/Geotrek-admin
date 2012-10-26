@@ -1646,6 +1646,7 @@ Fixé
 
 Corrigé.
 Nouveau comportement:
+
 - Le multipath doit être désactivé manuellement en cliquant sur le contrôle multipath où le contrôle point.
   (elle était désactivée de façon buggée à la suite du calcul d'une nouvelle topologie multipath).
 - La désactivation du multipath entraîne la suppression des évènements drag, click etc. sur la topologie multipath.
@@ -1708,13 +1709,13 @@ qui ignorait les marqueurs intermédiaires lorsque ceux-ci étaient placés à d
 
 
 #379 - [BUG] Édition topologie point à un croisement : mauvais marqueur utilisé pour l'edition
----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
 
 Fixé.
 
 
 #375 - [BUG] (Javascript) Ajouter une signalétique, la carte ne s'affiche pas
-----------------------------------------------------------------------
+-----------------------------------------------------------------------------
 
 * Vider le cache du navigateur (localstorage inclus)
 
@@ -1821,7 +1822,7 @@ Les cas qui ne sont pas supportés sont explicités plus bas.
         
                                     AB and CD exist.
                                     CD updated into CE.
-        
+
 
 Avec des évènements linéaires sur les tronçons :
 
@@ -1859,9 +1860,11 @@ Avec des évènements linéaires sur les tronçons :
              |   |
              +---+ 
 
+
 Et lors de la mise à jour :
 
 ::
+
                                           + E
                                           :
                                          ||
@@ -1982,6 +1985,19 @@ Les cas suivants sont mal supportés :
                                       :
     C X-------+ D                     :
                                       + D
+    
+    
+    BUG: AB, EF, CD are split into 3 parts instead of 5.
+    
+               C              D
+               +            +
+             E  \          /  F
+        A +---+--+--------+--+---+ B
+               \  \      /  /   AB exists. Create EF. Create CD.
+                \  \    /  /
+                 +--+--+--+ 
+                     \/
+
 
 Le cas suivant n'est pas géré volontairement :
 
