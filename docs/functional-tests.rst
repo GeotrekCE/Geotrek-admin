@@ -1773,3 +1773,224 @@ en train de saisir une ligne multi-tronçons.
 
 Erreur liée au marqueur du champ parking, désormais fixée. Le marqueur de parking
 est bien restauré en édition.
+
+
+#279, #331 - Découpage de tronçons et association des évènements
+----------------------------------------------------------------
+
+Voici la liste des cas qui sont gérés et testés.
+Les cas qui ne sont pas supportés sont explicités plus bas.
+
+::
+
+               C
+        A +----+----+ B
+               |
+               +      AB exists. Add CD.
+               D      or CD exists and add AB.
+
+               C
+               +
+               |
+        A +----+----+ B
+               |
+               +      AB exists. Add CD.
+               D      
+
+             C   D
+             +   +
+             |   |
+        A +--+---+--+ B
+             |   |
+             +---+ 
+
+
+             C   E   G   I
+             +   +   +   +
+             |   |   |   |
+        A +--+---+----------+ B
+             |   |   |   |
+             +   +   +   +
+             D   F   H   J
+
+                                       + E
+                                       :
+        A +----+----+ B         A +----+----+ B
+                                       :
+        C +----+ D              C +----+ D
+        
+                                    AB and CD exist.
+                                    CD updated into CE.
+        
+
+Avec des évènements linéaires sur les tronçons :
+
+::
+
+                 C
+        A +---===+===---+ B
+             A'  |  B'
+                 +      AB exists with topology A'B'.
+                 D      Add CD.
+                 
+                     C
+        A +---+---=====--+ B
+              |   A'  B'
+              +           AB exists with topology A'B'.
+              D           Add CD          
+                 
+
+                    C
+        A +--=====--+---+ B
+             A'  B' |   
+                    +    AB exists with topology A'B'.
+                    D    Add CD
+
+                B   C   E
+        A +--===+===+===+===--+ F
+                    |   
+                    +    AB, BE, EF exist.
+                    D    Add CD.
+
+             C   D
+             +   +
+             |   |
+      A +--==+===+==--+ B
+             |   |
+             +---+ 
+
+Et lors de la mise à jour :
+
+::
+                                          + E
+                                          :
+                                         ||
+        A +-----------+ B         A +----++---+ B
+                                         ||
+        C +-====-+ D              C +--===+ D
+             
+                                          + E
+                                          :
+                                          :
+        A +-----------+ B         A +-----+---+ B
+                                          :
+        C +-==------+ D           C +--===+ D
+
+                                           + E
+                                          ||
+                                          ||
+        A +-----------+ B         A +-----+---+ B
+                                          :
+        C +------==-+ D           C +-----+ D
+
+
+Avec des évènements ponctuels :
+
+::
+
+                C
+        A +-----X----+ B
+                |   
+                +    AB exists with topology at C.
+                D    Add CD.
+                C
+    
+        A +--X--+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+                C
+    
+        A +-----+--X--+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+                C
+    
+        A X-----+----+ B
+                |   
+                +    AB exists.
+                D    Add CD.
+    
+                C
+        A +-----+----X B
+                |   
+                +    AB exists.
+                D    Add CD.
+    
+
+Et lors de la mise à jour :
+
+::
+
+                                      + E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-X-----+ D              C +--X-+ D
+    
+                                      + E
+                                      X
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-----X-+ D              C +----+ D
+
+                                      + E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C X-------+ D              C X----+ D
+
+                                      X E
+                                      :
+                                      :
+    A +-----------+ B         A +-----+---+ B
+                                      :
+    C +-------X D              C +----+ D
+
+
+Les cas suivants sont mal supportés :
+
+::
+    
+    BUG: AF segment not associated to X
+    
+                                      + E
+                                      :
+                                     F:
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +---X---+ D              C +----+ D
+    
+    
+    BUG: AD,DB segment not associated to X
+    
+                                      D
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +-------X D                     :
+                                      +
+                                      C
+                
+    BUG: AC,CB segment not associated to X
+          
+                                      C
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C X-------+ D                     :
+                                      + D
+
+Le cas suivant n'est pas géré volontairement :
+
+::
+
+    AB et CD se superposent. Seuls les intersections ponctuelles sont gérées.
+    
+    C +---+
+          |      
+    A +---+---+---+ B
+              |      
+              +---+ D

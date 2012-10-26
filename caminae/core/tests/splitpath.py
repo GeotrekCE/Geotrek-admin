@@ -170,6 +170,7 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.25, end=0.75)
+        topogeom = topology.geom
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
         cd = PathFactory.create(geom=LineString((2,0,0),(2,2,0)))
@@ -184,11 +185,14 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_cb = cb.aggregations.all()[0]
         self.assertEqual((0.5, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
-
+        topology.reload()
+        self.assertNotEqual(topology.geom, topogeom)
+        self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
+        self.assertEqual(topology.geom.coords[-1], topogeom.coords[-1])
 
     def test_split_tee_2(self):
         """
-               C
+              C
         A +---+---=====--+ B
               |   A'  B'
               +           AB exists with topology A'B'.
@@ -198,6 +202,7 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.5, end=0.75)
+        topogeom = topology.geom
         # Topology covers 1 path
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
@@ -212,7 +217,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertEqual(topology.paths.all()[0].pk, cb.pk)
-
+        topology.reload()
+        self.assertEqual(topology.geom, topogeom)
 
     def test_split_tee_3(self):
         """
@@ -226,6 +232,7 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.3, end=0.6)
+        topogeom = topology.geom
         # Topology covers 1 path
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
@@ -241,7 +248,8 @@ class SplitPathLineTopologyTest(TestCase):
         # But start/end have changed
         aggr_ab = ab.aggregations.all()[0]
         self.assertEqual((0.4, 0.8), (aggr_ab.start_position, aggr_ab.end_position))
-
+        topology.reload()
+        self.assertEqual(topology.geom, topogeom)
 
     def test_split_tee_4(self):
         """
@@ -259,6 +267,8 @@ class SplitPathLineTopologyTest(TestCase):
         topology.add_path(ab, start=0.5, end=1)
         topology.add_path(be, start=0, end=1)
         topology.add_path(ef, start=0.0, end=0.5)
+        topogeom = topology.geom
+        
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(be.aggregations.all()), 1)
         self.assertEqual(len(ef.aggregations.all()), 1)
@@ -280,7 +290,10 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_ce = ce.aggregations.all()[0]
         self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
         self.assertEqual((0.0, 1.0), (aggr_ce.start_position, aggr_ce.end_position))
-
+        topology.reload()
+        self.assertNotEqual(topology.geom, topogeom)
+        self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
+        self.assertEqual(topology.geom.coords[-1], topogeom.coords[-1])
 
     def test_split_twice(self):
         """
@@ -296,6 +309,7 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.1, end=0.9)
+        topogeom = topology.geom
         self.assertEqual(len(topology.paths.all()), 1)
         cd = PathFactory.create(name="CD", geom=LineString((1,2,0),(1,-2,0),
                                                            (3,-2,0),(3,2,0)))
@@ -309,6 +323,10 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_ab3 = ab3.aggregations.all()[0]
         self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
         self.assertEqual((0.0, 0.6), (aggr_ab3.start_position, aggr_ab3.end_position))
+        topology.reload()
+        self.assertNotEqual(topology.geom, topogeom)
+        self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
+        self.assertEqual(topology.geom.coords[-1], topogeom.coords[-1])
 
     def test_split_on_update(self):
         """                               + E
