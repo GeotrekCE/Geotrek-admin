@@ -8,6 +8,7 @@ from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelated
 from caminae.core.models import Topology, Path
 from caminae.common.models import Organism
+from caminae.maintenance.models import Intervention, Project
 
 
 def topology_edges(topology, pathattr):
@@ -70,6 +71,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
 Path.add_property('physical_edges', lambda self: PhysicalEdge.path_physicals(self))
 Topology.add_property('physical_edges', lambda self: topology_edges(self, 'physical_edges'))
+Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [])
 
 
 # Type of land under paths
@@ -119,7 +121,7 @@ class LandEdge(MapEntityMixin, Topology):
 
 Path.add_property('land_edges', lambda self: LandEdge.path_lands(self))
 Topology.add_property('land_edges', lambda self: topology_edges(self, 'land_edges'))
-
+Intervention.add_property('land_edges', lambda self: self.topology.land_edges if self.topology else [])
 
 
 # Interaction with external structures
@@ -156,6 +158,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
 Path.add_property('competence_edges', lambda self: CompetenceEdge.path_competences(self))
 Topology.add_property('competence_edges', lambda self: topology_edges(self, 'competence_edges'))
+Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [])
 
 
 class WorkManagementEdge(MapEntityMixin, Topology):
@@ -190,6 +193,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
 Path.add_property('work_edges', lambda self: WorkManagementEdge.path_works(self))
 Topology.add_property('work_edges', lambda self: topology_edges(self, 'work_edges'))
+Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [])
 
 
 class SignageManagementEdge(MapEntityMixin, Topology):
@@ -224,6 +228,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
 Path.add_property('signage_edges', lambda self: SignageManagementEdge.path_signages(self))
 Topology.add_property('signage_edges', lambda self: topology_edges(self, 'signage_edges'))
+Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [])
 
 
 # Zoning
@@ -275,6 +280,8 @@ Path.add_property('area_edges', lambda self: RestrictedAreaEdge.path_area_edges(
 Path.add_property('areas', lambda self: map(attrgetter('restricted_area'), self.area_edges))
 Topology.add_property('area_edges', lambda self: topology_edges(self, 'area_edges'))
 Topology.add_property('areas', lambda self: map(attrgetter('restricted_area'), self.area_edges))
+Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [])
+Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [])
 
 
 class City(models.Model):
@@ -325,6 +332,8 @@ Path.add_property('city_edges', lambda self: CityEdge.path_city_edges(self))
 Path.add_property('cities', lambda self: map(attrgetter('city'), self.city_edges))
 Topology.add_property('city_edges', lambda self: topology_edges(self, 'city_edges'))
 Topology.add_property('cities', lambda self: map(attrgetter('city'), self.city_edges))
+Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [])
+Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [])
 
 
 class District(models.Model):
@@ -373,3 +382,5 @@ Path.add_property('district_edges', lambda self: DistrictEdge.path_district_edge
 Path.add_property('districts', lambda self: map(attrgetter('district'), self.district_edges))
 Topology.add_property('district_edges', lambda self: topology_edges(self, 'district_edges'))
 Topology.add_property('districts', lambda self: map(attrgetter('district'), self.district_edges))
+Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [])
+Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [])
