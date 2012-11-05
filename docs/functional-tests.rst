@@ -2010,3 +2010,15 @@ Le cas suivant n'est pas géré volontairement :
     A +---+---+---+ B
               |      
               +---+ D
+
+
+
+========================
+Sprint 8 - Version 0.8.0
+========================
+
+#323 - Affichage des informations SIG dans les fiches objet
+-----------------------------------------------------------
+
+Tous les objets ont désormais une section "Foncier" qui liste les propriétés liées
+aux couches SIG, ainsi qu'au module foncier.
