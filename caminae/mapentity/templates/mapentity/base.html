@@ -21,5 +21,11 @@
         $(document).ready(function (e) {
             MapEntity.showNumberSearchResults();
         });
+        
+        // Auto-hide elements
+        $('.autohide').parents().hover(
+          function() { $(this).children(".autohide").show(); },
+          function() { $(this).children(".autohide").hide(); }
+        );
     </script>
 {% endblock extrabody %}
