@@ -160,7 +160,7 @@ class SplitPathTest(TestCase):
                +            +
              E  \          /  F
         A +---+--+--------+--+---+ B
-               \  \      /  /
+               \  \      /  /            AB exists. Create EF. Create CD.
                 \  \    /  /
                  +--+--+--+ 
                      \/
