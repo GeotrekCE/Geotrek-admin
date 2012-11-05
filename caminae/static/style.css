@@ -10,45 +10,25 @@ body {
     padding-right: 0;
 }
 
-.leaflet-container {
-    min-height: 600px;
-}
-
-
-/***** Entity detail ******/
+/***** Reusables ******/
 
 .centered {
 	text-align: center;
 }
 
+.autohide {
+    display: none;
+}
+
+/***** Bootstrap customizations ******/
 
 .groupfields {
     margin-bottom: 15px;
 }
 
-.details-panel {
-    padding: 40px;
-}
-
-
-.details-panel h3 {
-	border-bottom: 1px solid #333333;
-}
-
-.details-panel td {
-	color: #636363;
-}
-
-.details-panel th, .details-panel td {
-    border-top: 0px;
-    border-bottom: 1px solid #DDDDDD;
-}
-
-
 .nav-pills.nav-stacked > li > a {
     margin-bottom: 0;
 }
-
 
 .nav-pills > li > a {
 	border-radius: 0px;
@@ -59,7 +39,6 @@ body {
 	margin-top: 0px;
 	background-color: #F9F9F9;	
 }
-
 
 .nav-pills > .active > a, 
 .nav-pills > .active > a:hover {
@@ -114,7 +93,10 @@ h2 {
     display: none;
 }
 
-/* Alert messages */
+
+
+/***** Alerts ******/
+
 #alert-box {
 	position: absolute; 
 	top: 3px; 
@@ -123,9 +105,17 @@ h2 {
 	margin: 0 0 0 -25%;
 	z-index: 1000;
 }
-#alert-box li.alert {list-style-type: none; margin-bottom: 3px;}
 
-/* Maps */
+#alert-box li.alert {
+    list-style-type: none; margin-bottom: 3px;
+}
+
+/**** Maps ****/
+
+.leaflet-container {
+    min-height: 600px;
+}
+
 .map-error {
     border: 5px solid red;
 }
@@ -143,11 +133,6 @@ img.marker-via.marker-snapped { background-image: url('images/osrm_markers/marke
 
 /* snap drag */
 img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
-
-.axislabel {
-	color: blue;
-	font-size: 10px;
-}
 
 .leaflet-control-draw.enabled a, .leaflet-control.enabled a {
  	background-color: #fff;
@@ -173,6 +158,13 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
     background-image: url(images/screenshot-control.png);
 }
 
+/**** Widgets ****/
+
+.axislabel {
+	color: blue;
+	font-size: 10px;
+}
+
 tr.selected-row td {
     /* Button green color #5BB75B */
     background-color: #DF8 !important;
@@ -188,6 +180,53 @@ select.filter-set {
 #bboxfilter {
     text-align: right;
     padding-top: 3px;
+}
+
+/***** Entity detail ******/
+
+.details-panel {
+    padding: 40px;
+}
+
+.details-panel .table { 
+    table-layout: fixed; 
+}
+
+.details-panel .table th {
+    width: 40%;
+}
+
+.details-panel h3 {
+	border-bottom: 1px solid #333333;
+}
+
+.details-panel td {
+	color: #636363;
+}
+
+.details-panel th, .details-panel td {
+    border-top: 0px;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.details-panel td ul li {
+	list-style: none;
+}
+
+.details-panel span.none {
+	opacity: 0.4;
+}
+
+.details-panel td .autohide {
+    float: right;
+}
+
+.details-panel td ul {
+	margin: 0px;
+}
+
+.details-panel td p {  /* Autohide add buttons within <p> */
+    margin: 0px;
 }
 
 /**** Layout (based on "Conflicting position" trick) ****/
