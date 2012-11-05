@@ -28,7 +28,7 @@
                     <li>{{ p.name_display|safe }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
-                    {% trans "None" %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
         </tr>
@@ -40,7 +40,7 @@
                     <li>{{ t.name_display|safe }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
-                    {% trans "None" %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
         </tr>

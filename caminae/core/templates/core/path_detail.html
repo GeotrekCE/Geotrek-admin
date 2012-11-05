@@ -17,7 +17,7 @@
     
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
-        {{ path.comments|safe|default:_("None") }}
+        {{ path.comments|default:_("None")|safe }}
     </div>
 
     <h3>{% trans "Properties" %}</h3>
@@ -60,7 +60,7 @@
                     <li> {{ usage }} </li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
-                    {% trans "None" %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
         </tr><tr>
@@ -71,7 +71,7 @@
                     <li> {{ network }} </li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
-                    {% trans "None" %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
         </tr>
