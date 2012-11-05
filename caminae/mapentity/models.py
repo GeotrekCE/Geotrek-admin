@@ -36,7 +36,7 @@ class MapEntityMixin(object):
     @classmethod
     def add_property(cls, name, func):
         if hasattr(cls, name):
-            raise AttributeError("%s has already an attribute %s" % (cls, name))
+            return  # ignore
         setattr(cls, name, property(func))
 
     @classmethod
