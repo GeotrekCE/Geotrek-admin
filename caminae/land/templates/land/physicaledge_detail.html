@@ -8,5 +8,7 @@
             <th>{{ physicaledge|verbose:"physical_type" }}</th>
             <td>{{ physicaledge.physical_type }}</td>
         </tr>
+        
+        {% include "land/edge_path_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}
