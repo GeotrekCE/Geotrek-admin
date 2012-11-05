@@ -39,6 +39,18 @@ class PhysicalEdge(MapEntityMixin, Topology):
     def physical_type_display(self):
         return unicode(self.physical_type)
 
+    @property
+    def display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.physical_type)
+
+    @classmethod
+    def path_physicals(self, path):
+        return list(set([PhysicalEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=PhysicalEdge.KIND)]))
+
+Path.add_property('physical_edges', lambda self: PhysicalEdge.path_physicals(self))
+
 
 # Type of land under paths
 
@@ -72,14 +84,17 @@ class LandEdge(MapEntityMixin, Topology):
     def land_type_display(self):
         return unicode(self.land_type)
 
+    @property
+    def display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.land_type)
+
     @classmethod
     def path_lands(self, path):
         return list(set([LandEdge.objects.get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=LandEdge.KIND)]))
 
-Path.add_property('lands', lambda self: LandEdge.path_lands(self))
-
+Path.add_property('land_edges', lambda self: LandEdge.path_lands(self))
 
 
 
@@ -102,6 +117,19 @@ class CompetenceEdge(MapEntityMixin, Topology):
     def organization_display(self):
         return unicode(self.organization)
 
+    @property
+    def display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
+
+    @classmethod
+    def path_competences(self, path):
+        return list(set([CompetenceEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=CompetenceEdge.KIND)]))
+
+Path.add_property('competence_edges', lambda self: CompetenceEdge.path_competences(self))
+
+
 
 class WorkManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -120,6 +148,19 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     def organization_display(self):
         return unicode(self.organization)
 
+    @property
+    def display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
+
+    @classmethod
+    def path_works(self, path):
+        return list(set([WorkManagementEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=WorkManagementEdge.KIND)]))
+
+Path.add_property('work_edges', lambda self: WorkManagementEdge.path_works(self))
+
+
 
 class SignageManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -137,6 +178,18 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     @property
     def organization_display(self):
         return unicode(self.organization)
+
+    @property
+    def display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
+
+    @classmethod
+    def path_signages(self, path):
+        return list(set([SignageManagementEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=SignageManagementEdge.KIND)]))
+
+Path.add_property('signage_edges', lambda self: SignageManagementEdge.path_signages(self))
 
 
 # Zoning
@@ -171,6 +224,37 @@ class RestrictedAreaEdge(Topology):
         verbose_name = _(u"Restricted area edge")
         verbose_name_plural = _(u"Restricted area edges")
 
+    @property
+    def display(self):
+        return unicode(self)
+
+
+    @classmethod
+    def path_area_edges(cls, path):
+        return list(set([RestrictedAreaEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=RestrictedAreaEdge.KIND)]))
+
+    @classmethod
+    def path_areas(cls, path):
+        return [e.restricted_area for e in cls.path_area_edges(path)]
+
+    @classmethod
+    def topology_area_edges(cls, topology):
+        s = []
+        for p in topology.paths.all():
+            s += p.area_edges
+        return list(set(s))
+
+    @classmethod
+    def topology_areas(cls, topology):
+        return [e.restricted_area for e in cls.topology_areas(topology)]
+
+Path.add_property('area_edges', lambda self: RestrictedAreaEdge.path_area_edges(self))
+Path.add_property('areas', lambda self: RestrictedAreaEdge.path_areas(self))
+Topology.add_property('area_edges', lambda self: RestrictedAreaEdge.topology_area_edges(self))
+Topology.add_property('areas', lambda self: RestrictedAreaEdge.topology_areas(self))
+
 
 class City(models.Model):
     code = models.CharField(primary_key=True, max_length=6, db_column='insee')
@@ -203,6 +287,36 @@ class CityEdge(Topology):
         verbose_name = _(u"City edge")
         verbose_name_plural = _(u"City edges")
 
+    @property
+    def display(self):
+        return unicode(self.city)
+
+    @classmethod
+    def path_city_edges(self, path):
+        return list(set([CityEdge.objects.get(pk=t.pk)
+                         for t in path.topology_set.existing().filter(
+                             kind=CityEdge.KIND)]))
+
+    @classmethod
+    def path_cities(cls, path):
+        return [e.city for e in cls.path_city_edges(path)]
+
+    @classmethod
+    def topology_city_edges(self, topology):
+        s = []
+        for p in topology.paths.all():
+            s += p.city_edges
+        return list(set(s))
+
+    @classmethod
+    def topology_cities(cls, topology):
+        return [e.city for e in cls.topology_city_edges(topology)]
+
+Path.add_property('city_edges', lambda self: CityEdge.path_city_edges(self))
+Path.add_property('cities', lambda self: CityEdge.path_cities(self))
+Topology.add_property('city_edges', lambda self: CityEdge.topology_city_edges(self))
+Topology.add_property('cities', lambda self: CityEdge.topology_cities(self))
+
 
 class District(models.Model):
     name = models.CharField(max_length=128, db_column='secteur', verbose_name=_(u"Name"))
@@ -233,18 +347,31 @@ class DistrictEdge(Topology):
         verbose_name = _(u"District edge")
         verbose_name_plural = _(u"District edges")
 
+    @property
+    def display(self):
+        return unicode(self.district)
+
     @classmethod
-    def path_districts(self, path):
-        return list(set([DistrictEdge.objects.get(pk=t.pk).district
+    def path_district_edges(self, path):
+        return list(set([DistrictEdge.objects.get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=DistrictEdge.KIND)]))
+    @classmethod
+    def path_districts(cls, path):
+        return [e.district for e in cls.path_district_edges(path)]
 
     @classmethod
-    def topology_districts(self, topology):
+    def topology_district_edges(self, topology):
         s = []
         for p in topology.paths.all():
-            s += p.districts
+            s += p.district_edges
         return list(set(s))
 
+    @classmethod
+    def topology_districts(cls, topology):
+        return [e.district for e in cls.topology_district_edges(topology)]
+
+Path.add_property('district_edges', lambda self: DistrictEdge.path_district_edges(self))
 Path.add_property('districts', lambda self: DistrictEdge.path_districts(self))
+Topology.add_property('district_edges', lambda self: DistrictEdge.topology_district_edges(self))
 Topology.add_property('districts', lambda self: DistrictEdge.topology_districts(self))

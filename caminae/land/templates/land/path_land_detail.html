@@ -3,26 +3,60 @@
 <h3>{% trans "Land" %}</h3>
 <table class="table">
     <tr>
+        <th>{% trans "Cities" %}</th>
+        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.city_edges %}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Districts" %}</th>
+        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.district_edges %}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Restricted areas" %}</th>
+        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.area_edges %}</td>
+    </tr>
+    <tr>
         <th>{% trans "Land edges" %}</th>
         <td>
-            {% for l in path.lands %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ l.name_display|safe }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                {% trans "None" %}
-            {% endfor %}
+            <p class="autohide"><a href="{% url land:landedge_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add land edge" %}</a>
+            </p>
+            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.land_edges %}
         </td>
-    </tr><tr>
-        <th>{% trans "Districts" %}</th>
+    </tr>
+    <tr>
+        <th>{% trans "Physical edges" %}</th>
         <td>
-            {% for d in path.districts %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ d }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                {% trans "None" %}
-            {% endfor %}
+            <p class="autohide"><a href="{% url land:physicaledge_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add physical edge" %}</a>
+            </p>
+            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.physical_edges %}
+        </td>
+    </tr>
+    <tr>
+        <th>{% trans "Competence edges" %}</th>
+        <td>
+            <p class="autohide"><a href="{% url land:competenceedge_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add competence edge" %}</a>
+            </p>
+            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.competence_edges %}
+        </td>
+    </tr>
+    <tr>
+        <th>{% trans "Work management edges" %}</th>
+        <td>
+            <p class="autohide"><a href="{% url land:workmanagementedge_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add work management edge" %}</a>
+            </p>
+            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.work_edges %}
+        </td>
+    </tr>
+    <tr>
+        <th>{% trans "Signage management edges" %}</th>
+        <td>
+            <p class="autohide"><a href="{% url land:signagemanagementedge_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add signage management edge" %}</a>
+            </p>
+            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=path.signage_edges %}
         </td>
     </tr>
 </table>

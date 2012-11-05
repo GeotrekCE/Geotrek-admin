@@ -13,29 +13,76 @@ from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
     WorkManagementEdge, SignageManagementEdge, City, RestrictedArea)
 
 
-from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory,
-    CompetenceEdgeFactory, WorkManagementEdgeFactory, SignageManagementEdgeFactory, 
-    PhysicalTypeFactory, LandTypeFactory)
+from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory, 
+    CityEdgeFactory, RestrictedAreaEdgeFactory, CompetenceEdgeFactory, WorkManagementEdgeFactory, 
+    SignageManagementEdgeFactory, PhysicalTypeFactory, LandTypeFactory)
 
 
-class LandEdgeTest(TestCase):
-    
-    def test_helpers(self):
+class EdgeHelperTest(TestCase):
+
+    factory = None
+    helper_name = None
+
+    def test_path_helpers(self):
+        if not self.factory:
+            return   # ignore abstract test
         p = PathFactory.create()
-        self.assertEquals(len(p.lands), 0)
-        l = LandEdgeFactory.create(no_path=True)
+        self.assertEquals(len(p.land_edges), 0)
+        l = self.factory.create(no_path=True)
         PathAggregationFactory.create(topo_object=l, path=p)
-        self.assertItemsEqual(p.lands, [l])
+        self.assertEqual(getattr(p, self.helper_name), [l])
 
 
-class DistrictEdgeTest(TestCase):
-    
-    def test_helpers(self):
-        p = PathFactory.create()
-        self.assertEquals(len(p.districts), 0)
-        d = DistrictEdgeFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=d, path=p)
-        self.assertItemsEqual(p.districts, [d.district])
+class LandEdgeTest(EdgeHelperTest):
+
+    factory = LandEdgeFactory
+    helper_name = 'land_edges'
+
+
+class PhysicalEdgeTest(EdgeHelperTest):
+
+    factory = PhysicalEdgeFactory
+    helper_name = 'physical_edges'
+
+
+class CompetenceEdgeTest(EdgeHelperTest):
+
+    factory = CompetenceEdgeFactory
+    helper_name = 'competence_edges'
+
+
+class WorkManagementEdgeTest(EdgeHelperTest):
+
+    factory = WorkManagementEdgeFactory
+    helper_name = 'work_edges'
+
+
+class SignageManagementEdgeTest(EdgeHelperTest):
+
+    factory = SignageManagementEdgeFactory
+    helper_name = 'signage_edges'
+
+
+
+class CitiesEdgeTest(EdgeHelperTest):
+
+    factory = CityEdgeFactory
+    helper_name = 'city_edges'
+
+
+
+class RestrictedAreaEdgeTest(EdgeHelperTest):
+
+    factory = RestrictedAreaEdgeFactory
+    helper_name = 'area_edges'
+
+
+
+class DistrictEdgeTest(EdgeHelperTest):
+
+    factory = DistrictEdgeFactory
+    helper_name = 'district_edges'
+
 
 
 class PhysicalEdgeViewsTest(MapEntityTest):
