@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n leaflet_tags field_verbose_name land %}
+{% load i18n leaflet_tags mapentity field_verbose_name land %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
@@ -61,48 +61,24 @@
 
         L.Control.Screenshot.prototype.options.title = "{% trans "Save map as image" %}";
 
-        function mainmapInit(mainmap, bounds) {
-            mainmap.removeControl(mainmap.attributionControl);
-            mainmap.doubleClickZoom.disable();
+        function mainmapInit(map, bounds) {
+            {% smart_include "mapinit" %}
+            
+            map.removeControl(map.attributionControl);
+            map.doubleClickZoom.disable();
             
             {% if DEBUG %}
-            mainmap.on('viewreset moveend', function () {
-                if (!mainmap._loaded)
+            map.on('viewreset moveend', function () {
+                if (!map._loaded)
                     return;
-                var n = objectsLayer.search(mainmap.getBounds()).length;
+                var n = objectsLayer.search(map.getBounds()).length;
                 objectsLayer.fire('info', {info : n + ' objects shown'});
             });
-            mainmap.addControl(new L.Control.Information());
+            map.addControl(new L.Control.Information());
             {% endif %}
 
-            mainmap.addControl(new L.Control.ResetView(bounds));
-            mainmap.addControl(new L.Control.Measurement());
-            
-            // Always show the path layer, except if model is path
-            // TODO: this is not supposed to be in mapentity --> caminae.common
-            if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
-                var paths = new L.ObjectsLayer(null, {
-                    indexing: false,
-                    style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
-                });
-                paths.addTo(mainmap)
-                paths.load('{% url core:path_layer %}');
-                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
-            }
-            // Add land layers (TODO--> caminae.common)
-            var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}'},
-                              {url:'{% url land:city_layer %}', name: '{% trans "City" %}'},
-                              {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}'}];
-            for (var i=0; i<landLayers.length; i++) {
-                var landLayer = landLayers[i];
-                var layer = new L.ObjectsLayer(null, {
-                    indexing: false,
-                    style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
-                });
-                layer.addTo(mainmap)
-                layer.load(landLayer.url);
-                mainmap.layerscontrol.addOverlay(layer, landLayer.name);
-            }
+            map.addControl(new L.Control.ResetView(bounds));
+            map.addControl(new L.Control.Measurement());
             
             var getUrl = function (properties, layer) {
                 //TODO use nice JS url rewriting
@@ -113,8 +89,8 @@
                 objectUrl: getUrl,
                 style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
             });
-            mainmap.addLayer(objectsLayer);
-            mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
+            map.addLayer(objectsLayer);
+            map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}");
 
             var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
@@ -129,7 +105,7 @@
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
             var mapsync = new L.MapListSync(dt,
-                                            mainmap, 
+                                            map, 
                                             objectsLayer, {
                                                 filter: {
                                                     form: $('#mainfilter'),
@@ -146,17 +122,17 @@
             
             var screenshot = new L.Control.Screenshot()
             screenshot.on('trigger', function () {
-                var fullContext = MapEntity.Context.serializeFullContext(mainmap, '#mainfilter', dt);
+                var fullContext = MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
                 // Hack to download response attachment in Ajax
                 $('<form action="{% url mapentity:map_screenshot %}" method="post">' + 
                 '<textarea name="printcontext">' + fullContext + '</textarea>' + 
                 '</form>').appendTo('body').submit().remove();
             });
-            mainmap.addControl(screenshot);
+            map.addControl(screenshot);
             
-            MapEntity.Context.restoreFullContext(mainmap, '#mainfilter', dt, '{{ objectsname|title }}');
+            MapEntity.Context.restoreFullContext(map, '#mainfilter', dt, '{{ objectsname|title }}');
             $(window).unload(function () {
-                MapEntity.Context.saveFullContext(mainmap, '#mainfilter', dt);
+                MapEntity.Context.saveFullContext(map, '#mainfilter', dt);
             });
         }
     </script>
