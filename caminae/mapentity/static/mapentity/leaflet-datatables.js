@@ -19,7 +19,11 @@ L.MapListSync = L.Class.extend({
         this.selectorOnce = this.__initSelectorOnce(); // TODO: rename this and refactor
         this._dtcontainer = this.dt.fnSettings().nTableWrapper;
         
-        this.dt.fnSettings().fnCreatedRow = this._onRowCreated.bind(this);
+        this.dt.fnSettings()['aoRowCreatedCallback'].push({
+            fn: this._onRowCreated.bind(this),
+            sName: 'user',
+        });
+        
         this.layer.on('click', this._onObjectClick.bind(this));
         
         this._loading = false;
@@ -67,18 +71,18 @@ L.MapListSync = L.Class.extend({
     },
 
     _onRowCreated: function(nRow, aData, iDataIndex ) {
+        var self = this;
         var pk = aData[0];
         $(nRow).hover(
             function(){
-                this.layer.highlight(pk);
+                self.layer.highlight(pk);
             },
             function(){
-                this.layer.highlight(pk, false);
+                self.layer.highlight(pk, false);
             }
         );
 
         // select from row
-        var self = this;
         $(nRow).click(function() {
             self.selectorOnce.select(pk, $(nRow));
         });
