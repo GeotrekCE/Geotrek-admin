@@ -128,25 +128,20 @@
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
-            
-            var mapsync = new MapEntity.MapListSync(dt,
-                                                    mainmap, 
-                                                    objectsLayer, {
-                                                        filter: {
-                                                            form: $('#mainfilter'),
-                                                            submitbutton: $('#filter'),
-                                                            resetbutton: $('#reset'),
-                                                            bboxfield: $('#id_bbox'),
-                                                        }
-                                                    });
+            var mapsync = new L.MapListSync(dt,
+                                            mainmap, 
+                                            objectsLayer, {
+                                                filter: {
+                                                    form: $('#mainfilter'),
+                                                    submitbutton: $('#filter'),
+                                                    resetbutton: $('#reset'),
+                                                    bboxfield: $('#id_bbox'),
+                                                }
+                                            });
             
             mapsync.on('reloaded', function (data) {
                 // Show and save number of results
                 MapEntity.showNumberSearchResults(data.nbrecords);
-            });
-            
-            $('#reset').click(function () {
-                MapEntity.resetForm($(this));
             });
             
             var screenshot = new L.Control.Screenshot()
