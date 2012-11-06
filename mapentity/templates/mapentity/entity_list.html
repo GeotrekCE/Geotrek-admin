@@ -49,35 +49,7 @@
 
     <script type="text/javascript">
 
-        L.Control.Screenshot = L.Control.extend({
-            includes: L.Mixin.Events,
-            options: {
-                position: 'topleft',
-                title: "{% trans "Save map as image" %}",
-            },
-            
-            screenshot: function () {
-                // Screenshot effect
-                $('<div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color: white;"> </div>')
-                    .appendTo(document.body)
-                    .fadeOut();
-                this.fire('trigger');
-            },
-
-            onAdd: function(map) {
-                this.map = map;
-                this._container = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
-                var link = L.DomUtil.create('a', 'leaflet-control-zoom-out screenshot-control', this._container);
-                link.href = '#';
-                link.title = this.options.title;
-
-                L.DomEvent
-                    .addListener(link, 'click', L.DomEvent.stopPropagation)
-                    .addListener(link, 'click', L.DomEvent.preventDefault)
-                    .addListener(link, 'click', this.screenshot, this);
-                return this._container;
-            }
-        });
+        L.Control.Screenshot.prototype.options.title = "{% trans "Save map as image" %}";
 
         function mainmapInit(mainmap, bounds) {
             mainmap.removeControl(mainmap.attributionControl);
@@ -257,6 +229,17 @@
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
 
+            // Trigger a call to the format url
+            $('#list-download-toolbar button').on('click', function exportList() {
+                var format = $(this).attr('name');
+                var url = "{{ model.get_format_list_url }}" + '?' +
+                          filterform.serialize() + '&format=' + format;
+
+                document.location = url;
+
+                return false;
+            });
+
             // on JSON load, return the json used by dataTable
             // Update also the map given the layer's pk
             var extract_data_and_pks = function(data, type, callback_args) {
@@ -278,17 +261,6 @@
 
                 return false;
             }
-
-            // Trigger a call to the format url
-            $('#list-download-toolbar button').on('click', function exportList() {
-                var format = $(this).attr('name');
-                var url = "{{ model.get_format_list_url }}" + '?' +
-                          filterform.serialize() + '&format=' + format;
-
-                document.location = url;
-
-                return false;
-            });
 
             /*
              * Store initial map bounds, used for reset
