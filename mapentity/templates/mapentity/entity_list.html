@@ -48,6 +48,16 @@
     {{ block.super }}
 
     <script type="text/javascript">
+        
+        // Trigger a call to the format url
+        $('#list-download-toolbar button').on('click', function () {
+            var format = $(this).attr('name');
+            var url = "{{ model.get_format_list_url }}" + '?' +
+                      $('#mainfilter').serialize() + '&format=' + format;
+
+            document.location = url;
+            return false;
+        });
 
         L.Control.Screenshot.prototype.options.title = "{% trans "Save map as image" %}";
 
@@ -107,8 +117,37 @@
             mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}");
 
-            // init ajax list
-            var dt = initAjaxList(mainmap, objectsLayer);
+            var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
+                // Hide pk column
+                aoColumnDefs: [ { "bVisible": false, "aTargets": [ 0 ] } ],
+                sDom: "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
+                aaData: [],
+                iDeferLoading: 0
+            });            
+            // Hardcore Datatables customizations
+            $('li.next a').html($('li.next a').html().replace('Next', ''));
+            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
+
+            
+            var mapsync = new MapEntity.MapListSync(dt,
+                                                    mainmap, 
+                                                    objectsLayer, {
+                                                        filter: {
+                                                            form: $('#mainfilter'),
+                                                            submitbutton: $('#filter'),
+                                                            resetbutton: $('#reset'),
+                                                            bboxfield: $('#id_bbox'),
+                                                        }
+                                                    });
+            
+            mapsync.on('reloaded', function (data) {
+                // Show and save number of results
+                MapEntity.showNumberSearchResults(data.nbrecords);
+            });
+            
+            $('#reset').click(function () {
+                MapEntity.resetForm($(this));
+            });
             
             var screenshot = new L.Control.Screenshot()
             screenshot.on('trigger', function () {
@@ -124,215 +163,7 @@
             $(window).unload(function () {
                 MapEntity.Context.saveFullContext(mainmap, '#mainfilter', dt);
             });
-            
-            $('#filter').click();
         }
-
-        /* Table initialisation */
-        function initAjaxList(map, objectsLayer) {
-
-            var filterform = $('#mainfilter')
-              , submitbutton = $('#filter')
-              , resetbutton = $('#reset')
-              , ajax_list = $('#objects-list')
-              , results_panel = document.getElementById('results-panel')
-            ;
-
-            var selectorOnce = (function() {
-                var current = { 'pk': null, 'row': null };
-
-                function toggleSelectRow($prevRow, $nextRow) {
-                    function nextRowAnim() {
-                        if ($nextRow) {
-                            $nextRow.hide('fast')
-                                    .show('fast', function() { $nextRow.addClass('selected-row'); });
-                        }
-                    }
-
-                    if ($prevRow) {
-                        $prevRow.hide('fast', function() { $prevRow.removeClass('selected-row'); })
-                                .show('fast', nextRowAnim);
-                    } else {
-                        nextRowAnim();
-                    }
-                }
-
-                function toggleSelectObject(pk, on) {
-                    on = on === undefined ? true : on;
-                    objectsLayer.select(pk, on);
-                };
-
-                return {
-                    'select': function(pk, row) {
-                        // Click on already selected => unselect
-                        if (pk == current.pk) {
-                            pk = null, row = null;
-                        }
-
-                        var prev = current;
-                        current = {'pk': pk, 'row': row}
-
-                        toggleSelectRow(prev.row, row);
-
-                        if (prev.pk && prev.row) {
-                            toggleSelectObject(prev.pk, false);
-                        }
-                        if (row && pk) {
-                            toggleSelectObject(pk, true);
-                        }
-                    }
-                };
-            })();
-
-
-            // initialize data table
-            var dt = JQDataTable.init(
-                  ajax_list
-                , null // no load at startup
-                , {
-                    // Hide pk
-                    "aoColumnDefs": [ { "bVisible": false, "aTargets": [ 0 ] } ],
-                    "fnCreatedRow": function(nRow, aData, iDataIndex ) {
-                        var pk = aData[0];
-                        $(nRow).hover(function(){
-                            objectsLayer.highlight(pk);
-                        },
-                        function(){
-                            objectsLayer.highlight(pk, false);
-                        });
-
-                        // select from row
-                        $(nRow).click(function() {
-                            selectorOnce.select(pk, $(nRow));
-                        });
-                        $(nRow).dblclick(function() {
-                            objectsLayer.jumpTo(pk);
-                        });
-                    },
-                    "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
-                    aaData: [],
-                    iDeferLoading: 0
-                }
-            );
-
-            objectsLayer.on('click', function(e) {
-                var search_pk = e.layer.properties.pk;
-                JQDataTable.goToPage(dt, function pk_equals(row) {
-                    return row[0] === search_pk;
-                }, function($row) {
-                    selectorOnce.select(search_pk, $row);
-                });
-            });
-
-
-            // Hardcore customizations
-            $('li.next a').html($('li.next a').html().replace('Next', ''));
-            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
-
-            // Trigger a call to the format url
-            $('#list-download-toolbar button').on('click', function exportList() {
-                var format = $(this).attr('name');
-                var url = "{{ model.get_format_list_url }}" + '?' +
-                          filterform.serialize() + '&format=' + format;
-
-                document.location = url;
-
-                return false;
-            });
-
-            // on JSON load, return the json used by dataTable
-            // Update also the map given the layer's pk
-            var extract_data_and_pks = function(data, type, callback_args) {
-                callback_args.map_obj_pk = data.map_obj_pk;
-                return data.aaData;
-            }
-
-            function ajaxTrigger(cb) {
-                var spinner = new Spinner().spin(results_panel);
-
-                var url = filterform.attr("action") + '?' + filterform.serialize()
-
-                dt.fnReloadAjax(url, extract_data_and_pks, function() {
-                    spinner.stop();
-                    // Show and save number of results
-                    MapEntity.showNumberSearchResults(dt.fnSettings().fnRecordsTotal());
-                    cb.apply(cb, arguments);
-                });
-
-                return false;
-            }
-
-            /*
-             * Store initial map bounds, used for reset
-             */
-            var initial_map_bounds = null;
-            if (map._loaded) {
-                initial_map_bounds = map.getBounds();
-            }
-            else {
-                map.on('load', function () {
-                    initial_map_bounds = map.getBounds();
-                }, map);
-            }
-            
-            var storeCurrentMapBoundsToField = function() {
-                // Store the map bounds as WKT in the bbox field
-                var bbox_field = $('#id_bbox');
-                var storeBounds = function () {
-                    var bounds = map.getBounds(),
-                        rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-                    bbox_field.val(L.Util.getWKT(rect));
-                };
-                if (map._loaded)
-                    storeBounds(); 
-                else
-                    map.on('load', storeBounds);
-            };
-
-            // Restore initial map bounds on trigger
-            submitbutton.click(ajaxMapObjectsUpdateOnly);
-            resetbutton.click(function() {
-                MapEntity.resetForm(filterform);
-                mapBoundsUpdateNoListen(initial_map_bounds, listenMapBoundsUpdate);
-                ajaxMapObjectsUpdateOnly();
-                return false;
-            });
-
-            // Updates map bounds if necessary (return a boolean if bounds were updated)
-            // Unregistering specific callback to avoid triggering ajax request
-            function mapBoundsUpdateNoListen(new_bounds, cb) {
-                // no need to update if bounds are equals
-                if (map.getBounds().equals(new_bounds))
-                    return false;
-
-                // deactivate/reactivate listener to trigger our own callback
-                cb(false);
-                map.fitBounds(new_bounds);
-                cb(true);
-                return true;
-            }
-
-            function ajaxMapObjectsUpdateOnly() {
-                storeCurrentMapBoundsToField();
-                ajaxTrigger(function(oSettings, callback_args) {
-                    objectsLayer.updateFromPks(callback_args.map_obj_pk);
-                });
-            }
-
-            function ajaxMapBoundsUpdateOnly() {
-                storeCurrentMapBoundsToField();
-                ajaxTrigger(function(){});
-            };
-
-            function listenMapBoundsUpdate(on) {
-                on = on === undefined ? true: on;
-                map[on ? 'on': 'off']('load moveend viewreset', ajaxMapBoundsUpdateOnly);
-            }
-
-            listenMapBoundsUpdate(true);
-            
-            return dt;
-        };
     </script>
 
 {% endblock extrabody %}
