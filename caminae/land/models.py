@@ -53,7 +53,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Physical edges")
 
     def __unicode__(self):
-        return _(u"Physical edge") + ": %s" % self.physical_type
+        return _(u"Physical edge") + u": %s" % self.physical_type
 
     @property
     def physical_type_display(self):
@@ -110,7 +110,7 @@ class LandEdge(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Land edges")
 
     def __unicode__(self):
-        return _(u"Land edge") + ": %s" % self.land_type
+        return _(u"Land edge") + u": %s" % self.land_type
 
     @property
     def land_type_display(self):
@@ -147,7 +147,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Competence edges")
 
     def __unicode__(self):
-        return _(u"Competence edge") + ": %s" % self.organization
+        return _(u"Competence edge") + u": %s" % self.organization
 
     @property
     def organization_display(self):
@@ -183,7 +183,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Work management edges")
 
     def __unicode__(self):
-        return _(u"Work management edge") + ": %s" % self.organization
+        return _(u"Work management edge") + u": %s" % self.organization
 
     @property
     def organization_display(self):
@@ -219,7 +219,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Signage management edges")
 
     def __unicode__(self):
-        return _(u"Signage management edge") + ": %s" % self.organization
+        return _(u"Signage management edge") + u": %s" % self.organization
 
     @property
     def organization_display(self):
@@ -274,11 +274,7 @@ class RestrictedAreaEdge(Topology):
         verbose_name_plural = _(u"Restricted area edges")
 
     def __unicode__(self):
-        return _(u"Restricted area edge") + ": %s" % self.restricted_area
-
-    @property
-    def display(self):
-        return unicode(self)
+        return _(u"Restricted area edge") + u": %s" % self.restricted_area
 
     @classmethod
     def path_area_edges(cls, path):
@@ -287,13 +283,13 @@ class RestrictedAreaEdge(Topology):
                              kind=RestrictedAreaEdge.KIND)]))
 
 Path.add_property('area_edges', lambda self: RestrictedAreaEdge.path_area_edges(self))
-Path.add_property('areas', lambda self: map(attrgetter('restricted_area'), self.area_edges))
+Path.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
 Topology.add_property('area_edges', lambda self: topology_edges(self, 'area_edges'))
-Topology.add_property('areas', lambda self: map(attrgetter('restricted_area'), self.area_edges))
+Topology.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
 Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [])
 Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [])
 Project.add_property('area_edges', lambda self: project_edges(self, 'area_edges'))
-Project.add_property('areas', lambda self: map(attrgetter('restricted_area'), self.area_edges))
+Project.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
 
 
 class City(models.Model):
@@ -328,11 +324,7 @@ class CityEdge(Topology):
         verbose_name_plural = _(u"City edges")
 
     def __unicode__(self):
-        return _("City edge") + ": %s" % self.city
-
-    @property
-    def display(self):
-        return unicode(self.city)
+        return _("City edge") + u": %s" % self.city
 
     @classmethod
     def path_city_edges(self, path):
@@ -341,13 +333,13 @@ class CityEdge(Topology):
                              kind=CityEdge.KIND)]))
 
 Path.add_property('city_edges', lambda self: CityEdge.path_city_edges(self))
-Path.add_property('cities', lambda self: map(attrgetter('city'), self.city_edges))
+Path.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
 Topology.add_property('city_edges', lambda self: topology_edges(self, 'city_edges'))
-Topology.add_property('cities', lambda self: map(attrgetter('city'), self.city_edges))
+Topology.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
 Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [])
 Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [])
 Project.add_property('city_edges', lambda self: project_edges(self, 'city_edges'))
-Project.add_property('cities', lambda self: map(attrgetter('city'), self.city_edges))
+Project.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
 
 
 class District(models.Model):
@@ -380,11 +372,7 @@ class DistrictEdge(Topology):
         verbose_name_plural = _(u"District edges")
 
     def __unicode__(self):
-        return _(u"District edge") + ": %s" % self.district
-
-    @property
-    def display(self):
-        return unicode(self.district)
+        return _(u"District edge") + u": %s" % self.district
 
     @classmethod
     def path_district_edges(self, path):
@@ -393,10 +381,10 @@ class DistrictEdge(Topology):
                              kind=DistrictEdge.KIND)]))
 
 Path.add_property('district_edges', lambda self: DistrictEdge.path_district_edges(self))
-Path.add_property('districts', lambda self: map(attrgetter('district'), self.district_edges))
+Path.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
 Topology.add_property('district_edges', lambda self: topology_edges(self, 'district_edges'))
-Topology.add_property('districts', lambda self: map(attrgetter('district'), self.district_edges))
+Topology.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
 Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [])
 Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [])
 Project.add_property('district_edges', lambda self: project_edges(self, 'district_edges'))
-Project.add_property('districts', lambda self: map(attrgetter('district'), self.district_edges))
+Project.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
