@@ -1,0 +1,13 @@
+{% load i18n %}
+
+// Show the path layer only if model is not path, and if we are not 
+// in an editing widget (module_settings)
+if (window.{{ module }}_settings === undefined && '{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
+    var paths = new L.ObjectsLayer(null, {
+        indexing: false,
+        style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
+    });
+    paths.addTo(map)
+    paths.load('{% url core:path_layer %}');
+    map.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+}

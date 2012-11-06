@@ -1,8 +1,10 @@
-{% load maps leaflet_tags geojson_tags %}
+{% load maps leaflet_tags geojson_tags mapentity %}
 
 {% leaflet_map mapname  fitextent=False %}
 <script type="text/javascript">
 function {{ mapname }}Init(map, bounds) {
+    {% smart_include "mapinit" %}
+    
     {% if readonly %}
         // Set map readonly
         map.dragging.disable();
