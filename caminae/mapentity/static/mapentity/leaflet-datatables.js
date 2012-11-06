@@ -22,18 +22,7 @@ L.MapListSync = L.Class.extend({
         this.dt.fnSettings().fnCreatedRow = this._onRowCreated.bind(this);
         this.layer.on('click', this._onObjectClick.bind(this));
         
-        this._ignoreMap = false;
         this._loading = false;
-        this._initialBounds = null;
-        if (this.map._loaded) {
-            this._initialBounds = this.map.getBounds();
-        }
-        else {
-            this.map.on('load', function () {
-                this._initialBounds = this.map.getBounds();
-                this._onMapViewChanged();
-            }, this);
-        }
         this.map.on('moveend', this._onMapViewChanged, this);
         
         if (this.options.filter) {
@@ -43,8 +32,12 @@ L.MapListSync = L.Class.extend({
     },
 
     _onMapViewChanged: function (e) {
-        if (this._ignoreMap || !this.map._loaded)
+        if (!this.map._loaded) {
+            // leaflet bug, fire again !
+            // fixed in unstable version : https://github.com/CloudMade/Leaflet/commit/fbf91fef546125bd4950937fa04ad1bf0f5dc955
+            setTimeout(L.Util.bind(function() { this.map.fire('moveend'); }, this), 20);
             return;
+        }
         this._formSetBounds();
         this._reloadList();
     },
@@ -55,10 +48,6 @@ L.MapListSync = L.Class.extend({
     },
 
     _onFormReset: function (e) {
-        this._ignoreMap = true;
-        if (this._initialBounds) this.map.fitBounds(this._initialBounds);
-        this._ignoreMap = false;
-        
         this._formClear($(this.options.filter.form)); // clear all fields
         this._formSetBounds(); // re-fill current bbox
         this._reloadList();
