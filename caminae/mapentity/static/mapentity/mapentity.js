@@ -1,5 +1,37 @@
 if (!MapEntity) var MapEntity = {};
 
+L.Control.Screenshot = L.Control.extend({
+    includes: L.Mixin.Events,
+    options: {
+        position: 'topleft',
+        title: 'Screenshot',
+    },
+    
+    screenshot: function () {
+        // Screenshot effect
+        $('<div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color: white;"> </div>')
+            .appendTo(document.body)
+            .fadeOut();
+        this.fire('trigger');
+    },
+
+    onAdd: function(map) {
+        this.map = map;
+        this._container = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out screenshot-control', this._container);
+        link.href = '#';
+        link.title = this.options.title;
+
+        L.DomEvent
+            .addListener(link, 'click', L.DomEvent.stopPropagation)
+            .addListener(link, 'click', L.DomEvent.preventDefault)
+            .addListener(link, 'click', this.screenshot, this);
+        return this._container;
+    }
+});
+
+
+
 /**
  * Get URL parameter in Javascript
  * source: http://stackoverflow.com/questions/1403888/get-url-parameter-with-jquery
