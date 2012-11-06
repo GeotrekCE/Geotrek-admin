@@ -2022,3 +2022,15 @@ Sprint 8 - Version 0.8.0
 
 Tous les objets ont désormais une section "Foncier" qui liste les propriétés liées
 aux couches SIG, ainsi qu'au module foncier.
+
+#334 - Type foncier
+-------------------
+
+* Créer un objet de type foncier
+
+* Retourner sur la recherche, il apparait dans la liste, et sur la carte
+
+* Cliquer sur son nom, puis sur Éditer
+
+* Modifier la géométrie ou les attributs, retourner sur la liste, vérifier que
+  tout s'est bien mis à jour.
