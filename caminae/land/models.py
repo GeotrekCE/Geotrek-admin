@@ -57,6 +57,10 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
     @property
     def physical_type_display(self):
+        return self.display
+
+    @property
+    def physical_type_csv_display(self):
         return unicode(self.physical_type)
 
     @property
@@ -114,6 +118,10 @@ class LandEdge(MapEntityMixin, Topology):
 
     @property
     def land_type_display(self):
+        return self.display
+
+    @property
+    def land_type_csv_display(self):
         return unicode(self.land_type)
 
     @property
@@ -151,6 +159,10 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
+        return self.display
+
+    @property
+    def organization_csv_display(self):
         return unicode(self.organization)
 
     @property
@@ -187,6 +199,10 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
+        return self.display
+
+    @property
+    def organization_csv_display(self):
         return unicode(self.organization)
 
     @property
@@ -223,6 +239,10 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
+        return self.display
+
+    @property
+    def organization_csv_display(self):
         return unicode(self.organization)
 
     @property
@@ -241,7 +261,13 @@ Intervention.add_property('signage_edges', lambda self: self.topology.signage_ed
 Project.add_property('signage_edges', lambda self: project_edges(self, 'signage_edges'))
 
 
-# Zoning
+
+"""
+
+   Zoning
+   (not MapEntity : just layers, on which intersections with objects is done in triggers)
+
+"""
 
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=128, db_column='zonage', verbose_name=_(u"Name"))
