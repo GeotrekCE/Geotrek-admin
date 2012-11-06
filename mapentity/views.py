@@ -118,8 +118,8 @@ class MapEntityLayer(GeoJSONLayerView):
 
         if result and latest:
             cache_latest, content = result
-            # still valid
-            if cache_latest >= latest:
+            # Not empty and still valid
+            if cache_latest and cache_latest >= latest:
                 return self.response_class(content=content, **response_kwargs)
 
         response = super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
