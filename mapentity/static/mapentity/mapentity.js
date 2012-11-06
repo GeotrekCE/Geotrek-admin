@@ -62,7 +62,7 @@ MapEntity.Context = new function() {
         // Form filters
         if (filter) {
             // exclude bbox field, since it comes from the map view.
-            var fields = $($('filter').serializeArray()).filter(function (){ return this.name != 'bbox'});
+            var fields = $($(filter).serializeArray()).filter(function (){ return this.name != 'bbox'});
             context['filter'] = $.param(fields);
         }
         
