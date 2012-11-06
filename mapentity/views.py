@@ -301,7 +301,7 @@ class MapEntityCreate(CreateView):
         if hasattr(name, '_proxy____args'):
             name = name._proxy____args[0]  # untranslated
         # Whole "add" phrase translatable, but not catched  by makemessages
-        return _("Add a new %s" % name.lower())
+        return _(u"Add a new %s" % name.lower())
 
     @method_decorator(login_required)
     @save_history()
