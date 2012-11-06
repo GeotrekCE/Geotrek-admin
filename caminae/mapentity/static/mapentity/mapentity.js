@@ -206,3 +206,209 @@ MapEntity.showNumberSearchResults = function (nb) {
     }
     $('#nbresults').text(nb);
 }
+
+
+
+
+MapEntity.MapListSync = L.Class.extend({
+    includes: L.Mixin.Events,
+    options: {
+        filter: null,
+        /* { form: $('#mainfilter'),
+             submitbutton: $('#filter'),
+             resetbutton: $('#reset'),
+             bboxfield: $('#id_bbox'),
+           }
+        */
+    },
+
+    initialize: function (datatables, map, objectsLayer, options) {
+        this.dt = datatables;
+        this.map = map;
+        this.layer = objectsLayer;
+        L.Util.setOptions(this, options);
+        
+        this.selectorOnce = this.__initSelectorOnce(); // TODO: rename this and refactor
+        this._dtcontainer = this.dt.fnSettings().nTableWrapper;
+        
+        this.dt.fnSettings().fnCreatedRow = this._onRowCreated.bind(this);
+        this.layer.on('click', this._onObjectClick.bind(this));
+        
+        this._ignoreMap = false;
+        this._loading = false;
+        this._pk_list = null;
+        this._initialBounds = null;
+        if (this.map._loaded) {
+            this._initialBounds = this.map.getBounds();
+        }
+        else {
+            this.map.on('load', function () {
+                this._initialBounds = this.map.getBounds();
+                this._onMapViewChanged();
+            }, this);
+        }
+        this.map.on('moveend', this._onMapViewChanged, this);
+        
+        if (this.options.filter) {
+            this.options.filter.submitbutton.click(this._onFormSubmit.bind(this));
+            this.options.filter.resetbutton.click(this._onFormReset.bind(this));
+        }
+    },
+
+    _onMapViewChanged: function (e) {
+        if (this._ignoreMap || !this.map._loaded)
+            return;
+        this._formSetBounds();
+        this._reloadList();
+    },
+
+    _onFormSubmit: function (e) {
+        this._formSetBounds();
+        this._reloadList();
+        this.layer.updateFromPks(this._pk_list);
+    },
+
+    _onFormReset: function (e) {
+        this._ignoreMap = true;
+        if (this._initialBounds) this.map.fitBounds(this._initialBounds);
+        this._ignoreMap = false;
+        
+        this._formSetBounds();
+        this._reloadList();
+        this.layer.updateFromPks(this._pk_list);
+    },
+
+    _onObjectClick: function (e) {
+        var self = this;
+        var search_pk = e.layer.properties.pk;
+        JQDataTable.goToPage(this.dt, 
+            function pk_equals(row) {
+                return row[0] === search_pk;
+            }, function($row) {
+                self.selectorOnce.select(search_pk, $row);
+            }
+        );
+    },
+
+    _onRowCreated: function(nRow, aData, iDataIndex ) {
+        var pk = aData[0];
+        $(nRow).hover(
+            function(){
+                this.layer.highlight(pk);
+            },
+            function(){
+                this.layer.highlight(pk, false);
+            }
+        );
+
+        // select from row
+        var self = this;
+        $(nRow).click(function() {
+            self.selectorOnce.select(pk, $(nRow));
+        });
+        $(nRow).dblclick(function() {
+            self.layer.jumpTo(pk);
+        });
+    },
+
+    _reloadList: function () {
+        if (this._loading)
+            return;
+        this._loading = true;
+        this._pk_list = [];
+        var spinner = new Spinner().spin(this._dtcontainer);
+        
+        // on JSON load, return the json used by dataTable
+        // Update also the map given the layer's pk
+        var self = this;
+        var extract_data_and_pks = function(data, type, callback_args) {
+            callback_args.map_obj_pk = data.map_obj_pk;
+            return data.aaData;
+        };
+        var on_data_loaded = function (oSettings, callback_args) {
+            self._loading = false;
+            self._pk_list = callback_args.map_obj_pk;
+            self.fire('reloaded', {
+                nbrecords: self.dt.fnSettings().fnRecordsTotal(),
+            });
+            spinner.stop();
+        };
+        
+        var url = this.options.url;
+        if (this.options.filter) {
+            url = this.options.filter.form.attr("action") + '?' + this.options.filter.form.serialize();
+        }
+        console.log(url);
+        this.dt.fnReloadAjax(url, extract_data_and_pks, on_data_loaded);
+        return false;
+    },
+
+    _formSetBounds: function () {
+        if (!this.options.filter)
+            return;
+        
+        if (!this.map._loaded) {
+            console.warn("Map view not set, cannot get bounds.");
+            return;
+        }
+        var bounds = this.map.getBounds(),
+            rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
+        this.options.filter.bboxfield.val(L.Util.getWKT(rect));
+    },
+
+
+
+    __initSelectorOnce: function () {
+        /**
+         * This code was moved from entity list main page. A massive simplification
+         * is required.
+         */
+        var self = this;
+        var selectorOnce = (function() {
+                var current = { 'pk': null, 'row': null };
+
+                function toggleSelectRow($prevRow, $nextRow) {
+                    function nextRowAnim() {
+                        if ($nextRow) {
+                            $nextRow.hide('fast')
+                                    .show('fast', function() { $nextRow.addClass('selected-row'); });
+                        }
+                    }
+
+                    if ($prevRow) {
+                        $prevRow.hide('fast', function() { $prevRow.removeClass('selected-row'); })
+                                .show('fast', nextRowAnim);
+                    } else {
+                        nextRowAnim();
+                    }
+                }
+
+                function toggleSelectObject(pk, on) {
+                    on = on === undefined ? true : on;
+                    self.layer.select(pk, on);
+                };
+
+                return {
+                    'select': function(pk, row) {
+                        // Click on already selected => unselect
+                        if (pk == current.pk) {
+                            pk = null, row = null;
+                        }
+
+                        var prev = current;
+                        current = {'pk': pk, 'row': row}
+
+                        toggleSelectRow(prev.row, row);
+
+                        if (prev.pk && prev.row) {
+                            toggleSelectObject(prev.pk, false);
+                        }
+                        if (row && pk) {
+                            toggleSelectObject(pk, true);
+                        }
+                    }
+                };
+            })();
+        return selectorOnce;
+    }
+});
