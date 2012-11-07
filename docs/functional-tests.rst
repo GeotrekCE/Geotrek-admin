@@ -2052,3 +2052,14 @@ Fixé.
 -------------------------------------------------------------------------------
 
 Fixé.
+
+
+#309 - Préparer les fichiers de traduction pour le PNAM
+-------------------------------------------------------
+
+Les fichiers de traduction des différents modules du projet ont été fusionnés 
+un un seul, grâce à la commande ``msgcat``. 
+
+::
+
+    msgcat caminae/*/locale/fr/LC_MESSAGES/django.po > caminae-fr.po
