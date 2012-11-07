@@ -14,6 +14,10 @@ defaultstructure = PNE
 # URL prefix, leave empty if dedicated server. (example: /ecrins)
 rooturl = 
 
+# Default language and list of available
+language = fr
+languages = en,fr,it
+
 # Database
 dbname = caminaedb
 dbuser = caminae

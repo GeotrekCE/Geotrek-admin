@@ -56,7 +56,6 @@ MODELTRANSLATION_TRANSLATION_REGISTRY = 'caminae.translation'
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
 )
 
 LOCALE_PATHS = (

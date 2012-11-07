@@ -2063,3 +2063,17 @@ un un seul, grâce à la commande ``msgcat``.
 ::
 
     msgcat caminae/*/locale/fr/LC_MESSAGES/django.po > caminae-fr.po
+
+#254 - Gérer les langues depuis settings.ini
+--------------------------------------------
+
+Désormais, il est possible de configurer les langues du projet depuis le
+fichier de configuration ``settings.ini``.
+
+Voici les valeurs dans le fichier d'exemple :
+
+::
+
+    # Default language and list of available
+    language = fr
+    languages = en,fr,it
