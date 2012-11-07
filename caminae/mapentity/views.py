@@ -158,8 +158,12 @@ class MapEntityList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityList, self).get_context_data(**kwargs)
+        for k,v in self.model._meta.__dict__.items():
+            print k, v
         context.update(**dict(
             model=self.model,
+            appname=self.model._meta.app_label.lower(),
+            modelname=self.model._meta.object_name.lower(),
             objectsname=self.model._meta.verbose_name_plural,
             datatables_ajax_url=self.model.get_jsonlist_url(),
             filterform=self.filterform(None, queryset=self.get_queryset()),

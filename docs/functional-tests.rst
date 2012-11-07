@@ -2017,11 +2017,14 @@ Le cas suivant n'est pas géré volontairement :
 Sprint 8 - Version 0.8.0
 ========================
 
-#323 - Affichage des informations SIG dans les fiches objet
------------------------------------------------------------
+#323, #289 - Affichage des informations SIG dans les fiches objet
+-----------------------------------------------------------------
 
 Tous les objets ont désormais une section "Foncier" qui liste les propriétés liées
 aux couches SIG, ainsi qu'au module foncier.
+
+Les couches du module foncier (nature, status, protection) seront implémentées
+avec la story #386.
 
 #334 - Type foncier
 -------------------
@@ -2034,3 +2037,8 @@ aux couches SIG, ainsi qu'au module foncier.
 
 * Modifier la géométrie ou les attributs, retourner sur la liste, vérifier que
   tout s'est bien mis à jour.
+
+#357 - BUG - ADMIN - Perte des résultats de la recherche
+--------------------------------------------------------
+
+Fixé.

@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_list.html" %}
-{% load i18n %}
+{% load i18n mapentity %}
 
 {% block nav-path %}active{% endblock nav-path %}
 
@@ -11,7 +11,4 @@
         <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add a path" %}</span>
         {% endif %}
     </div>
-
-    {% include "core/manageland_fragment.html" %}
-
 {% endblock mainactions %}

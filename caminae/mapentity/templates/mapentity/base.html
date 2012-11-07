@@ -1,8 +1,36 @@
 {% extends "base.html" %}
-{% load static %} 
+{% load static i18n leaflet_tags %}
+
+{% block content %}
+        <div id="container" class="container-fluid">
+            <div class="row-fluid">
+                {% block mainpanel %}
+                {% endblock mainpanel %}
+            </div><!--/row-->
+        </div><!--/container-->
+{% endblock content %}
+
+{% block extracss %}
+    <link rel="stylesheet" type="text/css" href="{% static "mapentity/dataTables/css/dataTables.bootstrap.css" %}">
+    {% leaflet_css %}
+    <link rel="stylesheet" href="{% static "mapentity/Leaflet.draw/leaflet.draw.css" %}"></link>
+    <link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+{% endblock extracss %}
 
 {% block extrajs %}
     {{ block.super }}
+
+    {% leaflet_js %}
+    <script type="text/javascript">
+        L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
+    </script>
+
+    <script type="text/javascript" src="{% static "mapentity/dataTables/js/jquery.dataTables.js" %}"></script>
+    <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.ajax_list.js" %}"></script>
+    <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.fnReloadAjax.js" %}"></script>
+    <script type="text/javascript" src="{% static "mapentity/Leaflet.draw/leaflet.draw.js" %}"></script>
+    <script type="text/javascript" src="{% static "mapentity/leaflet-measure.js" %}"></script>
+    
     <script type="text/javascript" src="{% static "mapentity/leaflet-geomutils.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/leaflet-objectslayer.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/leaflet-snapping.js" %}"></script>
@@ -14,6 +42,7 @@
     <script type="text/javascript" src="{% static "mapentity/rtree.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/jquery.deserialize.js" %}"></script>
 {% endblock extrajs %}
+
 
 {% block extrabody %}
     {{ block.super }}
