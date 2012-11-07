@@ -68,7 +68,7 @@ msgstr "Surface"
 
 #: models.py:27
 msgid "Slope"
-msgstr "Pente"
+msgstr "Dénivelé"
 
 #: models.py:30
 msgid "Material cost"
@@ -272,13 +272,16 @@ msgid ""
 "                     %(job)s: %(nb_days)s days\n"
 "                    "
 msgstr ""
+"\n"
+"                     %(job)s: %(nb_days)s jours\n"
+"                    "
 
 #: templates/maintenance/intervention_detail.html:31
 msgid "Total:"
 msgstr ""
 
 #: templates/maintenance/intervention_detail.html:31
-msgid "day"
+msgid "manday"
 msgstr "Jour-Homme"
 
 #: templates/maintenance/intervention_detail.html:32
@@ -346,6 +349,9 @@ msgid ""
 "                    %(amount)s€ de %(organism)s\n"
 "                    "
 msgstr ""
+"\n"
+"                    %(amount)s€ de %(organism)s\n"
+"                    "
 
 #: templates/maintenance/project_form.html:34
 msgid "Add funding"

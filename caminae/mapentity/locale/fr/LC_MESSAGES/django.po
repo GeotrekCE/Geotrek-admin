@@ -22,10 +22,6 @@ msgstr ""
 msgid "Any year"
 msgstr "Année"
 
-#: tests.py:41
-msgid "Topology is not valid."
-msgstr "La topologie n'est pas valide."
-
 #: views.py:308
 #, python-format
 msgid "Add a new %s"
@@ -146,4 +142,3 @@ msgstr "Sauvegarder l'image"
 #: templates/mapentity/popupplus.html:8
 msgid "Add"
 msgstr "Ajouter"
-

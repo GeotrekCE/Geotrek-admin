@@ -19,7 +19,7 @@ msgstr ""
 
 #: fields.py:18
 msgid "Topology is not valid."
-msgstr "La topology n'est pas valide."
+msgstr "La topologie n'est pas valide."
 
 #: filters.py:16 filters.py:28
 msgid "length"
@@ -242,4 +242,3 @@ msgstr "Interventions"
 #: templates/core/trail_detail.html:32
 msgid "Add intervention"
 msgstr "Ajouter une intervention"
-

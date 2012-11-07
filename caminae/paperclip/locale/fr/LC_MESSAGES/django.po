@@ -44,11 +44,11 @@ msgstr "Légende"
 
 #: models.py:41
 msgid "Insertion date"
-msgstr "Ajouté"
+msgstr "Date d'insertion"
 
 #: models.py:42
 msgid "Update date"
-msgstr "Modifié"
+msgstr "Date de modification"
 
 #: views.py:37
 msgid "Your attachment was uploaded."
