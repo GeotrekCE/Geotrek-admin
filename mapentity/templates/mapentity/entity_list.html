@@ -1,53 +1,127 @@
 {% extends "mapentity/base.html" %}
-{% load i18n leaflet_tags mapentity field_verbose_name land %}
+{% load i18n static leaflet_tags mapentity field_verbose_name land %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
-{% block mainmap %}
-    <div id="bboxfilter">
-        {# ids: bbox_cities bbox_districts #}
-        {% combobox_bbox_land %}
-    </div>
-    {% leaflet_map "mainmap" fitextent=False %}
-{% endblock mainmap %}
+{% block mainpanel %}
+    <!-- Modules Panel -->
+    <div class="span1">
+        <ul id="entitylist" class="nav nav-pills nav-stacked">
+            <li class="centered {% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
+            <li class="centered {% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}" title="{% trans "Intervention" %}"><img src="{% static "images/intervention.png" %}"/></a></li>
+            <li class="centered {% block nav-project %}{% endblock nav-project %}"><a href="{% url maintenance:project_list %}" title="{% trans "Project" %}"><img src="{% static "images/project.png" %}"/></a></li>
+            <li class="centered {% block nav-signage %}{% endblock nav-signage %}"><a href="{% url infrastructure:signage_list %}" title="{% trans "Signage" %}"><img src="{% static "images/signage.png" %}"/></a></li>
+            <li class="centered {% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="{% url infrastructure:infrastructure_list %}" title="{% trans "Infrastructure" %}"><img src="{% static "images/infrastructure.png" %}"/></a></li>
+            <li class="centered {% block nav-trekking %}{% endblock nav-trekking %}"><a href="{% url trekking:trek_list %}" title="{% trans "Trek" %}"><img src="{% static "images/trek.png" %}"/></a></li>
+            <li class="centered {% block nav-poi %}{% endblock nav-poi %}"><a href="{% url trekking:poi_list %}" title="{% trans "POI" %}"><img src="{% static "images/poi.png" %}"/></a></li>
+        </ul>
+    </div> <!--/span-->
 
-{% block filters %}
-    <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
-        {{ filterform.form.as_p }}
-        <input id="reset" type="reset" class="btn" />
-        <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
-    </form>
-{% endblock filters %}
+    <!-- List Panel -->
+    <div id="results-panel" class="span5">
+    
+        <div class="btn-toolbar">
+            {% block mainactions %}
+            {% endblock mainactions %}
+            
+            {% smart_include "listactions" %}
+        </div> <!--/row-->
 
-{% block mainlist %}
-    <table id="objects-list" class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                {% for field in columns %}
-                <th>{{ model|verbose:field }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+        <a href="#" id="filters-btn" class="btn btn-large"><i class="icon-filter"></i> Filter</a>
+        <div id="filters-popover"></div>
+        <div id="filters-wrapper" style="display:None">
+            <div id="filters-panel">
+                {% block filters %}
+                    <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
+                        {{ filterform.form.as_p }}
+                        <input id="reset" type="reset" class="btn" />
+                        <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+                    </form>
+                {% endblock filters %}
+            </div>
+        </div>
+        
+        {% block mainlist %}
+            <table id="objects-list" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        {% for field in columns %}
+                        <th>{{ model|verbose:field }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
 
-    <div id="list-download-toolbar">
-        <p>
-            <i class="icon-download-alt"></i> 
-            Exporter la liste
-            <button class="btn btn-mini" name="csv" >CSV</button>
-            <button class="btn btn-mini" name="shp" >ShapeFile</button>
-            <button class="btn btn-mini" name="gpx" >GPX</button>
-        </p>
-    </div>
+            <div id="list-download-toolbar">
+                <p>
+                    <i class="icon-download-alt"></i> 
+                    Exporter la liste
+                    <button class="btn btn-mini" name="csv" >CSV</button>
+                    <button class="btn btn-mini" name="shp" >ShapeFile</button>
+                    <button class="btn btn-mini" name="gpx" >GPX</button>
+                </p>
+            </div>
+        {% endblock mainlist %}
+        
+    </div><!--/span-->
 
-{% endblock mainlist %}
+    <!-- Map Panel -->
+    <div id="panelright" class="map-panel span6">
+        {% block mainmap %}
+            <div id="bboxfilter">
+                {# ids: bbox_cities bbox_districts #}
+                {% combobox_bbox_land %}
+            </div>
+            {% leaflet_map "mainmap" fitextent=False %}
+        {% endblock mainmap %}
+    </div><!--/span-->
+{% endblock mainpanel %}
+
 
 {% block extrabody %}
     {{ block.super }}
 
     <script type="text/javascript">
+        $(document).ready(function() {
+            var div = $('#filters-popover')
+                      .popover({
+                          placement: 'bottom',
+                          title: '{% trans "Filter list and map" %}',
+                          content: ''
+                      });
+
+            var getPopover = function() { return div.data('popover') };
+            var isVisible = function() {
+                var tip = getPopover().$tip;
+                if (!tip)
+                    return false;
+                return tip.hasClass('in');
+            };
+
+            $('#filters-btn').click(function () {
+
+                // if was visible - clone
+                if (isVisible()) {
+                    $('#filters-wrapper').append(
+                        // The whole $tip will be deleted, save the #filters-panel
+                        // and add it to the DOM so the dynamic filters still works.
+                        getPopover().$tip.find('#filters-panel').detach()
+                    );
+                }
+
+                div.popover('toggle');
+
+                if (isVisible()) {
+                   getPopover().$tip
+                      .css('width', 'auto')
+                      .find('.popover-content').empty()
+                      .append($('#filters-wrapper #filters-panel').detach())
+                }
+
+            });
+        });
         
         // Trigger a call to the format url
         $('#list-download-toolbar button').on('click', function () {
