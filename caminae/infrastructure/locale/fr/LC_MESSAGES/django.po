@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2012-11-07 11:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,26 +47,25 @@ msgid "Infrastructure"
 msgstr "Aménagement"
 
 #: templates/infrastructure/baseinfrastructure_detail.html:12
-#: templates/infrastructure/baseinfrastructure_detail.html:34
-msgid "Interventions"
-msgstr "Interventions"
-
-#: templates/infrastructure/baseinfrastructure_detail.html:13
-msgid "Add intervention"
-msgstr "Ajouter une intervention"
-
-#: templates/infrastructure/baseinfrastructure_detail.html:20
 msgid "Management"
 msgstr "Gestion"
 
-#: templates/infrastructure/baseinfrastructure_detail.html:23
+#: templates/infrastructure/baseinfrastructure_detail.html:15
 msgid "Paths"
 msgstr "Tronçons"
 
-#: templates/infrastructure/baseinfrastructure_detail.html:30
-#: templates/infrastructure/baseinfrastructure_detail.html:41
+#: templates/infrastructure/baseinfrastructure_detail.html:22
+#: templates/infrastructure/baseinfrastructure_detail.html:36
 msgid "None"
-msgstr "Aucun"
+msgstr "Aucun(e)"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:26
+msgid "Interventions"
+msgstr "Interventions"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:29
+msgid "Add intervention"
+msgstr "Ajouter une intervention"
 
 #: templates/infrastructure/infrastructure_list.html:7
 msgid "Add infrastructure"
@@ -76,8 +75,8 @@ msgstr "Ajouter un aménagement"
 msgid "Add signage"
 msgstr "Ajouter une signalétique"
 
-#~ msgid "Add a new infrastructure"
-#~ msgstr "Ajouter un aménagement"
+msgid "Add a new infrastructure"
+msgstr "Ajouter un aménagement"
 
-#~ msgid "Add a new signage"
-#~ msgstr "Ajouter une signalétique"
+msgid "Add a new signage"
+msgstr "Ajouter une signalétique"

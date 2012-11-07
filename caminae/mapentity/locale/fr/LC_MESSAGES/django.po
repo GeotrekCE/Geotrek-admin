@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2012-11-07 11:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,33 +22,33 @@ msgstr ""
 msgid "Any year"
 msgstr "Année"
 
-#: tests.py:33
+#: tests.py:41
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
-#: views.py:297
+#: views.py:308
 #, python-format
 msgid "Add a new %s"
 msgstr "Ajouter un nouveau %s"
 
-#: views.py:310
+#: views.py:321
 msgid "Created"
 msgstr "Créé"
 
-#: views.py:314 views.py:347
+#: views.py:325 views.py:358
 msgid "Your form contains errors"
 msgstr "Le formulaire contient des erreurs"
 
-#: views.py:330
+#: views.py:341
 #, python-format
 msgid "Edit %s"
 msgstr "Éditer %s"
 
-#: views.py:343
+#: views.py:354
 msgid "Saved"
 msgstr "Sauvegardé"
 
-#: views.py:396
+#: views.py:407
 #, python-format
 msgid "Unknown serialization format '%s'"
 msgstr "Format de sérialization inconnnu '%s'"
@@ -66,7 +66,7 @@ msgstr "Oui, supprimer"
 msgid "No, back to edit view"
 msgstr "Non, retour à la vue d'édition"
 
-#: templates/mapentity/entity_detail.html:20
+#: templates/mapentity/entity_detail.html:19
 msgid "Update"
 msgstr "Éditer"
 
@@ -78,14 +78,18 @@ msgstr "ODT"
 msgid "PDF"
 msgstr "PDF"
 
-#: templates/mapentity/entity_detail.html:32
+#: templates/mapentity/entity_detail.html:35
 #: templates/mapentity/entity_form.html:31
 msgid "Attached files"
 msgstr "Fichiers liés"
 
-#: templates/mapentity/entity_detail.html:47
+#: templates/mapentity/entity_detail.html:50
 msgid "No map available for this object."
 msgstr "Pas de carte disponible pour cet objet."
+
+#: templates/mapentity/entity_detail_valuelist_fragment.html:7
+msgid "None"
+msgstr "Aucun(e)"
 
 #: templates/mapentity/entity_form.html:18
 msgid "Delete"
@@ -99,39 +103,47 @@ msgstr "Nouveau fichier lié"
 msgid "Existing file attachment"
 msgstr "Fichiers liés existant"
 
-#: templates/mapentity/entity_list.html:18
+#: templates/mapentity/entity_list.html:10
+msgid "Path"
+msgstr "Tronçon"
+
+#: templates/mapentity/entity_list.html:11
+msgid "Intervention"
+msgstr "Intervention"
+
+#: templates/mapentity/entity_list.html:12
+msgid "Project"
+msgstr "Chantier"
+
+#: templates/mapentity/entity_list.html:13
+msgid "Signage"
+msgstr "Signalétique"
+
+#: templates/mapentity/entity_list.html:14
+msgid "Infrastructure"
+msgstr "Aménagement"
+
+#: templates/mapentity/entity_list.html:15
+msgid "Trek"
+msgstr "Itinéraire"
+
+#: templates/mapentity/entity_list.html:16
+msgid "POI"
+msgstr "POI"
+
+#: templates/mapentity/entity_list.html:38
 msgid "Filter"
 msgstr "Filtrer"
 
-#: templates/mapentity/entity_list.html:56
+#: templates/mapentity/entity_list.html:91
+msgid "Filter list and map"
+msgstr "Filtrer la liste et la carte"
+
+#: templates/mapentity/entity_list.html:136
 msgid "Save map as image"
 msgstr "Sauvegarder l'image"
-
-#: templates/mapentity/entity_list.html:105
-msgid "Trails"
-msgstr "Sentiers"
-
-#: templates/mapentity/entity_list.html:108
-msgid "District"
-msgstr "Secteur"
-
-#: templates/mapentity/entity_list.html:109
-msgid "City"
-msgstr "Commune"
-
-#: templates/mapentity/entity_list.html:110
-msgid "Restricted Area"
-msgstr "Zone protégée"
 
 #: templates/mapentity/popupplus.html:8
 msgid "Add"
 msgstr "Ajouter"
 
-#~ msgid "Paths"
-#~ msgstr "Tronçons"
-
-#~ msgid "Cancel"
-#~ msgstr "Annuler"
-
-#~ msgid "Save changes"
-#~ msgstr "Sauvegarder"
