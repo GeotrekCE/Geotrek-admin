@@ -2077,3 +2077,16 @@ Voici les valeurs dans le fichier d'exemple :
     # Default language and list of available
     language = fr
     languages = en,fr,it
+
+#316 - Modifier le terme TERRAIN par SCAN
+-----------------------------------------
+
+Fait.
+
+
+#368 - Raffraichir la carte quand on fait un recherche dans la liste
+--------------------------------------------------------------------
+
+* Afficher la liste
+* Taper un mot-clé, la liste se filtre, la carte aussi.
+* Effacer le mot-clé, la liste s'affiche entièrement, les objets réapparaissent sur la carte

@@ -33,6 +33,22 @@ L.MapListSync = L.Class.extend({
             this.options.filter.submitbutton.click(this._onFormSubmit.bind(this));
             this.options.filter.resetbutton.click(this._onFormReset.bind(this));
         }
+        
+        // Keep track of searched records, and refresh map.
+        // Do not do it if event is received with no search 
+        this._searched = false;
+        var self = this;
+        $(this.dt.fnSettings().oInstance).on('filter', function (e) {
+            var filterTxt = $("input[type='text']", this._dtcontainer).val();
+            if ((self._searched && filterTxt == '') || 
+                (!self._searched && filterTxt != '')) {
+                self.layer.updateFromPks(self.dt.fnGetColumnData(0));
+                self._searched = true;
+            }
+            else {
+                self._searched = false;
+            }
+        });
     },
 
     _onMapViewChanged: function (e) {
