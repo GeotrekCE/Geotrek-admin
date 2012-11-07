@@ -43,6 +43,18 @@ class MapEntityTest(LiveServerTestCase):
     def get_good_data(self):
         raise NotImplementedError()
 
+    def get_form(self, response):
+        form = None
+        for c in response.context:
+            _form = c.get('form')
+            if _form and isinstance(_form, MapEntityForm):
+                form = _form
+                break
+
+        if not form:
+            self.fail(u'Could not find form')
+        return form
+
     def test_status(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -131,15 +143,7 @@ class MapEntityTest(LiveServerTestCase):
             response = self.client.post(url, bad_data)
             self.assertEqual(response.status_code, 200)
 
-            form = None
-            for c in response.context:
-                _form = c.get('form')
-                if _form and isinstance(_form, MapEntityForm):
-                    form = _form
-                    break
-
-            if not form:
-                self.fail(u'Could not find form')
+            form = self.get_form(response)
 
             fields_errors = form.errors[bad_data.keys()[0]]
             for err in to_list(form_error):

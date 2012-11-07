@@ -2047,3 +2047,8 @@ Fixé.
 ----------------------------
 
 Fixé.
+
+#221 - [BUG] Parking perdu (marqueur) si erreur de saisie formulaire itinéraire
+-------------------------------------------------------------------------------
+
+Fixé.

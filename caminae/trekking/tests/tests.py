@@ -81,6 +81,17 @@ class TrekViewsTest(MapEntityTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def test_badfield_goodgeom(self):
+        self.login()
+        
+        bad_data, form_error = self.get_bad_data()
+        bad_data['parking_location'] = 'POINT (1.0 1.0 0.0)'
+        url = self.model.get_add_url()
+        response = self.client.post(url, bad_data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
 
 class TrekCustomViewTests(TestCase):
 
