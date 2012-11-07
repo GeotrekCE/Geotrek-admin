@@ -4,7 +4,7 @@ from django.forms import widgets as django_widgets
 
 import floppyforms as forms
 
-from caminae.common.utils import wkt_to_geom
+from caminae.common.utils import transform_wkt, wkt_to_geom
 
 
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
@@ -22,13 +22,17 @@ class GeometryWidget(LeafletMapWidget):
 
     def value_from_datadict(self, data, files, name):
         wkt = super(GeometryWidget, self).value_from_datadict(data, files, name)
-        return None if not wkt else wkt_to_geom(wkt)
+        return None if not wkt else transform_wkt(wkt, settings.API_SRID, settings.SRID)
 
     def get_context(self, name, value, attrs=None, extra_context={}):
         context = super(GeometryWidget, self).get_context(name, value, attrs, extra_context)
         # Be careful, on form error, value is not a GEOSGeometry
-        if value and not isinstance(value, basestring):
-            value.transform(settings.API_SRID)
+        if value:
+            if isinstance(value, basestring):
+                value = transform_wkt(value, settings.SRID, settings.API_SRID)
+                context['field'] = wkt_to_geom(value)
+            else:
+                value.transform(settings.API_SRID)
         context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
         context['LAYERCOLOR_LAND'] = settings.LAYERCOLOR_LAND
         context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
