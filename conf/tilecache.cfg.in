@@ -2,22 +2,22 @@
 type=Disk
 base=${options.cachedir}
 
-[terrain]
+[scan]
 type=WMSLayer
-layers=${options.terrain_layers}
-url=${options.wms_url}
+layers=${parts['settings'].scan_layers}
+url=${parts['settings'].wms_url}
 extension=jpg
 tms_type=google
-srs=EPSG:${options.srid}
-bbox=${options.spatial_extent}
-maxResolution=${options.max_resolution}
+srs=EPSG:${parts['settings'].srid}
+bbox=${parts['settings'].spatial_extent}
+maxResolution=${parts['settings'].max_resolution}
 
 [ortho]
 type=WMSLayer
-layers=${options.ortho_layers}
-url=${options.wms_url}
+layers=${parts['settings'].ortho_layers}
+url=${parts['settings'].wms_url}
 extension=jpg
 tms_type=google
-srs=EPSG:${options.srid}
-bbox=${options.spatial_extent}
-maxResolution=${options.max_resolution}
+srs=EPSG:${parts['settings'].srid}
+bbox=${parts['settings'].spatial_extent}
+maxResolution=${parts['settings'].max_resolution}

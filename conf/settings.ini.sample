@@ -42,8 +42,8 @@ spatial_extent_wgs84 = 5.0, 43.8, 7.5, 45.8
 wms_url = http://extranet.parcnational.fr/pnx/wms?
 # Layers for aerial picture
 ortho_layers = ortho
-# Layers for terrain map
-terrain_layers = scan100,scan25
+# Layers for scan map
+scan_layers = scan100,scan25
 # Layers colors
 layercolor_paths = #DD00FF
 layercolor_land = #FF9700
