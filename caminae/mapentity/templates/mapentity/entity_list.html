@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n static leaflet_tags mapentity field_verbose_name land %}
+{% load i18n static leaflet_tags mapentity field_verbose_name %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
@@ -70,10 +70,7 @@
     <!-- Map Panel -->
     <div id="panelright" class="map-panel span6">
         {% block mainmap %}
-            <div id="bboxfilter">
-                {# ids: bbox_cities bbox_districts #}
-                {% combobox_bbox_land %}
-            </div>
+            {% smart_include "maphead" %}
             {% leaflet_map "mainmap" fitextent=False %}
         {% endblock mainmap %}
     </div><!--/span-->
