@@ -1,10 +1,14 @@
 import math
 from urlparse import urljoin
+import logging
 
 from django.db import connection
 from django.conf import settings
 from django.utils.timezone import utc
+from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr, LineString, Point
+
+logger = logging.getLogger(__name__)
 
 
 def dbnow():
@@ -41,15 +45,29 @@ def elevation_profile(g):
     return profile
 
 
-def wkt_to_geom(wkt):
+def wkt_to_geom(wkt, srid_from=None):
+    if srid_from is None:
+        srid_from = settings.API_SRID
+    return fromstr(wkt, srid=srid_from)
+
+def transform_wkt(wkt, srid_from=None, srid_to=None):
+    """
+    Changes SRID, and returns 3D wkt
+    """
+    if srid_from is None:
+        srid_from = settings.API_SRID
+    if srid_to is None:
+        srid_to = settings.SRID
     try:
-        geom = fromstr(wkt, srid=settings.API_SRID)
-        geom.transform(settings.SRID)
+        geom = fromstr(wkt, srid=srid_from)
+        if srid_from != srid_to:
+            geom.transform(srid_to)
         dim = 3
         extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
         wkt3d = geom.wkt.replace(',', extracoords + ',')
         return wkt3d
-    except (GEOSException, TypeError, ValueError):
+    except (OGRException, GEOSException, TypeError, ValueError), e:
+        logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
         return None
 
 
