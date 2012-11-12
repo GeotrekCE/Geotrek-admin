@@ -57,14 +57,12 @@
                     </tbody>
                 </table>
 
-                <div id="list-download-toolbar" class="span6">
-                    <p>
-                        <i class="icon-download-alt"></i> 
-                        {% trans "Export list" %}
-                        <button class="btn btn-mini" name="csv" >{% trans "CSV" %}</button>
-                        <button class="btn btn-mini" name="shp" >{% trans "ShapeFile" %}</button>
-                        <button class="btn btn-mini" name="gpx" >{% trans "GPX" %}</button>
-                    </p>
+                <div id="list-download-toolbar">
+                    <div class="btn-group">
+                        <button class="btn btn-mini" name="csv" title="{% trans "CSV" %}"><img src="{% static "paperclip/fileicons/csv.png" %}"></button>
+                        <button class="btn btn-mini" name="shp" title="{% trans "Shapefile" %}"><img src="{% static "paperclip/fileicons/shp.png" %}"></button>
+                        <button class="btn btn-mini" name="gpx" title="{% trans "GPX" %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"></button>
+                     </div>
                 </div>
             {% endblock mainlist %}
         </div>
@@ -176,17 +174,17 @@
             var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
                 // Hide pk column
                 aoColumnDefs: [ { "bVisible": false, "aTargets": [ 0 ] } ],
-                sDom: "<'row-fluid'<'span7'><'span5'f>r>t<'row-fluid'<'#bottomleft' 'span6'><'span6'i>>",
+                sDom: "tpf",
                 aaData: [],
                 iDeferLoading: 0,
-                "bScrollInfinite": true,
-                "bScrollCollapse": true,
-                "sScrollY": "400px"
-            });            
+                iDisplayLength: 15,  // TODO: this is VERY ANNOYING ! I want to fill height !
+            });
             // Hardcore Datatables customizations
-            $('#bottomleft').addClass('span6 dataTables_info').html($('#list-download-toolbar').html());
-            $('#list-download-toolbar').remove();
-            
+            $('li.next a').html($('li.next a').html().replace('Next', ''));
+            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
+            $('#objects-list_filter input').attr('placeHolder', "{% trans "Search" %}");
+            $('#objects-list_filter label').contents().filter(function() {return this.nodeType === 3;/*Node.TEXT_NODE*/}).remove();
+
             var mapsync = new L.MapListSync(dt,
                                             map, 
                                             objectsLayer, {

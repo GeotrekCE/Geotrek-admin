@@ -39,7 +39,7 @@ L.MapListSync = L.Class.extend({
         this._searched = false;
         var self = this;
         $(this.dt.fnSettings().oInstance).on('filter', function (e) {
-            var filterTxt = $("input[type='text']", this._dtcontainer).val();
+            var filterTxt = $(".dataTables_filter input[type='text']").val();
             if ((self._searched && filterTxt == '') || 
                 (!self._searched && filterTxt != '')) {
                 self.layer.updateFromPks(self.dt.fnGetColumnData(0));
