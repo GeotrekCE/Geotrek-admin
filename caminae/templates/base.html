@@ -43,17 +43,6 @@
     {% endblock extrahead %}
 </head>
 <body>
-    {% if messages %}
-    <ul id="alert-box">
-        {% for message in messages %}
-        <li class="alert {{ message.tags }}">
-            {{ message }}
-            {% if 'warning' in message.tags or 'error' in message.tags %}<button class="close" data-dismiss="alert">×</button>{% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
     {% block navbar %}
     <div class="navbar">
       <div class="navbar-inner">
@@ -95,23 +84,10 @@
     </div>
     {% endblock navbar %}
 
-    {% block body %}
-        <div id="viewport" class="content">
-          {% block content %}
-          {% endblock content %}
-        </div>
-    {% endblock body %}
+    {% block content %}
+    {% endblock content %}
 
     {% block extrabody %}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Fade out success/infos messages
-            $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
-        
-            $('#entitylist a').tooltip({'placement': 'right'});
-            $('#historylist a').tooltip({'placement': 'bottom'});
-        });
-    </script>
     {% endblock extrabody %}
 </body>
 </html>
