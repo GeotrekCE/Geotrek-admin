@@ -3,10 +3,12 @@
 
 {% block nav-list %}active{% endblock nav-list %}
 
-{% block mainpanel %}
+{% block container %}
+    <div id="container">
+
     <!-- Modules Panel -->
-    <div class="span1">
-        <ul id="entitylist" class="nav nav-pills nav-stacked">
+    <div id="entitylist">
+        <ul class="nav nav-pills nav-stacked">
             <li class="centered {% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
             <li class="centered {% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}" title="{% trans "Intervention" %}"><img src="{% static "images/intervention.png" %}"/></a></li>
             <li class="centered {% block nav-project %}{% endblock nav-project %}"><a href="{% url maintenance:project_list %}" title="{% trans "Project" %}"><img src="{% static "images/project.png" %}"/></a></li>
@@ -15,68 +17,73 @@
             <li class="centered {% block nav-trekking %}{% endblock nav-trekking %}"><a href="{% url trekking:trek_list %}" title="{% trans "Trek" %}"><img src="{% static "images/trek.png" %}"/></a></li>
             <li class="centered {% block nav-poi %}{% endblock nav-poi %}"><a href="{% url trekking:poi_list %}" title="{% trans "POI" %}"><img src="{% static "images/poi.png" %}"/></a></li>
         </ul>
-    </div> <!--/span-->
+    </div>
 
     <!-- List Panel -->
-    <div id="results-panel" class="span5">
-    
-        <div class="btn-toolbar">
-            {% block mainactions %}
-            {% endblock mainactions %}
+    <div id="panelleft">
+        <div id="list-panel">
             
-            {% smart_include "listactions" %}
-        </div> <!--/row-->
-
-        <a href="#" id="filters-btn" class="btn btn-large"><i class="icon-filter"></i> Filter</a>
-        <div id="filters-popover"></div>
-        <div id="filters-wrapper" style="display:None">
-            <div id="filters-panel">
-                {% block filters %}
-                    <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
-                        {{ filterform.form.as_p }}
-                        <input id="reset" type="reset" class="btn" />
-                        <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
-                    </form>
-                {% endblock filters %}
+            <div class="btn-toolbar">
+                {% block mainactions %}
+                {% endblock mainactions %}
+                
+                {% smart_include "listactions" %}
             </div>
+
+            <a href="#" id="filters-btn" class="btn btn-large"><i class="icon-filter"></i> Filter</a>
+            <div id="filters-popover"></div>
+            <div id="filters-wrapper" style="display:None">
+                <div id="filters-panel">
+                    {% block filters %}
+                        <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
+                            {{ filterform.form.as_p }}
+                            <input id="reset" type="reset" class="btn" />
+                            <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+                        </form>
+                    {% endblock filters %}
+                </div>
+            </div>
+            
+            {% block mainlist %}
+                <table id="objects-list" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            {% for field in columns %}
+                            <th>{{ model|verbose:field }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <div id="list-download-toolbar" class="span6">
+                    <p>
+                        <i class="icon-download-alt"></i> 
+                        {% trans "Export list" %}
+                        <button class="btn btn-mini" name="csv" >{% trans "CSV" %}</button>
+                        <button class="btn btn-mini" name="shp" >{% trans "ShapeFile" %}</button>
+                        <button class="btn btn-mini" name="gpx" >{% trans "GPX" %}</button>
+                    </p>
+                </div>
+            {% endblock mainlist %}
         </div>
-        
-        {% block mainlist %}
-            <table id="objects-list" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        {% for field in columns %}
-                        <th>{{ model|verbose:field }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-
-            <div id="list-download-toolbar" class="span6">
-                <p>
-                    <i class="icon-download-alt"></i> 
-                    {% trans "Export list" %}
-                    <button class="btn btn-mini" name="csv" >{% trans "CSV" %}</button>
-                    <button class="btn btn-mini" name="shp" >{% trans "ShapeFile" %}</button>
-                    <button class="btn btn-mini" name="gpx" >{% trans "GPX" %}</button>
-                </p>
-            </div>
-        {% endblock mainlist %}
-        
-    </div><!--/span-->
+    </div>
 
     <!-- Map Panel -->
-    <div id="panelright" class="map-panel span6">
+    <div id="panelright">
+        <div class="map-panel">
         {% block mainmap %}
             <div id="maphead">
                 {% smart_include "maphead" %}
             </div>
             {% leaflet_map "mainmap" fitextent=False %}
         {% endblock mainmap %}
-    </div><!--/span-->
-{% endblock mainpanel %}
+        </div>
+    </div>
+    
+    </div>
+{% endblock container %}
 
 
 {% block extrabody %}

@@ -2,12 +2,25 @@
 {% load static i18n leaflet_tags %}
 
 {% block content %}
-        <div id="container" class="container-fluid">
-            <div class="row-fluid">
-                {% block mainpanel %}
-                {% endblock mainpanel %}
-            </div><!--/row-->
-        </div><!--/container-->
+    {% if messages %}
+    <ul id="alert-box">
+        {% for message in messages %}
+        <li class="alert {{ message.tags }}">
+            {{ message }}
+            {% if 'warning' in message.tags or 'error' in message.tags %}<button class="close" data-dismiss="alert">×</button>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% block container %}
+    <div id="container" class="container-fluid">
+        <div class="row-fluid">
+            {% block mainpanel %}
+            {% endblock mainpanel %}
+        </div><!--/row-->
+    </div><!--/container-->
+    {% endblock container %}
 {% endblock content %}
 
 {% block extracss %}
@@ -50,12 +63,18 @@
         // Show number of results
         $(document).ready(function (e) {
             MapEntity.showNumberSearchResults();
-        });
+            
+            // Fade out success/infos messages
+            $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
         
-        // Auto-hide elements
-        $('.autohide').parents().hover(
-          function() { $(this).children(".autohide").show(); },
-          function() { $(this).children(".autohide").hide(); }
-        );
+            $('#entitylist a').tooltip({'placement': 'right'});
+            $('#historylist a').tooltip({'placement': 'bottom'});
+            
+            // Auto-hide elements
+            $('.autohide').parents().hover(
+              function() { $(this).children(".autohide").show(); },
+              function() { $(this).children(".autohide").hide(); }
+            );
+        });
     </script>
 {% endblock extrabody %}

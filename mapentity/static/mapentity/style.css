@@ -1,3 +1,82 @@
+body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    padding: 0; margin: 0;
+}
+
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/***** Reusables ******/
+
+.centered {
+	text-align: center;
+}
+
+.autohide {
+    display: none;
+}
+
+
+/**** Layout (based on "Conflicting position" trick) ****/
+
+#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
+#panelleft {position: absolute; top: 0; bottom: 0; width: 50%; left: 0;}
+#panelright {position: absolute; top: 0; bottom: 0; width: 50%; right: 0;}
+
+#mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
+
+#entitylist {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 60px;
+}
+
+#list-panel {
+    margin-left: 60px;
+    padding: 4px;
+}
+
+/***** SPAN 6 *****/
+.row-fluid > .span6 > .pull-right {
+	margin-top: 5px;
+	/*margin-right: 5px;*/
+	padding-right: 12px;
+
+}
+
+#entitylist a {
+    padding: 0px;
+}
+
+#results-panel {
+    margin-left: 10px;
+}
+
+#mainfilter label {
+    display: none;
+}
+
+
+/***** Alerts ******/
+
+#alert-box {
+	position: absolute; 
+	top: 3px; 
+	left: 50%; 
+	width: 50%; 
+	margin: 0 0 0 -25%;
+	z-index: 1000;
+}
+
+#alert-box li.alert {
+    list-style-type: none; margin-bottom: 3px;
+}
+
 
 
 /**** Maps ****/
