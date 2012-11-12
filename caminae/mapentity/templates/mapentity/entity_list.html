@@ -70,7 +70,9 @@
     <!-- Map Panel -->
     <div id="panelright" class="map-panel span6">
         {% block mainmap %}
-            {% smart_include "maphead" %}
+            <div id="maphead">
+                {% smart_include "maphead" %}
+            </div>
             {% leaflet_map "mainmap" fitextent=False %}
         {% endblock mainmap %}
     </div><!--/span-->

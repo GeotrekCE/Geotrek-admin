@@ -5,8 +5,6 @@ from caminae.land.models import District, City, RestrictedArea
 
 register = template.Library()
 
-# Here, register is a django.template.Library instance, as before
-
 
 def get_bbox_cities():
     return [
@@ -26,8 +24,10 @@ def get_bbox_areas():
         for area in RestrictedArea.objects.all()
     ]
 
+@register.inclusion_tag('land/bbox.html')
 def combobox_bbox_land():
-    return { 'bbox_cities': get_bbox_cities(), 'bbox_districts': get_bbox_districts(), 
-             'bbox_areas': get_bbox_areas() }
-
-register.inclusion_tag('land/bbox.html')(combobox_bbox_land)
+    return { 
+        'bbox_cities': get_bbox_cities(), 
+        'bbox_districts': get_bbox_districts(), 
+        'bbox_areas': get_bbox_areas() 
+    }

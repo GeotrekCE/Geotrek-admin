@@ -67,9 +67,11 @@ select.filter-set {
     color: black;
 }
 
-#bboxfilter {
-    text-align: right;
+#maphead {
+    position: absolute;
     padding-top: 3px;
+    z-index: 9999;
+    width: 100%;
 }
 
 /***** Entity detail ******/
