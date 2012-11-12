@@ -14,54 +14,6 @@ body {
     margin-bottom: 0px;
 }
 
-/***** Reusables ******/
-
-.centered {
-	text-align: center;
-}
-
-.autohide {
-    display: none;
-}
-
-
-/**** Layout (based on "Conflicting position" trick) ****/
-
-#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
-#panelleft {position: absolute; top: 0; bottom: 0; width: 50%; left: 0;}
-#panelright {position: absolute; top: 0; bottom: 0; width: 50%; right: 0;}
-
-#mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
-
-#entitylist {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    width: 60px;
-}
-
-#list-panel {
-    margin-left: 60px;
-    padding: 4px;
-}
-
-#list-download-toolbar, #objects-list_filter, div.dataTables_paginate { 
-    position: absolute;
-    bottom: 5px;
-}
-
-#list-download-toolbar {
-    padding-bottom: 10px;
-}
-
-div.dataTables_paginate {
-    right: 5px;
-}
-
-#objects-list_filter {
-    left: 160px;
-}
-
 
 /***** SPAN 6 *****/
 .row-fluid > .span6 > .pull-right {
@@ -71,18 +23,15 @@ div.dataTables_paginate {
 
 }
 
-#entitylist a {
-    padding: 0px;
+/***** Reusables ******/
+
+.centered {
+	text-align: center;
 }
 
-#results-panel {
-    margin-left: 10px;
-}
-
-#mainfilter label {
+.autohide {
     display: none;
 }
-
 
 /***** Alerts ******/
 
@@ -174,6 +123,55 @@ select.filter-set {
     z-index: 9999;
     width: 100%;
 }
+
+
+/***** Entity List ******/
+
+
+/* Layout (based on "Conflicting position" trick) */
+#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
+#panelleft {position: absolute; top: 0px; bottom: 0; width: 50%; left: 0;}
+#panelright {position: absolute; top: 0px; bottom: 0; width: 50%; right: 0;}
+
+#mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
+
+
+/* Left menu */
+#entitylist {position: absolute; top: 0px; left: 0; width: 60px;}
+#list-panel {
+    margin-left: 60px;
+    padding: 4px;
+}
+#entitylist a {
+    padding: 0px;
+}
+
+
+/* Datatables customization for filters and pagination */
+#list-download-toolbar, #objects-list_filter, div.dataTables_paginate { 
+    position: absolute;
+    bottom: 5px;
+}
+
+#list-download-toolbar {
+    padding-bottom: 10px;
+}
+
+div.dataTables_paginate {
+    right: 5px;
+}
+
+#objects-list_filter {
+    left: 160px;
+}
+
+
+#filters-panel {position: absolute; top: 0px; left:0; right: 0;}
+
+#mainfilter label {
+    display: none;
+}
+
 
 /***** Entity detail ******/
 
