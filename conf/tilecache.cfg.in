@@ -1,5 +1,5 @@
 [cache]
-type=Disk
+type=GoogleDisk
 base=${options.cachedir}
 
 [scan]
