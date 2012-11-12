@@ -169,12 +169,12 @@ L.MapListSync = L.Class.extend({
                     function nextRowAnim() {
                         if ($nextRow) {
                             $nextRow.hide('fast')
-                                    .show('fast', function() { $nextRow.addClass('selected-row'); });
+                                    .show('fast', function() { $nextRow.addClass('success'); });
                         }
                     }
 
                     if ($prevRow) {
-                        $prevRow.hide('fast', function() { $prevRow.removeClass('selected-row'); })
+                        $prevRow.hide('fast', function() { $prevRow.removeClass('success'); })
                                 .show('fast', nextRowAnim);
                     } else {
                         nextRowAnim();
