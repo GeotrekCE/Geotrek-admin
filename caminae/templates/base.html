@@ -63,9 +63,6 @@
         <ul class="nav pull-right">
             {% if request.user.is_authenticated %}
             <li class="divider-vertical"></li>
-            <li class="pull-right {% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
-            
-            <li class="divider-vertical"></li>
             <li class="dropdown">
                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                    <img src="{% static "images/icon-user-white.png" %}"/>
@@ -75,6 +72,9 @@
                     <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
                   {% endif %}
                   <li class="divider"></li>
+                  <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
+                  <li class="divider"></li>
+                  
                   <li><a href="{% url logout %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
                </ul>
             </li>
