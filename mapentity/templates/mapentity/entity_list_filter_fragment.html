@@ -1,0 +1,67 @@
+{% load i18n %}
+<span class="pull-right">
+    <a href="#" id="filters-btn" class="btn  btn-info"><i class="icon-filter icon-white"></i> {% trans "Filter" %}</a>
+</span>
+
+<div id="filters-popover"></div>
+<div id="filters-wrapper" style="display:None">
+    <div id="filters-panel">
+        <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
+            {{ filterform.form.as_p }}
+            <input id="reset" type="reset" class="btn" />
+            <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var div = $('#filters-popover')
+              .popover({
+                  placement: 'bottom',
+                  title: '',
+                  content: ''
+              });
+
+    var getPopover = function() { return div.data('popover') };
+    var isVisible = function() {
+        var tip = getPopover().$tip;
+        if (!tip)
+            return false;
+        return tip.hasClass('in');
+    };
+
+    $('#filters-btn').click(function () {
+
+        // if was visible - clone
+        if (isVisible()) {
+            $('#filters-wrapper').append(
+                // The whole $tip will be deleted, save the #filters-panel
+                // and add it to the DOM so the dynamic filters still works.
+                getPopover().$tip.find('#filters-panel').detach()
+            );
+        }
+        else {
+        }
+
+        div.popover('toggle');
+
+        if (isVisible()) {
+            var btnleft = $(this).position().left,
+                btnwidth = $(this).width();
+            
+            getPopover().$tip
+              .find('.popover-inner').empty()
+              .append($('#filters-wrapper #filters-panel').detach());
+            
+            getPopover().$tip
+              .width(getPopover().$tip.find('#filters-panel form').outerWidth())
+              .height(getPopover().$tip.find('#filters-panel form').outerHeight());
+            // Adjust position under filter button
+            getPopover().$tip
+               .css('left', btnleft + btnwidth/2 - getPopover().$tip.width()/2);    
+        }
+
+    });
+});
+</script>
