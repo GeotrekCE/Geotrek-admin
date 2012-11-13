@@ -29,6 +29,10 @@
 	padding-bottom: 4px;
 }
 
+.dropdown-menu {
+    z-index: 9999;
+}
+
 h2 {
 	text-align: center;
 }

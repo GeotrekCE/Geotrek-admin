@@ -120,7 +120,7 @@ select.filter-set {
 #maphead {
     position: absolute;
     padding-top: 3px;
-    z-index: 9999;
+    z-index: 999;
     width: 100%;
 }
 
@@ -170,6 +170,17 @@ div.dataTables_paginate {
 
 #mainfilter label {
     display: none;
+}
+
+#filters-panel .well {
+    padding: 5px;
+}
+#filters-panel form {
+    margin-bottom: 0px;
+}
+
+.popover {
+    border: 5px solid rgba(0, 0, 0, 0.5);
 }
 
 
