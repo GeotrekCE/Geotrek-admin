@@ -63,7 +63,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
             this.on('dblclick', this.layer_events.detail_dblclick);
         }
 
-        var self = this;
         if (!options.style) {
             options.style = function (geojson) {
                 return { 
@@ -74,6 +73,8 @@ L.ObjectsLayer = L.GeoJSON.extend({
                 }
             };
         }
+
+        this.spinning = false;
 
         var dataurl = null;
         if (typeof(geojson) == 'string') {
@@ -136,8 +137,14 @@ L.ObjectsLayer = L.GeoJSON.extend({
         L.GeoJSON.prototype.onRemove.call(this, map);
     },
 
+    onAdd: function (map) {
+        this.spin(this.spinning, map);
+        L.GeoJSON.prototype.onAdd.call(this, map);
+    },
+
     spin: function (state, map) {
         var _map = map || this._map;
+        this.spinning = state;
         
         if (!_map) return;
 
@@ -151,7 +158,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
         else {
             _map._spinning--;
-            if (_map._spinning == 0) {
+            if (_map._spinning <= 0) {
                 // end spinning !
                 if (_map._spinner) {
                     _map._spinner.stop();
