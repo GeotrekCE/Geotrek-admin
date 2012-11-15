@@ -28,7 +28,7 @@
         </h2>
         {% endblock detailshead %}
         
-        <div id="details-body">
+        <div id="details-body" class="scrollable">
             {% block detailspanel %}
             {% endblock detailspanel %}
 
@@ -57,21 +57,3 @@
     </div><!-- span5 -->
 
 {% endblock mainpanel %}
-
-
-
-{% block extrabody %}
-    {{ block.super }}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var fillmax = function () {
-                var header = $('.details-panel h2').position().top + $('.details-panel h2').height() + 110;
-                var height = $(window).height() - header;
-                $("#details-body").css('max-height', height);
-            }
-            fillmax();
-            $(window).resize(fillmax);
-        })
-    </script>
-{% endblock extrabody %}

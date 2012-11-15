@@ -60,8 +60,8 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-        // Show number of results
         $(document).ready(function (e) {
+            // Show number of results
             MapEntity.showNumberSearchResults();
             
             // Fade out success/infos messages
@@ -75,6 +75,18 @@
               function() { $(this).children(".autohide").show(); },
               function() { $(this).children(".autohide").hide(); }
             );
-        });
+            
+            // Scrollable panels
+            var fillmax = function () {
+                $('.scrollable').each(function () {
+                    var top = $(this).position().top,
+                        height = $(window).height() - top - 50; // margin
+                    $(this).css('max-height', height);
+                    
+                });
+            }
+            fillmax();
+            $(window).resize(fillmax);
+        })
     </script>
 {% endblock extrabody %}
