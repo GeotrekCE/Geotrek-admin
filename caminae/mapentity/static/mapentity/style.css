@@ -191,12 +191,14 @@ span.filter-info {
 
 /***** Entity detail ******/
 
+
 .details-panel {
-    padding: 40px;
+    padding-left: 40px;
 }
 
 .details-panel .table { 
     table-layout: fixed; 
+    margin-right: 10px;
 }
 
 .details-panel .table th {
@@ -236,9 +238,25 @@ span.filter-info {
     margin: 0px;
 }
 
+.details-panel h2 { 
+    min-height: 75px; 
+}
+
+#details-body {
+    overflow-y: auto;
+    clear: both;
+    padding-right: 10px;
+}
+
+
+/***** Entity form ******/
+
+
+.form-panel h2 { 
+    padding-left: 100px; 
+}
+
 /* Icons for each entity */
-.details-panel h2 { min-height: 75px; }
-.form-panel h2 { padding-left: 100px; }
 .form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
 .form-panel.trail,          .details-panel.trail          { background: url(images/trail-96.png) no-repeat; }
 .form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention-96.png) no-repeat; }
