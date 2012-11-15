@@ -254,6 +254,10 @@ span.filter-info {
 
 /***** Entity form ******/
 
+.form-panel form {
+    padding-left: 10px;
+}
+
 
 .form-panel h2 { 
     padding-left: 100px; 

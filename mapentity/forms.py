@@ -18,7 +18,7 @@ class MapEntityForm(forms.ModelForm):
     actions = FormActions(
         Button('cancel', _('Cancel'), ),
         Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
-        css_class="form-actions span11",
+        css_class="form-actions",
     )
 
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
@@ -60,7 +60,7 @@ class MapEntityForm(forms.ModelForm):
         fields = ('pk','model') + self.modelfields
         leftpanel = Div(
             *fields,
-            css_class="span3"
+            css_class="span4"
         )
 
         rightpanel = Div(
@@ -71,8 +71,14 @@ class MapEntityForm(forms.ModelForm):
         # Main form layout
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
-            leftpanel,
-            rightpanel,
+            Div(
+                Div(
+                    leftpanel,
+                    rightpanel,
+                    css_class="row-fluid"
+                ),
+                css_class="container-fluid"
+            ),
             self.actions
         )
 
