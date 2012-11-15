@@ -71,17 +71,6 @@
                     <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
-        </tr><tr>
-            <th>{% trans "Districts" %}</th>
-            <td>
-                {% for d in trek.districts %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ d.name }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
-            </td>
         </tr>
     </table>
 {% endblock detailspanel %}
