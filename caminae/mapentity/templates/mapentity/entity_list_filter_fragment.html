@@ -81,7 +81,7 @@ $(document).ready(function() {
             var i = '';
             for (k in this.fields) {
                 var f = this.fields[k];
-                i += p.replace('%name%', f.label).replace('%value%', f.val);
+                i += p.replace('%name%', f.label).replace('%value%', f.value);
             }
             return i;
         },
@@ -118,8 +118,15 @@ $(document).ready(function() {
                 name = $(field).attr('name'),
                 val = $(field).val(),
                 set = val != '' && val != [''];
+
+            // Displayed value
+            var value = val;
+            if (field.tagName == 'SELECT') {
+                value = $(field).find("option:selected").text();
+            }
+
             if (set) {
-                this.fields[name] = {name: name, val:val, label:label};
+                this.fields[name] = {name: name, val:val, value:value, label:label};
             }
             else {
                 delete this.fields[name];
