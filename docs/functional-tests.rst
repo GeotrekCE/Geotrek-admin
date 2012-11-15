@@ -2090,3 +2090,28 @@ Fait.
 * Afficher la liste
 * Taper un mot-clé, la liste se filtre, la carte aussi.
 * Effacer le mot-clé, la liste s'affiche entièrement, les objets réapparaissent sur la carte
+
+
+#315, #356, #225 - Filtres de liste
+-----------------------------------
+
+* Afficher la liste
+* Cliquer sur le bouton de *Filtre*. Le panneau s'affiche sous le bouton.
+* Remplir un champ, celui-ci apparaît en gras, son label apparait en infobulle.
+* Valider le formulaire, la liste est filtrée, la carte aussi. Le bouton *Filtre* change de couleur.
+* Cliquer sur le bouton *Filtre*. Le panneau se ferme.
+
+* Survoler le bouton *Filtre*. Un encart apparait avec un récapitualitif des filtres appliqués.
+
+* Raffraîchir la page ou naviguer dans l'application, pour constater que les filtres sont conservés.
+  Le bouton *Filtre* est restauré dans l'état "actif".
+
+* Ouvrir le panneau de filtre, réinitializer le formulaire. La carte et la liste sont
+  raffraichis, le bouton *Filtre* reprend son état inactif.
+
+
+#295 - Sentiers, itinéraire et tronçons / Départ et arrivée
+-----------------------------------------------------------
+
+Pour les objets dont la géometrie est de type Ligne, des marqueurs départ
+et arrivée sont placés aux extrémités.
