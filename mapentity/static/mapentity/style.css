@@ -33,6 +33,11 @@ body {
     display: none;
 }
 
+.scrollable {
+    overflow-y: auto;
+    clear: both;
+}
+
 /***** Alerts ******/
 
 #alert-box {
@@ -243,8 +248,6 @@ span.filter-info {
 }
 
 #details-body {
-    overflow-y: auto;
-    clear: both;
     padding-right: 10px;
 }
 
