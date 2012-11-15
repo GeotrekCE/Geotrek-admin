@@ -158,8 +158,6 @@ class MapEntityList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityList, self).get_context_data(**kwargs)
-        for k,v in self.model._meta.__dict__.items():
-            print k, v
         context.update(**dict(
             model=self.model,
             appname=self.model._meta.app_label.lower(),
