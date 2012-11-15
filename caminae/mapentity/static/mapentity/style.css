@@ -111,9 +111,9 @@ tr.selected-row td {
     opacity: 1 !important;
 }
 
-select.filter-set {
+.filter-set {
     font-weight: bold;
-    border: 2px solid black;
+    border: 2px solid black !important;
     color: black;
 }
 
@@ -175,12 +175,17 @@ div.dataTables_paginate {
 #filters-panel .well {
     padding: 5px;
 }
+
 #filters-panel form {
     margin-bottom: 0px;
 }
 
 .popover {
     border: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+span.filter-info {
+    font-weight: bold;
 }
 
 

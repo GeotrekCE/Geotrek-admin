@@ -25,6 +25,7 @@ $(document).ready(function() {
         initialize: function () {
             this.button = '#filters-btn';
 
+            this.fields = {};
             this.visible = false;
             this.popover = $('#filters-popover')
                               .popover({
@@ -35,12 +36,16 @@ $(document).ready(function() {
             this.hover = $('#filters-hover')
                               .popover({
                                   placement: 'bottom',
-                                  content: 'No filter',
-                                  title: '{% trans "Current filter" %}'
+                                  content: this.infos.bind(this),
+                                  title: '{% trans "Current criteria" %}'
                               });
 
             $(this.button).click(this.toggle.bind(this));
             $(this.button).hover(this.showinfo.bind(this));
+            var self = this;
+            $('#mainfilter').find('select,input').change(function (e) {
+                self.setfield(this);
+            });
         },
 
         tip: function () {
@@ -65,6 +70,20 @@ $(document).ready(function() {
             
             this.hover.popover('toggle');
             this.__reposition(this.htip());
+        },
+
+        infos: function () {
+            if (Object.keys(this.fields).length == 0)
+                return "{% trans "No filter" %}";
+            
+            // We do not use handlebars just for this. If more to come, we will !
+            var p = '<p><span class="filter-info">%name%</span>: %value%</p>';
+            var i = '';
+            for (k in this.fields) {
+                var f = this.fields[k];
+                i += p.replace('%name%', f.label).replace('%value%', f.val);
+            }
+            return i;
         },
 
         toggle: function () {
@@ -93,8 +112,42 @@ $(document).ready(function() {
                 this.__reposition(this.tip());
             }
         },
+
+        setfield: function (field) {
+            var label = $(field).data('label'),
+                name = $(field).attr('name'),
+                val = $(field).val(),
+                set = val != '' && val != [''];
+            if (set) {
+                this.fields[name] = {name: name, val:val, label:label};
+            }
+            else {
+                delete this.fields[name];
+            }
+            
+            if (set) {
+                $(field).addClass('filter-set');
+            }
+            else {
+                $(field).removeClass('filter-set');
+            }
+            
+            return set;
+        },
+
+        setsubmit: function () {
+            this.submitted = true;
+            // Show fields as bold
+            // Show button as active
+            if (Object.keys(this.fields).length == 0) {
+                $('#filters-btn').addClass('btn-info');
+                $('#filters-btn').removeClass('btn-warning');
+            }
+            else {
+                $('#filters-btn').removeClass('btn-info');
+                $('#filters-btn').addClass('btn-warning');
+            }
+        }
     });
-    
-    var t = new MapEntity.TogglableFilter();
 });
 </script>
