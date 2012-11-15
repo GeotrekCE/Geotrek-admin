@@ -3,6 +3,7 @@
     <a href="#" id="filters-btn" class="btn  btn-info"><i class="icon-filter icon-white"></i> {% trans "Filter" %}</a>
 </span>
 
+<div id="filters-hover"></div>
 <div id="filters-popover"></div>
 <div id="filters-wrapper" style="display:None">
     <div id="filters-panel">
@@ -16,52 +17,84 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    var div = $('#filters-popover')
-              .popover({
-                  placement: 'bottom',
-                  title: '',
-                  content: ''
-              });
 
-    var getPopover = function() { return div.data('popover') };
-    var isVisible = function() {
-        var tip = getPopover().$tip;
-        if (!tip)
-            return false;
-        return tip.hasClass('in');
-    };
+    MapEntity.TogglableFilter = L.Class.extend({
+        includes: L.Mixin.Events,
+        options: {},
 
-    $('#filters-btn').click(function () {
+        initialize: function () {
+            this.button = '#filters-btn';
 
-        // if was visible - clone
-        if (isVisible()) {
-            $('#filters-wrapper').append(
-                // The whole $tip will be deleted, save the #filters-panel
+            this.visible = false;
+            this.popover = $('#filters-popover')
+                              .popover({
+                                  placement: 'bottom',
+                                  content: '',
+                                  title: 'Useless'
+                              });
+            this.hover = $('#filters-hover')
+                              .popover({
+                                  placement: 'bottom',
+                                  content: 'No filter',
+                                  title: '{% trans "Current filter" %}'
+                              });
+
+            $(this.button).click(this.toggle.bind(this));
+            $(this.button).hover(this.showinfo.bind(this));
+        },
+
+        tip: function () {
+            return this.popover.data('popover').$tip;
+        },
+
+        htip: function () {
+            return this.hover.data('popover').$tip;
+        },
+
+        __reposition: function (tip) {
+            // Adjust position nicely along filter button
+            var btnleft = $(this.button).position().left,
+                btnwidth = $(this.button).width();
+            tip.css('left', btnleft + btnwidth/2 - tip.width()/2);
+        },
+
+        showinfo: function () {
+            // If popover is already visible, do not show hover
+            if (this.visible)
+                return;
+            
+            this.hover.popover('toggle');
+            this.__reposition(this.htip());
+        },
+
+        toggle: function () {
+            /* Show/Hide popover */
+            if (this.visible) {
+                // The whole $tip will be deleted, save the panel
                 // and add it to the DOM so the dynamic filters still works.
-                getPopover().$tip.find('#filters-panel').detach()
-            );
-        }
-        else {
-        }
-
-        div.popover('toggle');
-
-        if (isVisible()) {
-            var btnleft = $(this).position().left,
-                btnwidth = $(this).width();
+                $('#filters-wrapper').append(
+                    this.tip().find('#filters-panel').detach()
+                );
+            }
             
-            getPopover().$tip
-              .find('.popover-inner').empty()
-              .append($('#filters-wrapper #filters-panel').detach());
+            this.popover.popover('toggle');
+            this.visible = !this.visible;
             
-            getPopover().$tip
-              .width(getPopover().$tip.find('#filters-panel form').outerWidth())
-              .height(getPopover().$tip.find('#filters-panel form').outerHeight());
-            // Adjust position under filter button
-            getPopover().$tip
-               .css('left', btnleft + btnwidth/2 - getPopover().$tip.width()/2);    
-        }
-
+            if (this.visible) {
+                this.tip()
+                  .find('.popover-inner').empty()
+                  .append($('#filters-wrapper #filters-panel').detach());
+                
+                // Adjust popover width
+                this.tip()
+                  .width(this.tip().find('#filters-panel form').outerWidth())
+                  .height(this.tip().find('#filters-panel form').outerHeight());
+                
+                this.__reposition(this.tip());
+            }
+        },
     });
+    
+    var t = new MapEntity.TogglableFilter();
 });
 </script>
