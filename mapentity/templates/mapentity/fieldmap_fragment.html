@@ -1,4 +1,4 @@
-{% load maps leaflet_tags geojson_tags mapentity %}
+{% load static maps leaflet_tags geojson_tags mapentity %}
 
 {% leaflet_map mapname  fitextent=False %}
 <script type="text/javascript">
@@ -27,6 +27,20 @@ function {{ mapname }}Init(map, bounds) {
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
     
+    // Add origin and destination markers if geometry is a line
+    var geomType = '{{ object.geom.geom_type }}';
+    if (geomType == 'LineString') {
+        var originlonlat = [{{ object.geom.coords|first|join:"," }}],
+            destinationlonlat = [{{ object.geom.coords|last|join:"," }}];
+
+        L.marker(L.latLng(originlonlat[1], originlonlat[0]),
+                 {clickable: false,
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-source.png" %}'})}).addTo(map);
+        L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
+                 {clickable: false,
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
+    }
+    
     // Paths layer (TODO: should we show objectsLayers ?)
     var pathsLayer = new L.ObjectsLayer(null, {
         style: {weight: 2, opacity: 0.7, clickable: false, color: '{{ LAYERCOLOR_PATHS }}'}
@@ -34,7 +48,7 @@ function {{ mapname }}Init(map, bounds) {
     map.addLayer(pathsLayer);
     pathsLayer.load("{% url core:path_layer %}");
     
-	// Save map context : will be restored on next form (e.g. interventions, ref story #182)
+    // Save map context : will be restored on next form (e.g. interventions, ref story #182)
     $(window).unload(function () {
         MapEntity.Context.saveFullContext(map);
     });
