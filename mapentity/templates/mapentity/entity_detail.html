@@ -6,7 +6,7 @@
 {% block mainpanel %}
     <div class="details-panel span7 {{ modelname }}">
 
-    {% block detailspanel %}
+        {% block detailshead %}
         <h2>
             {% if object.structure %}
                 <span class="badge badge-info">{{ object.structure }}</span>
@@ -26,20 +26,24 @@
                 </div>
             </div>
         </h2>
-    {% endblock detailspanel %}
+        {% endblock detailshead %}
+        
+        <div id="details-body">
+            {% block detailspanel %}
+            {% endblock detailspanel %}
 
-    {% smart_include "detail" %}
+            {% smart_include "detail" %}
 
-    {% block attachmentpanel %}
-    <div class="file-attachment file-attachment-detail">
-        <h3>{% trans "Attached files" %}</h3>
+            {% block attachmentpanel %}
+            <div class="file-attachment file-attachment-detail">
+                <h3>{% trans "Attached files" %}</h3>
 
-        {% with object=object can_delete_attachment=can_delete_attachment attachment_delete_next=object.get_detail_url %}
-            {% include 'paperclip/details.html' %}
-        {% endwith %}
-    </div>
-    {% endblock attachmentpanel %}
-
+                {% with object=object can_delete_attachment=can_delete_attachment attachment_delete_next=object.get_detail_url %}
+                    {% include 'paperclip/details.html' %}
+                {% endwith %}
+            </div>
+            {% endblock attachmentpanel %}
+        </div>
     </div><!-- span7 -->
 
     <div class="map-panel span5">
@@ -53,3 +57,21 @@
     </div><!-- span5 -->
 
 {% endblock mainpanel %}
+
+
+
+{% block extrabody %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var fillmax = function () {
+                var header = $('.details-panel h2').position().top + $('.details-panel h2').height() + 110;
+                var height = $(window).height() - header;
+                $("#details-body").css('max-height', height);
+            }
+            fillmax();
+            $(window).resize(fillmax);
+        })
+    </script>
+{% endblock extrabody %}
