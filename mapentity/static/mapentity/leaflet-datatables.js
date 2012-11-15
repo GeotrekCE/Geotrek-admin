@@ -151,7 +151,7 @@ L.MapListSync = L.Class.extend({
     },
 
     _formClear: function ($form) {
-        $form.find('input:text, input:password, input:file, select, textarea').val('');
+        $form.find('input:text, input:password, input:file, select, textarea').val('').trigger('change');
         $form.find('input:radio, input:checkbox')
              .removeAttr('checked').removeAttr('selected');
     },

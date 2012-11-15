@@ -153,6 +153,11 @@
                 MapEntity.showNumberSearchResults(data.nbrecords);
             });
             
+            var t = new MapEntity.TogglableFilter();
+            mapsync.on('reloaded', function (data) {
+                t.setsubmit();
+            });
+            
             var screenshot = new L.Control.Screenshot()
             screenshot.on('trigger', function () {
                 var fullContext = MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
