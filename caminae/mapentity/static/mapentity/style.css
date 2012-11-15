@@ -166,7 +166,7 @@ div.dataTables_paginate {
 }
 
 
-#filters-panel {position: absolute; top: 0px; left:0; right: 0;}
+/* Filters popover */
 
 #mainfilter label {
     display: none;
