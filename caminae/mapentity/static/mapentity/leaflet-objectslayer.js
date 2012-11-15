@@ -75,6 +75,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
 
         this.spinning = false;
+        this.loading = false;
 
         var dataurl = null;
         if (typeof(geojson) == 'string') {
@@ -175,14 +176,17 @@ L.ObjectsLayer = L.GeoJSON.extend({
             });
             data.features = features;
             this.addData(data);
+            this.loading = false;
             this.spin(false);
             this.fire('load');
         };
         var jsonError = function () {
+            this.loading = false;
             this.spin(false);
             console.error("Could not load url '" + url + "'");
             if (this._map) $(this._map._container).addClass('map-error');
         };
+        this.loading = true;
         this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
          .error(L.Util.bind(jsonError, this));
