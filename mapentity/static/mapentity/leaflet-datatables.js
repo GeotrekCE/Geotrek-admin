@@ -125,7 +125,17 @@ L.MapListSync = L.Class.extend({
             self.fire('reloaded', {
                 nbrecords: self.dt.fnSettings().fnRecordsTotal(),
             });
-            if(refreshLayer) self.layer.updateFromPks(callback_args.map_obj_pk);
+            if(refreshLayer) {
+                self.layer.updateFromPks(callback_args.map_obj_pk);
+            }
+            else {
+                if (self.layer.loading) {
+                    // Layer is not loaded yet, delay object filtering
+                    self.layer.on('load', function (e) {
+                        self.layer.updateFromPks(callback_args.map_obj_pk);
+                    }, self);
+                }
+            }
             spinner.stop();
         };
         
