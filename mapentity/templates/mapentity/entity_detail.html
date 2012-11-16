@@ -55,6 +55,9 @@
             function detailmapInit(map, bounds) {
                 {% smart_include "mapinit" %}
                 
+                {% block mapinit %}
+                {% endblock mapinit %}
+                
                 {% if readonly %}
                     // Set map readonly
                     map.dragging.disable();
@@ -77,9 +80,8 @@
                     mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
                 map.fitBounds(mapBounds);
                 
+                {% if object.geom.geom_type == "LineString" %}
                 // Add origin and destination markers if geometry is a line
-                var geomType = '{{ object.geom.geom_type }}';
-                if (geomType == 'LineString') {
                     var originlonlat = [{{ object.geom.coords|first|join:"," }}],
                         destinationlonlat = [{{ object.geom.coords|last|join:"," }}];
 
@@ -89,7 +91,7 @@
                     L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
                              {clickable: false,
                               icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
-                }
+                {% endif %}
                 
                 // Save map context : will be restored on next form (e.g. interventions, ref story #182)
                 $(window).unload(function () {

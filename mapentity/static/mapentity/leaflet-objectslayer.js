@@ -27,7 +27,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             if (this._onEachFeature) this._onEachFeature(geojson, layer);
         };
         var pointToLayer = function (geojson, latlng) {
-            if (this._pointToLayer) return this._pointToLayer(geojson, latlng);
+            if (self._pointToLayer) return self._pointToLayer(geojson, latlng);
             return new L.CircleMarker(latlng);
         };
         
