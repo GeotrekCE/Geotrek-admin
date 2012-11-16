@@ -91,13 +91,6 @@
                               icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
                 }
                 
-                // Paths layer (TODO: should we show objectsLayers ?)
-                var pathsLayer = new L.ObjectsLayer(null, {
-                    style: {weight: 2, opacity: 0.7, clickable: false, color: '{{ LAYERCOLOR_PATHS }}'}
-                });
-                map.addLayer(pathsLayer);
-                pathsLayer.load("{% url core:path_layer %}");
-                
                 // Save map context : will be restored on next form (e.g. interventions, ref story #182)
                 $(window).unload(function () {
                     MapEntity.Context.saveFullContext(map);
