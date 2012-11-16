@@ -4,7 +4,7 @@ from django.conf import settings
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Submit, HTML
+from crispy_forms.layout import Layout, Submit, HTML, Div
 
 from caminae.core.forms import TopologyForm
 from caminae.mapentity.widgets import PointWidget
@@ -18,30 +18,48 @@ class TrekForm(TopologyForm):
     parking_location = forms.gis.GeometryField(widget=PointWidget)
 
     modelfields = (
-            'name',
-            'departure',
-            'arrival',
-            'published',
-            'difficulty',
-            'route',
-            'destination',
-            'description_teaser',
-            'description',
-            'ambiance',
-            'disabled_infrastructure',
-            'duration',
-            'is_park_centered',
-            'is_transborder',
-            'advised_parking',
-            'parking_location',
-            'public_transport',
-            'advice',
-            'themes',
-            'main_themes',
-            'networks',
-            'usages',
-            'web_links',
-            )
+        Div(
+            HTML("""
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                <li><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+            </ul>""" % (_("Main"), _("Advanced"))),
+            Div(
+                Div(
+                    'name',
+                    'published',
+                    'departure',
+                    'arrival',
+                    'duration',
+                    'difficulty',
+                    'route',
+                    'destination',
+                    'description_teaser',
+                    'description',
+                    'is_park_centered',
+                    'is_transborder',
+                    css_id="main",
+                    css_class="tab-pane active"
+                ),
+                Div('ambiance',
+                    'disabled_infrastructure',
+                    'advised_parking',
+                    'parking_location',
+                    'public_transport',
+                    'advice',
+                    'themes',
+                    'main_themes',
+                    'networks',
+                    'usages',
+                    'web_links',
+                    css_id="advanced",
+                    css_class="tab-pane"
+                ),
+                css_class="tab-content"
+            ),
+            css_class="tabbable"
+        ),
+    )
 
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)

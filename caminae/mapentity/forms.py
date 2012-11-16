@@ -4,7 +4,7 @@ from django import forms as django_forms
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Div, Button
+from crispy_forms.layout import Layout, Submit, Div, Button, HTML, Field
 from crispy_forms.bootstrap import FormActions
 from tinymce.widgets import TinyMCE
 from modeltranslation.translator import translator, NotRegistered
@@ -38,23 +38,7 @@ class MapEntityForm(forms.ModelForm):
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
 
-        # Expand i18n fields
-        try:
-            # Obtain model translation options
-            mto = translator.get_options_for_model(self._meta.model)
-        except NotRegistered:
-            # No translation field on this model, nothing to do
-            pass
-        else:
-            self.modelfields = list(self.modelfields) # Switch to mutable sequence
-            for f in mto.fields:
-                self.fields.pop(f)
-                if f in self.modelfields:
-                    # Replace i18n field by dynamic l10n fields
-                    i = self.modelfields.index(f)
-                    self.modelfields[i:i+1] = ['{0}_{1}'.format(f, l[0])
-                                             for l in settings.LANGUAGES]
-            self.modelfields = tuple(self.modelfields) # Switch back to unmutable sequence
+        self.__expand_translatable_fields()
 
         # Get fields from subclasses
         fields = ('pk','model') + self.modelfields
@@ -89,3 +73,68 @@ class MapEntityForm(forms.ModelForm):
                                                        django_forms.widgets.Textarea)):
             formfield.widget = TinyMCE()
         return formfield
+
+    """
+    
+    Auto-expand translatable fields.
+    
+    """
+
+    def __expand_translatable_fields(self):
+        # Expand i18n fields
+        try:
+            # Obtain model translation options
+            mto = translator.get_options_for_model(self._meta.model)
+        except NotRegistered:
+            # No translation field on this model, nothing to do
+            pass
+        else:
+            for f in mto.fields:
+                self.fields.pop(f)
+            # Switch to mutable sequence
+            self.modelfields = list(self.modelfields) 
+            for f in mto.fields:
+                self.__replace_translatable_field(f, self.modelfields)
+            # Switch back to unmutable sequence
+            self.modelfields = tuple(self.modelfields) 
+
+    def __replace_translatable_field(self, field, modelfields):
+        for i, modelfield in enumerate(modelfields):
+            if hasattr(modelfield, 'fields'):
+                # Switch to mutable sequence
+                modelfield.fields = list(modelfield.fields)
+                self.__replace_translatable_field(field, modelfield.fields)
+                # Switch back to unmutable sequence
+                modelfield.fields = tuple(modelfield.fields)
+            else:
+                if modelfield == field:
+                    # Replace i18n field by dynamic l10n fields
+                    i = modelfields.index(modelfield)
+                    modelfields[i:i+1] = self.__tabbed_translatable_field(modelfield)
+
+    def __tabbed_translatable_field(self, field):
+        fields = []
+        for l in settings.LANGUAGES:
+            active = "active" if l[0] == settings.LANGUAGE_CODE else ""
+            fields.append(Div(
+                '%s_%s' % (field, l[0]),
+                css_class="tab-pane " + active,
+                css_id="%s_%s" % (field, l[0])
+                )
+            )
+        
+        layout = Div(
+            HTML("""
+            <ul class="nav nav-pills">
+            {% for lang in LANGUAGES %}
+                <li {% if lang.0 == LANGUAGE_CODE %}class="active"{% endif %}><a href="#%s_{{ lang.0 }}" data-toggle="tab">{{ lang.0 }}</a></li>
+            {% endfor %}
+            </ul>
+            """.replace("%s", field)),
+            Div(
+                *fields,
+                css_class="tab-content"
+            ),
+            css_class="tabbable"
+        )
+        return [layout]

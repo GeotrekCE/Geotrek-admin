@@ -151,6 +151,34 @@ tr.selected-row td {
     padding: 0px;
 }
 
+#entitylist .nav-pills.nav-stacked > li > a {
+    margin-bottom: 0;
+}
+
+#entitylist .nav-pills > li > a {
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-bottom: 1px solid #DDDDDD;	
+	border-right: 1px solid #DDDDDD;	
+	margin-bottom: 0px;
+	margin-top: 0px;
+	background-color: #F9F9F9;	
+}
+
+#entitylist .nav-pills > .active > a, 
+#entitylist .nav-pills > .active > a:hover {
+	border-right: 1px solid #fff;
+    background-color: #fff;
+    color: #333333;
+}
+
+#entitylist .nav-pills > li > a > img  {
+	padding-bottom: 4px;
+}
+
+
+
+
 
 /* Datatables customization for filters and pagination */
 #list-download-toolbar, #objects-list_filter, div.dataTables_paginate { 
@@ -261,6 +289,19 @@ span.filter-info {
 
 .form-panel h2 { 
     padding-left: 100px; 
+}
+
+.form-panel .tab-content .nav { 
+    margin-bottom: 5px;
+}
+
+.form-panel .nav li:first-child {
+    margin-left: 160px;
+}
+
+.form-panel .tab-content .nav-pills li a {
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 /* Icons for each entity */
