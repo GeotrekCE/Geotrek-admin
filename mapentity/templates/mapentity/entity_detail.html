@@ -1,5 +1,5 @@
 {% extends "mapentity/base.html" %}
-{% load i18n static field_verbose_name mapentity maps convert_tags %}
+{% load i18n static field_verbose_name mapentity leaflet_tags geojson_tags maps convert_tags %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
 
@@ -48,8 +48,63 @@
 
     <div class="map-panel span5">
         {% block mappanel %}
+        
         {% if object.geom %}
-            {{ object|fieldmap:"geom" }}
+            {% leaflet_map "detailmap"  fitextent=False %}
+            <script type="text/javascript">
+            function detailmapInit(map, bounds) {
+                {% smart_include "mapinit" %}
+                
+                {% if readonly %}
+                    // Set map readonly
+                    map.dragging.disable();
+                    map.touchZoom.disable();
+                    map.doubleClickZoom.disable();
+                    map.scrollWheelZoom.disable();
+                    map.boxZoom.disable();
+                {% endif %}
+                map.removeControl(map.zoomControl);
+                map.removeControl(map.attributionControl);
+                
+                // Add layers
+                var geojson = {{ object|geojsonfeature|safe }};
+                var objectLayer = new L.ObjectsLayer(geojson, {
+                    style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'},
+                    indexing: false
+                });
+                map.addLayer(objectLayer);
+                var objectBounds = {{ object|latlngbounds }},
+                    mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
+                map.fitBounds(mapBounds);
+                
+                // Add origin and destination markers if geometry is a line
+                var geomType = '{{ object.geom.geom_type }}';
+                if (geomType == 'LineString') {
+                    var originlonlat = [{{ object.geom.coords|first|join:"," }}],
+                        destinationlonlat = [{{ object.geom.coords|last|join:"," }}];
+
+                    L.marker(L.latLng(originlonlat[1], originlonlat[0]),
+                             {clickable: false,
+                              icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-source.png" %}'})}).addTo(map);
+                    L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
+                             {clickable: false,
+                              icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
+                }
+                
+                // Paths layer (TODO: should we show objectsLayers ?)
+                var pathsLayer = new L.ObjectsLayer(null, {
+                    style: {weight: 2, opacity: 0.7, clickable: false, color: '{{ LAYERCOLOR_PATHS }}'}
+                });
+                map.addLayer(pathsLayer);
+                pathsLayer.load("{% url core:path_layer %}");
+                
+                // Save map context : will be restored on next form (e.g. interventions, ref story #182)
+                $(window).unload(function () {
+                    MapEntity.Context.saveFullContext(map);
+                });
+            }
+            </script>
+
         {% else %}
             {% trans "No map available for this object." %}
         {% endif %}
