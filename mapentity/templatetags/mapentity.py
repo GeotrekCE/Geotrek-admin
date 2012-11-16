@@ -1,8 +1,7 @@
 from django import template
 from django.conf import settings
-from django.template import Context
 from django.template.base import TemplateDoesNotExist
-
+from django.contrib.gis.geos import GEOSGeometry, Point
 
 register = template.Library()
 
@@ -32,3 +31,19 @@ def do_smart_include(parser, token):
     if not (viewname[0] == viewname[-1] and viewname[0] in ('"', "'")):
         raise template.TemplateSyntaxError("%r tag's viewname argument should be in quotes" % tag_name)
     return SmartIncludeNode(viewname[1:-1])
+
+
+@register.filter
+def latlngbounds(obj, fieldname='geom'):
+    if obj is None or isinstance(obj, basestring):
+        return 'null'
+    if not isinstance(obj, GEOSGeometry):
+        obj = getattr(obj, fieldname)
+    if obj is None:
+        return 'null'
+    obj.transform(settings.API_SRID)
+    if isinstance(obj, Point):
+        extent = [obj.x-0.005, obj.y-0.005, obj.x+0.005, obj.y+0.005]
+    else:
+        extent = list(obj.extent)
+    return [[extent[1], extent[0]], [extent[3], extent[2]]]
