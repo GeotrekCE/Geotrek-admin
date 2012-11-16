@@ -77,6 +77,17 @@
     {{ block.super }}
 
     <script type="text/javascript">
+        function adjustDisplayLength(dTable) {
+            var nTable = $(dTable.fnSettings().nTable),
+                wrapper = nTable.parents('.dataTables_wrapper').first(),
+                extraHead = 30 + nTable.position().top - wrapper.position().top,
+                rowHeight = nTable.find('tbody tr').height();
+            
+            var displayLength = Math.floor((wrapper.height() - extraHead) / rowHeight);
+            dTable.fnSettings()._iDisplayLength = Math.max(1, displayLength -1); //<thead>
+            dTable.fnDraw(false);
+        };
+
         $(document).ready(function() {
             // Trigger a call to the format url
             $('#list-download-toolbar button').on('click', function () {
@@ -131,6 +142,12 @@
                 iDeferLoading: 0,
                 iDisplayLength: 15,  // TODO: this is VERY ANNOYING ! I want to fill height !
             });
+            // Adjust vertically
+            adjustDisplayLength(dt);
+            $(window).resize(function (e) {
+                adjustDisplayLength(dt);
+            });
+            
             // Hardcore Datatables customizations
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));

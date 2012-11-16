@@ -140,13 +140,23 @@ tr.selected-row td {
 
 #mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
 
-
-/* Left menu */
-#entitylist {position: absolute; top: 0px; left: 0; width: 60px;}
 #list-panel {
     margin-left: 60px;
     padding: 4px;
+    height: 95%;
 }
+
+#list-panel .table th, 
+#list-panel .table td {
+    padding: 5px;
+}
+#list-panel .pagination a, .pagination span {
+    line-height: 30px;
+}
+
+
+/* Left menu */
+#entitylist {position: absolute; top: 0px; left: 0; width: 60px;}
 #entitylist a {
     padding: 0px;
 }
@@ -181,9 +191,18 @@ tr.selected-row td {
 
 
 /* Datatables customization for filters and pagination */
-#list-download-toolbar, #objects-list_filter, div.dataTables_paginate { 
+.dataTables_wrapper {
+    height: inherit;
+}
+
+#list-download-toolbar, 
+#objects-list_filter, 
+div.dataTables_paginate { 
     position: absolute;
     bottom: 5px;
+}
+div.dataTables_paginate { 
+    bottom: 0px;
 }
 
 #list-download-toolbar {
