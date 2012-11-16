@@ -6,19 +6,17 @@
     {{ block.super }}
     {{ form.media }}
     <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
-    <script src="{% static "js/jquery.formset.js" %}"></script>
+    <script src="{% static "mapentity/jquery.formset.js" %}"></script>
 {% endblock extrahead %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
 
 {% block mainpanel %}
-    <div class="form-panel span12 {{ modelname }}">
+    <div class="form-panel {{ modelname }}">
         <h2>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
         {% if object %}
             <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
         {% endif %}</h2>
-        
-        <div>&nbsp;</div>
         
         {% block mainform %}
         {% crispy form %}

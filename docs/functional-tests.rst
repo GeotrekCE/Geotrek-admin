@@ -1646,6 +1646,7 @@ Fixé
 
 Corrigé.
 Nouveau comportement:
+
 - Le multipath doit être désactivé manuellement en cliquant sur le contrôle multipath où le contrôle point.
   (elle était désactivée de façon buggée à la suite du calcul d'une nouvelle topologie multipath).
 - La désactivation du multipath entraîne la suppression des évènements drag, click etc. sur la topologie multipath.
@@ -1708,13 +1709,13 @@ qui ignorait les marqueurs intermédiaires lorsque ceux-ci étaient placés à d
 
 
 #379 - [BUG] Édition topologie point à un croisement : mauvais marqueur utilisé pour l'edition
----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
 
 Fixé.
 
 
 #375 - [BUG] (Javascript) Ajouter une signalétique, la carte ne s'affiche pas
-----------------------------------------------------------------------
+-----------------------------------------------------------------------------
 
 * Vider le cache du navigateur (localstorage inclus)
 
@@ -1821,7 +1822,7 @@ Les cas qui ne sont pas supportés sont explicités plus bas.
         
                                     AB and CD exist.
                                     CD updated into CE.
-        
+
 
 Avec des évènements linéaires sur les tronçons :
 
@@ -1859,9 +1860,11 @@ Avec des évènements linéaires sur les tronçons :
              |   |
              +---+ 
 
+
 Et lors de la mise à jour :
 
 ::
+
                                           + E
                                           :
                                          ||
@@ -1982,6 +1985,19 @@ Les cas suivants sont mal supportés :
                                       :
     C X-------+ D                     :
                                       + D
+    
+    
+    BUG: AB, EF, CD are split into 3 parts instead of 5.
+    
+               C              D
+               +            +
+             E  \          /  F
+        A +---+--+--------+--+---+ B
+               \  \      /  /   AB exists. Create EF. Create CD.
+                \  \    /  /
+                 +--+--+--+ 
+                     \/
+
 
 Le cas suivant n'est pas géré volontairement :
 
@@ -1994,3 +2010,108 @@ Le cas suivant n'est pas géré volontairement :
     A +---+---+---+ B
               |      
               +---+ D
+
+
+
+========================
+Sprint 8 - Version 0.8.0
+========================
+
+#323, #289 - Affichage des informations SIG dans les fiches objet
+-----------------------------------------------------------------
+
+Tous les objets ont désormais une section "Foncier" qui liste les propriétés liées
+aux couches SIG, ainsi qu'au module foncier.
+
+Les couches du module foncier (nature, status, protection) seront implémentées
+avec la story #386.
+
+#334 - Type foncier
+-------------------
+
+* Créer un objet de type foncier
+
+* Retourner sur la recherche, il apparait dans la liste, et sur la carte
+
+* Cliquer sur son nom, puis sur Éditer
+
+* Modifier la géométrie ou les attributs, retourner sur la liste, vérifier que
+  tout s'est bien mis à jour.
+
+#357 - BUG - ADMIN - Perte des résultats de la recherche
+--------------------------------------------------------
+
+Fixé.
+
+#194 - Fixer certains labels
+----------------------------
+
+Fixé.
+
+#221 - [BUG] Parking perdu (marqueur) si erreur de saisie formulaire itinéraire
+-------------------------------------------------------------------------------
+
+Fixé.
+
+
+#309 - Préparer les fichiers de traduction pour le PNAM
+-------------------------------------------------------
+
+Les fichiers de traduction des différents modules du projet ont été fusionnés 
+un un seul, grâce à la commande ``msgcat``. 
+
+::
+
+    msgcat caminae/*/locale/fr/LC_MESSAGES/django.po > caminae-fr.po
+
+#254 - Gérer les langues depuis settings.ini
+--------------------------------------------
+
+Désormais, il est possible de configurer les langues du projet depuis le
+fichier de configuration ``settings.ini``.
+
+Voici les valeurs dans le fichier d'exemple :
+
+::
+
+    # Default language and list of available
+    language = fr
+    languages = en,fr,it
+
+#316 - Modifier le terme TERRAIN par SCAN
+-----------------------------------------
+
+Fait.
+
+
+#368 - Raffraichir la carte quand on fait un recherche dans la liste
+--------------------------------------------------------------------
+
+* Afficher la liste
+* Taper un mot-clé, la liste se filtre, la carte aussi.
+* Effacer le mot-clé, la liste s'affiche entièrement, les objets réapparaissent sur la carte
+
+
+#315, #356, #225 - Filtres de liste
+-----------------------------------
+
+* Afficher la liste
+* Cliquer sur le bouton de *Filtre*. Le panneau s'affiche sous le bouton.
+* Remplir un champ, celui-ci apparaît en gras, son label apparait en infobulle.
+* Valider le formulaire, la liste est filtrée, la carte aussi. Le bouton *Filtre* change de couleur.
+* Cliquer sur le bouton *Filtre*. Le panneau se ferme.
+
+* Survoler le bouton *Filtre*. Un encart apparait avec un récapitualitif des filtres appliqués.
+
+* Raffraîchir la page ou naviguer dans l'application, pour constater que les filtres sont conservés.
+  Le bouton *Filtre* est restauré dans l'état "actif".
+
+* Ouvrir le panneau de filtre, réinitializer le formulaire. La carte et la liste sont
+  raffraichis, le bouton *Filtre* reprend son état inactif.
+
+
+#295 - Sentiers, itinéraire et tronçons / Départ et arrivée
+-----------------------------------------------------------
+
+Pour les objets dont la géometrie est de type Ligne, des marqueurs départ
+et arrivée sont placés aux extrémités.

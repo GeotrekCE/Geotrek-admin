@@ -1,7 +1,14 @@
 {% load i18n %}
+
+{% if modelname == "path" or appname == "land" %}
+
 <div class="btn-group">
     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        {% trans "Manage land" %}
+        {% if appname == "land" %}
+            <strong>{% trans "Manage land" %}</strong>
+        {% else %}
+            {% trans "Manage land" %}
+        {% endif %}
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
@@ -12,3 +19,4 @@
         <li><a class="disabled" href="{% url land:workmanagementedge_list %}">{% trans "Work management" %}</a></li>
     </ul>
 </div>
+{% endif %}

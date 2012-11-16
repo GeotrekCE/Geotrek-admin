@@ -1,4 +1,4 @@
-{% load maps leaflet_tags geojson_tags static %}
+{% load leaflet_tags geojson_tags static mapentity %}
 
 {% leaflet_map module fitextent=False %}
 <style type="text/css">
@@ -39,8 +39,8 @@ var {{ module }}_settings = {
         'pathsnapping': {{ path_snapping|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
         'geojson': {{ field|geojsonfeature|safe }},  // If no field, will be null.
-        'iconUrl': '{% static "images/marker-trans.png" %}',
-        'iconDragUrl': '{% static "images/osrm_markers/marker-drag.png" %}',
+        'iconUrl': '{% static "mapentity/images/marker-trans.png" %}',
+        'iconDragUrl': '{% static "mapentity/images/osrm_markers/marker-drag.png" %}',
         'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}'
     },
     'colors': {
@@ -55,6 +55,8 @@ FormField.makeModule({{ module }}, {{ module }}_settings);
 
 // Callback
 {{ module }}Init = function (map, bounds) {
+    {% smart_include "mapinit" %}
+    
     var module = {{ module }};
     var fitToBounds = true;
 

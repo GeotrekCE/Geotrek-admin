@@ -98,9 +98,11 @@ class MapEntityFilterSet(FilterSet):
                     self.__set_placeholder(field.fields[i], widget)
             elif isinstance(field, django_forms.ChoiceField):
                 field.empty_label = field.label
+                self.__set_placeholder(field, field.widget)
             else:
                 self.__set_placeholder(field, field.widget)
 
     def __set_placeholder(self, field, widget):
         widget.attrs['placeholder'] = field.label
-
+        widget.attrs['title'] = field.label
+        widget.attrs['data-label'] = field.label

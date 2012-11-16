@@ -8,5 +8,7 @@
             <th>{{ landedge|verbose:"land_type" }}</th>
             <td>{{ landedge.land_type }}</td>
         </tr>
+        
+        {% include "land/edge_path_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

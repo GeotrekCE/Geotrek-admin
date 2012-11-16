@@ -3,10 +3,13 @@
 
 {% block detailspanel %}
     {{ block.super }}
+    
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ competenceedge|verbose:"organization" }}</th>
             <td>{{ competenceedge.organization }}</td>
         </tr>
+        
+        {% include "land/edge_path_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

@@ -1,126 +1,125 @@
 {% extends "mapentity/base.html" %}
-{% load i18n leaflet_tags field_verbose_name land %}
+{% load i18n static leaflet_tags mapentity field_verbose_name %}
 
 {% block nav-list %}active{% endblock nav-list %}
 
-{% block mainmap %}
-    <div id="bboxfilter">
-        {# ids: bbox_cities bbox_districts #}
-        {% combobox_bbox_land %}
+{% block container %}
+    <div id="container">
+
+    <!-- List Panel -->
+    <div id="panelleft">
+        
+        <!-- Modules Panel -->
+        <div id="entitylist">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="centered {% block nav-path %}{% endblock nav-path %}"><a href="{% url core:path_list %}" title="{% trans "Path" %}"><img src="{% static "images/path.png" %}" style="width: 50px;"></img></a></li>
+                <li class="centered {% block nav-intervention %}{% endblock nav-intervention %}"><a href="{% url maintenance:intervention_list %}" title="{% trans "Intervention" %}"><img src="{% static "images/intervention.png" %}"/></a></li>
+                <li class="centered {% block nav-project %}{% endblock nav-project %}"><a href="{% url maintenance:project_list %}" title="{% trans "Project" %}"><img src="{% static "images/project.png" %}"/></a></li>
+                <li class="centered {% block nav-signage %}{% endblock nav-signage %}"><a href="{% url infrastructure:signage_list %}" title="{% trans "Signage" %}"><img src="{% static "images/signage.png" %}"/></a></li>
+                <li class="centered {% block nav-infrastructure %}{% endblock nav-infrastructure %}"><a href="{% url infrastructure:infrastructure_list %}" title="{% trans "Infrastructure" %}"><img src="{% static "images/infrastructure.png" %}"/></a></li>
+                <li class="centered {% block nav-trekking %}{% endblock nav-trekking %}"><a href="{% url trekking:trek_list %}" title="{% trans "Trek" %}"><img src="{% static "images/trek.png" %}"/></a></li>
+                <li class="centered {% block nav-poi %}{% endblock nav-poi %}"><a href="{% url trekking:poi_list %}" title="{% trans "POI" %}"><img src="{% static "images/poi.png" %}"/></a></li>
+            </ul>
+        </div>
+
+        <div id="list-panel">
+            
+            <div class="btn-toolbar">
+                {% block mainactions %}
+                {% endblock mainactions %}
+                
+                {% smart_include "listactions" %}
+                
+                {% include "mapentity/entity_list_filter_fragment.html" %}
+            </div>
+            
+            {% block mainlist %}
+                <table id="objects-list" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            {% for field in columns %}
+                            <th>{{ model|verbose:field }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <div id="list-download-toolbar">
+                    <div class="btn-group">
+                        <button class="btn btn-mini" name="csv" title="{% trans "CSV" %}"><img src="{% static "paperclip/fileicons/csv.png" %}"></button>
+                        <button class="btn btn-mini" name="shp" title="{% trans "Shapefile" %}"><img src="{% static "paperclip/fileicons/shp.png" %}"></button>
+                        <button class="btn btn-mini" name="gpx" title="{% trans "GPX" %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"></button>
+                     </div>
+                </div>
+            {% endblock mainlist %}
+        </div>
     </div>
-    {% leaflet_map "mainmap" fitextent=False %}
-{% endblock mainmap %}
 
-{% block filters %}
-    <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
-        {{ filterform.form.as_p }}
-        <input id="reset" type="reset" class="btn" />
-        <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
-    </form>
-{% endblock filters %}
-
-{% block mainlist %}
-    <table id="objects-list" class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                {% for field in columns %}
-                <th>{{ model|verbose:field }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <div id="list-download-toolbar">
-        <p>
-            <i class="icon-download-alt"></i> 
-            Exporter la liste
-            <button class="btn btn-mini" name="csv" >CSV</button>
-            <button class="btn btn-mini" name="shp" >ShapeFile</button>
-            <button class="btn btn-mini" name="gpx" >GPX</button>
-        </p>
+    <!-- Map Panel -->
+    <div id="panelright">
+        <div class="map-panel">
+        {% block mainmap %}
+            <div id="maphead">
+                {% smart_include "maphead" %}
+            </div>
+            {% leaflet_map "mainmap" fitextent=False %}
+        {% endblock mainmap %}
+        </div>
     </div>
+    
+    </div>
+{% endblock container %}
 
-{% endblock mainlist %}
 
 {% block extrabody %}
     {{ block.super }}
 
     <script type="text/javascript">
-
-        L.Control.Screenshot = L.Control.extend({
-            includes: L.Mixin.Events,
-            options: {
-                position: 'topleft',
-                title: "{% trans "Save map as image" %}",
-            },
+        function adjustDisplayLength(dTable) {
+            var nTable = $(dTable.fnSettings().nTable),
+                wrapper = nTable.parents('.dataTables_wrapper').first(),
+                extraHead = 30 + nTable.position().top - wrapper.position().top,
+                rowHeight = nTable.find('tbody tr').height();
             
-            screenshot: function () {
-                // Screenshot effect
-                $('<div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color: white;"> </div>')
-                    .appendTo(document.body)
-                    .fadeOut();
-                this.fire('trigger');
-            },
+            var displayLength = Math.floor((wrapper.height() - extraHead) / rowHeight);
+            dTable.fnSettings()._iDisplayLength = Math.max(1, displayLength -1); //<thead>
+            dTable.fnDraw(false);
+        };
 
-            onAdd: function(map) {
-                this.map = map;
-                this._container = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
-                var link = L.DomUtil.create('a', 'leaflet-control-zoom-out screenshot-control', this._container);
-                link.href = '#';
-                link.title = this.options.title;
+        $(document).ready(function() {
+            // Trigger a call to the format url
+            $('#list-download-toolbar button').on('click', function () {
+                var format = $(this).attr('name');
+                var url = "{{ model.get_format_list_url }}" + '?' +
+                          $('#mainfilter').serialize() + '&format=' + format;
 
-                L.DomEvent
-                    .addListener(link, 'click', L.DomEvent.stopPropagation)
-                    .addListener(link, 'click', L.DomEvent.preventDefault)
-                    .addListener(link, 'click', this.screenshot, this);
-                return this._container;
-            }
+                document.location = url;
+                return false;
+            });
+
+            L.Control.Screenshot.prototype.options.title = "{% trans "Save map as image" %}";
         });
 
-        function mainmapInit(mainmap, bounds) {
-            mainmap.removeControl(mainmap.attributionControl);
-            mainmap.doubleClickZoom.disable();
+        function mainmapInit(map, bounds) {
+            {% smart_include "mapinit" %}
+            
+            map.removeControl(map.attributionControl);
+            map.doubleClickZoom.disable();
             
             {% if DEBUG %}
-            mainmap.on('viewreset moveend', function () {
-                if (!mainmap._loaded)
+            map.on('viewreset moveend', function () {
+                if (!map._loaded)
                     return;
-                var n = objectsLayer.search(mainmap.getBounds()).length;
+                var n = objectsLayer.search(map.getBounds()).length;
                 objectsLayer.fire('info', {info : n + ' objects shown'});
             });
-            mainmap.addControl(new L.Control.Information());
+            map.addControl(new L.Control.Information());
             {% endif %}
 
-            mainmap.addControl(new L.Control.ResetView(bounds));
-            mainmap.addControl(new L.Control.Measurement());
-            
-            // Always show the path layer, except if model is path
-            // TODO: this is not supposed to be in mapentity --> caminae.common
-            if ('{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
-                var paths = new L.ObjectsLayer(null, {
-                    indexing: false,
-                    style: { clickable:false, weight:2, color:'{{ LAYERCOLOR_PATHS }}'}
-                });
-                paths.addTo(mainmap)
-                paths.load('{% url core:path_layer %}');
-                mainmap.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
-            }
-            // Add land layers (TODO--> caminae.common)
-            var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}'},
-                              {url:'{% url land:city_layer %}', name: '{% trans "City" %}'},
-                              {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}'}];
-            for (var i=0; i<landLayers.length; i++) {
-                var landLayer = landLayers[i];
-                var layer = new L.ObjectsLayer(null, {
-                    indexing: false,
-                    style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
-                });
-                layer.addTo(mainmap)
-                layer.load(landLayer.url);
-                mainmap.layerscontrol.addOverlay(layer, landLayer.name);
-            }
+            map.addControl(new L.Control.ResetView(bounds));
+            map.addControl(new L.Control.Measurement());
             
             var getUrl = function (properties, layer) {
                 //TODO use nice JS url rewriting
@@ -131,236 +130,66 @@
                 objectUrl: getUrl,
                 style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
             });
-            mainmap.addLayer(objectsLayer);
-            mainmap.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
+            map.addLayer(objectsLayer);
+            map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}");
 
-            // init ajax list
-            var dt = initAjaxList(mainmap, objectsLayer);
+            var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
+                // Hide pk column
+                aoColumnDefs: [ { "bVisible": false, "aTargets": [ 0 ] } ],
+                sDom: "tpf",
+                aaData: [],
+                iDeferLoading: 0,
+                iDisplayLength: 15,  // TODO: this is VERY ANNOYING ! I want to fill height !
+            });
+            // Adjust vertically
+            adjustDisplayLength(dt);
+            $(window).resize(function (e) {
+                adjustDisplayLength(dt);
+            });
+            
+            // Hardcore Datatables customizations
+            $('li.next a').html($('li.next a').html().replace('Next', ''));
+            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
+            $('#objects-list_filter input').attr('placeHolder', "{% trans "Search" %}");
+            $('#objects-list_filter label').contents().filter(function() {return this.nodeType === 3;/*Node.TEXT_NODE*/}).remove();
+
+            var mapsync = new L.MapListSync(dt,
+                                            map, 
+                                            objectsLayer, {
+                                                filter: {
+                                                    form: $('#mainfilter'),
+                                                    submitbutton: $('#filter'),
+                                                    resetbutton: $('#reset'),
+                                                    bboxfield: $('#id_bbox'),
+                                                }
+                                            });
+            
+            mapsync.on('reloaded', function (data) {
+                // Show and save number of results
+                MapEntity.showNumberSearchResults(data.nbrecords);
+            });
+            
+            var t = new MapEntity.TogglableFilter();
+            mapsync.on('reloaded', function (data) {
+                t.setsubmit();
+            });
             
             var screenshot = new L.Control.Screenshot()
             screenshot.on('trigger', function () {
-                var fullContext = MapEntity.Context.serializeFullContext(mainmap, '#mainfilter', dt);
+                var fullContext = MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
                 // Hack to download response attachment in Ajax
                 $('<form action="{% url mapentity:map_screenshot %}" method="post">' + 
                 '<textarea name="printcontext">' + fullContext + '</textarea>' + 
                 '</form>').appendTo('body').submit().remove();
             });
-            mainmap.addControl(screenshot);
+            map.addControl(screenshot);
             
-            MapEntity.Context.restoreFullContext(mainmap, '#mainfilter', dt, '{{ objectsname|title }}');
+            MapEntity.Context.restoreFullContext(map, '#mainfilter', dt, '{{ objectsname|title }}');
             $(window).unload(function () {
-                MapEntity.Context.saveFullContext(mainmap, '#mainfilter', dt);
+                MapEntity.Context.saveFullContext(map, '#mainfilter', dt);
             });
-            
-            $('#filter').click();
         }
-
-        /* Table initialisation */
-        function initAjaxList(map, objectsLayer) {
-
-            var filterform = $('#mainfilter')
-              , submitbutton = $('#filter')
-              , resetbutton = $('#reset')
-              , ajax_list = $('#objects-list')
-              , results_panel = document.getElementById('results-panel')
-            ;
-
-            var selectorOnce = (function() {
-                var current = { 'pk': null, 'row': null };
-
-                function toggleSelectRow($prevRow, $nextRow) {
-                    function nextRowAnim() {
-                        if ($nextRow) {
-                            $nextRow.hide('fast')
-                                    .show('fast', function() { $nextRow.addClass('selected-row'); });
-                        }
-                    }
-
-                    if ($prevRow) {
-                        $prevRow.hide('fast', function() { $prevRow.removeClass('selected-row'); })
-                                .show('fast', nextRowAnim);
-                    } else {
-                        nextRowAnim();
-                    }
-                }
-
-                function toggleSelectObject(pk, on) {
-                    on = on === undefined ? true : on;
-                    objectsLayer.select(pk, on);
-                };
-
-                return {
-                    'select': function(pk, row) {
-                        // Click on already selected => unselect
-                        if (pk == current.pk) {
-                            pk = null, row = null;
-                        }
-
-                        var prev = current;
-                        current = {'pk': pk, 'row': row}
-
-                        toggleSelectRow(prev.row, row);
-
-                        if (prev.pk && prev.row) {
-                            toggleSelectObject(prev.pk, false);
-                        }
-                        if (row && pk) {
-                            toggleSelectObject(pk, true);
-                        }
-                    }
-                };
-            })();
-
-
-            // initialize data table
-            var dt = JQDataTable.init(
-                  ajax_list
-                , null // no load at startup
-                , {
-                    // Hide pk
-                    "aoColumnDefs": [ { "bVisible": false, "aTargets": [ 0 ] } ],
-                    "fnCreatedRow": function(nRow, aData, iDataIndex ) {
-                        var pk = aData[0];
-                        $(nRow).hover(function(){
-                            objectsLayer.highlight(pk);
-                        },
-                        function(){
-                            objectsLayer.highlight(pk, false);
-                        });
-
-                        // select from row
-                        $(nRow).click(function() {
-                            selectorOnce.select(pk, $(nRow));
-                        });
-                        $(nRow).dblclick(function() {
-                            objectsLayer.jumpTo(pk);
-                        });
-                    },
-                    "sDom": "<'row-fluid'<'span6'i><'span6'f>r>t<'row-fluid'<'span6'l><'span6'p>>",
-                    aaData: [],
-                    iDeferLoading: 0
-                }
-            );
-
-            objectsLayer.on('click', function(e) {
-                var search_pk = e.layer.properties.pk;
-                JQDataTable.goToPage(dt, function pk_equals(row) {
-                    return row[0] === search_pk;
-                }, function($row) {
-                    selectorOnce.select(search_pk, $row);
-                });
-            });
-
-
-            // Hardcore customizations
-            $('li.next a').html($('li.next a').html().replace('Next', ''));
-            $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
-
-            // on JSON load, return the json used by dataTable
-            // Update also the map given the layer's pk
-            var extract_data_and_pks = function(data, type, callback_args) {
-                callback_args.map_obj_pk = data.map_obj_pk;
-                return data.aaData;
-            }
-
-            function ajaxTrigger(cb) {
-                var spinner = new Spinner().spin(results_panel);
-
-                var url = filterform.attr("action") + '?' + filterform.serialize()
-
-                dt.fnReloadAjax(url, extract_data_and_pks, function() {
-                    spinner.stop();
-                    // Show and save number of results
-                    MapEntity.showNumberSearchResults(dt.fnSettings().fnRecordsTotal());
-                    cb.apply(cb, arguments);
-                });
-
-                return false;
-            }
-
-            // Trigger a call to the format url
-            $('#list-download-toolbar button').on('click', function exportList() {
-                var format = $(this).attr('name');
-                var url = "{{ model.get_format_list_url }}" + '?' +
-                          filterform.serialize() + '&format=' + format;
-
-                document.location = url;
-
-                return false;
-            });
-
-            /*
-             * Store initial map bounds, used for reset
-             */
-            var initial_map_bounds = null;
-            if (map._loaded) {
-                initial_map_bounds = map.getBounds();
-            }
-            else {
-                map.on('load', function () {
-                    initial_map_bounds = map.getBounds();
-                }, map);
-            }
-            
-            var storeCurrentMapBoundsToField = function() {
-                // Store the map bounds as WKT in the bbox field
-                var bbox_field = $('#id_bbox');
-                var storeBounds = function () {
-                    var bounds = map.getBounds(),
-                        rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-                    bbox_field.val(L.Util.getWKT(rect));
-                };
-                if (map._loaded)
-                    storeBounds(); 
-                else
-                    map.on('load', storeBounds);
-            };
-
-            // Restore initial map bounds on trigger
-            submitbutton.click(ajaxMapObjectsUpdateOnly);
-            resetbutton.click(function() {
-                MapEntity.resetForm(filterform);
-                mapBoundsUpdateNoListen(initial_map_bounds, listenMapBoundsUpdate);
-                ajaxMapObjectsUpdateOnly();
-                return false;
-            });
-
-            // Updates map bounds if necessary (return a boolean if bounds were updated)
-            // Unregistering specific callback to avoid triggering ajax request
-            function mapBoundsUpdateNoListen(new_bounds, cb) {
-                // no need to update if bounds are equals
-                if (map.getBounds().equals(new_bounds))
-                    return false;
-
-                // deactivate/reactivate listener to trigger our own callback
-                cb(false);
-                map.fitBounds(new_bounds);
-                cb(true);
-                return true;
-            }
-
-            function ajaxMapObjectsUpdateOnly() {
-                storeCurrentMapBoundsToField();
-                ajaxTrigger(function(oSettings, callback_args) {
-                    objectsLayer.updateFromPks(callback_args.map_obj_pk);
-                });
-            }
-
-            function ajaxMapBoundsUpdateOnly() {
-                storeCurrentMapBoundsToField();
-                ajaxTrigger(function(){});
-            };
-
-            function listenMapBoundsUpdate(on) {
-                on = on === undefined ? true: on;
-                map[on ? 'on': 'off']('load moveend viewreset', ajaxMapBoundsUpdateOnly);
-            }
-
-            listenMapBoundsUpdate(true);
-            
-            return dt;
-        };
     </script>
 
 {% endblock extrabody %}

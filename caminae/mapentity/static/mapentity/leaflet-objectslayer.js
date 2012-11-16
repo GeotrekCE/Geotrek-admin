@@ -27,7 +27,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             if (this._onEachFeature) this._onEachFeature(geojson, layer);
         };
         var pointToLayer = function (geojson, latlng) {
-            if (this._pointToLayer) return this._pointToLayer(geojson, latlng);
+            if (self._pointToLayer) return self._pointToLayer(geojson, latlng);
             return new L.CircleMarker(latlng);
         };
         
@@ -63,7 +63,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
             this.on('dblclick', this.layer_events.detail_dblclick);
         }
 
-        var self = this;
         if (!options.style) {
             options.style = function (geojson) {
                 return { 
@@ -74,6 +73,9 @@ L.ObjectsLayer = L.GeoJSON.extend({
                 }
             };
         }
+
+        this.spinning = false;
+        this.loading = false;
 
         var dataurl = null;
         if (typeof(geojson) == 'string') {
@@ -136,8 +138,14 @@ L.ObjectsLayer = L.GeoJSON.extend({
         L.GeoJSON.prototype.onRemove.call(this, map);
     },
 
+    onAdd: function (map) {
+        this.spin(this.spinning, map);
+        L.GeoJSON.prototype.onAdd.call(this, map);
+    },
+
     spin: function (state, map) {
         var _map = map || this._map;
+        this.spinning = state;
         
         if (!_map) return;
 
@@ -151,7 +159,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
         else {
             _map._spinning--;
-            if (_map._spinning == 0) {
+            if (_map._spinning <= 0) {
                 // end spinning !
                 if (_map._spinner) {
                     _map._spinner.stop();
@@ -168,14 +176,17 @@ L.ObjectsLayer = L.GeoJSON.extend({
             });
             data.features = features;
             this.addData(data);
+            this.loading = false;
             this.spin(false);
             this.fire('load');
         };
         var jsonError = function () {
+            this.loading = false;
             this.spin(false);
             console.error("Could not load url '" + url + "'");
             if (this._map) $(this._map._container).addClass('map-error');
         };
+        this.loading = true;
         this.spin(true);
         $.getJSON(url, L.Util.bind(jsonLoad, this))
          .error(L.Util.bind(jsonError, this));

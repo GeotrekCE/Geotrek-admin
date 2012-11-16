@@ -6,14 +6,14 @@
         <th>{% trans "Interventions" %}</th>
         <td>
             <p><a href="{% url maintenance:intervention_add %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}
-            </a></p>
+                <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
+            </p>
             {% for i in path.interventions %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li>{{ i.name_display|safe }}</li>
                 {% if forloop.last %}</ul>{% endif %}
             {% empty %}
-                {% trans "None" %}
+                <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
     </tr><tr>
@@ -24,7 +24,7 @@
                 <li>{{ p.name_display|safe }}</li>
                 {% if forloop.last %}</ul>{% endif %}
             {% empty %}
-                {% trans "None" %}
+                <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
     </tr><tr>
@@ -35,7 +35,7 @@
                 <li>{{ i.name_display|safe }}</li>
                 {% if forloop.last %}</ul>{% endif %}
             {% empty %}
-                {% trans "None" %}
+                <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
     </tr><tr>
@@ -46,7 +46,7 @@
                 <li>{{ s.name_display|safe }}</li>
                 {% if forloop.last %}</ul>{% endif %}
             {% empty %}
-                {% trans "None" %}
+                <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
     </tr>

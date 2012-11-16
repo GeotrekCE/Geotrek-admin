@@ -10,7 +10,7 @@
         </tr>
         <tr>
             <th>{{ intervention|verbose:"stake" }}</th>
-            <td>{{ intervention.stake }}</td>
+            <td>{{ intervention.stake|default:_("None") }}</td>
         </tr>
         <tr>
             <th>{{ intervention|verbose:"date" }}</th>
@@ -28,7 +28,7 @@
                     </li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% endfor %}
-                <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "day" %}{{ intervention.total_manday|pluralize }}</p>
+                <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "manday" %}{{ intervention.total_manday|pluralize }}</p>
                 <p>{% trans "Total cost:" %} {{ intervention.total_cost|floatformat:2 }} &euro;</p>
             </td>
         </tr>
@@ -44,25 +44,25 @@
                     <li>{{ p.name_display|safe }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
-                    {% trans "None" %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
         </tr><tr>
             <th>{% trans "Related Project" %}</th>
             <td>{% if intervention.project %} {{ intervention.project.name_display|safe }}
-                {% else %} {% trans "None" %}
+                {% else %} <span class="none">{% trans "None" %}</span>
                 {% endif %}
             </td>
         </tr><tr>
             <th>{% trans "Related infrastructure" %}</th>
             <td>{% if intervention.is_infrastructure %} {{ intervention.infrastructure.name_display|safe }}
-                {% else %} {% trans "None" %}
+                {% else %} <span class="none">{% trans "None" %}</span>
                 {% endif %}
             </td>
         </tr><tr>
             <th>{% trans "Related signage" %}</th>
             <td>{% if intervention.is_signage %} {{ intervention.infrastructure.name_display|safe }}
-                {% else %} {% trans "None" %}
+                {% else %} <span class="none">{% trans "None" %}</span>
                 {% endif %}
             </td>
         </tr>

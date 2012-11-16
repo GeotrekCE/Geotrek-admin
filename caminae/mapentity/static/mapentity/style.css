@@ -1,0 +1,360 @@
+body {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    padding: 0; margin: 0;
+}
+
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/***** SPAN 6 *****/
+.row-fluid > .span6 > .pull-right {
+	margin-top: 5px;
+	/*margin-right: 5px;*/
+	padding-right: 12px;
+
+}
+
+/***** Reusables ******/
+
+.centered {
+	text-align: center;
+}
+
+.autohide {
+    display: none;
+}
+
+.scrollable {
+    overflow-y: auto;
+    clear: both;
+}
+
+/***** Alerts ******/
+
+#alert-box {
+	position: absolute; 
+	top: 3px; 
+	left: 50%; 
+	width: 50%; 
+	margin: 0 0 0 -25%;
+	z-index: 1000;
+}
+
+#alert-box li.alert {
+    list-style-type: none; margin-bottom: 3px;
+}
+
+/**** Navigation bar ****/
+
+.navbar {
+    margin-bottom: 0px;
+}
+
+.navbar .brand {
+    padding-top: 7px;
+    padding-right: 5px;
+}
+
+.navbar-inner {
+    padding-left: 5px;
+    padding-right: 0px;
+}
+
+.navbar .nav > li > a {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.navbar .nav > li:last-child > a { padding-right: 0px; }
+.navbar .nav > li:first-child > a { padding-left: 5px; }
+
+/**** Maps ****/
+
+.leaflet-container {
+    min-height: 600px;
+}
+
+.map-error {
+    border: 5px solid red;
+}
+
+div.marker-snapped { background: yellow !important; }
+img.marker-add { background-image: url('images/marker-add.png') }
+img.marker-snapped { background-image: url('images/marker-snap.png') }
+img.marker-source { background-image: url('images/osrm_markers/marker-source.png') }
+img.marker-source.marker-snapped { background-image: url('images/osrm_markers/marker-source-snap.png') }
+img.marker-target { background-image: url('images/osrm_markers/marker-target.png') }
+img.marker-target.marker-snapped { background-image: url('images/osrm_markers/marker-target-snap.png') }
+
+img.marker-via { background-image: url('images/osrm_markers/marker-via.png') }
+img.marker-via.marker-snapped { background-image: url('images/osrm_markers/marker-via-snap.png') }
+
+/* snap drag */
+img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
+
+.leaflet-control-draw.enabled a, .leaflet-control.enabled a {
+ 	background-color: #fff;
+}
+
+.leaflet-control-draw.enabled, .leaflet-control.enabled {
+ 	background-color: rgba(255, 255, 0, 0.6);
+}
+
+.leaflet-control.disabled a {
+ 	background-color: rgba(0, 0, 0, 0.25);
+}
+
+.leaflet-control-draw-measure {
+	background-image: url(images/measure-control.png);
+}
+
+.multipath-control {
+    background-image: url(images/multipath-control.png);
+}
+
+.screenshot-control {
+    background-image: url(images/screenshot-control.png);
+}
+
+/**** Widgets ****/
+
+.axislabel {
+	color: blue;
+	font-size: 10px;
+}
+
+tr.selected-row td {
+    /* Button green color #5BB75B */
+    background-color: #DF8 !important;
+    opacity: 1 !important;
+}
+
+.filter-set {
+    font-weight: bold;
+    border: 2px solid black !important;
+    color: black;
+}
+
+#maphead {
+    position: absolute;
+    padding-top: 3px;
+    z-index: 999;
+    width: 100%;
+}
+
+
+/***** Entity List ******/
+
+
+/* Layout (based on "Conflicting position" trick) */
+#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
+#panelleft {position: absolute; top: 0px; bottom: 0; width: 50%; left: 0;}
+#panelright {position: absolute; top: 0px; bottom: 0; width: 50%; right: 0;}
+
+#mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
+
+#list-panel {
+    margin-left: 60px;
+    padding: 4px;
+    height: 95%;
+}
+
+#list-panel .table th, 
+#list-panel .table td {
+    padding: 5px;
+}
+#list-panel .pagination a, .pagination span {
+    line-height: 30px;
+}
+
+
+/* Left menu */
+#entitylist {position: absolute; top: 0px; left: 0; width: 60px;}
+#entitylist a {
+    padding: 0px;
+}
+
+#entitylist .nav-pills.nav-stacked > li > a {
+    margin-bottom: 0;
+}
+
+#entitylist .nav-pills > li > a {
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-bottom: 1px solid #DDDDDD;	
+	border-right: 1px solid #DDDDDD;	
+	margin-bottom: 0px;
+	margin-top: 0px;
+	background-color: #F9F9F9;	
+}
+
+#entitylist .nav-pills > .active > a, 
+#entitylist .nav-pills > .active > a:hover {
+	border-right: 1px solid #fff;
+    background-color: #fff;
+    color: #333333;
+}
+
+#entitylist .nav-pills > li > a > img  {
+	padding-bottom: 4px;
+}
+
+
+
+
+
+/* Datatables customization for filters and pagination */
+.dataTables_wrapper {
+    height: inherit;
+}
+
+#list-download-toolbar, 
+#objects-list_filter, 
+div.dataTables_paginate { 
+    position: absolute;
+    bottom: 5px;
+}
+div.dataTables_paginate { 
+    bottom: 0px;
+}
+
+#list-download-toolbar {
+    padding-bottom: 10px;
+}
+
+div.dataTables_paginate {
+    right: 5px;
+}
+
+#objects-list_filter {
+    left: 160px;
+}
+
+
+/* Filters popover */
+
+#mainfilter label {
+    display: none;
+}
+
+#filters-panel .well {
+    padding: 5px;
+}
+
+#filters-panel form {
+    margin-bottom: 0px;
+}
+
+.popover {
+    border: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+span.filter-info {
+    font-weight: bold;
+}
+
+
+/***** Entity detail ******/
+
+
+.details-panel {
+    padding-left: 40px;
+}
+
+.details-panel .table { 
+    table-layout: fixed; 
+    margin-right: 10px;
+}
+
+.details-panel .table th {
+    width: 40%;
+}
+
+.details-panel h3 {
+	border-bottom: 1px solid #333333;
+}
+
+.details-panel td {
+	color: #636363;
+}
+
+.details-panel th, .details-panel td {
+    border-top: 0px;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.details-panel td ul li {
+	list-style: none;
+}
+
+.details-panel span.none {
+	opacity: 0.4;
+}
+
+.details-panel td .autohide {
+    float: right;
+}
+
+.details-panel td ul {
+	margin: 0px;
+}
+
+.details-panel td p {  /* Autohide add buttons within <p> */
+    margin: 0px;
+}
+
+.details-panel h2 { 
+    min-height: 75px; 
+}
+
+#details-body {
+    padding-right: 10px;
+}
+
+
+/***** Entity form ******/
+
+.form-panel form {
+    padding-left: 10px;
+}
+
+
+.form-panel h2 { 
+    padding-left: 100px; 
+}
+
+.form-panel .tab-content .nav { 
+    margin-bottom: 5px;
+}
+
+.form-panel .nav li:first-child {
+    margin-left: 160px;
+}
+
+.form-panel .tab-content .nav-pills li a {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+/* Icons for each entity */
+.form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
+.form-panel.trail,          .details-panel.trail          { background: url(images/trail-96.png) no-repeat; }
+.form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention-96.png) no-repeat; }
+.form-panel.project,        .details-panel.project        { background: url(images/project-96.png) no-repeat; }
+.form-panel.signage,        .details-panel.signage        { background: url(images/signage-96.png) no-repeat; }
+.form-panel.infrastructure, .details-panel.infrastructure { background: url(images/infrastructure-96.png) no-repeat; }
+.form-panel.trek,           .details-panel.trek           { background: url(images/trek-96.png) no-repeat; }
+.form-panel.poi,            .details-panel.poi            { background: url(images/poi-96.png) no-repeat; }
+
+/* Icons for tabs */
+li.history.path a { padding-right: 5px; padding-left: 20px; background: url(images/path-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trail a { padding-right: 5px; padding-left: 20px; background: url(images/trail-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.intervention a { padding-right: 5px; padding-left: 20px; background: url(images/intervention-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.project a { padding-right: 5px; padding-left: 20px; background: url(images/project-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.signage a { padding-right: 5px; padding-left: 20px; background: url(images/signage-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.infrastructure a { padding-right: 5px; padding-left: 20px; background: url(images/infrastructure-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.trek a { padding-right: 5px; padding-left: 20px; background: url(images/trek-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }
+li.history.poi a { padding-right: 5px; padding-left: 20px; background: url(images/poi-16.png) no-repeat; background-position-x: 4px; background-position-y: 10px; }

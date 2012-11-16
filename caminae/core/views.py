@@ -117,7 +117,8 @@ def get_graph_json(request):
 
     if result and latest:
         cache_latest, json_graph = result
-        if cache_latest >= latest:
+        # Not empty and still valid
+        if cache_latest and cache_latest >= latest:
             return HttpJSONResponse(json_graph)
 
     # cache does not exist or is not up to date

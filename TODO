@@ -16,6 +16,8 @@ Known problems
 Soon...
 ==========
 
+* Refactor wkt_to_geom, transform_wkt, move to widgets
+
 * Refactor Topology.overlapping() : should not receive queryset
 
 * Should not be necessary to call "existing()" on each manager

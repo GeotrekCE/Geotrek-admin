@@ -8,5 +8,7 @@
             <th>{{ signagemanagementedge|verbose:"organization" }}</th>
             <td>{{ signagemanagementedge.organization }}</td>
         </tr>
+        
+        {% include "land/edge_path_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

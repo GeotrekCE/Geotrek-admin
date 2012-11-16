@@ -1,0 +1,16 @@
+{% load i18n %}
+
+// Add land layers
+var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}'},
+                  {url:'{% url land:city_layer %}', name: '{% trans "City" %}'},
+                  {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}'}];
+for (var i=0; i<landLayers.length; i++) {
+    var landLayer = landLayers[i];
+    var layer = new L.ObjectsLayer(null, {
+        indexing: false,
+        style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
+    });
+    layer.addTo(map)
+    layer.load(landLayer.url);
+    map.layerscontrol.addOverlay(layer, landLayer.name);
+}

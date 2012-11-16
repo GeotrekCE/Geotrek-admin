@@ -8,5 +8,7 @@
             <th>{{ workmanagementedge|verbose:"organization" }}</th>
             <td>{{ workmanagementedge.organization }}</td>
         </tr>
+        
+        {% include "land/edge_path_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}
