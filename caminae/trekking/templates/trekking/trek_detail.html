@@ -9,6 +9,23 @@
 {% endblock download %}
 
 
+{% block mapinit %}
+    // POIs markers
+    var pointToLayer = function (geojson, latlng) {
+        var url = "{% url trekking:poi_detail 0 %}".replace('0', geojson.properties.pk);
+        return L.marker(latlng).bindPopup('<a href="' + url + '">{% trans "Details" %}</a>');;
+    };
+
+    // Trek POIs layer
+    var pois = new L.ObjectsLayer(null, {
+        pointToLayer: pointToLayer, 
+        indexing: false
+    });
+    pois.load('{% url trekking:trek_poi_geojson object.pk %}');
+    map.addLayer(pois);
+{% endblock mapinit %}
+
+
 {% block detailspanel %}
     {{ block.super }}
     <table class="table-striped table-bordered table">
