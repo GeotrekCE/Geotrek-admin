@@ -1,23 +1,8 @@
 from django import template
 from django.conf import settings
-from django.template import Context
 from django.contrib.gis.geos import GEOSGeometry, Point
 
 register = template.Library()
-
-
-@register.filter
-def fieldmap(obj, fieldname):
-    """Usage: {{ object|fieldmap:"geom" }}"""
-    name = "map%s%s" % (obj.__class__.__name__, fieldname)
-    t = template.loader.get_template("mapentity/fieldmap_fragment.html")
-    return t.render(Context(dict(
-                    object=obj,
-                    mapname=name,
-                    # TODO: refactor, use {% with and include %} instead ! ContextProcessor have no effect with simple Context :(
-                    LAYERCOLOR_PATHS=settings.LAYERCOLOR_PATHS,
-                    LAYERCOLOR_LAND=settings.LAYERCOLOR_LAND,
-                    LAYERCOLOR_OTHERS=settings.LAYERCOLOR_OTHERS)))
 
 
 @register.filter
