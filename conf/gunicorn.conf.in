@@ -1,5 +1,5 @@
 backlog = 2048
-bind = ${options.bind}
+bind = "${options.bind}"
 pidfile = ${options.pidfile}
 workers = ${options.workers}
 errorlog = ${options.errorlog}
