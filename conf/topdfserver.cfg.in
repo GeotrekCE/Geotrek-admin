@@ -9,7 +9,8 @@ pyramid.default_locale_name = en
 
 download_dir = ${options.download_dir}
 converted_dir = ${options.converted_dir}
-
+converted_url = converted
+converted_max_age = 60
 
 [server:main]
 use = egg:gunicorn#main
