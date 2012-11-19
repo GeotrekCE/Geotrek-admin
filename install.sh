@@ -236,7 +236,8 @@ _EOF_
         # If buildout was successful, deploy really !
         if [ -f etc/nginx.conf ]; then
             sudo rm /etc/nginx/sites-enabled/default
-            sudo cp etc/nginx.conf /etc/nginx/sites-enabled/default
+            sudo cp etc/caminae.conf /etc/nginx/sites-available/caminae
+            sudo ln -sf /etc/nginx/sites-available/caminae /etc/nginx/sites-enabled/caminae
             sudo /etc/init.d/nginx restart
             
             sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
