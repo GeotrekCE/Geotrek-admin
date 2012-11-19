@@ -13,6 +13,8 @@ upstream conversion_server {
 server {
     listen ${options.port} default;
     server_name _;
+    access_log ${options.accesslog};
+    error_log ${options.errorlog};
 
     keepalive_timeout 5;
 
