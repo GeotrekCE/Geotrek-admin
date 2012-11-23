@@ -52,6 +52,12 @@ Soon...
 * Use localstorage instead of Django sessions for navigation history and last search
 
 * Remove core dependancies to other apps (registry?)
+    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py
+    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py#L68
+    <alexis> la doc est bien d'ailleurs
+    <alexis> http://docs.python.org/2/library/abc.html
+    <alexis> par contre, je pensais qu'avoir la liste était plus classe que ça, il faut utiliser la liste des classes dérivées de la classe parente, c'est pas ouf …
+    <alexis> http://www.doughellmann.com/PyMOTW/abc/ ce machin est bien aussi
 
 ==========
 One day...

@@ -11,6 +11,14 @@ from django.contrib.gis.geos import GEOSException, fromstr, LineString, Point
 logger = logging.getLogger(__name__)
 
 
+class classproperty(object):
+    def __init__(self, getter):
+        self.getter = getter
+
+    def __get__(self, instance, owner):
+        return self.getter(owner)
+
+
 def dbnow():
     cursor = connection.cursor()
     cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
@@ -73,13 +81,6 @@ def transform_wkt(wkt, srid_from=None, srid_to=None):
 
 def almostequal(v1, v2, precision=2):
     return abs(v1 - v2) < 10**-precision
-
-
-class classproperty(object):
-     def __init__(self, getter):
-        self.getter= getter
-     def __get__(self, instance, owner):
-         return self.getter(owner)
 
 
 def smart_urljoin(base, path):
