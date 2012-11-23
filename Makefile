@@ -4,15 +4,38 @@ listen=localhost:8000
 baseurl=http://$(listen)
 root=$(shell pwd)
 version=$(shell git describe --tags --abbrev=0)
+arch=$(shell uname -p)
 
-bin/buildout:
+
+etc/settings.ini:
+	mkdir -p etc/
+	cp conf/settings.ini.sampleetc/settings.ini
+
+bin/phantomjs:
+	mkdir -p lib/
+	wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
+	tar -jxvf phantomjs.tar.bz2 -C lib/
+	rm phantomjs.tar.bz2
+	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/phantomjs
+	# Install system-wide binary (require sudo)
+	sudo ln -sf $(root)/bin/phantomjs /usr/local/bin/phantomjs
+
+bin/casperjs: bin/phantomjs
+	wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC4 -O casperjs.zip
+	unzip -o casperjs.zip -d lib/ > /dev/null
+	rm casperjs.zip
+	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/casperjs
+	# Install system-wide binary (require sudo)
+	sudo ln -sf $(root)/bin/casperjs /usr/local/bin/casperjs
+
+bin/buildout: etc/settings.ini
 	virtualenv .
 	mkdir -p lib/eggs
 	wget http://python-distribute.org/bootstrap.py
 	bin/python bootstrap.py
 	rm bootstrap.py
 
-install: bin/buildout
+install: bin/buildout bin/casperjs
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;

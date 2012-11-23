@@ -112,18 +112,9 @@ function ubuntu_precise {
     sudo apt-get install -y libreoffice unoconv
 
     # Default settings if not any
-    mkdir -p etc/
     settingsfile=etc/settings.ini
-    settingssample=caminae/conf/settings.ini.sample
-    if [ ! -f $settingsfile ]; then
-        if [ -f $settingssample ]; then
-            cp $settingssample $settingsfile
-        else
-            echo "# WARNING : empty configuration ! Use model file 'settings.ini.sample'" > $settingsfile
-        fi
-    else
-        migrate_settings $settingsfile $settingssample
-    fi
+    settingssample=conf/settings.ini.sample
+    migrate_settings $settingsfile $settingssample
     
     # Prompt user to edit/review settings
     vim -c 'startinsert' $settingsfile
@@ -176,35 +167,6 @@ _EOF_
         echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
         exit 4
     fi
-
-
-    mkdir -p lib/
-    cd lib/
-
-    if [ ! -f /usr/local/bin/phantomjs ]; then
-        arch=$(uname -p)
-        if [ "${arch}" == "x86_64" ] ; then
-            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
-        else
-            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-i686.tar.bz2 -O phantomjs.tar.bz2
-        fi
-        tar -jxvf phantomjs.tar.bz2
-        rm phantomjs.tar.bz2
-        cd *phantomjs*
-        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
-        cd ..
-    fi
-
-    if [ ! -f /usr/local/bin/casperjs ]; then
-        wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC1 -O casperjs.zip
-        unzip -o casperjs.zip > /dev/null
-        rm casperjs.zip
-        cd *casperjs*
-        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-        cd ..
-    fi
-
-    cd ..
 
     if $dev ; then
         # A postgis template is required for django tests
