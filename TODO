@@ -59,6 +59,15 @@ Soon...
     <alexis> par contre, je pensais qu'avoir la liste était plus classe que ça, il faut utiliser la liste des classes dérivées de la classe parente, c'est pas ouf …
     <alexis> http://www.doughellmann.com/PyMOTW/abc/ ce machin est bien aussi
 
+* Use search_path ALTER USER toto SET search_path = toto, public;  ou db_table = 'schema\".\"tablename'
+
+* Manager Mixins django-qmixin / django-qmanager
+* django-crud
+* refactor nodelete
+* refactor permissions
+* django - computed field 
+
+
 ==========
 One day...
 ==========
