@@ -125,6 +125,16 @@ class Trek(MapEntityMixin, Topology):
                  'name': d.name} for d in self.districts]
 
     @property
+    def serializable_weblinks(self):
+        return [{'id': w.pk,
+                 'name': w.name,
+                 'url': w.url} for w in self.web_links.all()]
+
+    @property
+    def serializable_parking_location(self):
+        return self.parking_location.transform(settings.API_SRID, clone=True).coords
+
+    @property
     def elevation_profile(self):
         return elevation_profile(self.geom)
 

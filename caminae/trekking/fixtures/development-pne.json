@@ -1,43 +1,10 @@
 [
     {
         "pk": 1,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Histoire",
-            "label_fr": "Histoire",
-            "label_it": "Storia",
-            "label_en": "History"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Nature",
-            "label_fr": "Nature",
-            "label_it": "Natura",
-            "label_en": "Nature"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Sport",
-            "label_fr": "Sport",
-            "label_it": "Sport",
-            "label_en": "Sport"
-        }
-    },
-    {
-        "pk": 1,
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Picolo patrimonio",
-            "pictogram": "upload/church.png",
+            "pictogram": "upload/heritage.png",
             "label_en": "Small patrimony",
             "label_fr": "Petit patrimoine",
             "label": "Petit patrimoine"
@@ -309,7 +276,7 @@
             "description_fr": "<p>Tr&egrave;s belle</p>",
             "description_it": "<p>Molto bella</p>",
             "name_en": "Chapel",
-            "type": 1,
+            "type": 4,
             "description": "<p>Very nice</p>"
         }
     }
