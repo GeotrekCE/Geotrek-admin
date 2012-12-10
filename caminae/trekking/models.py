@@ -1,4 +1,5 @@
 import logging
+import mimetypes
 from HTMLParser import HTMLParser
 
 from django.conf import settings
@@ -357,7 +358,11 @@ class POIType(models.Model):
     @property
     def serializable_pictogram(self):
         try:
-            return self.pictogram.read().encode('base64')
+            pictopath = self.pictogram.name
+            mimetype = mimetypes.guess_type(pictopath)
+            mimetype = mimetype[0] if mimetype else 'application/octet-stream'
+            encoded = self.pictogram.read().encode('base64').replace("\n", '')
+            return "%s;base64,%s" % (mimetype, encoded)
         except (IOError, ValueError), e:
             logger.warning(e)
             return ''

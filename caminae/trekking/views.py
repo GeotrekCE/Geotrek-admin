@@ -102,7 +102,7 @@ class TrekJsonProfile(BaseDetailView):
 class TrekPOIGeoJSON(GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    fields = ['name', 'serializable_type']
+    fields = ['name', 'description', 'serializable_type']
 
     def get_queryset(self):
         try:
