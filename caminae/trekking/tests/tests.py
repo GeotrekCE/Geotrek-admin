@@ -136,6 +136,16 @@ class TrekCustomViewTests(TestCase):
         obj = simplejson.loads(response.content)
         self.assertEqual(obj['name'], trek.name_fr)
 
+    def test_geojson_translation(self):
+        trek = TrekFactory.create(name='Voie lactee')
+        trek.name_it = 'Via Lattea'
+        trek.save()
+        url = reverse('trekking:trek_layer')
+        # Test with another language
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        obj = simplejson.loads(response.content)
+        self.assertEqual(obj['features'][0]['properties']['name'], trek.name_it)
+
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
         trek = TrekFactory.create(no_path=True)
