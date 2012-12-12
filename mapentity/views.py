@@ -111,7 +111,8 @@ class MapEntityLayer(GeoJSONLayerView):
 
     def render_to_response(self, context, **response_kwargs):
         cache = get_cache('fat')
-        key = '%s_layer_json' % self.model._meta.module_name
+        key = '%s_%s_layer_json' % (self.request.LANGUAGE_CODE,
+                                    self.model._meta.module_name)
 
         result = cache.get(key)
         latest = self.model.latest_updated()
