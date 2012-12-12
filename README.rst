@@ -83,6 +83,13 @@ Load example data (used in development) :
 Among other things, an administrator "admin"/"admin" will be created.
 
 
+:note:
+
+    This command makes use of ``GDAL`` and ``raster2pgsql`` internally. It
+    therefore supports all GDAL raster input formats. You can list these formats
+    with the command ``raster2pgsql -G``.
+
+
 Without Initial Data
 --------------------
 
@@ -97,7 +104,6 @@ or change its password :
 ::
 
     bin/django changepassword --username admin <password>
-
 
 =============
 CONFIGURATION
@@ -142,13 +148,6 @@ Expected columns in table/view are :
     
     Caminae can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
-
-:note:
-
-    This command makes use of ``GDAL`` and ``raster2pgsql`` internally. It
-    therefore supports all GDAL raster input formats. You can list these formats
-    with the command ``raster2pgsql -G``.
-
 
 ===========
 DEVELOPMENT
