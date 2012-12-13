@@ -25,7 +25,7 @@ class TrekLayer(MapEntityLayer):
               'duration', 'ascent', 'descent', 'min_elevation', 'max_elevation',
               'serializable_themes', 'serializable_weblinks', 'is_park_centered',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'is_transborder', 'serializable_districts', 'serializable_parking_location']
+              'serializable_districts', 'serializable_parking_location']
 
 
 class TrekList(MapEntityList):

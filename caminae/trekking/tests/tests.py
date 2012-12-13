@@ -65,7 +65,6 @@ class TrekViewsTest(MapEntityTest):
             'disabled_infrastructure_en': '',
             'duration': '0',
             'is_park_centered': '',
-            'is_transborder': '',
             'advised_parking': 'Very close',
             'parking_location': 'POINT (1.0 1.0 0.0)',
             'public_transport': 'huhu',

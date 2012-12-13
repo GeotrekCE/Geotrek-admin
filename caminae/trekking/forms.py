@@ -36,7 +36,6 @@ class TrekForm(TopologyForm):
                     'description_teaser',
                     'description',
                     'is_park_centered',
-                    'is_transborder',
                     css_id="main",
                     css_class="tab-pane active"
                 ),

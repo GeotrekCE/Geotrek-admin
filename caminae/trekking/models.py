@@ -37,7 +37,6 @@ class Trek(MapEntityMixin, Topology):
     duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
-    is_transborder = models.BooleanField(verbose_name=_(u"Is transborder"))
 
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
     parking_location = models.PointField(srid=settings.SRID, spatial_index=False)

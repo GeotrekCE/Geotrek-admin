@@ -75,7 +75,6 @@ class TrekFactory(TopologyFactory):
     duration = 60
 
     is_park_centered = False
-    is_transborder = False
 
     advised_parking = factory.Sequence(lambda n: u"Advised parking %s" % n)
     parking_location = Point(1, 1)
