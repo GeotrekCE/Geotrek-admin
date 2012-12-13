@@ -80,8 +80,10 @@ L.Control.ExclusiveActivation = L.Class.extend({
     add: function (control) {
         this._controls.push(control);
         var self = this;
+        control.activable(true);
         control.handler.on('enabled', function (e) {
-            // When this control is enabled, disable the others !
+            // When this control is enabled, activate this one, 
+            // and disable the others !
             $.each(self._controls, function (i, c) {
                 if (c != control) {
                     c.activable(false);

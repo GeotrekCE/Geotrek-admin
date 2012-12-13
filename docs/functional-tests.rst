@@ -2115,3 +2115,19 @@ Fait.
 
 Pour les objets dont la géometrie est de type Ligne, des marqueurs départ
 et arrivée sont placés aux extrémités.
+
+
+========================
+Sprint 9 - Version 0.9.0
+========================
+
+
+#313 - Retrait de la notion de thématiques majeures
+---------------------------------------------------
+
+Le formulaire ne contient plus le champ, la base non plus.
+
+#396 - [BUG] Formulaire POI : controle marqueur cassé
+-----------------------------------------------------
+
+Fixé.
