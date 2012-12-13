@@ -48,7 +48,6 @@ class TrekForm(TopologyForm):
                     'public_transport',
                     'advice',
                     'themes',
-                    'main_themes',
                     'networks',
                     'usages',
                     'web_links',

@@ -74,7 +74,6 @@ class TrekViewsTest(MapEntityTest):
             'advice_it': '',
             'advice_en': '',
             'themes': ThemeFactory.create().pk,
-            'main_themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,

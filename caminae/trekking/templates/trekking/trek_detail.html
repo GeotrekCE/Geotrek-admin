@@ -38,11 +38,7 @@
             <td>
                 {% for t in trek.themes.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    {% if t in trek.main_themes.all %}
-                        <li>{{ t }}</li>
-                    {% else %}
-                        <li><strong>{{ t }}</strong><i class="icon-star"></i></li>
-                    {% endif %}
+                    <li>{{ t }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
