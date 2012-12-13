@@ -22,6 +22,7 @@ from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing().filter(published=True)
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
+              'description', 'description_teaser', 'access', 'ambiance',
               'duration', 'ascent', 'descent', 'min_elevation', 'max_elevation',
               'serializable_themes', 'serializable_weblinks', 'is_park_centered',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',

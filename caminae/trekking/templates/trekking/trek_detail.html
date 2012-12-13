@@ -34,6 +34,18 @@
             <td>{{ trek.name }}</td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"description" }}</th>
+            <td>{{ trek.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"ambiance" }}</th>
+            <td>{{ trek.ambiance|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"access" }}</th>
+            <td>{{ trek.access|safe }}</td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
                 {% for t in trek.themes.all %}

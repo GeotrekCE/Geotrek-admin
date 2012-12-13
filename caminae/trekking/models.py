@@ -33,6 +33,7 @@ class Trek(MapEntityMixin, Topology):
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
     description = models.TextField(verbose_name=_(u"Description"))
     ambiance = models.TextField(verbose_name=_(u"Ambiance"))
+    access = models.TextField(verbose_name=_(u"Access"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
     duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
 
