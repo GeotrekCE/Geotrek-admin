@@ -33,7 +33,6 @@ class TrekForm(TopologyForm):
                     'duration',
                     'difficulty',
                     'route',
-                    'destination',
                     'description_teaser',
                     'description',
                     'is_park_centered',

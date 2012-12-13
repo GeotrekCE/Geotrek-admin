@@ -57,10 +57,6 @@ class DifficultyLevelTO(TranslationOptions):
     fields = ('difficulty', )
 
 
-class DestinationTO(TranslationOptions):
-    fields = ('destination', )
-
-
 class WebLinkTO(TranslationOptions):
     fields = ('name', )
 
@@ -75,7 +71,6 @@ trek_translation_to_register = [
     (trekking_models.Usage, UsageTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
-    (trekking_models.Destination, DestinationTO),
     (trekking_models.WebLink, WebLinkTO),
 ]
 

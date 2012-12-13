@@ -44,13 +44,6 @@ class DifficultyLevelFactory(factory.Factory):
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
 
 
-class DestinationFactory(factory.Factory):
-    FACTORY_FOR = models.Destination
-
-    destination = factory.Sequence(lambda n: u"destination %s" % n)
-    pictogram =  dummy_filefield_as_sequence('pictogram %s')
-
-
 class WebLinkFactory(factory.Factory):
     FACTORY_FOR = models.WebLink
 
@@ -92,7 +85,6 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
-    destination = factory.SubFactory(DestinationFactory)
 
 
 class TrekRelationshipFactory(factory.Factory):

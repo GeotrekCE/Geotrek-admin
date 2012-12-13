@@ -51,7 +51,6 @@ class TrekViewsTest(MapEntityTest):
             'published': '',
             'difficulty': '',
             'route': '',
-            'destination': '',
             'description_teaser_fr': '',
             'description_teaser_it': '',
             'description_teaser_en': '',

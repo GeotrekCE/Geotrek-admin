@@ -5,7 +5,7 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
+    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink
 )
 
 
@@ -39,11 +39,6 @@ class DifficultyLevelAdmin(TranslationAdmin):
     search_fields = ('difficulty',)
 
 
-class DestinationAdmin(TranslationAdmin):
-    list_display = ('destination',)
-    search_fields = ('destination',)
-
-
 class WebLinkAdmin(TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
@@ -57,7 +52,6 @@ trek_admin_to_register = [
     (Usage, UsageAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
-    (Destination, DestinationAdmin),
     (WebLink, WebLinkAdmin),
 ]
 

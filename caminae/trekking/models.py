@@ -60,9 +60,6 @@ class Trek(MapEntityMixin, Topology):
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', null=True, blank=True,
             verbose_name=_(u"Difficulty level"))
 
-    destination = models.ForeignKey('Destination', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Destination"))
-
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             verbose_name=_(u"Web links"))
 
@@ -217,20 +214,6 @@ class DifficultyLevel(models.Model):
 
     def __unicode__(self):
         return self.difficulty
-
-
-class Destination(models.Model):
-
-    destination = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
-
-    class Meta:
-        db_table = 'destination'
-        verbose_name = _(u"Destination")
-        verbose_name_plural = _(u"Destinations")
-
-    def __unicode__(self):
-        return self.destination
 
 
 class WebLink(models.Model):
