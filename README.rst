@@ -25,7 +25,6 @@ Go into the extracted directory, just follow the installation process :
 
 ::
 
-	chmod +x install.sh
     ./install.sh
 
 You will mainly be prompt for editing the base configuration file (``settings.ini``),
