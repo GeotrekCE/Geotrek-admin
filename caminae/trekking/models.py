@@ -182,6 +182,7 @@ class TrekNetwork(models.Model):
 class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
         db_table = 'usages'
@@ -220,7 +221,6 @@ class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     url = models.URLField(verbose_name=_(u"URL"), max_length=128)
-    thumbnail = models.FileField(null=True, blank=True, verbose_name=_(u"Thumbnail"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
         db_table = 'liens_web'

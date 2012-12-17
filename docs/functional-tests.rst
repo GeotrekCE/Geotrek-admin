@@ -2136,3 +2136,16 @@ Fixé.
 ---------------------------------------------------------
 
 Fixé.
+
+#353, #347, #399 - Champs offre rando
+-------------------------------------
+
+* Champs *Transfontalier*, *Destination* supprimés.
+
+* Champ *Accès* ajouté (traduisible).
+
+* Champ *Pictogramme* ajouté aux usages.
+
+* Champ aperçu supprimé sur lien supprimé.
+
+* Bibliothèque de catégories de liens ajoutée.

@@ -30,6 +30,7 @@ class UsageFactory(factory.Factory):
     FACTORY_FOR = models.Usage
 
     usage = factory.Sequence(lambda n: u"usage %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class RouteFactory(factory.Factory):
