@@ -2131,3 +2131,8 @@ Le formulaire ne contient plus le champ, la base non plus.
 -----------------------------------------------------
 
 Fixé.
+
+#244, #400 - [BUG] À la première visite la carte est vide
+---------------------------------------------------------
+
+Fixé.
