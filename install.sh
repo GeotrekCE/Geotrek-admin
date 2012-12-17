@@ -99,6 +99,8 @@ done
 function ubuntu_precise {
     set -x
 
+    sudo locale-gen fr_FR.UTF-8
+    sudo dpkg-reconfigure locales
     sudo apt-get update > /dev/null
     sudo apt-get install -y python-software-properties
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
@@ -112,6 +114,7 @@ function ubuntu_precise {
     sudo apt-get install -y libreoffice unoconv
 
     # Default settings if not any
+    make install
     settingsfile=etc/settings.ini
     settingssample=conf/settings.ini.sample
     migrate_settings $settingsfile $settingssample
@@ -120,7 +123,7 @@ function ubuntu_precise {
     vim -c 'startinsert' $settingsfile
 
     #
-    # If database is local, check it !
+    # If database is local, install it !
     #----------------------------------
     dbname=$(ini_value $settingsfile dbname)
     dbhost=$(ini_value $settingsfile dbhost)
@@ -146,10 +149,14 @@ function ubuntu_precise {
             sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
             
             # Open local and host connection for this user as md5
-            sudo cat >> /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
+            sudo sed -i "/DISABLE/a \
+# Automatically added by Caminae installation :\
+local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
+
+            cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 # Automatically added by Caminae installation :
-local    ${dbname}    ${dbuser}        md5
-host     ${dbname}    ${dbuser}        md5
+local        ${dbuser}        md5
+host     ${dbname}            md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
@@ -157,7 +164,7 @@ _EOF_
     
     # Check that database connection is correct
     dbport=$(ini_value $settingsfile dbport)
-    export PGPASSWORD=$dbpassword   
+    export PGPASSWORD=$dbpassword
     psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
     result=$?
     export PGPASSWORD=

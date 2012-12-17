@@ -9,7 +9,7 @@ arch=$(shell uname -p)
 
 etc/settings.ini:
 	mkdir -p etc/
-	cp conf/settings.ini.sampleetc/settings.ini
+	cp conf/settings.ini.sample etc/settings.ini
 
 bin/phantomjs:
 	mkdir -p lib/
