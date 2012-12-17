@@ -12,7 +12,7 @@ test_requirements = [
 
 setup(
     name='caminae',
-    version='0.8.3',
+    version='0.8.4',
     author='Makina Corpus',
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',

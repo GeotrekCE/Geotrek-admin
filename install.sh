@@ -149,10 +149,14 @@ function ubuntu_precise {
             sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
             
             # Open local and host connection for this user as md5
+            sudo sed -i "/DISABLE/a \
+# Automatically added by Caminae installation :\
+local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
+
             cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 # Automatically added by Caminae installation :
-local    ${dbname}    ${dbuser}        md5
-host     ${dbname}    ${dbuser}        md5
+local        ${dbuser}        md5
+host     ${dbname}            md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
