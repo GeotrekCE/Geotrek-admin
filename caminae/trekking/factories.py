@@ -51,8 +51,6 @@ class WebLinkFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"web link name %s" % n)
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
 
-    thumbnail = dummy_filefield_as_sequence('thumbnail %s')
-
 
 class TrekFactory(TopologyFactory):
     FACTORY_FOR = models.Trek

@@ -2148,4 +2148,4 @@ Fixé.
 
 * Champ aperçu supprimé sur lien supprimé.
 
-* Bibliothèque de catégories de liens ajoutée.
+* Bibliothèque de catégories de liens avec picto ajoutée.

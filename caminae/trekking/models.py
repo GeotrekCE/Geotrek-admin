@@ -190,6 +190,11 @@ class Usage(models.Model):
     def __unicode__(self):
         return self.usage
 
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
+
 
 class Route(models.Model):
 
@@ -217,10 +222,19 @@ class DifficultyLevel(models.Model):
         return self.difficulty
 
 
+class WebLinkManager(models.Manager):
+    def get_query_set(self):
+        return super(WebLinkManager, self).get_query_set().select_related('category')
+
+
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     url = models.URLField(verbose_name=_(u"URL"), max_length=128)
+    category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
+                                 related_name='links', null=True, blank=True)
+
+    objects = WebLinkManager()
 
     class Meta:
         db_table = 'liens_web'
@@ -228,12 +242,32 @@ class WebLink(models.Model):
         verbose_name_plural = _(u"Web links")
 
     def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.url)
+        category =  "%s - " % self.category.label if self.category else ""
+        return u"%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
     @models.permalink
     def get_add_url(cls):
         return ('trekking:weblink_add', )
+
+
+class WebLinkCategory(models.Model):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    class Meta:
+        db_table = 'o_t_web_category'
+        verbose_name = _(u"Web link category")
+        verbose_name_plural = _(u"Web link categories")
+
+    def __unicode__(self):
+        return u"%s" % self.label
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
 
 class Theme(models.Model):
@@ -244,6 +278,10 @@ class Theme(models.Model):
     def __unicode__(self):
         return self.label
 
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
 
 class TrekRelationshipManager(models.Manager):

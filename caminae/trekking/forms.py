@@ -94,7 +94,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         # Main form layout
         self.helper.form_class = 'form-horizontal'
         arg_list = ['name_{0}'.format(l[0]) for l in settings.LANGUAGES]
-        arg_list += ['url', 'thumbnail', FormActions(
+        arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),
             css_class="form-actions",

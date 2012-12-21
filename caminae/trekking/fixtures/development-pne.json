@@ -136,9 +136,6 @@
                 1,
                 2
             ],
-            "main_themes": [
-                1
-            ],
             "arrival_en": "Chabottes",
             "departure_en": "Ancelle",
             "description_fr": null,
@@ -200,10 +197,33 @@
         "pk": 1,
         "model": "trekking.usage",
         "fields": {
-            "usage": "Casual",
-            "usage_en": "Casual",
-            "usage_it": "Promenada",
-            "usage_fr": "Promenade"
+            "pictogram": "upload/usage-mountainbike.png",
+            "usage": "Mountain Bike",
+            "usage_en": "Mountain Bike",
+            "usage_it": "Bici Montana",
+            "usage_fr": "VTT"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-fauna.png",
+            "label": "Fauna",
+            "label_it": "Fona",
+            "label_en": "Fauna",
+            "label_fr": "Faune"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-flora.png",
+            "label": "Flora",
+            "label_it": "Flora",
+            "label_en": "Flora",
+            "label_fr": "Flore"
         }
     },
     {
@@ -220,10 +240,53 @@
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
+            "difficulty_it": "Confirmado",
+            "difficulty": "Rookie",
+            "difficulty_fr": "Confirmé",
+            "difficulty_en": "Rookie"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.difficultylevel",
+        "fields": {
             "difficulty_it": "Duro",
             "difficulty": "Hard",
             "difficulty_fr": "Difficile",
             "difficulty_en": "Hard"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Refuge",
+            "label_it": "Refugio",
+            "label_fr": "Refuge",
+            "label_en": "Refugee",
+            "pictogram": "upload/weblink-refuge.png"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Map",
+            "label_it": "Carto",
+            "label_fr": "Carte",
+            "label_en": "Map",
+            "pictogram": "upload/weblink-map.png"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Bus",
+            "label_it": "Bus",
+            "label_fr": "Bus",
+            "label_en": "Bus",
+            "pictogram": "upload/weblink-bus.png"
         }
     },
     {
@@ -235,7 +298,7 @@
             "name": "FE",
             "url": "http://fe.com",
             "name_en": "FE",
-            "thumbnail": "upload/fe.jpg"
+            "category": 1
         }
     },
 
