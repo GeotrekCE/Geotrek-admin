@@ -2137,6 +2137,12 @@ Fixé.
 
 Fixé.
 
+
+==========================
+Sprint 10 - Version 0.10.0
+==========================
+
+
 #353, #347, #399 - Champs offre rando
 -------------------------------------
 
@@ -2149,3 +2155,14 @@ Fixé.
 * Champ aperçu supprimé sur lien supprimé.
 
 * Bibliothèque de catégories de liens avec picto ajoutée.
+
+
+#393 - [BUG] Les itinéraires non publiés n'apparaissent pas sur la carte recherche
+----------------------------------------------------------------------------------
+
+Fixé.
+
+#388 - [BUG] kml / gpx ne sont pas accessibles si itinéraire n'est pas publié
+-----------------------------------------------------------------------------
+
+Fixé.

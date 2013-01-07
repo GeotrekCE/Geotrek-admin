@@ -71,7 +71,6 @@ class MapEntityTest(LiveServerTestCase):
 
         # Document layer either
         obj = self.modelfactory.create()
-        print obj.date_insert, obj.date_update
         # Will have to mock screenshot, though.
         with open(obj.get_map_image_path(), 'w') as f:
             f.write('This is fake PNG file')
