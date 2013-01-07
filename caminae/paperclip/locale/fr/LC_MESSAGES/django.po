@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-01-07 15:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,6 +29,10 @@ msgstr "Ajouter un fichier lié"
 #: models.py:34
 msgid "Attachment"
 msgstr "Fichier"
+
+#: models.py:35
+msgid "File type"
+msgstr "Type de fichier"
 
 #: models.py:37
 msgid "Creator"
@@ -76,7 +80,7 @@ msgstr "Supprimer"
 
 #: templates/paperclip/details.html:44
 msgid "No file attached"
-msgstr ""
+msgstr "Aucun fichier attaché"
 
 #: templates/paperclip/details.html:59
 msgid "Confirm file deletion"

@@ -32,7 +32,7 @@ class Attachment(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     attachment_file = models.FileField(_('Attachment'), upload_to=attachment_upload)
-    filetype = models.ForeignKey(FileType)
+    filetype = models.ForeignKey(FileType, verbose_name=_('File type'))
 
     creator = models.ForeignKey(User, related_name="created_attachments", verbose_name=_('Creator'))
     title = models.CharField(blank=True, default='', max_length=128, db_column='titre', verbose_name=_(u"Title"))
