@@ -31,7 +31,7 @@ BEGIN
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
 
-        RAISE NOTICE '% intersects % : %', NEW.id, troncon.id, ST_AsEWKT(ST_Intersection(troncon.geom, NEW.geom));
+        -- RAISE NOTICE '% intersects % : %', NEW.id, troncon.id, ST_AsEWKT(ST_Intersection(troncon.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
         intersections_on_new := ARRAY[0::float];
@@ -69,7 +69,7 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_new, 1) > 2 THEN
-            RAISE NOTICE 'New: % intersecting on NEW % : %', NEW.id, troncon.id, intersections_on_new;
+            -- RAISE NOTICE 'New: % intersecting on NEW % : %', NEW.id, troncon.id, intersections_on_new;
             
             FOR i IN 1..(array_length(intersections_on_new, 1) - 1)
             LOOP
@@ -80,10 +80,10 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    RAISE NOTICE 'New: Skrink % : geom is %', NEW.id, ST_AsEWKT(segment);
+                    -- RAISE NOTICE 'New: Skrink % : geom is %', NEW.id, ST_AsEWKT(segment);
                     UPDATE troncons SET geom = segment WHERE id = NEW.id;
                 ELSE
-                    RAISE NOTICE 'New: Create geom is %', ST_AsEWKT(segment);
+                    -- RAISE NOTICE 'New: Create geom is %', ST_AsEWKT(segment);
                     -- Next ones : create clones !
                     INSERT INTO troncons (structure_id, 
                                           troncon_valide,
@@ -122,7 +122,7 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
-            RAISE NOTICE 'Current: % intersecting on current % : %', NEW.id, troncon.id, intersections_on_current;
+            -- RAISE NOTICE 'Current: % intersecting on current % : %', NEW.id, troncon.id, intersections_on_current;
             
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
             LOOP
@@ -133,11 +133,11 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    RAISE NOTICE 'Current: Skrink % : geom is %', troncon.id, ST_AsEWKT(segment);
+                    -- RAISE NOTICE 'Current: Skrink % : geom is %', troncon.id, ST_AsEWKT(segment);
                     UPDATE troncons SET geom = segment WHERE id = troncon.id;
                 ELSE
                     -- Next ones : create clones !
-                    RAISE NOTICE 'Current: Create geom is %', ST_AsEWKT(segment);
+                    -- RAISE NOTICE 'Current: Create geom is %', ST_AsEWKT(segment);
                     INSERT INTO troncons (structure_id, 
                                           troncon_valide,
                                           nom_troncon, 
