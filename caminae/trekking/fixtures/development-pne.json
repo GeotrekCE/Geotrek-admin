@@ -205,6 +205,28 @@
         }
     },
     {
+        "pk": 2,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-bike.png",
+            "usage": "Cycling",
+            "usage_en": "Cycling",
+            "usage_it": "Bicicleta",
+            "usage_fr": "Vélo"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-horse.png",
+            "usage": "Horse",
+            "usage_en": "Horse",
+            "usage_it": "Caballo",
+            "usage_fr": "Cheval"
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.theme",
         "fields": {
