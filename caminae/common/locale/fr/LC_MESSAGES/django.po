@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2013-01-07 12:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,14 +28,6 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
-#: forms.py:23
-msgid "Cancel"
-msgstr "Annuler"
-
-#: forms.py:24
-msgid "Save changes"
-msgstr "Sauvegarder"
-
 #: models.py:7 models.py:11
 msgid "Organism"
 msgstr "Organisme"
@@ -51,3 +43,9 @@ msgstr "Type de fichiers"
 #: models.py:24
 msgid "File types"
 msgstr "Types de fichiers"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Save changes"
+#~ msgstr "Sauvegarder"

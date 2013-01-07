@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-07 11:58+0100\n"
+"POT-Creation-Date: 2013-01-07 12:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,7 +120,7 @@ msgstr "Tronçon de zonage réglementaire"
 msgid "Restricted area edges"
 msgstr "Tronçons de zonage réglementaire"
 
-#: models.py:331 models.py:342 templates/land/bbox.html:7
+#: models.py:331 models.py:342 templates/land/bbox.html:5
 #: templates/land/land_mapinit_fragment.html:5
 msgid "City"
 msgstr "Commune"
@@ -137,7 +137,7 @@ msgstr "Tronçon de commune"
 msgid "City edges"
 msgstr "Tronçons de commune"
 
-#: models.py:380 models.py:390 templates/land/bbox.html:14
+#: models.py:380 models.py:390 templates/land/bbox.html:12
 #: templates/land/land_mapinit_fragment.html:4
 msgid "District"
 msgstr "Secteur"
@@ -154,13 +154,14 @@ msgstr "Tronçon de secteur"
 msgid "District edges"
 msgstr "Tronçons de secteur"
 
-#: templates/land/bbox.html:4
-msgid "Center on"
-msgstr "Centrer sur"
-
-#: templates/land/bbox.html:21 templates/land/land_mapinit_fragment.html:6
+#: templates/land/bbox.html:19 templates/land/land_mapinit_fragment.html:6
 msgid "Restricted Area"
 msgstr "Zone réglementaire"
+
+#: templates/land/competenceedge_list.html:8
+#: templates/land/land_detail_fragment.html:39
+msgid "Add competence edge"
+msgstr "Renseigner l'organisme compétent"
 
 #: templates/land/edge_path_list_fragment.html:3
 msgid "Paths"
@@ -174,53 +175,25 @@ msgstr "Aucun(e)"
 msgid "Land"
 msgstr "Foncier"
 
-
-#: templates/land/competenceedge_list.html:8
-#: templates/land/land_detail_fragment.html:39
-msgid "Add competence edge"
-msgstr "Renseigner l'organisme compétent"
-
-msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
-
-
 #: templates/land/land_detail_fragment.html:21
 #: templates/land/landedge_list.html:8
 msgid "Add land edge"
 msgstr "Renseigner la nature foncière"
-
-msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
-
 
 #: templates/land/land_detail_fragment.html:30
 #: templates/land/physicaledge_list.html:8
 msgid "Add physical edge"
 msgstr "Renseigner la nature physique"
 
-msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
-
-
 #: templates/land/land_detail_fragment.html:48
 #: templates/land/workmanagementedge_list.html:8
 msgid "Add work management edge"
 msgstr "Renseigner le gestionnaire travaux"
 
-msgid "Add a new work management edge"
-msgstr "Renseigner le gestionnaire travaux"
-
-
-
 #: templates/land/land_detail_fragment.html:57
 #: templates/land/signagemanagementedge_list.html:8
 msgid "Add signage management edge"
 msgstr "Renseigner le gestionnaire signalétique"
-
-msgid "Add a new signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
-
-
 
 #: templates/land/land_listactions_fragment.html:8
 #: templates/land/land_listactions_fragment.html:10
@@ -230,3 +203,21 @@ msgstr "Gestion foncière"
 #: templates/land/land_listactions_fragment.html:17
 msgid "Competence zones"
 msgstr "Zones de compétence"
+
+#~ msgid "Center on"
+#~ msgstr "Centrer sur"
+
+#~ msgid "Add a new competence edge"
+#~ msgstr "Renseigner l'organisme compétent"
+
+#~ msgid "Add a new land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add a new physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add a new work management edge"
+#~ msgstr "Renseigner le gestionnaire travaux"
+
+#~ msgid "Add a new signage management edge"
+#~ msgstr "Renseigner le gestionnaire signalétique"
