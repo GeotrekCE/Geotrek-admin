@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 class Trek(MapEntityMixin, Topology):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True)
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True)
     published = models.BooleanField(verbose_name=_(u"Published"))
 
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
@@ -30,38 +30,38 @@ class Trek(MapEntityMixin, Topology):
     min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
     max_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Maximum elevation"))
 
-    description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
-    description = models.TextField(verbose_name=_(u"Description"))
-    ambiance = models.TextField(verbose_name=_(u"Ambiance"))
-    access = models.TextField(verbose_name=_(u"Access"))
+    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True)
+    description = models.TextField(verbose_name=_(u"Description"), blank=True)
+    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True)
+    access = models.TextField(verbose_name=_(u"Access"), blank=True)
     disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
+    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
 
-    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
-    parking_location = models.PointField(srid=settings.SRID, spatial_index=False)
+    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True)
+    parking_location = models.PointField(srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
-    public_transport = models.TextField(verbose_name=_(u"Public transport"))
-    advice = models.TextField(verbose_name=_(u"Advice"))
+    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True)
+    advice = models.TextField(verbose_name=_(u"Advice"), blank=True)
 
     themes = models.ManyToManyField('Theme', related_name="treks",
-            verbose_name=_(u"Themes"))
+            blank=True, null=True, verbose_name=_(u"Themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-            verbose_name=_(u"Trek networks"))
+            blank=True, null=True, verbose_name=_(u"Trek networks"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
-            verbose_name=_(u"Usages"))
+            blank=True, null=True, verbose_name=_(u"Usages"))
 
-    route = models.ForeignKey('Route', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Route"))
+    route = models.ForeignKey('Route', related_name='treks',
+            blank=True, null=True, verbose_name=_(u"Route"))
 
-    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Difficulty level"))
+    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
+            blank=True, null=True, verbose_name=_(u"Difficulty level"))
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-            verbose_name=_(u"Web links"))
+            blank=True, null=True, verbose_name=_(u"Web links"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -99,6 +99,8 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def serializable_difficulty(self):
+        if not self.difficulty:
+            return None
         return {'id': self.difficulty.pk,
                 'label': self.difficulty.difficulty}
 
@@ -126,6 +128,8 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def serializable_parking_location(self):
+        if not self.parking_location:
+            return None
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
 
     @property

@@ -15,7 +15,7 @@ from .models import Trek, POI, WebLink
 
 
 class TrekForm(TopologyForm):
-    parking_location = forms.gis.GeometryField(widget=PointWidget)
+    parking_location = forms.gis.GeometryField(widget=PointWidget, required=False)
 
     modelfields = (
         Div(
@@ -65,6 +65,8 @@ class TrekForm(TopologyForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(
                                                 choices=self.fields['web_links'].choices, 
                                                 add_url=WebLink.get_add_url())
+        # Make sure name is required, in default language
+        self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
     class Meta(TopologyForm.Meta):
         model = Trek

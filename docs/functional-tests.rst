@@ -2166,3 +2166,11 @@ Fixé.
 -----------------------------------------------------------------------------
 
 Fixé.
+
+#390 - [BUG] Formulaire itinéraire - champs obligatoires
+--------------------------------------------------------
+
+Ne sont désormais obligatoires que les champs suivants :
+
+* Nom dans la langue par défaut
+* Trajet
