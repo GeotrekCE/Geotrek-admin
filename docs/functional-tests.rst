@@ -2156,7 +2156,6 @@ Sprint 10 - Version 0.10.0
 
 * Bibliothèque de catégories de liens avec picto ajoutée.
 
-
 #393 - [BUG] Les itinéraires non publiés n'apparaissent pas sur la carte recherche
 ----------------------------------------------------------------------------------
 
@@ -2173,4 +2172,12 @@ Fixé.
 Ne sont désormais obligatoires que les champs suivants :
 
 * Nom dans la langue par défaut
-* Trajet
+* Topologie (trajet)
+
+#387 - Améliorer formulaire itinéraire
+--------------------------------------
+
+La carte de saisie parking s'ajuste à la position de la carte de saisie itinéraire (à terme, il serait évidemment
+préferrable de n'avoir qu'une seule carte).
+
+Si une erreur de saisie survient sur l'onglet "Avancé", alors l'onglet s'affiche en rouge et s'active par défaut.

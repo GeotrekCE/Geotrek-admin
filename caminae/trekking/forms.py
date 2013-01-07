@@ -21,8 +21,8 @@ class TrekForm(TopologyForm):
         Div(
             HTML("""
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                <li><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (_("Main"), _("Advanced"))),
             Div(
                 Div(
@@ -50,7 +50,7 @@ class TrekForm(TopologyForm):
                     'networks',
                     'usages',
                     'web_links',
-                    css_id="advanced",
+                    css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"
                 ),
                 css_class="tab-content"
@@ -65,7 +65,7 @@ class TrekForm(TopologyForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(
                                                 choices=self.fields['web_links'].choices, 
                                                 add_url=WebLink.get_add_url())
-        # Make sure name is required, in default language
+        # Make sure (force) that name is required, in default language only
         self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
     class Meta(TopologyForm.Meta):

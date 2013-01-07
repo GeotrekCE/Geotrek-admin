@@ -1,1 +1,28 @@
 {% extends "mapentity/entity_form.html" %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            /* Show advanced tab if error in there */
+            if ($('.tab-content #advanced .error').length > 0) {
+                $('#tab-advanced a').addClass('error').click();
+            }
+
+            // Initialize map states on tab change
+            $('.nav-tabs a').on('shown', function (e) {
+                if (e.target.getAttribute('href') == '#advanced') {
+                    var parkingMap = window.maps[0],
+                        topoMap =  window.maps[1];
+                    console.assert(parkingMap._container.getAttribute('id'), 'map_parking_location');
+                    // Force redraw
+                    parkingMap.invalidateSize();
+                    // Synchronize map center of parking from topology
+                    topoMap.on('move', function () {
+                        parkingMap.setView(topoMap.getCenter(), topoMap.getZoom());
+                    })
+                }
+            })
+        });
+    </script>
+{% endblock extrabody %}
