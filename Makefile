@@ -28,14 +28,14 @@ bin/casperjs: bin/phantomjs
 	# Install system-wide binary (require sudo)
 	sudo ln -sf $(root)/bin/casperjs /usr/local/bin/casperjs
 
-bin/buildout: etc/settings.ini
+bin/python:
 	virtualenv .
 	mkdir -p lib/eggs
 	wget http://python-distribute.org/bootstrap.py
 	bin/python bootstrap.py
 	rm bootstrap.py
 
-install: bin/buildout bin/casperjs
+install: etc/settings.ini bin/buildout bin/casperjs
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;
@@ -49,16 +49,16 @@ clean: clean_harmless
 
 .PHONY: all_makemessages all_compilemessages
 
-all_makemessages: bin/
+all_makemessages: install
 	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
 
-all_compilemessages: bin/
+all_compilemessages: install
 	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
 release:
 	git archive --format=zip --prefix="caminae-$(version)/" $(version) > ../caminae-src-$(version).zip
 
-unit_tests: bin/buildout clean_harmless
+unit_tests: install clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/develop update -f
 	bin/django jenkins --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
@@ -73,7 +73,7 @@ functional_tests:
 
 tests: unit_tests functional_tests
 
-serve: bin/buildout clean_harmless all_compilemessages
+serve: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
 	bin/django runcserver $(listen)
@@ -83,7 +83,7 @@ load_data:
 	bin/django loaddata development-pne
 	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
-deploy: bin/buildout clean_harmless all_compilemessages
+deploy: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-prod.cfg
 	touch lib/parts/django/django_extrasettings/settings_production.py
 	bin/develop update -f
