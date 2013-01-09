@@ -95,25 +95,21 @@ class Path(MapEntityMixin, StructureRelated):
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        from string import Template
         if not self.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
         if point.srid != settings.SRID:
             point.transform(settings.SRID)
         cursor = connection.cursor()
-        sql = Template("""
+        sql = """
         SELECT position, distance
-        FROM ft_troncon_interpolate($pk, ST_GeomFromText('POINT($x $y $z)',$srid))
+        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s %(z)s)',%(srid)s))
              AS (position FLOAT, distance FLOAT)
-        """)
-        cursor.execute(sql.substitute({
-            'pk': self.pk,
-            'x': point.x,
-            'y': point.y,
-            'z': 0,  # TODO: does it matter ?
-            'srid': settings.SRID,
-            'table': self._meta.db_table
-        }))
+        """ % {'pk': self.pk,
+               'x': point.x,
+               'y': point.y,
+               'z': 0,  # TODO: does it matter ?
+               'srid': settings.SRID}
+        cursor.execute(sql)
         result = cursor.fetchall()
         return result[0]
 
