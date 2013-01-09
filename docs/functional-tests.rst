@@ -2181,3 +2181,9 @@ La carte de saisie parking s'ajuste à la position de la carte de saisie itinér
 préferrable de n'avoir qu'une seule carte).
 
 Si une erreur de saisie survient sur l'onglet "Avancé", alors l'onglet s'affiche en rouge et s'active par défaut.
+
+#385 - Découpage de tronçons - superposition
+--------------------------------------------
+
+Si lors de la saisie du tronçon, une partie est superposée avec un tronçon existant, une erreur est levée et le
+champ carte du formulaire est marqué invalide.
