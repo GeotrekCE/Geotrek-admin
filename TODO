@@ -10,7 +10,8 @@ Known problems
 * Breakpoints on onLayerAdd and onLayerRemove triggered twice at page load which
   seems to indicate that some layers (or features?) are unecessarily loaded. To
   further investigated.
-
+* mapentity/widgets.py does too much. Should not transform data. If 'abc' is submitted in
+  parking location field, error is silent.
 
 ==========
 Soon...
