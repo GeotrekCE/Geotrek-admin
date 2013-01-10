@@ -135,10 +135,6 @@ ALTER TABLE troncons DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
 ALTER TABLE troncons ADD CONSTRAINT troncons_geom_issimple CHECK (ST_IsSimple(geom));
 
 
-ALTER TABLE troncons DROP CONSTRAINT IF EXISTS troncons_geom_overlap;
-ALTER TABLE troncons ADD CONSTRAINT troncons_geom_overlap CHECK (check_path_not_overlap(id, geom));
-
-
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------

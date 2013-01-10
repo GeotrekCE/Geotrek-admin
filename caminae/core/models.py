@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.common.utils import elevation_profile, classproperty
+from caminae.common.utils import elevation_profile, classproperty, sqlfunction
 from caminae.mapentity.models import MapEntityMixin
 
 
@@ -89,6 +89,20 @@ class Path(MapEntityMixin, StructureRelated):
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
         return cls.objects.all().distance(point).order_by('distance')[0]
+
+    @classmethod
+    def disjoint(cls, geom, pk):
+        """
+        Returns True if this path does not overlap another.
+        TODO: this could be a constraint at DB-level. But this would mean that
+        path never ever overlap, even during trigger computation, like path splitting...
+        """
+        wkt = "ST_GeomFromText('%s', %s)" % (data, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', pk, wkt)
+        return disjoint[0]
+
+    def is_overlap(self):
+        return not Path.disjoint(self.geom, self.pk)
 
     def interpolate(self, point):
         """
