@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
 from caminae.authent.models import StructureRelated
-from caminae.common.utils import elevation_profile, classproperty
+from caminae.common.utils import elevation_profile, classproperty, sqlfunction
 from caminae.mapentity.models import MapEntityMixin
 
 
@@ -90,30 +90,40 @@ class Path(MapEntityMixin, StructureRelated):
             point = point.transform(settings.SRID, clone=True)
         return cls.objects.all().distance(point).order_by('distance')[0]
 
+    @classmethod
+    def disjoint(cls, geom, pk):
+        """
+        Returns True if this path does not overlap another.
+        TODO: this could be a constraint at DB-level. But this would mean that
+        path never ever overlap, even during trigger computation, like path splitting...
+        """
+        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
+        return disjoint[0]
+
+    def is_overlap(self):
+        return not Path.disjoint(self.geom, self.pk)
+
     def interpolate(self, point):
         """
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        from string import Template
         if not self.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
         if point.srid != settings.SRID:
             point.transform(settings.SRID)
         cursor = connection.cursor()
-        sql = Template("""
+        sql = """
         SELECT position, distance
-        FROM ft_troncon_interpolate($pk, ST_GeomFromText('POINT($x $y $z)',$srid))
+        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s %(z)s)',%(srid)s))
              AS (position FLOAT, distance FLOAT)
-        """)
-        cursor.execute(sql.substitute({
-            'pk': self.pk,
-            'x': point.x,
-            'y': point.y,
-            'z': 0,  # TODO: does it matter ?
-            'srid': settings.SRID,
-            'table': self._meta.db_table
-        }))
+        """ % {'pk': self.pk,
+               'x': point.x,
+               'y': point.y,
+               'z': 0,  # TODO: does it matter ?
+               'srid': settings.SRID}
+        cursor.execute(sql)
         result = cursor.fetchall()
         return result[0]
 

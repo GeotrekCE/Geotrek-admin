@@ -1,5 +1,8 @@
 from math import isnan
 
+from django.conf import settings
+from django.db import IntegrityError
+from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString
 
@@ -68,6 +71,14 @@ class PathForm(CommonForm):
               'valid')
     geomfields = ('geom',
                   'reverse_geom',)
+
+    def clean_geom(self):
+        data = self.cleaned_data['geom']
+        if not data.simple:
+            raise forms.ValidationError("Geometry is not simple.")
+        if not Path.disjoint(data, self.cleaned_data.get('pk', '-1')):
+            raise forms.ValidationError("Geometry overlaps another.")
+        return data
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)

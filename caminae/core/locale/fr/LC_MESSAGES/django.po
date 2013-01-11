@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-07 11:58+0100\n"
+"POT-Creation-Date: 2013-01-07 12:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,15 +21,15 @@ msgstr ""
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
-#: filters.py:16 filters.py:28
+#: filters.py:13
 msgid "length"
 msgstr "Longueur"
 
-#: filters.py:17 filters.py:29 models.py:32 models.py:516
+#: filters.py:14 models.py:32 models.py:516
 msgid "Name"
 msgstr "Nom"
 
-#: filters.py:18 filters.py:30 models.py:33 models.py:519
+#: filters.py:15 models.py:33 models.py:519
 msgid "Comments"
 msgstr "Commentaires"
 
@@ -231,7 +231,7 @@ msgstr "Altitude (m)"
 msgid "Distance (m)"
 msgstr "Distance (m)"
 
-#: templates/core/path_list.html:9 templates/core/path_list.html.py:11
+#: templates/core/path_list.html:8 templates/core/path_list.html.py:10
 msgid "Add a path"
 msgstr "Ajouter un tronçon"
 

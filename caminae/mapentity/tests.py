@@ -71,7 +71,6 @@ class MapEntityTest(LiveServerTestCase):
 
         # Document layer either
         obj = self.modelfactory.create()
-        print obj.date_insert, obj.date_update
         # Will have to mock screenshot, though.
         with open(obj.get_map_image_path(), 'w') as f:
             f.write('This is fake PNG file')
@@ -118,6 +117,34 @@ class MapEntityTest(LiveServerTestCase):
                 # the col should not contains any html tags
                 self.assertEquals(force_unicode(col), html.strip_tags(col))
 
+    def _post_form(self, url):
+        # no data
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        
+        bad_data, form_error = self.get_bad_data()
+        response = self.client.post(url, bad_data)
+        self.assertEqual(response.status_code, 200)
+
+        form = self.get_form(response)
+
+        fields_errors = form.errors[bad_data.keys()[0]]
+        for err in to_list(form_error):
+            self.assertTrue(err in fields_errors)
+
+        response = self.client.post(url, self.get_good_data())
+        if response.status_code != 302:
+            form = self.get_form(response)
+            self.assertEqual(form.errors, [])  # this will show form errors
+
+        self.assertEqual(response.status_code, 302)  # success, redirects to detail view
+
+    def _post_add_form(self):
+        self._post_form(self.model.get_add_url())
+
+    def _post_update_form(self, obj):
+        self._post_form(obj.get_update_url())
+
     def test_crud_status(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -134,29 +161,12 @@ class MapEntityTest(LiveServerTestCase):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 200)
 
-        for url in [self.model.get_add_url(), obj.get_update_url()]:
-            # no data
-            response = self.client.post(url)
-            self.assertEqual(response.status_code, 200)
-            
-            bad_data, form_error = self.get_bad_data()
-            response = self.client.post(url, bad_data)
-            self.assertEqual(response.status_code, 200)
-
-            form = self.get_form(response)
-
-            fields_errors = form.errors[bad_data.keys()[0]]
-            for err in to_list(form_error):
-                self.assertTrue(err in fields_errors)
-
-            response = self.client.post(url, self.get_good_data())
-            if response.status_code != 302:
-                self.assertEqual(form.errors, [])  # this will show form errors
-                
-            self.assertEqual(response.status_code, 302)  # success, redirects to detail view
+        self._post_update_form(obj)
 
         response = self.client.get(obj.get_delete_url())
         self.assertEqual(response.status_code, 200)
+
+        self._post_add_form()
 
     def test_map_image(self):
         if self.model is None:

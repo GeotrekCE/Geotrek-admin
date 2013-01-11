@@ -7,7 +7,7 @@ upstream tile_server {
 }
 
 upstream conversion_server {
-    server ${parts['gunicorn-topdfserver-conf'].bind} fail_timeout=0;
+    server ${parts['gunicorn-convertit-conf'].bind} fail_timeout=0;
 }
 
 server {

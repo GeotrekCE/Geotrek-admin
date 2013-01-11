@@ -30,6 +30,7 @@ class UsageFactory(factory.Factory):
     FACTORY_FOR = models.Usage
 
     usage = factory.Sequence(lambda n: u"usage %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class RouteFactory(factory.Factory):
@@ -44,20 +45,11 @@ class DifficultyLevelFactory(factory.Factory):
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
 
 
-class DestinationFactory(factory.Factory):
-    FACTORY_FOR = models.Destination
-
-    destination = factory.Sequence(lambda n: u"destination %s" % n)
-    pictogram =  dummy_filefield_as_sequence('pictogram %s')
-
-
 class WebLinkFactory(factory.Factory):
     FACTORY_FOR = models.WebLink
 
     name = factory.Sequence(lambda n: u"web link name %s" % n)
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
-
-    thumbnail = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class TrekFactory(TopologyFactory):
@@ -77,12 +69,12 @@ class TrekFactory(TopologyFactory):
     description_teaser = factory.Sequence(lambda n: u"description_teaser %s" % n)
     description = factory.Sequence(lambda n: u"description %s" % n)
     ambiance = factory.Sequence(lambda n: u"ambiance %s" % n)
+    access = factory.Sequence(lambda n: u"access %s" % n)
     disabled_infrastructure = factory.Sequence(lambda n: u"disabled_infrastructure %s" % n)
     # 60 minutes (1 hour)
     duration = 60
 
     is_park_centered = False
-    is_transborder = False
 
     advised_parking = factory.Sequence(lambda n: u"Advised parking %s" % n)
     parking_location = Point(1, 1)
@@ -92,7 +84,6 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
-    destination = factory.SubFactory(DestinationFactory)
 
 
 class TrekRelationshipFactory(factory.Factory):

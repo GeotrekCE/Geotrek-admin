@@ -25,7 +25,6 @@ Go into the extracted directory, just follow the installation process :
 
 ::
 
-	chmod +x install.sh
     ./install.sh
 
 You will mainly be prompt for editing the base configuration file (``settings.ini``),
@@ -83,6 +82,13 @@ Load example data (used in development) :
 Among other things, an administrator "admin"/"admin" will be created.
 
 
+:note:
+
+    This command makes use of ``GDAL`` and ``raster2pgsql`` internally. It
+    therefore supports all GDAL raster input formats. You can list these formats
+    with the command ``raster2pgsql -G``.
+
+
 Without Initial Data
 --------------------
 
@@ -97,6 +103,11 @@ or change its password :
 ::
 
     bin/django changepassword --username admin <password>
+
+You might also need to deploy logo images in the following places :
+
+* ``var/media/upload/logo-header.png``
+* ``var/media/upload/logo-login.png``
 
 
 =============
@@ -143,13 +154,6 @@ Expected columns in table/view are :
     Caminae can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
 
-:note:
-
-    This command makes use of ``GDAL`` and ``raster2pgsql`` internally. It
-    therefore supports all GDAL raster input formats. You can list these formats
-    with the command ``raster2pgsql -G``.
-
-
 ===========
 DEVELOPMENT
 ===========
@@ -177,7 +181,7 @@ For PDF conversion server, run an instance in a separate terminal :
 
 ::
 
-    bin/pserve src/topdfserver/development.ini
+    bin/pserve lib/src/convertit/development.ini
 
 =======
 AUTHORS

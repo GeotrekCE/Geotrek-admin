@@ -99,6 +99,8 @@ done
 function ubuntu_precise {
     set -x
 
+    sudo locale-gen fr_FR.UTF-8
+    sudo dpkg-reconfigure locales
     sudo apt-get update > /dev/null
     sudo apt-get install -y python-software-properties
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
@@ -112,24 +114,16 @@ function ubuntu_precise {
     sudo apt-get install -y libreoffice unoconv
 
     # Default settings if not any
-    mkdir -p etc/
+    make install
     settingsfile=etc/settings.ini
-    settingssample=caminae/conf/settings.ini.sample
-    if [ ! -f $settingsfile ]; then
-        if [ -f $settingssample ]; then
-            cp $settingssample $settingsfile
-        else
-            echo "# WARNING : empty configuration ! Use model file 'settings.ini.sample'" > $settingsfile
-        fi
-    else
-        migrate_settings $settingsfile $settingssample
-    fi
+    settingssample=conf/settings.ini.sample
+    migrate_settings $settingsfile $settingssample
     
     # Prompt user to edit/review settings
     vim -c 'startinsert' $settingsfile
 
     #
-    # If database is local, check it !
+    # If database is local, install it !
     #----------------------------------
     dbname=$(ini_value $settingsfile dbname)
     dbhost=$(ini_value $settingsfile dbhost)
@@ -155,10 +149,14 @@ function ubuntu_precise {
             sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
             
             # Open local and host connection for this user as md5
-            sudo cat >> /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
+            sudo sed -i "/DISABLE/a \
+# Automatically added by Caminae installation :\
+local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
+
+            cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 # Automatically added by Caminae installation :
-local    ${dbname}    ${dbuser}        md5
-host     ${dbname}    ${dbuser}        md5
+local        ${dbuser}        md5
+host     ${dbname}            md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
@@ -166,7 +164,7 @@ _EOF_
     
     # Check that database connection is correct
     dbport=$(ini_value $settingsfile dbport)
-    export PGPASSWORD=$dbpassword   
+    export PGPASSWORD=$dbpassword
     psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
     result=$?
     export PGPASSWORD=
@@ -176,35 +174,6 @@ _EOF_
         echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
         exit 4
     fi
-
-
-    mkdir -p lib/
-    cd lib/
-
-    if [ ! -f /usr/local/bin/phantomjs ]; then
-        arch=$(uname -p)
-        if [ "${arch}" == "x86_64" ] ; then
-            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
-        else
-            wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-i686.tar.bz2 -O phantomjs.tar.bz2
-        fi
-        tar -jxvf phantomjs.tar.bz2
-        rm phantomjs.tar.bz2
-        cd *phantomjs*
-        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/phantomjs
-        cd ..
-    fi
-
-    if [ ! -f /usr/local/bin/casperjs ]; then
-        wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC1 -O casperjs.zip
-        unzip -o casperjs.zip > /dev/null
-        rm casperjs.zip
-        cd *casperjs*
-        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-        cd ..
-    fi
-
-    cd ..
 
     if $dev ; then
         # A postgis template is required for django tests

@@ -34,15 +34,23 @@
             <td>{{ trek.name }}</td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"description" }}</th>
+            <td>{{ trek.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"ambiance" }}</th>
+            <td>{{ trek.ambiance|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"access" }}</th>
+            <td>{{ trek.access|safe }}</td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
                 {% for t in trek.themes.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    {% if t in trek.main_themes.all %}
-                        <li>{{ t }}</li>
-                    {% else %}
-                        <li><strong>{{ t }}</strong><i class="icon-star"></i></li>
-                    {% endif %}
+                    <li>{{ t }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>

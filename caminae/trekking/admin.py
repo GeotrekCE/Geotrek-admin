@@ -5,7 +5,7 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, Destination, WebLink
+    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink, WebLinkCategory
 )
 
 
@@ -15,7 +15,7 @@ class POITypeAdmin(TranslationAdmin):
 
 
 class ThemeAdmin(TranslationAdmin):
-    list_display = ('label',)
+    list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 
@@ -25,7 +25,7 @@ class TrekNetworkAdmin(TranslationAdmin):
 
 
 class UsageAdmin(TranslationAdmin):
-    list_display = ('usage',)
+    list_display = ('usage', 'pictogram_img')
     search_fields = ('usage',)
 
 
@@ -39,14 +39,14 @@ class DifficultyLevelAdmin(TranslationAdmin):
     search_fields = ('difficulty',)
 
 
-class DestinationAdmin(TranslationAdmin):
-    list_display = ('destination',)
-    search_fields = ('destination',)
-
-
 class WebLinkAdmin(TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
+
+
+class WebLinkCategoryAdmin(TranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label', )
 
 
 # Register previously defined modeladmins
@@ -57,8 +57,8 @@ trek_admin_to_register = [
     (Usage, UsageAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
-    (Destination, DestinationAdmin),
     (WebLink, WebLinkAdmin),
+    (WebLinkCategory, WebLinkCategoryAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

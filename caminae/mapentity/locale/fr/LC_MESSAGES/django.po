@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-07 11:58+0100\n"
+"POT-Creation-Date: 2013-01-07 12:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,29 +22,41 @@ msgstr ""
 msgid "Any year"
 msgstr "Année"
 
-#: views.py:308
+#: forms.py:19
+msgid "Cancel"
+msgstr "Annuler"
+
+#: forms.py:20
+msgid "Save changes"
+msgstr "Sauvegarder"
+
+#: tests.py:41
+msgid "Topology is not valid."
+msgstr "Topologie invalide"
+
+#: views.py:307
 #, python-format
 msgid "Add a new %s"
 msgstr "Ajouter un nouveau %s"
 
-#: views.py:321
+#: views.py:320
 msgid "Created"
 msgstr "Créé"
 
-#: views.py:325 views.py:358
+#: views.py:324 views.py:357
 msgid "Your form contains errors"
 msgstr "Le formulaire contient des erreurs"
 
-#: views.py:341
+#: views.py:340
 #, python-format
 msgid "Edit %s"
 msgstr "Éditer %s"
 
-#: views.py:354
+#: views.py:353
 msgid "Saved"
 msgstr "Sauvegardé"
 
-#: views.py:407
+#: views.py:406
 #, python-format
 msgid "Unknown serialization format '%s'"
 msgstr "Format de sérialization inconnnu '%s'"
@@ -74,12 +86,12 @@ msgstr "ODT"
 msgid "PDF"
 msgstr "PDF"
 
-#: templates/mapentity/entity_detail.html:35
-#: templates/mapentity/entity_form.html:31
+#: templates/mapentity/entity_detail.html:39
+#: templates/mapentity/entity_form.html:29
 msgid "Attached files"
 msgstr "Fichiers liés"
 
-#: templates/mapentity/entity_detail.html:50
+#: templates/mapentity/entity_detail.html:55
 msgid "No map available for this object."
 msgstr "Pas de carte disponible pour cet objet."
 
@@ -91,54 +103,78 @@ msgstr "Aucun(e)"
 msgid "Delete"
 msgstr "Supprimer"
 
-#: templates/mapentity/entity_form.html:33
+#: templates/mapentity/entity_form.html:31
 msgid "New file attachment"
 msgstr "Nouveau fichier lié"
 
-#: templates/mapentity/entity_form.html:38
+#: templates/mapentity/entity_form.html:36
 msgid "Existing file attachment"
 msgstr "Fichiers liés existant"
 
-#: templates/mapentity/entity_list.html:10
+#: templates/mapentity/entity_list.html:15
 msgid "Path"
 msgstr "Tronçon"
 
-#: templates/mapentity/entity_list.html:11
+#: templates/mapentity/entity_list.html:16
 msgid "Intervention"
 msgstr "Intervention"
 
-#: templates/mapentity/entity_list.html:12
+#: templates/mapentity/entity_list.html:17
 msgid "Project"
 msgstr "Chantier"
 
-#: templates/mapentity/entity_list.html:13
+#: templates/mapentity/entity_list.html:18
 msgid "Signage"
 msgstr "Signalétique"
 
-#: templates/mapentity/entity_list.html:14
+#: templates/mapentity/entity_list.html:19
 msgid "Infrastructure"
 msgstr "Aménagement"
 
-#: templates/mapentity/entity_list.html:15
+#: templates/mapentity/entity_list.html:20
 msgid "Trek"
 msgstr "Itinéraire"
 
-#: templates/mapentity/entity_list.html:16
+#: templates/mapentity/entity_list.html:21
 msgid "POI"
 msgstr "POI"
 
-#: templates/mapentity/entity_list.html:38
+#: templates/mapentity/entity_list.html:51
+msgid "CSV"
+msgstr ""
+
+#: templates/mapentity/entity_list.html:52
+msgid "Shapefile"
+msgstr ""
+
+#: templates/mapentity/entity_list.html:53
+msgid "GPX"
+msgstr ""
+
+#: templates/mapentity/entity_list.html:102
+msgid "Save map as image"
+msgstr "Sauvegarder l'image"
+
+#: templates/mapentity/entity_list.html:154
+msgid "Search"
+msgstr "Rechercher"
+
+#: templates/mapentity/entity_list_filter_fragment.html:3
+#: templates/mapentity/entity_list_filter_fragment.html:13
 msgid "Filter"
 msgstr "Filtrer"
 
-#: templates/mapentity/entity_list.html:91
-msgid "Filter list and map"
-msgstr "Filtrer la liste et la carte"
+#: templates/mapentity/entity_list_filter_fragment.html:40
+msgid "Current criteria"
+msgstr "Critères choisis"
 
-#: templates/mapentity/entity_list.html:136
-msgid "Save map as image"
-msgstr "Sauvegarder l'image"
+#: templates/mapentity/entity_list_filter_fragment.html:77
+msgid "No filter"
+msgstr "Aucun filtre"
 
 #: templates/mapentity/popupplus.html:8
 msgid "Add"
 msgstr "Ajouter"
+
+#~ msgid "Filter list and map"
+#~ msgstr "Filtrer la liste et la carte"

@@ -1,43 +1,10 @@
 [
     {
         "pk": 1,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Histoire",
-            "label_fr": "Histoire",
-            "label_it": "Storia",
-            "label_en": "History"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Nature",
-            "label_fr": "Nature",
-            "label_it": "Natura",
-            "label_en": "Nature"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "",
-            "label": "Sport",
-            "label_fr": "Sport",
-            "label_it": "Sport",
-            "label_en": "Sport"
-        }
-    },
-    {
-        "pk": 1,
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Picolo patrimonio",
-            "pictogram": "upload/church.png",
+            "pictogram": "upload/heritage.png",
             "label_en": "Small patrimony",
             "label_fr": "Petit patrimoine",
             "label": "Petit patrimoine"
@@ -160,7 +127,6 @@
             "is_park_centered": false,
             "name_fr": "Passer la chapelle",
             "description_teaser_fr": null,
-            "is_transborder": false,
             "ambiance": "",
             "usages": [
                 1
@@ -170,14 +136,10 @@
                 1,
                 2
             ],
-            "main_themes": [
-                1
-            ],
             "arrival_en": "Chabottes",
             "departure_en": "Ancelle",
             "description_fr": null,
             "duration": 1,
-            "destination": null,
             "arrival_it": "Chabottes",
             "ascent": 0,
             "advised_parking": "Ancelle",
@@ -235,10 +197,55 @@
         "pk": 1,
         "model": "trekking.usage",
         "fields": {
-            "usage": "Casual",
-            "usage_en": "Casual",
-            "usage_it": "Promenada",
-            "usage_fr": "Promenade"
+            "pictogram": "upload/usage-mountainbike.png",
+            "usage": "Mountain Bike",
+            "usage_en": "Mountain Bike",
+            "usage_it": "Bici Montana",
+            "usage_fr": "VTT"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-bike.png",
+            "usage": "Cycling",
+            "usage_en": "Cycling",
+            "usage_it": "Bicicleta",
+            "usage_fr": "Vélo"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-horse.png",
+            "usage": "Horse",
+            "usage_en": "Horse",
+            "usage_it": "Caballo",
+            "usage_fr": "Cheval"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-fauna.png",
+            "label": "Fauna",
+            "label_it": "Fona",
+            "label_en": "Fauna",
+            "label_fr": "Faune"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-flora.png",
+            "label": "Flora",
+            "label_it": "Flora",
+            "label_en": "Flora",
+            "label_fr": "Flore"
         }
     },
     {
@@ -255,10 +262,53 @@
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
+            "difficulty_it": "Confirmado",
+            "difficulty": "Rookie",
+            "difficulty_fr": "Confirmé",
+            "difficulty_en": "Rookie"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.difficultylevel",
+        "fields": {
             "difficulty_it": "Duro",
             "difficulty": "Hard",
             "difficulty_fr": "Difficile",
             "difficulty_en": "Hard"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Refuge",
+            "label_it": "Refugio",
+            "label_fr": "Refuge",
+            "label_en": "Refugee",
+            "pictogram": "upload/weblink-refuge.png"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Map",
+            "label_it": "Carto",
+            "label_fr": "Carte",
+            "label_en": "Map",
+            "pictogram": "upload/weblink-map.png"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Bus",
+            "label_it": "Bus",
+            "label_fr": "Bus",
+            "label_en": "Bus",
+            "pictogram": "upload/weblink-bus.png"
         }
     },
     {
@@ -270,7 +320,7 @@
             "name": "FE",
             "url": "http://fe.com",
             "name_en": "FE",
-            "thumbnail": "upload/fe.jpg"
+            "category": 1
         }
     },
 
@@ -309,7 +359,7 @@
             "description_fr": "<p>Tr&egrave;s belle</p>",
             "description_it": "<p>Molto bella</p>",
             "name_en": "Chapel",
-            "type": 1,
+            "type": 4,
             "description": "<p>Very nice</p>"
         }
     }

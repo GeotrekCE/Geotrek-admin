@@ -20,11 +20,14 @@ from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 
 
 class TrekLayer(MapEntityLayer):
-    queryset = Trek.objects.existing().filter(published=True)
+    queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
-              'duration', 'ascent', 'serializable_themes',
+              'description', 'description_teaser', 'access', 'ambiance',
+              'duration', 'ascent', 'descent', 'min_elevation', 'max_elevation',
+              'serializable_themes', 'serializable_weblinks', 'is_park_centered',
               'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'is_transborder', 'serializable_districts']
+              'serializable_districts', 'serializable_parking_location',
+              'published']
 
 
 class TrekList(MapEntityList):
@@ -42,7 +45,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
 
 
 class TrekJsonDetail(BaseDetailView):
-    queryset = Trek.objects.existing().filter(published=True)
+    queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
               'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts']
@@ -69,7 +72,7 @@ class TrekJsonDetail(BaseDetailView):
 
 
 class TrekGPXDetail(BaseDetailView):
-    queryset = Trek.objects.existing().filter(published=True)
+    queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
         geom_field = 'geom'
@@ -81,7 +84,7 @@ class TrekGPXDetail(BaseDetailView):
 
 
 class TrekKMLDetail(BaseDetailView):
-    queryset = Trek.objects.existing().filter(published=True)
+    queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
         trek = self.get_object()
@@ -91,7 +94,7 @@ class TrekKMLDetail(BaseDetailView):
 
 
 class TrekJsonProfile(BaseDetailView):
-    queryset = Trek.objects.existing().filter(published=True)
+    queryset = Trek.objects.existing()
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -102,7 +105,7 @@ class TrekJsonProfile(BaseDetailView):
 class TrekPOIGeoJSON(GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    fields = ['serializable_type']
+    fields = ['name', 'description', 'serializable_type']
 
     def get_queryset(self):
         try:

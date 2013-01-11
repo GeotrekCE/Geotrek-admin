@@ -7,3 +7,8 @@ stop on starting shutdown
 exec ${parts['buildout'].directory}/bin/supervisord --nodaemon
 
 respawn
+
+# This is required to ensure all started processes to be stopped before Upstart times out
+pre-stop script
+  ${parts['buildout'].directory}/bin/supervisorctl stop all
+end script

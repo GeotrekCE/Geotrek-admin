@@ -1,4 +1,5 @@
 import logging
+import mimetypes
 from HTMLParser import HTMLParser
 
 from django.conf import settings
@@ -20,8 +21,8 @@ logger = logging.getLogger(__name__)
 class Trek(MapEntityMixin, Topology):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128)
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True)
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True)
     published = models.BooleanField(verbose_name=_(u"Published"))
 
     ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
@@ -29,44 +30,38 @@ class Trek(MapEntityMixin, Topology):
     min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
     max_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Maximum elevation"))
 
-    description_teaser = models.TextField(verbose_name=_(u"Description teaser"))
-    description = models.TextField(verbose_name=_(u"Description"))
-    ambiance = models.TextField(verbose_name=_(u"Ambiance"))
+    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True)
+    description = models.TextField(verbose_name=_(u"Description"), blank=True)
+    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True)
+    access = models.TextField(verbose_name=_(u"Access"), blank=True)
     disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration")) # in minutes
+    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True) # in minutes
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
-    is_transborder = models.BooleanField(verbose_name=_(u"Is transborder"))
 
-    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128)
-    parking_location = models.PointField(srid=settings.SRID, spatial_index=False)
+    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True)
+    parking_location = models.PointField(srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
-    public_transport = models.TextField(verbose_name=_(u"Public transport"))
-    advice = models.TextField(verbose_name=_(u"Advice"))
+    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True)
+    advice = models.TextField(verbose_name=_(u"Advice"), blank=True)
 
     themes = models.ManyToManyField('Theme', related_name="treks",
-            verbose_name=_(u"Themes"))
-
-    main_themes = models.ManyToManyField('Theme', related_name="treks_main",
-            verbose_name=_(u"Main themes"))
+            blank=True, null=True, verbose_name=_(u"Themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-            verbose_name=_(u"Trek networks"))
+            blank=True, null=True, verbose_name=_(u"Trek networks"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
-            verbose_name=_(u"Usages"))
+            blank=True, null=True, verbose_name=_(u"Usages"))
 
-    route = models.ForeignKey('Route', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Route"))
+    route = models.ForeignKey('Route', related_name='treks',
+            blank=True, null=True, verbose_name=_(u"Route"))
 
-    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Difficulty level"))
-
-    destination = models.ForeignKey('Destination', related_name='treks', null=True, blank=True,
-            verbose_name=_(u"Destination"))
+    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
+            blank=True, null=True, verbose_name=_(u"Difficulty level"))
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-            verbose_name=_(u"Web links"))
+            blank=True, null=True, verbose_name=_(u"Web links"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -104,6 +99,8 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def serializable_difficulty(self):
+        if not self.difficulty:
+            return None
         return {'id': self.difficulty.pk,
                 'label': self.difficulty.difficulty}
 
@@ -122,6 +119,18 @@ class Trek(MapEntityMixin, Topology):
     def serializable_districts(self):
         return [{'id': d.pk,
                  'name': d.name} for d in self.districts]
+
+    @property
+    def serializable_weblinks(self):
+        return [{'id': w.pk,
+                 'name': w.name,
+                 'url': w.url} for w in self.web_links.all()]
+
+    @property
+    def serializable_parking_location(self):
+        if not self.parking_location:
+            return None
+        return self.parking_location.transform(settings.API_SRID, clone=True).coords
 
     @property
     def elevation_profile(self):
@@ -177,12 +186,18 @@ class TrekNetwork(models.Model):
 class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
         db_table = 'usages'
 
     def __unicode__(self):
         return self.usage
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
 
 class Route(models.Model):
@@ -211,25 +226,19 @@ class DifficultyLevel(models.Model):
         return self.difficulty
 
 
-class Destination(models.Model):
-
-    destination = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
-
-    class Meta:
-        db_table = 'destination'
-        verbose_name = _(u"Destination")
-        verbose_name_plural = _(u"Destinations")
-
-    def __unicode__(self):
-        return self.destination
+class WebLinkManager(models.Manager):
+    def get_query_set(self):
+        return super(WebLinkManager, self).get_query_set().select_related('category')
 
 
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     url = models.URLField(verbose_name=_(u"URL"), max_length=128)
-    thumbnail = models.FileField(null=True, blank=True, verbose_name=_(u"Thumbnail"), upload_to=settings.UPLOAD_DIR)
+    category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
+                                 related_name='links', null=True, blank=True)
+
+    objects = WebLinkManager()
 
     class Meta:
         db_table = 'liens_web'
@@ -237,12 +246,32 @@ class WebLink(models.Model):
         verbose_name_plural = _(u"Web links")
 
     def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.url)
+        category =  "%s - " % self.category.label if self.category else ""
+        return u"%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
     @models.permalink
     def get_add_url(cls):
         return ('trekking:weblink_add', )
+
+
+class WebLinkCategory(models.Model):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    class Meta:
+        db_table = 'o_t_web_category'
+        verbose_name = _(u"Web link category")
+        verbose_name_plural = _(u"Web link categories")
+
+    def __unicode__(self):
+        return u"%s" % self.label
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
 
 class Theme(models.Model):
@@ -253,6 +282,10 @@ class Theme(models.Model):
     def __unicode__(self):
         return self.label
 
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
 
 class TrekRelationshipManager(models.Manager):
@@ -357,7 +390,11 @@ class POIType(models.Model):
     @property
     def serializable_pictogram(self):
         try:
-            return self.pictogram.read().encode('base64')
+            pictopath = self.pictogram.name
+            mimetype = mimetypes.guess_type(pictopath)
+            mimetype = mimetype[0] if mimetype else 'application/octet-stream'
+            encoded = self.pictogram.read().encode('base64').replace("\n", '')
+            return "%s;base64,%s" % (mimetype, encoded)
         except (IOError, ValueError), e:
             logger.warning(e)
             return ''

@@ -12,7 +12,7 @@ test_requirements = [
 
 setup(
     name='caminae',
-    version='1.0.dev0',
+    version=open(os.path.join(here, 'VERSION')).read().strip(),
     author='Makina Corpus',
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
@@ -22,7 +22,7 @@ setup(
         'django',  # pinned by buildout
         'South == 0.7.5',
         'psycopg2 == 2.4.1',
-        # 'GDAL == 1.9.1',  # installed by buildout, see include-dirs
+        'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'gpxpy == 0.7.1',
         'django-shapes == 0.2.0',
         'django-modeltranslation == 0.3.3',

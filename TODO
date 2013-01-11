@@ -10,7 +10,8 @@ Known problems
 * Breakpoints on onLayerAdd and onLayerRemove triggered twice at page load which
   seems to indicate that some layers (or features?) are unecessarily loaded. To
   further investigated.
-
+* mapentity/widgets.py does too much. Should not transform data. If 'abc' is submitted in
+  parking location field, error is silent.
 
 ==========
 Soon...
@@ -52,6 +53,21 @@ Soon...
 * Use localstorage instead of Django sessions for navigation history and last search
 
 * Remove core dependancies to other apps (registry?)
+    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py
+    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py#L68
+    <alexis> la doc est bien d'ailleurs
+    <alexis> http://docs.python.org/2/library/abc.html
+    <alexis> par contre, je pensais qu'avoir la liste était plus classe que ça, il faut utiliser la liste des classes dérivées de la classe parente, c'est pas ouf …
+    <alexis> http://www.doughellmann.com/PyMOTW/abc/ ce machin est bien aussi
+
+* Use search_path ALTER USER toto SET search_path = toto, public;  ou db_table = 'schema\".\"tablename'
+
+* Manager Mixins django-qmixin / django-qmanager
+* django-crud
+* refactor nodelete
+* refactor permissions
+* django - computed field 
+
 
 ==========
 One day...

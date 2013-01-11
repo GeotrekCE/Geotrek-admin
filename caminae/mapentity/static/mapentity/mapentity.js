@@ -111,6 +111,7 @@ MapEntity.Context = new function() {
         }
         if (!context) {
             console.warn("No context found.");
+            map.fitBounds(map.options.maxBounds);
             return;  // No context, no restore.
         }
         

@@ -2115,3 +2115,75 @@ Fait.
 
 Pour les objets dont la géometrie est de type Ligne, des marqueurs départ
 et arrivée sont placés aux extrémités.
+
+
+========================
+Sprint 9 - Version 0.9.0
+========================
+
+
+#313 - Retrait de la notion de thématiques majeures
+---------------------------------------------------
+
+Le formulaire ne contient plus le champ, la base non plus.
+
+#396 - [BUG] Formulaire POI : controle marqueur cassé
+-----------------------------------------------------
+
+Fixé.
+
+#244, #400 - [BUG] À la première visite la carte est vide
+---------------------------------------------------------
+
+Fixé.
+
+
+==========================
+Sprint 10 - Version 0.10.0
+==========================
+
+
+#353, #347, #399 - Champs offre rando
+-------------------------------------
+
+* Champs *Transfontalier*, *Destination* supprimés.
+
+* Champ *Accès* ajouté (traduisible).
+
+* Champ *Pictogramme* ajouté aux usages.
+
+* Champ aperçu supprimé sur lien supprimé.
+
+* Bibliothèque de catégories de liens avec picto ajoutée.
+
+#393 - [BUG] Les itinéraires non publiés n'apparaissent pas sur la carte recherche
+----------------------------------------------------------------------------------
+
+Fixé.
+
+#388 - [BUG] kml / gpx ne sont pas accessibles si itinéraire n'est pas publié
+-----------------------------------------------------------------------------
+
+Fixé.
+
+#390 - [BUG] Formulaire itinéraire - champs obligatoires
+--------------------------------------------------------
+
+Ne sont désormais obligatoires que les champs suivants :
+
+* Nom dans la langue par défaut
+* Topologie (trajet)
+
+#387 - Améliorer formulaire itinéraire
+--------------------------------------
+
+La carte de saisie parking s'ajuste à la position de la carte de saisie itinéraire (à terme, il serait évidemment
+préferrable de n'avoir qu'une seule carte).
+
+Si une erreur de saisie survient sur l'onglet "Avancé", alors l'onglet s'affiche en rouge et s'active par défaut.
+
+#385 - Découpage de tronçons - superposition
+--------------------------------------------
+
+Si lors de la saisie du tronçon, une partie est superposée avec un tronçon existant, une erreur est levée et le
+champ carte du formulaire est marqué invalide.

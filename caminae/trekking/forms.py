@@ -15,14 +15,14 @@ from .models import Trek, POI, WebLink
 
 
 class TrekForm(TopologyForm):
-    parking_location = forms.gis.GeometryField(widget=PointWidget)
+    parking_location = forms.gis.GeometryField(widget=PointWidget, required=False)
 
     modelfields = (
         Div(
             HTML("""
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                <li><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (_("Main"), _("Advanced"))),
             Div(
                 Div(
@@ -33,26 +33,24 @@ class TrekForm(TopologyForm):
                     'duration',
                     'difficulty',
                     'route',
-                    'destination',
+                    'ambiance',
+                    'access',
                     'description_teaser',
                     'description',
                     'is_park_centered',
-                    'is_transborder',
                     css_id="main",
                     css_class="tab-pane active"
                 ),
-                Div('ambiance',
-                    'disabled_infrastructure',
+                Div('disabled_infrastructure',
                     'advised_parking',
                     'parking_location',
                     'public_transport',
                     'advice',
                     'themes',
-                    'main_themes',
                     'networks',
                     'usages',
                     'web_links',
-                    css_id="advanced",
+                    css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"
                 ),
                 css_class="tab-content"
@@ -67,6 +65,8 @@ class TrekForm(TopologyForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(
                                                 choices=self.fields['web_links'].choices, 
                                                 add_url=WebLink.get_add_url())
+        # Make sure (force) that name is required, in default language only
+        self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
     class Meta(TopologyForm.Meta):
         model = Trek
@@ -96,7 +96,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         # Main form layout
         self.helper.form_class = 'form-horizontal'
         arg_list = ['name_{0}'.format(l[0]) for l in settings.LANGUAGES]
-        arg_list += ['url', 'thumbnail', FormActions(
+        arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),
             css_class="form-actions",

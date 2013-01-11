@@ -33,8 +33,14 @@ class ViewsTest(MapEntityTest):
             'arrival': '',
             'datasource': '',
             'valid': 'on',
-            'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
+            'geom': 'LINESTRING Z (99.0 89.0 0.0, 100.0 88.0 1.0)',
         }
+
+    def _post_add_form(self):
+        # Avoid overlap, delete all !
+        for p in Path.objects.all():
+            p.delete()
+        super(ViewsTest, self)._post_add_form()
 
     def test_structurerelated_filter(self):
         def test_structure(structure, stake):
@@ -259,6 +265,38 @@ class PathTest(TestCase):
         p.geom = LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0))
         self.assertRaises(IntegrityError, p.save)
         connection.close() # Clear DB exception at psycopg level
+
+    def test_overlap_geometry(self):
+        PathFactory.create(geom=LineString((0,0,0),(60,0,0)))
+        p = PathFactory.create(geom=LineString((40,0,0),(50,0,0)))
+        self.assertTrue(p.is_overlap())
+        # Overlaping twice
+        p = PathFactory.create(geom=LineString((20,1,0),(20,0,0),(25,0,0),(25,1,0),
+                                              (30,1,0),(30,0,0),(35,0,0),(35,1,0)))
+        self.assertTrue(p.is_overlap())
+
+        # But crossing is ok
+        p = PathFactory.create(geom=LineString((6,1,0),(6,3,0)))
+        self.assertFalse(p.is_overlap())
+        # Touching is ok too
+        p = PathFactory.create(geom=LineString((5,1,0),(5,0,0)))
+        self.assertFalse(p.is_overlap())
+        # Touching twice is ok too
+        p = PathFactory.create(geom=LineString((2.5,0,0),(3,1,0),(3.5,0,0)))
+        self.assertFalse(p.is_overlap())
+
+        """
+        I gave up with the idea of checking "almost overlaping" (and touching)...
+        """
+        # Almost overlaping fails also
+        #PathFactory.create(geom=LineString((0,0,0),(60,0,0)))
+        #p = PathFactory.build(geom=LineString((20,0.5,0),(30,0.5,0)))
+        #self.assertRaises(IntegrityError, p.save)
+        #connection.close()
+        # Almost touching is also ok
+        #PathFactory.create(geom=LineString((4,1,0),(4,0.5,0)))
+        # Almost touching twice is also ok
+        #PathFactory.create(geom=LineString((0.5,1,0),(1,1,0),(1.5,1,0)))
 
 
 class TopologyTest(TestCase):
@@ -549,7 +587,6 @@ class TopologyTest(TestCase):
                                       start_position=0.0, end_position=0.0)
         PathAggregationFactory.create(topo_object=t2, path=p4)
         t2.save()
-        print t2.pk, t2.geom.coords
         self.assertEqual(t2.geom, t.geom)
 
     def test_troncon_geom_update(self):

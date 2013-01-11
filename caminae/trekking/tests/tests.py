@@ -39,7 +39,7 @@ class TrekViewsTest(MapEntityTest):
     def get_good_data(self):
         path = PathFactory.create()
         return {
-            'name_fr': '',
+            'name_fr': 'Hoho',
             'name_it': '',
             'name_en': '',
             'departure_fr': '',
@@ -51,7 +51,6 @@ class TrekViewsTest(MapEntityTest):
             'published': '',
             'difficulty': '',
             'route': '',
-            'destination': '',
             'description_teaser_fr': '',
             'description_teaser_it': '',
             'description_teaser_en': '',
@@ -61,12 +60,14 @@ class TrekViewsTest(MapEntityTest):
             'ambiance_fr': '',
             'ambiance_it': '',
             'ambiance_en': '',
+            'access_fr': '',
+            'access_it': '',
+            'access_en': '',
             'disabled_infrastructure_fr': '',
             'disabled_infrastructure_it': '',
             'disabled_infrastructure_en': '',
             'duration': '0',
             'is_park_centered': '',
-            'is_transborder': '',
             'advised_parking': 'Very close',
             'parking_location': 'POINT (1.0 1.0 0.0)',
             'public_transport': 'huhu',
@@ -74,7 +75,6 @@ class TrekViewsTest(MapEntityTest):
             'advice_it': '',
             'advice_en': '',
             'themes': ThemeFactory.create().pk,
-            'main_themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
@@ -135,6 +135,16 @@ class TrekCustomViewTests(TestCase):
         response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr-FR')
         obj = simplejson.loads(response.content)
         self.assertEqual(obj['name'], trek.name_fr)
+
+    def test_geojson_translation(self):
+        trek = TrekFactory.create(name='Voie lactee')
+        trek.name_it = 'Via Lattea'
+        trek.save()
+        url = reverse('trekking:trek_layer')
+        # Test with another language
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        obj = simplejson.loads(response.content)
+        self.assertEqual(obj['features'][0]['properties']['name'], trek.name_it)
 
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
