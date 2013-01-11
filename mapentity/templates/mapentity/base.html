@@ -28,6 +28,11 @@
     {% leaflet_css %}
     <link rel="stylesheet" href="{% static "mapentity/Leaflet.draw/leaflet.draw.css" %}"></link>
     <link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+    {% if not DEBUG %}
+    <style>
+        .map-error { border: 0px;}
+    </style>
+    {% endif %}
 {% endblock extracss %}
 
 {% block extrajs %}

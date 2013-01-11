@@ -1,0 +1,53 @@
+{% load i18n static mapentity leaflet_tags geojson_tags %}
+
+{% leaflet_map "detailmap"  fitextent=False %}
+<script type="text/javascript">
+function detailmapInit(map, bounds) {
+    {% smart_include "mapinit" %}
+    
+    {% block mapinit %}
+    {% endblock mapinit %}
+    
+    {% if readonly %}
+        // Set map readonly
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+    {% endif %}
+    map.removeControl(map.zoomControl);
+    map.removeControl(map.attributionControl);
+    
+    // Add layers
+    var geojson = {{ object|geojsonfeature|safe }};
+    var objectLayer = new L.ObjectsLayer(geojson, {
+        style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'},
+        indexing: false
+    });
+    map.addLayer(objectLayer);
+    var objectBounds = {{ object|latlngbounds }},
+        mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
+    map.fitBounds(mapBounds);
+    
+    {% if object.geom.geom_type == "LineString" %}
+    // Add origin and destination markers if geometry is a line
+        var originlonlat = [{{ object.geom.coords|first|join:"," }}],
+            destinationlonlat = [{{ object.geom.coords|last|join:"," }}];
+
+        L.marker(L.latLng(originlonlat[1], originlonlat[0]),
+                 {clickable: false,
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-source.png" %}'})}).addTo(map);
+        L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
+                 {clickable: false,
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
+    {% endif %}
+    
+    // Save map context : will be restored on next form (e.g. interventions, ref story #182)
+    $(window).unload(function () {
+        MapEntity.Context.saveFullContext(map);
+    });
+}
+</script>
+
+{% block extra %}{% endblock extra %}

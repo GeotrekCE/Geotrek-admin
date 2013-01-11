@@ -321,7 +321,6 @@ span.filter-info {
     padding-left: 10px;
 }
 
-
 .form-panel h2 { 
     padding-left: 100px; 
 }
@@ -338,6 +337,11 @@ span.filter-info {
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+.form-panel .nav-tabs .error {
+    color: #B94A48;
+}
+
 
 /* Icons for each entity */
 .form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
