@@ -39,7 +39,7 @@ class TrekViewsTest(MapEntityTest):
     def get_good_data(self):
         path = PathFactory.create()
         return {
-            'name_fr': '',
+            'name_fr': 'Hoho',
             'name_it': '',
             'name_en': '',
             'departure_fr': '',
