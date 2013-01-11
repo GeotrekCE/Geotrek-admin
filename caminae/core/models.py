@@ -97,8 +97,8 @@ class Path(MapEntityMixin, StructureRelated):
         TODO: this could be a constraint at DB-level. But this would mean that
         path never ever overlap, even during trigger computation, like path splitting...
         """
-        wkt = "ST_GeomFromText('%s', %s)" % (data, settings.SRID)
-        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', pk, wkt)
+        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
         return disjoint[0]
 
     def is_overlap(self):

@@ -33,8 +33,14 @@ class ViewsTest(MapEntityTest):
             'arrival': '',
             'datasource': '',
             'valid': 'on',
-            'geom': 'LINESTRING (0.0 0.0 0.0, 1.0 1.0 1.0)',
+            'geom': 'LINESTRING Z (99.0 89.0 0.0, 100.0 88.0 1.0)',
         }
+
+    def _post_add_form(self):
+        # Avoid overlap, delete all !
+        for p in Path.objects.all():
+            p.delete()
+        super(ViewsTest, self)._post_add_form()
 
     def test_structurerelated_filter(self):
         def test_structure(structure, stake):
@@ -581,7 +587,6 @@ class TopologyTest(TestCase):
                                       start_position=0.0, end_position=0.0)
         PathAggregationFactory.create(topo_object=t2, path=p4)
         t2.save()
-        print t2.pk, t2.geom.coords
         self.assertEqual(t2.geom, t.geom)
 
     def test_troncon_geom_update(self):

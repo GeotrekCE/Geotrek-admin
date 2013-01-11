@@ -76,7 +76,7 @@ class PathForm(CommonForm):
         data = self.cleaned_data['geom']
         if not data.simple:
             raise forms.ValidationError("Geometry is not simple.")
-        if Path.overlap(geom, self.cleaned_data.get('pk', '-1')):
+        if not Path.disjoint(data, self.cleaned_data.get('pk', '-1')):
             raise forms.ValidationError("Geometry overlaps another.")
         return data
 
