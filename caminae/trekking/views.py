@@ -22,12 +22,9 @@ from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
 class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
-              'description', 'description_teaser', 'access', 'ambiance',
-              'duration', 'ascent', 'descent', 'min_elevation', 'max_elevation',
-              'serializable_themes', 'serializable_weblinks', 'is_park_centered',
-              'serializable_usages', 'disabled_infrastructure', 'is_loop',
-              'serializable_districts', 'serializable_parking_location',
-              'published']
+              'description', 'description_teaser', 'duration', 'ascent', 'descent', 
+              'min_elevation', 'max_elevation', 'serializable_themes', 
+              'serializable_usages', 'is_loop', 'published']
 
 
 class TrekList(MapEntityList):
@@ -48,7 +45,10 @@ class TrekJsonDetail(BaseDetailView):
     queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
-              'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts']
+              'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts',
+              'serializable_cities', 'serializable_districts', 'access', 'ambiance',
+              'serializable_weblinks', 'is_park_centered', 'disabled_infrastructure',
+              'serializable_parking_location',]
 
     def get_context_data(self, **kwargs):
         o = self.object
