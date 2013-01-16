@@ -2187,3 +2187,81 @@ Si une erreur de saisie survient sur l'onglet "Avancé", alors l'onglet s'affich
 
 Si lors de la saisie du tronçon, une partie est superposée avec un tronçon existant, une erreur est levée et le
 champ carte du formulaire est marqué invalide.
+
+
+#337 - OFFRE RANDO - Filtres sliders
+------------------------------------
+
+On peut modifier les valeurs minimum et maximum, et mettre les deux sur le même cran.
+
+#61 - OFFRE RANDO - Accéder aux fiches randonnées via une URL (permalink)
+-------------------------------------------------------------------------
+
+Chaque fiche a sa propre URL, bien que la navigation s'effectue en Ajax sur les navigateurs modernes.
+
+#73 - OFFRE RANDO - Présenter la liste des POI d'un itinéraire
+--------------------------------------------------------------
+
+Sur la fiche détaillée, les itinéraires s'affichent sous forme d'accordéon.
+
+#74 - OFFRE RANDO - Sélectionner un POI dans la liste ou sur la carte pour afficher sa description
+--------------------------------------------------------------------------------------------------
+
+Au survol d'un POI sur la carte, sa description s'affiche (accordéon ouvert).
+
+À l'ouverture de la description d'un POI, le marqueur s'anime sur la carte pour le répérer.
+
+#76 - OFFRE RANDO - Paramétrer étendue géographique
+---------------------------------------------------
+
+L'étendue géographique du portail public est obtenue automatiquement à partir de la configuration de l'admin sentiers.
+
+#72 - OFFRE RANDO - Afficher le profil altimetrique de l'itinéraire
+-------------------------------------------------------------------
+
+Le profil altimétrique (basique) s'affiche sur la fiche détail d'un itinéraire.
+
+#70 - OFFRE RANDO - Afficher l'ensemble des itinéraires sur la carte d'accueil
+------------------------------------------------------------------------------
+
+L'ensemble des itinéraires publiés sur l'admin sentiers s'affiche sur la page d'accueil, dans la liste et sur la carte.
+
+#345 - OFFRE RANDO - Itineraire dans le coeur
+---------------------------------------------
+
+Si l'itinéraire est dans le coeur, un encart d'avertissement s'affiche sur la fiche de l'itinéraire, et présente un lien vers la réglementation.
+
+:notes:
+
+    Attention! Le lien pointe la première des pages statiques. Il faut que la réglementation soit la première !
+
+
+#75 - OFFRE de RANDO - Filtrer les itinéraires
+----------------------------------------------
+
+Par défaut, tous les itinéraires sont affichés.
+
+Lors du filtrage, les itinéraires disparaissent de la liste. Ils disparaitront de la carte avec la story #405.
+
+Pour les thèmes et les usages, si aucun n'est sélectionné, le critère est ignoré.
+
+#367 - OFFRE de RANDO - Recherche par mot-clé
+---------------------------------------------
+
+La recherche textuelle s'effectue dans les champs suivants : 
+
+* Nom
+* Chapeau
+* Descriptif
+* Ambiance
+* Depart
+* Arrivee
+* Accès
+* Recommandation
+* Nom Pois
+* Commentaire des Pois
+* Type des Pois
+* Secteur
+* Commune
+
+Elle est insensible à la casse. Si plusieurs termes sont saisis, il faut que l'itinéraire réponde à au moins un terme pour s'afficher.

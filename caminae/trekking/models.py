@@ -98,6 +98,11 @@ class Trek(MapEntityMixin, Topology):
         return set(types)
 
     @property
+    def serializable_cities(self):
+        return [{'code': city.code,
+                 'name': city.name} for city in self.cities]
+
+    @property
     def serializable_difficulty(self):
         if not self.difficulty:
             return None
