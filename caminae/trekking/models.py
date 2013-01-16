@@ -1,5 +1,4 @@
 import logging
-import mimetypes
 from HTMLParser import HTMLParser
 
 from django.conf import settings
@@ -12,7 +11,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Topology
-from caminae.common.utils import elevation_profile
+from caminae.common.utils import elevation_profile, serialize_imagefield
 
 
 logger = logging.getLogger(__name__)
@@ -112,12 +111,14 @@ class Trek(MapEntityMixin, Topology):
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
+                 'pictogram': serialize_imagefield(t.pictogram),
                  'label': t.label,
                 } for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
+                 'pictogram': serialize_imagefield(u.pictogram),
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -129,6 +130,7 @@ class Trek(MapEntityMixin, Topology):
     def serializable_weblinks(self):
         return [{'id': w.pk,
                  'name': w.name,
+                 'category': w.serializable_category,
                  'url': w.url} for w in self.web_links.all()]
 
     @property
@@ -259,6 +261,14 @@ class WebLink(models.Model):
     def get_add_url(cls):
         return ('trekking:weblink_add', )
 
+    @property
+    def serializable_category(self):
+        if not self.category:
+            return None
+        return {
+           'label': self.category.label,
+           'pictogram': serialize_imagefield(self.category.pictogram),
+        }
 
 class WebLinkCategory(models.Model):
 
@@ -394,12 +404,4 @@ class POIType(models.Model):
 
     @property
     def serializable_pictogram(self):
-        try:
-            pictopath = self.pictogram.name
-            mimetype = mimetypes.guess_type(pictopath)
-            mimetype = mimetype[0] if mimetype else 'application/octet-stream'
-            encoded = self.pictogram.read().encode('base64').replace("\n", '')
-            return "%s;base64,%s" % (mimetype, encoded)
-        except (IOError, ValueError), e:
-            logger.warning(e)
-            return ''
+        return  serialize_imagefield(self.pictogram)

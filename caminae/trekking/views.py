@@ -45,7 +45,8 @@ class TrekJsonDetail(BaseDetailView):
     queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
-              'web_links', 'advice', 'networks', 'ambiance', 'serializable_districts',
+              'advice', 'networks', 'ambiance', 'serializable_districts',
+              'serializable_themes', 'serializable_usages',
               'serializable_cities', 'serializable_districts', 'access', 'ambiance',
               'serializable_weblinks', 'is_park_centered', 'disabled_infrastructure',
               'serializable_parking_location',]

@@ -1,4 +1,5 @@
 import math
+import mimetypes
 from urlparse import urljoin
 import logging
 
@@ -119,3 +120,15 @@ def split_bygeom(iterable, geom_getter=lambda x: x.geom):
         else:
             raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
     return points, linestrings
+
+
+def serialize_imagefield(imagefield):
+    try:
+        pictopath = imagefield.name
+        mimetype = mimetypes.guess_type(pictopath)
+        mimetype = mimetype[0] if mimetype else 'application/octet-stream'
+        encoded = imagefield.read().encode('base64').replace("\n", '')
+        return "%s;base64,%s" % (mimetype, encoded)
+    except (IOError, ValueError), e:
+        logger.warning(e)
+        return ''
