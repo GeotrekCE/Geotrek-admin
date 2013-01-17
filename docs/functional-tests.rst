@@ -2265,3 +2265,26 @@ La recherche textuelle s'effectue dans les champs suivants :
 * Commune
 
 Elle est insensible à la casse. Si plusieurs termes sont saisis, il faut que l'itinéraire réponde à au moins un terme pour s'afficher.
+
+
+#405 - OFFRE de RANDO - Filtrer les objets de la carte
+------------------------------------------------------
+
+Fait.
+
+
+#71 - OFFRE RANDO - Filtrer la liste en fonction de l'étendue de la carte
+-------------------------------------------------------------------------
+
+Fait.
+
+#403 - OFFRE RANDO - Filtres par commune
+----------------------------------------
+
+Fait.
+
+#410 - OFFRE RANDO - Popup carte
+--------------------------------
+
+Première implémentation effectuée.
+
