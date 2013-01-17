@@ -2,6 +2,7 @@
 
 import logging
 import collections
+from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.db import connection
@@ -138,6 +139,21 @@ class Path(MapEntityMixin, StructureRelated):
         self.min_elevation = tmp.min_elevation
         self.max_elevation = tmp.max_elevation
         self.geom = tmp.geom
+
+
+    def delete(self, using=None):
+        """
+        Since Path is not a NoDeleteMixin, a deletion does not change latest_updated
+        and cache is not refreshed.
+        TODO : one day, Path should be a ``NoDeleteMixin``, remove all of this.
+        """
+        super(Path, self).delete(using=using)
+        try:
+            latest = Path.objects.latest("date_update")
+            latest.date_update = datetime.now()
+            latest.save()
+        except Path.DoesNotExist:
+            pass
 
     def save(self, *args, **kwargs):
         before = len(connection.connection.notices) if connection.connection else 0

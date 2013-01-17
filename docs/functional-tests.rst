@@ -2288,3 +2288,9 @@ Fait.
 
 Première implémentation effectuée.
 
+#420 - [BUG] Supprimer un troncon ne fonctionne pas
+---------------------------------------------------
+
+Le dernier objet modifié sert de date de cache. 
+
+En attendant que les tronçons soient gérés avec la colonne ``supprimé``, lors de la suppression, le dernier objet modifié est mis à jour pour forcer la mise à jour du cache.
