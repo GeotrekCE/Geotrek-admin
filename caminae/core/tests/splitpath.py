@@ -79,6 +79,18 @@ class SplitPathTest(TestCase):
         self.assertEqual(ab_2.geom, LineString((2,0,0),(4,0,0)))
         self.assertEqual(cd_2.geom, LineString((2,0,0),(2,2,0)))
 
+    def test_split_cross_on_deleted(self):
+        """
+        Paths should not be splitted if they cross deleted paths.
+        (attribute delete=True)
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(4,0,0)))
+        self.assertEqual(len(Path.objects.all()), 1)
+        ab.delete()
+        self.assertEqual(len(Path.objects.all()), 0)
+        cd = PathFactory.create(name="CD", geom=LineString((2,-2,0),(2,2,0)))
+        self.assertEqual(len(Path.objects.all()), 1)
+
     def test_split_on_update(self):
         """
                                        + E
