@@ -16,17 +16,17 @@ bin/phantomjs:
 	wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
 	tar -jxvf phantomjs.tar.bz2 -C lib/
 	rm phantomjs.tar.bz2
-	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/phantomjs
+	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/
 	# Install system-wide binary (require sudo)
-	sudo ln -sf $(root)/bin/phantomjs /usr/local/bin/phantomjs
+	sudo ln -sf $(root)/bin/phantomjs /usr/local/bin/
 
 bin/casperjs: bin/phantomjs
 	wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC4 -O casperjs.zip
 	unzip -o casperjs.zip -d lib/ > /dev/null
 	rm casperjs.zip
-	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/casperjs
+	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/
 	# Install system-wide binary (require sudo)
-	sudo ln -sf $(root)/bin/casperjs /usr/local/bin/casperjs
+	sudo ln -sf $(root)/bin/casperjs /usr/local/bin/
 
 bin/python:
 	virtualenv .

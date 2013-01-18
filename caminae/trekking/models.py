@@ -186,7 +186,7 @@ class Trek(MapEntityMixin, Topology):
             if minele == 0 or path.min_elevation < minele:
                 minele = path.min_elevation
             if path.max_elevation > maxele:
-                maxele = path.maxele
+                maxele = path.max_elevation
         self.ascent = ascent
         self.descent = descent
         self.min_elevation = minele
