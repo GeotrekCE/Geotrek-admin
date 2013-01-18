@@ -2301,3 +2301,13 @@ En attendant que les tronçons soient gérés avec la colonne ``supprimé``, lor
 Sur les itinéraires très longs, le profile altimétrique était très volumineux (une valeur par segment de la lignestring).
 Désormais, un profil altimétrique a au plus 100 valeurs (paramètre ``PROFILE_MAXSIZE``).
 
+
+#391 - [BUG] Étendue carte recherche après consultation de la fiche
+-------------------------------------------------------------------
+
+Le comportement est corrigé.
+
+* Faire un aller-retour sur les pages liste / détail.
+* Vérifier que l'emprise de la liste est conservée.
+* Ajouter un tronçon depuis la vue liste, vérifier que c'est l'emprise de la liste qui est utilisée.
+* Renseigner l'organisme compétent (ou ajouter une intervention) depuis la fiche détail d'un tronçon, vérifier que c'est l'emprise de la fiche détial qui est utilisée.

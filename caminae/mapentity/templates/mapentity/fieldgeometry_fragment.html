@@ -60,9 +60,11 @@ FormField.makeModule({{ module }}, {{ module }}_settings);
     var module = {{ module }};
     var fitToBounds = true;
 
-    // We are displaying a form - if no object instance, restore previous map view
-    if (! module.getObjectPk()) {
-        if (MapEntity.Context.restoreMapView(map)) {
+    // We are displaying a form.
+    // if no object instance, restore previous map view
+    // Previous map view can come from list view, or from detail view
+    if (!module.getObjectPk()) {
+        if (MapEntity.Context.restoreLatestMapView(map, ['detail', 'list'])) {
             bounds = map.getBounds();
             // We just changed the map bounds, avoid resetting them...
             fitToBounds = false;

@@ -46,8 +46,10 @@ function getURLParameter(name) {
 MapEntity.Context = new function() {
     var self = this;
 
-    self.serializeFullContext = function(map, filter, datatable) {
-        var context = {};
+    self.serializeFullContext = function(map, kwargs) {
+        var context = {},
+            filter = kwargs.filter,
+            datatable = kwargs.datatable;
         
         // Map view
         context['mapview'] = {'lat': map.getCenter().lat, 'lng': map.getCenter().lng, 'zoom': map.getZoom()};
@@ -76,23 +78,42 @@ MapEntity.Context = new function() {
         context['viewport'] = {'width': $(window).width(), 'height': $(window).height()};
         context['mapsize'] = {'width': $('.map-panel').width(), 'height': $('.map-panel').height()};
 
+        // Mark timestamp
+        context['timestamp'] = new Date().getTime();
+
         return JSON.stringify(context);
     },
 
-    self.saveFullContext = function(map, filter, datatable) {
-        var serialized = self.serializeFullContext(map, filter, datatable);
-        localStorage.setItem('map-context', serialized);
+    self.saveFullContext = function(map, kwargs) {
+        var prefix = kwargs.prefix || '',
+            serialized = self.serializeFullContext(map, kwargs);
+        localStorage.setItem(prefix + 'map-context', serialized);
     };
 
-    self.__loadFullContext = function() {
-        var context = localStorage.getItem('map-context');
+    self.__loadFullContext = function(kwargs) {
+        if (!kwargs) kwargs = {};
+        var prefix = kwargs.prefix || '',
+            context = localStorage.getItem(prefix + 'map-context');
         if (context)
             return JSON.parse(context);
         return null;
     };
 
-    self.restoreMapView = function(map, context) {
-        if (!context) context = self.__loadFullContext();
+    self.restoreLatestMapView = function (map, prefixes, kwargs) {
+        var latest = null;
+        for (var i=0; i<prefixes.length; i++) {
+            var prefix = prefixes[i],
+                context = self.__loadFullContext($.extend(kwargs, {prefix: prefix}));
+            if (!latest || (context && context.timestamp && context.timestamp > latest.timestamp)) {
+                latest = context;
+                console.log(JSON.stringify(context)); //context.timestamp + ' / ' + latest.timestamp)
+            }
+        }
+        return self.restoreMapView(map, latest, kwargs);
+    }
+
+    self.restoreMapView = function(map, context, kwargs) {
+        if (!context) context = self.__loadFullContext(kwargs);
         if (context && context.mapview) {
             map.setView(L.latLng(context.mapview.lat, context.mapview.lng), context.mapview.zoom);
             return true;
@@ -100,14 +121,18 @@ MapEntity.Context = new function() {
         return false;
     };
 
-    self.restoreFullContext = function(map, filter, datatable, objectsname) {
-        var context = getURLParameter('context');
+    self.restoreFullContext = function(map, kwargs) {
+        if (!kwargs) kwargs = {};
+        var context = getURLParameter('context'),
+            filter = kwargs.filter,
+            datatable = kwargs.datatable,
+            objectsname = kwargs.objectsname;
         if (context) {
             context = JSON.parse(context);
         }
         else {
             // If not received from URL, load from LocalStorage
-            context = self.__loadFullContext();
+            context = self.__loadFullContext(kwargs);
         }
         if (!context) {
             console.warn("No context found.");
@@ -122,7 +147,7 @@ MapEntity.Context = new function() {
             $(map._container).removeClass('leaflet-fade-anim');
         }
 
-        self.restoreMapView(map, context);
+        self.restoreMapView(map, context, kwargs);
         
         if (filter && context.filter) {
             $(filter).deserialize(context.filter);
