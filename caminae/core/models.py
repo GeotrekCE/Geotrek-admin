@@ -170,7 +170,7 @@ class Path(MapEntityMixin, StructureRelated):
         """
         Extract elevation profile from path.
         """
-        return elevation_profile(self.geom)
+        return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
     def name_display(self):

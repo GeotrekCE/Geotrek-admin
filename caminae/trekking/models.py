@@ -24,10 +24,10 @@ class Trek(MapEntityMixin, Topology):
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True)
     published = models.BooleanField(verbose_name=_(u"Published"))
 
-    ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Maximum elevation"))
+    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True)
     description = models.TextField(verbose_name=_(u"Description"), blank=True)
@@ -141,7 +141,7 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def elevation_profile(self):
-        return elevation_profile(self.geom)
+        return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
     def is_loop(self):
@@ -172,6 +172,26 @@ class Trek(MapEntityMixin, Topology):
                          description=html.unescape(strip_tags(poi.description)),
                          coords=[place.coords])
         return kml._genkml()
+
+    def save(self):
+        # Store 3D profile information, take them from aggregated paths
+        # instead of using PostGIS trigger on each point.
+        ascent = 0
+        descent = 0
+        minele = 0
+        maxele = 0
+        for path in self.paths.all():
+            ascent += path.ascent
+            descent += path.descent
+            if minele == 0 or path.min_elevation < minele:
+                minele = path.min_elevation
+            if path.max_elevation > maxele:
+                maxele = path.maxele
+        self.ascent = ascent
+        self.descent = descent
+        self.min_elevation = minele
+        self.max_elevation = maxele
+        return super(Trekking, self).save()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)

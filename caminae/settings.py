@@ -298,6 +298,8 @@ API_SRID = 4326
 
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
+PROFILE_MAXSIZE = 100  # Maximum number of points in an altimetric profile
+
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'TILES_URL' : [],

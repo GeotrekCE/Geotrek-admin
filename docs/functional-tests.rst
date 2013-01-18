@@ -2294,3 +2294,10 @@ Première implémentation effectuée.
 Le dernier objet modifié sert de date de cache. 
 
 En attendant que les tronçons soient gérés avec la colonne ``supprimé``, lors de la suppression, le dernier objet modifié est mis à jour pour forcer la mise à jour du cache.
+
+#422 - Limiter le nombre de point du profil altimétrique (échantillonage)
+-------------------------------------------------------------------------
+
+Sur les itinéraires très longs, le profile altimétrique était très volumineux (une valeur par segment de la lignestring).
+Désormais, un profil altimétrique a au plus 100 valeurs (paramètre ``PROFILE_MAXSIZE``).
+
