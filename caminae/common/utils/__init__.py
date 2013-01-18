@@ -1,4 +1,5 @@
 import math
+import mimetypes
 from urlparse import urljoin
 import logging
 
@@ -37,16 +38,21 @@ def distance3D(a, b):
                      (b[2] - a[2]) ** 2)
 
 
-def elevation_profile(g):
+def elevation_profile(g, maxitems=None):
     """
     Extract elevation profile from a 3D geometry.
+    - maxitems : maximum number of points
     """
+    step = 1
+    if maxitems is not None:
+        nb = len(g.coords)
+        step = max(1, nb / maxitems)
     # Initialize with null distance at start point
     distance = 0.0
     profile = [(distance, g.coords[0][2])]
     # Add elevation and cumulative distance at each point
-    for i in range(1, len(g.coords)):
-        a = g.coords[i - 1]
+    for i in range(1, len(g.coords), step):
+        a = g.coords[i - step]
         b = g.coords[i]
         distance += distance3D(a, b)
         profile.append((distance, b[2],))
@@ -119,3 +125,15 @@ def split_bygeom(iterable, geom_getter=lambda x: x.geom):
         else:
             raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
     return points, linestrings
+
+
+def serialize_imagefield(imagefield):
+    try:
+        pictopath = imagefield.name
+        mimetype = mimetypes.guess_type(pictopath)
+        mimetype = mimetype[0] if mimetype else 'application/octet-stream'
+        encoded = imagefield.read().encode('base64').replace("\n", '')
+        return "%s;base64,%s" % (mimetype, encoded)
+    except (IOError, ValueError), e:
+        logger.warning(e)
+        return ''

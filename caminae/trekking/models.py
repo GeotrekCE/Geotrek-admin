@@ -1,5 +1,4 @@
 import logging
-import mimetypes
 from HTMLParser import HTMLParser
 
 from django.conf import settings
@@ -12,7 +11,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Topology
-from caminae.common.utils import elevation_profile
+from caminae.common.utils import elevation_profile, serialize_imagefield
 
 
 logger = logging.getLogger(__name__)
@@ -25,10 +24,10 @@ class Trek(MapEntityMixin, Topology):
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True)
     published = models.BooleanField(verbose_name=_(u"Published"))
 
-    ascent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, verbose_name=_(u"Maximum elevation"))
+    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True)
     description = models.TextField(verbose_name=_(u"Description"), blank=True)
@@ -112,12 +111,14 @@ class Trek(MapEntityMixin, Topology):
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
+                 'pictogram': serialize_imagefield(t.pictogram),
                  'label': t.label,
                 } for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
+                 'pictogram': serialize_imagefield(u.pictogram),
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -129,6 +130,7 @@ class Trek(MapEntityMixin, Topology):
     def serializable_weblinks(self):
         return [{'id': w.pk,
                  'name': w.name,
+                 'category': w.serializable_category,
                  'url': w.url} for w in self.web_links.all()]
 
     @property
@@ -139,7 +141,7 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def elevation_profile(self):
-        return elevation_profile(self.geom)
+        return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
     def is_loop(self):
@@ -170,6 +172,26 @@ class Trek(MapEntityMixin, Topology):
                          description=html.unescape(strip_tags(poi.description)),
                          coords=[place.coords])
         return kml._genkml()
+
+    def save(self):
+        # Store 3D profile information, take them from aggregated paths
+        # instead of using PostGIS trigger on each point.
+        ascent = 0
+        descent = 0
+        minele = 0
+        maxele = 0
+        for path in self.paths.all():
+            ascent += path.ascent
+            descent += path.descent
+            if minele == 0 or path.min_elevation < minele:
+                minele = path.min_elevation
+            if path.max_elevation > maxele:
+                maxele = path.maxele
+        self.ascent = ascent
+        self.descent = descent
+        self.min_elevation = minele
+        self.max_elevation = maxele
+        return super(Trekking, self).save()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -259,6 +281,14 @@ class WebLink(models.Model):
     def get_add_url(cls):
         return ('trekking:weblink_add', )
 
+    @property
+    def serializable_category(self):
+        if not self.category:
+            return None
+        return {
+           'label': self.category.label,
+           'pictogram': serialize_imagefield(self.category.pictogram),
+        }
 
 class WebLinkCategory(models.Model):
 
@@ -394,12 +424,4 @@ class POIType(models.Model):
 
     @property
     def serializable_pictogram(self):
-        try:
-            pictopath = self.pictogram.name
-            mimetype = mimetypes.guess_type(pictopath)
-            mimetype = mimetype[0] if mimetype else 'application/octet-stream'
-            encoded = self.pictogram.read().encode('base64').replace("\n", '')
-            return "%s;base64,%s" % (mimetype, encoded)
-        except (IOError, ValueError), e:
-            logger.warning(e)
-            return ''
+        return  serialize_imagefield(self.pictogram)

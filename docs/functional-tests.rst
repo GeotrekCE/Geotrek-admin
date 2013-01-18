@@ -2265,3 +2265,49 @@ La recherche textuelle s'effectue dans les champs suivants :
 * Commune
 
 Elle est insensible à la casse. Si plusieurs termes sont saisis, il faut que l'itinéraire réponde à au moins un terme pour s'afficher.
+
+
+#405 - OFFRE de RANDO - Filtrer les objets de la carte
+------------------------------------------------------
+
+Fait.
+
+
+#71 - OFFRE RANDO - Filtrer la liste en fonction de l'étendue de la carte
+-------------------------------------------------------------------------
+
+Fait.
+
+#403 - OFFRE RANDO - Filtres par commune
+----------------------------------------
+
+Fait.
+
+#410 - OFFRE RANDO - Popup carte
+--------------------------------
+
+Première implémentation effectuée.
+
+#420 - [BUG] Supprimer un troncon ne fonctionne pas
+---------------------------------------------------
+
+Le dernier objet modifié sert de date de cache. 
+
+En attendant que les tronçons soient gérés avec la colonne ``supprimé``, lors de la suppression, le dernier objet modifié est mis à jour pour forcer la mise à jour du cache.
+
+#422 - Limiter le nombre de point du profil altimétrique (échantillonage)
+-------------------------------------------------------------------------
+
+Sur les itinéraires très longs, le profile altimétrique était très volumineux (une valeur par segment de la lignestring).
+Désormais, un profil altimétrique a au plus 100 valeurs (paramètre ``PROFILE_MAXSIZE``).
+
+
+#391 - [BUG] Étendue carte recherche après consultation de la fiche
+-------------------------------------------------------------------
+
+Le comportement est corrigé.
+
+* Faire un aller-retour sur les pages liste / détail.
+* Vérifier que l'emprise de la liste est conservée.
+* Ajouter un tronçon depuis la vue liste, vérifier que c'est l'emprise de la liste qui est utilisée.
+* Renseigner l'organisme compétent (ou ajouter une intervention) depuis la fiche détail d'un tronçon, vérifier que c'est l'emprise de la fiche détial qui est utilisée.
