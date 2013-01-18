@@ -184,10 +184,21 @@
                 '</form>').appendTo('body').submit().remove();
             });
             map.addControl(screenshot);
-            
-            MapEntity.Context.restoreFullContext(map, '#mainfilter', dt, '{{ objectsname|title }}');
+
+            // We can have several contexts in the application (mainly 'detail' and 'list')
+            // Using prefixes is a way to manage this.
+            MapEntity.Context.restoreFullContext(map, {
+                filter: '#mainfilter',
+                datatable: dt,
+                objectsname: '{{ objectsname|title }}',
+                prefix: 'list',
+            });
             $(window).unload(function () {
-                MapEntity.Context.saveFullContext(map, '#mainfilter', dt);
+                MapEntity.Context.saveFullContext(map, {
+                    filter: '#mainfilter',
+                    datatable: dt,
+                    prefix: 'list',
+                });
             });
         }
     </script>

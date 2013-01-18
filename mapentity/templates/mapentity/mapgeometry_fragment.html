@@ -45,7 +45,7 @@ function detailmapInit(map, bounds) {
     
     // Save map context : will be restored on next form (e.g. interventions, ref story #182)
     $(window).unload(function () {
-        MapEntity.Context.saveFullContext(map);
+        MapEntity.Context.saveFullContext(map, {prefix: 'detail'});
     });
 }
 </script>
