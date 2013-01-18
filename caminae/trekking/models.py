@@ -191,7 +191,7 @@ class Trek(MapEntityMixin, Topology):
         self.descent = descent
         self.min_elevation = minele
         self.max_elevation = maxele
-        return super(Trekking, self).save()
+        return super(Trek, self).save()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
