@@ -2311,3 +2311,20 @@ Le comportement est corrigé.
 * Vérifier que l'emprise de la liste est conservée.
 * Ajouter un tronçon depuis la vue liste, vérifier que c'est l'emprise de la liste qui est utilisée.
 * Renseigner l'organisme compétent (ou ajouter une intervention) depuis la fiche détail d'un tronçon, vérifier que c'est l'emprise de la fiche détial qui est utilisée.
+
+
+
+
+==========================
+Sprint 11 - Version 0.11.0
+==========================
+
+#444 - Internal Server Error: /ecrins-sentiers/trek/add/
+--------------------------------------------------------
+
+Fixé.
+
+#398, #402, #421, #442 - Internal Server Error sur le filtrage
+--------------------------------------------------------------
+
+Fixé.

@@ -50,7 +50,7 @@ def filter(qs, edges):
         return qs.filter(pk__in=set(projects))
 
     else:
-        assert isinstance(qs.model, Topology), "%s is not a Topology as expected" % qs.model
+        assert issubclass(qs.model, Topology), "%s is not a Topology as expected" % qs.model
         return qs.filter(pk__in=[ topo.pk for topo in overlapping ])
 
 
