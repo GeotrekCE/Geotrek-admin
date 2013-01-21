@@ -254,12 +254,22 @@ LOGGING = {
         },
     },
     'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
         },
         'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'south': {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
