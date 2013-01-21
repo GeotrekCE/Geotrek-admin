@@ -180,14 +180,16 @@ class Trek(MapEntityMixin, Topology):
         descent = 0
         minele = 0
         maxele = 0
-        if self.pk:
-            for path in self.paths.all():
-                ascent += path.ascent
-                descent += path.descent
-                if minele == 0 or path.min_elevation < minele:
-                    minele = path.min_elevation
-                if path.max_elevation > maxele:
-                    maxele = path.max_elevation
+        if not self.pk:
+            # Required to iterate on paths.all()
+            super(Trek, self).save(*args, **kwargs)
+        for path in self.paths.all():
+            ascent += path.ascent
+            descent += path.descent
+            if minele == 0 or path.min_elevation < minele:
+                minele = path.min_elevation
+            if path.max_elevation > maxele:
+                maxele = path.max_elevation
         self.ascent = ascent
         self.descent = descent
         self.min_elevation = minele
