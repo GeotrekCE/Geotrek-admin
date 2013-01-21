@@ -47,4 +47,7 @@ def run_initial_sql(sender, **kwargs):
             raise e
         else:
             transaction.commit_unless_managed()
-post_migrate.connect(run_initial_sql)
+
+post_migrate.connect(run_initial_sql, dispatch_uid="caminae.core.sqlautoload")
+
+
