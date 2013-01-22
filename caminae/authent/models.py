@@ -11,9 +11,14 @@ from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 
 
+"""
+    Groups required for managing permissions.
+    This could be managed using initial_data. And permissions could globally be refactored using has_perm()
+"""
 GROUP_PATH_MANAGER = u'Référents sentiers'
 GROUP_TREKKING_MANAGER = u'Référents communication'
 GROUP_EDITOR = u'Rédacteurs'
+
 
 
 class Structure(models.Model):
@@ -99,17 +104,17 @@ class UserProfile(StructureRelated):
 
     def is_path_manager(self):
         """ Returns True if the user belongs to path managers group. """
-        g = Group.objects.get(name=GROUP_PATH_MANAGER)
+        g = Group.objects.get_or_create(name=GROUP_PATH_MANAGER)[0]
         return self.has_group(g) or self.user.is_staff
 
     def is_trekking_manager(self):
         """ Returns True if the user belongs to comm managers group. """
-        g = Group.objects.get(name=GROUP_TREKKING_MANAGER)
+        g = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER)[0]
         return self.has_group(g) or self.user.is_staff
 
     def is_editor(self):
         """ Returns True if the user belongs to editors group. """
-        g = Group.objects.get(name=GROUP_EDITOR)
+        g = Group.objects.get_or_create(name=GROUP_EDITOR)[0]
         return self.has_group(g) or self.user.is_staff
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
