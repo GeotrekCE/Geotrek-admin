@@ -49,7 +49,7 @@ class TrekJsonDetail(BaseDetailView):
               'serializable_themes', 'serializable_usages',
               'serializable_cities', 'serializable_districts', 'access', 'ambiance',
               'serializable_weblinks', 'is_park_centered', 'disabled_infrastructure',
-              'serializable_parking_location',]
+              'serializable_parking_location', 'serializable_picture']
 
     def get_context_data(self, **kwargs):
         o = self.object

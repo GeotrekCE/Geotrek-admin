@@ -9,5 +9,5 @@ def get_dummy_img():
 def get_dummy_uploaded_image(name='dummy_img.png'):
     return SimpleUploadedFile(name, get_dummy_img(), content_type='image/png')
 
-# Alias
-get_dummy_uploaded_file = get_dummy_uploaded_image
+def get_dummy_uploaded_file(name='dummy_file.txt'):
+    return SimpleUploadedFile(name, 'HelloWorld', content_type='plain/text')

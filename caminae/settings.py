@@ -290,6 +290,9 @@ LOGGING = {
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},
+        # Thumbnails for public trek website
+        'small-square': {'size': (120, 120), 'crop': True},
+        'medium': {'size': (500, 500)},
     },
 }
 

@@ -2328,3 +2328,17 @@ Fixé.
 --------------------------------------------------------------
 
 Fixé.
+
+#443 - Internal Server Error: /ecrins-sentiers/document/landedge-956752.odt
+---------------------------------------------------------------------------
+
+Problème de déploiement.
+
+#458 - Vignettes itinéraires
+-----------------------------
+
+Les vignettes nécessaires au portail rando sont créées automatiquement. Actuellement, l'illustration d'un itinéraire est construite à partir de la première image trouvée dans les fichiers attachés à l'itinéraire.
+
+:note:
+
+    Celles-ci ne sont pas encore utilisé côté portail rando.

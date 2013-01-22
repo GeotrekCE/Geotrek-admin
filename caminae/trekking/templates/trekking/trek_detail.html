@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n static field_verbose_name %}
+{% load i18n static field_verbose_name thumbnail %}
 
 
 {% block download %}
@@ -80,6 +80,10 @@
                     <span class="none">{% trans "None" %}</span>
                 {% endfor %}
             </td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ trek.picture|thumbnail_url:"small-square" }}"></td>
         </tr>
     </table>
 

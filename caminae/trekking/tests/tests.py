@@ -2,9 +2,11 @@ from django.test import TestCase
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
+
+from caminae.paperclip.factories import AttachmentFactory
+from caminae.common.utils.testdata import get_dummy_uploaded_image
 from caminae.mapentity.tests import MapEntityTest
 from caminae.authent.factories import TrekkingManagerFactory
-
 from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.land.factories import DistrictFactory
 from caminae.trekking.models import POI, Trek
@@ -209,3 +211,16 @@ class RelatedObjectsTest(TestCase):
         d2 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((3,3), (9,3), (9,9), (3,9), (3,3)))))
         self.assertItemsEqual(trek.districts, [d1, d2])
+
+
+    def test_picture(self):
+        trek = TrekFactory.create()
+        AttachmentFactory.create(obj=trek)
+        self.assertEqual(len(trek.attachments), 1)
+        self.assertEqual(trek.picture, None)
+
+        AttachmentFactory.create(obj=trek, attachment_file=get_dummy_uploaded_image())
+        self.assertEqual(len(trek.attachments), 2)
+        self.assertNotEqual(trek.picture, None)
+
+

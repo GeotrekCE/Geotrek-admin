@@ -1,3 +1,4 @@
+import os
 import logging
 from HTMLParser import HTMLParser
 
@@ -6,6 +7,8 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 from django.utils.html import strip_tags
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.files import get_thumbnailer
 
 import simplekml
 
@@ -138,6 +141,30 @@ class Trek(MapEntityMixin, Topology):
         if not self.parking_location:
             return None
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
+
+    @property
+    def picture(self):
+        """
+        Find first image among attachments.
+        """
+        for attachment in self.attachments.all():
+            if attachment.is_image:
+                return attachment.attachment_file
+        return None
+
+    @property
+    def serializable_picture(self):
+        picture = self.picture
+        if not picture:
+            return None
+        # Thumbnails
+        thumbnailer = get_thumbnailer(picture)
+        thlist = thumbnailer.get_thumbnail(aliases.get('small-square'))
+        thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+        return {
+            'thumbnail': os.path.join(settings.MEDIA_URL, thlist.name),
+            'preview': os.path.join(settings.MEDIA_URL, thdetail.name)
+        }
 
     @property
     def elevation_profile(self):
