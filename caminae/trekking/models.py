@@ -173,16 +173,13 @@ class Trek(MapEntityMixin, Topology):
                          coords=[place.coords])
         return kml._genkml()
 
-    def save(self, *args, **kwargs):
+    def refresh_altimetry(self):
         # Store 3D profile information, take them from aggregated paths
         # instead of using PostGIS trigger on each point.
         ascent = 0
         descent = 0
         minele = 0
         maxele = 0
-        if not self.pk:
-            # Required to iterate on paths.all()
-            super(Trek, self).save(*args, **kwargs)
         for path in self.paths.all():
             ascent += path.ascent
             descent += path.descent
@@ -194,10 +191,15 @@ class Trek(MapEntityMixin, Topology):
         self.descent = descent
         self.min_elevation = minele
         self.max_elevation = maxele
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            self.refresh_altimetry()
         return super(Trek, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+
 
 
 class TrekNetwork(models.Model):
