@@ -80,7 +80,8 @@ serve: install clean_harmless all_compilemessages
 
 load_data:
 	# /!\ will delete existing data
-	bin/django loaddata development-pne
+	bin/django loaddata minimal
+	bin/django loaddata basic
 	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
 deploy: install clean_harmless all_compilemessages

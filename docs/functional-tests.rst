@@ -2342,3 +2342,28 @@ Les vignettes nécessaires au portail rando sont créées automatiquement. Actue
 :note:
 
     Celles-ci ne sont pas encore utilisé côté portail rando.
+
+
+#441 - Données initiales (minimal, basic, example)
+--------------------------------------------------
+
+Il est possible de charger des données dans l'application, avec la commande suivante :
+
+::
+
+    make load_data
+
+Désormais cette commande ne charge plus les données d'exemple du Parc des Écrins. Pour celles-ci, il faut désormais utiliser :
+
+::
+
+    bin/django loaddata development-pne
+
+:note:
+
+    Le réseau de tronçons d'exemple du PNE peut éventuellement échouer à cause des clés primaires dupliquées. **En attendant une mise à jour de celui-ci**, il faut désactiver au préalable le trigger de découpage des tronçons (``ALTER TABLE troncons DISABLE TRIGGER troncons_split_geom_iu_tgr;``). On peut ensuite charger le réseau, réactiver le trigger, et le déclencher sur chaque objet (``UPDATE troncons SET geom = geom;``).
+
+
+
+
+

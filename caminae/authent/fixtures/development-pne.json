@@ -61,38 +61,6 @@
         }
     },
     {
-        "pk": 1,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9f\u00e9rents sentiers",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 2,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9f\u00e9rents communication",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 3,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9dacteurs",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 4,
-        "model": "auth.group",
-        "fields": {
-            "name": "Administrateurs",
-            "permissions": []
-        }
-    },
-    {
         "pk": 2,
         "model": "auth.user",
         "fields": {
@@ -121,9 +89,7 @@
             "is_superuser": true,
             "is_staff": true,
             "last_login": "2012-07-25T09:13:26.495Z",
-            "groups": [
-                4
-            ],
+            "groups": [],
             "user_permissions": [],
             "password": "pbkdf2_sha256$10000$M7URcO1rPRGv$2vCwLDAnfwCvP6lyA3Qo6PQ5Zqrz0YkccetVIHByODU=",
             "email": "admin@yopmail.com",

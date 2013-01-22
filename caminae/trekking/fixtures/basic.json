@@ -1,0 +1,281 @@
+[
+    {
+        "pk": 1,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Picolo patrimonio",
+            "pictogram": "upload/heritage.png",
+            "label_en": "Small patrimony",
+            "label_fr": "Petit patrimoine",
+            "label": "Petit patrimoine"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Flora",
+            "pictogram": "upload/flora.png",
+            "label_en": "Flora",
+            "label_fr": "Flore",
+            "label": "Flore"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Fauna",
+            "pictogram": "upload/fauna.png",
+            "label_en": "Fauna",
+            "label_fr": "Faune",
+            "label": "Faune"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Panorama",
+            "pictogram": "upload/panorama.png",
+            "label_en": "Panorama",
+            "label_fr": "Point de vue",
+            "label": "Point de vue"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Rifugio",
+            "pictogram": "upload/refuge.png",
+            "label_en": "Refuge",
+            "label_fr": "Refuge",
+            "label": "Refuge"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Lago",
+            "pictogram": "upload/lake.png",
+            "label_en": "Lake",
+            "label_fr": "Lac",
+            "label": "Lac"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Picco",
+            "pictogram": "upload/peak.png",
+            "label_en": "Peak",
+            "label_fr": "Sommet",
+            "label": "Sommet"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": "Geologia",
+            "pictogram": "upload/geology.png",
+            "label_en": "Geology",
+            "label_fr": "Géologie",
+            "label": "Géologie"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": "Villas",
+            "network": "City",
+            "network_en": "City",
+            "network_fr": "En ville"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-mountainbike.png",
+            "usage": "Mountain Bike",
+            "usage_en": "Mountain Bike",
+            "usage_it": "Bici Montana",
+            "usage_fr": "VTT"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-bike.png",
+            "usage": "Cycling",
+            "usage_en": "Cycling",
+            "usage_it": "Bicicleta",
+            "usage_fr": "Vélo"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.usage",
+        "fields": {
+            "pictogram": "upload/usage-horse.png",
+            "usage": "Horse",
+            "usage_en": "Horse",
+            "usage_it": "Caballo",
+            "usage_fr": "Cheval"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "P\u00e9destre",
+            "usage_en": null,
+            "usage_it": null,
+            "pictogram": "upload/archeo_1.png",
+            "usage_fr": "P\u00e9destre"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "Fauteuil roulant",
+            "usage_en": null,
+            "usage_it": null,
+            "pictogram": "upload/histoire_1.png",
+            "usage_fr": "Fauteuil roulant"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "Poussette",
+            "usage_en": null,
+            "usage_it": null,
+            "pictogram": "upload/archeo_2.png",
+            "usage_fr": "Poussette"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-fauna.png",
+            "label": "Fauna",
+            "label_it": "Fona",
+            "label_en": "Fauna",
+            "label_fr": "Faune"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.theme",
+        "fields": {
+            "pictogram": "upload/theme-flora.png",
+            "label": "Flora",
+            "label_it": "Flora",
+            "label_en": "Flora",
+            "label_fr": "Flore"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.route",
+        "fields": {
+            "route_it": null,
+            "route": "Boucle",
+            "route_fr": "Boucle",
+            "route_en": null
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.route",
+        "fields": {
+            "route_it": null,
+            "route": "Aller-retour",
+            "route_fr": "Aller-retour",
+            "route_en": null
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.route",
+        "fields": {
+            "route_it": null,
+            "route": "Travers\u00e9e",
+            "route_fr": "Travers\u00e9e",
+            "route_en": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": "Facilo",
+            "difficulty": "Easy",
+            "difficulty_fr": "Facile",
+            "difficulty_en": "Easy"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": "Confirmado",
+            "difficulty": "Rookie",
+            "difficulty_fr": "Confirmé",
+            "difficulty_en": "Rookie"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": "Duro",
+            "difficulty": "Hard",
+            "difficulty_fr": "Difficile",
+            "difficulty_en": "Hard"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Refuge",
+            "label_it": "Refugio",
+            "label_fr": "Refuge",
+            "label_en": "Refugee",
+            "pictogram": "upload/weblink-refuge.png"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Map",
+            "label_it": "Carto",
+            "label_fr": "Carte",
+            "label_en": "Map",
+            "pictogram": "upload/weblink-map.png"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label": "Bus",
+            "label_it": "Bus",
+            "label_fr": "Bus",
+            "label_en": "Bus",
+            "pictogram": "upload/weblink-bus.png"
+        }
+    }
+]

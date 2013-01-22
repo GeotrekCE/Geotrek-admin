@@ -1,0 +1,79 @@
+[
+    {
+        "pk": 1,
+        "model": "common.organism",
+        "fields": {
+            "organism": "Organisme A"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Projets travaux"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Autorisations de travaux"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Plans"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Croquis"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Fiches techniques"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Commandes mat\u00e9riaux"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Commandes sous-traitance"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "common.filetype",
+        "fields": {
+            "type": "CCTP"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "common.filetype",
+        "fields": {
+            "type": "CR de visite"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "common.filetype",
+        "fields": {
+            "type": "PV de r\u00e9ception"
+        }
+    }
+]

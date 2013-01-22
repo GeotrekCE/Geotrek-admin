@@ -1,0 +1,306 @@
+[
+    {
+        "pk": 1,
+        "model": "maintenance.interventionstatus",
+        "fields": {
+            "status": "souhait\u00e9e",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.interventionstatus",
+        "fields": {
+            "status": "planifi\u00e9e",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "maintenance.interventionstatus",
+        "fields": {
+            "status": "termin\u00e9e",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.interventiontype",
+        "fields": {
+            "type": "Entretien ",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.interventiontype",
+        "fields": {
+            "type": "Travaux d'ouvrages",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "maintenance.interventiontype",
+        "fields": {
+            "type": "Travaux d'urgence",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 4,
+        "model": "maintenance.interventiontype",
+        "fields": {
+            "type": "Suppression",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "maintenance.interventiontype",
+        "fields": {
+            "type": "Cr\u00e9ation",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Avalanche",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Chablis",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Chute de blocs",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 4,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Chute de pierres",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Crue de torrent",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 6,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Crue d'orage",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 7,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Diverticules",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 8,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Eboulis",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 9,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Equipement d\u00e9grad\u00e9",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 10,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Equipement emport\u00e9",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 11,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Erosion ",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 12,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Glissement de terrain",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 13,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Mauvaise lisibilit\u00e9 du trac\u00e9",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 14,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Passage a\u00e9rien",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 15,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Passage de troupeaux",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 16,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Ruissellement",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 17,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Suintement source",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 18,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Surfr\u00e9quentation pi\u00e9tons",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 19,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Vandalisme",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 20,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "V\u00e9g\u00e9tation envahissante",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 21,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "VTT",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 22,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Zone glissante sur dalles",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 23,
+        "model": "maintenance.interventiondisorder",
+        "fields": {
+            "disorder": "Zone glissante talweg",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.interventionjob",
+        "fields": {
+            "job": "Ouvrier",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "maintenance.interventionjob",
+        "fields": {
+            "job": "ATE",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "maintenance.interventionjob",
+        "fields": {
+            "job": "TE",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 4,
+        "model": "maintenance.interventionjob",
+        "fields": {
+            "job": "Charg\u00e9 de missions",
+            "structure": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.contractor",
+        "fields": {
+            "structure": 1,
+            "contractor": "Entreprise A"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.projecttype",
+        "fields": {
+            "structure": 1,
+            "type": "Type projet 1"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "maintenance.projectdomain",
+        "fields": {
+            "structure": 1,
+            "domain": "Domaine projet 1"
+        }
+    }
+]

@@ -1,0 +1,371 @@
+[
+    {
+        "pk": 4,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Aire de stationnement"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Aire de stationnement Handicap\u00e9s"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Enrochement de sout\u00e8nement"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Gabions de rivi\u00e8re"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Gabions de sout\u00e8nement"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Madriers assembl\u00e9s pos\u00e9s sur rive"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Mur de sout\u00e8nement"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Passerelle aubann\u00e9e"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Passerelle d\u00e9montable"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Passerelle fixe"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Platelage sur pilotis"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Pont \u00e0 poutrelles"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Pont \u00e0 voute"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Radier enroch\u00e9"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Seuil de rivi\u00e8re"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "A",
+            "structure": 1,
+            "label": "Sout\u00e8nement gabion bois"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Banc"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Barri\u00e8re levante"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Barri\u00e8res animaux"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Compteur pi\u00e9tons"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Compteur routier"
+        }
+    },
+    {
+        "pk": 25,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Dispositif anti-stationnement"
+        }
+    },
+    {
+        "pk": 26,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Emmarchement m\u00e9tallique"
+        }
+    },
+    {
+        "pk": 27,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Fontaine"
+        }
+    },
+    {
+        "pk": 28,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Main courante \u00e0 c\u00e2ble"
+        }
+    },
+    {
+        "pk": 29,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Parc \u00e0 v\u00e9lo"
+        }
+    },
+    {
+        "pk": 30,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Point d'assurance"
+        }
+    },
+    {
+        "pk": 31,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Poubelles"
+        }
+    },
+    {
+        "pk": 32,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Table"
+        }
+    },
+    {
+        "pk": 33,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Table d'orientation"
+        }
+    },
+    {
+        "pk": 34,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Toilettes \u00e0 \u00e9vacuation"
+        }
+    },
+    {
+        "pk": 35,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "E",
+            "structure": 1,
+            "label": "Toilettes s\u00e8ches"
+        }
+    },
+    {
+        "pk": 36,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Porte d'entr\u00e9e du Parc"
+        }
+    },
+    {
+        "pk": 37,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Directionelle"
+        }
+    },
+    {
+        "pk": 38,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Situation"
+        }
+    },
+    {
+        "pk": 39,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "R\u00e9glementaire"
+        }
+    },
+    {
+        "pk": 40,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 41,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Appartenance"
+        }
+    },
+    {
+        "pk": 42,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Limite C\u0153ur"
+        }
+    },
+    {
+        "pk": 43,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Information"
+        }
+    },
+    {
+        "pk": 44,
+        "model": "infrastructure.infrastructuretype",
+        "fields": {
+            "type": "S",
+            "structure": 1,
+            "label": "Temporaire"
+        }
+    }
+]

@@ -1,0 +1,33 @@
+[
+    {
+        "pk": 1, 
+        "model": "authent.structure", 
+        "fields": {
+            "name": "G\u00e9n\u00e9rale"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents sentiers",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents communication",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9dacteurs",
+            "permissions": []
+        }
+    }
+]

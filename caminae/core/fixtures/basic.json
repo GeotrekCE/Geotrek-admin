@@ -1,0 +1,149 @@
+[
+    {
+        "pk": 1,
+        "model": "core.datasource",
+        "fields": {
+            "source": "TopoDB"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "core.stake",
+        "fields": {
+            "stake": "Faible"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.stake",
+        "fields": {
+            "stake": "Mod\u00e9r\u00e9"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.stake",
+        "fields": {
+            "stake": "Fort"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "core.stake",
+        "fields": {
+            "stake": "Tr\u00e8s fort"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "core.usage",
+        "fields": {
+            "usage": "P\u00e9destre"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Pastoral"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Equestre"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "core.usage",
+        "fields": {
+            "usage": "VTT"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Moto"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Quad"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Automobile"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Ski de fond"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Raquettes"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Ski de randonn\u00e9e"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Alpinisme"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Sentier d'interpr\u00e9tation"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "core.network",
+        "fields": {
+            "network": "Circuit GR"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "core.comfort",
+        "fields": {
+            "comfort": "Facile"
+        }
+    },
+    { 
+        "pk": 2,
+        "model": "core.comfort",
+        "fields": {
+            "comfort": "Moyen"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.comfort",
+        "fields": {
+            "comfort": "Difficile"
+        }
+    }
+]
