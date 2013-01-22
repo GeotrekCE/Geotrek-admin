@@ -13,6 +13,7 @@ from django.test.testcases import to_list
 from django.utils import html
 
 from caminae.mapentity.forms import MapEntityForm
+from caminae.paperclip.factories import AttachmentFactory
 
 
 @override_settings(MEDIA_ROOT='/tmp/caminae-media')
@@ -179,3 +180,12 @@ class MapEntityTest(LiveServerTestCase):
         # TODO: test disabled since not working on CI server
         # obj.prepare_map_image(self.live_server_url)
         # self.assertTrue(os.path.exists(obj.get_map_image_path()))
+
+    def test_attachment(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        obj = self.modelfactory.create()
+        AttachmentFactory.create(obj=obj)
+        AttachmentFactory.create(obj=obj)
+        self.assertEqual(len(obj.attachments), 2)

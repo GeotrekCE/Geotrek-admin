@@ -8,6 +8,7 @@ from django.utils import timezone
 from screamshot.utils import casperjs_capture
 
 from caminae.common.utils import smart_urljoin
+from caminae.paperclip.models import Attachment
 
 
 # Used to create the matching url name
@@ -95,6 +96,10 @@ class MapEntityMixin(object):
     @models.permalink
     def get_detail_url(self):
         return (self.get_url_name(ENTITY_DETAIL), [str(self.pk)])
+
+    @property
+    def attachments(self):
+        return Attachment.objects.attachments_for_object(self)
 
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
