@@ -35,7 +35,7 @@ DECLARE
     tuple record;
 BEGIN
     linear_offset := ST_Line_Locate_Point(line, point);
-    shortest_line := ST_3DShortestLine(line, point);
+    shortest_line := ST_ShortestLine(line, point);
     crossing_dir := ST_LineCrossingDirection(line, shortest_line);
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
     side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir < 0 THEN 1 WHEN crossing_dir > 0 THEN -1 ELSE 0 END;
@@ -77,10 +77,34 @@ END;
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
--- Convert 2D linestring to 3D using a DEM
+-- Convert 2D points and linestring to 3D using a DEM
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION add_elevation(geom geometry) RETURNS record AS $$
+CREATE OR REPLACE FUNCTION add_point_elevation(geom geometry) RETURNS geometry AS $$
+DECLARE
+    ele integer;
+    geom3d geometry;
+BEGIN
+    -- Ensure we have a DEM
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND OR ST_GeometryType(geom) NOT IN ('ST_Point') THEN
+        geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), 0);
+        geom3d := ST_SetSRID(geom3d, ST_SRID(geom));
+        RETURN geom3d;
+    END IF;
+
+    SELECT ST_Value(rast, 1, geom) INTO ele FROM mnt WHERE ST_Intersects(rast, geom);
+    IF NOT FOUND THEN
+        ele := 0;
+    END IF;
+    geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), ele);
+    geom3d := ST_SetSRID(geom3d, ST_SRID(geom));
+    RETURN geom3d;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION elevation_infos(geom geometry) RETURNS record AS $$
 DECLARE
     num_points integer;
     current_point geometry;
@@ -166,6 +190,7 @@ BEGIN
     -- /!\ linear offset (start and end point) are given as a fraction of the
     -- 2D-length in Postgis. Since we are working on 3D geometry, it could lead
     -- to unexpected results.
+    -- January 2013 : It does indeed.
 
     IF t_count = 0 THEN
         -- No more troncons, close this topology
@@ -175,11 +200,11 @@ BEGIN
         -- Note: We are faking a M-geometry in order to use LocateAlong.
         -- This is handy because this function includes an offset parameter
         -- which could be otherwise diffcult to handle.
-        SELECT ST_Force_3DZ(ST_GeometryN(ST_LocateAlong(ST_AddMeasure(t.geom, 0, 1), et.pk_debut, e.decallage), 1))
+        SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
             INTO egeom
             FROM evenements e, evenements_troncons et, troncons t
             WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
-        UPDATE evenements SET geom = egeom, longueur = ST_3DLength(egeom) WHERE id = eid;
+        UPDATE evenements SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
         -- Note: We are faking a M-geometry in order to use LocateBetween

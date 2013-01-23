@@ -117,12 +117,11 @@ class Path(MapEntityMixin, StructureRelated):
         cursor = connection.cursor()
         sql = """
         SELECT position, distance
-        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s %(z)s)',%(srid)s))
+        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
              AS (position FLOAT, distance FLOAT)
         """ % {'pk': self.pk,
                'x': point.x,
                'y': point.y,
-               'z': 0,  # TODO: does it matter ?
                'srid': settings.SRID}
         cursor.execute(sql)
         result = cursor.fetchall()

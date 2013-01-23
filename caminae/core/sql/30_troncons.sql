@@ -151,7 +151,7 @@ DECLARE
 BEGIN
 
     SELECT *
-    FROM add_elevation(NEW.geom) AS (line3d geometry, min_ele integer, max_ele integer, positive_gain integer, negative_gain integer)
+    FROM elevation_infos(NEW.geom) AS (line3d geometry, min_ele integer, max_ele integer, positive_gain integer, negative_gain integer)
     INTO line3d, min_ele, max_ele, positive_gain, negative_gain;
 
     -- Update path geometry
