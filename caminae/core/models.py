@@ -275,7 +275,7 @@ class Topology(NoDeleteMixin):
             break
         return False
 
-    def add_path(self, path, start=0.0, end=1.0):
+    def add_path(self, path, start=0.0, end=1.0, reload=True):
         """
         Shortcut function to add paths into this topology.
         """
@@ -285,7 +285,8 @@ class Topology(NoDeleteMixin):
                                              start_position=start, 
                                              end_position=end)
         # Since a trigger modifies geom, we reload the object
-        self.reload()
+        if reload:
+            self.reload()
         return aggr
 
     def mutate(self, other, delete=True):
@@ -302,9 +303,10 @@ class Topology(NoDeleteMixin):
         if other.ispoint():
             aggrs = aggrs[:1]
         for aggr in aggrs:
-            self.add_path(aggr.path, aggr.start_position, aggr.end_position)
+            self.add_path(aggr.path, aggr.start_position, aggr.end_position, reload=False)
         if delete:
             other.delete()
+        self.save()
         return self
 
     def reload(self):
@@ -354,7 +356,7 @@ class Topology(NoDeleteMixin):
         lng = objdict.get('lng')
         # Point topology ?
         if lat and lng:
-            return cls._topologypoint(lng, lat, kind)
+            return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
 
         # Path aggregation
         topology = TopologyFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
@@ -390,7 +392,7 @@ class Topology(NoDeleteMixin):
         return topology
 
     @classmethod
-    def _topologypoint(cls, lng, lat, kind=None):
+    def _topologypoint(cls, lng, lat, kind=None, snap=None):
         """
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
@@ -399,8 +401,13 @@ class Topology(NoDeleteMixin):
         # Find closest path
         point = Point((lng, lat), srid=settings.API_SRID)
         point.transform(settings.SRID)
-        closest = Path.closest(point)
-        position, offset = closest.interpolate(point)
+        if snap is None:
+            closest = Path.closest(point)
+            position, offset = closest.interpolate(point)
+        else:
+            closest = Path.objects.get(pk=snap)
+            position, offset = closest.interpolate(point)
+            offset = 0
         # We can now instantiante a Topology object
         topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
         aggrobj = PathAggregation(topo_object=topology,
@@ -408,6 +415,7 @@ class Topology(NoDeleteMixin):
                                   end_position=position,
                                   path=closest)
         aggrobj.save()
+        topology.save()
         return topology
 
     def geom_as_point(self):
