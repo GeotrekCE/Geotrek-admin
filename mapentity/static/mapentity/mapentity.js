@@ -196,8 +196,13 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
             var serialized = '';
             if (topologyMode) {
                 if (layer instanceof L.Marker) {
-                    var p = layer.getLatLng();
-                    serialized = JSON.stringify({lat: p.lat, lng: p.lng});
+                    var p = layer.getLatLng(),
+                        serialized = {lat: p.lat, lng: p.lng};
+                    // In case the marker is snapped, serialize this information.
+                    if (layer.snap) {
+                        serialized['snap'] = layer.snap.properties.pk;
+                    }
+                    serialized = JSON.stringify(serialized);
                 }
                 else
                     serialized = JSON.stringify(layer);
