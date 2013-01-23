@@ -72,25 +72,12 @@ Load MNT raster
 Initial Data
 ------------
 
-Load example data (used in development) :
+Load basic data :
 
 ::
 
     make load_data
 
-
-Among other things, an administrator "admin"/"admin" will be created.
-
-
-:note:
-
-    This command makes use of ``GDAL`` and ``raster2pgsql`` internally. It
-    therefore supports all GDAL raster input formats. You can list these formats
-    with the command ``raster2pgsql -G``.
-
-
-Without Initial Data
---------------------
 
 If you do not load data, you'll have to at least create a super user :
 
@@ -108,6 +95,14 @@ You might also need to deploy logo images in the following places :
 
 * ``var/media/upload/logo-header.png``
 * ``var/media/upload/logo-login.png``
+
+
+Development Data
+----------------
+
+::
+
+    bin/django loaddata development-pne
 
 
 =============
