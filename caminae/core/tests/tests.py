@@ -489,6 +489,34 @@ class TopologyTest(TestCase):
         self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
                                     after.aggregations.all()[0].end_position))
 
+    def test_point_geom(self):
+        """
+           + 
+          / \ 
+         / X \
+        +     + 
+        """
+        p1 = PathFactory.create(geom=LineString((0,0,0), (4,4,0)))
+        p2 = PathFactory.create(geom=LineString((4,4,0), (8,0,0)))
+        
+        poi = Point(3, 1, srid=settings.SRID)
+        position, distance = Path.interpolate(p1, poi)
+        self.assertTrue(almostequal(0.5, position))
+        self.assertTrue(almostequal(-1.414, distance))
+        # Verify that deserializing this, we obtain the same original coordinates
+        # (use lat/lng as in forms)
+        poi.transform(settings.API_SRID)
+        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        poitopo.save()
+        # Computed topology properties match original interpolation
+        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(-1.414, poitopo.offset))
+        # Resulting geometry
+        self.assertTrue(almostequal(3, poitopo.geom.x))
+        self.assertTrue(almostequal(1, poitopo.geom.y))
+        self.assertTrue(almostequal(0, poitopo.geom.z))
+
+
     def test_junction_point(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
         p2 = PathFactory.create(geom=LineString((0,0,0), (2,0,0)))
