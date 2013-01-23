@@ -10,6 +10,7 @@ import zipfile
 import tempfile
 import datetime
 from django.http import HttpResponse
+from django.conf import settings
 from django.utils.encoding import smart_str
 from django.contrib.gis.db.models.fields import GeometryField
 from django.contrib.gis.gdal import check_err, OGRGeomType
@@ -24,12 +25,12 @@ from osgeo import ogr, osr
 
 
 
-def zip_shapes(shapes):
+def zip_shapes(shapes, delete=True):
     buffr = StringIO()
     zipf = zipfile.ZipFile(buffr, 'w', zipfile.ZIP_DEFLATED)
 
     for shp_name, shp_path in shapes:
-        zip_shapefile_path(zipf, shp_path, shp_name)
+        zip_shapefile_path(zipf, shp_path, shp_name, delete)
 
     zipf.close()
     buffr.flush()
@@ -40,11 +41,13 @@ def zip_shapes(shapes):
     return zip_stream
 
 
-def zip_shapefile_path(zipf, shapefile_path, file_name):
+def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
     files = ['shp','shx','prj','dbf']
     for item in files:
         filename = '%s.%s' % (shapefile_path.replace('.shp',''), item)
         zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp',''), item))
+        if delete:
+            os.remove(filename)
 
 
 def zip_stream_to_response(zip_stream, zip_file_name, mimetype='application/zip'):
@@ -123,7 +126,7 @@ def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
 
 def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
     # Create temp file
-    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode = 'w+b')
+    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode = 'w+b', dir=settings.TEMP_DIR)
     # we must close the file for GDAL to be able to open and write to it
     tmp.close()
     # create shape format
