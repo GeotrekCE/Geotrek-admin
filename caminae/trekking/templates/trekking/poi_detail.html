@@ -16,6 +16,10 @@
             <th>{{ poi|verbose:"description" }}</th>
             <td>{{ poi.description|safe }}</td>
         </tr>
+        <tr>
+            <th>{% trans "Elevation" %}</th>
+            <td>{{ poi.geom.z }}m</td>
+        </tr>
     </table>
 
     <h3>{% trans "Management" %}</h3>
@@ -23,9 +27,9 @@
         <tr>
             <th>{% trans "Paths" %}</th>
             <td>
-                {% for p in poi.paths.all %}
+                {% for aggr in poi.aggregations.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
+                    <li>{{ aggr.path.name_display|safe }} ({{ aggr.start_position|floatformat:"2" }} : {{ poi.offset|floatformat:"2" }})</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
