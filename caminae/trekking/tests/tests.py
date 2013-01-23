@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 
 from caminae.paperclip.factories import AttachmentFactory
 from caminae.common.utils.testdata import get_dummy_uploaded_image
-from caminae.mapentity.tests import MapEntityTest
+from caminae.mapentity.tests import MapEntityTest, MapEntityLiveTest
 from caminae.authent.factories import TrekkingManagerFactory
 from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.land.factories import DistrictFactory
@@ -93,6 +93,12 @@ class TrekViewsTest(MapEntityTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
+
+class TrekViewsLiveTest(MapEntityLiveTest):
+    model = Trek
+    modelfactory = TrekFactory
+    userfactory = TrekkingManagerFactory
 
 
 class TrekCustomViewTests(TestCase):

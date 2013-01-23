@@ -7,6 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 test_requirements = [
     'factory_boy == 1.1.5',
+    'requests == 1.1.0',
 ]
 
 

@@ -1,23 +1,27 @@
 # -*- coding: utf-8 -*-
-
 import os
+import md5
+import time
 import shutil, StringIO, csv
 
+import requests
 from django.conf import settings
+from django.utils.http import http_date
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
-from django.test import LiveServerTestCase
+from django.test import TestCase, LiveServerTestCase
 from django.test.utils import override_settings
 from django.test.testcases import to_list
 
 from django.utils import html
 
+from caminae.common.utils import smart_urljoin
 from caminae.mapentity.forms import MapEntityForm
 from caminae.paperclip.factories import AttachmentFactory
 
 
 @override_settings(MEDIA_ROOT='/tmp/caminae-media')
-class MapEntityTest(LiveServerTestCase):
+class MapEntityTest(TestCase):
     model = None
     modelfactory = None
     userfactory = None
@@ -169,6 +173,73 @@ class MapEntityTest(LiveServerTestCase):
 
         self._post_add_form()
 
+    def test_attachment(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        obj = self.modelfactory.create()
+        AttachmentFactory.create(obj=obj)
+        AttachmentFactory.create(obj=obj)
+        self.assertEqual(len(obj.attachments), 2)
+
+
+
+class MapEntityLiveTest(LiveServerTestCase):
+    model = None
+    userfactory = None
+    session = None
+
+    def url_for(self, path):
+        return smart_urljoin(self.live_server_url, path)
+
+    def login(self):
+        user = self.userfactory(password='booh')
+        self.session = requests.Session()
+        response = self.session.get(self.live_server_url)
+        csrftoken = response.cookies['csrftoken']
+        response = self.session.post(self.url_for('/login/'), 
+                                    {'username': user.username,
+                                     'password': 'booh',
+                                     'csrfmiddlewaretoken': csrftoken})
+
+    def test_geojson_cache(self):
+        self.login()
+        obj = self.modelfactory()
+        response = self.session.get(self.url_for(obj.get_layer_url()))
+        self.assertEqual(response.status_code, 200)
+        # Without headers to cache
+        latest = obj.latest_updated()
+        lastmodified = response.headers.get('Last-Modified')
+        md5sum = md5.new(response.content).digest()
+        self.assertNotEqual(lastmodified, None)
+
+        # Try again, check that nothing changed
+        response = self.session.get(self.url_for(obj.get_layer_url()))
+        self.assertEqual(lastmodified, response.headers.get('Last-Modified'))
+        self.assertEqual(md5sum, md5.new(response.content).digest())
+
+        # Create a new object
+        time.sleep(1)  # wait some time, last-modified has precision in seconds
+        self.modelfactory()
+        self.assertNotEqual(latest, obj.latest_updated())
+        response = self.session.get(self.url_for(obj.get_layer_url()))
+        # Check that last modified and content changed
+        self.assertNotEqual(lastmodified, response.headers.get('Last-Modified'))
+        self.assertNotEqual(md5sum, md5.new(response.content).digest())
+
+        # Ask again with headers, and expect a 304 status (not changed)
+        lastmodified = response.headers.get('Last-Modified')
+        response = self.session.get(self.url_for(obj.get_layer_url()),
+                                    headers={'if-modified-since': lastmodified})
+        self.assertEqual(response.status_code, 304)
+
+        # Ask again with headers in the past, and expect a 200
+        response = self.session.get(self.url_for(obj.get_layer_url()),
+                                    headers={'if-modified-since': http_date(1000)})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(md5sum, md5.new(response.content).digest())
+
+
     def test_map_image(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -180,12 +251,3 @@ class MapEntityTest(LiveServerTestCase):
         # TODO: test disabled since not working on CI server
         # obj.prepare_map_image(self.live_server_url)
         # self.assertTrue(os.path.exists(obj.get_map_image_path()))
-
-    def test_attachment(self):
-        if self.model is None:
-            return  # Abstract test should not run
-
-        obj = self.modelfactory.create()
-        AttachmentFactory.create(obj=obj)
-        AttachmentFactory.create(obj=obj)
-        self.assertEqual(len(obj.attachments), 2)
