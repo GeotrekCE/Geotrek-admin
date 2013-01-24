@@ -132,7 +132,7 @@
             });
             map.addLayer(objectsLayer);
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
-            objectsLayer.load("{{ model.get_layer_url }}?_u=" + (new Date().getTime()));
+            objectsLayer.load("{{ model.get_layer_url }}", true);
 
             var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
                 // Hide pk column

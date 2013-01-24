@@ -71,7 +71,7 @@ FormField.makeModule = function(module, module_settings) {
             map.addLayer(pathsLayer);
             snapObserver = new L.SnapObserver(map, pathsLayer);
             // Start ajax loading at last
-            pathsLayer.load(module_settings.enablePathSnapping.pathsLayer_url);
+            pathsLayer.load(module_settings.enablePathSnapping.pathsLayer_url, true);
         }
         else {
             snapObserver = new L.SnapObserver(map, objectsLayer);

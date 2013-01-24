@@ -169,7 +169,10 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
     },
 
-    load: function (url) {
+    load: function (url, force) {
+        if (!!force && url.indexOf("?") != -1) {
+            url += '?_u=' + (new Date().getTime());
+        }
         var jsonLoad = function (data) {
             var features = jQuery.grep(data.features, function(obj, i) {
                 return obj.geometry != null;

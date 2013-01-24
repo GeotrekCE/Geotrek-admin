@@ -2374,3 +2374,15 @@ De cette manière, la géométrie des objets qui est enregistrée est celle qui 
 Dans le cas du snapping, le décallage est à 0, l'évènement évolue avec le tronçon.
 
 
+#447, #394, #418 - [BUG] Forcer le raffraichissement de la carte après ajout/modification/suppression
+-----------------------------------------------------------------------------------------------------
+
+Les couches des objets ne sont plus mises en cache côté client sur la page liste et lors de la saisie d'une topologie.
+
+Elle est en cache côté serveur en fonction de la colonne date_update.
+
+:note:
+
+    Initialement, le comportement était basé sur les entêtes HTTP ``Last-Modified``. Désormais, dans certains cas, nous forçons le raffraichissement du cache du navigateur à l'aide un paramètre GET ``?_u=<timestamp>``.
+
+

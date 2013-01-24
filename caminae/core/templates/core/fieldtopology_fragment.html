@@ -28,7 +28,7 @@
     };
 
     {{ module }}_settings['enableMultipath'] = {
-        'path_json_graph_url': '{% url core:path_json_graph %}'
+        'path_json_graph_url': '{% url core:path_json_graph %}?_u=' + (new Date().getTime()),
     };
 
     {{ module }}_settings.init = {
