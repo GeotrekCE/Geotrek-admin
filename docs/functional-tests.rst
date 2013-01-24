@@ -2364,6 +2364,13 @@ Désormais cette commande ne charge plus les données d'exemple du Parc des Écr
     Le réseau de tronçons d'exemple du PNE peut éventuellement échouer à cause des clés primaires dupliquées. **En attendant une mise à jour de celui-ci**, il faut désactiver au préalable le trigger de découpage des tronçons (``ALTER TABLE troncons DISABLE TRIGGER troncons_split_geom_iu_tgr;``). On peut ensuite charger le réseau, réactiver le trigger, et le déclencher sur chaque objet (``UPDATE troncons SET geom = geom;``).
 
 
+#456 - [BUG] Positionnement des POIs après sauvegarde
+-----------------------------------------------------
 
+Désormais, les geométries des événement de type point ne sont pas recalculées à partir des décallages et pk, si le décalage est supérieur à 0.
+
+De cette manière, la géométrie des objets qui est enregistrée est celle qui est saisie.
+
+Dans le cas du snapping, le décallage est à 0, l'évènement évolue avec le tronçon.
 
 

@@ -298,6 +298,7 @@ class Topology(NoDeleteMixin):
         save them into this one. Optionnally deletes the other.
         """
         self.offset = other.offset
+        self.geom = other.geom
         self.save()
         PathAggregation.objects.filter(topo_object=self).delete()
         aggrs = other.aggregations.all()
@@ -335,7 +336,8 @@ class Topology(NoDeleteMixin):
         if self.pk:
             tmp = self.__class__.objects.get(pk=self.pk)
             self.length = tmp.length
-            self.geom = tmp.geom
+            if tmp.geom and tmp.geom.geom_type != 'Point':
+                self.geom = tmp.geom
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
@@ -402,7 +404,7 @@ class Topology(NoDeleteMixin):
         """
         from .factories import TopologyFactory
         # Find closest path
-        point = Point((lng, lat), srid=settings.API_SRID)
+        point = Point(lng, lat, srid=settings.API_SRID)
         point.transform(settings.SRID)
         if snap is None:
             closest = Path.closest(point)
@@ -418,11 +420,14 @@ class Topology(NoDeleteMixin):
                                   end_position=position,
                                   path=closest)
         aggrobj.save()
+        point = Point(point.x, point.y, 0, srid=settings.SRID)
+        topology.geom = point
         topology.save()
         return topology
 
     def geom_as_point(self):
         geom = self.geom
+        assert geom, 'Topology point is None'
         if geom.geom_type != 'Point':
             logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
             geom = Point(geom.coords[0], srid=settings.SRID)

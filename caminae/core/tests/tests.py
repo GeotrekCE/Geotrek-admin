@@ -538,6 +538,34 @@ class TopologyTest(TestCase):
         # It should have kept its position !
         self.assertTrue(almostequal(10, poitopo.geom.x))
         self.assertTrue(almostequal(10, poitopo.geom.y))
+        # Change path, it should still be in the same position
+        p1.geom = LineString((0,0,0),
+                             (0,5,0),
+                             (-5,10,0),
+                             (0,15,0),
+                             (0,20,0))
+        p1.save()
+        poitopo.reload()
+        self.assertTrue(almostequal(10, poitopo.geom.x))
+        self.assertTrue(almostequal(10, poitopo.geom.y))
+
+    def test_point_geom_moving(self):
+        p1 = PathFactory.create(geom=LineString((0,0,0),
+                                                (0,5,0)))
+        poi = Point(0, 2.5, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(0, poitopo.offset))
+        self.assertTrue(almostequal(0, poitopo.geom.x))
+        self.assertTrue(almostequal(2.5, poitopo.geom.y))
+        p1.geom = LineString((10,0,0),
+                             (10,5,0))
+        p1.save()
+        poitopo.reload()
+        self.assertTrue(almostequal(10, poitopo.geom.x))
+        self.assertTrue(almostequal(2.5, poitopo.geom.y))
+
 
     def test_junction_point(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))

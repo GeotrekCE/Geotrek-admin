@@ -40,6 +40,11 @@ BEGIN
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
     side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir < 0 THEN 1 WHEN crossing_dir > 0 THEN -1 ELSE 0 END;
 
+    -- Round if close to 0
+    IF ABS(side_offset) < 0.1 THEN
+        side_offset := 0;
+    END IF;
+
     SELECT linear_offset AS position, side_offset AS distance INTO tuple;
     RETURN tuple;
 END;
@@ -180,6 +185,7 @@ DECLARE
     egeom geometry;
     lines_only boolean;
     t_count integer;
+    t_offset float;
 BEGIN
     -- See what kind of topology we have
     SELECT bool_and(et.pk_debut != et.pk_fin), count(*)
@@ -200,10 +206,13 @@ BEGIN
         -- Note: We are faking a M-geometry in order to use LocateAlong.
         -- This is handy because this function includes an offset parameter
         -- which could be otherwise diffcult to handle.
-        SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
-            INTO egeom
-            FROM evenements e, evenements_troncons et, troncons t
-            WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+        SELECT geom, decallage INTO egeom, t_offset FROM evenements e WHERE e.id = eid;
+        IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) THEN
+            SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
+                INTO egeom
+                FROM evenements e, evenements_troncons et, troncons t
+                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+        END IF;
         UPDATE evenements SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
