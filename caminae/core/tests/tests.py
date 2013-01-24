@@ -489,7 +489,7 @@ class TopologyTest(TestCase):
         self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
                                     after.aggregations.all()[0].end_position))
 
-    def test_point_geom(self):
+    def test_point_geom_3d(self):
         """
            + 
           / \ 
@@ -507,7 +507,6 @@ class TopologyTest(TestCase):
         # (use lat/lng as in forms)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        poitopo.save()
         # Computed topology properties match original interpolation
         self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
         self.assertTrue(almostequal(-1.414, poitopo.offset))
@@ -515,6 +514,30 @@ class TopologyTest(TestCase):
         self.assertTrue(almostequal(3, poitopo.geom.x))
         self.assertTrue(almostequal(1, poitopo.geom.y))
         self.assertTrue(almostequal(0, poitopo.geom.z))
+
+    def test_point_geom_not_moving(self):
+        """
+        Modify path, point not moving
+        +                  +
+        |                  |
+         \     X          /        X
+         /                \
+        |                  |
+        +                  +
+        """
+        p1 = PathFactory.create(geom=LineString((0,0,0),
+                                                (0,5,0),
+                                                (5,10,0),
+                                                (0,15,0),
+                                                (0,20,0)))
+        poi = Point(10, 10, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        self.assertEqual(0.5, poitopo.aggregations.all()[0].start_position)
+        self.assertTrue(almostequal(-5, poitopo.offset))
+        # It should have kept its position !
+        self.assertTrue(almostequal(10, poitopo.geom.x))
+        self.assertTrue(almostequal(10, poitopo.geom.y))
 
     def test_junction_point(self):
         p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
