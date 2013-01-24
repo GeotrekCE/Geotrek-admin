@@ -344,8 +344,15 @@ class Topology(NoDeleteMixin):
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.__class__.KIND
 
-        super(Topology, self).save(*args, **kwargs)
-        self.reload()
+        before = len(connection.connection.notices) if connection.connection else 0
+        try:
+            super(Topology, self).save(*args, **kwargs)
+            self.reload()
+        finally:
+            # Show triggers output
+            if connection.connection:
+                for notice in connection.connection.notices[before:]:
+                    logger.debug(notice)
 
     @classmethod
     def deserialize(cls, serialized):
