@@ -392,15 +392,27 @@ class Topology(NoDeleteMixin):
             # Javascript hash keys are parsed as a string
             # Provides default values
             start_position, end_position = positions.get(str(i), (False, False))
-            if start_position != end_position \
-               and i > 0 and i < len(paths) -1:
-                raise ValueError(_("Invalid serialization of intermediate markers"))
-
-            aggrobj = PathAggregation(topo_object=topology,
-                                      start_position=start_position or 0.0,
-                                      end_position=end_position or 1.0,
-                                      path=path)
-            aggrobj.save()
+            if i > 0 and i < len(paths) -1:
+                if start_position != end_position:
+                    raise ValueError(_("Invalid serialization of intermediate markers"))
+                else:
+                    # Intermediary points, in the case of return AB - BA
+                    aggrobj = PathAggregation(topo_object=topology,
+                                              start_position=0.0,
+                                              end_position=start_position,
+                                              path=path)
+                    aggrobj.save()
+                    aggrobj = PathAggregation(topo_object=topology,
+                                              start_position=start_position,
+                                              end_position=0.0,
+                                              path=path)
+                    aggrobj.save()
+            else:
+                aggrobj = PathAggregation(topo_object=topology,
+                                          start_position=start_position or 0.0,
+                                          end_position=end_position or 1.0,
+                                          path=path)
+                aggrobj.save()
         return topology
 
     @classmethod

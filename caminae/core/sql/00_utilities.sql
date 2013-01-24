@@ -186,6 +186,11 @@ DECLARE
     lines_only boolean;
     t_count integer;
     t_offset float;
+
+    t_start float;
+    t_end float;
+    t_geom geometry;
+    tomerge geometry[];
 BEGIN
     -- See what kind of topology we have
     SELECT bool_and(et.pk_debut != et.pk_fin), count(*)
@@ -219,22 +224,28 @@ BEGIN
         -- Note: We are faking a M-geometry in order to use LocateBetween
         -- which is better than OffsetCurve because it will not drop the
         -- Z-index.
+
         -- FIXME: If paths are not contiguous, only the first chunk will be
         -- considered. How to handle these invalid linear topologies?
-        -- FIXME: LineMerge and Line_Substring work on X and Y only. If two
+
+        -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
-        -- functions will see only on point.
-        SELECT ST_Force_3DZ(ST_GeometryN(ST_LocateBetween(ST_AddMeasure(ST_LineMerge(
-                ST_Collect(
-                    -- Intermediate (forced passage) markers for topologies will be stored like points
-                    -- Ignore them in geometry computation, they are used in UI only.
-                    CASE WHEN et.pk_debut != et.pk_fin THEN ST_Line_Substring(t.geom, et.pk_debut, et.pk_fin) ELSE t.geom END
-                )), 0, 1), 0, 1, e.decallage), 1))
-            INTO egeom
-            FROM evenements e, evenements_troncons et, troncons t
-            WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
-            GROUP BY e.id, e.decallage;
-        UPDATE evenements SET geom = egeom, longueur = ST_3DLength(egeom) WHERE id = eid;
+        -- functions will see only on point. --> No problem in mountain path management.
+        FOR t_start, t_end, t_geom IN SELECT et.pk_debut, et.pk_fin, t.geom
+               FROM evenements e, evenements_troncons et, troncons t
+               WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
+               ORDER BY et.id  -- /!\ We suppose that evenement_troncons were created in the right order
+        LOOP
+            IF t_start < t_end THEN
+                egeom := ST_Line_Substring(t_geom, t_start, t_end);
+            ELSE
+                egeom := ST_Line_Substring(ST_Reverse(t_geom), 1.0-t_start, 1.0-t_end);
+            END IF;
+            tomerge := array_append(tomerge, egeom);
+        END LOOP;
+        egeom := ST_MakeLine(tomerge);
+        -- RAISE NOTICE 'Merged : %', ST_AsText(ST_MakeLine(tomerge));
+        UPDATE evenements SET geom = ST_Force_3DZ(egeom), longueur = ST_3DLength(egeom) WHERE id = eid;
     END IF;
 END;
 $$ LANGUAGE plpgsql;

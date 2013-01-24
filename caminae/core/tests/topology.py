@@ -422,3 +422,46 @@ class TopologyTest(TestCase):
         self.assertEqual(t2.geom.coords, (2,-1,0))
         self.assertEqual(t2_agg.start_position, 0.25)
         self.assertEqual(t2_agg.end_position, 0.25)
+
+
+
+class TopologyCornerCases(TestCase):
+    def test_return_path(self):
+        """
+                     A
+                 ----+
+                 |
+        B +------+------+ C
+        """
+        p1 = PathFactory.create(geom=LineString((0,0,0), (10,0,0)))
+        p2 = PathFactory.create(geom=LineString((5,0,0), (5,10,0), (10,10,0)))
+        p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
+        # Now create a topology B-A-C
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p1, start=0.5, end=1)
+        topo.add_path(p2, start=0, end=0.8)
+        topo.add_path(p2, start=0.8, end=0)
+        topo.add_path(p3, start=0, end=0.5)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((2.5,0,0),(5,0,0),(5,10,0),
+                                               (7,10,0),(5,10,0),(5,0,0),
+                                               (7.5,0,0)))
+
+    def test_return_path_serialized(self):
+        """
+        Same as test_return_path() but from deserialization.
+        """
+        p1 = PathFactory.create(geom=LineString((0,0,0), (10,0,0)))
+        p2 = PathFactory.create(geom=LineString((5,0,0), (5,10,0), (10,10,0)))
+        p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
+        topo = Topology.deserialize("""
+            {"offset":0,
+             "positions":{"0":[0.5,1],
+                          "1":[0.8,0.8],
+                          "2":[0,0.5]},
+             "paths":[%s,%s,%s]}
+        """ % (p1.pk, p2.pk, p3.pk))
+        topo.save()
+        self.assertEqual(topo.geom, LineString((2.5,0,0),(5,0,0),(5,10,0),
+                                               (7,10,0),(5,10,0),(5,0,0),
+                                               (7.5,0,0)))
