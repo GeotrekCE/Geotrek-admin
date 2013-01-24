@@ -287,7 +287,9 @@ span.filter-info {
 }
 
 .details-panel td ul li {
-	list-style: none;
+    list-style: none;
+    float: left;
+    width: 25%;
 }
 
 .details-panel span.none {
