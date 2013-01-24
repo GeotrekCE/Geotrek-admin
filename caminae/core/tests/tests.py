@@ -360,7 +360,7 @@ class TopologyTest(TestCase):
         self.assertEqual(topology1.offset, 14.5)
         self.assertEqual(len(topology1.paths.all()), 1)
         # topology2 does not exist anymore
-        self.assertTrue(topology2.deleted)
+        self.assertEqual(len(Topology.objects.filter(pk=topology2.pk)), 0)
         # Without deletion
         topology3 = TopologyFactory.create()
         topology1.mutate(topology3, delete=False)
@@ -531,7 +531,7 @@ class TopologyTest(TestCase):
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
 
         # Update to a non junction point topology
-        pa.end_position=0.4
+        pa.end_position = 0.4
         pa.save()
 
         self.assertItemsEqual(t.paths.all(), [p1])

@@ -195,9 +195,12 @@ class Path(MapEntityMixin, StructureRelated):
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
 
-    def delete(self, using=None):
-        self.deleted = True
-        self.save(using=using)
+    def delete(self, force=False, using=None, **kwargs):
+        if force:
+            super(NoDeleteMixin, self).delete(using, **kwargs)
+        else:
+            self.deleted = True
+            self.save(using=using)
 
     class Meta:
         abstract = True
@@ -305,7 +308,7 @@ class Topology(NoDeleteMixin):
         for aggr in aggrs:
             self.add_path(aggr.path, aggr.start_position, aggr.end_position, reload=False)
         if delete:
-            other.delete()
+            other.delete(force=True)  # Really delete it from database
         self.save()
         return self
 
@@ -368,7 +371,7 @@ class Topology(NoDeleteMixin):
         # Check that paths should be unique
         if len(set(paths)) != len(paths):
             paths = collections.Counter(paths)
-            extras = [p for p in paths if paths[p]>1]
+            extras = [p for p in paths if paths[p] > 1]
             raise ValueError(_("Paths are not unique : %s") % extras)
 
         # Create path aggregations
