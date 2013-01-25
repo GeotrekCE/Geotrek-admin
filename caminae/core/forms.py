@@ -1,10 +1,4 @@
-from math import isnan
-
-from django.conf import settings
-from django.db import IntegrityError
-from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import LineString
 
 import floppyforms as forms
 from crispy_forms.layout import Field
@@ -84,11 +78,7 @@ class PathForm(CommonForm):
         path = super(PathForm, self).save(commit=False)
 
         if self.cleaned_data.get('reverse_geom'):
-            # path.geom.reverse() won't work for 3D coords
-            reversed_coord = path.geom.coords[-1::-1]
-            # FIXME: why do we have to filter nan variable ?! Why are they here in the first place ?
-            valid_coords = [ (x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord ]
-            path.geom = LineString(valid_coords)
+            path.reverse()
 
         if commit:
             path.save()

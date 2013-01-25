@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from math import isnan
 import logging
 import collections
 from datetime import datetime
@@ -104,6 +104,14 @@ class Path(MapEntityMixin, StructureRelated):
 
     def is_overlap(self):
         return not Path.disjoint(self.geom, self.pk)
+
+    def reverse(self):
+        # path.geom.reverse() won't work for 3D coords
+        reversed_coord = self.geom.coords[-1::-1]
+        # TODO: Why do we have to filter nan variable ?! Why are they here in the first place ?
+        valid_coords = [ (x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord ]
+        self.geom = LineString(valid_coords)
+        return self
 
     def interpolate(self, point):
         """
