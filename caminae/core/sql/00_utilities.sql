@@ -177,7 +177,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
--- Update geometry of an "evenement"
+-- A smart ST_Line_Substring that supports start > end
 -------------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION ST_Smart_Line_Substring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
@@ -193,6 +193,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+-------------------------------------------------------------------------------
+-- Update geometry of an "evenement"
+-------------------------------------------------------------------------------
 
 
 CREATE OR REPLACE FUNCTION update_geometry_of_evenement(eid integer) RETURNS void AS $$

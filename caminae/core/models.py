@@ -72,6 +72,8 @@ class Path(MapEntityMixin, StructureRelated):
             blank=True, null=True, related_name="paths",
             verbose_name=_(u"Networks"))
 
+    is_reversed = False
+
     def __unicode__(self):
         return self.name or 'path %d' % self.pk
 
@@ -106,11 +108,16 @@ class Path(MapEntityMixin, StructureRelated):
         return not Path.disjoint(self.geom, self.pk)
 
     def reverse(self):
+        """
+        Reverse the geometry.
+        We keep track of this, since we will have to work on topologies at save()
+        """
         # path.geom.reverse() won't work for 3D coords
         reversed_coord = self.geom.coords[-1::-1]
         # TODO: Why do we have to filter nan variable ?! Why are they here in the first place ?
         valid_coords = [ (x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord ]
         self.geom = LineString(valid_coords)
+        self.is_reversed = True
         return self
 
     def interpolate(self, point):
@@ -147,7 +154,6 @@ class Path(MapEntityMixin, StructureRelated):
         self.max_elevation = tmp.max_elevation
         self.geom = tmp.geom
 
-
     def delete(self, using=None):
         """
         Since Path is not a NoDeleteMixin, a deletion does not change latest_updated
@@ -165,6 +171,13 @@ class Path(MapEntityMixin, StructureRelated):
     def save(self, *args, **kwargs):
         before = len(connection.connection.notices) if connection.connection else 0
         try:
+            # If the path was reversed, we have to invert related topologies
+            if self.is_reversed:
+                for aggr in self.aggregations.all():
+                    aggr.start_position = 1 - aggr.start_position
+                    aggr.end_position = 1 - aggr.end_position
+                    aggr.save()
+                self._is_reversed = False
             super(Path, self).save(*args, **kwargs)
             self.reload()
         finally:

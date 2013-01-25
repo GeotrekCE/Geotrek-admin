@@ -438,7 +438,16 @@ class TopologyCornerCases(TestCase):
         topo.add_path(ab, start=0.2, end=0)
         topo.add_path(cd, start=0, end=0.2)
         topo.save()
-        self.assertEqual(topo.geom, LineString((4,0,0),(5,0,0),(6,0,0)))
+        expected = LineString((4,0,0),(5,0,0),(6,0,0))
+        self.assertEqual(topo.geom, expected)
+        # Now let's have some fun, reverse BA :)
+        ab.reverse()
+        ab.save()
+        topo.reload()
+        self.assertEqual(topo.geom, expected)
+
+
+    def test_opposite_paths_with_middle(self):
         """
                 A            C
         B +-------+--------+-------+ D
@@ -452,7 +461,14 @@ class TopologyCornerCases(TestCase):
         topo.add_path(ac)
         topo.add_path(cd, start=0, end=0.2)
         topo.save()
-        self.assertEqual(topo.geom, LineString((4,0,0),(5,0,0),(10,0,0),(11,0,0)))
+        expected = LineString((4,0,0),(5,0,0),(10,0,0),(11,0,0))
+        self.assertEqual(topo.geom, expected)
+        # Reverse AC ! OMG this is hell !
+        ac.reverse()
+        ac.save()
+        topo.reload()
+        self.assertEqual(topo.geom, expected)
+
 
     def test_return_path(self):
         """
