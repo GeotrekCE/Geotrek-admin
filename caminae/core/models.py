@@ -104,6 +104,15 @@ class Path(MapEntityMixin, StructureRelated):
         disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
         return disjoint[0]
 
+    @classmethod
+    def connected(self, p1, p2):
+        if not isinstance(p1, Path):
+            p1 = Path.objects.get(pk=p1)
+        if not isinstance(p2, Path):
+            p2 = Path.objects.get(pk=p2)
+        return p1.geom.coords[-1] == p2.geom.coords[0] or \
+               p2.geom.coords[0] == p1.geom.coords[-1]
+
     def is_overlap(self):
         return not Path.disjoint(self.geom, self.pk)
 
@@ -293,6 +302,8 @@ class Topology(NoDeleteMixin):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
     def ispoint(self):
+        if not self.pk and self.geom and self.geom.geom_type == 'Point':
+            return True
         for aggr in self.aggregations.all():
             if aggr.start_position == aggr.end_position:
                 return True
@@ -357,7 +368,9 @@ class Topology(NoDeleteMixin):
         if self.pk:
             tmp = self.__class__.objects.get(pk=self.pk)
             self.length = tmp.length
-            if tmp.geom and tmp.geom.geom_type != 'Point':
+            # In the case of points, the geom can be set by Django. Don't override.
+            if (self.ispoint() and self.geom is None) or \
+               (not self.ispoint() and tmp.geom is not None):
                 self.geom = tmp.geom
 
         if not self.kind:
@@ -406,34 +419,24 @@ class Topology(NoDeleteMixin):
 
         # Create path aggregations
         for i, path in enumerate(paths):
+            intermediary = i > 0 and i < len(paths)-1
+            # Javascript hash keys are parsed as a string
+            idx = str(i)
             try:
                 path = Path.objects.get(pk=path)
             except Path.DoesNotExist, e:
                 raise ValueError(str(e))
-            # Javascript hash keys are parsed as a string
-            # Provides default values
-            start_position, end_position = positions.get(str(i), (False, False))
-            if i > 0 and i < len(paths) -1:
-                if start_position != end_position:
-                    raise ValueError(_("Invalid serialization of intermediate markers"))
-                else:
-                    # Intermediary points, in the case of return AB - BA
-                    aggrobj = PathAggregation(topo_object=topology,
-                                              start_position=0.0,
-                                              end_position=start_position,
-                                              path=path)
-                    aggrobj.save()
-                    aggrobj = PathAggregation(topo_object=topology,
-                                              start_position=start_position,
-                                              end_position=0.0,
-                                              path=path)
-                    aggrobj.save()
+            start_position, end_position = positions.get(idx, (0.0, 1.0))
+            # Intermediary points are used in UI only. We store them in DB, but they are ignored in triggers.
+            if intermediary and idx in positions and start_position != end_position:
+                raise ValueError(_("Invalid serialization of intermediate markers"))
             else:
-                aggrobj = PathAggregation(topo_object=topology,
-                                          start_position=start_position or 0.0,
-                                          end_position=end_position or 1.0,
-                                          path=path)
-                aggrobj.save()
+                # In the case of return AB - BA
+                if intermediary and Path.connected(paths[i-1], paths[i+1]):
+                        topology.add_path(path, start=0.0, end=start_position, reload=False)
+                        topology.add_path(path, start=start_position, end=0.0, reload=False)
+                else:
+                    topology.add_path(path, start=start_position, end=end_position, reload=False)
         return topology
 
     @classmethod

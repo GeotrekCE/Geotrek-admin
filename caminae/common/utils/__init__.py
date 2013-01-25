@@ -59,6 +59,14 @@ def elevation_profile(g, maxitems=None):
     return profile
 
 
+def force3D(geom):
+    if not geom or geom.geom_type != 'Point':
+        raise ValueError('Cannot force 3D on %s' % geom)
+    if geom.z != 0:
+        return geom
+    return Point(geom.x, geom.y, 0)
+
+
 def wkt_to_geom(wkt, srid_from=None):
     if srid_from is None:
         srid_from = settings.API_SRID

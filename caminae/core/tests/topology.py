@@ -360,6 +360,8 @@ class TopologyTest(TestCase):
         """
         t = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1)
+        PathAggregationFactory.create(topo_object=t, path=p2)
+        # There will a forced passage in database...
         PathAggregationFactory.create(topo_object=t, path=p2, 
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)
@@ -371,6 +373,7 @@ class TopologyTest(TestCase):
         """
         t2 = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t2, path=p1)
+        PathAggregationFactory.create(topo_object=t2, path=p2)
         PathAggregationFactory.create(topo_object=t2, path=p2, 
                                       start_position=0.0, end_position=0.0)
         PathAggregationFactory.create(topo_object=t2, path=p4)

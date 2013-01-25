@@ -203,6 +203,7 @@ CREATE OR REPLACE FUNCTION update_geometry_of_evenement(eid integer) RETURNS voi
 DECLARE
     egeom geometry;
     lines_only boolean;
+    points_only boolean;
     t_count integer;
     t_offset float;
 
@@ -212,8 +213,8 @@ DECLARE
     tomerge geometry[];
 BEGIN
     -- See what kind of topology we have
-    SELECT bool_and(et.pk_debut != et.pk_fin), count(*)
-        INTO lines_only, t_count
+    SELECT bool_and(et.pk_debut != et.pk_fin), bool_and(et.pk_debut = et.pk_fin), count(*)
+        INTO lines_only, points_only, t_count
         FROM evenements_troncons et
         WHERE et.evenement = eid;
 
@@ -224,13 +225,14 @@ BEGIN
 
     IF t_count = 0 THEN
         -- No more troncons, close this topology
-        UPDATE evenements SET geom = ST_GeomFromText('POINTZ EMPTY', 2154), longueur = 0 WHERE id = eid;
-    ELSIF NOT lines_only AND t_count = 1 THEN
+        UPDATE evenements SET geom = NULL, longueur = 0 WHERE id = eid;
+    ELSIF (NOT lines_only AND t_count = 1) OR points_only THEN
         -- Special case: the topology describe a point on the path
         -- Note: We are faking a M-geometry in order to use LocateAlong.
         -- This is handy because this function includes an offset parameter
         -- which could be otherwise diffcult to handle.
         SELECT geom, decallage INTO egeom, t_offset FROM evenements e WHERE e.id = eid;
+
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) THEN
             SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
                 INTO egeom
@@ -239,12 +241,13 @@ BEGIN
         END IF;
         UPDATE evenements SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
+
         -- Regular case: the topology describe a line
 
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point. --> No problem in mountain path management.
-        FOR t_start, t_end, t_geom IN SELECT et.pk_debut, et.pk_fin, t.geom
+        FOR t_offset, t_start, t_end, t_geom IN SELECT e.decallage, et.pk_debut, et.pk_fin, t.geom
                FROM evenements e, evenements_troncons et, troncons t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
@@ -253,6 +256,10 @@ BEGIN
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;
         egeom := ST_MakeLine(tomerge);
+        -- Add some offset if necessary.
+        IF t_offset > 0 THEN
+            egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
+        END IF;
         UPDATE evenements SET geom = ST_Force_3DZ(egeom), longueur = ST_3DLength(egeom) WHERE id = eid;
     END IF;
 END;
