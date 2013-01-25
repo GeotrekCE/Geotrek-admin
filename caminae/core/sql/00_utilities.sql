@@ -247,6 +247,7 @@ BEGIN
         FOR t_start, t_end, t_geom IN SELECT et.pk_debut, et.pk_fin, t.geom
                FROM evenements e, evenements_troncons et, troncons t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
+                 AND et.pk_debut != et.pk_fin
                ORDER BY et.id  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));

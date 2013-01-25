@@ -469,7 +469,6 @@ class TopologyCornerCases(TestCase):
         topo.reload()
         self.assertEqual(topo.geom, expected)
 
-
     def test_return_path(self):
         """
                      A
@@ -509,3 +508,50 @@ class TopologyCornerCases(TestCase):
         self.assertEqual(topo.geom, LineString((2.5,0,0),(5,0,0),(5,10,0),
                                                (7,10,0),(5,10,0),(5,0,0),
                                                (7.5,0,0)))
+
+    def test_simple_loop(self):
+        """
+           ==========
+          ||        ||
+        A +==------==+ B
+        """
+        p1 = PathFactory.create(geom=LineString((10,0,0), (0,0,0)))
+        p2 = PathFactory.create(geom=LineString((0,0,0), (0,5,0),(10,5,0), (10,0,0)))
+        # Full loop
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p1)
+        topo.add_path(p2)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((10,0,0),(0,0,0),(0,5,0),(10,5,0),(10,0,0)))
+        # Subpart, like in diagram
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p1, start=0.8, end=1)
+        topo.add_path(p2)
+        topo.add_path(p1, start=0, end=0.2)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((2,0,0),(0,0,0),(0,5,0),
+                                               (10,5,0),(10,0,0),(8,0,0)))
+
+
+    def test_trek_loop(self):
+        """
+                            =========
+                           ||       ||
+        +-------===========+=========+----------+
+        """
+        p1 = PathFactory.create(geom=LineString((0,0,0), (10,0,0)))
+        p2 = PathFactory.create(geom=LineString((10,0,0), (30,0,0)))
+        p3 = PathFactory.create(geom=LineString((10,0,0), (10,5,0),
+                                                (20,5,0), (20,0,0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p1, start=0.3, end=1)
+        topo.add_path(p3)
+        # Add couple of intermediary points for fun
+        topo.add_path(p3, start=0.666, end=0.666)
+        topo.add_path(p2, start=0.42, end=0.42)
+        # Continue ...
+        topo.add_path(p2, start=1, end=0)
+        topo.add_path(p1, start=1, end=0.3)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((3,0,0),(10,0,0),(10,5,0),(20,5,0),(20,0,0),
+                                               (10,0,0),(3,0,0)))
