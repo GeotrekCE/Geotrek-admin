@@ -180,6 +180,21 @@ $$ LANGUAGE plpgsql;
 -- Update geometry of an "evenement"
 -------------------------------------------------------------------------------
 
+CREATE OR REPLACE FUNCTION ST_Smart_Line_Substring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
+DECLARE
+    egeom geometry;
+BEGIN
+    IF t_start < t_end THEN
+        egeom := ST_Line_Substring(geom, t_start, t_end);
+    ELSE
+        egeom := ST_Line_Substring(ST_Reverse(geom), 1.0-t_start, 1.0-t_end);
+    END IF;
+    RETURN egeom;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION update_geometry_of_evenement(eid integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
@@ -221,12 +236,6 @@ BEGIN
         UPDATE evenements SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
-        -- Note: We are faking a M-geometry in order to use LocateBetween
-        -- which is better than OffsetCurve because it will not drop the
-        -- Z-index.
-
-        -- FIXME: If paths are not contiguous, only the first chunk will be
-        -- considered. How to handle these invalid linear topologies?
 
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
@@ -236,15 +245,9 @@ BEGIN
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                ORDER BY et.id  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
-            IF t_start < t_end THEN
-                egeom := ST_Line_Substring(t_geom, t_start, t_end);
-            ELSE
-                egeom := ST_Line_Substring(ST_Reverse(t_geom), 1.0-t_start, 1.0-t_end);
-            END IF;
-            tomerge := array_append(tomerge, egeom);
+            tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;
         egeom := ST_MakeLine(tomerge);
-        -- RAISE NOTICE 'Merged : %', ST_AsText(ST_MakeLine(tomerge));
         UPDATE evenements SET geom = ST_Force_3DZ(egeom), longueur = ST_3DLength(egeom) WHERE id = eid;
     END IF;
 END;

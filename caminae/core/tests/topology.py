@@ -426,6 +426,34 @@ class TopologyTest(TestCase):
 
 
 class TopologyCornerCases(TestCase):
+    def test_opposite_paths(self):
+        """
+                A  C
+        B +-------+-------+ D
+
+        """
+        ab = PathFactory.create(geom=LineString((5,0,0), (0,0,0)))
+        cd = PathFactory.create(geom=LineString((5,0,0), (10,0,0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(ab, start=0.2, end=0)
+        topo.add_path(cd, start=0, end=0.2)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((4,0,0),(5,0,0),(6,0,0)))
+        """
+                A            C
+        B +-------+--------+-------+ D
+
+        """
+        ab = PathFactory.create(geom=LineString((5,0,0), (0,0,0)))
+        ac = PathFactory.create(geom=LineString((5,0,0), (10,0,0)))
+        cd = PathFactory.create(geom=LineString((10,0,0), (15,0,0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(ab, start=0.2, end=0)
+        topo.add_path(ac)
+        topo.add_path(cd, start=0, end=0.2)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((4,0,0),(5,0,0),(10,0,0),(11,0,0)))
+
     def test_return_path(self):
         """
                      A
