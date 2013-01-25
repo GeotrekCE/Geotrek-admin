@@ -350,6 +350,7 @@ class TopologyTest(TestCase):
         """
         t = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1)
+        PathAggregationFactory.create(topo_object=t, path=p3)
         PathAggregationFactory.create(topo_object=t, path=p3, 
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)

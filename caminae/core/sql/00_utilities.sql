@@ -194,6 +194,70 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
+BEGIN
+    RETURN ST_3DDistance(ST_EndPoint(line1), ST_StartPoint(line2)) < 0.1;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
+BEGIN
+    RETURN ST_3DDistance(ST_StartPoint(line1), ST_EndPoint(line2)) < 0.1;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
+-- A smart ST_MakeLine that will re-oder linestring before merging them
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
+DECLARE
+    result geometry;
+    t_line geometry;
+    remaining int;
+    t_found boolean;
+BEGIN
+    result := ST_GeomFromText('LINESTRINGZ EMPTY');
+    remaining := array_length(lines, 1);
+
+    t_found := true;
+    WHILE t_found AND remaining > 0
+    LOOP
+        t_found := false;
+        FOREACH t_line IN ARRAY lines 
+        LOOP
+            IF ST_IsEmpty(result) THEN
+                result := t_line;
+                t_found := true;
+                remaining := remaining-1;
+            ELSE
+                IF ft_IsAfter(t_line, result) THEN
+                    result := ST_MakeLine(result, t_line);
+                    t_found := true;
+                    remaining := remaining-1;
+                ELSEIF ft_IsBefore(t_line, result) THEN
+                    result := ST_MakeLine(t_line, result);
+                    t_found := true;
+                    remaining := remaining-1;
+                ELSIF ST_Within(t_line, result) THEN
+                    t_found := true;
+                    remaining := remaining-1;
+                END IF;
+            END IF;
+        END LoOP;
+    END LOOP;
+    IF NOT t_found THEN
+        RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_MakeLine(lines));
+        result := ST_MakeLine(lines);
+    END IF;
+    RAISE NOTICE 'Merged % into %', ST_AsText(ST_Union(lines)), ST_AsText(result);
+    RETURN result;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -------------------------------------------------------------------------------
 -- Update geometry of an "evenement"
 -------------------------------------------------------------------------------
@@ -255,7 +319,7 @@ BEGIN
         LOOP
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;
-        egeom := ST_MakeLine(tomerge);
+        egeom := ft_Smart_MakeLine(tomerge);
         -- Add some offset if necessary.
         IF t_offset > 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);

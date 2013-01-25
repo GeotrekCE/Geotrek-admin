@@ -218,6 +218,11 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.0, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
         topology.reload()
         self.assertNotEqual(topology.geom, topogeom)
+        for a in topology.aggregations.all():
+            print a, a.path.geom
+        
+        print topology.geom, topogeom
+        
         self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
         self.assertEqual(topology.geom.coords[-1], topogeom.coords[-1])
 
@@ -287,7 +292,7 @@ class SplitPathLineTopologyTest(TestCase):
                 B   C   E
         A +--===+===+===+===--+ F
                     |   
-                    +    AB, BE, EF exist.
+                    +    AB, BE, EF exist. A topology exists along them.
                     D    Add CD.
         """
         ab = PathFactory.create(name="AB", geom=LineString((0,0,0),(2,0,0)))
@@ -306,7 +311,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 3)
         # Create CD
         cd = PathFactory.create(geom=LineString((3,0,0),(3,2,0)))
-        # Topology still now covers 4 paths
+        # Topology now covers 4 paths
         self.assertEqual(len(topology.paths.all()), 4)
         # AB and EF have still their topology
         self.assertEqual(len(ab.aggregations.all()), 1)
@@ -322,7 +327,13 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
         self.assertEqual((0.0, 1.0), (aggr_ce.start_position, aggr_ce.end_position))
         topology.reload()
+        self.assertEqual(len(topology.aggregations.all()), 4)
+        # Geometry has changed
         self.assertNotEqual(topology.geom, topogeom)
+        for a in topology.aggregations.all():
+            print a, a.path.geom
+        print topology.geom
+        # But extremities are equal
         self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
         self.assertEqual(topology.geom.coords[-1], topogeom.coords[-1])
 
