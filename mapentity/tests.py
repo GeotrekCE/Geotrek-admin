@@ -203,6 +203,8 @@ class MapEntityLiveTest(LiveServerTestCase):
                                      'csrfmiddlewaretoken': csrftoken})
 
     def test_geojson_cache(self):
+        if self.model is None:
+            return  # Abstract test should not run
         self.login()
         obj = self.modelfactory()
         response = self.session.get(self.url_for(obj.get_layer_url()))
