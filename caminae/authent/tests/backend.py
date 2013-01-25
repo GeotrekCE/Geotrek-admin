@@ -1,4 +1,5 @@
 from django.db import connections, DatabaseError
+from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -49,7 +50,7 @@ class AuthentDatabaseTest(TestCase):
 
     def test_conftablemissing(self):
         query_db("DROP TABLE IF EXISTS %s;" % settings.AUTHENT_TABLENAME)
-        self.assertRaises(DatabaseError, self.backend.authenticate, ('toto', 'totopwd'))
+        self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))
         query_db(_CREATE_TABLE_STATEMENT %  settings.AUTHENT_TABLENAME)
         self.assertEqual(None, self.backend.authenticate('toto', 'totopwd'))
 

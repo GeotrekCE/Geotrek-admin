@@ -89,7 +89,8 @@ def transform_wkt(wkt, srid_from=None, srid_to=None):
         wkt3d = geom.wkt.replace(',', extracoords + ',')
         return wkt3d
     except (OGRException, GEOSException, TypeError, ValueError), e:
-        logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
+        if not settings.TEST:
+            logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
         return None
 
 def sqlfunction(function, *args):

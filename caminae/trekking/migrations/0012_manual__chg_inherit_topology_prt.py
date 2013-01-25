@@ -9,7 +9,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         try:
-            db.rename_column('itineraire', 'topologymixin_ptr_id', 'topology_ptr_id')
+            exists = db.execute("SELECT COUNT(*) FROM information_schema.columns "
+                                "WHERE table_name='itineraire' and column_name='topologymixin_ptr_id';")[0][0]
+            if exists > 0:
+                db.rename_column('itineraire', 'topologymixin_ptr_id', 'topology_ptr_id')
         except:
             print "Ignore column rename `topologymixin_ptr_id`"
 

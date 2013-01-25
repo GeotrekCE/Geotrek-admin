@@ -66,13 +66,19 @@ class DatabaseBackend(object):
         if not settings.AUTHENT_TABLENAME:
             raise ImproperlyConfigured("Database backend is used, without AUTHENT_TABLENAME setting.")
         try:
+            result = None
             cursor = connections[settings.AUTHENT_DATABASE].cursor()
-            sqlquery = "SELECT %s FROM %s WHERE username = " % (','.join(FIELDS), settings.AUTHENT_TABLENAME)
+            cursor.execute("SELECT COUNT(*) FROM information_schema.columns "
+                           "WHERE table_name='%s'" % settings.AUTHENT_TABLENAME)
+            if cursor.fetchone()[0] == 0:
+                raise ImproperlyConfigured("Database backend is used, and AUTHENT_TABLENAME does not exists.")
+            sqlquery = "SELECT %s FROM %s WHERE username = " % (', '.join(FIELDS), settings.AUTHENT_TABLENAME)
             cursor.execute(sqlquery + "%s", [username])
             result = cursor.fetchone()
-        except Exception, e:
-            logger.exception(e)
+        except Exception as e:
             connections[settings.AUTHENT_DATABASE].close()
+            if not settings.TEST:
+                logger.exception(e)
             raise
         if result:
             return Credentials(*result)
