@@ -286,6 +286,7 @@ class RestrictedArea(models.Model):
     objects = models.GeoManager()
 
     class Meta:
+        ordering = ['name', ]
         db_table = 'couche_zonage_reglementaire'
         verbose_name = _(u"Restricted area")
         verbose_name_plural = _(u"Restricted areas")
@@ -336,6 +337,7 @@ class City(models.Model):
 
     class Meta:
         db_table = 'couche_communes'
+        ordering = ['name', ]
         verbose_name = _(u"City")
         verbose_name_plural = _(u"Cities")
 
@@ -385,6 +387,7 @@ class District(models.Model):
 
     class Meta:
         db_table = 'couche_secteurs'
+        ordering = ['name', ]
         verbose_name = _(u"District")
         verbose_name_plural = _(u"Districts")
 
