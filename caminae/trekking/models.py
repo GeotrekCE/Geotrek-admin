@@ -23,13 +23,13 @@ logger = logging.getLogger(__name__)
 class Trek(MapEntityMixin, Topology):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
-                            help_text=_(u"Public name"))
+                            help_text=_(u"Public name"), db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
-                                 help_text=_(u"Departure place"))
+                                 help_text=_(u"Departure place"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
-                               help_text=_(u"Arrival place"))
+                               help_text=_(u"Arrival place"), db_column='arrivee')
     published = models.BooleanField(verbose_name=_(u"Published"),
-                                    help_text=_(u"Online"))
+                                    help_text=_(u"Online"), db_column='public')
 
     ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
@@ -37,20 +37,20 @@ class Trek(MapEntityMixin, Topology):
     max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
-                                          help_text=_(u"A brief characteristic"))
-    description = models.TextField(verbose_name=_(u"Description"), blank=True)
-    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True)
-    access = models.TextField(verbose_name=_(u"Access"), blank=True)
-    disabled_infrastructure = models.TextField(verbose_name=_(u"Handicapped's infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True) # in minutes
+                                          help_text=_(u"A brief characteristic"), db_column='chapeau')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description')
+    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True, db_column='ambiance')
+    access = models.TextField(verbose_name=_(u"Access"), blank=True, db_column='acces')
+    disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap')
+    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True, db_column='duree') # in minutes
 
-    is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"))
+    is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur')
 
-    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True)
-    parking_location = models.PointField(srid=settings.SRID, spatial_index=False, blank=True, null=True)
+    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking')
+    parking_location = models.PointField(srid=settings.SRID, spatial_index=False, blank=True, null=True, db_column='geom_parking')
 
-    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True)
-    advice = models.TextField(verbose_name=_(u"Advice"), blank=True)
+    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True, db_column='transport')
+    advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation')
 
     themes = models.ManyToManyField('Theme', related_name="treks",
             db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
@@ -62,10 +62,10 @@ class Trek(MapEntityMixin, Topology):
             db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
 
     route = models.ForeignKey('Route', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Route"))
+            blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
 
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Difficulty level"))
+            blank=True, null=True, verbose_name=_(u"Difficulty level"), db_column='difficulte')
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
@@ -236,7 +236,7 @@ class Trek(MapEntityMixin, Topology):
 
 class TrekNetwork(models.Model):
 
-    network = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
 
     class Meta:
         db_table = 'o_b_reseau'
@@ -249,8 +249,9 @@ class TrekNetwork(models.Model):
 
 class Usage(models.Model):
 
-    usage = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+    usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR, 
+                                 db_column='picto')
 
     class Meta:
         db_table = 'o_b_usage'
@@ -266,7 +267,7 @@ class Usage(models.Model):
 
 class Route(models.Model):
 
-    route = models.CharField(verbose_name=_(u"Name"), max_length=128)
+    route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
 
     class Meta:
         db_table = 'o_b_parcours'
@@ -279,7 +280,8 @@ class Route(models.Model):
 
 class DifficultyLevel(models.Model):
 
-    difficulty = models.CharField(verbose_name=_(u"Difficulty level"), max_length=128)
+    difficulty = models.CharField(verbose_name=_(u"Difficulty level"), 
+                                  max_length=128, db_column='difficulte')
 
     class Meta:
         db_table = 'o_b_difficulte'
@@ -297,10 +299,11 @@ class WebLinkManager(models.Manager):
 
 class WebLink(models.Model):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    url = models.URLField(verbose_name=_(u"URL"), max_length=128)
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    url = models.URLField(verbose_name=_(u"URL"), max_length=128, db_column='url')
     category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
-                                 related_name='links', null=True, blank=True)
+                                 related_name='links', null=True, blank=True, 
+                                 db_column='categorie')
 
     objects = WebLinkManager()
 
@@ -330,8 +333,9 @@ class WebLink(models.Model):
 
 class WebLinkCategory(models.Model):
 
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto')
 
     class Meta:
         db_table = 'o_b_web_category'
@@ -349,8 +353,9 @@ class WebLinkCategory(models.Model):
 
 class Theme(models.Model):
 
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto')
 
     class Meta:
         db_table = 'o_b_theme'
@@ -396,12 +401,12 @@ class TrekRelationshipManager(models.Manager):
 #     trek2.relationships()
 class TrekRelationship(models.Model):
 
-    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"))
-    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"))
-    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"))
+    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun')
+    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"), db_column='troncons_communs')
+    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"), db_column='etape_circuit')
 
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a")
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b")
+    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b')
 
     class Meta:
         db_table = 'o_r_itineraire_itineraire'
@@ -418,9 +423,9 @@ class TrekRelationship(models.Model):
 class POI(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    description = models.TextField(verbose_name=_(u"Description"))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    description = models.TextField(verbose_name=_(u"Description"), db_column='description')
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -464,8 +469,9 @@ class POI(MapEntityMixin, Topology):
 
 
 class POIType(models.Model):
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128)
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto')
 
     class Meta:
         db_table = 'o_b_poi'
