@@ -53,13 +53,13 @@ class Trek(MapEntityMixin, Topology):
     advice = models.TextField(verbose_name=_(u"Advice"), blank=True)
 
     themes = models.ManyToManyField('Theme', related_name="treks",
-            blank=True, null=True, verbose_name=_(u"Themes"))
+            db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-            blank=True, null=True, verbose_name=_(u"Trek networks"))
+            db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Trek networks"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
-            blank=True, null=True, verbose_name=_(u"Usages"))
+            db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
 
     route = models.ForeignKey('Route', related_name='treks',
             blank=True, null=True, verbose_name=_(u"Route"))
@@ -68,7 +68,7 @@ class Trek(MapEntityMixin, Topology):
             blank=True, null=True, verbose_name=_(u"Difficulty level"))
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-            blank=True, null=True, verbose_name=_(u"Web links"))
+            db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -83,7 +83,7 @@ class Trek(MapEntityMixin, Topology):
         return TrekRelationship.objects.related_treks_values(self)
 
     class Meta:
-        db_table = 'itineraire'
+        db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
 
@@ -239,7 +239,7 @@ class TrekNetwork(models.Model):
     network = models.CharField(verbose_name=_(u"Name"), max_length=128)
 
     class Meta:
-        db_table = 'reseau'
+        db_table = 'o_b_reseau'
         verbose_name = _(u"Trek network")
         verbose_name_plural = _(u"Trek networks")
 
@@ -253,7 +253,7 @@ class Usage(models.Model):
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
-        db_table = 'usages'
+        db_table = 'o_b_usage'
 
     def __unicode__(self):
         return self.usage
@@ -269,7 +269,7 @@ class Route(models.Model):
     route = models.CharField(verbose_name=_(u"Name"), max_length=128)
 
     class Meta:
-        db_table = 'parcours'
+        db_table = 'o_b_parcours'
         verbose_name = _(u"Route")
         verbose_name_plural = _(u"Routes")
 
@@ -282,7 +282,7 @@ class DifficultyLevel(models.Model):
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"), max_length=128)
 
     class Meta:
-        db_table = 'classement_difficulte'
+        db_table = 'o_b_difficulte'
         verbose_name = _(u"Difficulty level")
         verbose_name_plural = _(u"Difficulty levels")
 
@@ -305,7 +305,7 @@ class WebLink(models.Model):
     objects = WebLinkManager()
 
     class Meta:
-        db_table = 'liens_web'
+        db_table = 'o_t_web'
         verbose_name = _(u"Web link")
         verbose_name_plural = _(u"Web links")
 
@@ -327,13 +327,14 @@ class WebLink(models.Model):
            'pictogram': serialize_imagefield(self.category.pictogram),
         }
 
+
 class WebLinkCategory(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128)
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
 
     class Meta:
-        db_table = 'o_t_web_category'
+        db_table = 'o_b_web_category'
         verbose_name = _(u"Web link category")
         verbose_name_plural = _(u"Web link categories")
 
@@ -350,6 +351,11 @@ class Theme(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128)
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    class Meta:
+        db_table = 'o_b_theme'
+        verbose_name = _(u"Theme")
+        verbose_name_plural = _(u"Theme")
 
     def __unicode__(self):
         return self.label
@@ -398,7 +404,7 @@ class TrekRelationship(models.Model):
     trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b")
 
     class Meta:
-        db_table = 'liens_itineraire'
+        db_table = 'o_r_itineraire_itineraire'
         verbose_name = _(u"Trek relationship")
         verbose_name_plural = _(u"Trek relationships")
         # Not sufficient we should ensure
@@ -415,6 +421,11 @@ class POI(MapEntityMixin, Topology):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128)
     description = models.TextField(verbose_name=_(u"Description"))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"))
+
+    class Meta:
+        db_table = 'o_t_poi'
+        verbose_name = _(u"POI")
+        verbose_name_plural = _(u"POI")
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -455,6 +466,11 @@ class POI(MapEntityMixin, Topology):
 class POIType(models.Model):
     label = models.CharField(verbose_name=_(u"Label"), max_length=128)
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR)
+
+    class Meta:
+        db_table = 'o_b_poi'
+        verbose_name = _(u"POI")
+        verbose_name_plural = _(u"POI")
 
     def __unicode__(self):
         return self.label
