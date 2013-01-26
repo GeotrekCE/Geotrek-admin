@@ -14,26 +14,27 @@ from caminae.infrastructure.models import Infrastructure, Signage
 
 class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
-    in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"))
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"))
-    comments = models.TextField(blank=True, verbose_name=_(u"Comments"))
+    in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"),
+                                         db_column='maintenance')
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"), db_column='date')
+    comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire')
 
     ## Technical information ##
-    length = models.FloatField(default=0.0, verbose_name=_(u"Length"))
-    width = models.FloatField(default=0.0, verbose_name=_(u"Width"))
-    height = models.FloatField(default=0.0, verbose_name=_(u"Height"))
-    area = models.IntegerField(default=0, verbose_name=_(u"Area"))
-    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"))
+    length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
+    width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
+    height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
+    area = models.IntegerField(default=0, verbose_name=_(u"Area"), db_column='surface')
+    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"), db_column='pente')
 
     ## Costs ##
-    material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"))
-    heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"))
-    subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"))
+    material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
+    heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
+    subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
 
     #TODO: remove this --> abstract class
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
 
     """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
@@ -41,12 +42,12 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                                  verbose_name=_(u"Interventions"))
 
     stake = models.ForeignKey('core.Stake', null=True,
-            related_name='interventions', verbose_name=_("Stake"))
+            related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
-    status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"))
+    status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"), db_column='status')
 
     type = models.ForeignKey('InterventionType', null=True, blank=True,
-            verbose_name=_(u"Intervention type"))
+            verbose_name=_(u"Intervention type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
             db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
@@ -55,7 +56,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-            verbose_name=_(u"Project"))
+            verbose_name=_(u"Project"), db_column='chantier')
 
     # Special manager
     objects = Topology.get_manager_cls()()
@@ -182,7 +183,7 @@ Trail.add_property('interventions', lambda self: Intervention.trail_intervention
 
 class InterventionStatus(StructureRelated):
 
-    status = models.CharField(verbose_name=_(u"Status"), max_length=128)
+    status = models.CharField(verbose_name=_(u"Status"), max_length=128, db_column='status')
 
     class Meta:
         db_table = 'm_b_suivi'
@@ -196,7 +197,7 @@ class InterventionStatus(StructureRelated):
 
 class InterventionType(StructureRelated):
 
-    type = models.CharField(max_length=128, verbose_name=_(u"Type"))
+    type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
 
     class Meta:
         db_table = 'm_b_intervention'
@@ -209,7 +210,7 @@ class InterventionType(StructureRelated):
 
 class InterventionDisorder(StructureRelated):
 
-    disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"))
+    disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"), db_column='desordre')
 
     class Meta:
         db_table = 'm_b_desordre'
@@ -222,7 +223,7 @@ class InterventionDisorder(StructureRelated):
 
 class InterventionJob(StructureRelated):
 
-    job = models.CharField(max_length=128, verbose_name=_(u"Job"))
+    job = models.CharField(max_length=128, verbose_name=_(u"Job"), db_column='fonction')
     cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
 
     class Meta:
@@ -236,9 +237,9 @@ class InterventionJob(StructureRelated):
 
 class ManDay(models.Model):
 
-    nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6)
-    intervention = models.ForeignKey(Intervention)
-    job = models.ForeignKey(InterventionJob)
+    nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6, db_column='nb_jours')
+    intervention = models.ForeignKey(Intervention, db_column='intervention')
+    job = models.ForeignKey(InterventionJob, db_column='fonction')
 
     class Meta:
         db_table = 'm_r_intervention_fonction'
@@ -255,30 +256,30 @@ class ManDay(models.Model):
 
 class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    begin_year = models.IntegerField(verbose_name=_(u"Begin year"))
-    end_year = models.IntegerField(verbose_name=_(u"End year"))
-    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True)
-    cost = models.FloatField(verbose_name=_(u"Cost"), default=0)
-    comments = models.TextField(verbose_name=_(u"Comments"), blank=True)
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
+    end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
+    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes')
+    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout')
+    comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires')
     type = models.ForeignKey('ProjectType', null=True, blank=True,
-                             verbose_name=_(u"Project type"))
+                             verbose_name=_(u"Project type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
-                             verbose_name=_(u"Project domain"))
+                             verbose_name=_(u"Project domain"), db_column='domaine')
 
 
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True)
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True)
+    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
+    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
 
     ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",
             db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
 
     project_owner = models.ForeignKey(Organism, related_name='own',
-            verbose_name=_(u"Project owner"))
+            verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
 
     project_manager = models.ForeignKey(Organism, related_name='manage',
-            verbose_name=_(u"Project manager"))
+            verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
 
     founders = models.ManyToManyField(Organism, through='Funding',
             verbose_name=_(u"Founders"))
@@ -345,7 +346,7 @@ Path.add_property('projects', lambda self: Project.path_projects(self))
 
 class ProjectType(StructureRelated):
 
-    type = models.CharField(max_length=128, verbose_name=_(u"Type"))
+    type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
 
     class Meta:
         db_table = 'm_b_chantier'
@@ -358,7 +359,7 @@ class ProjectType(StructureRelated):
 
 class ProjectDomain(StructureRelated):
 
-    domain = models.CharField(max_length=128, verbose_name=_(u"Domain"))
+    domain = models.CharField(max_length=128, verbose_name=_(u"Domain"), db_column='domaine')
 
     class Meta:
         db_table = 'm_b_domaine'
@@ -371,7 +372,7 @@ class ProjectDomain(StructureRelated):
 
 class Contractor(StructureRelated):
 
-    contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"))
+    contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"), db_column='prestataire')
 
     class Meta:
         db_table = 'm_b_prestataire'
@@ -384,9 +385,9 @@ class Contractor(StructureRelated):
 
 class Funding(models.Model):
 
-    amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"))
-    project = models.ForeignKey(Project)
-    organism = models.ForeignKey(Organism)
+    amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"), db_column='montant')
+    project = models.ForeignKey(Project, db_column='chantier')
+    organism = models.ForeignKey(Organism, db_column='organisme')
 
     class Meta:
         db_table = 'm_r_chantier_financement'

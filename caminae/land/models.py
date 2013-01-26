@@ -28,7 +28,7 @@ def project_edges(project, pathattr):
 # Physical nature of paths
 
 class PhysicalType(models.Model):
-    name = models.CharField(max_length=128, verbose_name=_(u"Name"))
+    name = models.CharField(max_length=128, verbose_name=_(u"Name"), db_column='nom')
 
     class Meta:
         db_table = 'f_b_nature'
@@ -42,7 +42,8 @@ class PhysicalType(models.Model):
 class PhysicalEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"))
+    physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"),
+                                      db_column='type')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -103,7 +104,7 @@ class LandType(StructureRelated):
 class LandEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"))
+    land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"), db_column='type')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -144,7 +145,7 @@ Project.add_property('land_edges', lambda self: project_edges(self, 'land_edges'
 class CompetenceEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
+    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -184,7 +185,7 @@ Project.add_property('competence_edges', lambda self: project_edges(self, 'compe
 class WorkManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
+    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -224,7 +225,7 @@ Project.add_property('work_edges', lambda self: project_edges(self, 'work_edges'
 class SignageManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"))
+    organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -270,7 +271,7 @@ Project.add_property('signage_edges', lambda self: project_edges(self, 'signage_
 """
 
 class RestrictedAreaType(models.Model):
-    name = models.CharField(max_length=200, verbose_name=_(u"Name"))
+    name = models.CharField(max_length=200, verbose_name=_(u"Name"), db_column='nom')
 
     class Meta:
         db_table = 'f_b_zonage'
@@ -298,7 +299,8 @@ class RestrictedArea(models.Model):
 class RestrictedAreaEdge(Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"))
+    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_(u"Restricted area"),
+                                        db_column='zone')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -349,7 +351,7 @@ class CityEdge(Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
 
-    city = models.ForeignKey(City, verbose_name=_(u"City"))
+    city = models.ForeignKey(City, verbose_name=_(u"City"), db_column='commune')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -398,7 +400,7 @@ class District(models.Model):
 class DistrictEdge(Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    district = models.ForeignKey(District, verbose_name=_(u"District"))
+    district = models.ForeignKey(District, verbose_name=_(u"District"), db_column='secteur')
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()

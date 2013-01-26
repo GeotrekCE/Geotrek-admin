@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 
 
 class Trek(MapEntityMixin, Topology):
-
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                      db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
                             help_text=_(u"Public name"), db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
@@ -421,6 +422,9 @@ class TrekRelationship(models.Model):
 
 
 class POI(MapEntityMixin, Topology):
+
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                      db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     description = models.TextField(verbose_name=_(u"Description"), db_column='description')
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
@@ -467,6 +471,7 @@ class POI(MapEntityMixin, Topology):
 
 
 class POIType(models.Model):
+
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
                                  db_column='picto')

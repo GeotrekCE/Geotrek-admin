@@ -58,8 +58,8 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                       db_column='evenement')
     
     name = models.CharField(db_column="nom", max_length=128)
-    description = models.TextField(blank=True)
-    type = models.ForeignKey(InfrastructureType)
+    description = models.TextField(blank=True, db_column='description')
+    type = models.ForeignKey(InfrastructureType, db_column='type')
 
     class Meta:
         db_table = 'a_t_amenagement'
