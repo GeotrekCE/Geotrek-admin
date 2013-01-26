@@ -29,7 +29,7 @@ setup(
         'django-shapes == 0.2.0',
         'django-modeltranslation == 0.5b1',
         'django-floppyforms == 1.0',
-        'django-crispy-forms == 1.1.4',
+        'django-crispy-forms == 1.2.3',
         'django-compressor == 1.2',
         'django-filter == 0.5.4',
         'Pillow == 1.7.8',
