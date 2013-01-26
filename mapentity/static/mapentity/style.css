@@ -151,8 +151,8 @@ tr.selected-row td {
 
 /* Layout (based on "Conflicting position" trick) */
 #container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
-#panelleft {position: absolute; top: 0px; bottom: 0; width: 50%; left: 0;}
-#panelright {position: absolute; top: 0px; bottom: 0; width: 50%; right: 0;}
+#panelleft {position: absolute; top: 2px; bottom: 0; width: 50%; left: 0;}
+#panelright {position: absolute; top: 2px; bottom: 0; width: 50%; right: 0;}
 
 #mainmap {position: absolute; top: 0px; bottom: 0; left: 0; right: 0;}
 
