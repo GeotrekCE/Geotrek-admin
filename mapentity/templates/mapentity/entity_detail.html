@@ -21,6 +21,7 @@
                 <div class="btn-group">
                     {% block download %}
                     <a class="btn btn-mini" href="{{ object.get_document_url }}"><img src="{% static "paperclip/fileicons/odt.png" %}"/> {% trans "ODT" %}</a>
+                    <a class="btn btn-mini" href="{% convert_url request object.get_document_url format="doc" %}"><img src="{% static "paperclip/fileicons/doc.png" %}"/> {% trans "DOC" %}</a>
                     <a class="btn btn-mini" href="{% convert_url request object.get_document_url %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "PDF" %}</a>
                     {% endblock download %}
                 </div>

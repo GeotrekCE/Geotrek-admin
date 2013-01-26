@@ -76,7 +76,7 @@ msgstr "Non, retour à la vue d'édition"
 
 #: templates/mapentity/entity_detail.html:19
 msgid "Update"
-msgstr "Éditer"
+msgstr "Modifier"
 
 #: templates/mapentity/entity_detail.html:23
 msgid "ODT"
