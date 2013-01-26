@@ -165,6 +165,7 @@ tr.selected-row td {
 #list-panel .table th, 
 #list-panel .table td {
     padding: 5px;
+    white-space: nowrap;
 }
 #list-panel .pagination a, .pagination span {
     line-height: 30px;
