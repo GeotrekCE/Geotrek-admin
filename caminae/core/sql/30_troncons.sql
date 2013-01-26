@@ -218,12 +218,6 @@ DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON l_t_troncon;
 CREATE OR REPLACE FUNCTION troncons_related_objects_d() RETURNS trigger AS $$
 DECLARE
 BEGIN
-    -- Un-published treks because they might be broken
-    UPDATE o_t_itineraire i
-        SET published = FALSE
-        FROM e_r_evenement_troncon et
-        WHERE et.evenement = i.topology_ptr_id AND et.troncon = OLD.id;
-
     -- Mark empty topologies as deleted
     UPDATE e_t_evenement e
         SET supprime = TRUE
