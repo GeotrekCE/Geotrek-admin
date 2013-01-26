@@ -8,6 +8,7 @@ register = template.Library()
 @register.simple_tag
 def convert_url(request, sourceurl, format='pdf'):
     fullurl = request.build_absolute_uri(sourceurl)
-    conversion_url = "%s?url=%s" % (settings.CONVERSION_SERVER,
-                                    urllib.quote(fullurl))
+    conversion_url = "%s?url=%s&to=%s" % (settings.CONVERSION_SERVER,
+                                          urllib.quote(fullurl),
+                                          format)
     return conversion_url
