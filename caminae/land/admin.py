@@ -3,7 +3,7 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-from caminae.land.models import PhysicalType, LandType
+from caminae.land.models import PhysicalType, LandType, RestrictedAreaType
 
 
 class PhysicalTypeAdmin(TranslationAdmin):
@@ -17,3 +17,4 @@ class LandTypeAdmin(admin.ModelAdmin):
 
 admin.site.register(PhysicalType, PhysicalTypeAdmin)
 admin.site.register(LandType, LandTypeAdmin)
+admin.site.register(RestrictedAreaType)

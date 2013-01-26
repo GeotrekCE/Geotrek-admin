@@ -269,10 +269,14 @@ Project.add_property('signage_edges', lambda self: project_edges(self, 'signage_
 
 """
 
+class RestrictedAreaType(models.Model):
+    name = models.CharField(max_length=200, verbose_name=_(u"Label"))
+
+
 class RestrictedArea(models.Model):
-    name = models.CharField(max_length=128, db_column='zonage', verbose_name=_(u"Name"))
-    order = models.IntegerField(db_column='order', verbose_name=_(u"Order"))
+    name = models.CharField(max_length=250, db_column='zonage', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_(u"Restricted area"))
 
     # Override default manager
     objects = models.GeoManager()
