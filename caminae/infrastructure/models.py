@@ -44,7 +44,7 @@ class InfrastructureType(StructureRelated):
     objects = InfrastructureTypeManager()
 
     class Meta:
-        db_table = 'classe_amenagement'
+        db_table = 'a_b_amenagement'
         verbose_name = _(u"Infrastructure Type")
         verbose_name_plural = _(u"Infrastructure Types")
 
@@ -62,7 +62,7 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     type = models.ForeignKey(InfrastructureType)
 
     class Meta:
-        db_table = 'amenagement'
+        db_table = 'a_t_amenagement'
         verbose_name = _(u"Infrastructure")
         verbose_name_plural = _(u"Infrastructure")
 
