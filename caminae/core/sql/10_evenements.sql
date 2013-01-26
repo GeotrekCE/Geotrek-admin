@@ -53,7 +53,7 @@ DROP TRIGGER IF EXISTS evenements_interventions_d_tgr ON evenements;
 
 CREATE OR REPLACE FUNCTION delete_related_intervention() RETURNS trigger AS $$
 BEGIN
-    UPDATE interventions SET supprime = TRUE WHERE topology_id = OLD.id;
+    UPDATE m_t_intervention SET supprime = TRUE WHERE topology_id = OLD.id;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;

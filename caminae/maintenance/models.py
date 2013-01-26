@@ -49,7 +49,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             verbose_name=_(u"Intervention type"))
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-            verbose_name=_(u"Disorders"))
+            db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
 
     jobs = models.ManyToManyField('InterventionJob', through='ManDay',
             verbose_name=_(u"Jobs"))
@@ -61,7 +61,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     objects = Topology.get_manager_cls()()
 
     class Meta:
-        db_table = 'interventions'
+        db_table = 'm_t_interventions'
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
 
@@ -185,7 +185,7 @@ class InterventionStatus(StructureRelated):
     status = models.CharField(verbose_name=_(u"Status"), max_length=128)
 
     class Meta:
-        db_table = 'bib_de_suivi'
+        db_table = 'm_b_suivi'
         verbose_name = _(u"Intervention's status")
         verbose_name_plural = _(u"Intervention's statuses")
         ordering = ['id']
@@ -199,7 +199,7 @@ class InterventionType(StructureRelated):
     type = models.CharField(max_length=128, verbose_name=_(u"Type"))
 
     class Meta:
-        db_table = 'typologie_des_interventions'
+        db_table = 'm_b_intervention'
         verbose_name = _(u"Intervention's type")
         verbose_name_plural = _(u"Intervention's types")
 
@@ -212,7 +212,7 @@ class InterventionDisorder(StructureRelated):
     disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"))
 
     class Meta:
-        db_table = 'desordres'
+        db_table = 'm_b_desordre'
         verbose_name = _(u"Intervention's disorder")
         verbose_name_plural = _(u"Intervention's disorders")
 
@@ -226,7 +226,7 @@ class InterventionJob(StructureRelated):
     cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
 
     class Meta:
-        db_table = 'bib_fonctions'
+        db_table = 'm_b_fonction'
         verbose_name = _(u"Intervention's job")
         verbose_name_plural = _(u"Intervention's jobs")
 
@@ -241,7 +241,7 @@ class ManDay(models.Model):
     job = models.ForeignKey(InterventionJob)
 
     class Meta:
-        db_table = 'journeeshomme'
+        db_table = 'm_r_intervention_fonction'
         verbose_name = _(u"Manday")
         verbose_name_plural = _(u"Mandays")
 
@@ -272,7 +272,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",
-            verbose_name=_(u"Contractors"))
+            db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
 
     project_owner = models.ForeignKey(Organism, related_name='own',
             verbose_name=_(u"Project owner"))
@@ -287,7 +287,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     objects = Topology.get_manager_cls()()
 
     class Meta:
-        db_table = 'chantiers'
+        db_table = 'm_t_chantier'
         verbose_name = _(u"Project")
         verbose_name_plural = _(u"Projects")
 
@@ -348,7 +348,7 @@ class ProjectType(StructureRelated):
     type = models.CharField(max_length=128, verbose_name=_(u"Type"))
 
     class Meta:
-        db_table = 'bib_projet_type'
+        db_table = 'm_b_chantier'
         verbose_name = _(u"Project type")
         verbose_name_plural = _(u"Project types")
 
@@ -361,7 +361,7 @@ class ProjectDomain(StructureRelated):
     domain = models.CharField(max_length=128, verbose_name=_(u"Domain"))
 
     class Meta:
-        db_table = 'bib_projet_domaine'
+        db_table = 'm_b_domaine'
         verbose_name = _(u"Project domain")
         verbose_name_plural = _(u"Project domains")
 
@@ -374,7 +374,7 @@ class Contractor(StructureRelated):
     contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"))
 
     class Meta:
-        db_table = 'prestataires'
+        db_table = 'm_b_prestataire'
         verbose_name = _(u"Contractor")
         verbose_name_plural = _(u"Contractors")
 
@@ -389,7 +389,7 @@ class Funding(models.Model):
     organism = models.ForeignKey(Organism)
 
     class Meta:
-        db_table = 'financement'
+        db_table = 'm_r_chantier_financement'
         verbose_name = _(u"Funding")
         verbose_name_plural = _(u"Fundings")
 
