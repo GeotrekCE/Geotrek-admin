@@ -10,8 +10,10 @@
     {% compress css %}
         {% if DEBUG %}
             <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
+            <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.css" %}" />
         {% else %}
             <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+            <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" />
         {% endif %}
         <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/datepicker.css" %}">
         <link rel="stylesheet" href="{% static "style.css" %}" />
