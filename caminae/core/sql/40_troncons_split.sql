@@ -85,9 +85,9 @@ BEGIN
                 ELSE
                     -- RAISE NOTICE 'New: Create geom is %', ST_AsEWKT(segment);
                     -- Next ones : create clones !
-                    INSERT INTO l_t_troncon (structure_id, 
-                                          troncon_valide,
-                                          nom_troncon, 
+                    INSERT INTO l_t_troncon (structure, 
+                                          valide,
+                                          nom, 
                                           remarques,
                                           trail_id,
                                           datasource_id,
@@ -97,9 +97,9 @@ BEGIN
                                           arrivee,
                                           comfort_id,
                                           geom) 
-                        VALUES (NEW.structure_id,
-                                NEW.troncon_valide,
-                                NEW.nom_troncon,
+                        VALUES (NEW.structure,
+                                NEW.valide,
+                                NEW.nom,
                                 NEW.remarques,
                                 NEW.trail_id,
                                 NEW.datasource_id,

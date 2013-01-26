@@ -29,8 +29,8 @@ class Path(MapEntityMixin, StructureRelated):
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
                                            spatial_index=False, dim=3)
-    valid = models.BooleanField(db_column='troncon_valide', default=True, verbose_name=_(u"Validity"))
-    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom_troncon', verbose_name=_(u"Name"))
+    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"))
+    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"))
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"))
 
     departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"))
@@ -38,13 +38,13 @@ class Path(MapEntityMixin, StructureRelated):
     
     comfort =  models.ForeignKey('Comfort',
                                  null=True, blank=True, related_name='paths',
-                                 verbose_name=_("Comfort"))
+                                 verbose_name=_("Comfort"), db_column='confort')
     # Override default manager
     objects = models.GeoManager()
 
     # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
-    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
+    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
+    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
     length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(
             editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
@@ -58,13 +58,13 @@ class Path(MapEntityMixin, StructureRelated):
 
     trail = models.ForeignKey('Trail',
             null=True, blank=True, related_name='paths',
-            verbose_name=_("Trail"))
+            verbose_name=_("Trail"), db_column='sentier')
     datasource = models.ForeignKey('Datasource',
             null=True, blank=True, related_name='paths',
-            verbose_name=_("Datasource"))
+            verbose_name=_("Datasource"), db_column='source')
     stake = models.ForeignKey('Stake',
             null=True, blank=True, related_name='paths',
-            verbose_name=_("Stake"))
+            verbose_name=_("Stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
             blank=True, null=True, related_name="paths",
             verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
@@ -258,8 +258,8 @@ class Topology(NoDeleteMixin):
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"))
-    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"))
+    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
+    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
     length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 blank=True, spatial_index=False, dim=3)
@@ -542,7 +542,7 @@ class Datasource(StructureRelated):
 
 class Stake(StructureRelated):
 
-    stake = models.CharField(verbose_name=_(u"Stake"), max_length=50)
+    stake = models.CharField(verbose_name=_(u"Stake"), max_length=50, db_column='enjeu')
 
     class Meta:
         db_table = 'l_b_enjeu'
@@ -558,7 +558,7 @@ class Stake(StructureRelated):
 
 class Comfort(StructureRelated):
 
-    comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50)
+    comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50, db_column='confort')
 
     class Meta:
         db_table = 'l_b_confort'
@@ -571,7 +571,7 @@ class Comfort(StructureRelated):
 
 class Usage(StructureRelated):
 
-    usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
+    usage = models.CharField(verbose_name=_(u"Usage"), max_length=50, db_column='usage')
 
     class Meta:
         db_table = 'l_b_usage'
@@ -584,7 +584,7 @@ class Usage(StructureRelated):
 
 class Network(StructureRelated):
 
-    network = models.CharField(verbose_name=_(u"Network"), max_length=50)
+    network = models.CharField(verbose_name=_(u"Network"), max_length=50, db_column='reseau')
 
     class Meta:
         db_table = 'l_b_reseau'
@@ -597,10 +597,10 @@ class Network(StructureRelated):
 
 class Trail(MapEntityMixin, StructureRelated):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=64)
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=64)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64)
-    comments = models.TextField(default="", verbose_name=_(u"Comments"))
+    name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
+    comments = models.TextField(default="", verbose_name=_(u"Comments"), db_column='commentaire')
 
     class Meta:
         db_table = 'l_t_sentier'
