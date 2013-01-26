@@ -91,7 +91,7 @@
     <table class="table">
         <tr>
             <th>{% trans "Paths" %}</th>
-            <td>
+            <td class="paths">
                 {% for p in trek.paths.all %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li>{{ p.name_display|safe }}</li>
