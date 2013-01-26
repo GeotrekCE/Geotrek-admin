@@ -63,7 +63,8 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure, verbose_name=_(u"Related structure"))
+    structure = models.ForeignKey(Structure, default=default_structure,
+                                  verbose_name=_(u"Related structure"), db_column='structure')
 
     objects = models.Manager()
     in_structure = StructureRelatedManager()
