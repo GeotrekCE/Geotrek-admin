@@ -22,17 +22,22 @@ logger = logging.getLogger(__name__)
 
 class Trek(MapEntityMixin, Topology):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128)
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True)
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True)
-    published = models.BooleanField(verbose_name=_(u"Published"))
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
+                            help_text=_(u"Public name"))
+    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
+                                 help_text=_(u"Departure place"))
+    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
+                               help_text=_(u"Arrival place"))
+    published = models.BooleanField(verbose_name=_(u"Published"),
+                                    help_text=_(u"Online"))
 
     ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
     min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
     max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
-    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True)
+    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
+                                          help_text=_(u"A brief characteristic"))
     description = models.TextField(verbose_name=_(u"Description"), blank=True)
     ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True)
     access = models.TextField(verbose_name=_(u"Access"), blank=True)

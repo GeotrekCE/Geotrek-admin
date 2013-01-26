@@ -53,6 +53,7 @@ class MapEntityForm(forms.ModelForm):
         )
         
         # Main form layout
+        self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Div(

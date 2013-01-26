@@ -15,3 +15,8 @@ h2 {
 .form-panel h2 {
 	text-align: left;
 }
+
+
+#div_id_topology .controls {
+    margin-left: 30px;
+}

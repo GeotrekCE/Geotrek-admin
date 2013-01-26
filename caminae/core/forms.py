@@ -19,7 +19,7 @@ class TopologyForm(CommonForm):
         
     The geom field is fully ignored, since we edit a topology.
     """
-    topology = TopologyField()
+    topology = TopologyField(label="")
     geomfields = ('topology', )
 
     def __init__(self, *args, **kwargs):

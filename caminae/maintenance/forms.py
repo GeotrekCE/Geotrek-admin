@@ -42,7 +42,7 @@ FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=F
 
 class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
-    topology = TopologyField()
+    topology = TopologyField(label="")
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())

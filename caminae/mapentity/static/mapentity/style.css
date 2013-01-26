@@ -344,6 +344,13 @@ span.filter-info {
     color: #B94A48;
 }
 
+.help-inline {
+    font-size: 0.5em;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 5px;
+}
 
 /* Icons for each entity */
 .form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
