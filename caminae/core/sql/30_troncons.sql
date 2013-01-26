@@ -45,36 +45,36 @@ BEGIN
     -- Remove obsolete evenement
     IF TG_OP = 'UPDATE' THEN
         -- Related evenement/zonage/secteur/commune will be cleared by another trigger
-        DELETE FROM evenements_troncons et USING zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
-        DELETE FROM evenements_troncons et USING secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
-        DELETE FROM evenements_troncons et USING commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
+        DELETE FROM evenements_troncons et USING f_t_zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
+        DELETE FROM evenements_troncons et USING f_t_secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
+        DELETE FROM evenements_troncons et USING f_t_commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
     END IF;
 
     -- Add new evenement
     -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_communes WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_commune WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
-        INSERT INTO commune (evenement, city_id) VALUES (eid, rec.id);
+        INSERT INTO f_t_commune (evenement, city_id) VALUES (eid, rec.id);
     END LOOP;
 
     -- Secteur
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_secteurs WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_secteur WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
-        INSERT INTO secteur (evenement, district_id) VALUES (eid, rec.id);
+        INSERT INTO f_t_secteur (evenement, district_id) VALUES (eid, rec.id);
     END LOOP;
 
     -- Zonage
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
-        INSERT INTO zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
+        INSERT INTO f_t_zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
     END LOOP;
 
     RETURN NULL;

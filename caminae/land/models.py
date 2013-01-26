@@ -31,7 +31,7 @@ class PhysicalType(models.Model):
     name = models.CharField(max_length=128, verbose_name=_(u"Name"))
 
     class Meta:
-        db_table = 'nature_sentier'
+        db_table = 'f_b_nature'
         verbose_name = _(u"Physical type")
         verbose_name_plural = _(u"Physical types")
 
@@ -48,7 +48,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'nature'
+        db_table = 'f_t_nature'
         verbose_name = _(u"Physical edge")
         verbose_name_plural = _(u"Physical edges")
 
@@ -92,7 +92,7 @@ class LandType(StructureRelated):
     right_of_way = models.BooleanField(db_column='droit_de_passage', verbose_name=_(u"Right of way"))
 
     class Meta:
-        db_table = 'type_foncier'
+        db_table = 'f_b_foncier'
         verbose_name = _(u"Land type")
         verbose_name_plural = _(u"Land types")
 
@@ -109,7 +109,7 @@ class LandEdge(MapEntityMixin, Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'foncier'
+        db_table = 'f_t_foncier'
         verbose_name = _(u"Land edge")
         verbose_name_plural = _(u"Land edges")
 
@@ -150,7 +150,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'competence'
+        db_table = 'f_t_competence'
         verbose_name = _(u"Competence edge")
         verbose_name_plural = _(u"Competence edges")
 
@@ -190,7 +190,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'gestion_travaux'
+        db_table = 'f_t_gestion_travaux'
         verbose_name = _(u"Work management edge")
         verbose_name_plural = _(u"Work management edges")
 
@@ -230,7 +230,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'gestion_signaletique'
+        db_table = 'f_t_gestion_signaletique'
         verbose_name = _(u"Signage management edge")
         verbose_name_plural = _(u"Signage management edges")
 
@@ -273,7 +273,7 @@ class RestrictedAreaType(models.Model):
     name = models.CharField(max_length=200, verbose_name=_(u"Name"))
 
     class Meta:
-        db_table = 'bib_typeszones'
+        db_table = 'f_b_zonage'
         verbose_name = _(u"Restricted area type")
 
 
@@ -287,7 +287,7 @@ class RestrictedArea(models.Model):
 
     class Meta:
         ordering = ['area_type', 'name',]
-        db_table = 'couche_zonage_reglementaire'
+        db_table = 'l_zonage_reglementaire'
         verbose_name = _(u"Restricted area")
         verbose_name_plural = _(u"Restricted areas")
 
@@ -304,7 +304,7 @@ class RestrictedAreaEdge(Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'zonage'
+        db_table = 'f_t_zonage'
         verbose_name = _(u"Restricted area edge")
         verbose_name_plural = _(u"Restricted area edges")
 
@@ -336,7 +336,7 @@ class City(models.Model):
     objects = models.GeoManager()
 
     class Meta:
-        db_table = 'couche_communes'
+        db_table = 'l_commune'
         ordering = ['name', ]
         verbose_name = _(u"City")
         verbose_name_plural = _(u"Cities")
@@ -355,7 +355,7 @@ class CityEdge(Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'commune'
+        db_table = 'f_t_commune'
         verbose_name = _(u"City edge")
         verbose_name_plural = _(u"City edges")
 
@@ -386,7 +386,7 @@ class District(models.Model):
     objects = models.GeoManager()
 
     class Meta:
-        db_table = 'couche_secteurs'
+        db_table = 'l_secteur'
         ordering = ['name', ]
         verbose_name = _(u"District")
         verbose_name_plural = _(u"Districts")
@@ -404,7 +404,7 @@ class DistrictEdge(Topology):
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'secteur'
+        db_table = 'f_t_secteur'
         verbose_name = _(u"District edge")
         verbose_name_plural = _(u"District edges")
 

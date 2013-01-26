@@ -3,13 +3,16 @@
 -------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS couche_communes_geom_idx;
-CREATE INDEX couche_communes_geom_idx ON couche_communes USING gist(geom);
+DROP INDEX IF EXISTS l_commune_geom_idx;
+CREATE INDEX l_commune_geom_idx ON l_commune USING gist(geom);
 
 DROP INDEX IF EXISTS couche_secteurs_geom_idx;
-CREATE INDEX couche_secteurs_geom_idx ON couche_secteurs USING gist(geom);
+DROP INDEX IF EXISTS l_secteur_geom_idx;
+CREATE INDEX l_secteur_geom_idx ON l_secteur USING gist(geom);
 
 DROP INDEX IF EXISTS couche_zonage_reglementaire_geom_idx;
-CREATE INDEX couche_zonage_reglementaire_geom_idx ON couche_zonage_reglementaire USING gist(geom);
+DROP INDEX IF EXISTS l_zonage_reglementaire_geom_idx;
+CREATE INDEX l_zonage_reglementaire_geom_idx ON l_zonage_reglementaire USING gist(geom);
 
 
 -------------------------------------------------------------------------------
@@ -23,7 +26,7 @@ DECLARE
     tab varchar;
     eid integer;
 BEGIN
-    FOREACH tab IN ARRAY ARRAY[['commune', 'secteur', 'zonage']]
+    FOREACH tab IN ARRAY ARRAY[['f_t_commune', 'f_t__secteur', 'f_t_zonage']]
     LOOP
         -- Delete related object in association tables
         -- /!\ This query is executed for any kind of evenement, but it will
@@ -51,9 +54,9 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
 -- Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON commune;
-DROP TRIGGER IF EXISTS secteur_troncons_d_tgr ON secteur;
-DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON zonage;
+DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON f_t_commune;
+DROP TRIGGER IF EXISTS secteur_troncons_d_tgr ON f_t_secteur;
+DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON f_t_zonage;
 
 CREATE OR REPLACE FUNCTION nettoyage_auto_couches_sig_d() RETURNS trigger AS $$
 BEGIN
@@ -64,15 +67,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER commune_troncons_d_tgr
-AFTER DELETE ON commune
+AFTER DELETE ON f_t_commune
 FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 
 CREATE TRIGGER secteur_troncons_d_tgr
-AFTER DELETE ON secteur
+AFTER DELETE ON f_t_secteur
 FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 
 CREATE TRIGGER zonage_troncons_d_tgr
-AFTER DELETE ON zonage
+AFTER DELETE ON f_t_zonage
 FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 
 
@@ -80,9 +83,9 @@ FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS commune_troncons_iu_tgr ON couche_communes;
-DROP TRIGGER IF EXISTS secteur_troncons_iu_tgr ON couche_secteurs;
-DROP TRIGGER IF EXISTS zonage_troncons_iu_tgr ON couche_zonage_reglementaire;
+DROP TRIGGER IF EXISTS commune_troncons_iu_tgr ON l_commune;
+DROP TRIGGER IF EXISTS secteur_troncons_iu_tgr ON l_secteur;
+DROP TRIGGER IF EXISTS zonage_troncons_iu_tgr ON l_zonage_reglementaire;
 
 CREATE OR REPLACE FUNCTION lien_auto_couches_sig_troncon_iu() RETURNS trigger AS $$
 DECLARE
@@ -120,13 +123,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER commune_troncons_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON couche_communes
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('commune', 'insee', 'city_id', 'CITYEDGE');
+AFTER INSERT OR UPDATE OF geom ON l_commune
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_commune', 'insee', 'city_id', 'CITYEDGE');
 
 CREATE TRIGGER secteur_troncons_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON couche_secteurs
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('secteur', 'id', 'district_id', 'DISTRICTEDGE');
+AFTER INSERT OR UPDATE OF geom ON l_secteur
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_secteur', 'id', 'district_id', 'DISTRICTEDGE');
 
 CREATE TRIGGER zonage_troncons_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON couche_zonage_reglementaire
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('zonage', 'id', 'restricted_area_id', 'RESTRICTEDAREAEDGE');
+AFTER INSERT OR UPDATE OF geom ON l_zonage_reglementaire
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_zonage', 'id', 'restricted_area_id', 'RESTRICTEDAREAEDGE');
