@@ -278,13 +278,18 @@ class RestrictedAreaType(models.Model):
         verbose_name = _(u"Restricted area type")
 
 
+class RestrictedAreaManager(models.GeoManager):
+    def get_query_set(self):
+        return super(RestrictedAreaManager, self).get_query_set().select_related('area_type')
+
+
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, db_column='zonage', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_(u"Restricted area"), db_column='type')
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = RestrictedAreaManager()
 
     class Meta:
         ordering = ['area_type', 'name',]
