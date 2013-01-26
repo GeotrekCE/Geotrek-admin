@@ -21,18 +21,18 @@ setup(
     long_description=open(os.path.join(here, 'README.rst')).read(),
     install_requires = [
         'django',  # pinned by buildout
-        'South == 0.7.5',
+        'South == 0.7.6',
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'gpxpy == 0.7.1',
         'django-shapes == 0.2.0',
-        'django-modeltranslation == 0.3.3',
+        'django-modeltranslation == 0.5b1',
         'django-floppyforms == 1.0',
         'django-crispy-forms == 1.1.4',
         'django-compressor == 1.2',
-        'Pillow == 1.7.7',
+        'Pillow == 1.7.8',
         'easy-thumbnails == 1.1',
-        'simplekml == 1.1.2',
+        'simplekml == 1.2.1',
         'django-appypod == 0.0.1',
         'django-screamshot',   # pinned by buildout
         'django-leaflet',   # pinned by buildout
