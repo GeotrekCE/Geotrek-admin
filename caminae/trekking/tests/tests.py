@@ -159,6 +159,9 @@ class TrekCustomViewTests(TestCase):
         trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0,0,0), (4,4,2)))
         poi = POIFactory.create(no_path=True)
+        poi.name_fr = "Chapelle"
+        poi.name_it = "Capela"
+        poi.save()
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       start_position=0.5)
         PathAggregationFactory.create(topo_object=poi, path=p1,
@@ -171,7 +174,7 @@ class TrekCustomViewTests(TestCase):
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
             obj = simplejson.loads(response.content)
             jsonpoi = obj.get('features', [])[0]
-            self.assertEqual(jsonpoi.get('properties', {}).get('label'), expected)
+            self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
 
 
 class RelatedObjectsTest(TestCase):

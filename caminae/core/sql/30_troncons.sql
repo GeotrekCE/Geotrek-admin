@@ -56,7 +56,7 @@ BEGIN
     -- Commune
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_communes WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom) RETURNING id INTO eid;
+        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO commune (evenement, city_id) VALUES (eid, rec.id);
     END LOOP;
@@ -64,7 +64,7 @@ BEGIN
     -- Secteur
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_secteurs WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom) RETURNING id INTO eid;
+        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO secteur (evenement, district_id) VALUES (eid, rec.id);
     END LOOP;
@@ -72,7 +72,7 @@ BEGIN
     -- Zonage
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM couche_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom) RETURNING id INTO eid;
+        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
     END LOOP;
