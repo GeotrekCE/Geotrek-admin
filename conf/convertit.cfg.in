@@ -11,6 +11,24 @@ download_dir = ${options.download_dir}
 converted_dir = ${options.converted_dir}
 converted_url = converted
 converted_max_age = 60
+convertit.converted_url = converted
+# Available options:
+#   url_hostname: the url hostname
+#   url_port: the url port
+#   url_dirname: the url path's dirname with '/' replaced by '_'
+#   url_filename: filename part of the url path's basename
+#   url_extension: extension part of the url path's basename
+#   extension: the converted extension
+# Exemple: url=http://exemple.com:8080/path/to/foo.bar&to=application/pdf
+#   url_hostname: exemple.com
+#   url_port: 8080
+#   url_dirname: path_to
+#   url_filename: foo
+#   url_extension: .bar
+#   extension: .pdf
+convertit.converted_name = {url_dirname}_{url_filename}{extension}
+convertit.converters =
+    convertit.converters.unoconv
 
 [server:main]
 use = egg:gunicorn#main
