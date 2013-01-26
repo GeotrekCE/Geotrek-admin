@@ -233,7 +233,7 @@ class Migration(SchemaMigration):
             'network': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         'core.path': {
-            'Meta': {'object_name': 'Path', 'db_table': "'troncons'"},
+            'Meta': {'object_name': 'Path', 'db_table': "'l_t_troncon'"},
             'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_positive'"}),
             'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'"}),
             'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Datasource']"}),

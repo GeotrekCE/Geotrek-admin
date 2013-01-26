@@ -265,7 +265,7 @@ class Topology(NoDeleteMixin):
                                 blank=True, spatial_index=False, dim=3)
 
     class Meta:
-        db_table = 'evenements'
+        db_table = 'e_t_evenement'
         verbose_name = _(u"Topology")
         verbose_name_plural = _(u"Topologies")
 
@@ -519,7 +519,7 @@ class PathAggregation(models.Model):
         return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)
 
     class Meta:
-        db_table = 'evenements_troncons'
+        db_table = 'e_r_evenement_troncon'
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
         # Important - represent the order of the path in the Topology path list

@@ -9,18 +9,18 @@ BEGIN
     -- Obtain FK name (which is dynamically generated when table is created)
     SELECT c.conname INTO fk_name
         FROM pg_class t1, pg_class t2, pg_constraint c
-        WHERE t1.relname = 'evenements_troncons' AND c.conrelid = t1.oid
+        WHERE t1.relname = 'e_r_evenement_troncon' AND c.conrelid = t1.oid
           AND t2.relname = 'l_t_troncon' AND c.confrelid = t2.oid
           AND c.contype = 'f';
     -- Use a dynamic SQL statement with the name found
     IF fk_name IS NOT NULL THEN
-        EXECUTE 'ALTER TABLE evenements_troncons DROP CONSTRAINT ' || quote_ident(fk_name);
+        EXECUTE 'ALTER TABLE e_r_evenement_troncon DROP CONSTRAINT ' || quote_ident(fk_name);
     END IF;
 END;
 $$;
 
 -- Now re-create the FK with cascade option
-ALTER TABLE evenements_troncons ADD FOREIGN KEY (troncon) REFERENCES l_t_troncon(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE e_r_evenement_troncon ADD FOREIGN KEY (troncon) REFERENCES l_t_troncon(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 -------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ $$ LANGUAGE plpgsql;
 -- Compute geometry of Evenements
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS evenements_troncons_geometry_tgr ON evenements_troncons;
+DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON e_r_evenement_troncon;
 
 CREATE OR REPLACE FUNCTION ft_evenements_troncons_geometry() RETURNS trigger AS $$
 DECLARE
@@ -69,8 +69,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER evenements_troncons_geometry_tgr
-AFTER INSERT OR UPDATE OR DELETE ON evenements_troncons
+CREATE TRIGGER e_r_evenement_troncon_geometry_tgr
+AFTER INSERT OR UPDATE OR DELETE ON e_r_evenement_troncon
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 
 
@@ -78,7 +78,7 @@ FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 -- Emulate junction points
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS evenements_troncons_junction_point_iu_tgr ON evenements_troncons;
+DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON e_r_evenement_troncon;
 
 CREATE OR REPLACE FUNCTION ft_evenements_troncons_junction_point_iu() RETURNS trigger AS $$
 DECLARE
@@ -89,7 +89,7 @@ BEGIN
     IF TG_OP = 'UPDATE' THEN
         -- There were connected paths only if it was a junction point
         IF OLD.pk_debut = OLD.pk_fin AND OLD.pk_debut IN (0.0, 1.0) THEN
-            DELETE FROM evenements_troncons
+            DELETE FROM e_r_evenement_troncon
             WHERE id != OLD.id AND evenement = OLD.evenement;
         END IF;
     END IF;
@@ -103,7 +103,7 @@ BEGIN
     -- is not the only evenement_troncon, then it's an intermediate marker.
     SELECT count(*)
         INTO t_count
-        FROM evenements_troncons et
+        FROM e_r_evenement_troncon et
         WHERE et.evenement = NEW.evenement;
     IF t_count > 1 THEN
         RETURN NULL;
@@ -116,19 +116,19 @@ BEGIN
         SELECT ST_EndPoint(geom) INTO junction FROM l_t_troncon WHERE id = NEW.troncon;
     END IF;
 
-    INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+    INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
     SELECT id, NEW.evenement, 0.0, 0.0 -- Troncon departing from this junction
     FROM l_t_troncon t
     WHERE id != NEW.troncon AND ST_StartPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
-        SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement
+        SELECT * FROM e_r_evenement_troncon WHERE troncon = t.id AND evenement = NEW.evenement
     )
     UNION
     SELECT id, NEW.evenement, 1.0, 1.0-- Troncon arriving at this junction
     FROM l_t_troncon t
     WHERE id != NEW.troncon AND ST_EndPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
-        SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement
+        SELECT * FROM e_r_evenement_troncon WHERE troncon = t.id AND evenement = NEW.evenement
     );
 
     RETURN NULL;
@@ -137,6 +137,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- VOLATILE is the default but I prefer to set it explicitly because it is
 -- required for this case (in order to avoid trigger cascading)
 
-CREATE TRIGGER evenements_troncons_junction_point_iu_tgr
-AFTER INSERT OR UPDATE OF pk_debut, pk_fin ON evenements_troncons
+CREATE TRIGGER e_r_evenement_troncon_junction_point_iu_tgr
+AFTER INSERT OR UPDATE OF pk_debut, pk_fin ON e_r_evenement_troncon
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_junction_point_iu();

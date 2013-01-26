@@ -119,7 +119,7 @@ class Migration(SchemaMigration):
             'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
         },
         'core.pathaggregation': {
-            'Meta': {'object_name': 'PathAggregation', 'db_table': "'evenements_troncons'"},
+            'Meta': {'object_name': 'PathAggregation', 'db_table': "'e_r_evenement_troncon'"},
             'end_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_fin'"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'troncon'", 'to': "orm['core.Path']"}),
@@ -133,7 +133,7 @@ class Migration(SchemaMigration):
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})
         },
         'core.topology': {
-            'Meta': {'object_name': 'Topology', 'db_table': "'evenements'"},
+            'Meta': {'object_name': 'Topology', 'db_table': "'e_t_evenement'"},
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),

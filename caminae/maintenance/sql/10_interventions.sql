@@ -3,7 +3,7 @@
 -- Delete related interventions when an evenement is deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS evenements_interventions_d_tgr ON evenements;
+DROP TRIGGER IF EXISTS m_t_evenement_interventions_d_tgr ON e_t_evenement;
 
 CREATE OR REPLACE FUNCTION delete_related_intervention() RETURNS trigger AS $$
 BEGIN
@@ -12,6 +12,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER evenements_interventions_d_tgr
-AFTER UPDATE OF supprime ON evenements
+CREATE TRIGGER m_t_evenement_interventions_d_tgr
+AFTER UPDATE OF supprime ON e_t_evenement
 FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();

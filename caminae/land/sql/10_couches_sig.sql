@@ -19,7 +19,7 @@ CREATE INDEX l_zonage_reglementaire_geom_idx ON l_zonage_reglementaire USING gis
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON evenements_troncons;
+DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON e_r_evenement_troncon;
 
 CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
 DECLARE
@@ -45,7 +45,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER troncons_couches_sig_d_tgr
-AFTER DELETE ON evenements_troncons
+AFTER DELETE ON e_r_evenement_troncon
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
 
 
@@ -60,8 +60,8 @@ DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON f_t_zonage;
 
 CREATE OR REPLACE FUNCTION nettoyage_auto_couches_sig_d() RETURNS trigger AS $$
 BEGIN
-    DELETE FROM evenements_troncons WHERE evenement = OLD.evenement;
-    DELETE FROM evenements WHERE id = OLD.evenement;
+    DELETE FROM e_r_evenement_troncon WHERE evenement = OLD.evenement;
+    DELETE FROM e_t_evenement WHERE id = OLD.evenement;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
@@ -113,8 +113,8 @@ BEGIN
     -- Add new evenement
     FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_Line_Locate_Point(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_Line_Locate_Point(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM troncons WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
-        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         EXECUTE 'INSERT INTO '|| quote_ident(table_name) ||' (evenement, '|| quote_ident(fk_name) ||') VALUES ($1, $2)' USING eid, obj.id;
     END LOOP;
 

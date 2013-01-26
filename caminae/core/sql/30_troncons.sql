@@ -80,9 +80,9 @@ BEGIN
     -- Remove obsolete evenement
     IF TG_OP = 'UPDATE' THEN
         -- Related evenement/zonage/secteur/commune will be cleared by another trigger
-        DELETE FROM evenements_troncons et USING f_t_zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
-        DELETE FROM evenements_troncons et USING f_t_secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
-        DELETE FROM evenements_troncons et USING f_t_commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
+        DELETE FROM e_r_evenement_troncon et USING f_t_zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
+        DELETE FROM e_r_evenement_troncon et USING f_t_secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
+        DELETE FROM e_r_evenement_troncon et USING f_t_commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
     END IF;
 
     -- Add new evenement
@@ -91,24 +91,24 @@ BEGIN
     -- Commune
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_commune WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
-        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO f_t_commune (evenement, city_id) VALUES (eid, rec.id);
     END LOOP;
 
     -- Secteur
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_secteur WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
-        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO f_t_secteur (evenement, district_id) VALUES (eid, rec.id);
     END LOOP;
 
     -- Zonage
     FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO evenements (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
-        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO f_t_zonage (evenement, restricted_area_id) VALUES (eid, rec.id);
     END LOOP;
 
@@ -137,7 +137,7 @@ BEGIN
     -- Geometry of linear topologies are always updated
     -- Geometry of point topologies are updated if offset = 0
     FOR eid IN SELECT DISTINCT e.id
-               FROM evenements_troncons et, evenements e
+               FROM e_r_evenement_troncon et, e_t_evenement e
                WHERE et.troncon = NEW.id AND et.evenement = e.id AND (et.pk_debut != et.pk_fin OR e.decallage = 0.0)
     LOOP
         PERFORM update_geometry_of_evenement(eid);
@@ -145,12 +145,12 @@ BEGIN
 
     -- Special case of point geometries with offset != 0
     FOR eid, egeom IN SELECT e.id, e.geom
-               FROM evenements_troncons et, evenements e
+               FROM e_r_evenement_troncon et, e_t_evenement e
                WHERE et.troncon = NEW.id AND et.evenement = e.id AND et.pk_debut = et.pk_fin AND e.decallage != 0.0
     LOOP
         SELECT * INTO linear_offset, side_offset FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
-        UPDATE evenements SET decallage = side_offset WHERE id = eid;
-        UPDATE evenements_troncons SET pk_debut = linear_offset, pk_fin = linear_offset WHERE evenement = eid AND troncon = NEW.id;
+        UPDATE e_t_evenement SET decallage = side_offset WHERE id = eid;
+        UPDATE e_r_evenement_troncon SET pk_debut = linear_offset, pk_fin = linear_offset WHERE evenement = eid AND troncon = NEW.id;
     END LOOP;
 
     RETURN NULL;
@@ -168,7 +168,7 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
 ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
-ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncons_geom_issimple CHECK (ST_IsSimple(geom));
+ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSimple(geom));
 
 
 -------------------------------------------------------------------------------
@@ -221,15 +221,15 @@ BEGIN
     -- Un-published treks because they might be broken
     UPDATE itineraire i
         SET published = FALSE
-        FROM evenements_troncons et
+        FROM e_r_evenement_troncon et
         WHERE et.evenement = i.topology_ptr_id AND et.troncon = OLD.id;
 
     -- Mark empty topologies as deleted
-    UPDATE evenements e
+    UPDATE e_t_evenement e
         SET supprime = TRUE
-        FROM evenements_troncons et
+        FROM e_r_evenement_troncon et
         WHERE et.evenement = e.id AND et.troncon = OLD.id AND NOT EXISTS(
-            SELECT * FROM evenements_troncons
+            SELECT * FROM e_r_evenement_troncon
             WHERE evenement = e.id AND troncon != OLD.id
         );
 

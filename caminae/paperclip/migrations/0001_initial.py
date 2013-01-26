@@ -60,7 +60,7 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'common.filetype': {
-            'Meta': {'object_name': 'FileType', 'db_table': "'types_fichiers'"},
+            'Meta': {'object_name': 'FileType', 'db_table': "'fl_b_fichier'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'type_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),

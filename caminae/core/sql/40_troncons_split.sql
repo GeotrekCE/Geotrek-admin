@@ -166,21 +166,21 @@ BEGIN
                     
                     -- Copy topologies matching pk start/end
                     -- RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;                    
-                    INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                    INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                         SELECT
                             tid_clone,
                             et.evenement,
                             (greatest(a, pk_debut) - a) / (b - a),
                             (least(b, pk_fin) - a) / (b - a)
-                        FROM evenements_troncons et
+                        FROM e_r_evenement_troncon et
                         WHERE et.troncon = troncon.id 
                               AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
                                    (pk_debut = pk_fin AND pk_debut = a)); -- Point
                     -- Special case : point topology at the end of path
                     IF b = 1 THEN
-                        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                             SELECT tid_clone, evenement, pk_debut, pk_fin
-                            FROM evenements_troncons et
+                            FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id AND 
                                   pk_debut = pk_fin AND 
                                   pk_debut = 1;
@@ -188,9 +188,9 @@ BEGIN
                     -- Special case : point topology exactly where NEW path intersects
                     IF a > 0 THEN
                         pk := ST_Line_Locate_Point(NEW.geom, ST_Line_Substring(troncon.geom, a, a));
-                        INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
+                        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                             SELECT NEW.id, et.evenement, pk, pk
-                            FROM evenements_troncons et
+                            FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
                               AND pk_debut = pk_fin AND pk_debut = a;
                     END IF;
@@ -201,13 +201,13 @@ BEGIN
             a := intersections_on_current[1];
             b := intersections_on_current[2];
             -- RAISE NOTICE 'Current: Remove topologies of % on [% ; %]', troncon.id, a, b;
-            DELETE FROM evenements_troncons et WHERE et.troncon = troncon.id
-                                               AND (pk_debut > b OR pk_fin < a);
+            DELETE FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id
+                                                 AND (pk_debut > b OR pk_fin < a);
 
             -- Update topologies overlapping
             -- RAISE NOTICE 'Current: Update topologies of % on [% ; %]', troncon.id, a, b;
-            UPDATE evenements_troncons et SET pk_debut = pk_debut / (b - a),
-                                              pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
+            UPDATE e_r_evenement_troncon et SET pk_debut = pk_debut / (b - a),
+                                                pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
                 WHERE et.troncon = troncon.id
                 AND pk_debut <= b AND pk_fin >= a; 
         END IF;
