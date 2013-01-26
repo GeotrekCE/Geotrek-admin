@@ -3,30 +3,34 @@
 -------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS troncons_geom_idx;
-CREATE INDEX troncons_geom_idx ON troncons USING gist(geom);
+DROP INDEX IF EXISTS l_t_troncon_geom_idx;
+CREATE INDEX l_t_troncon_geom_idx ON l_t_troncon USING gist(geom);
 
 DROP INDEX IF EXISTS troncons_start_point_idx;
-CREATE INDEX troncons_start_point_idx ON troncons USING gist(ST_StartPoint(geom));
+DROP INDEX IF EXISTS l_t_troncon_start_point_idx;
+CREATE INDEX l_t_troncon_start_point_idx ON l_t_troncon USING gist(ST_StartPoint(geom));
 
 DROP INDEX IF EXISTS troncons_end_point_idx;
-CREATE INDEX troncons_end_point_idx ON troncons USING gist(ST_EndPoint(geom));
+DROP INDEX IF EXISTS l_t_troncon_end_point_idx;
+CREATE INDEX l_t_troncon_end_point_idx ON l_t_troncon USING gist(ST_EndPoint(geom));
 
 DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
-CREATE INDEX troncons_geom_cadastre_idx ON troncons USING gist(geom_cadastre);
+DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
+CREATE INDEX l_t_troncon_geom_cadastre_idx ON l_t_troncon USING gist(geom_cadastre);
 
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_date_insert_tgr ON troncons;
-CREATE TRIGGER troncons_date_insert_tgr
-    BEFORE INSERT ON troncons
+DROP TRIGGER IF EXISTS l_t_troncon_date_insert_tgr ON l_t_troncon;
+CREATE TRIGGER l_t_troncon_date_insert_tgr
+    BEFORE INSERT ON l_t_troncon
     FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
 
-DROP TRIGGER IF EXISTS troncons_date_update_tgr ON troncons;
-CREATE TRIGGER troncons_date_update_tgr
-    BEFORE INSERT OR UPDATE ON troncons
+DROP TRIGGER IF EXISTS l_t_troncon_date_update_tgr ON l_t_troncon;
+CREATE TRIGGER l_t_troncon_date_update_tgr
+    BEFORE INSERT OR UPDATE ON l_t_troncon
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
 
@@ -45,7 +49,7 @@ BEGIN
     -- Crossing and extremity touching is OK. 
     -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
-    FROM troncons 
+    FROM l_t_troncon 
     WHERE pid != id 
       AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
       -- not extremity touching
@@ -65,7 +69,7 @@ $$ LANGUAGE plpgsql;
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_couches_sig_iu_tgr ON troncons;
+DROP TRIGGER IF EXISTS l_t_troncon_couches_sig_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_iu() RETURNS trigger AS $$
 DECLARE
@@ -112,8 +116,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER troncons_couches_sig_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON troncons
+CREATE TRIGGER l_t_troncon_couches_sig_iu_tgr
+AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 
 
@@ -121,7 +125,7 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 -- Update geometry of related topologies
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_evenements_geom_u_tgr ON troncons;
+DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
 DECLARE
@@ -153,8 +157,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER troncons_evenements_geom_u_tgr
-AFTER UPDATE OF geom ON troncons
+CREATE TRIGGER l_t_troncon_evenements_geom_u_tgr
+AFTER UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 
@@ -162,15 +166,16 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 -- Ensure paths have valid geometries
 -------------------------------------------------------------------------------
 
-ALTER TABLE troncons DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
-ALTER TABLE troncons ADD CONSTRAINT troncons_geom_issimple CHECK (ST_IsSimple(geom));
+ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
+ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
+ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncons_geom_issimple CHECK (ST_IsSimple(geom));
 
 
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_elevation_iu_tgr ON troncons;
+DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_elevation_iu() RETURNS trigger AS $$
 DECLARE
@@ -199,8 +204,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER troncons_elevation_iu_tgr
-BEFORE INSERT OR UPDATE OF geom ON troncons
+CREATE TRIGGER l_t_troncon_elevation_iu_tgr
+BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_elevation_iu();
 
 
@@ -208,7 +213,7 @@ FOR EACH ROW EXECUTE PROCEDURE troncons_elevation_iu();
 -- Change status of related objects when paths are deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_related_objects_d_tgr ON troncons;
+DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_related_objects_d() RETURNS trigger AS $$
 DECLARE
@@ -232,6 +237,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER troncons_related_objects_d_tgr
-BEFORE DELETE ON troncons
+CREATE TRIGGER l_t_troncon_related_objects_d_tgr
+BEFORE DELETE ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();

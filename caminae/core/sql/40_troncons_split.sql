@@ -2,7 +2,7 @@
 -- Split paths when crossing each other
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_split_geom_iu_tgr ON troncons;
+DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
@@ -24,7 +24,7 @@ BEGIN
 
     -- Iterate paths intersecting, excluding those touching by extremities
     FOR troncon IN SELECT *
-                   FROM troncons t
+                   FROM l_t_troncon t
                    WHERE id != NEW.id 
                          AND ST_Intersects(geom, NEW.geom) 
                          AND NOT ST_Relate(geom, NEW.geom, 'FF*F*****')
@@ -81,11 +81,11 @@ BEGIN
                 IF i = 1 THEN
                     -- First segment : shrink it !
                     -- RAISE NOTICE 'New: Skrink % : geom is %', NEW.id, ST_AsEWKT(segment);
-                    UPDATE troncons SET geom = segment WHERE id = NEW.id;
+                    UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                 ELSE
                     -- RAISE NOTICE 'New: Create geom is %', ST_AsEWKT(segment);
                     -- Next ones : create clones !
-                    INSERT INTO troncons (structure_id, 
+                    INSERT INTO l_t_troncon (structure_id, 
                                           troncon_valide,
                                           nom_troncon, 
                                           remarques,
@@ -134,11 +134,11 @@ BEGIN
                 IF i = 1 THEN
                     -- First segment : shrink it !
                     -- RAISE NOTICE 'Current: Skrink % : geom is %', troncon.id, ST_AsEWKT(segment);
-                    UPDATE troncons SET geom = segment WHERE id = troncon.id;
+                    UPDATE l_t_troncon SET geom = segment WHERE id = troncon.id;
                 ELSE
                     -- Next ones : create clones !
                     -- RAISE NOTICE 'Current: Create geom is %', ST_AsEWKT(segment);
-                    INSERT INTO troncons (structure_id, 
+                    INSERT INTO l_t_troncon (structure_id, 
                                           troncon_valide,
                                           nom_troncon, 
                                           remarques,
@@ -217,6 +217,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER troncons_split_geom_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON troncons
+CREATE TRIGGER l_t_troncon_split_geom_iu_tgr
+AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();

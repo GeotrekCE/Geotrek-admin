@@ -62,7 +62,7 @@ BEGIN
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) THEN
             SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
                 INTO egeom
-                FROM evenements e, evenements_troncons et, troncons t
+                FROM evenements e, evenements_troncons et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
         END IF;
         UPDATE evenements SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
@@ -74,7 +74,7 @@ BEGIN
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point. --> No problem in mountain path management.
         FOR t_offset, t_start, t_end, t_geom IN SELECT e.decallage, et.pk_debut, et.pk_fin, t.geom
-               FROM evenements e, evenements_troncons et, troncons t
+               FROM evenements e, evenements_troncons et, l_t_troncon t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
                ORDER BY et.id  -- /!\ We suppose that evenement_troncons were created in the right order

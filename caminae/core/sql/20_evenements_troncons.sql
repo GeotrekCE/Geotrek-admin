@@ -10,7 +10,7 @@ BEGIN
     SELECT c.conname INTO fk_name
         FROM pg_class t1, pg_class t2, pg_constraint c
         WHERE t1.relname = 'evenements_troncons' AND c.conrelid = t1.oid
-          AND t2.relname = 'troncons' AND c.confrelid = t2.oid
+          AND t2.relname = 'l_t_troncon' AND c.confrelid = t2.oid
           AND c.contype = 'f';
     -- Use a dynamic SQL statement with the name found
     IF fk_name IS NOT NULL THEN
@@ -20,7 +20,7 @@ END;
 $$;
 
 -- Now re-create the FK with cascade option
-ALTER TABLE evenements_troncons ADD FOREIGN KEY (troncon) REFERENCES troncons(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE evenements_troncons ADD FOREIGN KEY (troncon) REFERENCES l_t_troncon(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 -------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ DECLARE
   line GEOMETRY;
   result RECORD;
 BEGIN
-    SELECT geom FROM troncons WHERE id=troncon INTO line;
+    SELECT geom FROM l_t_troncon WHERE id=troncon INTO line;
     SELECT * FROM ST_InterpolateAlong(line, point) AS (position FLOAT, distance FLOAT) INTO result;
     RETURN result;
 END;
@@ -111,21 +111,21 @@ BEGIN
 
     -- Deal with newly connected paths
     IF NEW.pk_debut = 0.0 THEN
-        SELECT ST_StartPoint(geom) INTO junction FROM troncons WHERE id = NEW.troncon;
+        SELECT ST_StartPoint(geom) INTO junction FROM l_t_troncon WHERE id = NEW.troncon;
     ELSIF NEW.pk_debut = 1.0 THEN
-        SELECT ST_EndPoint(geom) INTO junction FROM troncons WHERE id = NEW.troncon;
+        SELECT ST_EndPoint(geom) INTO junction FROM l_t_troncon WHERE id = NEW.troncon;
     END IF;
 
     INSERT INTO evenements_troncons (troncon, evenement, pk_debut, pk_fin)
     SELECT id, NEW.evenement, 0.0, 0.0 -- Troncon departing from this junction
-    FROM troncons t
+    FROM l_t_troncon t
     WHERE id != NEW.troncon AND ST_StartPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
         SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement
     )
     UNION
     SELECT id, NEW.evenement, 1.0, 1.0-- Troncon arriving at this junction
-    FROM troncons t
+    FROM l_t_troncon t
     WHERE id != NEW.troncon AND ST_EndPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
         SELECT * FROM evenements_troncons WHERE troncon = t.id AND evenement = NEW.evenement

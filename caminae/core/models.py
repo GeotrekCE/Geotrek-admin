@@ -67,10 +67,10 @@ class Path(MapEntityMixin, StructureRelated):
             verbose_name=_("Stake"))
     usages = models.ManyToManyField('Usage',
             blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Usages"))
+            verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
     networks = models.ManyToManyField('Network',
             blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Networks"))
+            verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
 
     is_reversed = False
 
@@ -78,7 +78,7 @@ class Path(MapEntityMixin, StructureRelated):
         return self.name or 'path %d' % self.pk
 
     class Meta:
-        db_table = 'troncons'
+        db_table = 'l_t_troncon'
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
 
@@ -532,7 +532,7 @@ class Datasource(StructureRelated):
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
     class Meta:
-        db_table = 'source_donnees'
+        db_table = 'l_b_source'
         verbose_name = _(u"Datasource")
         verbose_name_plural = _(u"Datasources")
 
@@ -545,7 +545,7 @@ class Stake(StructureRelated):
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50)
 
     class Meta:
-        db_table = 'enjeu'
+        db_table = 'l_b_enjeu'
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
 
@@ -561,7 +561,7 @@ class Comfort(StructureRelated):
     comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50)
 
     class Meta:
-        db_table = 'bib_confort'
+        db_table = 'L_b_confort'
         verbose_name = _(u"Comfort")
         verbose_name_plural = _(u"Comforts")
 
@@ -574,7 +574,7 @@ class Usage(StructureRelated):
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50)
 
     class Meta:
-        db_table = 'usage'
+        db_table = 'l_b_usage'
         verbose_name = _(u"Usage")
         verbose_name_plural = _(u"Usages")
 
@@ -587,7 +587,7 @@ class Network(StructureRelated):
     network = models.CharField(verbose_name=_(u"Network"), max_length=50)
 
     class Meta:
-        db_table = 'reseau_troncon'
+        db_table = 'l_b_reseau'
         verbose_name = _(u"Network")
         verbose_name_plural = _(u"Networks")
 
@@ -603,7 +603,7 @@ class Trail(MapEntityMixin, StructureRelated):
     comments = models.TextField(default="", verbose_name=_(u"Comments"))
 
     class Meta:
-        db_table = 'sentier'
+        db_table = 'l_t_sentier'
         verbose_name = _(u"Trails")
         verbose_name_plural = _(u"Trails")
 
