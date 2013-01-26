@@ -270,7 +270,7 @@ Project.add_property('signage_edges', lambda self: project_edges(self, 'signage_
 """
 
 class RestrictedAreaType(models.Model):
-    name = models.CharField(max_length=200, verbose_name=_(u"Label"))
+    name = models.CharField(max_length=200, verbose_name=_(u"Name"))
 
     class Meta:
         db_table = 'bib_typeszones'
@@ -286,13 +286,13 @@ class RestrictedArea(models.Model):
     objects = models.GeoManager()
 
     class Meta:
-        ordering = ['name', ]
+        ordering = ['area_type', 'name',]
         db_table = 'couche_zonage_reglementaire'
         verbose_name = _(u"Restricted area")
         verbose_name_plural = _(u"Restricted areas")
 
     def __unicode__(self):
-        return self.name
+        return "%s - %s" % (self.area_type.name, self.name)
 
 
 class RestrictedAreaEdge(Topology):
