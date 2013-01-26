@@ -79,6 +79,64 @@ AFTER DELETE ON f_t_zonage
 FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 
 
+
+-------------------------------------------------------------------------------
+-- Automatic link between Troncon and Commune/Zonage/Secteur
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS l_t_troncon_couches_sig_iu_tgr ON l_t_troncon;
+
+CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_iu() RETURNS trigger AS $$
+DECLARE
+    rec record;
+    tab varchar;
+    eid integer;
+BEGIN
+    -- Remove obsolete evenement
+    IF TG_OP = 'UPDATE' THEN
+        -- Related evenement/zonage/secteur/commune will be cleared by another trigger
+        DELETE FROM e_r_evenement_troncon et USING f_t_zonage z WHERE et.troncon = OLD.id AND et.evenement = z.evenement;
+        DELETE FROM e_r_evenement_troncon et USING f_t_secteur s WHERE et.troncon = OLD.id AND et.evenement = s.evenement;
+        DELETE FROM e_r_evenement_troncon et USING f_t_commune c WHERE et.troncon = OLD.id AND et.evenement = c.evenement;
+    END IF;
+
+    -- Add new evenement
+    -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
+
+    -- Commune
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_commune WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    LOOP
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO f_t_commune (evenement, commune) VALUES (eid, rec.id);
+    END LOOP;
+
+    -- Secteur
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_secteur WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    LOOP
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO f_t_secteur (evenement, secteur) VALUES (eid, rec.id);
+    END LOOP;
+
+    -- Zonage
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    LOOP
+        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+        INSERT INTO f_t_zonage (evenement, zonage) VALUES (eid, rec.id);
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER l_t_troncon_couches_sig_iu_tgr
+AFTER INSERT OR UPDATE OF geom ON l_t_troncon
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
+
+
+
 -------------------------------------------------------------------------------
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
@@ -124,12 +182,12 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER commune_troncons_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_commune
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_commune', 'insee', 'city_id', 'CITYEDGE');
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_commune', 'insee', 'commune', 'CITYEDGE');
 
 CREATE TRIGGER secteur_troncons_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_secteur
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_secteur', 'id', 'district_id', 'DISTRICTEDGE');
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_secteur', 'id', 'secteur', 'DISTRICTEDGE');
 
 CREATE TRIGGER zonage_troncons_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_zonage_reglementaire
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_zonage', 'id', 'restricted_area_id', 'RESTRICTEDAREAEDGE');
+FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('f_t_zonage', 'id', 'zone', 'RESTRICTEDAREAEDGE');

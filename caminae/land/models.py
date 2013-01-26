@@ -281,7 +281,7 @@ class RestrictedAreaType(models.Model):
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, db_column='zonage', verbose_name=_(u"Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_(u"Restricted area"))
+    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_(u"Restricted area"), db_column='type')
 
     # Override default manager
     objects = models.GeoManager()
