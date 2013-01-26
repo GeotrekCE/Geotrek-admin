@@ -7,7 +7,7 @@ class Organism(models.Model):
     organism = models.CharField(max_length=128, verbose_name=_(u"Organism"))
 
     class Meta:
-        db_table = 'liste_de_tous_les_organismes'
+        db_table = 'm_b_organisme'
         verbose_name = _(u"Organism")
         verbose_name_plural = _(u"Organisms")
 
@@ -19,7 +19,7 @@ class FileType(models.Model):
     type = models.CharField(max_length=128, verbose_name=_("File type"))
 
     class Meta:
-        db_table = 'types_fichiers'
+        db_table = 'fl_b_fichier'
         verbose_name = _(u"File type")
         verbose_name_plural = _(u"File types")
 

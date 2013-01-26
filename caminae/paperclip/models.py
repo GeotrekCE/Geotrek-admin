@@ -16,14 +16,17 @@ class AttachmentManager(models.Manager):
         return self.filter(content_type__pk=object_type.id,
                            object_id=obj.id)
 
+
+def attachment_upload(instance, filename):
+    """Stores the attachment in a "per module/appname/primary key" folder"""
+    return 'paperclip/%s/%s/%s' % (
+        '%s_%s' % (instance.content_object._meta.app_label,
+                   instance.content_object._meta.object_name.lower()),
+                   instance.content_object.pk,
+                   filename)
+
+
 class Attachment(models.Model):
-    def attachment_upload(instance, filename):
-        """Stores the attachment in a "per module/appname/primary key" folder"""
-        return 'paperclip/%s/%s/%s' % (
-            '%s_%s' % (instance.content_object._meta.app_label,
-                       instance.content_object._meta.object_name.lower()),
-                       instance.content_object.pk,
-                       filename)
 
     objects = AttachmentManager()
 
@@ -42,6 +45,7 @@ class Attachment(models.Model):
     date_update = models.DateTimeField(editable=False, auto_now=True, verbose_name=_(u"Update date"))
 
     class Meta:
+        db_table = "fl_t_fichier"
         ordering = ['-date_insert']
         permissions = (
             ('delete_foreign_attachments', 'Can delete foreign attachments'),
