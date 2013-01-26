@@ -172,7 +172,77 @@
         "pk": 1,
         "model": "land.restrictedareatype",
         "fields": {
-            "name": "Area type"
+            "name": "Inconnu"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Znieff2"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Znieff1"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Coeur du parc national"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Natura 2000"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "R\u00e9serves de chasses"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Sites class\u00e9s"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Arret\u00e9s de biotope"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "R\u00e9serves naturelles"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "Sites inscrits"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "land.restrictedareatype",
+        "fields": {
+            "name": "R\u00e9serve int\u00e9grale"
         }
     }
 ]

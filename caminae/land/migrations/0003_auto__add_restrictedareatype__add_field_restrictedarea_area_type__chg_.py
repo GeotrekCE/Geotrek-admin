@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'RestrictedAreaType'
-        db.create_table('land_restrictedareatype', (
+        db.create_table('bib_typeszones', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
         ))
@@ -26,7 +26,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'RestrictedAreaType'
-        db.delete_table('land_restrictedareatype')
+        db.delete_table('bib_typeszones')
 
         # Deleting field 'RestrictedArea.area_type'
         db.delete_column('couche_zonage_reglementaire', 'area_type_id')
@@ -195,7 +195,7 @@ class Migration(SchemaMigration):
             'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"})
         },
         'land.restrictedareatype': {
-            'Meta': {'object_name': 'RestrictedAreaType'},
+            'Meta': {'object_name': 'RestrictedAreaType', 'db_table': "'bib_typeszones'"},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },

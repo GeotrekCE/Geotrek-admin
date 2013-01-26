@@ -272,6 +272,10 @@ Project.add_property('signage_edges', lambda self: project_edges(self, 'signage_
 class RestrictedAreaType(models.Model):
     name = models.CharField(max_length=200, verbose_name=_(u"Label"))
 
+    class Meta:
+        db_table = 'bib_typeszones'
+        verbose_name = _(u"Restricted area type")
+
 
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, db_column='zonage', verbose_name=_(u"Name"))
