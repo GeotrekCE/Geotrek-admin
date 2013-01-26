@@ -31,6 +31,37 @@ CREATE TRIGGER troncons_date_update_tgr
 
 
 -------------------------------------------------------------------------------
+-- Check overlapping paths
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION check_path_not_overlap(pid integer, line geometry) RETURNS BOOL AS $$
+DECLARE
+    t_count integer;
+    tolerance float;
+BEGIN
+    -- Note: I gave up with the idea of checking almost overlap/touch.
+
+    -- tolerance := 1.0;
+    -- Crossing and extremity touching is OK. 
+    -- Overlapping and --almost overlapping-- is KO.
+    SELECT COUNT(*) INTO t_count
+    FROM troncons 
+    WHERE pid != id 
+      AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
+      -- not extremity touching
+      -- AND ST_Touches(geom, line) = false
+      -- not crossing
+      -- AND ST_GeometryType(ST_intersection(geom, line)) NOT IN ('ST_Point', 'ST_MultiPoint')
+      -- overlap is a line
+      -- AND ST_GeometryType(ST_intersection(geom, ST_buffer(line, tolerance))) IN ('ST_LineString', 'ST_MultiLineString')
+      -- not almost touching, at most twice
+      -- AND       ST_Length(ST_intersection(geom, ST_buffer(line, tolerance))) > (4 * tolerance);
+    RETURN t_count = 0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
