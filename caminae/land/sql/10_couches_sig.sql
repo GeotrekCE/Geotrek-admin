@@ -26,7 +26,7 @@ DECLARE
     tab varchar;
     eid integer;
 BEGIN
-    FOREACH tab IN ARRAY ARRAY[['f_t_commune', 'f_t__secteur', 'f_t_zonage']]
+    FOREACH tab IN ARRAY ARRAY[['f_t_commune', 'f_t_secteur', 'f_t_zonage']]
     LOOP
         -- Delete related object in association tables
         -- /!\ This query is executed for any kind of evenement, but it will
@@ -36,7 +36,7 @@ BEGIN
 
         -- Delete the evenement itself
         IF eid IS NOT NULL THEN
-            DELETE FROM evenements WHERE id = eid;
+            DELETE FROM e_t_evenement WHERE id = eid;
         END IF;
     END LOOP;
 
@@ -111,7 +111,7 @@ BEGIN
     END IF;
 
     -- Add new evenement
-    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_Line_Locate_Point(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_Line_Locate_Point(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM troncons WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_Line_Locate_Point(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_Line_Locate_Point(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM l_t_troncon WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));

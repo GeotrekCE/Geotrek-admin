@@ -76,12 +76,19 @@ class DistrictFactory(factory.Factory):
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_district_iter.next()), srid=settings.SRID))
 
 
+class RestrictedAreaTypeFactory(factory.Factory):
+
+    FACTORY_FOR = models.RestrictedAreaType
+
+    name = factory.Sequence(lambda n: u"Restricted name %s" % n)
+
+
 class RestrictedAreaFactory(factory.Factory):
     FACTORY_FOR = models.RestrictedArea
 
     name = factory.Sequence(lambda n: u"Restricted area name %s" % n)
-    order = 1
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_area_iter.next()), srid=settings.SRID))
+    area_type = factory.SubFactory(RestrictedAreaTypeFactory)
 
 
 class RestrictedAreaEdgeFactory(TopologyFactory):

@@ -219,7 +219,7 @@ CREATE OR REPLACE FUNCTION troncons_related_objects_d() RETURNS trigger AS $$
 DECLARE
 BEGIN
     -- Un-published treks because they might be broken
-    UPDATE itineraire i
+    UPDATE o_t_itineraire i
         SET published = FALSE
         FROM e_r_evenement_troncon et
         WHERE et.evenement = i.topology_ptr_id AND et.troncon = OLD.id;

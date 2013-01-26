@@ -561,7 +561,7 @@ class Comfort(StructureRelated):
     comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50)
 
     class Meta:
-        db_table = 'L_b_confort'
+        db_table = 'l_b_confort'
         verbose_name = _(u"Comfort")
         verbose_name_plural = _(u"Comforts")
 

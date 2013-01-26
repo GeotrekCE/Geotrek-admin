@@ -36,7 +36,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
         'core.comfort': {
-            'Meta': {'object_name': 'Comfort', 'db_table': "'L_b_confort'"},
+            'Meta': {'object_name': 'Comfort', 'db_table': "'l_b_confort'"},
             'comfort': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"})

@@ -14,7 +14,7 @@ from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
 
 
 from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory, 
-    CityEdgeFactory, RestrictedAreaEdgeFactory, CompetenceEdgeFactory, WorkManagementEdgeFactory, 
+    CityEdgeFactory, RestrictedAreaFactory, RestrictedAreaEdgeFactory, CompetenceEdgeFactory, WorkManagementEdgeFactory, 
     SignageManagementEdgeFactory, PhysicalTypeFactory, LandTypeFactory)
 
 
@@ -203,12 +203,10 @@ class CouchesSIGTest(TestCase):
 
     def test_couches_sig_link(self):
         # Fake restricted areas
-        ra1 = RestrictedArea(name='Zone 1', order=1, geom=MultiPolygon(
+        ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0,0), (2,0), (2,1), (0,1), (0,0)))))
-        ra1.save()
-        ra2 = RestrictedArea(name='Zone 2', order=1, geom=MultiPolygon(
+        ra2 = RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0,1), (2,1), (2,2), (0,2), (0,1)))))
-        ra2.save()
 
         # Fake city
         c = City(code='005178', name='Trifouillis-les-marmottes',

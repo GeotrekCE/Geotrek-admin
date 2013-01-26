@@ -61,7 +61,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     objects = Topology.get_manager_cls()()
 
     class Meta:
-        db_table = 'm_t_interventions'
+        db_table = 'm_t_intervention'
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
 

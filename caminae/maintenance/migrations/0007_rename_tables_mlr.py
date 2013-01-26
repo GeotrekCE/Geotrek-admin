@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('interventions_disorders', 'm_r_intervention_desordre')
-        db.rename_table('interventions', 'm_t_interventions')
+        db.rename_table('interventions', 'm_t_intervention')
         db.rename_table('bib_de_suivi', 'm_b_suivi')
         db.rename_table('typologie_des_interventions', 'm_b_intervention')
         db.rename_table('desordres', 'm_b_desordre')
@@ -24,7 +24,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         db.rename_table('m_r_intervention_desordre', 'interventions_disorders')
-        db.rename_table('m_t_interventions', 'interventions')
+        db.rename_table('m_t_interventions', 'intervention')
         db.rename_table('m_b_suivi', 'bib_de_suivi')
         db.rename_table('m_b_intervention', 'typologie_des_interventions')
         db.rename_table('m_b_desordre', 'desordres')
@@ -146,7 +146,7 @@ class Migration(SchemaMigration):
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['maintenance.Project']"})
         },
         'maintenance.intervention': {
-            'Meta': {'object_name': 'Intervention', 'db_table': "'m_t_interventions'"},
+            'Meta': {'object_name': 'Intervention', 'db_table': "'m_t_intervention'"},
             'area': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
