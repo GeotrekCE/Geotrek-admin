@@ -15,12 +15,6 @@ Caminae.TopologyHelper = (function() {
         return ll_p.equals(ll_a) || ll_p.equals(ll_b);
     }
 
-    // Returns [start_position, end_position]
-    function getPosition(bound_by_first_point, distance) {
-        // bound_by_first_point => start point is included
-        return bound_by_first_point ? [0.0, distance] : [distance, 1.0];
-    }
-
     function buildTopologyGeom(polylines, ll_start, ll_end, start, end) {
         var closest_first_idx = start.closest
           , closest_end_idx = end.closest;
@@ -43,19 +37,20 @@ Caminae.TopologyHelper = (function() {
                  */
                 _ll_end = ll_end, _ll_start = ll_start;
                 _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
+                positions[0] = [start.distance, end.distance];
             } else {
                 /*        B     A 
                  *   +----|=====|---->
                  */
                 _ll_end = ll_start, _ll_start = ll_end;
                 _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
+                positions[0] = [end.distance, start.distance];
             }
 
             lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx + 1);
             lls_tmp.unshift(_ll_start);
             lls_tmp.push(_ll_end);
             latlngs.push(lls_tmp);
-            positions[0] = [start.distance, end.distance];
         }
         else {
             /*
@@ -65,27 +60,28 @@ Caminae.TopologyHelper = (function() {
             if (start_bound_by_first_point) {
                 /*
                  *        A               B
-                 *   <----|------++-------|--->
+                 *   <----|------++-------|----
                  *
-                 *   <----|=====|++=======|--->
+                 *   <----|=====|++=======|----
                  *
                  * first point is shared ; include closest
                  */
-                lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
+                lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1);
                 lls_tmp.push(ll_start);
+                positions[0] = [start.distance, 0.0];
             } else {
                 /*
                  *        A               B
-                 *   +----|------>+-------|--->
+                 *   +----|------>+-------|----
                  *
-                 *   +----|=====|>+=======|--->
+                 *   +----|=====|>+=======|----
                  *
                  * first point is not shared ; don't include closest
                  */
                 lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
                 lls_tmp.unshift(ll_start);
+                positions[0] = [start.distance, 1.0];
             }
-            positions[0] = getPosition(start_bound_by_first_point, start.distance);
 
             latlngs.push(lls_tmp);
 
@@ -104,15 +100,28 @@ Caminae.TopologyHelper = (function() {
              */
             var end_bound_by_first_point = getOrder(polyline_end, polylines[polylines.length - 2]);
             if (end_bound_by_first_point) {
-                // first point is shared ; include closest
+                /*
+                 *        A               B
+                 *   -----|------++-------|---->
+                 *
+                 *   -----|======+|=======>---->
+                 */
+                 // first point is shared ; include closest
                 lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
                 lls_tmp.push(ll_end);
+                positions[polylines.length - 1] = [0.0, end.distance];
             } else {
+                /*
+                 *        A               B
+                 *   -----|------+<-------|----+
+                 *
+                 *   -----|=====|+<=======|----+
+                 */
                 // first point is not shared ; don't include closest
                 lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
                 lls_tmp.unshift(ll_end);
+                positions[polylines.length - 1] = [1.0, end.distance];
             }
-            positions[polylines.length - 1] = getPosition(end_bound_by_first_point, end.distance);
 
             latlngs.push(lls_tmp);
         }
@@ -126,89 +135,43 @@ Caminae.TopologyHelper = (function() {
 
 
     function buildTopologyFromComputedPath(idToLayer, data) {
-        // This piece of code was moved from formfield.js, its place is here,
-        // not around control instantiation. Of course this is not very elegant.
+        /**
+         * @param idToLayer : callback to obtain a layer object from a pk/id.
+         * @data : computed_path
+         */
         if (!data.computed_paths) {
             return {
                 layer: null,
                 serialized: null
             }
         }
-        var computed_paths = data['computed_paths']
-          , new_edges = data['new_edges'];
 
-        var cpath, data = [], topo;
+        var computed_paths = data['computed_paths']
+          , new_edges = data['new_edges']
+          , cpath = null
+          , topo = null
+          , data = []
+          , layer = L.featureGroup();
+
+        if (DEBUG) console.log('Topology: ');
         for (var i = 0; i < computed_paths.length; i++ ) {
             cpath = computed_paths[i];
             topo = createTopology(idToLayer, cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
-            topo.from_pop = cpath.from_pop;
-            topo.to_pop = cpath.to_pop;
-            data.push(topo);
+            data.push(topo.topology);
+            if (DEBUG) console.log(JSON.stringify(topo.topology));
+
+            // Multilines for each sub-topology
+            var group_layer = L.multiPolyline(topo.array_lls);
+            group_layer.from_pop = cpath.from_pop;
+            group_layer.to_pop = cpath.to_pop;
+            group_layer.step_idx = i;
+            layer.addLayer(group_layer);
         }
+        if (DEBUG) console.log('----');
 
-        var group_layers = $.map(data, function(topo, idx) {
-            var polylines = $.map(topo.array_lls, function(lls) {
-                return new L.Polyline(lls);
-            });
-            // var group_layer = new L.FeatureGroup(polylines);
-            // var group_layer = new L.MultiPolyline(polylines);
-            var group_layer = new L.FeatureGroup(polylines);
-
-            group_layer.from_pop = topo.from_pop;
-            group_layer.to_pop = topo.to_pop;
-            group_layer.step_idx = idx;
-
-            return group_layer;
-        });
-        var super_layer = new L.FeatureGroup(group_layers);
-
-        // assemble topologies
-        var positions = data[0].topology.positions
-          , paths = data[0].topology.paths
-          , ioffset = paths.length - 1;
-
-        for (var k = 1; k < data.length; k++) {
-            var data_topology = data[k].topology;
-            
-            // Merge paths of sub computed paths, without its first element
-            paths = paths.concat(data_topology.paths.slice(1));
-
-            delete data_topology.positions[0]
-            $.each(data_topology.positions, function(key, pos) {
-                positions[parseInt(key) + ioffset] = pos;
-            });
-        }
-
-        // All middle computed paths are constraints points
-        // We want them to have start==end.
-        var keys = Object.keys(paths);
-        keys = keys.filter(function (i) {return !!positions[i];});
-        for (var key in positions) {
-            if (key != keys[0] && key != keys[keys.length-1]) {
-                var pos = positions[key];
-                /* make sure pos will be [X, X]
-                   [0, X] or [X, 1] --> X
-                   [0.0, 1.0] --> 0.0
-                   [1.0, 1.0] --> 1.0 */
-                var x = -1;
-                if      (pos[0] == 0.0 && pos[1] == 1.0) x = 0.0;
-                else if (pos[0] == 1.0 && pos[1] == 1.0) x = 1.0;
-                else if (pos[1] == 1.0) x = pos[0];
-                else if (pos[0] == 0.0) x = pos[1];
-                positions[key] = [x, x];
-            }
-        }
-
-        var topology = {
-            offset: 0,  // TODO: input for offset
-            positions: positions,
-            paths: paths,
-            geometry: L.Util.getWKT(super_layer)
-        };
-        if (DEBUG) console.log("Topology merged: " + JSON.stringify(topology));
         return {
-            layer: super_layer,
-            serialized: topology
+            layer: layer,
+            serialized: data
         }
     }
 
@@ -253,7 +216,6 @@ Caminae.TopologyHelper = (function() {
             positions: new_topology.positions,
             paths: paths
         };
-        if (DEBUG) console.log('Sub-topology: ' + JSON.stringify(topology));
 
         return {
             topology: topology

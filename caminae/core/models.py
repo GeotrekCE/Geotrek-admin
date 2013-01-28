@@ -389,6 +389,30 @@ class Topology(NoDeleteMixin):
 
     @classmethod
     def deserialize(cls, serialized):
+        """
+        Topologies can be points or lines. Serialized topologies come from Javascript
+        module ``topology_helper.js``.
+
+        Example of linear point topology (snapped with path 1245): 
+
+            {"lat":5.0, "lng":10.2, "snap":1245}
+
+        Example of linear serialized topology : 
+
+        [
+            {"offset":0,"positions":{"0":[0,0.3],"1":[0.2,1]},"paths":[1264,1208]},
+            {"offset":0,"positions":{"0":[0.2,1],"5":[0,0.2]},"paths":[1208,1263,678,1265,1266,686]}
+        ]
+
+        * Each sub-topology represents a way between markers.
+        * Start point is first position of sub-topology.
+        * End point is last position of sub-topology.
+        * All last positions represents intermediary markers.
+
+        Global strategy is :
+        * If has lat/lng return point topology
+        * Otherwise, create path aggregations from serialized data.
+        """
         from .factories import TopologyFactory
         objdict = serialized
         if isinstance(serialized, basestring):
@@ -396,42 +420,51 @@ class Topology(NoDeleteMixin):
                 objdict = simplejson.loads(serialized)
             except simplejson.JSONDecodeError, e:
                 raise ValueError("Invalid serialization: %s" % e)
-        kind = objdict.get('kind')
-        lat = objdict.get('lat')
-        lng = objdict.get('lng')
-        # Point topology ?
-        if lat and lng:
-            return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
 
-        # Path aggregation
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=objdict.get('offset', 0.0))
-        PathAggregation.objects.filter(topo_object=topology).delete()
-
-        # Start repopulating from serialized data
-        positions = objdict.get('positions', {})
-        paths = objdict['paths']
-        print objdict
-        # Create path aggregations
-        for i, path in enumerate(paths):
-            intermediary = i > 0 and i < len(paths)-1
-            print intermediary
-            # Javascript hash keys are parsed as a string
-            idx = str(i)
-            try:
-                path = Path.objects.get(pk=path)
-            except Path.DoesNotExist, e:
-                raise ValueError(str(e))
-            start_position, end_position = positions.get(idx, (0.0, 1.0))
-            # Intermediary points are used in UI only. We store them in DB, but they are ignored in triggers.
-            if intermediary and idx in positions and start_position != end_position:
-                raise ValueError("Invalid serialization of intermediate markers: %s: %s-%s" % (idx, start_position, end_position,))
+        if not isinstance(objdict, (list,)):
+            lat = objdict.get('lat')
+            lng = objdict.get('lng')
+            kind = objdict.get('kind')
+            # Point topology ?
+            if lat and lng:
+                return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
             else:
-                # In the case of return AB - BA
-                if intermediary and Path.connected(paths[i-1], paths[i+1]):
-                    topology.add_path(path, start=0.0, end=start_position, reload=False)
-                    topology.add_path(path, start=start_position, end=0.0, reload=False)
-                else:
+                raise ValueError("Invalid serialized topology : no object or list found")
+
+        # Path aggregation, remove all existing
+        if len(objdict) == 0:
+            raise ValueError("Invalid serialized topology : empty list found")
+        kind = objdict[0].get('kind')
+        offset = objdict[0].get('offset', 0.0)
+        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+        PathAggregation.objects.filter(topo_object=topology).delete()
+        try:
+            for j, subtopology in enumerate(objdict):
+                last_topo = j == len(objdict)-1
+                positions = subtopology.get('positions', {})
+                paths = subtopology['paths']
+                # Create path aggregations
+                for i, path in enumerate(paths):
+                    last_path = j == len(paths)-1
+                    # Javascript hash keys are parsed as a string
+                    idx = str(i)
+                    start_position, end_position = positions.get(idx, (0.0, 1.0))
+                    path = Path.objects.get(pk=path)
                     topology.add_path(path, start=start_position, end=end_position, reload=False)
+                    if not last_topo and last_path:
+                        # Intermediary marker.       
+                        # make sure pos will be [X, X]
+                        # [0, X] or [X, 1] --> X
+                        # [0.0, 0.0] --> 0.0  : marker at beginning of path
+                        # [1.0, 1.0] --> 1.0  : marker at end of path
+                        if start_position == 0:
+                            pos = end_position
+                        elif end_position == 1:
+                            pos = start_position
+                        topology.add_path(path, start=pos, end=pos, reload=False)
+        except (ValueError, KeyError, Path.DoesNotExist) as e:
+            raise ValueError("Invalid serialized topology : %s" % e)
+        topology.save()
         return topology
 
     @classmethod
