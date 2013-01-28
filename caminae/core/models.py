@@ -433,8 +433,8 @@ class Topology(NoDeleteMixin):
             else:
                 # In the case of return AB - BA
                 if intermediary and Path.connected(paths[i-1], paths[i+1]):
-                        topology.add_path(path, start=0.0, end=start_position, reload=False)
-                        topology.add_path(path, start=start_position, end=0.0, reload=False)
+                    topology.add_path(path, start=0.0, end=start_position, reload=False)
+                    topology.add_path(path, start=start_position, end=0.0, reload=False)
                 else:
                     topology.add_path(path, start=start_position, end=end_position, reload=False)
         return topology

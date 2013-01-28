@@ -124,7 +124,7 @@ BEGIN
     LOOP
         INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
-        INSERT INTO f_t_zonage (evenement, zonage) VALUES (eid, rec.id);
+        INSERT INTO f_t_zonage (evenement, zone) VALUES (eid, rec.id);
     END LOOP;
 
     RETURN NULL;

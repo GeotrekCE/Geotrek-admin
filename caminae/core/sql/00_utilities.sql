@@ -216,7 +216,27 @@ BEGIN
                     remaining := remaining-1;
                 END IF;
             END IF;
-        END LoOP;
+        END LOOP;
+
+        IF NOT t_found THEN
+            -- Start again, with reversed path if not found
+            FOREACH t_line IN ARRAY lines 
+            LOOP
+                t_line := ST_Reverse(t_line);
+                IF ft_IsAfter(t_line, result) THEN
+                    result := ST_MakeLine(result, t_line);
+                    t_found := true;
+                    remaining := remaining-1;
+                ELSEIF ft_IsBefore(t_line, result) THEN
+                    result := ST_MakeLine(t_line, result);
+                    t_found := true;
+                    remaining := remaining-1;
+                ELSIF ST_Within(t_line, result) THEN
+                    t_found := true;
+                    remaining := remaining-1;
+                END IF;
+            END LOOP;
+        END IF;
     END LOOP;
     IF NOT t_found THEN
         RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_MakeLine(lines));

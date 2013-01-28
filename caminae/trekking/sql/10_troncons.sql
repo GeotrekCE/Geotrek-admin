@@ -7,7 +7,7 @@ BEGIN
     UPDATE o_t_itineraire i
         SET public = FALSE
         FROM e_r_evenement_troncon et
-        WHERE et.evenement = i.topology_ptr_id AND et.troncon = OLD.id;
+        WHERE et.evenement = i.evenement AND et.troncon = OLD.id;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;

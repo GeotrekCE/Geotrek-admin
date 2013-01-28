@@ -27,10 +27,9 @@ Caminae.TopologyHelper = (function() {
 
         var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
-          , single_path = polyline_start == polyline_end
+          , single_path = polylines.length == 1
           // Positions:: polylines index => pair of position [ [0..1], [0..1] ]
           , positions = {};
-
         var polylines_inner = single_path ? null : polylines.slice(1, -1);
 
         // Is the first point bound to the next edge or is it the other way ?
@@ -88,8 +87,8 @@ Caminae.TopologyHelper = (function() {
         }
 
         return {
-            'latlngs': latlngs,
-            'positions': positions,
+            'latlngs': latlngs,      // = Multilinestrings
+            'positions': positions,  // Positions on paths
             'is_single_path': single_path
         };
     }
@@ -150,10 +149,11 @@ Caminae.TopologyHelper = (function() {
         }
 
         // All middle computed paths are constraints points
-        // We want them to have start==end. 
-        var i = 0;
+        // We want them to have start==end.
+        var keys = Object.keys(paths);
+        keys = keys.filter(function (i) {return !!positions[i];});
         for (var key in positions) {
-            if (i > 0 && i < paths.length -1) {
+            if (key != keys[0] && key != keys[keys.length-1]) {
                 var pos = positions[key];
                 /* make sure pos will be [X, X]
                    [0, X] or [X, 1] --> X
@@ -166,15 +166,15 @@ Caminae.TopologyHelper = (function() {
                 else if (pos[0] == 0.0) x = pos[1];
                 positions[key] = [x, x];
             }
-            i++;
         }
 
         var topology = {
             offset: 0,  // TODO: input for offset
             positions: positions,
-            paths: paths
+            paths: paths,
+            geometry: L.Util.getWKT(super_layer)
         };
-        
+        if (DEBUG) console.log("Topology merged: " + JSON.stringify(topology));
         return {
             layer: super_layer,
             serialized: topology
@@ -210,20 +210,17 @@ Caminae.TopologyHelper = (function() {
         if (new_topology.is_single_path) {
             if (paths.length > 1) {
                 // Only get the first one
+                console.warn('Single-path, ignore paths ' + paths);
                 paths = paths.slice(0, 1);
             }
         }
 
-        var sorted_positions = {};
-        $.each(new_topology.positions, function(k, v) {
-            sorted_positions[k] = v.sort()
-        });
-
         var topology = {
             offset: 0,  // TODO: input for offset
-            positions: sorted_positions,
+            positions: new_topology.positions,
             paths: paths
         };
+        if (DEBUG) console.log('Sub-topology: ' + JSON.stringify(topology));
 
         return {
             topology: topology
