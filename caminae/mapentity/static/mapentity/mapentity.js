@@ -106,7 +106,7 @@ MapEntity.Context = new function() {
                 context = self.__loadFullContext($.extend(kwargs, {prefix: prefix}));
             if (!latest || (context && context.timestamp && context.timestamp > latest.timestamp)) {
                 latest = context;
-                console.log(JSON.stringify(context)); //context.timestamp + ' / ' + latest.timestamp)
+                if (DEBUG) console.log(JSON.stringify(context));
             }
         }
         return self.restoreMapView(map, latest, kwargs);

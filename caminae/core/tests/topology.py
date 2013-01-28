@@ -559,3 +559,10 @@ class TopologyCornerCases(TestCase):
         topo.save()
         self.assertEqual(topo.geom, LineString((3,0,0),(10,0,0),(10,5,0),(20,5,0),(20,0,0),
                                                (10,0,0),(3,0,0)))
+
+
+"""
+
+{"offset":0,"positions":{"0":[0.42,1],"1":[0.5,0.5],"8":[0,1]},"paths":[1088,768,1098,1089,1085,922,1026,1014,12]}
+
+"""

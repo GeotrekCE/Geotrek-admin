@@ -1,3 +1,5 @@
+import logging
+
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -6,6 +8,9 @@ import floppyforms as forms
 
 from .models import Topology
 from .widgets import BaseTopologyWidget, PointLineTopologyWidget
+
+
+logger = logging.getLogger(__name__)
 
 
 class TopologyField(forms.CharField):
@@ -23,5 +28,6 @@ class TopologyField(forms.CharField):
             return None
         try:
             return Topology.deserialize(value)
-        except ValueError:
+        except ValueError as e:
+            logger.error("User input error: %s" % e)
             raise ValidationError(self.error_messages['invalid_topology'])

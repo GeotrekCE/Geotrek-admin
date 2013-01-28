@@ -30,7 +30,6 @@ Caminae.TopologyHelper = (function() {
           , single_path = polylines.length == 1
           // Positions:: polylines index => pair of position [ [0..1], [0..1] ]
           , positions = {};
-        var polylines_inner = single_path ? null : polylines.slice(1, -1);
 
         // Is the first point bound to the next edge or is it the other way ?
 
@@ -39,9 +38,15 @@ Caminae.TopologyHelper = (function() {
         if (single_path) {
             var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
             if (closest_first_idx < closest_end_idx) {
+                /*        A     B 
+                 *   +----|=====|---->
+                 */
                 _ll_end = ll_end, _ll_start = ll_start;
                 _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
             } else {
+                /*        B     A 
+                 *   +----|=====|---->
+                 */
                 _ll_end = ll_start, _ll_start = ll_end;
                 _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
             }
@@ -53,13 +58,30 @@ Caminae.TopologyHelper = (function() {
             positions[0] = [start.distance, end.distance];
         }
         else {
+            /*
+             * Add first portion of line
+             */
             var start_bound_by_first_point = getOrder(polyline_start, polylines[1]);
             if (start_bound_by_first_point) {
-                // <--o-c- x---x---x // first point is shared ; include closest
+                /*
+                 *        A               B
+                 *   <----|------++-------|--->
+                 *
+                 *   <----|=====|++=======|--->
+                 *
+                 * first point is shared ; include closest
+                 */
                 lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1)
                 lls_tmp.push(ll_start);
             } else {
-                // -c-o--> x---x---x // first point is not shared ; don't include closest
+                /*
+                 *        A               B
+                 *   +----|------>+-------|--->
+                 *
+                 *   +----|=====|>+=======|--->
+                 *
+                 * first point is not shared ; don't include closest
+                 */
                 lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
                 lls_tmp.unshift(ll_start);
             }
@@ -67,17 +89,26 @@ Caminae.TopologyHelper = (function() {
 
             latlngs.push(lls_tmp);
 
+            /* 
+             * Add all intermediary lines
+             */
+            var polylines_inner = polylines.slice(1, -1);
             $.each(polylines_inner, function(idx, l) {
+                // TODO: Ideally if the line is not "connectable"
+                // we should reverse it and set positions to [1,0] instead of [0,1]
                 latlngs.push(l.getLatLngs());
             });
 
+            /*
+             * Add last portion of line
+             */
             var end_bound_by_first_point = getOrder(polyline_end, polylines[polylines.length - 2]);
             if (end_bound_by_first_point) {
-                // x---x---x -c-o--> // first point is shared ; include closest
+                // first point is shared ; include closest
                 lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
                 lls_tmp.push(ll_end);
             } else {
-                // x---x---x <--o-c- // first point is not shared ; don't include closest
+                // first point is not shared ; don't include closest
                 lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
                 lls_tmp.unshift(ll_end);
             }
@@ -202,8 +233,10 @@ Caminae.TopologyHelper = (function() {
         var start = percentageDistance(ll_start, polyline_start)
           , end = percentageDistance(ll_end, polyline_end);
 
-        if (!start || !end)
+        if (!start || !end) {
+            console.warn("Could not compute distances withing paths.");
             return;  // TODO: clean-up before give-up ?
+        }
 
         var new_topology = Caminae.TopologyHelper.buildTopologyGeom(layers, ll_start, ll_end, start, end);
 

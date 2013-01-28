@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import isnan
 import logging
-import collections
 from datetime import datetime
 
 from django.contrib.gis.db import models
@@ -396,7 +395,7 @@ class Topology(NoDeleteMixin):
             try:
                 objdict = simplejson.loads(serialized)
             except simplejson.JSONDecodeError, e:
-                raise ValueError(_("Invalid serialization: %s") % e)
+                raise ValueError("Invalid serialization: %s" % e)
         kind = objdict.get('kind')
         lat = objdict.get('lat')
         lng = objdict.get('lng')
@@ -411,15 +410,11 @@ class Topology(NoDeleteMixin):
         # Start repopulating from serialized data
         positions = objdict.get('positions', {})
         paths = objdict['paths']
-        # Check that paths should be unique
-        if len(set(paths)) != len(paths):
-            paths = collections.Counter(paths)
-            extras = [p for p in paths if paths[p] > 1]
-            raise ValueError(_("Paths are not unique : %s") % extras)
-
+        print objdict
         # Create path aggregations
         for i, path in enumerate(paths):
             intermediary = i > 0 and i < len(paths)-1
+            print intermediary
             # Javascript hash keys are parsed as a string
             idx = str(i)
             try:
@@ -429,7 +424,7 @@ class Topology(NoDeleteMixin):
             start_position, end_position = positions.get(idx, (0.0, 1.0))
             # Intermediary points are used in UI only. We store them in DB, but they are ignored in triggers.
             if intermediary and idx in positions and start_position != end_position:
-                raise ValueError(_("Invalid serialization of intermediate markers"))
+                raise ValueError("Invalid serialization of intermediate markers: %s: %s-%s" % (idx, start_position, end_position,))
             else:
                 # In the case of return AB - BA
                 if intermediary and Path.connected(paths[i-1], paths[i+1]):
