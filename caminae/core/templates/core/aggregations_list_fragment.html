@@ -1,0 +1,37 @@
+{% load i18n %}
+<tr>
+    <th>{% trans "Paths" %}</th>
+    <td class="paths">
+        {% for aggr in aggregations %}
+            {% if forloop.first %}<ul>{% endif %}
+            <li title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
+              <span class="path">{{ aggr.path.name_display|safe }}</span>
+              <span class="aggregation">
+                {% if aggr.offset > 0 %}
+                  ⇲{{ poi.offset|floatformat:"2" }}m
+                {% endif %}
+                {% if aggr.is_full %}
+                  (⇤100%⇥)
+                {% else %}
+                  ({% if aggr.start_position == aggr.end_position %}
+                    <span >{{ aggr.start_meter }}m</span>
+                  {% else %}
+                      {% if aggr.start_position == 0.0 or aggr.start_position == 1.0 %}
+                        ↦ {{ aggr.end_meter }}m
+                      {% else %}
+                        {% if aggr.end_position == 1.0 or aggr.end_position == 1.0 %}
+                          {{ aggr.start_meter }}m ⇥
+                        {% else %}
+                           {{ aggr.start_meter }}m ⇢ {{ aggr.end_meter }}m
+                        {% endif %}
+                      {% endif %}
+                  {% endif %})
+                {% endif %}
+              </span>
+            </li>
+            {% if forloop.last %}</ul>{% endif %}
+        {% empty %}
+            <span class="none">{% trans "None" %}</span>
+        {% endfor %}
+    </td>
+</tr>

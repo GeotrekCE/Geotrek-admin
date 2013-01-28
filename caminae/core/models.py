@@ -445,7 +445,7 @@ class Topology(NoDeleteMixin):
                 paths = subtopology['paths']
                 # Create path aggregations
                 for i, path in enumerate(paths):
-                    last_path = j == len(paths)-1
+                    last_path = i == len(paths)-1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
@@ -457,10 +457,16 @@ class Topology(NoDeleteMixin):
                         # [0, X] or [X, 1] --> X
                         # [0.0, 0.0] --> 0.0  : marker at beginning of path
                         # [1.0, 1.0] --> 1.0  : marker at end of path
-                        if start_position == 0:
+                        pos = -1
+                        if start_position == 0.0:
                             pos = end_position
-                        elif end_position == 1:
+                        elif start_position == 1.0:
+                            pos = end_position
+                        elif end_position == 0.0:
                             pos = start_position
+                        elif end_position == 1.0:
+                            pos = start_position
+                        assert pos >= 0
                         topology.add_path(path, start=pos, end=pos, reload=False)
         except (ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
@@ -545,6 +551,19 @@ class PathAggregation(models.Model):
 
     def __unicode__(self):
         return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)
+
+    @property
+    def start_meter(self):
+        return 0 if self.start_position == 0.0 else int(self.start_position * self.path.length)
+
+    @property
+    def end_meter(self):
+        return 0 if self.end_position == 0.0 else int(self.end_position * self.path.length)
+
+    @property
+    def is_full(self):
+        return self.start_position == 0.0 and self.end_position == 1.0 or \
+               self.start_position == 1.0 and self.end_position == 0.0
 
     class Meta:
         db_table = 'e_r_evenement_troncon'

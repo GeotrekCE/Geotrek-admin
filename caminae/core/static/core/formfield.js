@@ -80,11 +80,11 @@ FormField.makeModule = function(module, module_settings) {
             snapObserver.guidesLayer().on('click', function (e) {
             L.circleMarker(
                 $(e.layer.getLatLngs()).first()[0],
-                {fillColor: 'green'}
+                {fillColor: 'green', radius:5, color: 'green', opacity:1}
             ).addTo(map);
             L.circleMarker(
                 $(e.layer.getLatLngs()).last()[0],
-                {fillColor: 'red'}
+                {fillColor: 'red', radius:5, color: 'red', opacity:1}
             ).addTo(map);
             });
         }

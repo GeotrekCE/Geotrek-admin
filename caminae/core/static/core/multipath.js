@@ -458,8 +458,11 @@ L.Handler.MultiPath = L.Handler.extend({
         } else {
             var layer_ll_s = [];
             $.each(positions, function(k, pos) {
+                if (pos[0] > pos[1]) {
+                    pos = pos.reverse();
+                }
                 // default value: this is not supposed to be a marker ?!
-                if (pos[0] == 0 && pos[1] == 1) {
+                if (pos[0] == 0.0 && pos[1] == 1.0) {
                     console.log('Ignored marker ' + pos);
                     return;
                 }
