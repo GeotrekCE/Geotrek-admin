@@ -45,7 +45,7 @@ L.GeomUtils = (function() {
 
                 xs_len += x1.distanceTo(x2);
             }
-            var percent = Math.round((distance / xs_len))*100)/100;
+            var percent = Math.round((distance / xs_len)*100)/100;
             return distance_found ? { 'distance': percent, 'closest': closest_idx } : null;
         },
 
@@ -253,6 +253,42 @@ L.GeomUtils = (function() {
                 if (linepoint) point = linepoint;
             }
             return [chosen, point];
+        },
+
+        isBefore: function (polyline, other) {
+            var lls = polyline.getLatLngs(),
+               ll_p = lls[lls.length - 1];
+            if (!other) return false;
+            var lls = other.getLatLngs()
+              , ll_a = lls[0];
+            return ll_p.equals(ll_a);
+        },
+
+        isAfter: function (polyline, other) {
+            var ll_p = polyline.getLatLngs()[0];
+            if (!other) return false;
+            var lls = other.getLatLngs()
+              , ll_b = lls[lls.length - 1];
+            return ll_p.equals(ll_b);
+        },
+
+        isStartAtEdges: function (polyline, other) {
+            /** 
+             * Returns true if the first point of the polyline
+             * is equal to start or end of the other
+             */
+            var ll_p = polyline.getLatLngs()[0];
+            if (!other) return false;
+
+            var lls = other.getLatLngs()
+              , ll_a = lls[0]
+              , ll_b = lls[lls.length - 1];
+
+            return ll_p.equals(ll_a) || ll_p.equals(ll_b);
+        },
+
+        lineReverse: function (line) {
+            return L.polyline(line.getLatLngs().reverse());
         }
     };
 })();

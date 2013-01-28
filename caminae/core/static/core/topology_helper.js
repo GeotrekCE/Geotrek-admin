@@ -2,34 +2,33 @@ var Caminae = Caminae || {};
 
 Caminae.TopologyHelper = (function() {
 
-    // Returns true if the first point of the polyline
-    // is shared with one of the edge of the polyline
-    function getOrder(polyline, next_polyline) {
-        var ll_p = polyline.getLatLngs()[0];
-        if (!next_polyline) return false;
-
-        var lls = next_polyline.getLatLngs()
-          , ll_a = lls[0]
-          , ll_b = lls[lls.length - 1];
-
-        return ll_p.equals(ll_a) || ll_p.equals(ll_b);
-    }
-
-    function buildTopologyGeom(polylines, ll_start, ll_end, start, end) {
-        var closest_first_idx = start.closest
-          , closest_end_idx = end.closest;
-
+    function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
         var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
-          , single_path = polylines.length == 1
+          , single_path = paths.unique().length == 1
           // Positions:: polylines index => pair of position [ [0..1], [0..1] ]
           , positions = {};
 
-        // Is the first point bound to the next edge or is it the other way ?
+        if (!polyline_start || !polyline_end) {
+            console.warn("Could not compute distances without polylines.");
+            return null;  // TODO: clean-up before give-up ?
+        }
+
+        var percentageDistance = L.GeomUtils.getPercentageDistanceFromPolyline;
+        var start = percentageDistance(ll_start, polyline_start)
+          , end = percentageDistance(ll_end, polyline_end);
+        if (!start || !end) {
+            console.warn("Could not compute distances withing paths.");
+            return null;  // TODO: clean-up before give-up ?
+        }
+        var closest_first_idx = start.closest
+          , closest_end_idx = end.closest;
+
 
         var lls_tmp, lls_end, latlngs = [];
 
         if (single_path) {
+            paths = paths.unique();
             var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
             if (closest_first_idx < closest_end_idx) {
                 /*        A     B 
@@ -47,7 +46,7 @@ Caminae.TopologyHelper = (function() {
                 positions[0] = [end.distance, start.distance];
             }
 
-            lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx + 1);
+            lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx+1);
             lls_tmp.unshift(_ll_start);
             lls_tmp.push(_ll_end);
             latlngs.push(lls_tmp);
@@ -56,7 +55,7 @@ Caminae.TopologyHelper = (function() {
             /*
              * Add first portion of line
              */
-            var start_bound_by_first_point = getOrder(polyline_start, polylines[1]);
+            var start_bound_by_first_point = L.GeomUtils.isStartAtEdges(polyline_start, polylines[1]);
             if (start_bound_by_first_point) {
                 /*
                  *        A               B
@@ -68,6 +67,7 @@ Caminae.TopologyHelper = (function() {
                  */
                 lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1);
                 lls_tmp.push(ll_start);
+                polylines[0] = L.GeomUtils.lineReverse(polyline_start);
                 positions[0] = [start.distance, 0.0];
             } else {
                 /*
@@ -88,17 +88,20 @@ Caminae.TopologyHelper = (function() {
             /* 
              * Add all intermediary lines
              */
-            var polylines_inner = polylines.slice(1, -1);
-            $.each(polylines_inner, function(idx, l) {
-                // TODO: Ideally if the line is not "connectable"
-                // we should reverse it and set positions to [1,0] instead of [0,1]
-                latlngs.push(l.getLatLngs());
-            });
+            for (var i=1; i<polylines.length-1; i++) {
+                var previous = polylines[0],
+                    polyline = polylines[i];
+                if (!L.GeomUtils.isAfter(polyline, previous)) {
+                    positions[i] = [1.0, 0.0];
+                    polylines[i] = L.GeomUtils.lineReverse(polyline);
+                }
+                latlngs.push(polylines[i].getLatLngs());
+            }
 
             /*
              * Add last portion of line
              */
-            var end_bound_by_first_point = getOrder(polyline_end, polylines[polylines.length - 2]);
+            var end_bound_by_first_point = L.GeomUtils.isStartAtEdges(polyline_end, polylines[polylines.length - 2]);
             if (end_bound_by_first_point) {
                 /*
                  *        A               B
@@ -127,11 +130,14 @@ Caminae.TopologyHelper = (function() {
         }
 
         return {
-            'latlngs': latlngs,      // = Multilinestrings
-            'positions': positions,  // Positions on paths
-            'is_single_path': single_path
+            topology: {
+                offset: offset,       // Float for offset
+                positions: positions, // Positions on paths
+                paths: paths          // List of pks
+            },
+            multipolyline: L.multiPolyline(latlngs)
         };
-    }
+    };
 
 
     function buildTopologyFromComputedPath(idToLayer, data) {
@@ -147,21 +153,28 @@ Caminae.TopologyHelper = (function() {
         }
 
         var computed_paths = data['computed_paths']
-          , new_edges = data['new_edges']
-          , cpath = null
-          , topo = null
+          , edges = data['new_edges']
+          , offset = 0.0  // TODO: input for offset
           , data = []
           , layer = L.featureGroup();
 
-        if (DEBUG) console.log('Topology: ');
+        if (DEBUG) console.log('Topology has ' + computed_paths.length + ' sub-topologies.');
         for (var i = 0; i < computed_paths.length; i++ ) {
-            cpath = computed_paths[i];
-            topo = createTopology(idToLayer, cpath, cpath.from_pop, cpath.to_pop, new_edges[i])
+            var cpath = computed_paths[i]
+              , paths = $.map(edges[i], function(edge) { return edge.id; })
+              , polylines = $.map(edges[i], function(edge) { return idToLayer(edge.id); })
+              , topo = buildSubTopology(paths,
+                                        polylines, 
+                                        cpath.from_pop.ll,
+                                        cpath.to_pop.ll,
+                                        offset);
+            if (!topo) break;
+
             data.push(topo.topology);
             if (DEBUG) console.log(JSON.stringify(topo.topology));
 
             // Multilines for each sub-topology
-            var group_layer = L.multiPolyline(topo.array_lls);
+            var group_layer = topo.multipolyline;
             group_layer.from_pop = cpath.from_pop;
             group_layer.to_pop = cpath.to_pop;
             group_layer.step_idx = i;
@@ -173,55 +186,8 @@ Caminae.TopologyHelper = (function() {
             layer: layer,
             serialized: data
         }
-    }
+    };
 
-    function createTopology(idToLayer, computed_path, from_pop, to_pop, edges) {
-        /**
-         * @param computed_path: cf ``_onComputedPaths`` in ``L.Handler.Multipath``
-         * @param from_pop: start PointOnPolyline
-         * @param to_pop: end PointOnPolyline
-         * @param edges: list of edges (cf JSON graph)
-         */
-        var ll_start = from_pop.ll
-          , ll_end = to_pop.ll;
-
-        var paths = $.map(edges, function(edge) { return edge.id; });
-        var layers = $.map(edges, function(edge) { return idToLayer(edge.id); });
-
-        var polyline_start = layers[0];
-        var polyline_end = layers[layers.length -1];
-
-        var percentageDistance = L.GeomUtils.getPercentageDistanceFromPolyline;
-
-        var start = percentageDistance(ll_start, polyline_start)
-          , end = percentageDistance(ll_end, polyline_end);
-
-        if (!start || !end) {
-            console.warn("Could not compute distances withing paths.");
-            return;  // TODO: clean-up before give-up ?
-        }
-
-        var new_topology = Caminae.TopologyHelper.buildTopologyGeom(layers, ll_start, ll_end, start, end);
-
-        if (new_topology.is_single_path) {
-            if (paths.length > 1) {
-                // Only get the first one
-                console.warn('Single-path, ignore paths ' + paths);
-                paths = paths.slice(0, 1);
-            }
-        }
-
-        var topology = {
-            offset: 0,  // TODO: input for offset
-            positions: new_topology.positions,
-            paths: paths
-        };
-
-        return {
-            topology: topology
-          , array_lls: new_topology.latlngs
-        };
-    }
 
 
     var getNextId = (function() {
@@ -351,7 +317,7 @@ Caminae.TopologyHelper = (function() {
 
 
     return {
-        buildTopologyGeom: buildTopologyGeom,
+        buildTopologyGeom: buildSubTopology,
         buildTopologyFromComputedPath: buildTopologyFromComputedPath,
         PointOnPolyline: PointOnPolyline
     };
