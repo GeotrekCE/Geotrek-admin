@@ -45,8 +45,8 @@ L.GeomUtils = (function() {
 
                 xs_len += x1.distanceTo(x2);
             }
-
-            return distance_found ? { 'distance': distance / xs_len, 'closest': closest_idx } : null;
+            var percent = Math.round((distance / xs_len))*100)/100;
+            return distance_found ? { 'distance': percent, 'closest': closest_idx } : null;
         },
 
         // todo accept an array of positions ?
