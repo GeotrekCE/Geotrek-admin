@@ -3,8 +3,7 @@ var Caminae = Caminae || {};
 Caminae.TopologyHelper = (function() {
 
     function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
-        var paths = paths.unique()
-          , polyline_start = polylines[0]
+        var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
           , single_path = paths.length == 1 || polyline_start == polyline_end
           , positions = {};
@@ -28,6 +27,7 @@ Caminae.TopologyHelper = (function() {
         var lls_tmp, lls_end, latlngs = [];
 
         if (single_path) {
+            paths = paths.unique();
             var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
             if (closest_first_idx < closest_end_idx) {
                 /*        A     B 
