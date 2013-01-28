@@ -54,8 +54,52 @@ Or instead, if you prefer, you can overwrite the source code (or use symlinks),
 and run ``./install.sh``.
 
 
+============
+LOADING DATA
+============
+
+Prerequisites
+=============
+
+Layers
+------
+
+* WMS (scan + ortho)
+* Projection
+* Bounding box in native projection
+
+Core
+----
+
+* Only LineString geometries
+* Simple geometries
+* Not overlapping
+
+If possible :
+
+* Connex graph
+* Name column
+* Data source
+
+Formats: Shapefile or pure SQL dump SQL (CREATE TABLE + INSERT)
+
+
+Land
+----
+
+* Cities polygons (Shapefile or SQL, simple and valid Multi-Polygons)
+* Districts (Shapefile ou SQL, simple and valid Multi-Polygons)
+* Restricted Areas (Shapefile ou SQL, simple and valid Multi-Polygons)
+
+Extras
+------
+
+* Languages list
+* Structures list (and default one)
+
+
 Load MNT raster
----------------
+===============
 
 ::
 
@@ -70,7 +114,7 @@ Load MNT raster
 
 
 Initial Data
-------------
+============
 
 Load basic data :
 
@@ -98,7 +142,7 @@ You might also need to deploy logo images in the following places :
 
 
 Development Data
-----------------
+================
 
 ::
 
