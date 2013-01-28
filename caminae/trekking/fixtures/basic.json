@@ -88,6 +88,72 @@
         }
     },
     {
+        "pk": 9,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/archeo.png",
+            "label_en": null,
+            "label_fr": "Arch\u00e9ologie",
+            "label": "Arch\u00e9ologie"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/histoire.png",
+            "label_en": null,
+            "label_fr": "Histoire",
+            "label": "Histoire"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/histoire.png",
+            "label_en": null,
+            "label_fr": "Architecture",
+            "label": "Architecture"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/histoire.png",
+            "label_en": null,
+            "label_fr": "Glacier",
+            "label": "Glacier"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/histoire.png",
+            "label_en": null,
+            "label_fr": "Savoir-faire",
+            "label": "Savoir-faire"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "trekking.poitype",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/histoire.png",
+            "label_en": null,
+            "label_fr": "Pastoralisme",
+            "label": "Pastoralisme"
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.treknetwork",
         "fields": {
@@ -95,6 +161,46 @@
             "network": "City",
             "network_en": "City",
             "network_fr": "En ville"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": null,
+            "network": "PR",
+            "network_en": null,
+            "network_fr": "PR"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": null,
+            "network": "GRP",
+            "network_en": null,
+            "network_fr": "GRP"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": null,
+            "network": "VTT",
+            "network_en": null,
+            "network_fr": "VTT"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "network_it": null,
+            "network": "Piste \u00e9questre",
+            "network_en": null,
+            "network_fr": "Piste \u00e9questre"
         }
     },
     {
@@ -186,6 +292,83 @@
         }
     },
     {
+        "pk": 4,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Point de vue",
+            "label": "Point de vue"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Architecture",
+            "label": "Architecture"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Pastoralisme",
+            "label": "Pastoralisme"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "G\u00e9ologie",
+            "label": "G\u00e9ologie"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Lac et glacier",
+            "label": "Lac et glacier"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Sommet",
+            "label": "Sommet"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-flora.png",
+            "label_en": null,
+            "label_fr": "Refuge",
+            "label": "Refuge"
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.route",
         "fields": {
@@ -246,6 +429,16 @@
         }
     },
     {
+        "pk": 4,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "difficulty_it": null,
+            "difficulty": "Actif",
+            "difficulty_fr": "Actif",
+            "difficulty_en": null
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.weblinkcategory",
         "fields": {
@@ -276,6 +469,28 @@
             "label_fr": "Bus",
             "label_en": "Bus",
             "pictogram": "upload/weblink-bus.png"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/weblink-bus.png",
+            "label_en": null,
+            "label_fr": "A lire",
+            "label": "A lire"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/weblink-bus.png",
+            "label_en": null,
+            "label_fr": "Information touristique",
+            "label": "Information touristique"
         }
     }
 ]
