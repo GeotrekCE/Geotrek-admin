@@ -50,6 +50,8 @@ BEGIN
     -- to unexpected results.
     -- January 2013 : It does indeed.
 
+    RAISE NOTICE 'update_geometry_of_evenement (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
+
     IF t_count = 0 THEN
         -- No more troncons, close this topology
         UPDATE e_t_evenement SET geom = NULL, longueur = 0 WHERE id = eid;
@@ -82,7 +84,8 @@ BEGIN
         LOOP
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;
-        egeom := ft_Smart_MakeLine(tomerge);
+        -- egeom := ft_Smart_MakeLine(tomerge);
+        egeom := ST_Union(tomerge);
         -- Add some offset if necessary.
         IF t_offset > 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
