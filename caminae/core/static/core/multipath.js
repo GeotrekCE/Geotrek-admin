@@ -473,7 +473,7 @@ L.Handler.MultiPath = L.Handler.extend({
             for (var i=0; i<topo.length; i++) {
                 var subtopo = topo[i]
                   , paths = subtopo.paths
-                  , positions = subtopo.positions;
+                  , positions = subtopo.positions || [];
 
                 $.each(positions, function(k, pos) {
                     var path_idx = parseInt(k)
