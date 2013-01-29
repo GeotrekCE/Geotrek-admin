@@ -130,7 +130,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         else if (typeof layer.getLatLng == 'function') {
             bounds = new L.LatLngBounds(layer.getLatLng(), layer.getLatLng());
         }
-        if (bounds)
+        if (bounds.getSouthWest() && bounds.getNorthEast())
             this.rtree.insert(this._rtbounds(bounds), layer);
         else
             console.error("No bounds found for layer " + pk);
