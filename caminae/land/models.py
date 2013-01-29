@@ -70,7 +70,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_physicals(self, path):
-        return list(set([PhysicalEdge.objects.get(pk=t.pk)
+        return list(set([PhysicalEdge.objects.select_related('physical_type').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=PhysicalEdge.KIND)]))
 
@@ -131,7 +131,7 @@ class LandEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_lands(self, path):
-        return list(set([LandEdge.objects.get(pk=t.pk)
+        return list(set([LandEdge.objects.select_related('land_type').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=LandEdge.KIND)]))
 
@@ -172,7 +172,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_competences(self, path):
-        return list(set([CompetenceEdge.objects.get(pk=t.pk)
+        return list(set([CompetenceEdge.objects.select_related('organization').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=CompetenceEdge.KIND)]))
 
@@ -212,7 +212,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_works(self, path):
-        return list(set([WorkManagementEdge.objects.get(pk=t.pk)
+        return list(set([WorkManagementEdge.objects.select_related('organization').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=WorkManagementEdge.KIND)]))
 
@@ -252,7 +252,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_signages(self, path):
-        return list(set([SignageManagementEdge.objects.get(pk=t.pk)
+        return list(set([SignageManagementEdge.objects.select_related('organization').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=SignageManagementEdge.KIND)]))
 
@@ -320,7 +320,7 @@ class RestrictedAreaEdge(Topology):
 
     @classmethod
     def path_area_edges(cls, path):
-        return list(set([RestrictedAreaEdge.objects.get(pk=t.pk)
+        return list(set([RestrictedAreaEdge.objects.select_related('restricted_area').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=RestrictedAreaEdge.KIND)]))
 
@@ -371,7 +371,7 @@ class CityEdge(Topology):
 
     @classmethod
     def path_city_edges(self, path):
-        return list(set([CityEdge.objects.get(pk=t.pk)
+        return list(set([CityEdge.objects.select_related('city').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=CityEdge.KIND)]))
 
@@ -420,7 +420,7 @@ class DistrictEdge(Topology):
 
     @classmethod
     def path_district_edges(self, path):
-        return list(set([DistrictEdge.objects.get(pk=t.pk)
+        return list(set([DistrictEdge.objects.select_related('district').get(pk=t.pk)
                          for t in path.topology_set.existing().filter(
                              kind=DistrictEdge.KIND)]))
 

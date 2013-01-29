@@ -90,15 +90,7 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def pois(self):
-        s = []
-        for a in self.aggregations.all():
-            s += [POI.objects.get(pk=t.pk)
-                  for t in a.path.topology_set.existing().filter(
-                      kind=POI.KIND,
-                      aggregations__start_position__gte=a.start_position,
-                      aggregations__end_position__lte=a.end_position
-                  )]
-        return POI.objects.filter(pk__in=[p.pk for p in s])
+        return self.overlapping(Topology.objects.filter(kind=POI.KIND).existing())
 
     @property
     def poi_types(self):
