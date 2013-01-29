@@ -240,7 +240,7 @@ BEGIN
     END LOOP;
     IF NOT t_found THEN
         RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_MakeLine(lines));
-        result := ST_MakeLine(lines);
+        result := ST_Union(lines);
     END IF;
     -- RAISE NOTICE 'Merged % into %', ST_AsText(ST_Union(lines)), ST_AsText(result);
     RETURN result;

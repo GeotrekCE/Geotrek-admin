@@ -84,8 +84,7 @@ BEGIN
         LOOP
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;
-        -- egeom := ft_Smart_MakeLine(tomerge);
-        egeom := ST_Union(tomerge);
+        egeom := ft_Smart_MakeLine(tomerge);
         -- Add some offset if necessary.
         IF t_offset > 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
