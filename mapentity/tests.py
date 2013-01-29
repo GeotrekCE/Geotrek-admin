@@ -196,7 +196,7 @@ class MapEntityLiveTest(LiveServerTestCase):
         user = self.userfactory(password='booh')
         self.session = requests.Session()
         response = self.session.get(self.live_server_url)
-        csrftoken = response.cookies['csrftoken']
+        csrftoken = response.cookies.get('csrftoken', '')
         response = self.session.post(self.url_for('/login/'), 
                                     {'username': user.username,
                                      'password': 'booh',
