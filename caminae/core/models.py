@@ -303,7 +303,7 @@ class Topology(NoDeleteMixin):
     def ispoint(self):
         if not self.pk and self.geom and self.geom.geom_type == 'Point':
             return True
-        return len(self.aggregations.all()) == 1
+        return all([a.start_position == a.end_position for a in self.aggregations.all()])
 
     def add_path(self, path, start=0.0, end=1.0, order=0, reload=True):
         """
@@ -426,7 +426,7 @@ class Topology(NoDeleteMixin):
             if lat and lng:
                 return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
             else:
-                raise ValueError("Invalid serialized topology : no object or list found")
+                objdict = [objdict]
 
         # Path aggregation, remove all existing
         if len(objdict) == 0:
@@ -443,6 +443,7 @@ class Topology(NoDeleteMixin):
                 paths = subtopology['paths']
                 # Create path aggregations
                 for i, path in enumerate(paths):
+                    first_path = i == 0
                     last_path = i == len(paths)-1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)

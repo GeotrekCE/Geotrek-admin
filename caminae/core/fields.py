@@ -29,5 +29,5 @@ class TopologyField(forms.CharField):
         try:
             return Topology.deserialize(value)
         except ValueError as e:
-            logger.error("User input error: %s" % e)
+            logger.warning("User input error: %s" % e)
             raise ValidationError(self.error_messages['invalid_topology'])

@@ -88,12 +88,17 @@ class TopologyTest(TestCase):
         # Create a topology point at this intersection
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(p2, start=0.0, end=0.0)
+        self.assertTrue(topology.ispoint())
         # Make sure, the trigger worked, and linked to 3 paths
         self.assertEqual(len(topology.paths.all()), 3)
         # Mutate it to another one !
         topology2 = TopologyFactory.create(no_path=True)
         self.assertEqual(len(topology2.paths.all()), 0)
+        self.assertTrue(topology2.ispoint())
         topology2.mutate(topology)
+
+        for a in topology2.aggregations.all():
+            print a
         self.assertEqual(len(topology2.paths.all()), 3)
 
     def test_serialize(self):
@@ -109,14 +114,14 @@ class TopologyTest(TestCase):
         t.reload()
 
         test_objdict = dict(kind=t.kind,
-                       offset=1,
-                       # 0 referencing the index in paths of the only created path
-                       positions={},
-                       paths=[ path.pk ]
+                           offset=1,
+                           # 0 referencing the index in paths of the only created path
+                           positions={'0':[0.0, 1.0]},
+                           paths=[ path.pk ]
                        )
 
         objdict = simplejson.loads(t.serialize())
-        self.assertDictEqual(objdict, test_objdict)
+        self.assertDictEqual(objdict[0], test_objdict)
 
     def test_serialize_point(self):
         path = PathFactory.create()
@@ -131,7 +136,7 @@ class TopologyTest(TestCase):
 
     def test_deserialize(self):
         path = PathFactory.create()
-        topology = Topology.deserialize('{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}' % (path.pk))
+        topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
         self.assertEqual(topology.offset, 1)
         self.assertEqual(topology.kind, Topology.KIND)
         self.assertEqual(len(topology.paths.all()), 1)
@@ -156,13 +161,6 @@ class TopologyTest(TestCase):
         self.assertEqual(topology.aggregations.all()[1].end_position, 1.0)
         self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
-
-        # With intermediate markers
-        # Bad ones (start!=end)
-        self.assertRaises(ValueError, Topology.deserialize, '{"paths": %s, "positions": {"0": [0.3, 1.0], "1": [0.2, 0.3], "2": [0.0, 0.7]}}' % pks)
-        # Good ones
-        topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "1": [0.5, 0.5], "2": [0.0, 0.7]}}' % pks)
-        self.assertEqual(len(topology.paths.all()), 3)
 
     def test_deserialize_point(self):
         PathFactory.create()
@@ -487,6 +485,7 @@ class TopologyCornerCases(TestCase):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.5, end=1)
         topo.add_path(p2, start=0, end=0.8)
+        topo.add_path(p2, start=0.8, end=0.8)
         topo.add_path(p2, start=0.8, end=0)
         topo.add_path(p3, start=0, end=0.5)
         topo.save()
@@ -502,12 +501,18 @@ class TopologyCornerCases(TestCase):
         p2 = PathFactory.create(geom=LineString((5,0,0), (5,10,0), (10,10,0)))
         p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
         topo = Topology.deserialize("""
-            {"offset":0,
+           [{"offset":0,
              "positions":{"0":[0.5,1],
-                          "1":[0.8,0.8],
-                          "2":[0,0.5]},
-             "paths":[%s,%s,%s]}
-        """ % (p1.pk, p2.pk, p3.pk))
+                          "1":[0.0, 0.8]},
+             "paths":[%(p1)s,%(p2)s]
+            },
+            {"offset":0,
+             "positions":{"0":[0.8,0.0],
+                          "1":[0.0, 0.5]},
+             "paths":[%(p2)s,%(p3)s]
+            }
+           ]
+        """ % {'p1': p1.pk, 'p2': p2.pk, 'p3': p3.pk})
         topo.save()
         self.assertEqual(topo.geom, LineString((2.5,0,0),(5,0,0),(5,10,0),
                                                (7,10,0),(5,10,0),(5,0,0),
@@ -550,19 +555,8 @@ class TopologyCornerCases(TestCase):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.3, end=1)
         topo.add_path(p3)
-        # Add couple of intermediary points for fun
-        topo.add_path(p3, start=0.666, end=0.666)
-        topo.add_path(p2, start=0.42, end=0.42)
-        # Continue ...
         topo.add_path(p2, start=1, end=0)
         topo.add_path(p1, start=1, end=0.3)
         topo.save()
         self.assertEqual(topo.geom, LineString((3,0,0),(10,0,0),(10,5,0),(20,5,0),(20,0,0),
                                                (10,0,0),(3,0,0)))
-
-
-"""
-
-{"offset":0,"positions":{"0":[0.42,1],"1":[0.5,0.5],"8":[0,1]},"paths":[1088,768,1098,1089,1085,922,1026,1014,12]}
-
-"""
