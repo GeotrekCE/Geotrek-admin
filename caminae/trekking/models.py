@@ -90,7 +90,7 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def pois(self):
-        return self.overlapping(Topology.objects.filter(kind=POI.KIND))
+        return self.overlapping(POI.objects.all())
 
     @property
     def poi_types(self):
@@ -166,6 +166,8 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def elevation_profile(self):
+        if not self.geom:
+            return []
         return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
