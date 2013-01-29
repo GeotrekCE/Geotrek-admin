@@ -243,7 +243,7 @@ BEGIN
     t_failed := ST_Length(result) < ST_Length(ST_Union(lines));
     IF NOT t_found OR t_failed THEN
         result := ST_Union(lines);
-        RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
+        -- RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
     END IF;
     -- RAISE NOTICE 'Merged % into %', ST_AsText(ST_Union(lines)), ST_AsText(result);
     RETURN result;
