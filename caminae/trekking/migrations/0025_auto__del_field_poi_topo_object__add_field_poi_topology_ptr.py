@@ -8,23 +8,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'POI.topo_object'
-        db.delete_column('o_t_poi', 'evenement')
-
-        # Adding field 'POI.topology_ptr'
-        db.add_column('o_t_poi', 'topology_ptr',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default=None, to=orm['core.Topology'], unique=True, primary_key=True),
-                      keep_default=False)
-
+        db.rename_column('o_t_poi', 'evenement', 'topology_ptr_id')
 
     def backwards(self, orm):
-        # Adding field 'POI.topo_object'
-        db.add_column('o_t_poi', 'topo_object',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default=None, to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement'),
-                      keep_default=False)
-
-        # Deleting field 'POI.topology_ptr'
-        db.delete_column('o_t_poi', 'topology_ptr_id')
+        db.rename_column('o_t_poi', 'topology_ptr_id', 'evenement')
 
 
     models = {
