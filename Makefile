@@ -90,7 +90,7 @@ deploy: install clean_harmless all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --noinput
-	bin/django update_translation_fields
+	# bin/django update_translation_fields
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data
