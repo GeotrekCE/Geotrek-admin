@@ -523,6 +523,7 @@ class Topology(NoDeleteMixin):
             current = {}
             ipath = 0
             for i, aggr in enumerate(aggregations):
+                first = i == 0
                 last = i == len(aggregations) - 1
                 intermediary = aggr.start_position == aggr.end_position
 
@@ -530,7 +531,7 @@ class Topology(NoDeleteMixin):
                 current.setdefault('offset', self.offset)
                 if not intermediary:
                     current.setdefault('paths', []).append(aggr.path.pk)
-                    if not aggr.is_full:
+                    if not aggr.is_full or first or last:
                         current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
                 ipath = ipath + 1
 
