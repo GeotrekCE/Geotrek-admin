@@ -179,9 +179,10 @@ FormField.makeModule = function(module, module_settings) {
                 // core.models#Topology.serialize
                 var initialTopology = layerStore.getSerialized();
                 if (initialTopology) {
+                    if (DEBUG) console.log("Deserialize topology: " + initialTopology)
                     var topo =  JSON.parse(initialTopology);
                     // If it is multipath, restore
-                    if (topo.paths && !topo.lat && !topo.lng) {
+                    if (!topo.lat && !topo.lng) {
                         multipath_handler.restoreTopology(topo);
                     }
                 }

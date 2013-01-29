@@ -80,7 +80,7 @@ BEGIN
                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
-               ORDER BY et.id  -- /!\ We suppose that evenement_troncons were created in the right order
+               ORDER BY et.ordre  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
             tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
         END LOOP;

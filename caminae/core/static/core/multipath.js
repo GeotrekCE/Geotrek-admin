@@ -430,14 +430,27 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     restoreTopology: function (topo) {
+
+        /*
+         * Topo is a list of sub-topologies.
+         *
+         *  X--+--+---O-------+----O--+---+--X
+         *  
+         * Each sub-topoogy is a way between markers. The first marker
+         * of the first sub-topology is the beginning, the last of the last is the end.
+         * All others are intermediary points.
+         */
         var self = this;
-        // This topology should contain postgres calculated value (start/end point as latln)
-        var paths = topo.paths
-          , positions = topo.positions;
+
+
         // Only first and last positions
-        if (paths.length == 1) {
+        if (topo.length == 1 && topo[0].paths.length == 1) {
             // There is only one path, both positions values are relevant
             // and each one represents a marker
+            var topo = topo[0]
+              , paths = topo.paths
+              , positions = topo.positions;
+
             var first_pos = positions[0][0];
             var last_pos = positions[0][1];
 
@@ -454,35 +467,39 @@ L.Handler.MultiPath = L.Handler.extend({
                 end_layer: end_layer
             };
             this.setState(state);
-
-        } else {
+        }
+        else {
             var layer_ll_s = [];
-            $.each(positions, function(k, pos) {
-                if (pos[0] > pos[1]) {
-                    pos = pos.reverse();
-                }
-                // default value: this is not supposed to be a marker ?!
-                if (pos[0] == 0.0 && pos[1] == 1.0) {
-                    console.log('Ignored marker ' + pos);
-                    return;
-                }
+            for (var i=0; i<topo.length; i++) {
+                var subtopo = topo[i]
+                  , paths = subtopo.paths
+                  , positions = subtopo.positions;
 
-                var path_idx = parseInt(k);
-                var layer = self.idToLayer(paths[path_idx]);
-                // Look for the relevant value:
-                // 0 is the default in first_position, get the other value
-                var used_pos = pos[0] == 0 ? pos[1] : pos[0];
-
-                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
-                if (ll.length < 1) {
-                    return;
-                }
-
-                layer_ll_s.push({
-                    layer: layer,
-                    ll: ll[0]
+                $.each(positions, function(k, pos) {
+                    var path_idx = parseInt(k)
+                      , layer = self.idToLayer(paths[path_idx]);
+                    if (pos[0] > pos[1]) {
+                        pos = pos.reverse();
+                    }
+                    // default value: this is not supposed to be a marker ?!
+                    if (pos[0] == 0.0 && pos[1] == 1.0) {
+                        console.log('Ignored marker ' + pos);
+                        return;
+                    }
+                    // Look for the relevant value:
+                    // 0 is the default in first_position, get the other value
+                    var used_pos = pos[0] == 0 ? pos[1] : pos[0];
+                    var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
+                    if (ll.length < 1) {
+                        console.error('getLatLngFromPos()');
+                        return;
+                    }
+                    layer_ll_s.push({
+                        layer: layer,
+                        ll: ll[0]
+                    });
                 });
-            });
+            }
 
             var start_layer_ll = layer_ll_s.shift();
             var end_layer_ll = layer_ll_s.pop();

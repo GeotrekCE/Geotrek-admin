@@ -303,13 +303,9 @@ class Topology(NoDeleteMixin):
     def ispoint(self):
         if not self.pk and self.geom and self.geom.geom_type == 'Point':
             return True
-        for aggr in self.aggregations.all():
-            if aggr.start_position == aggr.end_position:
-                return True
-            break
-        return False
+        return len(self.aggregations.all()) == 1
 
-    def add_path(self, path, start=0.0, end=1.0, reload=True):
+    def add_path(self, path, start=0.0, end=1.0, order=0, reload=True):
         """
         Shortcut function to add paths into this topology.
         """
@@ -317,7 +313,8 @@ class Topology(NoDeleteMixin):
         aggr = PathAggregationFactory.create(topo_object=self, 
                                              path=path, 
                                              start_position=start, 
-                                             end_position=end)
+                                             end_position=end,
+                                             order=order)
         # Since a trigger modifies geom, we reload the object
         if reload:
             self.reload()
@@ -439,6 +436,7 @@ class Topology(NoDeleteMixin):
         topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
         PathAggregation.objects.filter(topo_object=topology).delete()
         try:
+            counter = 0
             for j, subtopology in enumerate(objdict):
                 last_topo = j == len(objdict)-1
                 positions = subtopology.get('positions', {})
@@ -450,7 +448,7 @@ class Topology(NoDeleteMixin):
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
                     path = Path.objects.get(pk=path)
-                    topology.add_path(path, start=start_position, end=end_position, reload=False)
+                    topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
                     if not last_topo and last_path:
                         # Intermediary marker.       
                         # make sure pos will be [X, X]
@@ -467,7 +465,8 @@ class Topology(NoDeleteMixin):
                         elif end_position == 1.0:
                             pos = start_position
                         assert pos >= 0
-                        topology.add_path(path, start=pos, end=pos, reload=False)
+                        topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
+                    counter += 1
         except (ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
         topology.save()
@@ -519,21 +518,32 @@ class Topology(NoDeleteMixin):
         else:
             # Line topology
             # Fetch properly ordered aggregations
-            aggregations = self.aggregations.all()
-            paths = list(aggregations.values_list('path__pk', flat=True))
-            # We may filter out aggregations that have default values (0.0 and 1.0)...
-            positions = dict(
-                (i, (a.start_position, a.end_position))
-                for i, a in enumerate(aggregations)
-                if (a.start_position, a.end_position) != (0, 1)
-            )
+            aggregations = self.aggregations.select_related('path').all()
+            objdict = []
+            current = {}
+            ipath = 0
+            for i, aggr in enumerate(aggregations):
+                last = i == len(aggregations) - 1
+                intermediary = aggr.start_position == aggr.end_position
 
-            objdict = dict(kind=self.kind,
-                           offset=self.offset,
-                           positions=positions,
-                           paths=paths,
-                           )
+                current.setdefault('kind', self.kind)
+                current.setdefault('offset', self.offset)
+                if not intermediary:
+                    current.setdefault('paths', []).append(aggr.path.pk)
+                    if not aggr.is_full:
+                        current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
+                ipath = ipath + 1
+
+                if intermediary or last:
+                    objdict.append(current)
+                    current = {}
+                    ipath = 0
         return simplejson.dumps(objdict)
+
+
+class PathAggregationManager(models.GeoManager):
+    def get_queryset(self):
+        self.get_query_set().order_by('order')
 
 
 class PathAggregation(models.Model):
@@ -545,9 +555,10 @@ class PathAggregation(models.Model):
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
     end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
+    order = models.IntegerField(db_column='ordre', verbose_name=_(u"Order"))
 
     # Override default manager
-    objects = models.GeoManager()
+    objects = PathAggregationManager()
 
     def __unicode__(self):
         return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)

@@ -166,6 +166,7 @@ class PathAggregationFactory(factory.Factory):
 
     start_position = 0.0
     end_position = 1.0
+    order = 0
 
 
 class PathAggregationInBoundsRandomGeomFactory(PathAggregationFactory):
