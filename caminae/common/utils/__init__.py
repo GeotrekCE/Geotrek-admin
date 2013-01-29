@@ -43,6 +43,12 @@ def elevation_profile(g, maxitems=None):
     Extract elevation profile from a 3D geometry.
     - maxitems : maximum number of points
     """
+    if g.geom_type == 'MultiLineString':
+        profile = []
+        for subcoords in g.coords:
+            profile.extend(elevation_profile(LineString(subcoords), maxitems=maxitems))
+        return profile
+
     step = 1
     if maxitems is not None:
         nb = len(g.coords)
