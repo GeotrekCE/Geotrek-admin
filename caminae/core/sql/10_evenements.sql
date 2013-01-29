@@ -50,7 +50,7 @@ BEGIN
     -- to unexpected results.
     -- January 2013 : It does indeed.
 
-    RAISE NOTICE 'update_geometry_of_evenement (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
+    -- RAISE NOTICE 'update_geometry_of_evenement (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
 
     IF t_count = 0 THEN
         -- No more troncons, close this topology
