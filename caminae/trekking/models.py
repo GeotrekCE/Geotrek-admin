@@ -90,7 +90,7 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def pois(self):
-        return self.overlapping(Topology.objects.filter(kind=POI.KIND).existing())
+        return self.overlapping(Topology.objects.filter(kind=POI.KIND))
 
     @property
     def poi_types(self):
