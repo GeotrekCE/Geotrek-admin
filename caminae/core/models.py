@@ -464,10 +464,10 @@ class Topology(NoDeleteMixin):
                             pos = start_position
                         elif end_position == 1.0:
                             pos = start_position
-                        assert pos >= 0
+                        assert pos >= 0, "Invalid position."
                         topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
                     counter += 1
-        except (ValueError, KeyError, Path.DoesNotExist) as e:
+        except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
         topology.save()
         return topology
