@@ -127,10 +127,13 @@ L.ObjectsLayer = L.GeoJSON.extend({
         else if (typeof layer.getLatLngs == 'function') {
             bounds = layer.getBounds();
         }
-        else {
+        else if (typeof layer.getLatLng == 'function') {
             bounds = new L.LatLngBounds(layer.getLatLng(), layer.getLatLng());
         }
-        this.rtree.insert(this._rtbounds(bounds), layer);
+        if (bounds)
+            this.rtree.insert(this._rtbounds(bounds), layer);
+        else
+            console.error("No bounds found for layer " + pk);
     },
 
     onRemove: function (map) {
