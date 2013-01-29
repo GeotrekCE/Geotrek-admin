@@ -555,7 +555,7 @@ class PathAggregation(models.Model):
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
     end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
-    order = models.IntegerField(db_column='ordre', verbose_name=_(u"Order"))
+    order = models.IntegerField(db_column='ordre', default=0, blank=True, null=True, verbose_name=_(u"Order"))
 
     # Override default manager
     objects = PathAggregationManager()
