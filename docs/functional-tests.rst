@@ -2409,3 +2409,13 @@ Si le décallage est différent de zéro, il est affiché aussi pour l'ensemble 
 Pour les évènements ponctuels, une seule valeur est affichée.
 
 
+#377 - Liste des tronçons sur intervention
+------------------------------------------
+
+La liste des tronçons s'affiche en colonnes.
+
+::
+
+    4 5 6 7
+    0 1 2 3
+
