@@ -37,7 +37,7 @@
     <h3>{% trans "Management" %}</h3>
     <table class="table">
         {% if intervention.topology %}
-            {% include "core/aggregations_list_fragment.html" with aggregations=intervention.topology.aggregations.all %}
+            {% include "core/aggregations_list_fragment.html" with object=intervention.topology %}
         {% endif %}
         <tr>
             <th>{% trans "Related Project" %}</th>

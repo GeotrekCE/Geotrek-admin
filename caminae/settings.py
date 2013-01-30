@@ -300,6 +300,7 @@ THUMBNAIL_ALIASES = {
 
 SCREAMSHOT_CONFIG = {
     'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
+    'CLI_ARGS': ['--disk-cache=true', '--max-disk-cache-size=30000'],
 }
 
 
