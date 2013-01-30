@@ -13,16 +13,18 @@ etc/settings.ini:
 
 bin/phantomjs:
 	mkdir -p lib/
-	wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
-	tar -jxvf phantomjs.tar.bz2 -C lib/
+	wget http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
+	rm -rf $(root)/lib/*phantomjs*/
+	tar -jxvf phantomjs.tar.bz2 -C $(root)/lib/
 	rm phantomjs.tar.bz2
 	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/
 	# Install system-wide binary (require sudo)
 	sudo ln -sf $(root)/bin/phantomjs /usr/local/bin/
 
 bin/casperjs: bin/phantomjs
-	wget https://github.com/n1k0/casperjs/zipball/1.0.0-RC4 -O casperjs.zip
-	unzip -o casperjs.zip -d lib/ > /dev/null
+	wget https://github.com/n1k0/casperjs/zipball/1.0.1 -O casperjs.zip
+	rm -rf $(root)/lib/*casperjs*/
+	unzip -o casperjs.zip -d $(root)/lib/ > /dev/null
 	rm casperjs.zip
 	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/
 	# Install system-wide binary (require sudo)
