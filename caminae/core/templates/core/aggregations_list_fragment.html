@@ -2,13 +2,13 @@
 <tr>
     <th>{% trans "Paths" %}</th>
     <td class="paths">
-        {% for aggr in aggregations %}
+        {% for aggr in object.aggregations.all %}
             {% if forloop.first %}<ul>{% endif %}
             <li title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
               <span class="path">{{ aggr.path.name_display|safe }}</span>
               <span class="aggregation">
-                {% if aggr.offset != 0 %}
-                  ⇲{{ aggr.offset|floatformat:"2" }}m
+                {% if forloop.first and object.offset != 0 %}
+                  ⇲ {{ object.offset|floatformat:"0" }}m
                 {% endif %}
                 {% if aggr.is_full %}
                   (⇤100%⇥)

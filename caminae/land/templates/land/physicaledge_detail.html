@@ -9,6 +9,6 @@
             <td>{{ physicaledge.physical_type }}</td>
         </tr>
         
-        {% include "core/aggregations_list_fragment.html" with aggregations=physicaledge.aggregations.all %}
+        {% include "core/aggregations_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}
