@@ -54,7 +54,7 @@ class GeomWidget(django_widgets.HiddenInput):
 
     def value_from_datadict(self, data, files, name):
         wkt = super(GeomWidget, self).value_from_datadict(data, files, name)
-        return None if not wkt else wkt_to_geom(wkt)
+        return None if not wkt else wkt_to_geom(wkt, silent=True)
 
     def _format_value(self, value):
         if value and not isinstance(value, basestring):
