@@ -20,7 +20,7 @@ class POIViewsTest(MapEntityTest):
     userfactory = TrekkingManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
+        PathFactory.create()
         return {
             'name_fr': 'test',
             'name_en': 'test',
@@ -29,7 +29,7 @@ class POIViewsTest(MapEntityTest):
             'description_en': 'here',
             'description_it': 'aca',
             'type': POITypeFactory.create().pk,
-            'topology': '{"paths": [%s], "offset": 18.4}' % path.pk,
+            'topology': '{"lat": 5.1, "lng": 6.6}'
         }
 
 
