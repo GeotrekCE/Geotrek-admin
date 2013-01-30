@@ -89,8 +89,8 @@ deploy: install clean_harmless all_compilemessages
 	touch lib/parts/django/django_extrasettings/settings_production.py
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
-	bin/django collectstatic --noinput
-	# bin/django update_translation_fields
+	bin/django collectstatic --clear --noinput
+	bin/django update_translation_fields
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data
