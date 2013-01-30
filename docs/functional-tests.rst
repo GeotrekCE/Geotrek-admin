@@ -2419,3 +2419,15 @@ La liste des tronçons s'affiche en colonnes.
     4 5 6 7
     0 1 2 3
 
+
+#364 - ADMIN - Liste des fichiers liés
+--------------------------------------
+
+Les fichiers liés sont triés par date d'ajout (décroissant).
+
+
+#431 - Sélecteur d'emprise : trier par ordre alphanum
+-----------------------------------------------------
+
+Les valeurs dans les sélecteurs d'emprise sont désormais triés par ordre alphanumérique.
+
