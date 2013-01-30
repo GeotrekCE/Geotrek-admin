@@ -207,12 +207,21 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
+        if (window.DEBUG) {
+            console.log('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
+                                                           latlng:state.start_ll.toString()},
+                                                    end:  {pk:state.end_layer.properties.pk,
+                                                           latlng:state.end_ll.toString()}})+')');
+        }
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
+            if (window.DEBUG) {
+                console.log('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
+                                                                 latlng: via_marker.marker.getLatLng().toString()}) + ')');
+            }
             self.addViaStep(via_marker.marker, idx + 1);
-
             self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
         });
     },
@@ -469,12 +478,11 @@ L.Handler.MultiPath = L.Handler.extend({
             this.setState(state);
         }
         else {
-            var start_layer_ll = null
-              , end_layer_ll = null
+            var start_layer_ll = {}
+              , end_layer_ll = {}
               , via_markers = [];
 
             var pos2latlng = function (pos, layer) {
-                debugger;
                 var used_pos = pos[0];
                 if (pos[0] == 0.0 && pos[1] != 1.0)
                     used_pos = pos[1];
@@ -484,6 +492,7 @@ L.Handler.MultiPath = L.Handler.extend({
                     used_pos = pos[0];
                 if (pos[0] != 0.0 && pos[1] == 1.0)
                     used_pos = pos[0];
+                console.log("Chose " + used_pos + " for " + pos);
                 var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
                 if (ll.length < 1) {
                     console.error('getLatLngFromPos()');
@@ -527,9 +536,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
             }
 
-            var start_layer_ll = layer_ll_s.shift()
-              , end_layer_ll = layer_ll_s.pop()
-              , state = {
+            var state = {
                     start_ll: start_layer_ll.ll,
                     end_ll: end_layer_ll.ll,
                     start_layer: start_layer_ll.layer,
@@ -537,6 +544,7 @@ L.Handler.MultiPath = L.Handler.extend({
                     via_markers: via_markers
                 };
 
+            // Restore state as if a user clicks.
             this.setState(state);
         }
     },
