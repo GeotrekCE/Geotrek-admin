@@ -41,7 +41,7 @@ class MapEntityForm(forms.ModelForm):
         self.__expand_translatable_fields()
 
         # Get fields from subclasses
-        fields = ('pk','model') + self.modelfields
+        fields = ('pk','model','structure') + self.modelfields
         leftpanel = Div(
             *fields,
             css_class="span4"
