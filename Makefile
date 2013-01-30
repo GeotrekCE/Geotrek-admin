@@ -96,3 +96,4 @@ deploy: install clean_harmless all_compilemessages
 	bin/supervisorctl restart all
 
 deploy_demo: deploy load_data
+	bin/django loaddata development-pne
