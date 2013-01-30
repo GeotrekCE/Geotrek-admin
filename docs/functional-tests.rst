@@ -2396,3 +2396,16 @@ Désormais les lignes du tableau sur sur un ligne de texte.
 
 Fait.
 
+
+#302 - PK début / fin - affichage
+---------------------------------
+
+Les pk début et fin sont affichés sur les listes de tronçons.
+
+Si le premier tronçon n'est pas couvert complètement, alors sera affiché le point de départ en mètres (ainsi que les pk au survol). De même pour le dernier.
+
+Si le décallage est différent de zéro, il est affiché aussi pour l'ensemble des tronçons.
+
+Pour les évènements ponctuels, une seule valeur est affichée.
+
+

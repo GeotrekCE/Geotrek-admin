@@ -9,6 +9,6 @@
             <td>{{ landedge.land_type }}</td>
         </tr>
         
-        {% include "land/edge_path_list_fragment.html" %}
+        {% include "core/aggregations_list_fragment.html" with aggregations=competenceedge.aggregations.all %}
     </table>
 {% endblock detailspanel %}
