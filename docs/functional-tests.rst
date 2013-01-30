@@ -2386,3 +2386,13 @@ Elle est en cache côté serveur en fonction de la colonne date_update.
     Initialement, le comportement était basé sur les entêtes HTTP ``Last-Modified``. Désormais, dans certains cas, nous forçons le raffraichissement du cache du navigateur à l'aide un paramètre GET ``?_u=<timestamp>``.
 
 
+#423 - [BUG] Défilement liste des interventions
+-----------------------------------------------
+
+Désormais les lignes du tableau sur sur un ligne de texte.
+
+#115 - Respecter les noms de tables et de champs en fonction du MLR
+-------------------------------------------------------------------
+
+Fait.
+
