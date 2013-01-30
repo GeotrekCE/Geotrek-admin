@@ -469,55 +469,73 @@ L.Handler.MultiPath = L.Handler.extend({
             this.setState(state);
         }
         else {
-            var layer_ll_s = [];
+            var start_layer_ll = null
+              , end_layer_ll = null
+              , via_markers = [];
+
+            var pos2latlng = function (pos, layer) {
+                debugger;
+                var used_pos = pos[0];
+                if (pos[0] == 0.0 && pos[1] != 1.0)
+                    used_pos = pos[1];
+                if (pos[0] == 1.0 && pos[1] != 0.0)
+                    used_pos = pos[1];
+                if (pos[0] != 1.0 && pos[1] == 0.0)
+                    used_pos = pos[0];
+                if (pos[0] != 0.0 && pos[1] == 1.0)
+                    used_pos = pos[0];
+                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
+                if (ll.length < 1) {
+                    console.error('getLatLngFromPos()');
+                    return null;
+                }
+                return ll[0];
+            };
+
             for (var i=0; i<topo.length; i++) {
                 var subtopo = topo[i]
-                  , paths = subtopo.paths
-                  , positions = subtopo.positions || [];
+                  , firsttopo = i==0
+                  , lasttopo = i==topo.length-1;
 
-                $.each(positions, function(k, pos) {
-                    var path_idx = parseInt(k)
-                      , layer = self.idToLayer(paths[path_idx]);
-                    if (pos[0] > pos[1]) {
-                        pos = pos.reverse();
-                    }
-                    // default value: this is not supposed to be a marker ?!
-                    if (pos[0] == 0.0 && pos[1] == 1.0) {
-                        console.log('Ignored marker ' + pos);
-                        return;
-                    }
-                    // Look for the relevant value:
-                    // 0 is the default in first_position, get the other value
-                    var used_pos = pos[0] == 0 ? pos[1] : pos[0];
-                    var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
-                    if (ll.length < 1) {
-                        console.error('getLatLngFromPos()');
-                        return;
-                    }
-                    layer_ll_s.push({
+                var paths = subtopo.paths
+                  , positions = subtopo.positions || {}
+                  , lastpath = paths.length-1;
+
+                // Safety check.
+                if (!('0' in positions)) positions['0'] = [0.0, 1.0];
+                if (!(lastpath in positions)) positions[lastpath] = [0.0, 1.0];
+
+                var firstlayer = self.idToLayer(paths[0])
+                  , lastlayer = self.idToLayer(paths[lastpath]);
+
+                if (firsttopo) {
+                    start_layer_ll.layer = firstlayer;
+                    start_layer_ll.ll = pos2latlng(positions['0'], firstlayer);
+                }
+                if (lasttopo) {
+                    end_layer_ll.layer = lastlayer;
+                    end_layer_ll.ll = pos2latlng(positions[lastpath], lastlayer);
+                }
+                else {
+                    var layer = lastlayer
+                      , ll = pos2latlng(positions[lastpath], layer);
+                    // Add a via marker
+                    via_markers.push({
                         layer: layer,
-                        ll: ll[0]
+                        marker: self.markersFactory.drag(ll, null, true)
                     });
-                });
+                }
             }
 
-            var start_layer_ll = layer_ll_s.shift();
-            var end_layer_ll = layer_ll_s.pop();
-
-            var via_markers = $.map(layer_ll_s, function(layer_ll) {
-                return {
-                    layer: layer_ll.layer,
-                    marker: self.markersFactory.drag(layer_ll.ll, null, true)
+            var start_layer_ll = layer_ll_s.shift()
+              , end_layer_ll = layer_ll_s.pop()
+              , state = {
+                    start_ll: start_layer_ll.ll,
+                    end_ll: end_layer_ll.ll,
+                    start_layer: start_layer_ll.layer,
+                    end_layer: end_layer_ll.layer,
+                    via_markers: via_markers
                 };
-            });
-
-            var state = {
-                start_ll: start_layer_ll.ll,
-                end_ll: end_layer_ll.ll,
-                start_layer: start_layer_ll.layer,
-                end_layer: end_layer_ll.layer,
-                via_markers: via_markers
-            };
 
             this.setState(state);
         }

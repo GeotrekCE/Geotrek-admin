@@ -101,102 +101,6 @@ class TopologyTest(TestCase):
             print a
         self.assertEqual(len(topology2.paths.all()), 3)
 
-    def test_serialize(self):
-        # At least two path are required
-        t = TopologyFactory.create(offset=1)
-        self.assertEqual(len(t.paths.all()), 1)
-
-        # This path as been created automatically
-        # as we will check only basic json serialization property
-        path = t.paths.all()[0]
-
-        # Reload as the geom of the topology will be build by trigger
-        t.reload()
-
-        test_objdict = dict(kind=t.kind,
-                           offset=1,
-                           # 0 referencing the index in paths of the only created path
-                           positions={'0':[0.0, 1.0]},
-                           paths=[ path.pk ]
-                       )
-
-        objdict = simplejson.loads(t.serialize())
-        self.assertDictEqual(objdict[0], test_objdict)
-
-    def test_serialize_point(self):
-        path = PathFactory.create()
-        topology = TopologyFactory.create(offset=1, no_path=True)
-        topology.add_path(path, start=0.5, end=0.5)
-        fieldvalue = topology.serialize()
-        # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGYMIXIN"}'
-        field = simplejson.loads(fieldvalue)
-        self.assertTrue(almostequal(field['lat'],  -5.983))
-        self.assertTrue(almostequal(field['lng'],  -1.363))
-        self.assertEqual(field['kind'],  "TOPOLOGY")
-
-    def test_deserialize(self):
-        path = PathFactory.create()
-        topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
-        self.assertEqual(topology.offset, 1)
-        self.assertEqual(topology.kind, Topology.KIND)
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(topology.aggregations.all()[0].path, path)
-        self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
-        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
-        
-        # Multiple paths
-        p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
-        p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
-        p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
-        pks = [p.pk for p in [p1,p2,p3]]
-        topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}' % (pks))
-        for i in range(3):
-            self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
-            self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
-
-        topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % (pks))
-        self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
-        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
-        self.assertEqual(topology.aggregations.all()[1].start_position, 0.0)
-        self.assertEqual(topology.aggregations.all()[1].end_position, 1.0)
-        self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
-        self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
-
-    def test_deserialize_point(self):
-        PathFactory.create()
-        # Take a point
-        p = Point(2, 1, 0, srid=settings.SRID)
-        p.transform(settings.API_SRID)
-        closest = Path.closest(p)
-        # Check closest path
-        self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
-        # The point has same x as first point of path, and y to 0 :
-        topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertAlmostEqual(topology.offset, -0.7071, 3)
-        self.assertEqual(len(topology.paths.all()), 1)
-        pagg = topology.aggregations.get()
-        self.assertTrue(almostequal(pagg.start_position, 0.5))
-        self.assertTrue(almostequal(pagg.end_position, 0.5))
-
-    def test_deserialize_serialize(self):
-        path = PathFactory.create(geom=LineString((1,1,1), (2,2,2), (2,0,0)))
-        before = TopologyFactory.create(offset=1, no_path=True)
-        before.add_path(path, start=0.5, end=0.5)
-        # Reload from DB
-        before = Topology.objects.get(pk=before.pk)
-        
-        # Deserialize its serialized version !
-        after = Topology.deserialize(before.serialize())
-        # Reload from DB
-        after = Topology.objects.get(pk=after.pk)
-        
-
-        self.assertEqual(len(before.paths.all()), len(after.paths.all()))
-        self.assertTrue(almostequal(before.aggregations.all()[0].start_position,
-                                    after.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
-                                    after.aggregations.all()[0].end_position))
-
     def test_point_geom_3d(self):
         """
            + 
@@ -560,3 +464,120 @@ class TopologyCornerCases(TestCase):
         topo.save()
         self.assertEqual(topo.geom, LineString((3,0,0),(10,0,0),(10,5,0),(20,5,0),(20,0,0),
                                                (10,0,0),(3,0,0)))
+
+
+
+class TopologySerialization(TestCase):
+
+    def test_serialize_line(self):
+        path = PathFactory.create()
+        test_objdict = dict(kind=Topology.KIND,
+                            offset=1.0,
+                            positions={},
+                            paths=[ path.pk ])
+        # +|========>+
+        topo = TopologyFactory.create(offset=1.0, no_path=True)
+        topo.add_path(path)
+        test_objdict['positions']['0'] = [0.0, 1.0]
+        objdict = simplejson.loads(topo.serialize())
+        self.assertDictEqual(objdict[0], test_objdict)
+
+        # +<========|+
+        topo = TopologyFactory.create(offset=1.0, no_path=True)
+        topo.add_path(path, start=1.0, end=0.0)
+        test_objdict['positions']['0'] = [1.0, 0.0]
+        objdict = simplejson.loads(topo.serialize())
+        self.assertDictEqual(objdict[0], test_objdict)
+
+        # +|========>+<========|+
+        path2 = PathFactory.create()
+        topo = TopologyFactory.create(offset=1.0, no_path=True)
+        topo.add_path(path, start=0.0, end=1.0)
+        topo.add_path(path2, start=1.0, end=0.0)
+        test_objdict['paths'] = [path.pk, path2.pk]
+        test_objdict['positions'] = {'0': [0.0, 1.0], '1': [1.0, 0.0]}
+        objdict = simplejson.loads(topo.serialize())
+        self.assertDictEqual(objdict[0], test_objdict)
+
+        # +<========|+|========>+
+        topo = TopologyFactory.create(offset=1.0, no_path=True)
+        topo.add_path(path, start=1.0, end=0.0)
+        topo.add_path(path2, start=0.0, end=1.0)
+        test_objdict['paths'] = [path.pk, path2.pk]
+        test_objdict['positions'] = {'0': [1.0, 0.0],'1': [0.0, 1.0]}
+        objdict = simplejson.loads(topo.serialize())
+        self.assertDictEqual(objdict[0], test_objdict)
+
+    def test_serialize_point(self):
+        path = PathFactory.create()
+        topology = TopologyFactory.create(offset=1, no_path=True)
+        topology.add_path(path, start=0.5, end=0.5)
+        fieldvalue = topology.serialize()
+        # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
+        field = simplejson.loads(fieldvalue)
+        self.assertTrue(almostequal(field['lat'],  -5.983))
+        self.assertTrue(almostequal(field['lng'],  -1.363))
+        self.assertEqual(field['kind'],  "TOPOLOGY")
+
+    def test_deserialize_line(self):
+        path = PathFactory.create()
+        topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
+        self.assertEqual(topology.offset, 1)
+        self.assertEqual(topology.kind, Topology.KIND)
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.aggregations.all()[0].path, path)
+        self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
+
+    def test_deserialize_multiple_lines(self):
+        # Multiple paths
+        p1 = PathFactory.create(geom=LineString((0,0,0), (2,2,2)))
+        p2 = PathFactory.create(geom=LineString((2,2,2), (2,0,0)))
+        p3 = PathFactory.create(geom=LineString((2,0,0), (4,0,0)))
+        pks = [p.pk for p in [p1,p2,p3]]
+        topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}' % (pks))
+        for i in range(3):
+            self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
+            self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
+
+        topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % (pks))
+        self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
+        self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
+        self.assertEqual(topology.aggregations.all()[1].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[1].end_position, 1.0)
+        self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
+        self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
+
+    def test_deserialize_point(self):
+        PathFactory.create()
+        # Take a point
+        p = Point(2, 1, 0, srid=settings.SRID)
+        p.transform(settings.API_SRID)
+        closest = Path.closest(p)
+        # Check closest path
+        self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
+        # The point has same x as first point of path, and y to 0 :
+        topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
+        self.assertAlmostEqual(topology.offset, -0.7071, 3)
+        self.assertEqual(len(topology.paths.all()), 1)
+        pagg = topology.aggregations.get()
+        self.assertTrue(almostequal(pagg.start_position, 0.5))
+        self.assertTrue(almostequal(pagg.end_position, 0.5))
+
+    def test_deserialize_serialize(self):
+        path = PathFactory.create(geom=LineString((1,1,1), (2,2,2), (2,0,0)))
+        before = TopologyFactory.create(offset=1, no_path=True)
+        before.add_path(path, start=0.5, end=0.5)
+        # Reload from DB
+        before = Topology.objects.get(pk=before.pk)
+        
+        # Deserialize its serialized version !
+        after = Topology.deserialize(before.serialize())
+        # Reload from DB
+        after = Topology.objects.get(pk=after.pk)
+        
+        self.assertEqual(len(before.paths.all()), len(after.paths.all()))
+        self.assertTrue(almostequal(before.aggregations.all()[0].start_position,
+                                    after.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
+                                    after.aggregations.all()[0].end_position))

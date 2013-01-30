@@ -68,6 +68,12 @@ L.GeomUtils = (function() {
               , polyline_len = d_len.length
               , polyline_distances = d_len.distances;
 
+            // Simple situation... simple solution.
+            if (pos_list.length == 1) {
+                 if (pos_list[0] == 0.0) return [polyline_lls[0]];
+                 if (pos_list[0] == 1.0) return [polyline_lls[polyline_lls.length-1]];
+            }
+
             var ds = $.map(pos_list, function(pos) { return polyline_len * pos; });
 
             var res = [];
