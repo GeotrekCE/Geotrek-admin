@@ -7,8 +7,8 @@
             <li title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
               <span class="path">{{ aggr.path.name_display|safe }}</span>
               <span class="aggregation">
-                {% if aggr.offset > 0 %}
-                  ⇲{{ poi.offset|floatformat:"2" }}m
+                {% if aggr.offset != 0 %}
+                  ⇲{{ aggr.offset|floatformat:"2" }}m
                 {% endif %}
                 {% if aggr.is_full %}
                   (⇤100%⇥)

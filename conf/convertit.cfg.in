@@ -7,11 +7,10 @@ pyramid.debug_notfound = false
 pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 
-download_dir = ${options.download_dir}
-converted_dir = ${options.converted_dir}
-converted_url = converted
-converted_max_age = 60
+convertit.downloads_path = ${options.download_dir}
+convertit.converted_path = ${options.converted_dir}
 convertit.converted_url = converted
+convertit.converted_max_age = 60
 # Available options:
 #   url_hostname: the url hostname
 #   url_port: the url port

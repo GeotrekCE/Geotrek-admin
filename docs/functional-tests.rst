@@ -2386,3 +2386,26 @@ Elle est en cache côté serveur en fonction de la colonne date_update.
     Initialement, le comportement était basé sur les entêtes HTTP ``Last-Modified``. Désormais, dans certains cas, nous forçons le raffraichissement du cache du navigateur à l'aide un paramètre GET ``?_u=<timestamp>``.
 
 
+#423 - [BUG] Défilement liste des interventions
+-----------------------------------------------
+
+Désormais les lignes du tableau sur sur un ligne de texte.
+
+#115 - Respecter les noms de tables et de champs en fonction du MLR
+-------------------------------------------------------------------
+
+Fait.
+
+
+#302 - PK début / fin - affichage
+---------------------------------
+
+Les pk début et fin sont affichés sur les listes de tronçons.
+
+Si le premier tronçon n'est pas couvert complètement, alors sera affiché le point de départ en mètres (ainsi que les pk au survol). De même pour le dernier.
+
+Si le décallage est différent de zéro, il est affiché aussi pour l'ensemble des tronçons.
+
+Pour les évènements ponctuels, une seule valeur est affichée.
+
+

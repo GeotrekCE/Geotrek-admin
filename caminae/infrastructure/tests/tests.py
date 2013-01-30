@@ -50,6 +50,18 @@ class InfrastructureViewsTest(MapEntityTest):
         }
 
 
+class PointInfrastructureViewsTest(InfrastructureViewsTest):
+    def get_good_data(self):
+        PathFactory.create()
+        return {
+            'name': 'test',
+            'description': 'oh',
+            'structure': default_structure().pk,
+            'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
+            'topology': '{"lat": 0.42, "lng": 0.666}'
+        }
+
+
 class SignageViewsTest(InfrastructureViewsTest):
     model = Signage
     modelfactory = SignageFactory
