@@ -158,7 +158,7 @@ Caminae.TopologyHelper = (function() {
           , data = []
           , layer = L.featureGroup();
 
-        if (DEBUG) console.log('Topology has ' + computed_paths.length + ' sub-topologies.');
+        if (window.DEBUG) console.log('Topology has ' + computed_paths.length + ' sub-topologies.');
         for (var i = 0; i < computed_paths.length; i++ ) {
             var cpath = computed_paths[i]
               , paths = $.map(edges[i], function(edge) { return edge.id; })
@@ -171,7 +171,7 @@ Caminae.TopologyHelper = (function() {
             if (!topo) break;
 
             data.push(topo.topology);
-            if (DEBUG) console.log(JSON.stringify(topo.topology));
+            if (window.DEBUG) console.log(JSON.stringify(topo.topology));
 
             // Multilines for each sub-topology
             var group_layer = topo.multipolyline;
@@ -180,7 +180,7 @@ Caminae.TopologyHelper = (function() {
             group_layer.step_idx = i;
             layer.addLayer(group_layer);
         }
-        if (DEBUG) console.log('----');
+        if (window.DEBUG) console.log('----');
 
         return {
             layer: layer,
