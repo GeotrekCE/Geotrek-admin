@@ -12,7 +12,7 @@ L.GeomUtils = (function() {
         // Use LatLng
         getPercentageDistanceFromPolyline: function(ll, polyline) {
             // Will test every point, considering a point is in a segment with an error of 5 meters
-            return self.getPercentageDistance(ll, polyline.getLatLngs(), 5 /* in meters */, true);
+            return self.getPercentageDistance(ll, polyline.getLatLngs(), 2 /* in meters */, true);
         },
 
         // May be used for performance issue but you will loose precision
