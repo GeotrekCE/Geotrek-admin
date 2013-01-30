@@ -343,6 +343,10 @@ span.filter-info {
     color: #B94A48;
 }
 
+label.requiredField {
+    font-weight: bold;
+}
+
 .help-inline {
     font-size: 0.5em;
 }
