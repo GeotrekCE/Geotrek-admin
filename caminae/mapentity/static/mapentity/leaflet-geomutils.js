@@ -48,9 +48,12 @@ L.GeomUtils = (function() {
             
             if (!distance_found) {
                 console.warn('Could not find ' + x + ' in ' + xs);
-                return null;
+                // Try with closest point.
+                var seg = L.GeomUtils.closestSegment(x, xs)
+                  , p = L.LineUtil.closestPointOnSegment(x, seg[0], seg[1]);
+                return L.GeomUtils.getPercentageDistance(p, xs, epsilon, only_first);
             }
-            var percent = Math.round((distance / xs_len)*100)/100;
+            var percent = Math.round((distance / xs_len)*10000)/10000;
             return { 'distance': percent, 'closest': closest_idx };
         },
 
@@ -197,6 +200,19 @@ L.GeomUtils = (function() {
                p2 = map.latLngToLayerPoint(latlngB);
                closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
             return map.layerPointToLatLng(closest);
+        },
+
+        closestSegment: function (p, points) {
+            var mindist = Number.MAX_VALUE
+              , idx = 0;
+            for (var i=0; i<points.length-1; i++) {
+                var x = points[i]
+                  , d = p.distanceTo(x);
+                if (d < mindist) {
+                    idx = i;
+                }
+            }
+            return [points[idx], points[idx+1]];
         },
 
         closestOnLine: function (map, latlng, linestring) {
