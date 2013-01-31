@@ -12,12 +12,12 @@ L.GeomUtils = (function() {
         // Use LatLng
         getPercentageDistanceFromPolyline: function(ll, polyline) {
             // Will test every point, considering a point is in a segment with an error of 2 meters
-            return self.getPercentageDistance(ll, polyline.getLatLngs(), 2 /* in meters */, true);
+            return self.getPercentageDistance(ll, polyline.getLatLngs(), 5 /* in meters */, true);
         },
 
         // May be used for performance issue but you will loose precision
         getPercentageDistanceFromPolylineAsPoints: function(point, polyline) {
-            return self.getPercentageDistance(point, polyline._parts[0], 0.5, true);
+            return self.getPercentageDistance(point, polyline._parts[0], 5, true);
         },
 
         // You may pass latlng or point to this function
@@ -45,8 +45,13 @@ L.GeomUtils = (function() {
 
                 xs_len += x1.distanceTo(x2);
             }
+            
+            if (!distance_found) {
+                console.warn('Could not find ' + x + ' in ' + xs);
+                return null;
+            }
             var percent = Math.round((distance / xs_len)*100)/100;
-            return distance_found ? { 'distance': percent, 'closest': closest_idx } : null;
+            return { 'distance': percent, 'closest': closest_idx };
         },
 
         getLatLngFromPos: function(map, polyline, pos_list, equal_delta) {

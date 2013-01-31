@@ -138,10 +138,17 @@ Caminae.TopologyHelper = (function() {
         var cleanpaths = []
           , cleanpositions = {};
         for (var i=0; i<paths.length; i++) {
-            if (positions[i][0] != positions[i][1]) {
-                cleanpaths.push(paths[i]);
-                cleanpositions[i] = positions[i];
+            var path = paths[i];
+            if (i in positions) {
+                if (positions[i][0] != positions[i][1] && cleanpaths.indexOf(path) == -1) {
+                    cleanpaths.push(path);
+                    cleanpositions[i] = positions[i];
+                }
             }
+            else {
+                cleanpaths.push(path);
+            }
+            
         }
         paths = cleanpaths;
         positions = cleanpositions;
