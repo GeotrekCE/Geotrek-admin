@@ -28,6 +28,7 @@ class TrekForm(TopologyForm):
                 Div(
                     'name',
                     'published',
+                    'is_park_centered',
                     'departure',
                     'arrival',
                     'duration',
@@ -37,7 +38,6 @@ class TrekForm(TopologyForm):
                     'access',
                     'description_teaser',
                     'description',
-                    'is_park_centered',
                     css_id="main",
                     css_class="tab-pane active"
                 ),
