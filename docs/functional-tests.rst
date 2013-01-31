@@ -2453,5 +2453,32 @@ Fixé. Elle n'apparait plus comme non valide.
 
 Pas reproduit. Remis au backlog.
 
+#481 - ITINERAIRE - Remonter le champ booléen EN CŒUR DE PARC en haut de page sous le champs PUBLIE.
+----------------------------------------------------------------------------------------------------
+
+Fait.
+
+#468 - Intégrer la couche ZONES REGLEMENTAIRES fournie par le PNE
+-----------------------------------------------------------------
+
+Fait.
+
+#273 - Terminologie INTERVENTIONS Status
+----------------------------------------
+
+Désormais "Statut". 
+
+#466 - [INTERROGATION] Découpage tronçon et attributs.
+------------------------------------------------------
+
+Les attributs sont dupliqués/conservés.
+
+#454 - FICHIERS LIES - auteur
+-----------------------------
+
+L'auteur par défaut est le nom d'utilisateur, mais il est possible de le changer.
+
+
+
 
 
