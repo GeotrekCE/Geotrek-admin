@@ -2431,3 +2431,27 @@ Les fichiers liés sont triés par date d'ajout (décroissant).
 
 Les valeurs dans les sélecteurs d'emprise sont désormais triés par ordre alphanumérique.
 
+
+#344 - [BUG] Edition trek : la topologie existante perd en précision (=décalage) après chargement
+-------------------------------------------------------------------------------------------------
+
+Le snapping ne s'active plus tout seul au chargement de la topologie.
+
+
+#463 - [BUG] Saisie d'une topologie linéraire
+---------------------------------------------
+
+Certains problèmes persistent, notammé liés au bug #457. Mais la plupart des situations ont été fixées.
+
+#461 - [BUG] Saisie d'une topologie circulaire
+----------------------------------------------
+
+Fixé. Elle n'apparait plus comme non valide.
+
+#418 - [BUG] Ajout de tronçon - apparait en double
+--------------------------------------------------
+
+Pas reproduit. Remis au backlog.
+
+
+

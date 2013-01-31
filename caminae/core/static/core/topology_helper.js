@@ -148,7 +148,6 @@ Caminae.TopologyHelper = (function() {
             else {
                 cleanpaths.push(path);
             }
-            
         }
         paths = cleanpaths;
         positions = cleanpositions;
