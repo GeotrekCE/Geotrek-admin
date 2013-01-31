@@ -73,10 +73,15 @@ def force3D(geom):
     return Point(geom.x, geom.y, 0)
 
 
-def wkt_to_geom(wkt, srid_from=None):
+def wkt_to_geom(wkt, srid_from=None, silent=False):
     if srid_from is None:
         srid_from = settings.API_SRID
-    return fromstr(wkt, srid=srid_from)
+    try:
+        return fromstr(wkt, srid=srid_from)
+    except (OGRException, GEOSException) as e:
+        if not silent:
+            raise e
+        return None
 
 def transform_wkt(wkt, srid_from=None, srid_to=None):
     """

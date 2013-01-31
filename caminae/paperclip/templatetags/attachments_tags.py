@@ -14,7 +14,7 @@ def attachment_form(context, obj):
     Renders a "upload attachment" form.
     """
     return {
-        'attachment_form': AttachmentForm(),
+        'attachment_form': AttachmentForm(context['request']),
         'attachment_form_url': add_url_for_obj(obj),
         'next': context['request'].build_absolute_uri(),
     }

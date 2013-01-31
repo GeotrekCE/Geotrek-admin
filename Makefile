@@ -37,7 +37,7 @@ bin/python:
 	bin/python bootstrap.py
 	rm bootstrap.py
 
-install: etc/settings.ini bin/buildout bin/casperjs
+install: etc/settings.ini bin/python bin/casperjs
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm {} \;

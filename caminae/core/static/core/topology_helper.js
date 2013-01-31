@@ -9,25 +9,31 @@ Caminae.TopologyHelper = (function() {
           , positions = {};
 
         if (!polyline_start || !polyline_end) {
-            console.warn("Could not compute distances without polylines.");
+            console.error("Could not compute distances without polylines.");
             return null;  // TODO: clean-up before give-up ?
+        }
+
+        if (window.DEBUG) {
+            console.log('Start on layer ' + polyline_start.properties.pk + ' ' + ll_start.toString());
+            console.log('End on layer ' + polyline_end.properties.pk + ' ' + ll_end.toString());
         }
 
         var percentageDistance = L.GeomUtils.getPercentageDistanceFromPolyline;
         var start = percentageDistance(ll_start, polyline_start)
           , end = percentageDistance(ll_end, polyline_end);
         if (!start || !end) {
-            console.warn("Could not compute distances withing paths.");
+            console.error("Could not compute distances withing paths.");
             return null;  // TODO: clean-up before give-up ?
         }
         var closest_first_idx = start.closest
           , closest_end_idx = end.closest;
 
-
         var lls_tmp, lls_end, latlngs = [];
 
         if (single_path) {
             paths = paths.unique();
+            positions[0] = [start.distance, end.distance];
+
             var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
             if (closest_first_idx < closest_end_idx) {
                 /*        A     B 
@@ -35,16 +41,13 @@ Caminae.TopologyHelper = (function() {
                  */
                 _ll_end = ll_end, _ll_start = ll_start;
                 _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
-                positions[0] = [start.distance, end.distance];
             } else {
                 /*        B     A 
                  *   +----|=====|---->
                  */
                 _ll_end = ll_start, _ll_start = ll_end;
                 _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
-                positions[0] = [end.distance, start.distance];
             }
-
             lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx+1);
             lls_tmp.unshift(_ll_start);
             lls_tmp.push(_ll_end);
@@ -129,6 +132,30 @@ Caminae.TopologyHelper = (function() {
             latlngs.push(lls_tmp);
         }
 
+        // Clean-up :
+        // We basically remove all points where position is [x,x]
+        // This can happen at extremity points...
+        var cleanpaths = []
+          , cleanpositions = {};
+        for (var i=0; i<paths.length; i++) {
+            var path = paths[i];
+            if (i in positions) {
+                if (positions[i][0] != positions[i][1] && cleanpaths.indexOf(path) == -1) {
+                    cleanpaths.push(path);
+                    cleanpositions[i] = positions[i];
+                }
+            }
+            else {
+                cleanpaths.push(path);
+            }
+        }
+        paths = cleanpaths;
+        positions = cleanpositions;
+
+        // Safety warning.
+        if (paths.length == 0)
+            console.error('Empty topology. Expect problems. (' + JSON.stringify({positions:positions, paths:paths}) + ')');
+
         return {
             topology: {
                 offset: offset,       // Float for offset
@@ -158,12 +185,14 @@ Caminae.TopologyHelper = (function() {
           , data = []
           , layer = L.featureGroup();
 
-        if (window.DEBUG) console.log('Topology has ' + computed_paths.length + ' sub-topologies.');
+        if (window.DEBUG) { console.log('----'); console.log('Topology has ' + computed_paths.length + ' sub-topologies.'); }
+
         for (var i = 0; i < computed_paths.length; i++ ) {
             var cpath = computed_paths[i]
               , paths = $.map(edges[i], function(edge) { return edge.id; })
-              , polylines = $.map(edges[i], function(edge) { return idToLayer(edge.id); })
-              , topo = buildSubTopology(paths,
+              , polylines = $.map(edges[i], function(edge) { return idToLayer(edge.id); });
+
+            var topo = buildSubTopology(paths,
                                         polylines, 
                                         cpath.from_pop.ll,
                                         cpath.to_pop.ll,
@@ -171,7 +200,7 @@ Caminae.TopologyHelper = (function() {
             if (!topo) break;
 
             data.push(topo.topology);
-            if (window.DEBUG) console.log(JSON.stringify(topo.topology));
+            if (window.DEBUG) console.log('subtopo[' + i + '] : ' + JSON.stringify(topo.topology));
 
             // Multilines for each sub-topology
             var group_layer = topo.multipolyline;

@@ -102,7 +102,7 @@ msgstr "Enjeu"
 
 #: models.py:46
 msgid "Intervention status"
-msgstr "Suivi"
+msgstr "Statut"
 
 #: models.py:49
 msgid "Intervention type"
@@ -126,15 +126,15 @@ msgstr "Intervention"
 
 #: models.py:185
 msgid "Status"
-msgstr "Suivi"
+msgstr "Statut"
 
 #: models.py:189
 msgid "Intervention's status"
-msgstr "Suivi"
+msgstr "Statut"
 
 #: models.py:190
 msgid "Intervention's statuses"
-msgstr "Suivis"
+msgstr "Statuts"
 
 #: models.py:199 models.py:348
 msgid "Type"

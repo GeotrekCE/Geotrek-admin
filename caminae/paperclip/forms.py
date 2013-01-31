@@ -17,13 +17,14 @@ class AttachmentForm(forms.ModelForm):
         exclude = ('creator', 'date_insert', 'date_update',
                    'content_type', 'object_id', 'content_object' )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(
                 Submit('submit_attachment', _('Add attachment'),
                     css_class="btn-primary offset1")
         )
         super(AttachmentForm, self).__init__(*args, **kwargs)
+        self.fields['author'].initial = request.user
 
     def save(self, request, obj, *args, **kwargs):
         self.instance.creator = request.user

@@ -2431,3 +2431,54 @@ Les fichiers liés sont triés par date d'ajout (décroissant).
 
 Les valeurs dans les sélecteurs d'emprise sont désormais triés par ordre alphanumérique.
 
+
+#344 - [BUG] Edition trek : la topologie existante perd en précision (=décalage) après chargement
+-------------------------------------------------------------------------------------------------
+
+Le snapping ne s'active plus tout seul au chargement de la topologie.
+
+
+#463 - [BUG] Saisie d'une topologie linéraire
+---------------------------------------------
+
+Certains problèmes persistent, notammé liés au bug #457. Mais la plupart des situations ont été fixées.
+
+#461 - [BUG] Saisie d'une topologie circulaire
+----------------------------------------------
+
+Fixé. Elle n'apparait plus comme non valide.
+
+#418 - [BUG] Ajout de tronçon - apparait en double
+--------------------------------------------------
+
+Pas reproduit. Remis au backlog.
+
+#481 - ITINERAIRE - Remonter le champ booléen EN CŒUR DE PARC en haut de page sous le champs PUBLIE.
+----------------------------------------------------------------------------------------------------
+
+Fait.
+
+#468 - Intégrer la couche ZONES REGLEMENTAIRES fournie par le PNE
+-----------------------------------------------------------------
+
+Fait.
+
+#273 - Terminologie INTERVENTIONS Status
+----------------------------------------
+
+Désormais "Statut". 
+
+#466 - [INTERROGATION] Découpage tronçon et attributs.
+------------------------------------------------------
+
+Les attributs sont dupliqués/conservés.
+
+#454 - FICHIERS LIES - auteur
+-----------------------------
+
+L'auteur par défaut est le nom d'utilisateur, mais il est possible de le changer.
+
+
+
+
+

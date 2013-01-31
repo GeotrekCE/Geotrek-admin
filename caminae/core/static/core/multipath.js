@@ -207,12 +207,21 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
+        if (window.DEBUG) {
+            console.log('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
+                                                           latlng:state.start_ll.toString()},
+                                                    end:  {pk:state.end_layer.properties.pk,
+                                                           latlng:state.end_ll.toString()}})+')');
+        }
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
+            if (window.DEBUG) {
+                console.log('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
+                                                                 latlng: via_marker.marker.getLatLng().toString()}) + ')');
+            }
             self.addViaStep(via_marker.marker, idx + 1);
-
             self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
         });
     },
@@ -306,12 +315,8 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var self = this;
-
-        // Restrict snaplist to layer and snapdistance to max_value
-        // will ensure this get snapped and to the layer clicked
-        var snapdistance = Number.MAX_VALUE;
-        var closest = L.GeomUtils.closest(self.map, marker, [ layer ], snapdistance);
-        marker.editing.updateClosest(marker, closest);
+        var closest = L.GeomUtils.closestOnLine(self.map, marker.getLatLng(), layer);
+        marker.editing.updateClosest(marker, [layer, closest]);
     },
 
     createStep: function(marker, idx) {
@@ -469,56 +474,75 @@ L.Handler.MultiPath = L.Handler.extend({
             this.setState(state);
         }
         else {
-            var layer_ll_s = [];
-            for (var i=0; i<topo.length; i++) {
-                var subtopo = topo[i]
-                  , paths = subtopo.paths
-                  , positions = subtopo.positions || [];
+            var start_layer_ll = {}
+              , end_layer_ll = {}
+              , via_markers = [];
 
-                $.each(positions, function(k, pos) {
-                    var path_idx = parseInt(k)
-                      , layer = self.idToLayer(paths[path_idx]);
-                    if (pos[0] > pos[1]) {
-                        pos = pos.reverse();
-                    }
-                    // default value: this is not supposed to be a marker ?!
-                    if (pos[0] == 0.0 && pos[1] == 1.0) {
-                        console.log('Ignored marker ' + pos);
-                        return;
-                    }
-                    // Look for the relevant value:
-                    // 0 is the default in first_position, get the other value
-                    var used_pos = pos[0] == 0 ? pos[1] : pos[0];
-                    var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
-                    if (ll.length < 1) {
-                        console.error('getLatLngFromPos()');
-                        return;
-                    }
-                    layer_ll_s.push({
-                        layer: layer,
-                        ll: ll[0]
-                    });
-                });
-            }
-
-            var start_layer_ll = layer_ll_s.shift();
-            var end_layer_ll = layer_ll_s.pop();
-
-            var via_markers = $.map(layer_ll_s, function(layer_ll) {
-                return {
-                    layer: layer_ll.layer,
-                    marker: self.markersFactory.drag(layer_ll.ll, null, true)
-                };
-            });
-
-            var state = {
-                start_ll: start_layer_ll.ll,
-                end_ll: end_layer_ll.ll,
-                start_layer: start_layer_ll.layer,
-                end_layer: end_layer_ll.layer,
-                via_markers: via_markers
+            var pos2latlng = function (pos, layer) {
+                var used_pos = pos;
+                if (pos instanceof Array) {
+                    used_pos = pos[0];
+                    if (pos[0] == 0.0 && pos[1] != 1.0)
+                        used_pos = pos[1];
+                    if (pos[0] == 1.0 && pos[1] != 0.0)
+                        used_pos = pos[1];
+                    if (pos[0] != 1.0 && pos[1] == 0.0)
+                        used_pos = pos[0];
+                    if (pos[0] != 0.0 && pos[1] == 1.0)
+                        used_pos = pos[0];
+                    console.log("Chose " + used_pos + " for " + pos);
+                }
+                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ])[0];
+                if (!ll) {
+                    throw ('Could not interpolate ' + used_pos + ' on layer ' + layer.properties.pk);
+                }
+                return ll;
             };
 
+            for (var i=0; i<topo.length; i++) {
+                var subtopo = topo[i]
+                  , firsttopo = i==0
+                  , lasttopo = i==topo.length-1;
+
+                var paths = subtopo.paths
+                  , positions = subtopo.positions || {}
+                  , lastpath = paths.length-1;
+
+                // Safety check.
+                if (!('0' in positions)) positions['0'] = [0.0, 1.0];
+                if (!(lastpath in positions)) positions[lastpath] = [0.0, 1.0];
+
+                var firstlayer = self.idToLayer(paths[0])
+                  , lastlayer = self.idToLayer(paths[lastpath]);
+
+                if (firsttopo) {
+                    start_layer_ll.layer = firstlayer;
+                    start_layer_ll.ll = pos2latlng(positions['0'][0], firstlayer);
+                }
+                if (lasttopo) {
+                    end_layer_ll.layer = lastlayer;
+                    end_layer_ll.ll = pos2latlng(positions[lastpath][1], lastlayer);
+                }
+                else {
+                    var layer = lastlayer
+                      , ll = pos2latlng(positions[lastpath], layer);
+                    // Add a via marker
+                    via_markers.push({
+                        layer: layer,
+                        marker: self.markersFactory.drag(ll, null, true)
+                    });
+                }
+            }
+
+            var state = {
+                    start_ll: start_layer_ll.ll,
+                    end_ll: end_layer_ll.ll,
+                    start_layer: start_layer_ll.layer,
+                    end_layer: end_layer_ll.layer,
+                    via_markers: via_markers
+                };
+
+            // Restore state as if a user clicks.
             this.setState(state);
         }
     },
