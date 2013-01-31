@@ -11,6 +11,7 @@ from caminae.common.models import FileType
 
 
 class AttachmentManager(models.Manager):
+
     def attachments_for_object(self, obj):
         object_type = ContentType.objects.get_for_model(obj)
         return self.filter(content_type__pk=object_type.id,
@@ -38,6 +39,7 @@ class Attachment(models.Model):
     filetype = models.ForeignKey(FileType, verbose_name=_('File type'))
 
     creator = models.ForeignKey(User, related_name="created_attachments", verbose_name=_('Creator'))
+    author = models.CharField(blank=True, default='', max_length=128, db_column='auteur', verbose_name=_('Author'))
     title = models.CharField(blank=True, default='', max_length=128, db_column='titre', verbose_name=_(u"Title"))
     legend = models.CharField(blank=True, default='', max_length=128, db_column='legende', verbose_name=_(u"Legend"))
 

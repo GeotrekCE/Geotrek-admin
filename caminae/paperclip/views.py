@@ -30,7 +30,7 @@ def add_attachment(request, app_label, module_name, pk,
     if model is None:
         return HttpResponseRedirect(next_url)
     obj = get_object_or_404(model, pk=pk)
-    form = AttachmentForm(request.POST, request.FILES)
+    form = AttachmentForm(request, request.POST, request.FILES)
 
     if form.is_valid():
         form.save(request, obj)
@@ -62,7 +62,7 @@ def delete_attachment(request, attachment_pk):
 
 
 def ajax_validate_attachment(request):
-    form = AttachmentForm(request.POST, request.FILES)
+    form = AttachmentForm(request, request.POST, request.FILES)
     return HttpResponse(simplejson.dumps(form.errors), content_type='application/json')
 
 

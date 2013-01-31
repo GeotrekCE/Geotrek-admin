@@ -8,7 +8,7 @@
         <thead>
             <th>{{ att|verbose:"title" }}</th>
             <th>{{ att|verbose:"legend" }}</th>
-            <th>{{ att|verbose:"creator" }}</th>
+            <th>{{ att|verbose:"author" }}</th>
             <th>{{ att|verbose:"date_insert" }}</th>
             <th>{{ att|verbose:"date_update" }}</th>
             {% if can_delete_attachment %}
@@ -29,7 +29,7 @@
                 </a> 
             </td>
             <td>{{ att.legend }}</td>
-            <td>{{ att.creator }}</td>
+            <td>{{ att.author }}</td>
             <td>{{ att.date_insert }}</td>
             <td>{{ att.date_update }}</td>
             {% if can_delete_attachment %}
