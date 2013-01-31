@@ -2478,7 +2478,22 @@ Les attributs sont dupliqués/conservés.
 
 L'auteur par défaut est le nom d'utilisateur, mais il est possible de le changer.
 
+#350 - OFFRE DE RANDO - Titre de l'application
+----------------------------------------------
 
+Voir fichier de configuration d'exemple.
 
+#469 - OFFRE RANDO - Templates 404 et 500
+-----------------------------------------
 
+Pages basiques. Des photos d'avalanches, d'hélicopters seraient sympas :)
 
+#407 - OFFRE RANDO - Enlever filtre accessibilité
+-------------------------------------------------
+
+Fait.
+
+#479 - OFFRE de RANDO - Filtres secteurs et communes
+----------------------------------------------------
+
+Nous utilisons désormais des listes avec complétion.
