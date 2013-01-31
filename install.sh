@@ -155,8 +155,8 @@ local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg
 
             cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
 # Automatically added by Caminae installation :
-local        ${dbuser}        md5
-host     ${dbname}            md5
+local    ${dbname}     ${dbuser}                   md5
+host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
 _EOF_
             sudo /etc/init.d/postgresql restart
         fi
