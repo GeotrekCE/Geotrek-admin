@@ -11,7 +11,7 @@ L.GeomUtils = (function() {
 
         // Use LatLng
         getPercentageDistanceFromPolyline: function(ll, polyline) {
-            // Will test every point, considering a point is in a segment with an error of 5 meters
+            // Will test every point, considering a point is in a segment with an error of 2 meters
             return self.getPercentageDistance(ll, polyline.getLatLngs(), 2 /* in meters */, true);
         },
 
@@ -22,7 +22,7 @@ L.GeomUtils = (function() {
 
         // You may pass latlng or point to this function
         getPercentageDistance: function(x, xs, epsilon, only_first) {
-            var xs_len = 0
+            var xs_len = 0.0
               , distance_found = false
               , closest_idx = null
               , distance = Number.MAX_VALUE;
@@ -49,14 +49,13 @@ L.GeomUtils = (function() {
             return distance_found ? { 'distance': percent, 'closest': closest_idx } : null;
         },
 
-        // todo accept an array of positions ?
         getLatLngFromPos: function(map, polyline, pos_list, equal_delta) {
-            equal_delta === equal_delta === undefined ? 5 /*in meters*/ : equal_delta;
+            equal_delta === equal_delta === undefined ? 2 /*in meters*/ : equal_delta;
 
+            // Safety check : should be ordered and 0.0 <= X <=1.0!
             $.each(pos_list, function(i, pos) {
                 var prev_pos = pos[i - 1];
                 var sorted = prev_pos === undefined ? true : pos > prev_pos;
-
                 if (! (pos >= 0 && pos <= 1 && sorted)) {
                     throw 'Wrong value: ' + pos_list;
                 }
@@ -70,8 +69,8 @@ L.GeomUtils = (function() {
 
             // Simple situation... simple solution.
             if (pos_list.length == 1) {
-                 if (pos_list[0] == 0.0) return [polyline_lls[0]];
-                 if (pos_list[0] == 1.0) return [polyline_lls[polyline_lls.length-1]];
+                 if (pos_list[0] == 0.0) return [self.cloneLatLng(polyline_lls[0])];
+                 if (pos_list[0] == 1.0) return [self.cloneLatLng(polyline_lls[polyline_lls.length-1])];
             }
 
             var ds = $.map(pos_list, function(pos) { return polyline_len * pos; });
@@ -82,7 +81,8 @@ L.GeomUtils = (function() {
             var current_distance = ds.shift()
               , current_geom = [];
 
-            if (current_distance == 0) {
+            // If pos is 0.0, take first latlng
+            if (current_distance == 0.0) {
                 res.push(self.cloneLatLng(polyline_distances[0].x1));
                 current_distance = ds.shift()
             }
@@ -115,6 +115,10 @@ L.GeomUtils = (function() {
             }
 
             if (res.length < 1) console.warn("Could not get LatLng from position " + pos_list);
+            if (window.DEBUG) {
+                console.log("Invert getLatLngFromPos("+ pos_list[0] + ") : " +
+                            JSON.stringify(self.getPercentageDistanceFromPolyline(res[0], polyline)));
+            }
             return res;
         },
 
@@ -123,32 +127,28 @@ L.GeomUtils = (function() {
         },
 
         getPointOnLine: function(map, ratio_dist, ll1, ll2) {
-            var p1 = map.project(ll1, 18)
-              , p2 = map.project(ll2, 18)
-              , d = p1.distanceTo(p2)
-              , point_distance = ratio_dist * d;
+            if (ratio_dist == 0.0) return ll1;
+            if (ratio_dist == 1.0) return ll2;
+            var zoom = map.getMaxZoom()
+              , p1 = map.project(ll1, zoom)
+              , p2 = map.project(ll2, zoom)
+              , d = p1.distanceTo(p2);
 
-            var coeff = self.getFunction(p1.x, p1.y, p2.x, p2.y);
-            var angle = Math.atan(coeff.a);
-
-            var sign_x = (p2.x - p1.x) > 0 ? -1 : 1;
-            // var sign_y = (p2.y - p1.y) > 0 ? 1 : -1;
-            // var y_new = p1.y + sign_y * point_distance * Math.cos(angle);
-
-            var x_new = p1.x + sign_x * point_distance * Math.sin(angle);
-            var y_new = coeff.a * x_new + coeff.b;
-
-            return map.unproject(new L.Point(x_new, y_new), 18);
+            var x_new = p1.x + (p2.x - p1.x) * ratio_dist
+              , y_new = p1.y + (p2.y - p1.y) * ratio_dist
+              , ll_new = map.unproject(new L.Point(x_new, y_new), zoom);
+            console.assert(!ll_new.equals(ll1) && !ll_new.equals(ll2), ratio_dist + ' got extremity (margin is ' + L.LatLng.MAX_MARGIN + ')');
+            return ll_new;
         },
 
-        getFunction: function(x1, y1, x2, y2) {
+        getGradient: function(x1, y1, x2, y2) {
             var a = (y2 - y1) / (x2 - x1);
             var b = y1 - (a * x1);
             return {'a': a, 'b': b};
         },
 
         getDistances: function(xs) {
-            var xs_len = 0, d, distances = [];
+            var xs_len = 0.0, d, distances = [];
 
             for (var i = 0; i < xs.length - 1; i++) {
                 var x1 = xs[i], x2 = xs[i+1];
