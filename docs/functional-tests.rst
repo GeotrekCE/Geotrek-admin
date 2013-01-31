@@ -2497,3 +2497,9 @@ Fait.
 ----------------------------------------------------
 
 Nous utilisons désormais des listes avec complétion.
+
+
+[BUG] - Intervention sur infrastructure
+---------------------------------------
+
+Fixé.
