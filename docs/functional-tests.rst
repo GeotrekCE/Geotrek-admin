@@ -2503,3 +2503,8 @@ Nous utilisons désormais des listes avec complétion.
 ---------------------------------------
 
 Fixé.
+
+#429 - [BUG] Les chantiers disparaissent quand on les associe à une intervention
+--------------------------------------------------------------------------------
+
+Fixé.
