@@ -315,12 +315,8 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var self = this;
-
-        // Restrict snaplist to layer and snapdistance to max_value
-        // will ensure this get snapped and to the layer clicked
-        var snapdistance = Number.MAX_VALUE;
-        var closest = L.GeomUtils.closest(self.map, marker, [ layer ], snapdistance);
-        marker.editing.updateClosest(marker, closest);
+        var closest = L.GeomUtils.closestOnLine(self.map, marker.getLatLng(), layer);
+        marker.editing.updateClosest(marker, [layer, closest]);
     },
 
     createStep: function(marker, idx) {
@@ -483,22 +479,24 @@ L.Handler.MultiPath = L.Handler.extend({
               , via_markers = [];
 
             var pos2latlng = function (pos, layer) {
-                var used_pos = pos[0];
-                if (pos[0] == 0.0 && pos[1] != 1.0)
-                    used_pos = pos[1];
-                if (pos[0] == 1.0 && pos[1] != 0.0)
-                    used_pos = pos[1];
-                if (pos[0] != 1.0 && pos[1] == 0.0)
+                var used_pos = pos;
+                if (pos instanceof Array) {
                     used_pos = pos[0];
-                if (pos[0] != 0.0 && pos[1] == 1.0)
-                    used_pos = pos[0];
-                console.log("Chose " + used_pos + " for " + pos);
-                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ]);
-                if (ll.length < 1) {
-                    console.error('getLatLngFromPos()');
-                    return null;
+                    if (pos[0] == 0.0 && pos[1] != 1.0)
+                        used_pos = pos[1];
+                    if (pos[0] == 1.0 && pos[1] != 0.0)
+                        used_pos = pos[1];
+                    if (pos[0] != 1.0 && pos[1] == 0.0)
+                        used_pos = pos[0];
+                    if (pos[0] != 0.0 && pos[1] == 1.0)
+                        used_pos = pos[0];
+                    console.log("Chose " + used_pos + " for " + pos);
                 }
-                return ll[0];
+                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ])[0];
+                if (!ll) {
+                    throw ('Could not interpolate ' + used_pos + ' on layer ' + layer.properties.pk);
+                }
+                return ll;
             };
 
             for (var i=0; i<topo.length; i++) {
@@ -519,11 +517,11 @@ L.Handler.MultiPath = L.Handler.extend({
 
                 if (firsttopo) {
                     start_layer_ll.layer = firstlayer;
-                    start_layer_ll.ll = pos2latlng(positions['0'], firstlayer);
+                    start_layer_ll.ll = pos2latlng(positions['0'][0], firstlayer);
                 }
                 if (lasttopo) {
                     end_layer_ll.layer = lastlayer;
-                    end_layer_ll.ll = pos2latlng(positions[lastpath], lastlayer);
+                    end_layer_ll.ll = pos2latlng(positions[lastpath][1], lastlayer);
                 }
                 else {
                     var layer = lastlayer

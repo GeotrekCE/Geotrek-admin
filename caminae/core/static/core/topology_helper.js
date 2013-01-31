@@ -9,7 +9,7 @@ Caminae.TopologyHelper = (function() {
           , positions = {};
 
         if (!polyline_start || !polyline_end) {
-            console.warn("Could not compute distances without polylines.");
+            console.error("Could not compute distances without polylines.");
             return null;  // TODO: clean-up before give-up ?
         }
 
@@ -22,7 +22,7 @@ Caminae.TopologyHelper = (function() {
         var start = percentageDistance(ll_start, polyline_start)
           , end = percentageDistance(ll_end, polyline_end);
         if (!start || !end) {
-            console.warn("Could not compute distances withing paths.");
+            console.error("Could not compute distances withing paths.");
             return null;  // TODO: clean-up before give-up ?
         }
         var closest_first_idx = start.closest
@@ -136,19 +136,19 @@ Caminae.TopologyHelper = (function() {
         // We basically remove all points where position is [x,x]
         // This can happen at extremity points...
         var cleanpaths = []
-          , hasposition = false;
-        for (idx in positions) {
-            if (positions[idx][0] == positions[idx][1])
-                delete positions[idx];
-            else
-                cleanpaths.push(paths[parseInt(idx)]);
+          , cleanpositions = {};
+        for (var i=0; i<paths.length; i++) {
+            if (positions[i][0] != positions[i][1]) {
+                cleanpaths.push(paths[i]);
+                cleanpositions[i] = positions[i];
+            }
         }
-        if (hasposition)
-            paths = cleanpaths;
+        paths = cleanpaths;
+        positions = cleanpositions;
 
         // Safety warning.
         if (paths.length == 0)
-            console.warn('Empty topology. Expect problems. (' + JSON.stringify({positions:positions, paths:paths}) + ')');
+            console.error('Empty topology. Expect problems. (' + JSON.stringify({positions:positions, paths:paths}) + ')');
 
         return {
             topology: {
