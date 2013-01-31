@@ -8,6 +8,7 @@
             <th>{{ project|verbose:"name" }}</th>
             <td>{{ project.name }}</td>
         </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{% trans "Fundings" %}</th>
             <td>

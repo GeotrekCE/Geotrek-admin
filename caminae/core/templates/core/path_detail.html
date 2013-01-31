@@ -20,15 +20,25 @@
         {{ path.comments|default:_("None")|safe }}
     </div>
 
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ path|verbose:"departure" }}</th>
+            <td>{{ path.departure }}</td>
+        </tr>
+        <tr>
+            <th>{{ path|verbose:"arrival" }}</th>
+            <td>{{ path.arrival }}</td>
+        </tr>
+        <tr>
+            <th>{{ path|verbose:"comfort" }}</th>
+            <td>{{ path.comfort|default:_("None") }}</td>
+        </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
     <h3>{% trans "Properties" %}</h3>
     <table class="table">
         <tr>
-            <th>{{ path|verbose:"date_insert" }}</th>
-            <td>{{ path.date_insert }}</td>
-        </tr><tr>
-            <th>{{ path|verbose:"date_update" }}</th>
-            <td>{{ path.date_update }}</td>
-        </tr><tr>
             <th>{% trans "Slope" %}</th>
             <td>{{ path.descent }} m  +{{ path.ascent }} m</td>
         </tr><tr>
