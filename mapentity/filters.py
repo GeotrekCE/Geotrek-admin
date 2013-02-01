@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django import forms as django_forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import FilterSet, Filter, ChoiceFilter
@@ -64,10 +65,11 @@ class PythonPolygonFilter(PolygonFilter):
     def filter(self, qs, value):
         if not value:
             return qs
+        value.transform(settings.SRID)
         filtered = []
         for o in qs.all():
             geom = getattr(o, self.name)
-            if geom:
+            if geom and geom.valid and not geom.empty:
                 if geom.intersects(value):
                     filtered.append(o.pk)
             else:
