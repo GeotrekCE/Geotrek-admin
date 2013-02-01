@@ -2524,3 +2524,8 @@ Fixé.
 
 Les enjeux sont filtrés par structure. Vérifier qu'il y a bien des enjeux pour la structure de l'utilisateur.
 
+#77 - Afficher de l'aide sous forme d'infobulles
+------------------------------------------------
+
+Il est possible de renseigner de l'aide à la saisie. Les étiquettes s'affichent en dessous des champs. L'aspect métier des textes devraient éventuellement être revu.
+
