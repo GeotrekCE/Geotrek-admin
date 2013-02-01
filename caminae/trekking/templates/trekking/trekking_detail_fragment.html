@@ -4,6 +4,11 @@
     <tr>
         <th>{% trans "Treks" %}</th>
         <td>
+            {% if user.profile.is_trekking_manager %}
+            <p class="autohide"><a href="{% url trekking:trek_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a trek" %}</a>
+            </p>
+            {% endif %}
             {% for t in object.treks %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li>{{ t.name_display|safe }}</li>
@@ -15,6 +20,11 @@
     </tr><tr>
         <th>{% trans "POIs" %}</th>
         <td>
+            {% if user.profile.is_trekking_manager %}
+            <p class="autohide"><a href="{% url trekking:poi_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a POI" %}</a>
+            </p>
+            {% endif %}
             {% for p in object.pois %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li>{{ p.name_display|safe }}</li>

@@ -4,6 +4,11 @@
     <tr>
         <th>{% trans "Infrastructures" %}</th>
         <td>
+            {% if user.profile.is_editor %}
+            <p class="autohide"><a href="{% url infrastructure:infrastructure_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add an infrastructure" %}</a>
+            </p>
+            {% endif %}
             {% for i in object.infrastructures %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li>{{ i.name_display|safe }}</li>
@@ -15,6 +20,11 @@
     </tr><tr>
         <th>{% trans "Signages" %}</th>
         <td>
+            {% if user.profile.is_editor %}
+            <p class="autohide"><a href="{% url infrastructure:signage_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a signage" %}</a>
+            </p>
+            {% endif %}
             {% for s in object.signages %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li>{{ s.name_display|safe }}</li>

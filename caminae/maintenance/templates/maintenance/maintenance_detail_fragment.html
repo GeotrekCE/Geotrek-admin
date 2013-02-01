@@ -5,12 +5,17 @@
     <tr>
         <th>{% trans "Interventions" %}</th>
         <td>
-            <p><a href="{% url maintenance:intervention_add %}" class="btn btn-mini btn-success">
+            {% if user.profile.is_editor %}
+            <p><a href="{% url maintenance:intervention_add %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
             </p>
+            {% endif %}
             {% for i in object.interventions.all %}
                 {% if forloop.first %}<ul>{% endif %}
-                <li>{{ i.name_display|safe }}</li>
+                <li>{{ i.name_display|safe }}
+                    {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
+                    ({{ i.date }})
+                </li>
                 {% if forloop.last %}</ul>{% endif %}
             {% empty %}
                 <span class="none">{% trans "None" %}</span>

@@ -685,3 +685,7 @@ class Trail(MapEntityMixin, StructureRelated):
             else:
                 geom = geom.union(p.geom)
         return geom
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)

@@ -304,6 +304,15 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         return list(set(s))
 
     @property
+    def trails(self):
+        s = []
+        for i in self.interventions.all():
+            for p in i.paths.all():
+                if p.trail:
+                    s.append(p.trail)
+        return list(set(s))
+
+    @property
     def signages(self):
         s = []
         for i in self.interventions.all():
