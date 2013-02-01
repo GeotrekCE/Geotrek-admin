@@ -161,8 +161,8 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
 
 def fieldmap_from_fields(model, fieldnames):
     return dict(
-            (fname, lambda x, fname=fname: str(getattr(x, fname)))
-            for fname in fieldnames
+        (fname, lambda x, fname=fname: smart_str(getattr(x, fname)))
+        for fname in fieldnames
     )
 
 def fieldmap_from_model(model):
@@ -170,7 +170,7 @@ def fieldmap_from_model(model):
     fields = model._meta.fields
     non_geometry_field_names = [f.name for f in fields if not isinstance(f, GeometryField)]
 
-    return fielmap_from_fields(model, non_geometry_field_names)
+    return fieldmap_from_fields(model, non_geometry_field_names)
 
 
 def geo_field_from_model(model, default_geo_field_name=None):
@@ -188,7 +188,7 @@ def geo_field_from_model(model, default_geo_field_name=None):
         else:
             geo_field_by_name = [fld for fld in geo_fields if fld.name == default_geo_field_name]
             if not geo_field_by_name:
-                raise ValueError("Geodjango geometry field not found with the name '%s', fields available are: '%s'" % (self.geo_field, geo_fields_names()))
+                raise ValueError("Geodjango geometry field not found with the name '%s', fields available are: '%s'" % (default_geo_field_name, geo_fields_names()))
             else:
                 geo_field = geo_field_by_name[0]
     elif geo_fields:

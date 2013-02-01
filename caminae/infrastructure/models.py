@@ -57,8 +57,10 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                       db_column='evenement')
     
-    name = models.CharField(db_column="nom", max_length=128)
-    description = models.TextField(blank=True, db_column='description')
+    name = models.CharField(db_column="nom", max_length=128,
+                            help_text=_(u"Reference, code, ..."))
+    description = models.TextField(blank=True, db_column='description',
+                                   help_text=_(u"Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type')
 
     class Meta:

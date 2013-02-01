@@ -248,9 +248,11 @@ Caminae.TopologyHelper = (function() {
                 this.polyline = e.object;
 
                 this.length = L.GeomUtils.length(this.polyline.getLatLngs());
-                this.percent_distance = L.GeomUtils.getPercentageDistanceFromPolyline(this.ll, this.polyline).distance;
-
-                this.events.fire('valid'); // self
+                var dd = L.GeomUtils.getPercentageDistanceFromPolyline(this.ll, this.polyline);
+                if (dd) {
+                    this.percent_distance = dd.distance;
+                    this.events.fire('valid');
+                }
             },
             'unsnap': function onUnsnap(e) {
                 this.ll = null;

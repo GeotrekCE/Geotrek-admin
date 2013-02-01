@@ -4,6 +4,7 @@
 {% block detailspanel %}
     {{ block.super }}
     <table class="table-striped table-bordered table">
+        {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{{ intervention|verbose:"date" }}</th>
             <td>{{ intervention.date }}</td>

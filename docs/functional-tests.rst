@@ -2478,7 +2478,54 @@ Les attributs sont dupliqués/conservés.
 
 L'auteur par défaut est le nom d'utilisateur, mais il est possible de le changer.
 
+#350 - OFFRE DE RANDO - Titre de l'application
+----------------------------------------------
+
+Voir fichier de configuration d'exemple.
+
+#469 - OFFRE RANDO - Templates 404 et 500
+-----------------------------------------
+
+Pages basiques. Des photos d'avalanches, d'hélicopters seraient sympas :)
+
+#407 - OFFRE RANDO - Enlever filtre accessibilité
+-------------------------------------------------
+
+Fait.
+
+#479 - OFFRE de RANDO - Filtres secteurs et communes
+----------------------------------------------------
+
+Nous utilisons désormais des listes avec complétion.
 
 
+[BUG] - Intervention sur infrastructure
+---------------------------------------
 
+Fixé.
+
+#429 - [BUG] Les chantiers disparaissent quand on les associe à une intervention
+--------------------------------------------------------------------------------
+
+Fixé.
+
+#464 - [BUG] Erreur interne - export list treks Shapefile
+---------------------------------------------------------
+
+Fixé.
+
+#457 - [BUG] Positionnement sur tronçon inversé (début/fin)
+-----------------------------------------------------------
+
+Fixé.
+
+#473- FORMULAIRE INTERVENTION bis
+---------------------------------
+
+Les enjeux sont filtrés par structure. Vérifier qu'il y a bien des enjeux pour la structure de l'utilisateur.
+
+#77 - Afficher de l'aide sous forme d'infobulles
+------------------------------------------------
+
+Il est possible de renseigner de l'aide à la saisie. Les étiquettes s'affichent en dessous des champs. L'aspect métier des textes devraient éventuellement être revu.
 

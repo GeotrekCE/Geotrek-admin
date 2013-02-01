@@ -70,20 +70,19 @@ BEGIN
         END IF;
         UPDATE e_t_evenement SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
-
         -- Regular case: the topology describe a line
-
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point. --> No problem in mountain path management.
-        FOR t_offset, t_start, t_end, t_geom IN SELECT e.decallage, et.pk_debut, et.pk_fin, t.geom
+        FOR t_offset, t_geom IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom, et.pk_debut, et.pk_fin)
                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
                ORDER BY et.ordre, et.id  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
-            tomerge := array_append(tomerge, ST_Smart_Line_Substring(t_geom, t_start, t_end));
+            tomerge := array_append(tomerge, t_geom);
         END LOOP;
+
         egeom := ft_Smart_MakeLine(tomerge);
         -- Add some offset if necessary.
         IF t_offset > 0 THEN

@@ -26,7 +26,7 @@ class InterventionFilter(EdgeStructureRelatedFilterSet):
     class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Intervention
         fields = EdgeStructureRelatedFilterSet.Meta.fields + [
-            'status', 'type', 'stake', # user
+            'status', 'type', 'stake',  # user
         ]
 
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*- 
 from django.test import TestCase
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.utils import simplejson
@@ -93,6 +95,13 @@ class TrekViewsTest(MapEntityTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
+    def test_basic_format(self):
+        super(TrekViewsTest, self).test_basic_format()
+        trekutf8 = self.modelfactory.create(name="ukélélé")
+        for fmt in ('csv', 'shp', 'gpx'):
+            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+            self.assertEqual(response.status_code, 200)
 
 
 class TrekViewsLiveTest(MapEntityLiveTest):

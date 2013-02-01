@@ -21,7 +21,7 @@ L.GeomUtils = (function() {
         },
 
         // You may pass latlng or point to this function
-        getPercentageDistance: function(x, xs, epsilon, only_first) {
+        getPercentageDistance: function(x, xs, epsilon, only_first, recurse) {
             var xs_len = 0.0
               , distance_found = false
               , closest_idx = null
@@ -47,10 +47,16 @@ L.GeomUtils = (function() {
             }
             
             if (!distance_found) {
-                console.warn('Could not find ' + x + ' in ' + xs);
-                return null;
+                if (!recurse) {
+                    console.warn('Could not find ' + x + ' in ' + xs);
+                    return null;
+                }
+                // Try with closest point.
+                var seg = L.GeomUtils.closestSegment(x, xs)
+                  , p = L.LineUtil.closestPointOnSegment(x, seg[0], seg[1]);
+                return L.GeomUtils.getPercentageDistance(p, xs, epsilon, only_first, true);
             }
-            var percent = Math.round((distance / xs_len)*100)/100;
+            var percent = Math.round((distance / xs_len)*10000)/10000;
             return { 'distance': percent, 'closest': closest_idx };
         },
 
@@ -192,11 +198,25 @@ L.GeomUtils = (function() {
         },
 
         latlngOnSegment: function (map, latlng, latlngA, latlngB) {
-            var p = map.latLngToLayerPoint(latlng),
-               p1 = map.latLngToLayerPoint(latlngA),
-               p2 = map.latLngToLayerPoint(latlngB);
+            var maxzoom = map.getMaxZoom();
+            var p = map.project(latlng, maxzoom),
+               p1 = map.project(latlngA, maxzoom),
+               p2 = map.project(latlngB, maxzoom);
                closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
-            return map.layerPointToLatLng(closest);
+            return map.unproject(closest, maxzoom);
+        },
+
+        closestSegment: function (p, points) {
+            var mindist = Number.MAX_VALUE
+              , idx = 0;
+            for (var i=0; i<points.length-1; i++) {
+                var x = points[i]
+                  , d = p.distanceTo(x);
+                if (d < mindist) {
+                    idx = i;
+                }
+            }
+            return [points[idx], points[idx+1]];
         },
 
         closestOnLine: function (map, latlng, linestring) {

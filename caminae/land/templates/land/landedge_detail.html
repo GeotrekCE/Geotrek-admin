@@ -8,7 +8,7 @@
             <th>{{ landedge|verbose:"land_type" }}</th>
             <td>{{ landedge.land_type }}</td>
         </tr>
-        
+        {% include "mapentity/trackinfo_fragment.html" %}
         {% include "core/aggregations_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

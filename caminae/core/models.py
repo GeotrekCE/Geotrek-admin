@@ -28,12 +28,17 @@ class Path(MapEntityMixin, StructureRelated):
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
                                            spatial_index=False, dim=3)
-    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"))
-    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"))
-    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"))
+    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
+                                help_text=_(u"Approved by manager"))
+    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"),
+                            help_text=_(u"Official name"))
+    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
+                                help_text=_(u"Remarks"))
 
-    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"))
-    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"))
+    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
+                                 help_text=_(u"Departure place"))
+    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
+                               help_text=_(u"Arrival place"))
     
     comfort =  models.ForeignKey('Comfort',
                                  null=True, blank=True, related_name='paths',
@@ -335,7 +340,7 @@ class Topology(NoDeleteMixin):
         if other.ispoint():
             aggrs = aggrs[:1]
         for aggr in aggrs:
-            self.add_path(aggr.path, aggr.start_position, aggr.end_position, reload=False)
+            self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
         if delete:
             other.delete(force=True)  # Really delete it from database
         self.save()
