@@ -4,7 +4,6 @@
 {% block detailspanel %}
     {{ block.super }}
     <table class="table-striped table-bordered table">
-        {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{{ poi|verbose:"type" }}</th>
             <td>{{ poi.type }}</td>
@@ -21,6 +20,7 @@
             <th>{% trans "Elevation" %}</th>
             <td>{{ poi.geom.z }}m</td>
         </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
     <h3>{% trans "Management" %}</h3>
