@@ -167,18 +167,16 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @classmethod
     def path_interventions(cls, path):
-        s = []
-        for t in path.topology_set.existing():
-            s += t.interventions.all()
-        return list(set(s))
+        pks = path.topology_set.existing().values_list('interventions__pk', flat=True)
+        return Intervention.objects.filter(pk__in=pks)
 
     @classmethod
     def trail_interventions(cls, trail):
         """ Interventions of a trail is the union of interventions on all its paths """
-        s = []
+        pks = []
         for p in trail.paths.all():
-            s.extend(p.interventions)
-        return list(set(s))
+            pks.extend(p.interventions.values_list('pk', flat=True))
+        return Intervention.objects.filter(pk__in=pks)
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
 Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
@@ -343,11 +341,14 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @classmethod
     def path_projects(self, path):
-        return list(set([i.project
-                         for i in path.interventions
-                         if i.in_project]))
+        return Project.objects.filter(interventions__in=path.interventions)
+
+    @classmethod
+    def trail_projects(self, trail):
+        return Project.objects.filter(interventions__in=trail.interventions)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))
+Trail.add_property('projects', lambda self: Project.trail_projects(self))
 
 
 class ProjectType(StructureRelated):

@@ -200,15 +200,15 @@ PROJECT_APPS = (
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
+    'caminae.mapentity',
+    'caminae.paperclip',
     'caminae.authent',
     'caminae.common',
     'caminae.core',
-    'caminae.maintenance',
     'caminae.land',
-    'caminae.trekking',
     'caminae.infrastructure',
-    'caminae.mapentity',
-    'caminae.paperclip',
+    'caminae.maintenance',
+    'caminae.trekking',
 )
 
 SERIALIZATION_MODULES = {

@@ -572,11 +572,18 @@ class PathAggregation(models.Model):
 
     @property
     def start_meter(self):
-        return 0 if self.start_position == 0.0 else int(self.start_position * self.path.length)
+        try:
+            return 0 if self.start_position == 0.0 else int(self.start_position * self.path.length)
+        except ValueError:
+            return -1
+
 
     @property
     def end_meter(self):
-        return 0 if self.end_position == 0.0 else int(self.end_position * self.path.length)
+        try:
+            return 0 if self.end_position == 0.0 else int(self.end_position * self.path.length)
+        except ValueError:
+            return -1
 
     @property
     def is_full(self):

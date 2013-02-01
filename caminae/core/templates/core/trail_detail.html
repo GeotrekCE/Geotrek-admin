@@ -19,26 +19,8 @@
             <td>{{ trail.comments|safe }}</td>
         </tr>
     </table>
-    <h2>{% trans "Paths" %}</h2>
+    <h3>{% trans "Paths" %}</h3>
     {% for path in trail.paths.all  %}
         <li><a href="{{ path.get_detail_url }}">{{ path }}</a></li>
     {% endfor %}
-    <h2>{% trans "Management" %}</h2>
-    <table class="table-striped table-bordered table">
-        <tr>
-            <th>{% trans "Interventions" %}</th>
-            <td>
-                <p><a href="{% url maintenance:intervention_add %}" class="btn btn-mini btn-success">
-                    <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}
-                </a></p>
-                {% for i in trail.interventions %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ i.name_display|safe }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    {% trans "None" %}
-                {% endfor %}
-            </td>
-        </tr>
-    </table>
 {% endblock detailspanel %}

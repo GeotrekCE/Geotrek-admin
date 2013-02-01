@@ -1,0 +1,27 @@
+{% load i18n %}
+<h3>{% trans "Trekking" %}</h3>
+<table class="table">
+    <tr>
+        <th>{% trans "Treks" %}</th>
+        <td>
+            {% for t in object.treks %}
+                {% if forloop.first %}<ul>{% endif %}
+                <li>{{ t.name_display|safe }}</li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% empty %}
+                <span class="none">{% trans "None" %}</span>
+            {% endfor %}
+        </td>
+    </tr><tr>
+        <th>{% trans "POIs" %}</th>
+        <td>
+            {% for p in object.pois %}
+                {% if forloop.first %}<ul>{% endif %}
+                <li>{{ p.name_display|safe }}</li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% empty %}
+                <span class="none">{% trans "None" %}</span>
+            {% endfor %}
+        </td>
+    </tr>
+</table>
