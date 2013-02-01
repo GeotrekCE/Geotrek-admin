@@ -21,7 +21,7 @@ L.GeomUtils = (function() {
         },
 
         // You may pass latlng or point to this function
-        getPercentageDistance: function(x, xs, epsilon, only_first) {
+        getPercentageDistance: function(x, xs, epsilon, only_first, recurse) {
             var xs_len = 0.0
               , distance_found = false
               , closest_idx = null
@@ -47,11 +47,14 @@ L.GeomUtils = (function() {
             }
             
             if (!distance_found) {
-                console.warn('Could not find ' + x + ' in ' + xs);
+                if (!recurse) {
+                    console.warn('Could not find ' + x + ' in ' + xs);
+                    return null;
+                }
                 // Try with closest point.
                 var seg = L.GeomUtils.closestSegment(x, xs)
                   , p = L.LineUtil.closestPointOnSegment(x, seg[0], seg[1]);
-                return L.GeomUtils.getPercentageDistance(p, xs, epsilon, only_first);
+                return L.GeomUtils.getPercentageDistance(p, xs, epsilon, only_first, true);
             }
             var percent = Math.round((distance / xs_len)*10000)/10000;
             return { 'distance': percent, 'closest': closest_idx };
