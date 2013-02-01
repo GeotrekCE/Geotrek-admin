@@ -335,7 +335,7 @@ class Topology(NoDeleteMixin):
         if other.ispoint():
             aggrs = aggrs[:1]
         for aggr in aggrs:
-            self.add_path(aggr.path, aggr.start_position, aggr.end_position, reload=False)
+            self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
         if delete:
             other.delete(force=True)  # Really delete it from database
         self.save()
