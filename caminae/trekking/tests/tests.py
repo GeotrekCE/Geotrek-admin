@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*- 
 from django.test import TestCase
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.utils import simplejson

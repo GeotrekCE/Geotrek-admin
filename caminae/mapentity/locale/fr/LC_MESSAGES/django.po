@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: filters.py:19
+#: filters.py:20
 msgid "Any year"
 msgstr "Année"
 
@@ -30,7 +30,7 @@ msgstr "Annuler"
 msgid "Save changes"
 msgstr "Sauvegarder"
 
-#: tests.py:41
+#: tests.py:46
 msgid "Topology is not valid."
 msgstr "Topologie invalide"
 
@@ -83,15 +83,19 @@ msgid "ODT"
 msgstr "ODT"
 
 #: templates/mapentity/entity_detail.html:24
+msgid "DOC"
+msgstr ""
+
+#: templates/mapentity/entity_detail.html:25
 msgid "PDF"
 msgstr "PDF"
 
-#: templates/mapentity/entity_detail.html:39
+#: templates/mapentity/entity_detail.html:40
 #: templates/mapentity/entity_form.html:29
 msgid "Attached files"
 msgstr "Fichiers liés"
 
-#: templates/mapentity/entity_detail.html:55
+#: templates/mapentity/entity_detail.html:56
 msgid "No map available for this object."
 msgstr "Pas de carte disponible pour cet objet."
 
@@ -176,5 +180,43 @@ msgstr "Aucun filtre"
 msgid "Add"
 msgstr "Ajouter"
 
-#~ msgid "Filter list and map"
-#~ msgstr "Filtrer la liste et la carte"
+#: templatetags/timesince.py:21
+#, python-format
+msgid "%d year ago"
+msgid_plural "%d years ago"
+msgstr[0] "%d an"
+msgstr[1] "%d ans"
+
+#: templatetags/timesince.py:25
+#, python-format
+msgid "%d week ago"
+msgid_plural "%d weeks ago"
+msgstr[0] "%d semaine"
+msgstr[1] "%d semaines"
+
+#: templatetags/timesince.py:28
+#, python-format
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] "%d jour"
+msgstr[1] "%d jours"
+
+#: templatetags/timesince.py:32
+#, python-format
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] "%d heure"
+msgstr[1] "%d heures"
+
+#: templatetags/timesince.py:36
+#, python-format
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] "%d minute"
+msgstr[1] "%d minutes"
+
+#: templatetags/timesince.py:38
+msgid "just a few seconds ago"
+msgstr "quelques secondes"
+
+

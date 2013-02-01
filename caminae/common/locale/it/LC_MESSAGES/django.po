@@ -7,92 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-28 16:12+0200\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
-
-#: decorators.py:31
-msgid ""
-"Access to the requested resource is restricted to path managers. You have "
-"been redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è riservata al responsabile dei sentieri. "
-"Siete stati reindirizzati"
-
-#: decorators.py:37
-msgid ""
-"Access to the requested resource is restricted to communication managers. "
-"You have been redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è riservata al responsabile della "
-"comunicazione. Siete stati reindirizzati"
-
-#: decorators.py:43
-msgid ""
-"Access to the requested resource is restricted to work editor. You have been "
-"redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è riservata ai compilatori. Siete stati "
-"reindirizzati"
-
-#: decorators.py:63
-msgid ""
-"Access to the requested resource is restricted by structure. You have been "
-"redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è limitata dalla struttura. Siete stati "
-"reindirizzati"
-
-#: models.py:23
-msgid "Nom"
-msgstr "Nome"
-
-#: models.py:29
-msgid "Structure"
-msgstr "Struttura"
-
-#: models.py:30
-msgid "Structures"
-msgstr "Strutture"
-
-#: models.py:61 models.py:78
-msgid "Related structure"
-msgstr "Struttura collegata"
-
-#: models.py:77
-msgid "Related structures"
-msgstr "Strutture collegate"
-
-#: models.py:87
-msgid "Language"
-msgstr "Lingua"
-
-#: models.py:91
-msgid "User's profile"
-msgstr "Profilo dell'utente"
-
-#: models.py:92
-msgid "User's profiles"
-msgstr "Profili degli utenti"
-
-#: models.py:95
-#, python-format
-msgid "Profile for %s"
-msgstr "Profilo per %s"
-
-#: tests/tests.py:39 tests/tests.py:49 tests/tests.py:56
-msgid "Logout"
-msgstr ""
-
-#: tests/tests.py:63 tests/tests.py:68
-msgid "Admin"
-msgstr ""
 
 #: filters.py:14
 #, python-format
@@ -104,15 +28,7 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
-#: forms.py:23 forms.py:82
-msgid "Cancel"
-msgstr "Eliminare"
-
-#: forms.py:24
-msgid "Save changes"
-msgstr "Salvare le modifiche"
-
-#: models.py:7 models.py:11 models.py:147 models.py:187 models.py:227
+#: models.py:7 models.py:11
 msgid "Organism"
 msgstr "Organismo"
 
@@ -128,1105 +44,822 @@ msgstr "Tipo di file"
 msgid "File types"
 msgstr "Tipi di file"
 
-#: fields.py:18 tests.py:41
-msgid "Topology is not valid."
-msgstr "La topologia non è valida."
-
-#: filters.py:16 filters.py:28
-msgid "length"
-msgstr "lunghezza"
-
-#: filters.py:17 filters.py:29 models.py:32 models.py:516 models.py:31
-#: models.py:91 models.py:273 models.py:323 models.py:372 models.py:18
-#: models.py:258 models.py:22 models.py:166 models.py:179 models.py:190
-#: models.py:216 models.py:230 models.py:310
-msgid "Name"
-msgstr "Nome"
-
-#: filters.py:18 filters.py:30 models.py:33 models.py:519 models.py:20
-#: models.py:263
-msgid "Comments"
-msgstr "Note"
-
-#: forms.py:54
-msgid "Reverse path"
-msgstr "Invertire la tratta"
-
-#: forms.py:55
-msgid "The path will be reversed once saved"
-msgstr "La tratta sarà invertita una volta salvata"
-
-#: models.py:31
-msgid "Validity"
-msgstr "Validità"
-
-#: models.py:35 models.py:517 models.py:23
-msgid "Departure"
-msgstr "Partenza"
-
-#: models.py:36 models.py:518 models.py:24
-msgid "Arrival"
-msgstr "Arrivo"
-
-#: models.py:40 models.py:477 models.py:481
-msgid "Comfort"
-msgstr "Comfort"
-
-#: models.py:45 models.py:203 models.py:35 models.py:270 models.py:41
-msgid "Insertion date"
-msgstr "Data di inserimento"
-
-#: models.py:46 models.py:204 models.py:36 models.py:271 models.py:42
-msgid "Update date"
-msgstr "Data di modifica"
-
-#: models.py:47 models.py:205 models.py:23
-msgid "Length"
-msgstr "Lunghezza"
-
-#: models.py:49 models.py:27
-msgid "Ascent"
-msgstr "Dislivello in salita"
-
-#: models.py:51 models.py:28
-msgid "Descent"
-msgstr "Dislivello in discesa"
-
-#: models.py:53 models.py:29
-msgid "Minimum elevation"
-msgstr "Quota minima"
-
-#: models.py:55 models.py:30
-msgid "Maximum elevation"
-msgstr "Quota massima"
-
-#: models.py:60
-msgid "Trail"
-msgstr "Sentiero"
-
-#: models.py:63 models.py:452
-msgid "Datasource"
-msgstr "Fonte dei dati"
-
-#: models.py:66 models.py:461 models.py:465 models.py:44
-msgid "Stake"
-msgstr "Enjeu"
-
-#: models.py:69 models.py:495 models.py:57
-msgid "Usages"
-msgstr "Utilizzo"
-
-#: models.py:72 models.py:508
-msgid "Networks"
-msgstr "Reti"
-
-#: models.py:79 models.py:195 models.py:423
-#: templates/mapentity/entity_list.html:10
-msgid "Path"
-msgstr "Tratta"
-
-#: models.py:80 templates/core/core_mapinit_fragment.html:12
-#: templates/core/trail_detail.html:22
-#: templates/infrastructure/baseinfrastructure_detail.html:15
-#: templates/land/edge_path_list_fragment.html:3
-#: templates/maintenance/intervention_detail.html:40
-#: templates/maintenance/project_detail.html:44
-#: templates/trekking/poi_detail.html:24
-#: templates/trekking/trek_detail.html:64
-msgid "Paths"
-msgstr "Tratte"
-
-#: models.py:161 models.py:167 templates/core/path_detail.html:20
-#: templates/core/path_detail.html.py:50 templates/core/path_detail.html:53
-#: templates/core/path_detail.html.py:63 templates/core/path_detail.html:74
-#: templates/core/trail_detail.html:39
-#: templates/infrastructure/baseinfrastructure_detail.html:22
-#: templates/infrastructure/baseinfrastructure_detail.html:36
-#: templates/land/edge_path_list_fragment.html:10
-#: templates/maintenance/intervention_detail.html:13
-#: templates/maintenance/intervention_detail.html:47
-#: templates/maintenance/intervention_detail.html:53
-#: templates/maintenance/intervention_detail.html:59
-#: templates/maintenance/intervention_detail.html:65
-#: templates/maintenance/path_maintenance_detail.html:16
-#: templates/maintenance/path_maintenance_detail.html:27
-#: templates/maintenance/path_maintenance_detail.html:38
-#: templates/maintenance/path_maintenance_detail.html:49
-#: templates/maintenance/project_detail.html:23
-#: templates/maintenance/project_detail.html:35
-#: templates/maintenance/project_detail.html:51
-#: templates/maintenance/project_detail.html:62
-#: templates/maintenance/project_detail.html:73
-#: templates/mapentity/entity_detail_valuelist_fragment.html:7
-#: templates/trekking/poi_detail.html:31 templates/trekking/poi_detail.html:43
-#: templates/trekking/trek_detail.html:31
-#: templates/trekking/trek_detail.html:43
-#: templates/trekking/trek_detail.html:55
-#: templates/trekking/trek_detail.html:71
-#: templates/trekking/trek_detail.html:82
-msgid "None"
-msgstr "Nessuno"
-
-#: models.py:171 models.py:334
-msgid "Deleted"
-msgstr "Cancellato"
-
-#: models.py:196
-msgid "Offset"
-msgstr "Scarto"
-
-#: models.py:197
-msgid "Kind"
-msgstr "Tipo di topologia"
-
-#: models.py:211 models.py:244 models.py:427
-msgid "Topology"
-msgstr "Topologia"
-
-#: models.py:212
-msgid "Topologies"
-msgstr "Topologie"
-
-#: models.py:326
-#, python-format
-msgid "Invalid serialization: %s"
-msgstr "Sérialisation invalide: %s"
-
-#: models.py:345
-#, python-format
-msgid "Paths are not unique : %s"
-msgstr "le tratte non sono uniche: %s"
-
-#: models.py:358
-msgid "Invalid serialization of intermediate markers"
-msgstr "Sérialisation invalide des points de passage"
-
-#: models.py:428
-msgid "Start position"
-msgstr "Posizione di partenza"
-
-#: models.py:429
-msgid "End position"
-msgstr "Posizione finale"
-
-#: models.py:435 models.py:439
-msgid "Path aggregation"
-msgstr "Unione di tratte"
-
-#: models.py:440
-msgid "Path aggregations"
-msgstr "Unioni di tratte"
-
-#: models.py:448
-msgid "Source"
-msgstr "Risorsa"
-
-#: models.py:453
-msgid "Datasources"
-msgstr "Fonti dei dati"
-
-#: models.py:466
-msgid "Stakes"
-msgstr "Enjeux"
-
-#: models.py:482
-msgid "Comforts"
-msgstr "Comfort"
-
-#: models.py:490 models.py:494
-msgid "Usage"
-msgstr "Utilizzo"
-
-#: models.py:503 models.py:507
-msgid "Network"
-msgstr "Rete"
-
-#: models.py:523 models.py:524
-msgid "Trails"
-msgstr "Sentieri"
-
-#: templates/core/path_detail.html:15
-msgid "Invalid"
-msgstr "Invalido"
-
-#: templates/core/path_detail.html:23
-msgid "Properties"
-msgstr "Proprietà"
-
-#: templates/core/path_detail.html:32 models.py:27
-msgid "Slope"
-msgstr "Dislivello"
-
-#: templates/core/path_detail.html:38
-msgid "Elevation"
-msgstr "Quota"
-
-#: templates/core/path_detail.html:43 templates/core/trail_detail.html:26
-#: templates/infrastructure/baseinfrastructure_detail.html:12
-#: templates/maintenance/intervention_detail.html:37
-#: templates/maintenance/project_detail.html:41
-#: templates/trekking/poi_detail.html:21
-#: templates/trekking/trek_detail.html:61
-msgid "Management"
-msgstr "Gestione"
-
-#: templates/core/path_detail.html:85
-msgid "Altitude profile"
-msgstr "Profilo altimetrico"
-
-#: templates/core/path_detail.html:86
-msgid "Altitude (m)"
-msgstr "Quota (m)"
-
-#: templates/core/path_detail.html:87
-msgid "Distance (m)"
-msgstr "Distanza (m)"
-
-#: templates/core/path_list.html:9 templates/core/path_list.html.py:11
-msgid "Add a path"
-msgstr "Aggiungere una tratta"
-
-#: templates/core/trail_detail.html:29
-#: templates/infrastructure/baseinfrastructure_detail.html:26 models.py:41
-#: models.py:66 templates/maintenance/path_maintenance_detail.html:6
-#: templates/maintenance/project_detail.html:28
-msgid "Interventions"
-msgstr "Interventi"
-
-#: templates/core/trail_detail.html:32
-#: templates/infrastructure/baseinfrastructure_detail.html:29
-#: templates/maintenance/intervention_list.html:7
-#: templates/maintenance/path_maintenance_detail.html:9
-msgid "Add intervention"
-msgstr "Aggiungere un intervento"
-
-#: filters.py:11 filters.py:24
-msgid "Intervention year"
-msgstr "Anno di intervento"
-
-#: models.py:14
-msgid "Building"
-msgstr ""
-
-#: models.py:15
-msgid "Facility"
-msgstr "Attrezzatura"
-
-#: models.py:16 templates/mapentity/entity_list.html:13
-msgid "Signage"
-msgstr "Segnaletica"
-
-#: models.py:48
-msgid "Infrastructure Type"
-msgstr "Tipo di infrastruttura"
-
-#: models.py:49
-msgid "Infrastructure Types"
-msgstr "Tipi di infrastrutture"
-
-#: models.py:66 models.py:67 templates/mapentity/entity_list.html:14
-msgid "Infrastructure"
-msgstr "Infrastruttura"
-
-#: templates/infrastructure/infrastructure_list.html:7
-msgid "Add infrastructure"
-msgstr "Aggiungere infrastruttura"
-
-#: templates/infrastructure/signage_list.html:7
-msgid "Add signage"
-msgstr "Aggiungere segnaletica"
-
-msgid "Add a new infrastructure"
-msgstr "Aggiungere nuova infrastruttura"
-
-msgid "Add a new signage"
-msgstr "Aggiungere nuova segnaletica"
-
-#: filters.py:151 filters.py:163 models.py:35 models.py:45
-msgid "Physical type"
-msgstr "Type physique"
-
-#: filters.py:152 filters.py:164 models.py:96 models.py:106
-msgid "Land type"
-msgstr "Type foncier"
-
-#: filters.py:154 filters.py:166
-msgid "Competence"
-msgstr "Competenza"
-
-#: filters.py:155 filters.py:167
-#: templates/land/land_listactions_fragment.html:18
-msgid "Signage management"
-msgstr "Gestione della segnaletica"
-
-#: filters.py:156 filters.py:168
-#: templates/land/land_listactions_fragment.html:19
-msgid "Work management"
-msgstr "Gestione dei lavori"
-
-#: models.py:36 templates/land/land_listactions_fragment.html:15
-msgid "Physical types"
-msgstr "Types physique"
-
-#: models.py:52 models.py:56
-msgid "Physical edge"
-msgstr "Tronçon physique"
-
-#: models.py:53 templates/land/land_detail_fragment.html:27
-msgid "Physical edges"
-msgstr "Tronçons physique"
-
-#: models.py:92
-msgid "Right of way"
-msgstr "Diritto di passaggio"
-
-#: models.py:97 templates/land/land_listactions_fragment.html:16
-msgid "Land types"
-msgstr "Types foncier"
-
-#: models.py:113 models.py:117
-msgid "Land edge"
-msgstr "Tronçon foncier"
-
-#: models.py:114 templates/land/land_detail_fragment.html:18
-msgid "Land edges"
-msgstr "Tronçons foncier"
-
-#: models.py:154 models.py:158
-msgid "Competence edge"
-msgstr "Tratta di competenza"
-
-#: models.py:155 templates/land/land_detail_fragment.html:36
-msgid "Competence edges"
-msgstr "Tratte di competenza"
-
-#: models.py:194 models.py:198
-msgid "Work management edge"
-msgstr "Tronçon de gestion de travaux"
-
-#: models.py:195 templates/land/land_detail_fragment.html:45
-msgid "Work management edges"
-msgstr "Tronçons de gestion de travaux"
-
-#: models.py:234 models.py:238
-msgid "Signage management edge"
-msgstr "Tronçon de gestion signalétique"
-
-#: models.py:235 templates/land/land_detail_fragment.html:54
-msgid "Signage management edges"
-msgstr "Tronçons de gestion signalétique"
-
-#: models.py:274
-msgid "Order"
-msgstr "Ordine"
-
-#: models.py:282 models.py:292
-msgid "Restricted area"
-msgstr "Zona regolamentata"
-
-#: models.py:283 templates/land/land_detail_fragment.html:14
-msgid "Restricted areas"
-msgstr "Zone regolamentate"
-
-#: models.py:299 models.py:303
-msgid "Restricted area edge"
-msgstr "Tratta in zona regolamentata"
-
-#: models.py:300
-msgid "Restricted area edges"
-msgstr "Tratte in zona regolamentata"
-
-#: models.py:331 models.py:342 templates/land/bbox.html:7
-#: templates/land/land_mapinit_fragment.html:5
-msgid "City"
-msgstr "Comune"
-
-#: models.py:332 templates/land/land_detail_fragment.html:6
-msgid "Cities"
-msgstr "Comuni"
-
-#: models.py:349 models.py:353
-msgid "City edge"
-msgstr "Tratta del Comune"
-
-#: models.py:350
-msgid "City edges"
-msgstr "Tratte dei Comuni"
-
-#: models.py:380 models.py:390 templates/land/bbox.html:14
-#: templates/land/land_mapinit_fragment.html:4
-msgid "District"
-msgstr "Settore"
-
-#: models.py:381 templates/land/land_detail_fragment.html:10
-msgid "Districts"
-msgstr "Settori"
-
-#: models.py:397 models.py:401
-msgid "District edge"
-msgstr "Tratta del Settore"
-
-#: models.py:398
-msgid "District edges"
-msgstr "Tratte del Settore"
-
-#: templates/land/bbox.html:4
-msgid "Center on"
-msgstr "Centrare su"
-
-#: templates/land/bbox.html:21 templates/land/land_mapinit_fragment.html:6
-msgid "Restricted Area"
-msgstr "Zona regolamentata"
-
-#: templates/land/land_detail_fragment.html:3
-msgid "Land"
-msgstr "Foncier"
-
-#: templates/land/competenceedge_list.html:8
-#: templates/land/land_detail_fragment.html:39
-msgid "Add competence edge"
-msgstr "Aggiungere l'organismo competente"
-
-msgid "Add a new competence edge"
-msgstr "Aggiungere nuovo organismo competente"
-
-#: templates/land/land_detail_fragment.html:21
-#: templates/land/landedge_list.html:8
-msgid "Add land edge"
-msgstr "Renseigner la nature foncière"
-
-msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
-
-#: templates/land/land_detail_fragment.html:30
-#: templates/land/physicaledge_list.html:8
-msgid "Add physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
-
-#: templates/land/land_detail_fragment.html:48
-#: templates/land/workmanagementedge_list.html:8
-msgid "Add work management edge"
-msgstr "Aggiungere gestione lavori"
-
-msgid "Add a new work management edge"
-msgstr "Aggiungere nuova gestione lavori"
-
-#: templates/land/land_detail_fragment.html:57
-#: templates/land/signagemanagementedge_list.html:8
-msgid "Add signage management edge"
-msgstr "Aggiungere gestione segnaletica"
-
-msgid "Add a new signage management edge"
-msgstr "Aggiungere nuova gestione segnaletica"
-
-#: templates/land/land_listactions_fragment.html:8
-#: templates/land/land_listactions_fragment.html:10
-msgid "Manage land"
-msgstr "Gestione fondiaria"
-
-#: templates/land/land_listactions_fragment.html:17
-msgid "Competence zones"
-msgstr "Zone di competenza"
-
-#: filters.py:24
-msgid "Year"
-msgstr "Anno"
-
-#: filters.py:36
-msgid "Year of activity"
-msgstr "Anno dell'attività"
-
-#: forms.py:69 models.py:239 models.py:246
-#: templates/maintenance/intervention_detail.html:20
-msgid "Mandays"
-msgstr "Giornate/Uomo"
-
-#: forms.py:139 models.py:394 templates/maintenance/project_detail.html:12
-msgid "Fundings"
-msgstr "Finanziamenti"
-
-#: models.py:17
-msgid "Whether the intervention is currently happening"
-msgstr "In manutenzione"
-
-#: models.py:19
-msgid "Intervention date"
-msgstr "Data dell'intervento"
-
-#: models.py:24
-msgid "Width"
-msgstr "Larghezza"
-
-#: models.py:25
-msgid "Height"
-msgstr "Quota"
-
-#: models.py:26
-msgid "Area"
-msgstr "Superficie"
-
-#: models.py:30
-msgid "Material cost"
-msgstr "Costo del materiale"
-
-#: models.py:31
-msgid "Heliport cost"
-msgstr "Costo dell'elitrasporto"
-
-#: models.py:32
-msgid "Subcontract cost"
-msgstr "Coût sous-traitance"
-
-#: models.py:46
-msgid "Intervention status"
-msgstr "Stato dell'intervento"
-
-#: models.py:49
-msgid "Intervention type"
-msgstr "Tipo di intervento"
-
-#: models.py:52
-msgid "Disorders"
-msgstr "Désordres"
-
-#: models.py:55
-msgid "Jobs"
-msgstr "Fonctions"
-
-#: models.py:58 models.py:291 templates/mapentity/entity_list.html:12
-msgid "Project"
-msgstr "Cantiere"
-
-#: models.py:65 templates/mapentity/entity_list.html:11
-msgid "Intervention"
-msgstr "Intervento"
-
-#: models.py:185
-msgid "Status"
-msgstr "Stato"
-
-#: models.py:189
-msgid "Intervention's status"
-msgstr "Stato dell'intervento"
-
-#: models.py:190
-msgid "Intervention's statuses"
-msgstr "Stato dell'intervento"
-
-#: models.py:312
-msgid "Type"
-msgstr "Tipo"
-
-#: models.py:203
-msgid "Intervention's type"
-msgstr "Tipo di intervento"
-
-#: models.py:204
-msgid "Intervention's types"
-msgstr "Tipi di intervento"
-
-#: models.py:212
-msgid "Disorder"
-msgstr "Désordre"
-
-#: models.py:216
-msgid "Intervention's disorder"
-msgstr "Désordre"
-
-#: models.py:217
-msgid "Intervention's disorders"
-msgstr "Désordres"
-
-#: models.py:225
-msgid "Job"
-msgstr "Fonction"
-
-#: models.py:226 models.py:262
-msgid "Cost"
-msgstr "Costo"
-
-#: models.py:230
-msgid "Intervention's job"
-msgstr "Fonction"
-
-#: models.py:231
-msgid "Intervention's jobs"
-msgstr "Fonctions"
-
-#: models.py:245
-msgid "Manday"
-msgstr "Giornata/Uomo"
-
-#: models.py:259
-msgid "Begin year"
-msgstr "Anno di inizio"
-
-#: models.py:260
-msgid "End year"
-msgstr "Anno di fine lavori"
-
-#: models.py:261
-msgid "Constraint"
-msgstr "Contraintes"
-
-#: models.py:265 models.py:352
-msgid "Project type"
-msgstr "Tipo di cantiere"
-
-#: models.py:267 models.py:365
-msgid "Project domain"
-msgstr "Area di cantiere"
-
-#: models.py:275 models.py:379
-msgid "Contractors"
-msgstr "Incaricati"
-
-#: models.py:278
-msgid "Project owner"
-msgstr "Committente"
-
-#: models.py:281
-msgid "Project manager"
-msgstr "Aggiudicatario"
-
-#: models.py:284
-msgid "Founders"
-msgstr "Finanziatori"
-
-#: models.py:292 templates/maintenance/path_maintenance_detail.html:20
-msgid "Projects"
-msgstr "Cantieri"
-
-#: models.py:353
-msgid "Project types"
-msgstr "Tipi di cantiere"
-
-#: models.py:361
-msgid "Domain"
-msgstr "Domaine"
-
-#: models.py:366
-msgid "Project domains"
-msgstr "Zone di cantiere"
-
-#: models.py:374 models.py:378
-msgid "Contractor"
-msgstr "Incaricato"
-
-#: models.py:387
-msgid "Amount"
-msgstr "Importo"
-
-#: models.py:393
-msgid "Funding"
-msgstr "Finanziamento"
-
-#: templates/maintenance/intervention_detail.html:25
-#, python-format
-msgid ""
-"\n"
-"                     %(job)s: %(nb_days)s days\n"
-"                    "
-msgstr ""
-"\n"
-"                     %(job)s: %(nb_days)s jours\n"
-"                    "
-
-#: templates/maintenance/intervention_detail.html:31
-msgid "Total:"
-msgstr ""
-
-#: templates/maintenance/intervention_detail.html:31
-msgid "day"
-msgstr "Giornata/Uomo"
-
-#: templates/maintenance/intervention_detail.html:32
-msgid "Total cost:"
-msgstr "Costo totale:"
-
-#: templates/maintenance/intervention_detail.html:51
-msgid "Related Project"
-msgstr "Cantiere collegato"
-
-#: templates/maintenance/intervention_detail.html:57
-msgid "Related infrastructure"
-msgstr "Infrastruttura collegata"
-
-#: templates/maintenance/intervention_detail.html:63
-msgid "Related signage"
-msgstr "Segnaletica collegata"
-
-#: templates/maintenance/intervention_form.html:7
-msgid "on"
-msgstr "su"
-
-#: templates/maintenance/intervention_form.html:45
-msgid "Add manday"
-msgstr "Aggiungere Giornata/Uomo"
-
-#: templates/maintenance/intervention_form.html:46
-#: templates/maintenance/project_form.html:35
-msgid "Remove"
-msgstr "Eliminare"
-
-#: templates/maintenance/path_maintenance_detail.html:3
-msgid "Maintenance"
-msgstr "Manutenzione"
-
-#: templates/maintenance/path_maintenance_detail.html:31
-#: templates/maintenance/project_detail.html:55
-msgid "Infrastructures"
-msgstr "Infrastrutture"
-
-#: templates/maintenance/path_maintenance_detail.html:42
-#: templates/maintenance/project_detail.html:66
-msgid "Signages"
-msgstr "Segnaletica"
-
-#: templates/maintenance/project_detail.html:17
-#, python-format
-msgid ""
-"\n"
-"                    %(amount)s€ of %(organism)s\n"
-"                    "
-msgstr ""
-"\n"
-"                    %(amount)s€ de %(organism)s\n"
-"                    "
-
-#: templates/maintenance/project_form.html:34
-msgid "Add funding"
-msgstr "Aggiungere finanziamento"
-
-#: templates/maintenance/project_list.html:7
-msgid "Add project"
-msgstr "Aggiungere cantiere"
-
-#: filters.py:19
-msgid "Any year"
-msgstr "Annuale"
-
-#: views.py:308
-#, python-format
-msgid "Add a new %s"
-msgstr "Aggiungere un nuovo %s"
-
-#: views.py:321
-msgid "Created"
-msgstr "Creato"
-
-#: views.py:325 views.py:358
-msgid "Your form contains errors"
-msgstr "La scheda contiene errori"
-
-#: views.py:341
-#, python-format
-msgid "Edit %s"
-msgstr "Scrivere %s"
-
-#: views.py:354
-msgid "Saved"
-msgstr "Salvato"
-
-#: views.py:407
-#, python-format
-msgid "Unknown serialization format '%s'"
-msgstr "Format de sérialization inconnnu '%s'"
-
-#: templates/mapentity/entity_confirm_delete.html:18
-#, python-format
-msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
-msgstr "Siete sicuri di voler eliminare <strong>%(object)s</strong> ?"
-
-#: templates/mapentity/entity_confirm_delete.html:22
-msgid "Yes, delete"
-msgstr "Si, cancella"
-
-#: templates/mapentity/entity_confirm_delete.html:23
-msgid "No, back to edit view"
-msgstr "No, torna alla visualizzazione scrittura"
-
-#: templates/mapentity/entity_detail.html:19
-msgid "Update"
-msgstr "Aggiornare"
-
-#: templates/mapentity/entity_detail.html:23
-msgid "ODT"
-msgstr "ODT"
-
-#: templates/mapentity/entity_detail.html:24
-msgid "PDF"
-msgstr "PDF"
-
-#: templates/mapentity/entity_detail.html:35
-#: templates/mapentity/entity_form.html:31
-msgid "Attached files"
-msgstr "File allegati"
-
-#: templates/mapentity/entity_detail.html:50
-msgid "No map available for this object."
-msgstr "Nessuna mappa disponibile per questo oggetto."
-
-#: templates/mapentity/entity_form.html:18 templates/paperclip/details.html:37
-msgid "Delete"
-msgstr "Cancellare"
-
-#: templates/mapentity/entity_form.html:33
-msgid "New file attachment"
-msgstr "Allegare nuovo file"
-
-#: templates/mapentity/entity_form.html:38
-msgid "Existing file attachment"
-msgstr "Allegare a file esistenti"
-
-#: templates/mapentity/entity_list.html:15 models.py:85
-msgid "Trek"
-msgstr "Itinerario"
-
-#: templates/mapentity/entity_list.html:16
-msgid "POI"
-msgstr "POI"
-
-#: templates/mapentity/entity_list.html:38
-msgid "Filter"
-msgstr "Filtro"
-
-#: templates/mapentity/entity_list.html:91
-msgid "Filter list and map"
-msgstr "Filtrare elenco e mappa"
-
-#: templates/mapentity/entity_list.html:136
-msgid "Save map as image"
-msgstr "Salvare la mappa come immagine"
-
-#: templates/mapentity/popupplus.html:8
-msgid "Add"
-msgstr "Aggiungere"
-
-#: forms.py:13
-msgid "Upload attachment"
-msgstr "Caricare allegato"
-
-#: forms.py:23
-msgid "Add attachment"
-msgstr "Aggiungere allegato"
-
-#: models.py:34
-msgid "Attachment"
-msgstr "Allegato"
-
-#: models.py:37
-msgid "Creator"
-msgstr "Autore"
-
-#: models.py:38
-msgid "Title"
-msgstr "Titolo"
-
-#: models.py:39
-msgid "Legend"
-msgstr "Legenda"
-
-#: views.py:37
-msgid "Your attachment was uploaded."
-msgstr "Il vostro allegato è stato caricato"
-
-#: views.py:56
-msgid "Your attachment was deleted."
-msgstr "Il vostro allegato è stato cancellato"
-
-#: views.py:58
-msgid "You are not allowed to delete this attachment."
-msgstr "Non siete autorizzati a cancellare questo allegato"
-
-#: templates/paperclip/delete_link.html:2
-msgid "Delete attachment"
-msgstr "Cancellare l'allegato"
-
-#: templates/paperclip/details.html:15
-msgid "Actions"
-msgstr "Azioni"
-
-#: templates/paperclip/details.html:44
-msgid "No file attached"
-msgstr ""
-
-#: templates/paperclip/details.html:59
-msgid "Confirm file deletion"
-msgstr ""
-
-#: templates/paperclip/details.html:60
-msgid "Are you sure to delete this file {file} ?"
-msgstr ""
-
-#: forms.py:83
-msgid "Create"
-msgstr "Creare"
-
-#: models.py:25
-msgid "Published"
-msgstr "Pubblicato"
-
-#: models.py:32
-msgid "Description teaser"
-msgstr "Riassunto"
-
-#: models.py:33 models.py:311
-msgid "Description"
-msgstr "Descrizione"
-
-#: models.py:34
-msgid "Ambiance"
-msgstr "Ambiente"
-
-#: models.py:35
-msgid "Handicapped's infrastructure"
-msgstr "Infrastrutture per disabili"
-
-#: models.py:36
-msgid "duration"
-msgstr "durata"
-
-#: models.py:38
-msgid "Is in the midst of the park"
-msgstr "E' all'interno del Parco"
-
-#: models.py:39
-msgid "Is transborder"
-msgstr "E' transfrontaliero"
-
-#: models.py:41
-msgid "Advised parking"
-msgstr "Parcheggio consigliato"
-
-#: models.py:44
-msgid "Public transport"
-msgstr "Trasporto pubblico"
-
-#: models.py:45
-msgid "Advice"
-msgstr "Avviso"
-
-#: models.py:48
-msgid "Themes"
-msgstr "Temi"
-
-#: models.py:51
-msgid "Main themes"
-msgstr "Temi principali"
-
-#: models.py:54 models.py:171
-msgid "Trek networks"
-msgstr "Rete sentieristica"
-
-#: models.py:60 models.py:194
-msgid "Route"
-msgstr "Percorso"
-
-#: models.py:63 models.py:203 models.py:207
-msgid "Difficulty level"
-msgstr "Grado di difficoltà"
-
-#: models.py:66 models.py:221
-msgid "Destination"
-msgstr "Destinazione"
-
-#: models.py:69 models.py:237
-msgid "Web links"
-msgstr "Collegamento web"
-
-#: models.py:86
-msgid "Treks"
-msgstr "Itinerari"
-
-#: models.py:170
-msgid "Trek network"
-msgstr "Rete sentieristica"
-
-#: models.py:195
-msgid "Routes"
-msgstr "Percorsi"
-
-#: models.py:208
-msgid "Difficulty levels"
-msgstr "Gradi di difficoltà"
-
-#: models.py:217 models.py:251 models.py:352
-msgid "Pictogram"
-msgstr "Pittogramma"
-
-#: models.py:222
-msgid "Destinations"
-msgstr "Destinazioni"
-
-#: models.py:231
-msgid "URL"
-msgstr "URL"
-
-#: models.py:232
-msgid "Thumbnail"
-msgstr "Vignette"
-
-#: models.py:236
-msgid "Web link"
-msgstr "Collegamento web"
-
-#: models.py:250 models.py:351
-msgid "Label"
-msgstr "Etichetta"
-
-#: models.py:288
-msgid "Common departure"
-msgstr "Partenza comune"
-
-#: models.py:289
-msgid "Common edge"
-msgstr "Tratta comune"
-
-#: models.py:290
-msgid "Circuit step"
-msgstr "Tappa di un circuito"
-
-#: models.py:297
-msgid "Trek relationship"
-msgstr "Collegamento tra itinerari"
-
-#: models.py:298
-msgid "Trek relationships"
-msgstr "Collegamenti tra itinerari"
-
-#: templates/trekking/poi_detail.html:36
-msgid "Trekkings"
-msgstr "Itinerari"
-
-#: templates/trekking/poi_list.html:7
-msgid "Add POI"
-msgstr "Aggiungere POI"
-
-#: templates/trekking/trek_detail.html:7
-msgid "GPX"
-msgstr ""
-
-#: templates/trekking/trek_detail.html:8
-msgid "KML"
-msgstr ""
-
-#: templates/trekking/trek_detail.html:36
-msgid "POIs"
-msgstr "POIs"
-
-#: templates/trekking/trek_detail.html:48
-msgid "POI types"
-msgstr "Tipi di POI"
-
-#: templates/trekking/trek_list.html:7
-msgid "Add trek"
-msgstr "Aggiungere itinerario"
-
-#: templates/trekking/weblink_form.html:4
-#: templates/trekking/weblink_form.html:9
-msgid "Add Web link"
-msgstr "Aggiungere collegamento web"
+#~ msgid ""
+#~ "Access to the requested resource is restricted to path managers. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata al responsabile dei "
+#~ "sentieri. Siete stati reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted to communication managers. "
+#~ "You have been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata al responsabile della "
+#~ "comunicazione. Siete stati reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted to work editor. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata ai compilatori. Siete stati "
+#~ "reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted by structure. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è limitata dalla struttura. Siete stati "
+#~ "reindirizzati"
+
+#~ msgid "Nom"
+#~ msgstr "Nome"
+
+#~ msgid "Structure"
+#~ msgstr "Struttura"
+
+#~ msgid "Structures"
+#~ msgstr "Strutture"
+
+#~ msgid "Related structure"
+#~ msgstr "Struttura collegata"
+
+#~ msgid "Related structures"
+#~ msgstr "Strutture collegate"
+
+#~ msgid "Language"
+#~ msgstr "Lingua"
+
+#~ msgid "User's profile"
+#~ msgstr "Profilo dell'utente"
+
+#~ msgid "User's profiles"
+#~ msgstr "Profili degli utenti"
+
+#~ msgid "Profile for %s"
+#~ msgstr "Profilo per %s"
+
+#~ msgid "Cancel"
+#~ msgstr "Eliminare"
+
+#~ msgid "Save changes"
+#~ msgstr "Salvare le modifiche"
+
+#~ msgid "Topology is not valid."
+#~ msgstr "La topologia non è valida."
+
+#~ msgid "length"
+#~ msgstr "lunghezza"
+
+#~ msgid "Name"
+#~ msgstr "Nome"
+
+#~ msgid "Comments"
+#~ msgstr "Note"
+
+#~ msgid "Reverse path"
+#~ msgstr "Invertire la tratta"
+
+#~ msgid "The path will be reversed once saved"
+#~ msgstr "La tratta sarà invertita una volta salvata"
+
+#~ msgid "Validity"
+#~ msgstr "Validità"
+
+#~ msgid "Departure"
+#~ msgstr "Partenza"
+
+#~ msgid "Arrival"
+#~ msgstr "Arrivo"
+
+#~ msgid "Comfort"
+#~ msgstr "Comfort"
+
+#~ msgid "Insertion date"
+#~ msgstr "Data di inserimento"
+
+#~ msgid "Update date"
+#~ msgstr "Data di modifica"
+
+#~ msgid "Length"
+#~ msgstr "Lunghezza"
+
+#~ msgid "Ascent"
+#~ msgstr "Dislivello in salita"
+
+#~ msgid "Descent"
+#~ msgstr "Dislivello in discesa"
+
+#~ msgid "Minimum elevation"
+#~ msgstr "Quota minima"
+
+#~ msgid "Maximum elevation"
+#~ msgstr "Quota massima"
+
+#~ msgid "Trail"
+#~ msgstr "Sentiero"
+
+#~ msgid "Datasource"
+#~ msgstr "Fonte dei dati"
+
+#~ msgid "Stake"
+#~ msgstr "Enjeu"
+
+#~ msgid "Usages"
+#~ msgstr "Utilizzo"
+
+#~ msgid "Networks"
+#~ msgstr "Reti"
+
+#~ msgid "Path"
+#~ msgstr "Tratta"
+
+#~ msgid "Paths"
+#~ msgstr "Tratte"
+
+#~ msgid "None"
+#~ msgstr "Nessuno"
+
+#~ msgid "Deleted"
+#~ msgstr "Cancellato"
+
+#~ msgid "Offset"
+#~ msgstr "Scarto"
+
+#~ msgid "Kind"
+#~ msgstr "Tipo di topologia"
+
+#~ msgid "Topology"
+#~ msgstr "Topologia"
+
+#~ msgid "Topologies"
+#~ msgstr "Topologie"
+
+#~ msgid "Invalid serialization: %s"
+#~ msgstr "Sérialisation invalide: %s"
+
+#~ msgid "Paths are not unique : %s"
+#~ msgstr "le tratte non sono uniche: %s"
+
+#~ msgid "Invalid serialization of intermediate markers"
+#~ msgstr "Sérialisation invalide des points de passage"
+
+#~ msgid "Start position"
+#~ msgstr "Posizione di partenza"
+
+#~ msgid "End position"
+#~ msgstr "Posizione finale"
+
+#~ msgid "Path aggregation"
+#~ msgstr "Unione di tratte"
+
+#~ msgid "Path aggregations"
+#~ msgstr "Unioni di tratte"
+
+#~ msgid "Source"
+#~ msgstr "Risorsa"
+
+#~ msgid "Datasources"
+#~ msgstr "Fonti dei dati"
+
+#~ msgid "Stakes"
+#~ msgstr "Enjeux"
+
+#~ msgid "Comforts"
+#~ msgstr "Comfort"
+
+#~ msgid "Usage"
+#~ msgstr "Utilizzo"
+
+#~ msgid "Network"
+#~ msgstr "Rete"
+
+#~ msgid "Trails"
+#~ msgstr "Sentieri"
+
+#~ msgid "Invalid"
+#~ msgstr "Invalido"
+
+#~ msgid "Properties"
+#~ msgstr "Proprietà"
+
+#~ msgid "Slope"
+#~ msgstr "Dislivello"
+
+#~ msgid "Elevation"
+#~ msgstr "Quota"
+
+#~ msgid "Management"
+#~ msgstr "Gestione"
+
+#~ msgid "Altitude profile"
+#~ msgstr "Profilo altimetrico"
+
+#~ msgid "Altitude (m)"
+#~ msgstr "Quota (m)"
+
+#~ msgid "Distance (m)"
+#~ msgstr "Distanza (m)"
+
+#~ msgid "Add a path"
+#~ msgstr "Aggiungere una tratta"
+
+#~ msgid "Interventions"
+#~ msgstr "Interventi"
+
+#~ msgid "Add intervention"
+#~ msgstr "Aggiungere un intervento"
+
+#~ msgid "Intervention year"
+#~ msgstr "Anno di intervento"
+
+#~ msgid "Facility"
+#~ msgstr "Attrezzatura"
+
+#~ msgid "Signage"
+#~ msgstr "Segnaletica"
+
+#~ msgid "Infrastructure Type"
+#~ msgstr "Tipo di infrastruttura"
+
+#~ msgid "Infrastructure Types"
+#~ msgstr "Tipi di infrastrutture"
+
+#~ msgid "Infrastructure"
+#~ msgstr "Infrastruttura"
+
+#~ msgid "Add infrastructure"
+#~ msgstr "Aggiungere infrastruttura"
+
+#~ msgid "Add signage"
+#~ msgstr "Aggiungere segnaletica"
+
+#~ msgid "Add a new infrastructure"
+#~ msgstr "Aggiungere nuova infrastruttura"
+
+#~ msgid "Add a new signage"
+#~ msgstr "Aggiungere nuova segnaletica"
+
+#~ msgid "Physical type"
+#~ msgstr "Type physique"
+
+#~ msgid "Land type"
+#~ msgstr "Type foncier"
+
+#~ msgid "Competence"
+#~ msgstr "Competenza"
+
+#~ msgid "Signage management"
+#~ msgstr "Gestione della segnaletica"
+
+#~ msgid "Work management"
+#~ msgstr "Gestione dei lavori"
+
+#~ msgid "Physical types"
+#~ msgstr "Types physique"
+
+#~ msgid "Physical edge"
+#~ msgstr "Tronçon physique"
+
+#~ msgid "Physical edges"
+#~ msgstr "Tronçons physique"
+
+#~ msgid "Right of way"
+#~ msgstr "Diritto di passaggio"
+
+#~ msgid "Land types"
+#~ msgstr "Types foncier"
+
+#~ msgid "Land edge"
+#~ msgstr "Tronçon foncier"
+
+#~ msgid "Land edges"
+#~ msgstr "Tronçons foncier"
+
+#~ msgid "Competence edge"
+#~ msgstr "Tratta di competenza"
+
+#~ msgid "Competence edges"
+#~ msgstr "Tratte di competenza"
+
+#~ msgid "Work management edge"
+#~ msgstr "Tronçon de gestion de travaux"
+
+#~ msgid "Work management edges"
+#~ msgstr "Tronçons de gestion de travaux"
+
+#~ msgid "Signage management edge"
+#~ msgstr "Tronçon de gestion signalétique"
+
+#~ msgid "Signage management edges"
+#~ msgstr "Tronçons de gestion signalétique"
+
+#~ msgid "Order"
+#~ msgstr "Ordine"
+
+#~ msgid "Restricted area"
+#~ msgstr "Zona regolamentata"
+
+#~ msgid "Restricted areas"
+#~ msgstr "Zone regolamentate"
+
+#~ msgid "Restricted area edge"
+#~ msgstr "Tratta in zona regolamentata"
+
+#~ msgid "Restricted area edges"
+#~ msgstr "Tratte in zona regolamentata"
+
+#~ msgid "City"
+#~ msgstr "Comune"
+
+#~ msgid "Cities"
+#~ msgstr "Comuni"
+
+#~ msgid "City edge"
+#~ msgstr "Tratta del Comune"
+
+#~ msgid "City edges"
+#~ msgstr "Tratte dei Comuni"
+
+#~ msgid "District"
+#~ msgstr "Settore"
+
+#~ msgid "Districts"
+#~ msgstr "Settori"
+
+#~ msgid "District edge"
+#~ msgstr "Tratta del Settore"
+
+#~ msgid "District edges"
+#~ msgstr "Tratte del Settore"
+
+#~ msgid "Center on"
+#~ msgstr "Centrare su"
+
+#~ msgid "Restricted Area"
+#~ msgstr "Zona regolamentata"
+
+#~ msgid "Land"
+#~ msgstr "Foncier"
+
+#~ msgid "Add competence edge"
+#~ msgstr "Aggiungere l'organismo competente"
+
+#~ msgid "Add a new competence edge"
+#~ msgstr "Aggiungere nuovo organismo competente"
+
+#~ msgid "Add land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add a new land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add a new physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add work management edge"
+#~ msgstr "Aggiungere gestione lavori"
+
+#~ msgid "Add a new work management edge"
+#~ msgstr "Aggiungere nuova gestione lavori"
+
+#~ msgid "Add signage management edge"
+#~ msgstr "Aggiungere gestione segnaletica"
+
+#~ msgid "Add a new signage management edge"
+#~ msgstr "Aggiungere nuova gestione segnaletica"
+
+#~ msgid "Manage land"
+#~ msgstr "Gestione fondiaria"
+
+#~ msgid "Competence zones"
+#~ msgstr "Zone di competenza"
+
+#~ msgid "Year"
+#~ msgstr "Anno"
+
+#~ msgid "Year of activity"
+#~ msgstr "Anno dell'attività"
+
+#~ msgid "Mandays"
+#~ msgstr "Giornate/Uomo"
+
+#~ msgid "Fundings"
+#~ msgstr "Finanziamenti"
+
+#~ msgid "Whether the intervention is currently happening"
+#~ msgstr "In manutenzione"
+
+#~ msgid "Intervention date"
+#~ msgstr "Data dell'intervento"
+
+#~ msgid "Width"
+#~ msgstr "Larghezza"
+
+#~ msgid "Height"
+#~ msgstr "Quota"
+
+#~ msgid "Area"
+#~ msgstr "Superficie"
+
+#~ msgid "Material cost"
+#~ msgstr "Costo del materiale"
+
+#~ msgid "Heliport cost"
+#~ msgstr "Costo dell'elitrasporto"
+
+#~ msgid "Subcontract cost"
+#~ msgstr "Coût sous-traitance"
+
+#~ msgid "Intervention status"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Intervention type"
+#~ msgstr "Tipo di intervento"
+
+#~ msgid "Disorders"
+#~ msgstr "Désordres"
+
+#~ msgid "Jobs"
+#~ msgstr "Fonctions"
+
+#~ msgid "Project"
+#~ msgstr "Cantiere"
+
+#~ msgid "Intervention"
+#~ msgstr "Intervento"
+
+#~ msgid "Status"
+#~ msgstr "Stato"
+
+#~ msgid "Intervention's status"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Intervention's statuses"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Type"
+#~ msgstr "Tipo"
+
+#~ msgid "Intervention's type"
+#~ msgstr "Tipo di intervento"
+
+#~ msgid "Intervention's types"
+#~ msgstr "Tipi di intervento"
+
+#~ msgid "Disorder"
+#~ msgstr "Désordre"
+
+#~ msgid "Intervention's disorder"
+#~ msgstr "Désordre"
+
+#~ msgid "Intervention's disorders"
+#~ msgstr "Désordres"
+
+#~ msgid "Job"
+#~ msgstr "Fonction"
+
+#~ msgid "Cost"
+#~ msgstr "Costo"
+
+#~ msgid "Intervention's job"
+#~ msgstr "Fonction"
+
+#~ msgid "Intervention's jobs"
+#~ msgstr "Fonctions"
+
+#~ msgid "Manday"
+#~ msgstr "Giornata/Uomo"
+
+#~ msgid "Begin year"
+#~ msgstr "Anno di inizio"
+
+#~ msgid "End year"
+#~ msgstr "Anno di fine lavori"
+
+#~ msgid "Constraint"
+#~ msgstr "Contraintes"
+
+#~ msgid "Project type"
+#~ msgstr "Tipo di cantiere"
+
+#~ msgid "Project domain"
+#~ msgstr "Area di cantiere"
+
+#~ msgid "Contractors"
+#~ msgstr "Incaricati"
+
+#~ msgid "Project owner"
+#~ msgstr "Committente"
+
+#~ msgid "Project manager"
+#~ msgstr "Aggiudicatario"
+
+#~ msgid "Founders"
+#~ msgstr "Finanziatori"
+
+#~ msgid "Projects"
+#~ msgstr "Cantieri"
+
+#~ msgid "Project types"
+#~ msgstr "Tipi di cantiere"
+
+#~ msgid "Domain"
+#~ msgstr "Domaine"
+
+#~ msgid "Project domains"
+#~ msgstr "Zone di cantiere"
+
+#~ msgid "Contractor"
+#~ msgstr "Incaricato"
+
+#~ msgid "Amount"
+#~ msgstr "Importo"
+
+#~ msgid "Funding"
+#~ msgstr "Finanziamento"
+
+#~ msgid ""
+#~ "\n"
+#~ "                     %(job)s: %(nb_days)s days\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                     %(job)s: %(nb_days)s jours\n"
+#~ "                    "
+
+#~ msgid "day"
+#~ msgstr "Giornata/Uomo"
+
+#~ msgid "Total cost:"
+#~ msgstr "Costo totale:"
+
+#~ msgid "Related Project"
+#~ msgstr "Cantiere collegato"
+
+#~ msgid "Related infrastructure"
+#~ msgstr "Infrastruttura collegata"
+
+#~ msgid "Related signage"
+#~ msgstr "Segnaletica collegata"
+
+#~ msgid "on"
+#~ msgstr "su"
+
+#~ msgid "Add manday"
+#~ msgstr "Aggiungere Giornata/Uomo"
+
+#~ msgid "Remove"
+#~ msgstr "Eliminare"
+
+#~ msgid "Maintenance"
+#~ msgstr "Manutenzione"
+
+#~ msgid "Infrastructures"
+#~ msgstr "Infrastrutture"
+
+#~ msgid "Signages"
+#~ msgstr "Segnaletica"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    %(amount)s€ of %(organism)s\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                    %(amount)s€ de %(organism)s\n"
+#~ "                    "
+
+#~ msgid "Add funding"
+#~ msgstr "Aggiungere finanziamento"
+
+#~ msgid "Add project"
+#~ msgstr "Aggiungere cantiere"
+
+#~ msgid "Any year"
+#~ msgstr "Annuale"
+
+#~ msgid "Add a new %s"
+#~ msgstr "Aggiungere un nuovo %s"
+
+#~ msgid "Created"
+#~ msgstr "Creato"
+
+#~ msgid "Your form contains errors"
+#~ msgstr "La scheda contiene errori"
+
+#~ msgid "Edit %s"
+#~ msgstr "Scrivere %s"
+
+#~ msgid "Saved"
+#~ msgstr "Salvato"
+
+#~ msgid "Unknown serialization format '%s'"
+#~ msgstr "Format de sérialization inconnnu '%s'"
+
+#~ msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+#~ msgstr "Siete sicuri di voler eliminare <strong>%(object)s</strong> ?"
+
+#~ msgid "Yes, delete"
+#~ msgstr "Si, cancella"
+
+#~ msgid "No, back to edit view"
+#~ msgstr "No, torna alla visualizzazione scrittura"
+
+#~ msgid "Update"
+#~ msgstr "Aggiornare"
+
+#~ msgid "ODT"
+#~ msgstr "ODT"
+
+#~ msgid "PDF"
+#~ msgstr "PDF"
+
+#~ msgid "Attached files"
+#~ msgstr "File allegati"
+
+#~ msgid "No map available for this object."
+#~ msgstr "Nessuna mappa disponibile per questo oggetto."
+
+#~ msgid "Delete"
+#~ msgstr "Cancellare"
+
+#~ msgid "New file attachment"
+#~ msgstr "Allegare nuovo file"
+
+#~ msgid "Existing file attachment"
+#~ msgstr "Allegare a file esistenti"
+
+#~ msgid "Trek"
+#~ msgstr "Itinerario"
+
+#~ msgid "POI"
+#~ msgstr "POI"
+
+#~ msgid "Filter"
+#~ msgstr "Filtro"
+
+#~ msgid "Filter list and map"
+#~ msgstr "Filtrare elenco e mappa"
+
+#~ msgid "Save map as image"
+#~ msgstr "Salvare la mappa come immagine"
+
+#~ msgid "Add"
+#~ msgstr "Aggiungere"
+
+#~ msgid "Upload attachment"
+#~ msgstr "Caricare allegato"
+
+#~ msgid "Add attachment"
+#~ msgstr "Aggiungere allegato"
+
+#~ msgid "Attachment"
+#~ msgstr "Allegato"
+
+#~ msgid "Creator"
+#~ msgstr "Autore"
+
+#~ msgid "Title"
+#~ msgstr "Titolo"
+
+#~ msgid "Legend"
+#~ msgstr "Legenda"
+
+#~ msgid "Your attachment was uploaded."
+#~ msgstr "Il vostro allegato è stato caricato"
+
+#~ msgid "Your attachment was deleted."
+#~ msgstr "Il vostro allegato è stato cancellato"
+
+#~ msgid "You are not allowed to delete this attachment."
+#~ msgstr "Non siete autorizzati a cancellare questo allegato"
+
+#~ msgid "Delete attachment"
+#~ msgstr "Cancellare l'allegato"
+
+#~ msgid "Actions"
+#~ msgstr "Azioni"
+
+#~ msgid "Create"
+#~ msgstr "Creare"
+
+#~ msgid "Published"
+#~ msgstr "Pubblicato"
+
+#~ msgid "Description teaser"
+#~ msgstr "Riassunto"
+
+#~ msgid "Description"
+#~ msgstr "Descrizione"
+
+#~ msgid "Ambiance"
+#~ msgstr "Ambiente"
+
+#~ msgid "Handicapped's infrastructure"
+#~ msgstr "Infrastrutture per disabili"
+
+#~ msgid "duration"
+#~ msgstr "durata"
+
+#~ msgid "Is in the midst of the park"
+#~ msgstr "E' all'interno del Parco"
+
+#~ msgid "Is transborder"
+#~ msgstr "E' transfrontaliero"
+
+#~ msgid "Advised parking"
+#~ msgstr "Parcheggio consigliato"
+
+#~ msgid "Public transport"
+#~ msgstr "Trasporto pubblico"
+
+#~ msgid "Advice"
+#~ msgstr "Avviso"
+
+#~ msgid "Themes"
+#~ msgstr "Temi"
+
+#~ msgid "Main themes"
+#~ msgstr "Temi principali"
+
+#~ msgid "Trek networks"
+#~ msgstr "Rete sentieristica"
+
+#~ msgid "Route"
+#~ msgstr "Percorso"
+
+#~ msgid "Difficulty level"
+#~ msgstr "Grado di difficoltà"
+
+#~ msgid "Destination"
+#~ msgstr "Destinazione"
+
+#~ msgid "Web links"
+#~ msgstr "Collegamento web"
+
+#~ msgid "Treks"
+#~ msgstr "Itinerari"
+
+#~ msgid "Trek network"
+#~ msgstr "Rete sentieristica"
+
+#~ msgid "Routes"
+#~ msgstr "Percorsi"
+
+#~ msgid "Difficulty levels"
+#~ msgstr "Gradi di difficoltà"
+
+#~ msgid "Pictogram"
+#~ msgstr "Pittogramma"
+
+#~ msgid "Destinations"
+#~ msgstr "Destinazioni"
+
+#~ msgid "URL"
+#~ msgstr "URL"
+
+#~ msgid "Thumbnail"
+#~ msgstr "Vignette"
+
+#~ msgid "Web link"
+#~ msgstr "Collegamento web"
+
+#~ msgid "Label"
+#~ msgstr "Etichetta"
+
+#~ msgid "Common departure"
+#~ msgstr "Partenza comune"
+
+#~ msgid "Common edge"
+#~ msgstr "Tratta comune"
+
+#~ msgid "Circuit step"
+#~ msgstr "Tappa di un circuito"
+
+#~ msgid "Trek relationship"
+#~ msgstr "Collegamento tra itinerari"
+
+#~ msgid "Trek relationships"
+#~ msgstr "Collegamenti tra itinerari"
+
+#~ msgid "Trekkings"
+#~ msgstr "Itinerari"
+
+#~ msgid "Add POI"
+#~ msgstr "Aggiungere POI"
+
+#~ msgid "POIs"
+#~ msgstr "POIs"
+
+#~ msgid "POI types"
+#~ msgstr "Tipi di POI"
+
+#~ msgid "Add trek"
+#~ msgstr "Aggiungere itinerario"
+
+#~ msgid "Add Web link"
+#~ msgstr "Aggiungere collegamento web"

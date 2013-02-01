@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,39 +48,39 @@ msgstr ""
 "L'accès à cette ressource est restreinte par structure. Vous avez été "
 "redirigé."
 
-#: models.py:23
+#: models.py:28
 msgid "Nom"
 msgstr "Name"
 
-#: models.py:29
+#: models.py:34
 msgid "Structure"
 msgstr "Structure"
 
-#: models.py:30
+#: models.py:35
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:61 models.py:78
+#: models.py:67 models.py:84
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:77
+#: models.py:83
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:87
+#: models.py:93
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:91
+#: models.py:97
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:92
+#: models.py:98
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:95
+#: models.py:101
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"

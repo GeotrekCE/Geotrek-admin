@@ -6,7 +6,7 @@
         <td>
             {% if user.profile.is_trekking_manager %}
             <p class="autohide"><a href="{% url trekking:trek_add %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a trek" %}</a>
+                <i class="icon-plus icon-white"></i> {% trans "Add a new trek" %}</a>
             </p>
             {% endif %}
             {% for t in object.treks %}
@@ -22,7 +22,7 @@
         <td>
             {% if user.profile.is_trekking_manager %}
             <p class="autohide"><a href="{% url trekking:poi_add %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a POI" %}</a>
+                <i class="icon-plus icon-white"></i> {% trans "Add a new POI" %}</a>
             </p>
             {% endif %}
             {% for p in object.pois %}
