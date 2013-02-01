@@ -1,5 +1,6 @@
 # pylint: disable=W0401
 
+from .triggers import *
 from .tests import *
 from .test_factories import *
 from .path_filter import *
