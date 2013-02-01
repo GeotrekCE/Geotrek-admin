@@ -195,11 +195,12 @@ L.GeomUtils = (function() {
         },
 
         latlngOnSegment: function (map, latlng, latlngA, latlngB) {
-            var p = map.latLngToLayerPoint(latlng),
-               p1 = map.latLngToLayerPoint(latlngA),
-               p2 = map.latLngToLayerPoint(latlngB);
+            var maxzoom = map.getMaxZoom();
+            var p = map.project(latlng, maxzoom),
+               p1 = map.project(latlngA, maxzoom),
+               p2 = map.project(latlngB, maxzoom);
                closest = L.LineUtil.closestPointOnSegment(p, p1, p2);
-            return map.layerPointToLatLng(closest);
+            return map.unproject(closest, maxzoom);
         },
 
         closestSegment: function (p, points) {
