@@ -166,14 +166,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
-    RETURN ST_3DDistance(ST_EndPoint(line1), ST_StartPoint(line2)) < 0.1;
+    RETURN ST_3DDistance(ST_EndPoint(line1), ST_StartPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
-    RETURN ST_3DDistance(ST_StartPoint(line1), ST_EndPoint(line2)) < 0.1;
+    RETURN ST_3DDistance(ST_StartPoint(line1), ST_EndPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -186,66 +186,63 @@ CREATE OR REPLACE FUNCTION ft_Smart_MakeLine(lines geometry[]) RETURNS geometry 
 DECLARE
     result geometry;
     t_line geometry;
-    remaining int;
+    nblines int;
+    current int[];
+    i int;
+    t_proceed boolean;
     t_found boolean;
     t_failed boolean;
 BEGIN
     result := ST_GeomFromText('LINESTRINGZ EMPTY');
-    remaining := array_length(lines, 1);
-
+    nblines := array_length(lines, 1);
+    current := array_append(current, 0);
     t_found := true;
-    WHILE t_found AND remaining > 0
+    WHILE t_found AND array_length(current, 1) < nblines + 1
     LOOP
         t_found := false;
-        FOREACH t_line IN ARRAY lines 
+        FOR i IN 1 .. nblines
         LOOP
+            t_proceed := NOT current @> ARRAY[i];
+            t_line := lines[i];
             IF ST_IsEmpty(result) THEN
                 result := t_line;
                 t_found := true;
-                remaining := remaining-1;
+                current := array_append(current, i);
             ELSE
-                IF ft_IsAfter(t_line, result) THEN
+                IF t_proceed AND ft_IsAfter(t_line, result) THEN
                     result := ST_MakeLine(result, t_line);
                     t_found := true;
-                    remaining := remaining-1;
-                ELSEIF ft_IsBefore(t_line, result) THEN
+                    current := array_append(current, i);
+                ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
                     result := ST_MakeLine(t_line, result);
                     t_found := true;
-                    remaining := remaining-1;
-                ELSIF ST_Within(t_line, result) THEN
-                    t_found := true;
-                    remaining := remaining-1;
+                    current := array_append(current, i);
                 END IF;
+
+                IF NOT t_found THEN
+                    t_line := ST_Reverse(t_line);
+                    IF t_proceed AND ft_IsAfter(t_line, result) THEN
+                        result := ST_MakeLine(result, t_line);
+                        t_found := true;
+                        current := array_append(current, i);
+                    ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
+                        result := ST_MakeLine(t_line, result);
+                        t_found := true;
+                        current := array_append(current, i);
+                    END IF;
+                END IF;
+
             END IF;
         END LOOP;
-
-        IF NOT t_found THEN
-            -- Start again, with reversed path if not found
-            FOREACH t_line IN ARRAY lines 
-            LOOP
-                t_line := ST_Reverse(t_line);
-                IF ft_IsAfter(t_line, result) THEN
-                    result := ST_MakeLine(result, t_line);
-                    t_found := true;
-                    remaining := remaining-1;
-                ELSEIF ft_IsBefore(t_line, result) THEN
-                    result := ST_MakeLine(t_line, result);
-                    t_found := true;
-                    remaining := remaining-1;
-                ELSIF ST_Within(t_line, result) THEN
-                    t_found := true;
-                    remaining := remaining-1;
-                END IF;
-            END LOOP;
-        END IF;
     END LOOP;
 
     t_failed := ST_Length(result) < ST_Length(ST_Union(lines));
     IF NOT t_found OR t_failed THEN
         result := ST_Union(lines);
         -- RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
+    ELSE
+        result := ST_SetSRID(result, ST_SRID(lines[1]));
     END IF;
-    -- RAISE NOTICE 'Merged % into %', ST_AsText(ST_Union(lines)), ST_AsText(result);
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;

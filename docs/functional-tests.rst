@@ -2514,3 +2514,7 @@ Fixé.
 
 Fixé.
 
+#457 - [BUG] Positionnement sur tronçon inversé (début/fin)
+-----------------------------------------------------------
+
+Fixé.
