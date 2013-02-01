@@ -24,11 +24,11 @@ class Trek(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
-                            help_text=_(u"Public name"), db_column='nom')
+                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
-                                 help_text=_(u"Departure place"), db_column='depart')
+                                 help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
-                               help_text=_(u"Arrival place"), db_column='arrivee')
+                               help_text=_(u"Arrival description"), db_column='arrivee')
     published = models.BooleanField(verbose_name=_(u"Published"),
                                     help_text=_(u"Online"), db_column='public')
 
@@ -38,20 +38,29 @@ class Trek(MapEntityMixin, Topology):
     max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
-                                          help_text=_(u"A brief characteristic"), db_column='chapeau')
-    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description')
-    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True, db_column='ambiance')
-    access = models.TextField(verbose_name=_(u"Access"), blank=True, db_column='acces')
-    disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap')
-    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True, db_column='duree') # in minutes
+                                          help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
+                                   help_text=_(u"Complete description"))
+    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True, db_column='ambiance',
+                                help_text=_(u"Main attraction and interest"))
+    access = models.TextField(verbose_name=_(u"Access"), blank=True, db_column='acces',
+                              help_text=_(u"Best way to go"))
+    disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
+                              help_text=_(u"Any specific infrastructure"))
+    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True, db_column='duree',
+                                   help_text=_(u"In hours"))
 
-    is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur')
+    is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
+                                           help_text=_(u"Crosses center of park"))
 
-    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking')
+    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',
+                                       help_text=_(u"Where to park"))
     parking_location = models.PointField(srid=settings.SRID, spatial_index=False, blank=True, null=True, db_column='geom_parking')
 
-    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True, db_column='transport')
-    advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation')
+    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True, db_column='transport',
+                                        help_text=_(u"Train, bus (see web links)"))
+    advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation',
+                              help_text=_(u"Risks, danger, best period, ..."))
 
     themes = models.ManyToManyField('Theme', related_name="treks",
             db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
@@ -420,8 +429,10 @@ class POI(MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                       db_column='evenement')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    description = models.TextField(verbose_name=_(u"Description"), db_column='description')
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
+                            help_text=_(u"Official name"))
+    description = models.TextField(verbose_name=_(u"Description"), db_column='description',
+                                   help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
 
     class Meta:

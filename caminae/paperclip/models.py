@@ -38,10 +38,14 @@ class Attachment(models.Model):
     attachment_file = models.FileField(_('Attachment'), upload_to=attachment_upload)
     filetype = models.ForeignKey(FileType, verbose_name=_('File type'))
 
-    creator = models.ForeignKey(User, related_name="created_attachments", verbose_name=_('Creator'))
-    author = models.CharField(blank=True, default='', max_length=128, db_column='auteur', verbose_name=_('Author'))
-    title = models.CharField(blank=True, default='', max_length=128, db_column='titre', verbose_name=_(u"Title"))
-    legend = models.CharField(blank=True, default='', max_length=128, db_column='legende', verbose_name=_(u"Legend"))
+    creator = models.ForeignKey(User, related_name="created_attachments", verbose_name=_('Creator'),
+                                help_text=_("User that uploaded"))
+    author = models.CharField(blank=True, default='', max_length=128, db_column='auteur', verbose_name=_('Author'),
+                              help_text=_("Original creator"))
+    title = models.CharField(blank=True, default='', max_length=128, db_column='titre', verbose_name=_(u"Title"),
+                             help_text=_("Official title"))
+    legend = models.CharField(blank=True, default='', max_length=128, db_column='legende', verbose_name=_(u"Legend"),
+                             help_text=_("Details"))
 
     date_insert = models.DateTimeField(editable=False, auto_now_add=True, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, auto_now=True, verbose_name=_(u"Update date"))

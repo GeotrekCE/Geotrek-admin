@@ -14,11 +14,14 @@ from caminae.infrastructure.models import Infrastructure, Signage
 
 class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
-    in_maintenance = models.BooleanField(verbose_name=_(u"Whether the intervention is currently happening"),
-                                         db_column='maintenance')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"), db_column='date')
-    comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire')
+    in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
+                                         db_column='maintenance', help_text=_(u"Recurrent"))
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
+                            help_text=_(u"Brief summary"))
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"), db_column='date',
+                            help_text=_(u"When ?"))
+    comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire',
+                                help_text=_(u"Remarks and notes"))
 
     ## Technical information ##
     length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
@@ -259,9 +262,12 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
     end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
-    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes')
-    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout')
-    comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires')
+    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes',
+                                  help_text=_(u"Specific conditions, ..."))
+    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout',
+                             help_text=_(u"€"))
+    comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
+                                help_text=_(u"Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
                              verbose_name=_(u"Project type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
