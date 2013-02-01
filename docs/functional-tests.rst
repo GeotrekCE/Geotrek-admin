@@ -2518,3 +2518,9 @@ Fixé.
 -----------------------------------------------------------
 
 Fixé.
+
+#473- FORMULAIRE INTERVENTION bis
+---------------------------------
+
+Les enjeux sont filtrés par structure. Vérifier qu'il y a bien des enjeux pour la structure de l'utilisateur.
+

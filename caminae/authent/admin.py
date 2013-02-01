@@ -20,7 +20,7 @@ class UserProfileAdmin(UserAdmin):
     """ Custom adminsite """
     inlines = [ UserProfileInline, ]
 
-if settings.AUTHENT_DATABASE:
+if settings.AUTHENT_TABLENAME:
     # If users are authenticated in a custom database, do not manage them here.
     admin.site.unregister(Group)
 else:
