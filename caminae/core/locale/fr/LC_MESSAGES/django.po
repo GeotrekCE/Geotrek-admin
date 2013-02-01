@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: fields.py:18
+#: fields.py:23
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
@@ -25,19 +25,19 @@ msgstr "La topologie n'est pas valide."
 msgid "length"
 msgstr "Longueur"
 
-#: filters.py:14 models.py:32 models.py:516
+#: filters.py:14 models.py:33 models.py:666
 msgid "Name"
 msgstr "Nom"
 
-#: filters.py:15 models.py:33 models.py:519
+#: filters.py:15 models.py:35 models.py:669
 msgid "Comments"
 msgstr "Commentaires"
 
-#: forms.py:54
+#: forms.py:51
 msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
-#: forms.py:55
+#: forms.py:52
 msgid "The path will be reversed once saved"
 msgstr "Le tronçon sera inversé une fois sauvegardé."
 
@@ -45,157 +45,170 @@ msgstr "Le tronçon sera inversé une fois sauvegardé."
 msgid "Validity"
 msgstr "Validité"
 
-#: models.py:35 models.py:517
+#: models.py:32
+msgid "Approved by manager"
+msgstr "Approuvé par le gérant"
+
+#: models.py:34
+msgid "Official name"
+msgstr "Nom officiel"
+
+#: models.py:36
+msgid "Remarks"
+msgstr "Remarques"
+
+#: models.py:38 models.py:667
 msgid "Departure"
 msgstr "Départ"
 
-#: models.py:36 models.py:518
+#: models.py:39
+msgid "Departure place"
+msgstr "Lieu de départ"
+
+#: models.py:40 models.py:668
 msgid "Arrival"
 msgstr "Arrivée"
 
-#: models.py:40 models.py:477 models.py:481
+#: models.py:41
+msgid "Arrival place"
+msgstr "Lieu d'arrivée"
+
+#: models.py:45 models.py:627 models.py:631
 msgid "Comfort"
 msgstr "Confort"
 
-#: models.py:45 models.py:203
+#: models.py:50 models.py:265
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:46 models.py:204
+#: models.py:51 models.py:266
 msgid "Update date"
 msgstr "Date de modification"
 
-#: models.py:47 models.py:205
+#: models.py:52 models.py:267
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:49
+#: models.py:54
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:51
+#: models.py:56
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:53
+#: models.py:58
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:55
+#: models.py:60
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:60
+#: models.py:65
 msgid "Trail"
 msgstr "Sentier"
 
-#: models.py:63 models.py:452
+#: models.py:68 models.py:602
 msgid "Datasource"
 msgstr "Source de données"
 
-#: models.py:66 models.py:461 models.py:465
+#: models.py:71 models.py:611 models.py:615
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:69 models.py:495
+#: models.py:74 models.py:645
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:72 models.py:508
+#: models.py:77 models.py:658
 msgid "Networks"
 msgstr "Réseaux"
 
-#: models.py:79 models.py:195 models.py:423
+#: models.py:86 models.py:257 models.py:552
 msgid "Path"
 msgstr "Tronçon"
 
-#: models.py:80 templates/core/core_mapinit_fragment.html:12
-#: templates/core/trail_detail.html:22
+#: models.py:87 templates/core/aggregations_list_fragment.html:3
+#: templates/core/core_mapinit_fragment.html:12
+#: templates/core/trail_detail.html:27
 msgid "Paths"
 msgstr "Tronçons"
 
-#: models.py:161 models.py:167 templates/core/path_detail.html:20
-#: templates/core/path_detail.html.py:50 templates/core/path_detail.html:53
-#: templates/core/path_detail.html.py:63 templates/core/path_detail.html:74
-#: templates/core/trail_detail.html:39
+#: models.py:220 models.py:226
+#: templates/core/aggregations_list_fragment.html:34
+#: templates/core/path_detail.html:20 templates/core/path_detail.html.py:34
+#: templates/core/path_detail.html:56 templates/core/path_detail.html.py:59
+#: templates/core/path_detail.html:69 templates/core/path_detail.html.py:80
+#: templates/core/trail_detail.html:34
 msgid "None"
 msgstr "Aucun(e)"
 
-#: models.py:171
+#: models.py:230
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: models.py:196
+#: models.py:258
 msgid "Offset"
 msgstr "Décalage"
 
-#: models.py:197
+#: models.py:259
 msgid "Kind"
 msgstr "Type de topologie"
 
-#: models.py:211 models.py:244 models.py:427
+#: models.py:273 models.py:300 models.py:556
 msgid "Topology"
 msgstr "Topologie"
 
-#: models.py:212
+#: models.py:274
 msgid "Topologies"
 msgstr "Topologies"
 
-#: models.py:326
-#, python-format
-msgid "Invalid serialization: %s"
-msgstr "Sérialisation invalide: %s"
-
-#: models.py:345
-#, python-format
-msgid "Paths are not unique : %s"
-msgstr "Les tronçons ne sont pas uniques: %s"
-
-#: models.py:358
-msgid "Invalid serialization of intermediate markers"
-msgstr "Sérialisation invalide des points de passage"
-
-#: models.py:428
+#: models.py:557
 msgid "Start position"
 msgstr "Position de début"
 
-#: models.py:429
+#: models.py:558
 msgid "End position"
 msgstr "Position de fin"
 
-#: models.py:435 models.py:439
+#: models.py:559
+msgid "Order"
+msgstr "Ordre"
+
+#: models.py:565 models.py:589
 msgid "Path aggregation"
 msgstr "Aggrégation de tronçons"
 
-#: models.py:440
+#: models.py:590
 msgid "Path aggregations"
 msgstr "Aggrégations de tronçons"
 
-#: models.py:448
+#: models.py:598
 msgid "Source"
 msgstr "Source"
 
-#: models.py:453
+#: models.py:603
 msgid "Datasources"
 msgstr "Source de données"
 
-#: models.py:466
+#: models.py:616
 msgid "Stakes"
 msgstr "Enjeux"
 
-#: models.py:482
+#: models.py:632
 msgid "Comforts"
 msgstr "Conforts"
 
-#: models.py:490 models.py:494
+#: models.py:640 models.py:644
 msgid "Usage"
 msgstr "Usage"
 
-#: models.py:503 models.py:507
+#: models.py:653 models.py:657
 msgid "Network"
 msgstr "Réseau"
 
-#: models.py:523 models.py:524
+#: models.py:673 models.py:674
 msgid "Trails"
 msgstr "Sentiers"
 
@@ -203,31 +216,27 @@ msgstr "Sentiers"
 msgid "Invalid"
 msgstr "Invalide"
 
-#: templates/core/path_detail.html:23
-msgid "Properties"
-msgstr "Propriétés"
-
-#: templates/core/path_detail.html:32
+#: templates/core/path_detail.html:37
 msgid "Slope"
 msgstr "Dénivelé"
 
-#: templates/core/path_detail.html:38
+#: templates/core/path_detail.html:43
 msgid "Elevation"
 msgstr "Altitude"
 
-#: templates/core/path_detail.html:43 templates/core/trail_detail.html:26
+#: templates/core/path_detail.html:49 templates/core/trail_detail.html:24
 msgid "Management"
 msgstr "Gestion"
 
-#: templates/core/path_detail.html:85
+#: templates/core/path_detail.html:91
 msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
-#: templates/core/path_detail.html:86
+#: templates/core/path_detail.html:92
 msgid "Altitude (m)"
 msgstr "Altitude (m)"
 
-#: templates/core/path_detail.html:87
+#: templates/core/path_detail.html:93
 msgid "Distance (m)"
 msgstr "Distance (m)"
 
@@ -235,10 +244,3 @@ msgstr "Distance (m)"
 msgid "Add a path"
 msgstr "Ajouter un tronçon"
 
-#: templates/core/trail_detail.html:29
-msgid "Interventions"
-msgstr "Interventions"
-
-#: templates/core/trail_detail.html:32
-msgid "Add intervention"
-msgstr "Ajouter une intervention"

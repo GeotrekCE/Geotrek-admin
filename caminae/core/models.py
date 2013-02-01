@@ -289,18 +289,12 @@ class Topology(NoDeleteMixin):
         return cls._meta.object_name.upper()
 
     @classmethod
-    def overlapping(self, edges):
+    def overlapping(cls, topologyqs):
         """ Return a list of Topology objects if specified edges overlap them.
         TODO: So far, the algorithm is quite simple, and not precise. Indeed
         it returns edges that "share" the same paths, and not exactly overlapping.
         """
-        paths = []
-        for edge in edges:
-            paths.extend(edge.topo_object.paths.select_related(depth=1).all())
-        topos = []
-        for path in set(paths):
-            topos += [aggr.topo_object for aggr in path.aggregations.select_related(depth=1).all()]
-        return topos
+        return cls.objects.filter(aggregations__path__in=topologyqs.values_list('aggregations__path', flat=True))
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
@@ -572,11 +566,18 @@ class PathAggregation(models.Model):
 
     @property
     def start_meter(self):
-        return 0 if self.start_position == 0.0 else int(self.start_position * self.path.length)
+        try:
+            return 0 if self.start_position == 0.0 else int(self.start_position * self.path.length)
+        except ValueError:
+            return -1
+
 
     @property
     def end_meter(self):
-        return 0 if self.end_position == 0.0 else int(self.end_position * self.path.length)
+        try:
+            return 0 if self.end_position == 0.0 else int(self.end_position * self.path.length)
+        except ValueError:
+            return -1
 
     @property
     def is_full(self):
@@ -684,3 +685,7 @@ class Trail(MapEntityMixin, StructureRelated):
             else:
                 geom = geom.union(p.geom)
         return geom
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)

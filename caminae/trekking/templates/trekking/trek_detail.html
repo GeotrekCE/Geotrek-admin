@@ -33,7 +33,6 @@
             <th>{{ trek|verbose:"name" }}</th>
             <td>{{ trek.name }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{{ trek|verbose:"description" }}</th>
             <td>{{ trek.description|safe }}</td>
@@ -86,6 +85,7 @@
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.picture|thumbnail_url:"small-square" }}"></td>
         </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
     <h3>{% trans "Management" %}</h3>

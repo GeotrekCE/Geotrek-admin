@@ -30,7 +30,8 @@ class EdgeHelperTest(TestCase):
         self.assertEquals(len(p.land_edges), 0)
         l = self.factory.create(no_path=True)
         PathAggregationFactory.create(topo_object=l, path=p)
-        self.assertEqual(getattr(p, self.helper_name), [l])
+        self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()],
+                         [l.pk])
 
 
 class LandEdgeTest(EdgeHelperTest):

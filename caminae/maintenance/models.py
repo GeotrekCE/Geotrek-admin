@@ -167,18 +167,16 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @classmethod
     def path_interventions(cls, path):
-        s = []
-        for t in path.topology_set.existing():
-            s += t.interventions.all()
-        return list(set(s))
+        return Intervention.objects.filter(topology__aggregations__path=path)
 
     @classmethod
     def trail_interventions(cls, trail):
         """ Interventions of a trail is the union of interventions on all its paths """
-        s = []
-        for p in trail.paths.all():
-            s.extend(p.interventions)
-        return list(set(s))
+        return Intervention.objects.filter(topology__aggregations__path__trail=trail)
+
+    @classmethod
+    def topology_interventions(cls, topology):
+        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
 Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
@@ -306,6 +304,15 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         return list(set(s))
 
     @property
+    def trails(self):
+        s = []
+        for i in self.interventions.all():
+            for p in i.paths.all():
+                if p.trail:
+                    s.append(p.trail)
+        return list(set(s))
+
+    @property
     def signages(self):
         s = []
         for i in self.interventions.all():
@@ -342,12 +349,26 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
 
     @classmethod
-    def path_projects(self, path):
-        return list(set([i.project
-                         for i in path.interventions
-                         if i.in_project]))
+    def path_projects(cls, path):
+        return cls.objects.filter(interventions__in=path.interventions)
+
+    @classmethod
+    def trail_projects(cls, trail):
+        return cls.objects.filter(interventions__in=trail.interventions)
+
+    @classmethod
+    def topology_projects(cls, topology):
+        return cls.objects.filter(interventions__in=topology.interventions)
+
+    def edges_by_attr(self, interventionattr):
+        pks = []
+        for i in self.interventions.all():
+            pks += getattr(i, interventionattr).values_list('pk', flat=True)
+        return Topology.objects.filter(pk__in=pks)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))
+Topology.add_property('projects', lambda self: Project.topology_projects(self))
+Trail.add_property('projects', lambda self: Project.trail_projects(self))
 
 
 class ProjectType(StructureRelated):

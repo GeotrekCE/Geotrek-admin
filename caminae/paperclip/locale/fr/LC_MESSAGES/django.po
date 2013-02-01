@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 15:59+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,31 +26,51 @@ msgstr "Charger un fichier"
 msgid "Add attachment"
 msgstr "Ajouter un fichier lié"
 
-#: models.py:34
+#: models.py:38
 msgid "Attachment"
 msgstr "Fichier"
 
-#: models.py:35
+#: models.py:39
 msgid "File type"
 msgstr "Type de fichier"
 
-#: models.py:37
+#: models.py:41
 msgid "Creator"
 msgstr "Auteur"
 
-#: models.py:38
+#: models.py:42
+msgid "User that uploaded"
+msgstr "Utilisateur"
+
+#: models.py:43
+msgid "Author"
+msgstr "Auteur"
+
+#: models.py:44
+msgid "Original creator"
+msgstr "Créateur original"
+
+#: models.py:45
 msgid "Title"
 msgstr "Titre"
 
-#: models.py:39
+#: models.py:46
+msgid "Official title"
+msgstr "Titre officiel"
+
+#: models.py:47
 msgid "Legend"
 msgstr "Légende"
 
-#: models.py:41
+#: models.py:48
+msgid "Details"
+msgstr "Détails"
+
+#: models.py:50
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
-#: models.py:42
+#: models.py:51
 msgid "Update date"
 msgstr "Date de modification"
 

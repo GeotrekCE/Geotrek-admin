@@ -13,9 +13,9 @@ from easy_thumbnails.files import get_thumbnailer
 import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
-from caminae.core.models import Topology
+from caminae.core.models import Path, Topology
 from caminae.common.utils import elevation_profile, serialize_imagefield
-
+from caminae.maintenance.models import Intervention, Project
 
 logger = logging.getLogger(__name__)
 
@@ -99,13 +99,12 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def pois(self):
-        pks = [o.pk for o in self.overlapping(POI.objects.all())]
-        return POI.objects.filter(pk__in=pks)
+        return POI.overlapping(Trek.objects.filter(pk=self))
 
     @property
     def poi_types(self):
-        types = [p.type for p in self.pois]
-        return set(types)
+        pks = set(self.pois.values_list('type', flat=True))
+        return POIType.objects.filter(pk__in=pks)
 
     @property
     def serializable_cities(self):
@@ -237,6 +236,18 @@ class Trek(MapEntityMixin, Topology):
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
+    @classmethod
+    def path_treks(cls, path):
+        return cls.objects.filter(aggregations__path=path).distinct('pk')
+
+    @classmethod
+    def topology_treks(cls, topology):
+        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+
+Path.add_property('treks', lambda self: Trek.path_treks(self))
+Topology.add_property('treks', lambda self: Trek.topology_treks(self))
+Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
+Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
 
 class TrekNetwork(models.Model):
@@ -474,6 +485,19 @@ class POI(MapEntityMixin, Topology):
                       aggregations__end_position__gte=a.start_position
                   )]
         return list(set(s))
+
+    @classmethod
+    def path_pois(cls, path):
+        return cls.objects.filter(aggregations__path=path).distinct('pk')
+
+    @classmethod
+    def topology_pois(cls, topology):
+        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+
+Path.add_property('pois', lambda self: POI.path_pois(self))
+Topology.add_property('pois', lambda self: Trek.topology_pois(self))
+Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [])
+Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
 
 
 class POIType(models.Model):

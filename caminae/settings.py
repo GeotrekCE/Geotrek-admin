@@ -203,10 +203,10 @@ INSTALLED_APPS = PROJECT_APPS + (
     'caminae.authent',
     'caminae.common',
     'caminae.core',
+    'caminae.infrastructure',
     'caminae.maintenance',
     'caminae.land',
     'caminae.trekking',
-    'caminae.infrastructure',
     'caminae.mapentity',
     'caminae.paperclip',
 )

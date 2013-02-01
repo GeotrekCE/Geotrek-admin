@@ -33,11 +33,6 @@
             <th>{{ path|verbose:"comfort" }}</th>
             <td>{{ path.comfort|default:_("None") }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
-
-    <h3>{% trans "Properties" %}</h3>
-    <table class="table">
         <tr>
             <th>{% trans "Slope" %}</th>
             <td>{{ path.descent }} m  +{{ path.ascent }} m</td>
@@ -48,8 +43,9 @@
             <th>{% trans "Elevation" %}</th>
             <td>Min: {{ path.min_elevation }} m, Max: {{ path.max_elevation }} m</td>
         </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-    
+
     <h3>{% trans "Management" %}</h3>
     <table class="table">
         <tr>

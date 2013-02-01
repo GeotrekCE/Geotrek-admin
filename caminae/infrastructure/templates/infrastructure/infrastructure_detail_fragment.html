@@ -1,0 +1,37 @@
+{% load i18n %}
+<h3>{% trans "Infrastructure" %}</h3>
+<table class="table">
+    <tr>
+        <th>{% trans "Infrastructures" %}</th>
+        <td>
+            {% if user.profile.is_editor %}
+            <p class="autohide"><a href="{% url infrastructure:infrastructure_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a new infrastructure" %}</a>
+            </p>
+            {% endif %}
+            {% for i in object.infrastructures %}
+                {% if forloop.first %}<ul>{% endif %}
+                <li>{{ i.name_display|safe }}</li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% empty %}
+                <span class="none">{% trans "None" %}</span>
+            {% endfor %}
+        </td>
+    </tr><tr>
+        <th>{% trans "Signages" %}</th>
+        <td>
+            {% if user.profile.is_editor %}
+            <p class="autohide"><a href="{% url infrastructure:signage_add %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
+            </p>
+            {% endif %}
+            {% for s in object.signages %}
+                {% if forloop.first %}<ul>{% endif %}
+                <li>{{ s.name_display|safe }}</li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% empty %}
+                <span class="none">{% trans "None" %}</span>
+            {% endfor %}
+        </td>
+    </tr>
+</table>

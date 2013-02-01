@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,207 +27,266 @@ msgstr ""
 msgid "Advanced"
 msgstr "Ambiance"
 
-#: forms.py:98
+#: forms.py:100
 msgid "Cancel"
 msgstr "Annuler"
 
-#: forms.py:99
+#: forms.py:101
 msgid "Create"
 msgstr "Créer"
 
-#: models.py:23 models.py:171 models.py:184 models.py:201 models.py:232
-#: models.py:339
+#: models.py:26 models.py:255 models.py:268 models.py:286 models.py:318
+#: models.py:443
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:24
+#: models.py:27
+msgid "Public name (Change carefully)"
+msgstr "Nom public (attention si changement)"
+
+#: models.py:28
 msgid "Departure"
 msgstr "Départ"
 
-#: models.py:25
+#: models.py:29
+msgid "Departure description"
+msgstr "Description du départ"
+
+#: models.py:30
 msgid "Arrival"
 msgstr "Arrivée"
 
-#: models.py:26
+#: models.py:31
+msgid "Arrival description"
+msgstr "Description de l'arrivée"
+
+#: models.py:32
 msgid "Published"
 msgstr "Publié"
 
-#: models.py:28
+#: models.py:33
+msgid "Online"
+msgstr "En-ligne"
+
+#: models.py:35
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:29
+#: models.py:36
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:30
+#: models.py:37
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:31
+#: models.py:38
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:33
+#: models.py:40
 msgid "Description teaser"
 msgstr "Résumé"
 
-#: models.py:34 models.py:340
+#: models.py:41
+msgid "A brief summary (map pop-ups)"
+msgstr "A bref résumé (info bulle sur la carte)"
+
+#: models.py:42 models.py:445
 msgid "Description"
 msgstr "Description"
 
-#: models.py:35
+#: models.py:43
+msgid "Complete description"
+msgstr "Description complète"
+
+#: models.py:44
 msgid "Ambiance"
 msgstr "Ambiance"
 
-#: models.py:36
+#: models.py:45
+msgid "Main attraction and interest"
+msgstr "Attraction principal et intérêts"
+
+#: models.py:46
 msgid "Access"
+msgstr "Mode d'accès"
+
+#: models.py:47
+msgid "Best way to go"
 msgstr ""
 
-#: models.py:37
-msgid "Handicapped's infrastructure"
+#: models.py:48
+msgid "Disabled infrastructure"
 msgstr "Aménagement handicapés"
 
-#: models.py:38
+#: models.py:49
+msgid "Any specific infrastructure"
+msgstr "Infrastructure à disposition"
+
+#: models.py:50
 msgid "duration"
 msgstr "durée"
 
-#: models.py:40
+#: models.py:51
+msgid "In hours"
+msgstr "En heures"
+
+#: models.py:53
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
 
-#: models.py:42
+#: models.py:54
+msgid "Crosses center of park"
+msgstr "Traverse le coeur du parc"
+
+#: models.py:56
 msgid "Advised parking"
 msgstr "Parking conseillé"
 
-#: models.py:45
+#: models.py:57
+msgid "Where to park"
+msgstr "Où se garer"
+
+#: models.py:60
 msgid "Public transport"
 msgstr "Transport en commun"
 
-#: models.py:46
+#: models.py:61
+msgid "Train, bus (see web links)"
+msgstr "Train, bus (voir liens Web)"
+
+#: models.py:62
 msgid "Advice"
 msgstr "Recommandations"
 
-#: models.py:49
+#: models.py:63
+msgid "Risks, danger, best period, ..."
+msgstr "Risques, danger, meilleure période, ..."
+
+#: models.py:66
 msgid "Themes"
 msgstr "Thématique"
 
-#: models.py:52 models.py:176
+#: models.py:69 models.py:260
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
-#: models.py:55
+#: models.py:72
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:58 models.py:205
+#: models.py:75 models.py:290
 msgid "Route"
 msgstr "Parcours"
 
-#: models.py:61 models.py:214 models.py:218
+#: models.py:78 models.py:299 models.py:304
 msgid "Difficulty level"
 msgstr "Niveau de difficulté"
 
-#: models.py:64 models.py:242
+#: models.py:81 models.py:329
 msgid "Web links"
 msgstr "Liens web"
 
-#: models.py:80
+#: models.py:97
 msgid "Trek"
 msgstr "Itinéraire"
 
-#: models.py:81
+#: models.py:98 templates/trekking/trekking_detail_fragment.html:5
 msgid "Treks"
 msgstr "Itinéraires"
 
-#: models.py:175
+#: models.py:259
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
-#: models.py:185 models.py:195 models.py:257 models.py:269 models.py:276
-#: models.py:283 models.py:381
+#: models.py:269 models.py:280 models.py:353 models.py:366 models.py:373
+#: models.py:386 models.py:506
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-#: models.py:206
+#: models.py:291
 msgid "Routes"
 msgstr "Parcours"
 
-#: models.py:219
+#: models.py:305
 msgid "Difficulty levels"
 msgstr "Niveaux de difficulté"
 
-#: models.py:233
+#: models.py:319
 msgid "URL"
 msgstr "URL"
 
-#: models.py:234
+#: models.py:320
 msgid "Category"
 msgstr ""
 
-#: models.py:241
+#: models.py:328
 msgid "Web link"
 msgstr "Lien web"
 
-#: models.py:256 models.py:275 models.py:380
+#: models.py:352 models.py:372 models.py:505
 msgid "Label"
 msgstr "Label"
 
-#: models.py:261
+#: models.py:358
 #, fuzzy
 msgid "Web link category"
 msgstr "Lien web"
 
-#: models.py:262
+#: models.py:359
 #, fuzzy
 msgid "Web link categories"
 msgstr "Liens web"
 
-#: models.py:317
+#: models.py:378 models.py:379
+msgid "Theme"
+msgstr "Thématique"
+
+#: models.py:420
 msgid "Common departure"
 msgstr "Départ en commun"
 
-#: models.py:318
+#: models.py:421
 msgid "Common edge"
 msgstr "Tronçon commun"
 
-#: models.py:319
+#: models.py:422
 msgid "Circuit step"
 msgstr "Étape de circuit"
 
-#: models.py:326
+#: models.py:429
 msgid "Trek relationship"
 msgstr "Réseaux randonnée"
 
-#: models.py:327
+#: models.py:430
 msgid "Trek relationships"
 msgstr "Liens entre itinéraires"
 
-#: models.py:341
+#: models.py:444
+msgid "Official name"
+msgstr "Nom officiel"
+
+#: models.py:446
+msgid "History, details,  ..."
+msgstr "Histoire, details"
+
+#: models.py:447
 msgid "Type"
 msgstr "Type"
 
-#: templates/trekking/poi_detail.html:21
-#: templates/trekking/trek_detail.html:86
+#: models.py:451 models.py:452 models.py:511 models.py:512
+msgid "POI"
+msgstr "POIs"
+
+#: templates/trekking/poi_detail.html:20
+msgid "Elevation"
+msgstr "Altitude"
+
+#: templates/trekking/poi_detail.html:26
+#: templates/trekking/trek_detail.html:91
 msgid "Management"
 msgstr "Gestion"
-
-#: templates/trekking/poi_detail.html:24
-#: templates/trekking/trek_detail.html:89
-msgid "Paths"
-msgstr "Tronçons"
-
-#: templates/trekking/poi_detail.html:31 templates/trekking/poi_detail.html:43
-#: templates/trekking/trek_detail.html:56
-#: templates/trekking/trek_detail.html:68
-#: templates/trekking/trek_detail.html:80
-#: templates/trekking/trek_detail.html:96
-msgid "None"
-msgstr "Aucun"
-
-#: templates/trekking/poi_detail.html:36
-msgid "Trekkings"
-msgstr "Itinéraires"
 
 #: templates/trekking/poi_list.html:7
 msgid "Add POI"
@@ -245,7 +304,16 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
+#: templates/trekking/trek_detail.html:56
+#: templates/trekking/trek_detail.html:68
+#: templates/trekking/trek_detail.html:80
+#: templates/trekking/trekking_detail_fragment.html:17
+#: templates/trekking/trekking_detail_fragment.html:33
+msgid "None"
+msgstr "Aucun"
+
 #: templates/trekking/trek_detail.html:61
+#: templates/trekking/trekking_detail_fragment.html:21
 msgid "POIs"
 msgstr "POIs"
 
@@ -253,14 +321,33 @@ msgstr "POIs"
 msgid "POI types"
 msgstr "Types de POI"
 
+#: templates/trekking/trek_detail.html:85
+msgid "Thumbnail"
+msgstr "Vignette"
+
 #: templates/trekking/trek_list.html:7
 msgid "Add trek"
 msgstr "Ajouter un itinéraire"
+
+#: templates/trekking/trekking_detail_fragment.html:2
+msgid "Trekking"
+msgstr "Itinéraire"
+
+#: templates/trekking/trekking_detail_fragment.html:9
+msgid "Add a trek"
+msgstr "Ajouter un itinéraire"
+
+#: templates/trekking/trekking_detail_fragment.html:25
+msgid "Add a POI"
+msgstr "Ajouter un POI"
 
 #: templates/trekking/weblink_form.html:4
 #: templates/trekking/weblink_form.html:9
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
+
+#~ msgid "Paths"
+#~ msgstr "Tronçons"
 
 #~ msgid "Is transborder"
 #~ msgstr "Transfrontalier"
@@ -273,9 +360,6 @@ msgstr "Ajouter un lien web"
 
 #~ msgid "Destinations"
 #~ msgstr "Destinations"
-
-#~ msgid "Thumbnail"
-#~ msgstr "Vignette"
 
 #~ msgid "Length"
 #~ msgstr "Longueur"

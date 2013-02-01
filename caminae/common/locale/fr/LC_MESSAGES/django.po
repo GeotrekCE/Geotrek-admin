@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 12:29+0100\n"
+"POT-Creation-Date: 2013-02-01 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,6 +43,46 @@ msgstr "Type de fichiers"
 #: models.py:24
 msgid "File types"
 msgstr "Types de fichiers"
+
+
+msgid "Add a new intervention"
+msgstr "Ajouter une intervention"
+
+msgid "Add a new project"
+msgstr "Ajouter un chantier"
+
+msgid "Add a project"
+msgstr "Ajouter un chantier"
+
+msgid "Add a new infrastructure"
+msgstr "Ajouter un aménagement"
+
+msgid "Add an infrastructure"
+msgstr "Ajouter un aménagement"
+
+msgid "Add signage"
+msgstr "Ajouter une signalétique"
+
+msgid "Add a new signage"
+msgstr "Ajouter une signalétique"
+
+msgid "Add a new competence edge"
+msgstr "Renseigner l'organisme compétent"
+
+msgid "Add a new land edge"
+msgstr "Renseigner la nature foncière"
+
+msgid "Add a new physical edge"
+msgstr "Renseigner la nature physique"
+
+msgid "Add a new work management edge"
+msgstr "Renseigner le gestionnaire travaux"
+
+msgid "Add a new signage management edge"
+msgstr "Renseigner le gestionnaire signalétique"
+
+
+
 
 #~ msgid "Cancel"
 #~ msgstr "Annuler"
