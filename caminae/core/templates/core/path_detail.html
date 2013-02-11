@@ -31,32 +31,24 @@
         </tr>
         <tr>
             <th>{{ path|verbose:"comfort" }}</th>
-            <td>{{ path.comfort|default:_("None") }}</td>
+            <td>{% if path.comfort %}{{ path.confort }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
-        <tr>
-            <th>{% trans "Slope" %}</th>
-            <td>{{ path.descent }} m  +{{ path.ascent }} m</td>
-        </tr><tr>
-            <th>{{ path|verbose:"length" }}</th>
-            <td>{{ path.length|stringformat:".2f" }} m</td>
-        </tr><tr>
-            <th>{% trans "Elevation" %}</th>
-            <td>Min: {{ path.min_elevation }} m, Max: {{ path.max_elevation }} m</td>
-        </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
+        {% include "core/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ path|verbose:"trail" }}</th>
             <td>{{ path.trail_display|safe }}</td>
         </tr><tr>
             <th>{{ path|verbose:"datasource" }}</th>
-            <td>{{ path.datasource|default:_("None") }}</td>
+            <td>{% if path.datasource %}{{ path.datasource }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr><tr>
             <th>{{ path|verbose:"stake" }}</th>
-            <td>{{ path.stake|default:_("None") }}</td>
+            <td>{% if path.stake %}{{ path.stake }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ path|verbose:"usages" }}</th>
@@ -81,6 +73,7 @@
                 {% endfor %}
             </td>
         </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}
 

@@ -121,8 +121,9 @@ class TrekDetail(MapEntityDetail):
     model = Trek
 
     def can_edit(self):
-        return hasattr(self.request.user, 'profile') and \
-               self.request.user.profile.is_trekking_manager()
+        return self.request.user.is_staff or \
+               (hasattr(self.request.user, 'profile') and \
+                self.request.user.profile.is_trekking_manager())
 
 
 class TrekDocument(MapEntityDocument):
@@ -177,8 +178,9 @@ class POIDetail(MapEntityDetail):
     model = POI
 
     def can_edit(self):
-        return hasattr(self.request.user, 'profile') and \
-               self.request.user.profile.is_trekking_manager()
+        return self.request.user.is_staff or \
+               (hasattr(self.request.user, 'profile') and \
+                self.request.user.profile.is_trekking_manager())
 
 
 class POIDocument(MapEntityDocument):

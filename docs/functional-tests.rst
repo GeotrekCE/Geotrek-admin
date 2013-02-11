@@ -2529,3 +2529,26 @@ Les enjeux sont filtrés par structure. Vérifier qu'il y a bien des enjeux pour
 
 Il est possible de renseigner de l'aide à la saisie. Les étiquettes s'affichent en dessous des champs. L'aspect métier des textes devraient éventuellement être revu.
 
+
+==========================
+Sprint 12 - Version 0.12.0
+==========================
+
+#324 - Terminer les fiches détails
+----------------------------------
+
+Les fiches détails contiennent tous les attributs disponibles.
+
+De plus, chaque module apportent son lot d'informations liées (à partir des tronçons), comme les zones foncières, ou la maintenance.
+
+
+#475 - FORMULAIRE INTERVENTION - Champs booléen EN MAINTENANCE
+--------------------------------------------------------------
+
+Corrigé -> "récurrent".
+
+#467 - [BUG] INTERVENTIONS sur AMENAGEMENT : Saisie geom ?
+----------------------------------------------------------
+
+Fixé.
+

@@ -47,7 +47,7 @@ class Trek(MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                               help_text=_(u"Any specific infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration"), blank=True, null=True, db_column='duree',
+    duration = models.IntegerField(verbose_name=_(u"duration"), default=0, blank=True, null=True, db_column='duree',
                                    help_text=_(u"In hours"))
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',

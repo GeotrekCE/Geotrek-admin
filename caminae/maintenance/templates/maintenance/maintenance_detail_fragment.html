@@ -1,5 +1,7 @@
 {% load i18n %}
 
+{% if modelname != "intervention" %}
+
 <h3>{% trans "Maintenance" %}</h3>
 <table class="table">
     <tr>
@@ -21,7 +23,10 @@
                 <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
-    </tr><tr>
+    </tr>
+
+    {% if modelname != "project" %}
+    <tr>
         <th>{% trans "Projects" %}</th>
         <td>
             {% for p in object.projects.all %}
@@ -33,4 +38,8 @@
             {% endfor %}
         </td>
     </tr>
+    {% endif %}
+
 </table>
+
+{% endif %}

@@ -14,17 +14,13 @@
         </tr>
         <tr>
             <th>{{ poi|verbose:"description" }}</th>
-            <td>{{ poi.description|safe }}</td>
+            <td>{% if poi.description %}{{ poi.description|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Elevation" %}</th>
             <td>{{ poi.geom.z }}m</td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
-        {% include "core/aggregations_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

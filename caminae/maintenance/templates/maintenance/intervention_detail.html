@@ -4,22 +4,55 @@
 {% block detailspanel %}
     {{ block.super }}
     <table class="table-striped table-bordered table">
-        {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{{ intervention|verbose:"name" }}</th>
+            <td>{{ intervention.name }}</td>
+        </tr>
         <tr>
             <th>{{ intervention|verbose:"date" }}</th>
             <td>{{ intervention.date }}</td>
         </tr>
         <tr>
             <th>{{ intervention|verbose:"stake" }}</th>
-            <td>{{ intervention.stake|default:_("None") }}</td>
+            <td>{% if intervention.stake %}<span class="label">{{ intervention.stake }}</span>
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+         <tr>
+            <th>{{ intervention|verbose:"status" }}</th>
+            <td>{% if intervention.status %}{{ intervention.status }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
-            <th>{{ intervention|verbose:"date" }}</th>
-            <td>{{ intervention.date }}</td>
+            <th>{{ intervention|verbose:"type" }}</th>
+            <td>{% if intervention.type %}{{ intervention.type }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
-            <th>{{ intervention|verbose:"project" }}</th>
-            <td>{{ intervention.project }}</td>
+            <th>{{ intervention|verbose:"disorders" }}</th>
+            <td>
+                {% for disorder in  intervention.disorders.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li> {{ disorder }} </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"material_cost" }}</th>
+            <td>{{ intervention.material_cost|floatformat:2 }} &euro;</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"heliport_cost" }}</th>
+            <td>{{ intervention.heliport_cost|floatformat:2 }} &euro;</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"subcontract_cost" }}</th>
+            <td>{{ intervention.subcontract_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
             <th>{% trans "Mandays" %}</th>
@@ -37,31 +70,50 @@
                 <p>{% trans "Total cost:" %} {{ intervention.total_cost|floatformat:2 }} &euro;</p>
             </td>
         </tr>
-    </table>
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
-        {% if intervention.topology %}
-            {% include "core/aggregations_list_fragment.html" with object=intervention.topology %}
-        {% endif %}
         <tr>
             <th>{% trans "Related Project" %}</th>
-            <td>{% if intervention.project %} {{ intervention.project.name_display|safe }}
-                {% else %} <span class="none">{% trans "None" %}</span>
-                {% endif %}
-            </td>
-        </tr><tr>
-            <th>{% trans "Related infrastructure" %}</th>
-            <td>{% if intervention.is_infrastructure %} {{ intervention.infrastructure.name_display|safe }}
-                {% else %} <span class="none">{% trans "None" %}</span>
-                {% endif %}
-            </td>
-        </tr><tr>
-            <th>{% trans "Related signage" %}</th>
-            <td>{% if intervention.is_signage %} {{ intervention.infrastructure.name_display|safe }}
+            <td>{% if intervention.project %}
+                    {{ intervention.project.name_display|safe }}
+                    ({{ intervention.project.begin_year }} - {{ intervention.project.end_year }})
                 {% else %} <span class="none">{% trans "None" %}</span>
                 {% endif %}
             </td>
         </tr>
+
+        {% if intervention.is_infrastructure %}
+        <tr>
+            <th>{% trans "Related infrastructure" %}</th>
+            <td>{{ intervention.infrastructure.name_display|safe }}</td>
+        </tr>
+        {% endif %}
+
+        {% if intervention.is_signage %}
+        <tr>
+            <th>{% trans "Related signage" %}</th>
+            <td>{{ intervention.infrastructure.name_display|safe }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>{{ intervention|verbose:"length" }}</th>
+            <td>{{ intervention.length|stringformat:".2f" }}m</td>
+        </tr>
+        <tr>
+            <th>{% trans "Surface" %}</th>
+            <td>{% trans "H:" %} {{ intervention.height|stringformat:".2f" }}m ,
+                {% trans "W:" %} {{ intervention.width|stringformat:".2f" }}m :
+                {{ intervention.area|stringformat:".1f" }}m&sup2;
+            </td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"slope" }}</th>
+            <td>{{ intervention.slope|stringformat:".2f" }} m</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"comments" }}</th>
+            <td>{% if intervention.comments %}{{ intervention.comments|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}

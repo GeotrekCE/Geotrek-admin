@@ -12,6 +12,12 @@ class SmartIncludeNode(template.Node):
 
     def render(self, context):
         apps = [app.split('.')[-1] for app in settings.INSTALLED_APPS]
+
+        # Bring current app to the top of the list
+        appname = context.get('appname', apps[0])
+        apps.pop(apps.index(appname))
+        apps = [appname] + apps
+
         viewname = self.viewname
         result = ""
         for module in apps:

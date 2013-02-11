@@ -1,0 +1,13 @@
+{% load i18n field_verbose_name %}
+<tr>
+    <th>{{ object|verbose:"length" }}</th>
+    <td>{{ object.length|stringformat:".2f" }}m</td>
+</tr>
+<tr>
+    <th>{% trans "Slope" %}</th>
+    <td>{{ object.descent }} m  +{{ object.ascent }}m</td>
+</tr>
+<tr>
+    <th>{% trans "Elevation" %}</th>
+    <td>Min: {{ object.min_elevation }} m, Max: {{ object.max_elevation }} m</td>
+</tr>
