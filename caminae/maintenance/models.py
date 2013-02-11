@@ -301,7 +301,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         s = []
         for i in self.interventions.all():
             s += i.paths
-        return list(set(s))
+        return Path.objects.filter(pk__in=[p.pk for p in set(s)])
 
     @property
     def trails(self):
@@ -310,7 +310,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
             for p in i.paths.all():
                 if p.trail:
                     s.append(p.trail)
-        return list(set(s))
+        return Trail.objects.filter(pk__in=[t.pk for t in set(s)])
 
     @property
     def signages(self):

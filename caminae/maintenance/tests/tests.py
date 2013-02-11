@@ -289,22 +289,22 @@ class ProjectTest(TestCase):
         i3.topology = t
 
         proj = ProjectFactory.create()
-        self.assertEquals(proj.paths, [])
+        self.assertItemsEqual(proj.paths.all(), [])
         self.assertEquals(proj.signages, [])
         self.assertEquals(proj.infrastructures, [])
 
         proj.interventions.add(i1)
-        self.assertEquals(proj.paths, [p1])
+        self.assertItemsEqual(proj.paths.all(), [p1])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [])
 
         proj.interventions.add(i2)
-        self.assertItemsEqual(proj.paths, [p1, p2])
+        self.assertItemsEqual(proj.paths.all(), [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
 
         proj.interventions.add(i3)
-        self.assertItemsEqual(proj.paths, [p1, p2])
+        self.assertItemsEqual(proj.paths.all(), [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
 
