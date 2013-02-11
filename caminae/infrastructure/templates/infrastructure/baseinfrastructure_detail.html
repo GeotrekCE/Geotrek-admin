@@ -8,10 +8,12 @@
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if path.description %}{{ path.description|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
-        {% include "core/aggregations_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}

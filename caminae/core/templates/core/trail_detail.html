@@ -19,21 +19,4 @@
             <td>{{ trail.comments|safe }}</td>
         </tr>
     </table>
-
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
-        <tr>
-            <th>{% trans "Paths" %}</th>
-            <td class="paths">
-                {% for p in trail.paths.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
-            </td>
-        </tr>
-    </table>
 {% endblock detailspanel %}

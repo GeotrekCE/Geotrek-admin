@@ -98,7 +98,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                 return self.signages[0]
             if self.is_infrastructure:
                 return self.infrastructures[0]
-        return None
+        raise ValueError("Invalid intervention")
 
     @property
     def is_infrastructure(self):

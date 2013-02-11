@@ -8,7 +8,60 @@
             <th>{{ project|verbose:"name" }}</th>
             <td>{{ project.name }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{{ project|verbose:"begin_year" }}</th>
+            <td>{{ project.begin_year }}</td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"end_year" }}</th>
+            <td>{{ project.end_year }}</td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"cost" }}</th>
+            <td>{{ project.cost }} &euro;</td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"type" }}</th>
+            <td>{% if project.type %}{{ project.type }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"domain" }}</th>
+            <td>{% if project.domain %}{{ project.domain }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"constraint" }}</th>
+            <td>{% if project.constraints %}{{ project.constraint|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"project_owner" }}</th>
+            <td>{% if project.project_owner %}{{ project.project_owner }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"project_manager" }}</th>
+            <td>{% if project.project_manager %}{{ project.project_manager }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ project|verbose:"contractors" }}</th>
+            <td>
+                {% for contractor in  project.contractors.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li> {{ contractor }} </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
         <tr>
             <th>{% trans "Fundings" %}</th>
             <td>
@@ -25,33 +78,12 @@
                 {% endfor %}
             </td>
         </tr>
-    </table>
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
         <tr>
-            <th>{% trans "Paths" %}</th>
-            <td class="paths">
-                {% for p in project.paths %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+            <th>{{ project|verbose:"comments" }}</th>
+            <td>{% if project.comments %}{{ project.comments|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        <tr>
-            <th>{% trans "Trails" %}</th>
-            <td>
-                {% for t in project.trails %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t.name_display|safe }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
-            </td>
-        </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}

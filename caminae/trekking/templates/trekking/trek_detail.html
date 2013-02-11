@@ -28,22 +28,92 @@
 
 {% block detailspanel %}
     {{ block.super }}
+
+    {% if not trek.published %}
+        <div class="alert alert-error"><strong>{% trans "Not published" %}</strong></div>
+    {% endif %}
+
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ trek|verbose:"name" }}</th>
             <td>{{ trek.name }}</td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"departure" }}</th>
+            <td>{{ trek.departure }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"arrival" }}</th>
+            <td>{{ trek.arrival }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"duration" }}</th>
+            <td>{{ trek.duration }}h</td>
+        </tr>
+        {% include "core/elevationinfo_fragment.html" %}
+        <tr>
+            <th>{{ trek|verbose:"route" }}</th>
+            <td>{% if trek.route %}{{ trek.route|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"difficulty" }}</th>
+            <td>{% if trek.difficulty %}{{ trek.difficulty|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"is_park_centered" }}</th>
+            <td>{{ trek.is_park_centered|yesno:_("yes,no") }}</td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"description_teaser" }}</th>
+            <td>{% if trek.description_teaser %}{{ trek.description_teaser|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"description" }}</th>
-            <td>{{ trek.description|safe }}</td>
+            <td>{% if trek.description %}{{ trek.description|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"ambiance" }}</th>
-            <td>{{ trek.ambiance|safe }}</td>
+            <td>{% if trek.ambiance %}{{ trek.ambiance|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"access" }}</th>
-            <td>{{ trek.access|safe }}</td>
+            <td>{% if trek.access %}{{ trek.access|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"advice" }}</th>
+            <td>{% if trek.advice %}{{ trek.advice|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"advised_parking" }}</th>
+            <td>{% if trek.advised_parking %}{{ trek.advised_parking|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"public_transport" }}</th>
+            <td>{% if trek.public_transport %}{{ trek.public_transport|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"disabled_infrastructure" }}</th>
+            <td>{% if trek.disabled_infrastructure %}{{ trek.disabled_infrastructure|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"themes" }}</th>
@@ -58,11 +128,35 @@
             </td>
         </tr>
         <tr>
-            <th>{% trans "POIs" %}</th>
+            <th>{{ trek|verbose:"usages" }}</th>
             <td>
-                {% for p in trek.pois %}
+                {% for u in trek.usages.all %}
                     {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ p.name_display|safe }}</li>
+                    <li>{{ u }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"networks" }}</th>
+            <td>
+                {% for n in trek.networks.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ n }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"web_links" }}</th>
+            <td>
+                {% for w in trek.web_links.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ w }}</li>
                     {% if forloop.last %}</ul>{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
@@ -86,10 +180,5 @@
             <td><img src="{{ trek.picture|thumbnail_url:"small-square" }}"></td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
-
-    <h3>{% trans "Management" %}</h3>
-    <table class="table">
-        {% include "core/aggregations_list_fragment.html" %}
     </table>
 {% endblock detailspanel %}
