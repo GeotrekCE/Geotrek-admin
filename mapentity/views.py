@@ -128,7 +128,20 @@ class MapEntityLayer(GeoJSONLayerView):
         return response
 
 
-class MapEntityList(ListView):
+class ModelMetaMixin(object):
+    """
+    Add model meta information in context data 
+    """
+    def get_context_data(self, **kwargs):
+        context = super(ModelMetaMixin, self).get_context_data(**kwargs)
+        context['model'] = self.model
+        context['appname'] = self.model._meta.app_label.lower()
+        context['modelname'] = self.model._meta.object_name.lower()
+        context['objectsname'] = self.model._meta.verbose_name_plural
+        return context
+
+
+class MapEntityList(ModelMetaMixin, ListView):
     """
     
     A generic view list web page.
@@ -159,16 +172,10 @@ class MapEntityList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityList, self).get_context_data(**kwargs)
-        context.update(**dict(
-            model=self.model,
-            appname=self.model._meta.app_label.lower(),
-            modelname=self.model._meta.object_name.lower(),
-            objectsname=self.model._meta.verbose_name_plural,
-            datatables_ajax_url=self.model.get_jsonlist_url(),
-            filterform=self.filterform(None, queryset=self.get_queryset()),
-            columns=self.columns,
-            generic_detail_url=self.model.get_generic_detail_url(),
-        ))
+        context['datatables_ajax_url'] = self.model.get_jsonlist_url()
+        context['filterform'] = self.filterform(None, queryset=self.get_queryset())
+        context['columns'] = self.columns
+        context['generic_detail_url'] = self.model.get_generic_detail_url()
         return context
 
 
@@ -216,7 +223,7 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         return context
 
 
-class MapEntityDetail(DetailView):
+class MapEntityDetail(ModelMetaMixin, DetailView):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_DETAIL
@@ -234,7 +241,6 @@ class MapEntityDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
-        context['modelname'] = self.model._meta.object_name.lower()
         context['can_edit'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
@@ -293,7 +299,7 @@ class MapEntityDocument(DetailView):
         return handler
 
 
-class MapEntityCreate(CreateView):
+class MapEntityCreate(ModelMetaMixin, CreateView):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_CREATE
@@ -326,12 +332,11 @@ class MapEntityCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
-        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         return context
 
 
-class MapEntityUpdate(UpdateView):
+class MapEntityUpdate(ModelMetaMixin, UpdateView):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_UPDATE
@@ -362,7 +367,6 @@ class MapEntityUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
-        context['modelname'] = self.model._meta.object_name.lower()
         context['title'] = self.get_title()
         context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
