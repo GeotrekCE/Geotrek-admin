@@ -30,9 +30,10 @@ class InfrastructureDetail(MapEntityDetail):
     model = Infrastructure
 
     def can_edit(self):
-        return hasattr(self.request.user, 'profile') and \
-               self.request.user.profile.is_path_manager() and \
-               self.get_object().same_structure(self.request.user)
+        return self.request.user.is_staff or \
+               (hasattr(self.request.user, 'profile') and \
+                self.request.user.profile.is_path_manager() and \
+                self.get_object().same_structure(self.request.user))
 
 
 class InfrastructureDocument(MapEntityDocument):
@@ -89,8 +90,9 @@ class SignageDetail(MapEntityDetail):
     model = Signage
 
     def can_edit(self):
-        return hasattr(self.request.user, 'profile') and \
-               self.request.user.profile.is_path_manager()
+        return self.request.user.is_staff or \
+               (hasattr(self.request.user, 'profile') and \
+                self.request.user.profile.is_path_manager())
 
 
 class SignageDocument(MapEntityDocument):
