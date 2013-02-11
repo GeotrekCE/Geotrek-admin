@@ -2540,3 +2540,15 @@ Sprint 12 - Version 0.12.0
 Les fiches détails contiennent tous les attributs disponibles.
 
 De plus, chaque module apportent son lot d'informations liées (à partir des tronçons), comme les zones foncières, ou la maintenance.
+
+
+#475 - FORMULAIRE INTERVENTION - Champs booléen EN MAINTENANCE
+--------------------------------------------------------------
+
+Corrigé -> "récurrent".
+
+#467 - [BUG] INTERVENTIONS sur AMENAGEMENT : Saisie geom ?
+----------------------------------------------------------
+
+Fixé.
+
