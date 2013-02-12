@@ -80,22 +80,21 @@ class Trek(MapEntityMixin, Topology):
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
 
+    related_treks = models.ManyToManyField('self', through='TrekRelationship', 
+                                           verbose_name=_(u"Related treks"), symmetrical=False,
+                                           related_name='related_treks+')  # Hide reverse attribute
+
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
-
-    ## relationships helpers ##
-    # TODO: can not be have an intermediary table and be "symmetrical" at the same time
-    # trek_relationships = models.ManyToManyField("self", through="TrekRelationship", symmetrical=True)
-    def get_relationships(self):
-        return TrekRelationship.objects.relationships(self)
-
-    def get_related_treks_values(self):
-        return TrekRelationship.objects.related_treks_values(self)
 
     class Meta:
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
+
+    @property
+    def relationships(self):
+        return TrekRelationship.objects.filter(trek_a=self)  # Does not matter if a or b
 
     @property
     def pois(self):
@@ -250,6 +249,46 @@ Intervention.add_property('treks', lambda self: self.topology.treks if self.topo
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
 
+class TrekRelationship(models.Model):
+
+    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun', default=False)
+    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"), db_column='troncons_communs', default=False)
+    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"), db_column='etape_circuit', default=False)
+
+    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b')
+
+    class Meta:
+        db_table = 'o_r_itineraire_itineraire'
+        verbose_name = _(u"Trek relationship")
+        verbose_name_plural = _(u"Trek relationships")
+        unique_together = ('trek_a', 'trek_b')
+
+    def save(self, *args, **kwargs):
+        # Create symetrical object (since, symmetrical with 'through' Model is not supported)
+        if not kwargs.pop('related', False):
+            try:
+                related = TrekRelationship.objects.get(trek_a=self.trek_b, trek_b=self.trek_a)
+            except TrekRelationship.DoesNotExist:
+                related = TrekRelationship(trek_a=self.trek_b, trek_b=self.trek_a)
+            related.has_common_departure = self.has_common_departure
+            related.has_common_edge = self.has_common_edge
+            related.is_circuit_step = self.is_circuit_step
+            related.save(related=True)
+        super(TrekRelationship, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if not kwargs.pop('related', False):
+            try:
+                TrekRelationship.objects.filter(trek_a=self.trek_b, trek_b=self.trek_a).delete(related=True)
+            except TrekRelationship.DoesNotExist:
+                pass
+        super(TrekRelationship, self).delete(*args, **kwargs)
+
+    def __unicode__(self):
+        return u"%s -- %s" % (self.trek_a, self.trek_b)
+
+
 class TrekNetwork(models.Model):
 
     network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
@@ -385,55 +424,6 @@ class Theme(models.Model):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
     pictogram_img.allow_tags = True
-
-
-class TrekRelationshipManager(models.Manager):
-
-    def relationships(self, trek):
-        """Ease the request to know all relationship of a given trek:
-
-            trek_1 = Trek.objects.get(pk=42)
-            TrekRelationship.objects.relationships(trek_1)
-        """
-        qs = super(TrekRelationshipManager, self).get_query_set()
-        return qs.filter(Q(trek_a=trek) | Q(trek_b=trek))
-
-    def related_treks_values(self, trek):
-        """
-        Returns related treks of a trek as an Array (and not a queryset !).
-        """
-        rss = self.relationships(trek)
-        return [ rs.trek_b if rs.trek_a == trek else rs.trek_a for rs in rss ]
-
-
-# TODO: can not be have an intermediary table and be "symmetrical" at the same time
-# We would like to use it disregarding intervention is in _a or _b:
-#
-#     trek1.save()
-#     trek2.save()
-#     rs = TrekRelationship.objects.create(trek_a=trek1, trek_b=trek2, ...)
-#
-#     trek1.relationships()
-#     trek2.relationships()
-class TrekRelationship(models.Model):
-
-    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun')
-    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"), db_column='troncons_communs')
-    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"), db_column='etape_circuit')
-
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b')
-
-    class Meta:
-        db_table = 'o_r_itineraire_itineraire'
-        verbose_name = _(u"Trek relationship")
-        verbose_name_plural = _(u"Trek relationships")
-        # Not sufficient we should ensure
-        # we don't get (trek_a, trek_b) and (trek_b, trek_a)
-        unique_together = (('trek_a', 'trek_b'), )
-
-    objects = TrekRelationshipManager()
-
 
 
 class POI(MapEntityMixin, Topology):
