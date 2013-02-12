@@ -93,6 +93,10 @@ class Trek(MapEntityMixin, Topology):
         verbose_name_plural = _(u"Treks")
 
     @property
+    def related(self):
+        return self.related_treks.exclude(pk=self.pk)
+
+    @property
     def relationships(self):
         return TrekRelationship.objects.filter(trek_a=self)  # Does not matter if a or b
 
@@ -230,7 +234,19 @@ class Trek(MapEntityMixin, Topology):
     def save(self, *args, **kwargs):
         if self.pk:
             self.refresh_altimetry()
-        return super(Trek, self).save(*args, **kwargs)
+        super(Trek, self).save(*args, **kwargs)
+        # Create relationships automatically
+        # Same departure
+        if self.departure.strip() != '':
+            for t in Trek.objects.filter(departure=self.departure):
+                r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
+                r.has_common_departure = True
+                r.save()
+        # Sharing edges
+        for t in self.treks.exclude(pk=self.pk):
+            r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
+            r.has_common_edge = True
+            r.save()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
