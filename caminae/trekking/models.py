@@ -66,7 +66,7 @@ class Trek(MapEntityMixin, Topology):
             db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-            db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Trek networks"))
+            db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
             db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
@@ -250,13 +250,16 @@ Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
 
 class TrekRelationship(models.Model):
-
+    """
+    Relationships between treks : symmetrical aspect is managed by a trigger that 
+    duplicates all couples (trek_a, trek_b)
+    """
     has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun', default=False)
     has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"), db_column='troncons_communs', default=False)
     is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"), db_column='etape_circuit', default=False)
 
     trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b')
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b', verbose_name=_(u"Trek"))
 
     class Meta:
         db_table = 'o_r_itineraire_itineraire'
@@ -264,29 +267,8 @@ class TrekRelationship(models.Model):
         verbose_name_plural = _(u"Trek relationships")
         unique_together = ('trek_a', 'trek_b')
 
-    def save(self, *args, **kwargs):
-        # Create symetrical object (since, symmetrical with 'through' Model is not supported)
-        if not kwargs.pop('related', False):
-            try:
-                related = TrekRelationship.objects.get(trek_a=self.trek_b, trek_b=self.trek_a)
-            except TrekRelationship.DoesNotExist:
-                related = TrekRelationship(trek_a=self.trek_b, trek_b=self.trek_a)
-            related.has_common_departure = self.has_common_departure
-            related.has_common_edge = self.has_common_edge
-            related.is_circuit_step = self.is_circuit_step
-            related.save(related=True)
-        super(TrekRelationship, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        if not kwargs.pop('related', False):
-            try:
-                TrekRelationship.objects.filter(trek_a=self.trek_b, trek_b=self.trek_a).delete(related=True)
-            except TrekRelationship.DoesNotExist:
-                pass
-        super(TrekRelationship, self).delete(*args, **kwargs)
-
     def __unicode__(self):
-        return u"%s -- %s" % (self.trek_a, self.trek_b)
+        return u"%s <--> %s" % (self.trek_a, self.trek_b)
 
 
 class TrekNetwork(models.Model):
