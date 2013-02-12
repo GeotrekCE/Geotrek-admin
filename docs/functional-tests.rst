@@ -2552,3 +2552,8 @@ Corrigé -> "récurrent".
 
 Fixé.
 
+#486 - BUG - Modification interventions
+---------------------------------------
+
+Idem #473.
+
