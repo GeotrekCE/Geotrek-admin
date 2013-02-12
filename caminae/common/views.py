@@ -72,12 +72,12 @@ class FormsetMixin(object):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        funding_form = context[self.context_name]
+        formset_form = context[self.context_name]
         
-        if funding_form.is_valid():
+        if formset_form.is_valid():
             self.object = form.save()
-            funding_form.instance = self.object
-            funding_form.save()
+            formset_form.instance = self.object
+            formset_form.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form))

@@ -70,7 +70,7 @@ class InterventionForm(CommonForm):
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
+        exclude = ('deleted', 'geom', 'jobs')
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
