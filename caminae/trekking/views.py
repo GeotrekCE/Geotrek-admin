@@ -12,10 +12,10 @@ from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from caminae.mapentity.serializers import GPXSerializer
-from caminae.common.views import json_django_dumps, HttpJSONResponse
+from caminae.common.views import FormsetMixin, json_django_dumps, HttpJSONResponse
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
-from .forms import TrekForm, POIForm, WebLinkCreateFormPopup
+from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 
 
 
@@ -130,7 +130,12 @@ class TrekDocument(MapEntityDocument):
     model = Trek
 
 
-class TrekCreate(MapEntityCreate):
+class TrekRelationshipFormsetMixin(FormsetMixin):
+    context_name = 'relationship_formset'
+    formset_class = TrekRelationshipFormSet
+
+
+class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 
@@ -139,7 +144,7 @@ class TrekCreate(MapEntityCreate):
         return super(TrekCreate, self).dispatch(*args, **kwargs)
 
 
-class TrekUpdate(MapEntityUpdate):
+class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
     model = Trek
     form_class = TrekForm
 

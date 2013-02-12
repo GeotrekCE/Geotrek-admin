@@ -1,10 +1,11 @@
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.forms.models import inlineformset_factory
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Submit, HTML, Div
+from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 
 from caminae.core.forms import TopologyForm
 from caminae.mapentity.widgets import PointWidget
@@ -12,6 +13,21 @@ from caminae.core.widgets import LineTopologyWidget, PointTopologyWidget
 from caminae.mapentity.widgets import SelectMultipleWithPop
 
 from .models import Trek, POI, WebLink
+
+
+class TrekRelationshipForm(forms.ModelForm):
+    helper = FormHelper()
+    def __init__(self, *args, **kwargs):
+        super(TrekRelationshipForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
+        self.helper.layout = Layout('id',
+                                    'trek_a',
+                                    'trek_b',
+                                    'has_common_departure',
+                                    'has_common_edge',
+                                    'is_circuit_step')
+
+TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
 
 
 class TrekForm(TopologyForm):
@@ -50,6 +66,7 @@ class TrekForm(TopologyForm):
                     'networks',
                     'usages',
                     'web_links',
+                    Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"
                 ),
@@ -70,6 +87,7 @@ class TrekForm(TopologyForm):
 
     class Meta(TopologyForm.Meta):
         model = Trek
+        exclude = TopologyForm.Meta.exclude + ('related_treks',)
 
 
 class POIForm(TopologyForm):

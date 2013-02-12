@@ -83,6 +83,22 @@ class TrekViewsTest(MapEntityTest):
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+
+            'trek_relationship_a-TOTAL_FORMS': '2',
+            'trek_relationship_a-INITIAL_FORMS': '0',
+            'trek_relationship_a-MAX_NUM_FORMS': '',
+
+            'trek_relationship_a-0-id': '',
+            'trek_relationship_a-0-trek_b': TrekFactory.create().pk,
+            'trek_relationship_a-0-has_common_edge': 'on',
+            'trek_relationship_a-0-has_common_departure': 'on',
+            'trek_relationship_a-0-is_circuit_step': '',
+
+            'trek_relationship_a-1-id': '',
+            'trek_relationship_a-1-trek_b': TrekFactory.create().pk,
+            'trek_relationship_a-1-has_common_edge': '',
+            'trek_relationship_a-1-has_common_departure': '',
+            'trek_relationship_a-1-is_circuit_step': 'on',
         }
 
     def test_badfield_goodgeom(self):
