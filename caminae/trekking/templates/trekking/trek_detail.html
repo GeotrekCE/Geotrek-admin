@@ -154,7 +154,7 @@
         <tr>
             <th>{% trans "Related treks" %}</th>
             <td>
-                {% for rs in trek.trek_relationship_a.all %}
+                {% for rs in trek.relationships.all %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li>{{ rs.trek_b.name_display|safe }}
                     {% if rs.has_common_departure %}{% trans "Departure" %}, {% endif %}
