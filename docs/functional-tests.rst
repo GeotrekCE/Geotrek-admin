@@ -2552,3 +2552,19 @@ Corrigé -> "récurrent".
 
 Fixé.
 
+#486 - BUG - Modification interventions
+---------------------------------------
+
+Idem #473.
+
+#496 - Formulaire itinéraires liés
+----------------------------------
+
+Il est désormais possible de choisir les itinéraires liés lors de la création ou la modification d'un itinéraire.
+
+De plus, lors de la sauvegarde d'un itinéraire, les itinéraires qui ont le même départ ou qui partagent des tronçons seront automatiquement liés.
+
+#485 - [BUG] ADMIN - Les filtres ne s'affichent plus
+----------------------------------------------------
+
+Fixé.

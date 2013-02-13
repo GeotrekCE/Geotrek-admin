@@ -1,6 +1,7 @@
 {% load i18n %}
 <h3>{% trans "Trekking" %}</h3>
 <table class="table">
+    {% if modelname != "trek" %}
     <tr>
         <th>{% trans "Treks" %}</th>
         <td>
@@ -17,7 +18,9 @@
                 <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
-    </tr><tr>
+    </tr>
+    {% endif %}
+    <tr>
         <th>{% trans "POIs" %}</th>
         <td>
             {% if user.profile.is_trekking_manager %}

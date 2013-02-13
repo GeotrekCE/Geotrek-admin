@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Fieldset, Layout, Div
+from crispy_forms.layout import Fieldset, Layout, Div
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
@@ -52,7 +52,7 @@ class InterventionForm(CommonForm):
             'status',
             'disorders',
             'type',
-            Field('comments', css_class='input-xlarge'),
+            'comments',
             'in_maintenance',
             'length',
             'height',
@@ -70,7 +70,7 @@ class InterventionForm(CommonForm):
 
     class Meta:
         model = Intervention
-        exclude = ('deleted', 'geom', 'jobs')  # TODO: inline formset for jobs
+        exclude = ('deleted', 'geom', 'jobs')
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
@@ -132,7 +132,7 @@ class ProjectForm(CommonForm):
             'end_year',
             'constraint',
             'cost',
-            Field('comments', css_class='input-xlarge'),)
+            'comments')
     geomfields = ('contractors',
             'project_owner',
             'project_manager',

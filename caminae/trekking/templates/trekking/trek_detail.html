@@ -152,6 +152,22 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Related treks" %}</th>
+            <td>
+                {% for rs in trek.relationships.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ rs.trek_b.name_display|safe }}
+                    {% if rs.has_common_departure %}{% trans "Departure" %}, {% endif %}
+                    {% if rs.has_common_edge %}{% trans "Path" %}, {% endif %}
+                    {% if rs.is_circuit_step %}{% trans "Circuit" %}, {% endif %}
+                    </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"web_links" }}</th>
             <td>
                 {% for w in trek.web_links.all %}

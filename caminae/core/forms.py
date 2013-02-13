@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms
-from crispy_forms.layout import Field
 
 from caminae.common.forms import CommonForm
 from .models import Path
@@ -58,7 +57,7 @@ class PathForm(CommonForm):
               'trail',
               'departure',
               'arrival',
-              Field('comments', css_class='input-xlarge'),
+              'comments',
               'datasource',
               'networks',
               'usages',
