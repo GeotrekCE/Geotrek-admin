@@ -30,12 +30,14 @@ $(document).ready(function() {
             this.popover = $('#filters-popover')
                               .popover({
                                   placement: 'bottom',
+                                  html: true,
                                   content: '',
                                   title: 'Useless'
                               });
             this.hover = $('#filters-hover')
                               .popover({
                                   placement: 'bottom',
+                                  html: true,
                                   content: this.infos.bind(this),
                                   title: '{% trans "Current criteria" %}'
                               });
@@ -67,14 +69,16 @@ $(document).ready(function() {
             // If popover is already visible, do not show hover
             if (this.visible)
                 return;
-            
             this.hover.popover('toggle');
+            // Adjust popover width
+            this.htip()
+                .width(this.htip().find('.popover-title').outerWidth());
             this.__reposition(this.htip());
         },
 
         infos: function () {
             if (Object.keys(this.fields).length == 0)
-                return "{% trans "No filter" %}";
+                return "<p>{% trans "No filter" %}</p>";
             
             // We do not use handlebars just for this. If more to come, we will !
             var p = '<p><span class="filter-info">%name%</span>: %value%</p>';
@@ -101,7 +105,8 @@ $(document).ready(function() {
             
             if (this.visible) {
                 this.tip()
-                  .find('.popover-inner').empty()
+                  .empty()
+                  .append('<div class="arrow"/>')
                   .append($('#filters-wrapper #filters-panel').detach());
                 
                 // Adjust popover width
