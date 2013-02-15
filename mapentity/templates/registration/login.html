@@ -1,0 +1,16 @@
+{% extends "mapentity/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="offset1 span8">
+    <img src="{{ MEDIA_URL }}upload/logo-login.png" />
+
+    <form action="{% url login %}" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

@@ -50,6 +50,12 @@ body {
 
 /**** Navigation bar ****/
 
+
+#entitylist-dropdown {
+    float: left;
+    margin-right: 5px;
+}
+
 .navbar {
     margin-bottom: 0px;
 }
@@ -173,7 +179,21 @@ tr.selected-row td {
 
 
 /* Left menu */
-#entitylist {position: absolute; top: 0px; left: 0; width: 60px;}
+#entitylist {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 60px;
+}
+
+#entitylist li img {
+    opacity: 0.2;
+}
+
+#entitylist li.active img {
+    opacity: 1.0;
+}
+
 #entitylist a {
     padding: 0px;
 }
@@ -202,6 +222,7 @@ tr.selected-row td {
 #entitylist .nav-pills > li > a > img  {
 	padding-bottom: 4px;
 }
+
 
 
 
