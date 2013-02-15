@@ -248,6 +248,8 @@ MapEntity.History = L.Control.extend({
     },
 
     render: function () {
+        var history = this;
+
         // Show number of results
         infos = localStorage.getItem('list-search-results') || "{nb: '?', model: null}";
         infos = JSON.parse(infos)
@@ -255,7 +257,6 @@ MapEntity.History = L.Control.extend({
         $('#entitylist-dropdown').parent('li').addClass(infos.model);
 
         $('#historylist a').tooltip({'placement': 'bottom'});
-        var history = this;
         $('#historylist button.close').click(function (e) {
             e.preventDefault();
             var path = $(this).parents('a').attr('href');
@@ -275,6 +276,20 @@ MapEntity.History = L.Control.extend({
                 $(this).find('.close').addClass('hidden');
             }
         );
+
+        // Remove all entries returning 404 :) Useful to remove deleted entries
+        $('#historylist li.history > a').each(function () {
+            var path = $(this).attr('href');
+            $.ajax({
+                type: "HEAD",
+                url: path,
+                statusCode: {
+                    404: function() {
+                        history.remove(path);
+                    }
+                }
+            });
+        });
     },
 });
 
