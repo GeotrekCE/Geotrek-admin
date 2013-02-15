@@ -50,9 +50,7 @@ body {
 
 /**** Navigation bar ****/
 
-
 #entitylist-dropdown {
-    float: left;
     margin-right: 5px;
 }
 
@@ -67,15 +65,42 @@ body {
 
 .navbar-inner {
     padding-left: 5px;
-    padding-right: 0px;
+    padding-right: 5px;
+    border: 0px;
+    border-bottom: 1px solid #d4d4d4;
+
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+
+    -moz-box-shadow: 0 0px 0px;
+    -webkit-box-shadow: 0 0px 0px;
+    box-shadow: 0 0px 0px;
 }
 
-.navbar .nav > li > a {
-    padding-left: 10px;
+.navbar .nav > li > a,
+.navbar .nav > li.history button:first-child {
+    padding-left: 18px;
     padding-right: 10px;
 }
-.navbar .nav > li:last-child > a { padding-right: 0px; }
-.navbar .nav > li:first-child > a { padding-left: 5px; }
+
+.navbar .nav > li.active > a,
+.navbar .nav > li.active > a:hover,
+.navbar .nav > li > a:hover {
+    border-bottom: 1px solid white;
+    margin-bottom: -1px;
+    border-left: 1px solid #d4d4d4;
+    border-right: 1px solid #d4d4d4;
+    background-color: white;
+    box-shadow: 0px -3px 3px 1px rgba(0, 0, 0, 0.125);
+}
+
+.navbar .nav > li.history > a,
+.navbar .nav > li.history button:first-child {
+    background-position-x: 2px;
+    background-position-y: 50%; 
+    background-repeat: no-repeat;
+}
 
 /**** Maps ****/
 
@@ -156,7 +181,7 @@ tr.selected-row td {
 
 
 /* Layout (based on "Conflicting position" trick) */
-#container {position: absolute; top: 42px; bottom: 0; left: 0; right: 0;}
+#container {position: absolute; top: 41px; bottom: 0; left: 0; right: 0;}
 #panelleft {position: absolute; top: 2px; bottom: 0; width: 50%; left: 0;}
 #panelright {position: absolute; top: 2px; bottom: 0; width: 50%; right: 0;}
 
@@ -205,16 +230,16 @@ tr.selected-row td {
 #entitylist .nav-pills > li > a {
 	border-radius: 0px;
 	-moz-border-radius: 0px;
-	border-bottom: 1px solid #DDDDDD;	
-	border-right: 1px solid #DDDDDD;	
+	border-bottom: 1px solid #DDDDDD;
+	border-right: 1px solid #DDDDDD;
 	margin-bottom: 0px;
 	margin-top: 0px;
-	background-color: #F9F9F9;	
+	background-color: #F9F9F9;
 }
 
 #entitylist .nav-pills > .active > a, 
 #entitylist .nav-pills > .active > a:hover {
-	border-right: 1px solid #fff;
+    border-right: 1px solid #fff;
     background-color: #fff;
     color: #333333;
 }
