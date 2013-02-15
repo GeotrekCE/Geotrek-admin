@@ -5,6 +5,7 @@
 
 /var/
 /etc/
+/install
 
 # buildout stuff
 .mr.developer.cfg

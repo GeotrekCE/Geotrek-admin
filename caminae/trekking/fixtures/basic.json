@@ -243,7 +243,7 @@
             "usage": "P\u00e9destre",
             "usage_en": null,
             "usage_it": null,
-            "pictogram": "upload/archeo_1.png",
+            "pictogram": "upload/usage-foot.png",
             "usage_fr": "P\u00e9destre"
         }
     },
@@ -254,7 +254,7 @@
             "usage": "Fauteuil roulant",
             "usage_en": null,
             "usage_it": null,
-            "pictogram": "upload/histoire_1.png",
+            "pictogram": "upload/usage-wheelchair.png",
             "usage_fr": "Fauteuil roulant"
         }
     },
@@ -265,7 +265,7 @@
             "usage": "Poussette",
             "usage_en": null,
             "usage_it": null,
-            "pictogram": "upload/archeo_2.png",
+            "pictogram": "upload/usage-stroller.png",
             "usage_fr": "Poussette"
         }
     },
@@ -273,7 +273,7 @@
         "pk": 1,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-fauna.png",
+            "pictogram": "upload/theme-fauna@2x.png",
             "label": "Fauna",
             "label_it": "Fona",
             "label_en": "Fauna",
@@ -284,7 +284,7 @@
         "pk": 2,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-flora@2x.png",
             "label": "Flora",
             "label_it": "Flora",
             "label_en": "Flora",
@@ -296,7 +296,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-panorama@2x.png",
             "label_en": null,
             "label_fr": "Point de vue",
             "label": "Point de vue"
@@ -307,7 +307,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-architecture@2x.png",
             "label_en": null,
             "label_fr": "Architecture",
             "label": "Architecture"
@@ -318,7 +318,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-pastoral@2x.png",
             "label_en": null,
             "label_fr": "Pastoralisme",
             "label": "Pastoralisme"
@@ -329,7 +329,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-geology@2x.png",
             "label_en": null,
             "label_fr": "G\u00e9ologie",
             "label": "G\u00e9ologie"
@@ -340,7 +340,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-lake@2x.png",
             "label_en": null,
             "label_fr": "Lac et glacier",
             "label": "Lac et glacier"
@@ -351,7 +351,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-peak@2x.png",
             "label_en": null,
             "label_fr": "Sommet",
             "label": "Sommet"
@@ -362,7 +362,7 @@
         "model": "trekking.theme",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/theme-flora.png",
+            "pictogram": "upload/theme-refugee@2x.png",
             "label_en": null,
             "label_fr": "Refuge",
             "label": "Refuge"
