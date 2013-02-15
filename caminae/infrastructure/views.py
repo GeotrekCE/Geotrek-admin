@@ -27,7 +27,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
 
 
 class InfrastructureDetail(MapEntityDetail):
-    model = Infrastructure
+    queryset = Infrastructure.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -50,7 +50,7 @@ class InfrastructureCreate(MapEntityCreate):
 
 
 class InfrastructureUpdate(MapEntityUpdate):
-    model = Infrastructure
+    queryset = Infrastructure.objects.existing()
     form_class = InfrastructureForm
 
     @method_decorator(path_manager_required('infrastructure:infrastructure_detail'))
@@ -87,7 +87,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
 
 
 class SignageDetail(MapEntityDetail):
-    model = Signage
+    queryset = Signage.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -109,7 +109,7 @@ class SignageCreate(MapEntityCreate):
 
 
 class SignageUpdate(MapEntityUpdate):
-    model = Signage
+    queryset = Signage.objects.existing()
     form_class = SignageForm
 
     @method_decorator(path_manager_required('infrastructure:signage_detail'))

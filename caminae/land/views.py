@@ -56,7 +56,7 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
 
 
 class PhysicalEdgeDetail(MapEntityDetail):
-    model = PhysicalEdge
+    queryset = PhysicalEdge.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -74,7 +74,7 @@ class PhysicalEdgeCreate(MapEntityCreate):
 
 
 class PhysicalEdgeUpdate(MapEntityUpdate):
-    model = PhysicalEdge
+    queryset = PhysicalEdge.objects.existing()
     form_class = PhysicalEdgeForm
 
     @method_decorator(path_manager_required('land:physicaledge_detail'))
@@ -109,7 +109,7 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
 
 
 class LandEdgeDetail(MapEntityDetail):
-    model = LandEdge
+    queryset = LandEdge.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -127,7 +127,7 @@ class LandEdgeCreate(MapEntityCreate):
 
 
 class LandEdgeUpdate(MapEntityUpdate):
-    model = LandEdge
+    queryset = LandEdge.objects.existing()
     form_class = LandEdgeForm
 
     @method_decorator(path_manager_required('land:landedge_detail'))
@@ -162,7 +162,7 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
 
 
 class CompetenceEdgeDetail(MapEntityDetail):
-    model = CompetenceEdge
+    queryset = CompetenceEdge.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -180,7 +180,7 @@ class CompetenceEdgeCreate(MapEntityCreate):
 
 
 class CompetenceEdgeUpdate(MapEntityUpdate):
-    model = CompetenceEdge
+    queryset = CompetenceEdge.objects.existing()
     form_class = CompetenceEdgeForm
 
     @method_decorator(path_manager_required('land:competenceedge_detail'))
@@ -215,7 +215,7 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
 
 
 class WorkManagementEdgeDetail(MapEntityDetail):
-    model = WorkManagementEdge
+    queryset = WorkManagementEdge.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -233,7 +233,7 @@ class WorkManagementEdgeCreate(MapEntityCreate):
 
 
 class WorkManagementEdgeUpdate(MapEntityUpdate):
-    model = WorkManagementEdge
+    queryset = WorkManagementEdge.objects.existing()
     form_class = WorkManagementEdgeForm
 
     @method_decorator(path_manager_required('land:workmanagementedge_detail'))
@@ -268,7 +268,7 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
 
 
 class SignageManagementEdgeDetail(MapEntityDetail):
-    model = SignageManagementEdge
+    queryset = SignageManagementEdge.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -286,7 +286,7 @@ class SignageManagementEdgeCreate(MapEntityCreate):
 
 
 class SignageManagementEdgeUpdate(MapEntityUpdate):
-    model = SignageManagementEdge
+    queryset = SignageManagementEdge.objects.existing()
     form_class = SignageManagementEdgeForm
 
     @method_decorator(path_manager_required('land:signagemanagementedge_detail'))
