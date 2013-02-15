@@ -16,7 +16,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.http import require_http_methods, last_modified as cache_last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
@@ -83,6 +83,18 @@ def map_screenshot(request):
         return HttpResponseBadRequest(e)
 
 
+@require_http_methods(["POST"])
+@csrf_exempt
+@login_required
+def history_delete(request, path=None):
+    path = request.POST.get('path', path)
+    if path:
+        history = request.session['history']
+        history = [h for h in history if h.path != path]
+        request.session['history'] = history
+    return HttpResponse()
+
+
 # Generic views, to be overriden
 
 class MapEntityLayer(GeoJSONLayerView):
@@ -132,12 +144,24 @@ class ModelMetaMixin(object):
     """
     Add model meta information in context data 
     """
+
+    def get_entity_kind(self):
+        return None
+
+    def get_title(self):
+        return None
+
     def get_context_data(self, **kwargs):
         context = super(ModelMetaMixin, self).get_context_data(**kwargs)
-        context['model'] = self.model
-        context['appname'] = self.model._meta.app_label.lower()
-        context['modelname'] = self.model._meta.object_name.lower()
-        context['objectsname'] = self.model._meta.verbose_name_plural
+        context['view'] = self.get_entity_kind()
+        context['title'] = self.get_title()
+
+        model = self.model or self.queryset.model
+        if model:
+            context['model'] = model
+            context['appname'] = model._meta.app_label.lower()
+            context['modelname'] = model._meta.object_name.lower()
+            context['objectsname'] = model._meta.verbose_name_plural
         return context
 
 
@@ -313,7 +337,6 @@ class MapEntityCreate(ModelMetaMixin, CreateView):
         return _(u"Add a new %s" % name.lower())
 
     @method_decorator(login_required)
-    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityCreate, self).dispatch(*args, **kwargs)
 
@@ -332,7 +355,6 @@ class MapEntityCreate(ModelMetaMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
-        context['title'] = self.get_title()
         return context
 
 
@@ -345,7 +367,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
         return _("Edit %s") % self.get_object()
 
     @method_decorator(login_required)
-    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
 
@@ -367,7 +388,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
-        context['title'] = self.get_title()
         context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
 
@@ -380,6 +400,11 @@ class MapEntityDelete(DeleteView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(MapEntityDelete, self).dispatch(*args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        # Remove entry from history
+        history_delete(request, path=self.get_object().get_detail_url())
+        return super(MapEntityDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.model.get_list_url()

@@ -8,7 +8,7 @@
 
     <!-- List Panel -->
     <div id="panelleft">
-        
+
         <!-- Modules Panel -->
         <div id="entitylist">
             <ul class="nav nav-pills nav-stacked">
@@ -89,6 +89,9 @@
         };
 
         $(document).ready(function() {
+            // Show tooltips on left menu
+            $('#entitylist a').tooltip({'placement': 'right'});
+
             // Trigger a call to the format url
             $('#list-download-toolbar button').on('click', function () {
                 var format = $(this).attr('name');
@@ -167,7 +170,8 @@
             
             mapsync.on('reloaded', function (data) {
                 // Show and save number of results
-                MapEntity.showNumberSearchResults(data.nbrecords);
+                MapEntity.history.saveListInfo({model:'{{ modelname }}', 
+                                                nb: data.nbrecords});
             });
             
             var t = new MapEntity.TogglableFilter();

@@ -233,12 +233,64 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
     };
 };
 
-MapEntity.showNumberSearchResults = function (nb) {
-    if (arguments.length > 0) {
-        localStorage.setItem('list-search-results', nb);
-    }
-    else {
-        nb = localStorage.getItem('list-search-results') || '?';
-    }
-    $('#nbresults').text(nb);
-}
+
+MapEntity.History = L.Control.extend({
+
+    saveListInfo: function (infos) {
+        localStorage.setItem('list-search-results', JSON.stringify(infos));
+    },
+
+    remove: function (path) {
+        var server = path.replace(/[^\/]+\/\d+\//, '');
+        $.post(server + 'history/delete/', {path: path}, function() {
+            $("#historylist li a[href='" + path + "']").parents('li').remove();
+        });
+    },
+
+    render: function () {
+        var history = this;
+
+        // Show number of results
+        infos = localStorage.getItem('list-search-results') || "{nb: '?', model: null}";
+        infos = JSON.parse(infos)
+        $('#nbresults').text(infos.nb);
+        $('#entitylist-dropdown').parent('li').addClass(infos.model);
+
+        $('#historylist a').tooltip({'placement': 'bottom'});
+        $('#historylist button.close').click(function (e) {
+            e.preventDefault();
+            var path = $(this).parents('a').attr('href');
+            history.remove(path);
+        });
+
+        $('#historylist a').hoverIntent(
+            function (e) {
+                $(this).find('.close').removeClass('hidden');
+                $(this).data('original-text', $(this).find('.content').text());
+                var title = $(this).data('original-title');
+                if (title)
+                    $(this).find('.content').text(title);
+            },
+            function (e) {
+                $(this).find('.content').text($(this).data('original-text'));
+                $(this).find('.close').addClass('hidden');
+            }
+        );
+
+        // Remove all entries returning 404 :) Useful to remove deleted entries
+        $('#historylist li.history > a').each(function () {
+            var path = $(this).attr('href');
+            $.ajax({
+                type: "HEAD",
+                url: path,
+                statusCode: {
+                    404: function() {
+                        history.remove(path);
+                    }
+                }
+            });
+        });
+    },
+});
+
+MapEntity.history = new MapEntity.History();
