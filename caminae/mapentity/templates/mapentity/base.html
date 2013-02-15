@@ -1,29 +1,23 @@
 {% extends "base.html" %}
-{% load static i18n leaflet_tags %}
+{% load static i18n leaflet_tags compress %}
 
-{% block content %}
-    {% if messages %}
-    <ul id="alert-box">
-        {% for message in messages %}
-        <li class="alert {{ message.tags }}">
-            {{ message }}
-            {% if 'warning' in message.tags or 'error' in message.tags %}<button class="close" data-dismiss="alert">×</button>{% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+
+{% block head %}
+
+  <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
+  <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+
+  {% compress css %}
+    {% if DEBUG %}
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.css" %}" />
+    {% else %}
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" />
     {% endif %}
-    
-    {% block container %}
-    <div id="container" class="container-fluid">
-        <div class="row-fluid">
-            {% block mainpanel %}
-            {% endblock mainpanel %}
-        </div><!--/row-->
-    </div><!--/container-->
-    {% endblock container %}
-{% endblock content %}
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/datepicker.css" %}">
+    <link rel="stylesheet" href="{% static "style.css" %}" />
 
-{% block extracss %}
     <link rel="stylesheet" type="text/css" href="{% static "mapentity/dataTables/css/dataTables.bootstrap.css" %}">
     {% leaflet_css %}
     <link rel="stylesheet" href="{% static "mapentity/Leaflet.draw/leaflet.draw.css" %}"></link>
@@ -33,10 +27,24 @@
         .map-error { border: 0px;}
     </style>
     {% endif %}
-{% endblock extracss %}
 
-{% block extrajs %}
-    {{ block.super }}
+    {% block extracss %}
+    {% endblock extracss %}
+  {% endcompress %}
+
+  {% compress js %}
+    {% if DEBUG %}
+        <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
+        <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+    {% else %}
+        <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    {% endif %}
+    <script src="{% static "bootstrap/js/bootstrap-confirm.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap-datepicker.js" %}"></script>
+    {% for lang in LANGUAGES %}
+        {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
+    {% endfor %}
 
     {% leaflet_js %}
     <script type="text/javascript">
@@ -59,7 +67,95 @@
     <script type="text/javascript" src="{% static "mapentity/spin.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/rtree.js" %}"></script>
     <script type="text/javascript" src="{% static "mapentity/jquery.deserialize.js" %}"></script>
-{% endblock extrajs %}
+
+    {% block extrajs %}
+    {% endblock extrajs %}
+  {% endcompress %}
+
+{% endblock head %}
+
+
+
+{% block content %}
+    {% block navbar %}
+    <div class="navbar">
+      <div class="navbar-inner">
+
+        {% block brand %}
+            {% if not request.user.is_authenticated %}
+                <a class="brand"><img src="{{ MEDIA_URL }}upload/logo-header.png" /></a>
+            {% else %}
+                <div id="entitylist-dropdown" class="btn-group">
+                  <button class="btn" onclick="javascript:location='{% url home %}';">{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
+                  <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="{% url core:path_list %}"><img src="{% static "images/path-16.png" %}"></img> {% trans "Path" %}</a></li>
+                    <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/intervention-16.png" %}"></img> {% trans "Intervention" %}</a></li>
+                    <li><a href="{% url maintenance:project_list %}"><img src="{% static "images/project-16.png" %}"></img> {% trans "Project" %}</a></li>
+                    <li><a href="{% url infrastructure:signage_list %}"><img src="{% static "images/signage-16.png" %}"></img> {% trans "Signage" %}</a></li>
+                    <li><a href="{% url infrastructure:infrastructure_list %}"><img src="{% static "images/infrastructure-16.png" %}"></img> {% trans "Infrastructure" %}</a></li>
+                    <li><a href="{% url trekking:trek_list %}"><img src="{% static "images/trek-16.png" %}"></img> {% trans "Trek" %}</a></li>
+                    <li><a href="{% url trekking:poi_list %}"><img src="{% static "images/poi-16.png" %}"></img> {% trans "POI" %}</a></li>
+                  </ul>
+                </div>
+            {% endif %}
+
+        {% endblock brand %}
+
+        <ul id="historylist" class="nav">
+          {% block toolbar %}
+            {% for item in request.session.history %}
+                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
+            {% endfor %}
+          {% endblock toolbar %}
+        </ul>
+
+        <ul class="nav pull-right">
+            {% if request.user.is_authenticated %}
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                   <i class="icon-user"></i>
+                    {{ request.user }}&nbsp;<span class="badge badge-info">{{ request.user.profile.structure }}</span> <b class="caret"></b></a>
+               <ul class="dropdown-menu">
+                  {% if request.user.is_staff %}
+                    <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+                  {% endif %}
+                  <li class="divider"></li>
+                  <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
+                  <li class="divider"></li>
+                  
+                  <li><a href="{% url logout %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
+               </ul>
+            </li>
+            {% endif %}  
+          </ul>
+      </div>
+    </div>
+    {% endblock navbar %}
+
+    {% if messages %}
+    <ul id="alert-box">
+        {% for message in messages %}
+        <li class="alert {{ message.tags }}">
+            {{ message }}
+            {% if 'warning' in message.tags or 'error' in message.tags %}<button class="close" data-dismiss="alert">×</button>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% block container %}
+    <div id="container" class="container-fluid">
+        <div class="row-fluid">
+            {% block mainpanel %}
+            {% endblock mainpanel %}
+        </div><!--/row-->
+    </div><!--/container-->
+    {% endblock container %}
+{% endblock content %}
 
 
 {% block extrabody %}
