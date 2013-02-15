@@ -43,15 +43,31 @@ Keep previous versions in separate folders (**recommended**) :
 
 ::
 
-	# Copy previous settings
-	cp ../previous-version/etc/settings.ini  etc/settings.ini
-	
-	# Re-run install
+    # Copy previous settings
+    cp ../previous-version/etc/settings.ini  etc/settings.ini
+
+    # Re-run install
     ./install.sh
 
 
 Or instead, if you prefer, you can overwrite the source code (or use symlinks), 
 and run ``./install.sh``.
+
+
+Tips and Tricks
+---------------
+
+Speed-up upgrades by caching downloads :
+
+::
+
+    mkdir ~/downloads
+    mkdir  ~/.buildout
+
+Create ``/home/sentiers/.buildout/default.cfg`` with ::
+
+    [buildout]
+    download-cache = /home/sentiers/downloads
 
 
 ============

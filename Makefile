@@ -34,7 +34,7 @@ bin/python:
 	virtualenv .
 	mkdir -p lib/eggs
 	wget http://python-distribute.org/bootstrap.py
-	bin/python bootstrap.py
+	bin/python bootstrap.py --version=1.6.3
 	rm bootstrap.py
 
 install: etc/settings.ini bin/python bin/casperjs

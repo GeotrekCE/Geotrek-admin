@@ -25,9 +25,10 @@ def save_history():
             except AttributeError:
                 pass  # Manage legacy history items, which were simple tuples
             # Add this one and remove extras
+            model = self.model or self.queryset.model
             history.insert(0, HistoryItem(unicode(self.get_title()), 
                                           request.path,
-                                          unicode(self.model._meta.object_name.lower())))
+                                          unicode(model._meta.object_name.lower())))
             if len(history) > getattr(settings, 'HISTORY_ITEMS_MAX', 5):
                 history.pop()
             request.session['history'] = history

@@ -45,7 +45,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return new_get_geom, geom_type, srid
 
 class InterventionDetail(MapEntityDetail):
-    model = Intervention
+    queryset = Intervention.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -96,7 +96,7 @@ class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
 
 
 class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
-    model = Intervention
+    queryset = Intervention.objects.existing()
     form_class = InterventionForm
 
     @same_structure_required('maintenance:intervention_detail')
@@ -179,13 +179,13 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
 
 
 class ProjectDetail(MapEntityDetail):
-    model = Project
+    queryset = Project.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
                (hasattr(self.request.user, 'profile') and \
                 self.request.user.profile.is_path_manager and \
-                self.get_object().same_structure(self.request.user))
+            self.get_object().same_structure(self.request.user))
 
 
 class ProjectDocument(MapEntityDocument):
@@ -203,7 +203,7 @@ class ProjectCreate(FundingFormsetMixin, MapEntityCreate):
 
 
 class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
-    model = Project
+    queryset = Project.objects.existing()
     form_class = ProjectForm
 
     @same_structure_required('maintenance:project_detail')

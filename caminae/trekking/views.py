@@ -118,7 +118,7 @@ class TrekPOIGeoJSON(GeoJSONLayerView):
 
 
 class TrekDetail(MapEntityDetail):
-    model = Trek
+    queryset = Trek.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -145,7 +145,7 @@ class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
 
 
 class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
-    model = Trek
+    queryset = Trek.objects.existing()
     form_class = TrekForm
 
     @method_decorator(trekking_manager_required('trekking:trek_detail'))
@@ -180,7 +180,7 @@ class POIFormatList(MapEntityFormat, POIList):
 
 
 class POIDetail(MapEntityDetail):
-    model = POI
+    queryset = POI.objects.existing()
 
     def can_edit(self):
         return self.request.user.is_staff or \
@@ -202,7 +202,7 @@ class POICreate(MapEntityCreate):
 
 
 class POIUpdate(MapEntityUpdate):
-    model = POI
+    queryset = POI.objects.existing()
     form_class = POIForm
 
     @method_decorator(trekking_manager_required('trekking:poi_detail'))
