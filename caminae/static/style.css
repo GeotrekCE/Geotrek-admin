@@ -44,11 +44,11 @@ span.aggregation {
 .form-panel.poi,            .details-panel.poi            { background: url(images/poi-96.png) no-repeat; }
 
  /* Icons for tabs */
-li.history.trail a, li.history.trail button:first-child         {background-image: url(images/trail-16.png);}
-li.history.path a, li.history.path button:first-child           {background-image: url(images/path-16.png);}
-li.history.intervention a, li.history.intervention button:first-child   {background-image: url(images/intervention-16.png);}
-li.history.project a, li.history.project button:first-child        {background-image: url(images/project-16.png);}
-li.history.signage a, li.history.signage button:first-child        {background-image: url(images/signage-16.png);}
-li.history.infrastructure a, li.history.infrastructure button:first-child {background-image: url(images/infrastructure-16.png);}
-li.history.trek a, li.history.trek button:first-child           {background-image: url(images/trek-16.png);}
-li.history.poi a, li.history.poi button:first-child           {background-image: url(images/poi-16.png);}
+li.history.trail > a, li.history.trail button:first-child                   {background-image: url(images/trail-16.png);}
+li.history.path > a, li.history.path button:first-child                     {background-image: url(images/path-16.png);}
+li.history.intervention > a, li.history.intervention button:first-child     {background-image: url(images/intervention-16.png);}
+li.history.project > a, li.history.project button:first-child               {background-image: url(images/project-16.png);}
+li.history.signage > a, li.history.signage button:first-child               {background-image: url(images/signage-16.png);}
+li.history.infrastructure > a, li.history.infrastructure button:first-child {background-image: url(images/infrastructure-16.png);}
+li.history.trek > a, li.history.trek button:first-child                     {background-image: url(images/trek-16.png);}
+li.history.poi > a, li.history.poi button:first-child                       {background-image: url(images/poi-16.png);}
