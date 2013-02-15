@@ -115,7 +115,12 @@
                         <a href="#">{% if title %}{{ title }}{% else %}{{ request.session.history.0.title }}{% endif %}</a>
                     </li>
                 {% else %}
-                    <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
+                    <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history">
+                        <a href="{{ item.path }}" title="{{ item.title }}">
+                            <span class="content">{{ item.title|truncatechars:12 }}</span>
+                            <button class="close hidden">&times;</button>
+                        </a>
+                    </li>
                 {% endif %}
             {% endfor %}
           {% endblock toolbar %}
@@ -171,30 +176,15 @@
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function (e) {
-            // Show number of results
-            MapEntity.showNumberSearchResults();
-            
             // Fade out success/infos messages
             $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
-        
-            $('#entitylist a').tooltip({'placement': 'right'});
-            $('#historylist a').tooltip({'placement': 'bottom'});
-            $('#historylist a').hoverIntent(
-                function (e) {
-                    $(this).data('original-text', $(this).text());
-                    var title = $(this).data('original-title');
-                    if (title)
-                        $(this).text(title);
-                },
-                function (e) {
-                    $(this).text($(this).data('original-text'));
-                }
-            );
-            
+
+            MapEntity.history.render();
+
             // Auto-hide elements
             $('.autohide').parents().hover(
-              function() { $(this).children(".autohide").show(); },
-              function() { $(this).children(".autohide").hide(); }
+                function() { $(this).children(".autohide").show(); },
+                function() { $(this).children(".autohide").hide(); }
             );
             
             // Scrollable panels
