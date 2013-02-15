@@ -240,6 +240,13 @@ MapEntity.History = L.Control.extend({
         localStorage.setItem('list-search-results', JSON.stringify(infos));
     },
 
+    remove: function (path) {
+        var server = path.replace(/[^\/]+\/\d+\//, '');
+        $.post(server + 'history/delete/', {path: path}, function() {
+            $("#historylist li a[href='" + path + "']").parents('li').remove();
+        });
+    },
+
     render: function () {
         // Show number of results
         infos = localStorage.getItem('list-search-results') || "{nb: '?', model: null}";
@@ -248,9 +255,11 @@ MapEntity.History = L.Control.extend({
         $('#entitylist-dropdown').parent('li').addClass(infos.model);
 
         $('#historylist a').tooltip({'placement': 'bottom'});
+        var history = this;
         $('#historylist button.close').click(function (e) {
             e.preventDefault();
-            $(this).parents('li').remove();
+            var path = $(this).parents('a').attr('href');
+            history.remove(path);
         });
 
         $('#historylist a').hoverIntent(
@@ -270,4 +279,3 @@ MapEntity.History = L.Control.extend({
 });
 
 MapEntity.history = new MapEntity.History();
-

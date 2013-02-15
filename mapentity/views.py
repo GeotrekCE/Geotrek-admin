@@ -16,7 +16,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.http import require_http_methods, last_modified as cache_last_modified
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
@@ -81,6 +81,18 @@ def map_screenshot(request):
     except Exception, e: 
         logger.exception(e)
         return HttpResponseBadRequest(e)
+
+
+@require_http_methods(["POST"])
+@csrf_exempt
+@login_required
+def history_delete(request):
+    path = request.POST.get('path')
+    if path:
+        history = request.session['history']
+        history = [h for h in history if h.path != path]
+        request.session['history'] = history
+    return HttpResponse()
 
 
 # Generic views, to be overriden
