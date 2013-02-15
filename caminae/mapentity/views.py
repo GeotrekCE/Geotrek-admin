@@ -132,8 +132,17 @@ class ModelMetaMixin(object):
     """
     Add model meta information in context data 
     """
+
+    def get_entity_kind(self):
+        return None
+
+    def get_title(self):
+        return None
+
     def get_context_data(self, **kwargs):
         context = super(ModelMetaMixin, self).get_context_data(**kwargs)
+        context['view'] = self.get_entity_kind()
+        context['title'] = self.get_title()
         context['model'] = self.model
         context['appname'] = self.model._meta.app_label.lower()
         context['modelname'] = self.model._meta.object_name.lower()
@@ -313,7 +322,6 @@ class MapEntityCreate(ModelMetaMixin, CreateView):
         return _(u"Add a new %s" % name.lower())
 
     @method_decorator(login_required)
-    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityCreate, self).dispatch(*args, **kwargs)
 
@@ -332,7 +340,6 @@ class MapEntityCreate(ModelMetaMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityCreate, self).get_context_data(**kwargs)
-        context['title'] = self.get_title()
         return context
 
 
@@ -345,7 +352,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
         return _("Edit %s") % self.get_object()
 
     @method_decorator(login_required)
-    @save_history()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
 
@@ -367,7 +373,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityUpdate, self).get_context_data(**kwargs)
-        context['title'] = self.get_title()
         context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
         return context
 
