@@ -33,6 +33,25 @@ span.aggregation {
     margin-top: -5px;
 }
 
+#altitudegraph {
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    border: 1px solid #d4d4d4;
+    padding: 5px;
+}
+
+#altitudegraph h4 {
+    margin: 0px;
+}
+
+#altitudegraph #mouseoverprofil {
+    margin: 0px;
+}
+
+
 /* Icons for each entity */
 .form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
 .form-panel.trail,          .details-panel.trail          { background: url(images/trail-96.png) no-repeat; }
