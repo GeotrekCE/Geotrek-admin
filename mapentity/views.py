@@ -155,10 +155,13 @@ class ModelMetaMixin(object):
         context = super(ModelMetaMixin, self).get_context_data(**kwargs)
         context['view'] = self.get_entity_kind()
         context['title'] = self.get_title()
-        context['model'] = self.model
-        context['appname'] = self.model._meta.app_label.lower()
-        context['modelname'] = self.model._meta.object_name.lower()
-        context['objectsname'] = self.model._meta.verbose_name_plural
+
+        model = self.model or self.queryset.model
+        if model:
+            context['model'] = model
+            context['appname'] = model._meta.app_label.lower()
+            context['modelname'] = model._meta.object_name.lower()
+            context['objectsname'] = model._meta.verbose_name_plural
         return context
 
 
