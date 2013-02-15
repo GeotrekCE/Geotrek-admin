@@ -86,8 +86,8 @@ def map_screenshot(request):
 @require_http_methods(["POST"])
 @csrf_exempt
 @login_required
-def history_delete(request):
-    path = request.POST.get('path')
+def history_delete(request, path=None):
+    path = request.POST.get('path', path)
     if path:
         history = request.session['history']
         history = [h for h in history if h.path != path]
@@ -397,6 +397,11 @@ class MapEntityDelete(DeleteView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(MapEntityDelete, self).dispatch(*args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        # Remove entry from history
+        history_delete(request, path=self.get_object().get_detail_url())
+        return super(MapEntityDelete, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.model.get_list_url()
