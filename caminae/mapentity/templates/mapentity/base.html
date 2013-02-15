@@ -40,6 +40,7 @@
         <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
         <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
     {% endif %}
+    <script src="{% static "mapentity/jquery.hoverIntent.js" %}"></script>
     <script src="{% static "bootstrap/js/bootstrap-confirm.js" %}"></script>
     <script src="{% static "bootstrap/js/bootstrap-datepicker.js" %}"></script>
     {% for lang in LANGUAGES %}
@@ -84,10 +85,15 @@
         {% block brand %}
             {% if not request.user.is_authenticated %}
                 <a class="brand"><img src="{{ MEDIA_URL }}upload/logo-header.png" /></a>
-            {% else %}
-                <div id="entitylist-dropdown" class="btn-group">
-                  <button class="btn" onclick="javascript:location='{% url home %}';">{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
-                  <button class="btn dropdown-toggle" data-toggle="dropdown">
+            {% endif %}
+        {% endblock brand %}
+
+        <ul id="historylist" class="nav">
+          {% if request.user.is_authenticated %}
+          <li class="history {% if view == "list" %}{{ modelname }} active{% endif %}">
+            <div id="entitylist-dropdown" class="btn-group">
+                  <button class="btn {% if view == "list" %}disabled{% endif %}" {% if view != "list" %} onclick="javascript:location='{% url home %}';"{% endif %}>{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
+                  <button class="btn dropdown-toggle {% if view == "list" %}disabled{% endif %}"data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
@@ -99,15 +105,18 @@
                     <li><a href="{% url trekking:trek_list %}"><img src="{% static "images/trek-16.png" %}"></img> {% trans "Trek" %}</a></li>
                     <li><a href="{% url trekking:poi_list %}"><img src="{% static "images/poi-16.png" %}"></img> {% trans "POI" %}</a></li>
                   </ul>
-                </div>
-            {% endif %}
-
-        {% endblock brand %}
-
-        <ul id="historylist" class="nav">
+            </div>
+          </li>
+          {% endif %}
           {% block toolbar %}
             {% for item in request.session.history %}
-                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
+                {% if forloop.first and view != "list" %}
+                    <li class="{{ modelname }} active history">
+                        <a href="#">{% if title %}{{ title }}{% else %}{{ request.session.history.0.title }}{% endif %}</a>
+                    </li>
+                {% else %}
+                    <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history"><a href="{{ item.path }}" title="{{ item.title }}">{{ item.title|truncatechars:12 }}</a></li>
+                {% endif %}
             {% endfor %}
           {% endblock toolbar %}
         </ul>
@@ -170,6 +179,17 @@
         
             $('#entitylist a').tooltip({'placement': 'right'});
             $('#historylist a').tooltip({'placement': 'bottom'});
+            $('#historylist a').hoverIntent(
+                function (e) {
+                    $(this).data('original-text', $(this).text());
+                    var title = $(this).data('original-title');
+                    if (title)
+                        $(this).text(title);
+                },
+                function (e) {
+                    $(this).text($(this).data('original-text'));
+                }
+            );
             
             // Auto-hide elements
             $('.autohide').parents().hover(
