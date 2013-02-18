@@ -24,7 +24,6 @@ var {{ module }}_settings = {
     },
     {% if path_snapping %}
     'enablePathSnapping': {
-        'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
     },
     {% endif %}
