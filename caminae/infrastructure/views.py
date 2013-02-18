@@ -15,7 +15,7 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilter
-    columns = ['id', 'name', 'type']
+    columns = ['id', 'name', 'type', 'cities']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -75,7 +75,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilter
-    columns = ['id', 'name', 'type']
+    columns = ['id', 'name', 'type', 'cities']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):

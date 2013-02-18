@@ -2596,3 +2596,10 @@ Le deuxième élément est la fiche en cours de consultation.
 Les onglets suivants présentent les dernières fiches consultées dans la session utilisateur. 
 
 Il est possible de les fermer. Les onglets des objets supprimés sont retirés (même si ce sont des objets supprimés par d'autres utilisateurs). Lorsque l'onglet courrant est fermé, le suivant est activé. S'il s'agit du dernier la page liste est affichée.
+
+
+#503 - Vues liste
+-----------------
+
+Fait.
+

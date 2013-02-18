@@ -47,7 +47,7 @@ class Trek(MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                               help_text=_(u"Any specific infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration"), default=0, blank=True, null=True, db_column='duree',
+    duration = models.IntegerField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
                                    help_text=_(u"In hours"))
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
@@ -75,7 +75,7 @@ class Trek(MapEntityMixin, Topology):
             blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
 
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Difficulty level"), db_column='difficulte')
+            blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
@@ -188,7 +188,10 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        if self.published:
+            s = u'<span class="badge badge-success">&#x2606;</span> ' + s
+        return s
 
     @property
     def name_csv_display(self):

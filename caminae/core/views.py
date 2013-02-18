@@ -35,9 +35,9 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    model = Path
+    queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
     filterform = PathFilter
-    columns = ['id', 'name', 'date_update', 'length', 'trail']
+    columns = ['id', 'name', 'networks', 'stake', 'trail']
 
 
 class PathJsonList(MapEntityJsonList, PathList):

@@ -7,6 +7,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
@@ -228,15 +229,31 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         queryset = kwargs.pop('object_list')
         # Filter queryset from possible serialized form
         queryset = self.filterform(self.request.GET or None, queryset=queryset)
+
+        attr_getters = {}
+        model = self.model or self.queryset.model
+        print dir(model)
+        for field in self.columns:
+            if hasattr(model, field + '_display'):
+                attr_getters[field] = lambda obj, field: getattr(obj, field + '_display')
+            else:
+                modelfield = model._meta.get_field(field)
+                if isinstance(modelfield, ForeignKey):
+                    attr_getters[field] = lambda obj, field: unicode(getattr(obj, field) or _("None"))
+                elif isinstance(modelfield, ManyToManyField):
+                    attr_getters[field] = lambda obj, field: [unicode(o) for o in getattr(obj, field).all()] or _("None")
+                else:
+                    def fixfloat(obj, field):
+                        value = getattr(obj, field)
+                        if isinstance(value, float) and math.isnan(value):
+                            value = 0.0
+                        return value
+                    attr_getters[field] = fixfloat
         # Build list with fields
         map_obj_pk = []
         data_table_rows = []
         for obj in queryset:
-            columns = []
-            for field in self.columns:
-                value = getattr(obj, field + '_display', getattr(obj, field))
-                if isinstance(value, float) and math.isnan(value): value = 0.0
-                columns.append(value)
+            columns = [attr_getters[field](obj, field) for field in self.columns]
             data_table_rows.append(columns)
             map_obj_pk.append(obj.pk)
 

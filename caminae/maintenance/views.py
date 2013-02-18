@@ -28,7 +28,7 @@ class InterventionLayer(MapEntityLayer):
 class InterventionList(MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilter
-    columns = ['id', 'name', 'date', 'material_cost']
+    columns = ['id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -131,7 +131,7 @@ class ProjectLayer(MapEntityLayer):
 class ProjectList(MapEntityList):
     queryset = Project.objects.existing()
     filterform = ProjectFilter
-    columns = ['id', 'name', 'begin_year', 'end_year', 'cost']
+    columns = ['id', 'name', 'period', 'type', 'domain']
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):

@@ -30,7 +30,7 @@ class TrekLayer(MapEntityLayer):
 class TrekList(MapEntityList):
     queryset = Trek.objects.existing()
     filterform = TrekFilter
-    columns = ['id', 'name', 'departure', 'arrival']
+    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'arrival']
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
