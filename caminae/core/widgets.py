@@ -84,7 +84,7 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
     def get_context(self, *args, **kwargs):
         context = super(TopologyReadonlyWidget, self).get_context(*args, **kwargs)
         topology =  context['topology']
-        if topology:
+        if topology and not isinstance(topology, basestring):
             context['object'] = topology.geom
         context['mapname'] = context['module']
         return context
