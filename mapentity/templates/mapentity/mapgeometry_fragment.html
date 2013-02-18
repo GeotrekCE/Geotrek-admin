@@ -22,7 +22,7 @@ function detailmapInit(map, bounds) {
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
     var objectLayer = new L.ObjectsLayer(geojson, {
-        style: {weight: 5, opacity: 1, clickable: false, color: '{{ LAYERCOLOR_OTHERS }}'},
+        style: {weight: 5, opacity: 1, clickable: false, color:window.SETTINGS.map.colors.others},
         indexing: false
     });
     map.addLayer(objectLayer);
