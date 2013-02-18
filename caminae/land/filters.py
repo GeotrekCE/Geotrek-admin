@@ -64,15 +64,14 @@ def filter(qs, edges):
     """
     # TODO: this is wrong, land should not depend on maintenance
     import caminae.maintenance as maintenance
-    
-    overlapping = set(Topology.overlapping(edges))
 
-    paths = []
-    for o in overlapping:
-        paths.extend(o.paths.all())
+    overlapping = Topology.overlapping(edges)
 
     # In case, we filter on paths
     if qs.model == Path:
+        paths = []
+        for o in overlapping:
+            paths.extend(o.paths.all())
         return qs.filter(pk__in=[ path.pk for path in set(paths) ])
 
     # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
