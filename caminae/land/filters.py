@@ -16,6 +16,46 @@ from .models import (
 )
 
 
+class PhysicalEdgeFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        model = PhysicalEdge
+        fields = MapEntityFilterSet.Meta.fields + ['physical_type']
+
+
+class LandEdgeFilter(StructureRelatedFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        model = LandEdge
+        fields = MapEntityFilterSet.Meta.fields + ['land_type']
+
+
+class OrganismFilter(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        fields = MapEntityFilterSet.Meta.fields + ['organization']
+
+
+class CompetenceEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
+        model = CompetenceEdge
+
+
+class WorkManagementEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
+        model = WorkManagementEdge
+
+
+class SignageManagementEdgeFilter(OrganismFilter):
+    class Meta(OrganismFilter.Meta):
+        model = SignageManagementEdge
+
+
+"""
+
+    Welcome in the land of complexity.
+
+    (also known as over-engineering)
+
+"""
+
 def filter(qs, edges):
     """
     This piece of code was moved from core, and should be rewritten nicely
@@ -54,37 +94,6 @@ def filter(qs, edges):
         return qs.filter(pk__in=[ topo.pk for topo in overlapping ])
 
 
-
-class PhysicalEdgeFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
-        model = PhysicalEdge
-        fields = MapEntityFilterSet.Meta.fields + ['physical_type']
-
-
-class LandEdgeFilter(StructureRelatedFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
-        model = LandEdge
-        fields = MapEntityFilterSet.Meta.fields + ['land_type']
-
-
-class OrganismFilter(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
-        fields = MapEntityFilterSet.Meta.fields + ['organization']
-
-
-class CompetenceEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
-        model = CompetenceEdge
-
-
-class WorkManagementEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
-        model = WorkManagementEdge
-
-
-class SignageManagementEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
-        model = SignageManagementEdge
 
 
 class TopoFilterPhysicalType(ModelChoiceFilter):
