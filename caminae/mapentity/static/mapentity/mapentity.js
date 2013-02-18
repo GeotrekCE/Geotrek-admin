@@ -241,8 +241,7 @@ MapEntity.History = L.Control.extend({
     },
 
     remove: function (path) {
-        var server = path.replace(/[^\/]+\/\d+\//, '');
-        $.post(server + 'history/delete/', {path: path}, function() {
+        $.post(window.SETTINGS.server + 'history/delete/', {path: path}, function() {
             $("#historylist li a[href='" + path + "']").parents('li').remove();
         });
     },

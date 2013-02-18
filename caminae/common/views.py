@@ -1,3 +1,5 @@
+import os
+
 from django.core.serializers import serialize
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.urlresolvers import reverse_lazy
@@ -11,6 +13,8 @@ from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.conf import settings
+
+from caminae import __version__
 
 
 class HttpJSONResponse(HttpResponse):
@@ -130,10 +134,11 @@ def qunit_tests_list_json(request):
 
 def settings_json(request):
     dictsettings = {}
-    # 
     dictsettings['map'] = dict(
         extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT')
     )
+    dictsettings['server'] = request.build_absolute_uri('/')
+    dictsettings['version'] = __version__
     # Languages
     dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
                                      default=settings.LANGUAGE_CODE)
