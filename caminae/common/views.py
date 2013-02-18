@@ -142,6 +142,8 @@ def settings_json(request):
             land=settings.LAYERCOLOR_LAND,
             others=settings.LAYERCOLOR_OTHERS,
         ),
+
+        snap_distance = settings.SNAP_DISTANCE,
     )
     dictsettings['server'] = request.build_absolute_uri('/')
     dictsettings['version'] = __version__

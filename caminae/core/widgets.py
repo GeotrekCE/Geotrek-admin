@@ -26,8 +26,6 @@ class SnappedLineStringWidget(LineStringWidget):
     def get_context(self, name, value, attrs=None, extra_context={}):
         context = super(SnappedLineStringWidget, self).get_context(name, value, attrs, extra_context)
         context['path_snapping'] = True
-        # TODO: this should come from context processor !
-        context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
 
@@ -60,8 +58,6 @@ class BaseTopologyWidget(forms.Textarea):
         context['topology'] = value
         context['topologyjson'] = topologyjson
         context['path_snapping'] = True
-        # TODO: this should come from context processor !
-        context['SNAP_DISTANCE'] = settings.SNAP_DISTANCE
         return context
 
 

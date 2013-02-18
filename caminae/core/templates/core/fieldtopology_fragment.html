@@ -23,7 +23,6 @@
     delete {{ module }}_settings.enableDrawing; 
     
     {{ module }}_settings['enablePathSnapping'] = {
-        'SNAP_DISTANCE': {{ SNAP_DISTANCE }},
         'pathsLayer_url': "{% url core:path_layer %}"
     };
 

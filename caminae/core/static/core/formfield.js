@@ -254,7 +254,7 @@ FormField.makeModule = function(module, module_settings) {
             snapObserver = null;
 
         if (path_snapping) {
-            L.Handler.MarkerSnapping.prototype.SNAP_DISTANCE = module_settings.enablePathSnapping.SNAP_DISTANCE;
+            L.Handler.MarkerSnapping.prototype.SNAP_DISTANCE = window.SETTINGS.map.snap_distance;
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
