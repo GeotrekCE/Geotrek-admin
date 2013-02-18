@@ -30,7 +30,7 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-        $('#id_date').datepicker({format: '{{ DATE_INPUT_FORMAT_JS }}'});
+        $('#id_date').datepicker({format: window.SETTINGS.date_format});
         
         // TODO: do this with crispyforms !
         $("fieldset.formset").detach().appendTo('#mainform fieldset');

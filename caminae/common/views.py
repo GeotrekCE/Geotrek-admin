@@ -135,11 +135,20 @@ def qunit_tests_list_json(request):
 def settings_json(request):
     dictsettings = {}
     dictsettings['map'] = dict(
-        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT')
+        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT'),
+
+        colors=dict(
+            paths=settings.LAYERCOLOR_PATHS,
+            land=settings.LAYERCOLOR_LAND,
+            others=settings.LAYERCOLOR_OTHERS,
+        ),
     )
     dictsettings['server'] = request.build_absolute_uri('/')
     dictsettings['version'] = __version__
+    dictsettings['date_format'] = settings.DATE_INPUT_FORMATS[0].replace('%Y', 'yyyy').replace('%m', 'mm').replace('%d', 'dd')
+
     # Languages
     dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
                                      default=settings.LANGUAGE_CODE)
+
     return HttpJSONResponse(json_django_dumps(dictsettings))

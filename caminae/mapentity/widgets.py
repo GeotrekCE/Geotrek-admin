@@ -33,9 +33,6 @@ class GeometryWidget(LeafletMapWidget):
                 context['field'] = wkt_to_geom(value)
             else:
                 value.transform(settings.API_SRID)
-        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
-        context['LAYERCOLOR_LAND'] = settings.LAYERCOLOR_LAND
-        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 
