@@ -190,7 +190,7 @@ tr.selected-row td {
 #panelright {position: absolute; top: 2px; bottom: 0; width: 50%; right: 0;}
 
 #mainmap {position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;}
-.map-panel {position: absolute; top: 0px; bottom: 0px; right: 0px;}
+.map-panel.detail {position: absolute; top: 0px; bottom: 0px; right: 0px;}
 #detailmap {height: 100%;}
 
 #list-panel {
