@@ -242,7 +242,22 @@ MapEntity.History = L.Control.extend({
 
     remove: function (path) {
         $.post(window.SETTINGS.server + 'history/delete/', {path: path}, function() {
-            $("#historylist li a[href='" + path + "']").parents('li').remove();
+            var entries = $("#historylist > li")
+              , entry = $("#historylist li a[href='" + path + "']").parents('li')
+              , closeCurrent = String(window.location).indexOf(path, window.location.length - path.length) !== -1;
+            if (closeCurrent) {
+                // Closing current...
+                if (entries.length > 2) {
+                    // More left
+                    entries.find(' > a').get(1).click();
+                    $(entry).remove();
+                }
+                else {
+                    // No more, redirect to list view 
+                    window.location = '/';
+                    $(entry).remove();
+                }
+            }
         });
     },
 
