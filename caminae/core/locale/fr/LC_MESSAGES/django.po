@@ -47,7 +47,7 @@ msgstr "Validité"
 
 #: models.py:32
 msgid "Approved by manager"
-msgstr "Approuvé par le gérant"
+msgstr "Approuvé par le référent"
 
 #: models.py:34
 msgid "Official name"

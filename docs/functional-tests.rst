@@ -2603,3 +2603,7 @@ Il est possible de les fermer. Les onglets des objets supprimés sont retirés (
 
 Fait.
 
+#489 - Traduction gérant -> référent Formulaire tronçon
+-------------------------------------------------------
+
+Fait.
