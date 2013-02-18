@@ -113,7 +113,10 @@ class TopoFilter(ModelChoiceFilter):
         """Overrides parent filter() method completely."""
         if not value:
             return qs
-        edges = self.value_to_edges(value)
+        if issubclass(value.__class__, Topology):
+            edges = Topology.objects.filter(pk=value.pk)
+        else:
+            edges = self.value_to_edges(value)
         return filter(qs, edges)
 
     def value_to_edges(self, value):

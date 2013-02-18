@@ -2607,3 +2607,24 @@ Fait.
 -------------------------------------------------------
 
 Fait.
+
+#501 - FILTRES - Itinéraires et POI
+-----------------------------------
+
+Ajouté partout :
+
+* Commune
+* Secteur
+
+Ajouté sur itinéraires
+
+* Usage
+* Durée
+* Parcours
+* Coeur
+* Thématique
+* Réseaux
+
+Ajouté sur POI :
+
+* Itinéraire
