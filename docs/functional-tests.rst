@@ -2628,3 +2628,9 @@ Ajouté sur itinéraires
 Ajouté sur POI :
 
 * Itinéraire
+
+
+#494 - Sentiers CRUD - commentaire facultatif
+---------------------------------------------
+
+Fait.
