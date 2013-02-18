@@ -51,9 +51,14 @@
     <script type="text/javascript">
         L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
         // Global Javascript
-        $.getJSON("{% url common:settings_json %}", function(data) {
-            window.SETTINGS = data;
-        })
+        $.ajax({
+          url: "{% url common:settings_json %}",
+          async: false,
+          dataType: 'json',
+          success: function (data) {
+              window.SETTINGS = data;
+          }
+        });
     </script>
 
     <script type="text/javascript" src="{% static "mapentity/dataTables/js/jquery.dataTables.js" %}"></script>
