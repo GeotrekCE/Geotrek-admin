@@ -12,7 +12,8 @@ from caminae.mapentity.filters import MapEntityFilterSet
 
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
-    SignageManagementEdge, WorkManagementEdge
+    SignageManagementEdge, WorkManagementEdge,
+    City, District, RestrictedArea
 )
 
 
@@ -95,68 +96,84 @@ def filter(qs, edges):
 
 
 
-
-class TopoFilterPhysicalType(ModelChoiceFilter):
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', PhysicalType.objects.all())
-        super(TopoFilterPhysicalType, self).__init__(*args, **kwargs)
-
-    def filter(self, qs, value_physical_type):
-        if value_physical_type is None:
-            return qs
-
-        edges = value_physical_type.physicaledge_set.all()
-        return filter(qs, edges)
-
-
-class TopoFilterLandType(ModelChoiceFilter):
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', LandType.objects.all())
-        super(TopoFilterLandType, self).__init__(*args, **kwargs)
-
-    def filter(self, qs, value_land_type):
-        if value_land_type is None:
-            return qs
-
-        edges = value_land_type.landedge_set.all()
-        return filter(qs, edges)
-
-
 class TopoFilter(ModelChoiceFilter):
 
+    model = None
+    queryset = None
+
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', Organism.objects.all())
+        kwargs.setdefault('queryset', self.get_queryset())
         super(TopoFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, qs, value_orga):
-        if not value_orga:
-            return qs
+    def get_queryset(self):
+        if self.queryset:
+            return self.queryset
+        return self.model.objects.all()
 
-        edges = self.orga_to_edges(value_orga)
+    def filter(self, qs, value):
+        """Overrides parent filter() method completely."""
+        if not value:
+            return qs
+        edges = self.value_to_edges(value)
         return filter(qs, edges)
 
-    def orga_to_edges(self, orga):
+    def value_to_edges(self, value):
         raise NotImplementedError
 
 
+class TopoFilterPhysicalType(TopoFilter):
+    model = PhysicalType
+
+    def value_to_edges(self, value):
+        return value.physicaledge_set.all()
+
+
+class TopoFilterLandType(TopoFilter):
+    model = LandType
+
+    def value_to_edges(self, value):
+        return value.landedge_set.all()
+
+
+class TopoFilterCity(TopoFilter):
+    model = City
+
+    def value_to_edges(self, value):
+        return value.cityedge_set.all()
+
+
+class TopoFilterDistrict(TopoFilter):
+    model = District
+
+    def value_to_edges(self, value):
+        return value.districtedge_set.all()
+
+
 class TopoFilterCompetenceEdge(TopoFilter):
-    def orga_to_edges(self, orga):
-        return orga.competenceedge_set.select_related(depth=1).all()
+    model = Organism
+
+    def value_to_edges(self, value):
+        return value.competenceedge_set.select_related(depth=1).all()
 
 
 class TopoFilterSignageManagementEdge(TopoFilter):
-    def orga_to_edges(self, orga):
-        return orga.signagemanagementedge_set.select_related(depth=1).all()
+    model = Organism
+
+    def value_to_edges(self, value):
+        return value.signagemanagementedge_set.select_related(depth=1).all()
 
 
 class TopoFilterWorkManagementEdge(TopoFilter):
-    def orga_to_edges(self, orga):
-        return orga.workmanagementedge_set.select_related(depth=1).all()
+    model = Organism
+
+    def value_to_edges(self, value):
+        return value.workmanagementedge_set.select_related(depth=1).all()
 
 
 class EdgeFilterSet(MapEntityFilterSet):
+    city = TopoFilterCity(label=_('City'), required=False)
+    district = TopoFilterDistrict(label=('District'), required=False)
+
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)
 
@@ -169,6 +186,9 @@ class EdgeFilterSet(MapEntityFilterSet):
 
 
 class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
+    city = TopoFilterCity(label=_('City'), required=False)
+    district = TopoFilterDistrict(label=('District'), required=False)
+
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)
 
