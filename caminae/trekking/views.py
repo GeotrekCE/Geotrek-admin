@@ -76,11 +76,10 @@ class TrekGPXDetail(BaseDetailView):
     queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
-        geom_field = 'geom'
         gpx_serializer = GPXSerializer()
-        gpx_xml = gpx_serializer.serialize(self.get_queryset(), geom_field=geom_field)
-        response = HttpResponse(gpx_xml, mimetype='application/gpx+xml')
+        response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
+        gpx_serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
         return response
 
 
@@ -225,7 +224,6 @@ class WebLinkCreatePopup(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        print form.instance
         return HttpResponse("""
             <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))

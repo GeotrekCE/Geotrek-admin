@@ -2634,3 +2634,8 @@ Ajouté sur POI :
 ---------------------------------------------
 
 Fait.
+
+#371 - ADMIN - Export des champs N-N
+------------------------------------
+
+Fait. Valeurs séparées par des virgules.

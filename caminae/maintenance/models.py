@@ -359,11 +359,15 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         return unicode(self.name)
 
     @property
-    def period_display(self):
+    def period(self):
         return "%s - %s" % (self.begin_year, self.end_year)
 
     @property
-    def period_verbose_name(self):
+    def period_display(self):
+        return self.period
+
+    @classproperty
+    def period_verbose_name(cls):
         return _("Period")
 
     def __unicode__(self):
