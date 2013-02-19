@@ -5,7 +5,6 @@ from HTMLParser import HTMLParser
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q
 from django.utils.html import strip_tags
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -14,7 +13,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
-from caminae.common.utils import elevation_profile, serialize_imagefield
+from caminae.common.utils import classproperty, elevation_profile, serialize_imagefield
 from caminae.maintenance.models import Intervention, Project
 
 logger = logging.getLogger(__name__)
@@ -140,7 +139,7 @@ class Trek(MapEntityMixin, Topology):
                  'name': d.name} for d in self.districts]
 
     @property
-    def serializable_weblinks(self):
+    def serializable_web_links(self):
         return [{'id': w.pk,
                  'name': w.name,
                  'category': w.serializable_category,

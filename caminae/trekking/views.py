@@ -22,10 +22,9 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 
 class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
-    fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
-              'description', 'description_teaser', 'duration', 'ascent', 'descent', 
-              'min_elevation', 'max_elevation', 'serializable_themes', 
-              'serializable_usages', 'is_loop', 'published']
+    fields = ['arrival', 'ascent', 'departure', 'descent', 'description', 'description_teaser', 
+              'duration', 'is_loop', 'max_elevation', 'min_elevation', 'name', 'published', 
+              'serializable_difficulty', 'serializable_themes', 'serializable_usages']
 
 
 class TrekList(MapEntityList):
@@ -38,36 +37,36 @@ class TrekJsonList(MapEntityJsonList, TrekList):
     pass
 
 
-class TrekFormatList(MapEntityFormat, TrekList):
-    pass
-
-
 class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
-    fields = ['name', 'departure', 'arrival', 'duration', 'description',
-              'description_teaser', 'length', 'ascent', 'max_elevation',
-              'advice', 'networks', 'ambiance', 'serializable_districts',
-              'serializable_themes', 'serializable_usages',
-              'serializable_cities', 'serializable_districts', 'access', 'ambiance',
-              'serializable_weblinks', 'is_park_centered', 'disabled_infrastructure',
-              'serializable_parking_location', 'serializable_picture']
+    columns = ['name', 'departure', 'arrival', 'duration', 'description',
+              'description_teaser', 'length', 'ascent', 'descent', 
+              'max_elevation', 'min_elevation', 'published',
+              'advice', 'networks', 'ambiance', 'difficulty',
+              'themes', 'usages', 'access', 
+              'web_links', 'is_park_centered', 'disabled_infrastructure',
+              'parking_location', 'picture',
+              'cities', 'districts']
 
     def get_context_data(self, **kwargs):
         o = self.object
         ctx = {}
 
-        for fname in self.fields:
-            prettyname = fname.replace('serializable_', '')
-            ctx[prettyname] = getattr(o, fname)
+        for fname in self.columns:
+            ctx[fname] = getattr(o, 'serializable_%s' % fname, getattr(o, fname))
             try:
                 field = o._meta.get_field_by_name(fname)[0]
             except FieldDoesNotExist: # fname may refer to non-field properties
                 pass
             else:
                 if field in o._meta.many_to_many:
-                    ctx[fname] = ctx[fname].all()
+                    ctx[fname] = getattr(o, fname).all()
 
         return ctx
+
+
+class TrekFormatList(MapEntityFormat, TrekList):
+    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['picture',])
 
 
 class TrekGPXDetail(BaseDetailView):
@@ -172,7 +171,7 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-        pass
+    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas'])
 
 
 class POIDetail(MapEntityDetail):
