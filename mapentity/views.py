@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import csv
 import math
 import urllib2
 import logging
@@ -10,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import smart_str
 from django.utils import simplejson
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -37,7 +35,7 @@ from caminae.common.utils import split_bygeom # TODO
 from . import models as mapentity_models
 from . import shape_exporter
 from .decorators import save_history
-from .serializers import GPXSerializer
+from .serializers import GPXSerializer, CSVSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -171,10 +169,10 @@ class MapEntityList(ModelMetaMixin, ListView):
     
     A generic view list web page.
     
+    """
     model = None
     filterform = None
     columns = []
-    """
 
     def __init__(self, *args, **kwargs):
         super(MapEntityList, self).__init__(*args, **kwargs)
@@ -208,9 +206,6 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
     """
     Return path related datas (belonging to the current user) as a JSON
     that will populate a dataTable.
-
-    TODO: provide filters, pagination, sorting etc.
-          At the moment everything (except the first listing) is done client side
     """
     # aaData is the key looked up by dataTables
     data_table_name = 'aaData'
@@ -232,7 +227,6 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
 
         attr_getters = {}
         model = self.model or self.queryset.model
-        print dir(model)
         for field in self.columns:
             if hasattr(model, field + '_display'):
                 attr_getters[field] = lambda obj, field: getattr(obj, field + '_display')
@@ -431,88 +425,45 @@ class MapEntityFormat(MapEntityList):
     """Make it  extends your EntityList"""
     DEFAULT_FORMAT = 'csv'
 
-    def __init__(self, *args, **kwargs):
-        self.formats = {
-            'csv': self.csv_view,
-            'shp': self.shape_view,
-            'gpx': self.gpx_view,
-        }
-        super(MapEntityFormat, self).__init__(*args, **kwargs)
-
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_FORMAT_LIST
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        fmt_str = request.GET.get('format', self.DEFAULT_FORMAT)
-        self.formatter = self.formats.get(fmt_str)
-
-        if not self.formatter:
-            logger.warning(_("Unknown serialization format '%s'") % fmt_str)
-            raise Http404
-
-        return super(MapEntityList, self).dispatch(request, *args, **kwargs)
+    def get_queryset(self):
+        queryset = super(MapEntityFormat, self).get_queryset()
+        return self.filterform(self.request.GET or None,
+                               queryset=queryset).qs
 
     def get_context_data(self, **kwargs):
-        """Get the right objects"""
-        queryset = kwargs.pop('object_list')
-        return { 'queryset': self.filterform(self.request.GET or None, queryset=queryset) }
+        return {}
 
     def render_to_response(self, context, **response_kwargs):
         """Delegate to the fmt view function found at dispatch time"""
-        return self.formatter(
-            request = self.request,
-            context = context,
-            **response_kwargs
-        )
+        formats = {
+            'csv': self.csv_view,
+            'shp': self.shape_view,
+            'gpx': self.gpx_view,
+        }
+        fmt_str = self.request.GET.get('format', self.DEFAULT_FORMAT)
+        formatter = formats.get(fmt_str)
+        if not formatter:
+            logger.warning("Unknown serialization format '%s'" % fmt_str)
+            raise Http404
+        return formatter(request = self.request, context = context, **response_kwargs)
 
     def csv_view(self, request, context, **kwargs):
-        """
-        Uses self.columns, containing fieldnames to produce the CSV.
-        The header of the csv is made of the verbose name of each field
-        Each column content is made using (by priority order):
-            * <field_name>_csv_display
-            * <field_name>_display
-            * <field_name>
-        """
-
-        def get_lines():
-            queryset = context['queryset'].qs
-
-            # Header line
-            yield [
-                smart_str(queryset.model._meta.get_field(field).verbose_name)
-                for field in self.columns
-            ]
-
-            for obj in queryset:
-                columns = []
-                for field in self.columns:
-                    # may be optimized
-                    columns.append(smart_str(
-                        getattr(obj, field + '_csv_display',
-                            getattr(obj, field + '_display',
-                                getattr(obj, field)
-                            )
-                        )
-                    ))
-                yield columns
-
+        serializer = CSVSerializer()
         response = HttpResponse(mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=list.csv'
-
-        writer = csv.writer(response)
-        writer.writerows(get_lines())
-
+        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+                             fields=self.columns, ensure_ascii=True)
         return response
 
     def shape_view(self, request, context, **kwarg):
-        queryset = context['queryset'].qs
 
         shp_creator = shape_exporter.ShapeCreator()
 
-        self.create_shape(shp_creator, queryset)
+        self.create_shape(shp_creator, self.get_queryset())
 
         return shp_creator.as_zipped_response('shp_download')
 
@@ -552,13 +503,8 @@ class MapEntityFormat(MapEntityList):
         return get_geom, geom_type, srid
 
     def gpx_view(self, request, context, **kwargs):
-        queryset = context['queryset'].qs
-        geom_field = 'geom'
-        gpx_serializer = GPXSerializer()
-        # Can't use values_list('geom', flat=True) as some geom are not a field but a property
-        qs = queryset.select_related(depth=1)
-        gpx_xml = gpx_serializer.serialize(qs, geom_field=geom_field)
-        
-        response = HttpResponse(gpx_xml, mimetype='application/gpx+xml')
+        serializer = GPXSerializer()
+        response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=list.gpx'
+        serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
         return response
