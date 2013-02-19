@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
@@ -14,9 +15,13 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_unicode
+from django.utils.functional import Promise, curry
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods, last_modified as cache_last_modified
 from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers import serialize
+from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
 from django.contrib.gis.db.models.fields import (
@@ -29,9 +34,6 @@ from djappypod.response import OdtTemplateResponse
 from screamshot.decorators import login_required_capturable
 from screamshot.utils import casperjs_capture
 
-from caminae.common.views import JSONResponseMixin  # TODO: mapentity should not have Caminae dependency
-from caminae.common.utils import split_bygeom # TODO
-
 from . import models as mapentity_models
 from . import shape_exporter
 from .decorators import save_history
@@ -39,8 +41,64 @@ from .serializers import GPXSerializer, CSVSerializer
 
 logger = logging.getLogger(__name__)
 
-# Concrete views
 
+"""
+
+    Reusables
+
+"""
+class HttpJSONResponse(HttpResponse):
+    def __init__(self, content='', **kwargs):
+        kwargs['content_type'] = 'application/json'
+        super(HttpJSONResponse, self).__init__(content, **kwargs)
+
+
+class DjangoJSONEncoder(DateTimeAwareJSONEncoder):
+    """
+    Taken (slightly modified) from:
+    http://stackoverflow.com/questions/2249792/json-serializing-django-models-with-simplejson
+    """
+    def default(self, obj):
+        # https://docs.djangoproject.com/en/dev/topics/serialization/#id2
+        if isinstance(obj, Promise):
+            return force_unicode(obj)
+        if isinstance(obj, QuerySet):
+            # `default` must return a python serializable
+            # structure, the easiest way is to load the JSON
+            # string produced by `serialize` and return it
+            return simplejson.loads(serialize('json', obj))
+        return super(DjangoJSONEncoder, self).default(obj)
+
+# partial function, we can now use dumps(my_dict) instead
+# of dumps(my_dict, cls=DjangoJSONEncoder)
+json_django_dumps = curry(simplejson.dumps, cls=DjangoJSONEncoder)
+
+
+class JSONResponseMixin(object):
+    """
+    A mixin that can be used to render a JSON response.
+    """
+    response_class = HttpJSONResponse
+
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        return self.response_class(
+            self.convert_context_to_json(context),
+            **response_kwargs
+        )
+
+    def convert_context_to_json(self, context):
+        "Convert the context dictionary into a JSON object"
+        return json_django_dumps(context)
+
+
+"""
+
+    Concrete views
+
+"""
 @csrf_exempt
 @login_required
 def map_screenshot(request):
@@ -93,6 +151,14 @@ def history_delete(request, path=None):
         request.session['history'] = history
     return HttpResponse()
 
+
+
+
+"""
+
+    Generic views
+
+"""
 
 # Generic views, to be overriden
 
@@ -492,6 +558,23 @@ class MapEntityFormat(MapEntityList):
             shp_creator.add_shape('shp_download', shp_filepath)
 
     def split_points_linestrings(self, queryset, get_geom):
+        from django.contrib.gis.geos import LineString, Point
+
+        def split_bygeom(iterable, geom_getter=lambda x: x.geom):
+            """Split an iterable in two list (points, linestring)"""
+            points, linestrings = [], []
+            
+            for x in iterable:
+                geom = geom_getter(x)
+                if geom is None:
+                    pass
+                elif isinstance(geom, Point):
+                    points.append(x)
+                elif isinstance(geom, LineString):
+                    linestrings.append(x)
+                else:
+                    raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
+            return points, linestrings
         return split_bygeom(queryset, geom_getter=get_geom)
 
     def get_fieldmap(self, qs):

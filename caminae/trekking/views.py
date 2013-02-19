@@ -10,9 +10,10 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
+                                     JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
-from caminae.common.views import FormsetMixin, json_django_dumps, HttpJSONResponse
+from caminae.common.views import FormsetMixin
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
@@ -41,7 +42,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
     pass
 
 
-class TrekJsonDetail(BaseDetailView):
+class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     fields = ['name', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'max_elevation',
@@ -68,9 +69,6 @@ class TrekJsonDetail(BaseDetailView):
 
         return ctx
 
-    def render_to_response(self, context):
-        return HttpJSONResponse(json_django_dumps(context))
-
 
 class TrekGPXDetail(BaseDetailView):
     queryset = Trek.objects.existing()
@@ -93,13 +91,12 @@ class TrekKMLDetail(BaseDetailView):
         return response
 
 
-class TrekJsonProfile(BaseDetailView):
+class TrekJsonProfile(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        profile = self.object.elevation_profile
-        return HttpJSONResponse(json_django_dumps({'profile': profile}))
+    def get_context_data(self, **kwargs):
+        t = self.get_object()
+        return {'profile': t.elevation_profile}
 
 
 class TrekPOIGeoJSON(GeoJSONLayerView):

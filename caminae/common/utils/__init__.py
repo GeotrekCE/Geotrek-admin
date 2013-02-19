@@ -130,23 +130,6 @@ def smart_urljoin(base, path):
     return urljoin(base, path)
 
 
-def split_bygeom(iterable, geom_getter=lambda x: x.geom):
-    """Split an iterable in two list (points, linestring)"""
-    points, linestrings = [], []
-    
-    for x in iterable:
-        geom = geom_getter(x)
-        if geom is None:
-            pass
-        elif isinstance(geom, Point):
-            points.append(x)
-        elif isinstance(geom, LineString):
-            linestrings.append(x)
-        else:
-            raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
-    return points, linestrings
-
-
 def serialize_imagefield(imagefield):
     try:
         pictopath = imagefield.name
