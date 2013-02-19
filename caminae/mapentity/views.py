@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import math
 import urllib2
 import logging
 from datetime import datetime
@@ -7,7 +6,6 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
@@ -37,7 +35,7 @@ from screamshot.utils import casperjs_capture
 from . import models as mapentity_models
 from . import shape_exporter
 from .decorators import save_history
-from .serializers import GPXSerializer, CSVSerializer
+from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -242,6 +240,7 @@ class MapEntityList(ModelMetaMixin, ListView):
 
     def __init__(self, *args, **kwargs):
         super(MapEntityList, self).__init__(*args, **kwargs)
+        self._filterform = None
         if self.model is None:
             self.model = self.queryset.model
 
@@ -250,8 +249,11 @@ class MapEntityList(ModelMetaMixin, ListView):
         return mapentity_models.ENTITY_LIST
 
     def get_queryset(self):
-        qs = super(MapEntityList, self).get_queryset()
-        return qs.select_related(depth=1)
+        queryset = super(MapEntityList, self).get_queryset()
+        queryset = queryset.select_related(depth=1)
+        # Filter queryset from possible serialized form
+        self._filterform = self.filterform(self.request.GET or None, queryset=queryset)
+        return self._filterform.qs
 
     @method_decorator(login_required_capturable)
     def dispatch(self, request, *args, **kwargs):
@@ -262,7 +264,7 @@ class MapEntityList(ModelMetaMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityList, self).get_context_data(**kwargs)
         context['datatables_ajax_url'] = self.model.get_jsonlist_url()
-        context['filterform'] = self.filterform(None, queryset=self.get_queryset())
+        context['filterform'] = self._filterform
         context['columns'] = self.columns
         context['generic_detail_url'] = self.model.get_generic_detail_url()
         return context
@@ -273,8 +275,6 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
     Return path related datas (belonging to the current user) as a JSON
     that will populate a dataTable.
     """
-    # aaData is the key looked up by dataTables
-    data_table_name = 'aaData'
 
     @classmethod
     def get_entity_kind(cls):
@@ -285,43 +285,10 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
 
     def get_context_data(self, **kwargs):
         """
-        override the most important part of JSONListView... (paginator)
+        Override the most important part of JSONListView... (paginator)
         """
-        queryset = kwargs.pop('object_list')
-        # Filter queryset from possible serialized form
-        queryset = self.filterform(self.request.GET or None, queryset=queryset)
-
-        attr_getters = {}
-        model = self.model or self.queryset.model
-        for field in self.columns:
-            if hasattr(model, field + '_display'):
-                attr_getters[field] = lambda obj, field: getattr(obj, field + '_display')
-            else:
-                modelfield = model._meta.get_field(field)
-                if isinstance(modelfield, ForeignKey):
-                    attr_getters[field] = lambda obj, field: unicode(getattr(obj, field) or _("None"))
-                elif isinstance(modelfield, ManyToManyField):
-                    attr_getters[field] = lambda obj, field: [unicode(o) for o in getattr(obj, field).all()] or _("None")
-                else:
-                    def fixfloat(obj, field):
-                        value = getattr(obj, field)
-                        if isinstance(value, float) and math.isnan(value):
-                            value = 0.0
-                        return value
-                    attr_getters[field] = fixfloat
-        # Build list with fields
-        map_obj_pk = []
-        data_table_rows = []
-        for obj in queryset:
-            columns = [attr_getters[field](obj, field) for field in self.columns]
-            data_table_rows.append(columns)
-            map_obj_pk.append(obj.pk)
-
-        context = {
-            self.data_table_name: data_table_rows,
-            'map_obj_pk': map_obj_pk,
-        }
-        return context
+        serializer = DatatablesSerializer()
+        return serializer.serialize(self.get_queryset())
 
 
 class MapEntityDetail(ModelMetaMixin, DetailView):
@@ -494,11 +461,6 @@ class MapEntityFormat(MapEntityList):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_FORMAT_LIST
-
-    def get_queryset(self):
-        queryset = super(MapEntityFormat, self).get_queryset()
-        return self.filterform(self.request.GET or None,
-                               queryset=queryset).qs
 
     def get_context_data(self, **kwargs):
         return {}

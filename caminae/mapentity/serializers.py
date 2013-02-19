@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import csv
+import math
 
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 from django.core.serializers.base import Serializer
@@ -11,6 +13,43 @@ from django.contrib.gis.geos.collections import GeometryCollection
 
 import gpxpy
 
+
+class DatatablesSerializer(Serializer):
+    def serialize(self, queryset, **options):
+        columns = options.pop('fields')
+        daykey = options.pop('datakey')
+
+        attr_getters = {}
+        model = queryset.model
+        for field in columns:
+            if hasattr(model, field + '_display'):
+                attr_getters[field] = lambda obj, field: getattr(obj, field + '_display')
+            else:
+                modelfield = model._meta.get_field(field)
+                if isinstance(modelfield, ForeignKey):
+                    attr_getters[field] = lambda obj, field: unicode(getattr(obj, field) or _("None"))
+                elif isinstance(modelfield, ManyToManyField):
+                    attr_getters[field] = lambda obj, field: [unicode(o) for o in getattr(obj, field).all()] or _("None")
+                else:
+                    def fixfloat(obj, field):
+                        value = getattr(obj, field)
+                        if isinstance(value, float) and math.isnan(value):
+                            value = 0.0
+                        return value
+                    attr_getters[field] = fixfloat
+        # Build list with fields
+        map_obj_pk = []
+        data_table_rows = []
+        for obj in queryset:
+            columns = [attr_getters[field](obj, field) for field in columns]
+            data_table_rows.append(columns)
+            map_obj_pk.append(obj.pk)
+
+        return {
+            # aaData is the key looked up by dataTables
+            'aaData': data_table_rows,
+            'map_obj_pk': map_obj_pk,
+        }
 
 
 
