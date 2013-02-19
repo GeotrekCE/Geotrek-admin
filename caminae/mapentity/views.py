@@ -6,7 +6,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, Http404, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.detail import DetailView
@@ -22,9 +22,6 @@ from django.core.serializers import serialize
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
-from django.contrib.gis.db.models.fields import (
-        GeometryField, GeometryCollectionField, PointField, LineStringField
-)
 
 from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
@@ -33,9 +30,8 @@ from screamshot.decorators import login_required_capturable
 from screamshot.utils import casperjs_capture
 
 from . import models as mapentity_models
-from . import shape_exporter
 from .decorators import save_history
-from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer
+from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer, ZipShapeSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -288,7 +284,7 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         Override the most important part of JSONListView... (paginator)
         """
         serializer = DatatablesSerializer()
-        return serializer.serialize(self.get_queryset())
+        return serializer.serialize(self.get_queryset(), fields=self.columns)
 
 
 class MapEntityDetail(ModelMetaMixin, DetailView):
@@ -476,7 +472,8 @@ class MapEntityFormat(MapEntityList):
         formatter = formats.get(fmt_str)
         if not formatter:
             logger.warning("Unknown serialization format '%s'" % fmt_str)
-            raise Http404
+            return HttpResponseBadRequest()
+
         return formatter(request = self.request, context = context, **response_kwargs)
 
     def csv_view(self, request, context, **kwargs):
@@ -487,65 +484,14 @@ class MapEntityFormat(MapEntityList):
                              fields=self.columns, ensure_ascii=True)
         return response
 
-    def shape_view(self, request, context, **kwarg):
-
-        shp_creator = shape_exporter.ShapeCreator()
-
-        self.create_shape(shp_creator, self.get_queryset())
-
-        return shp_creator.as_zipped_response('shp_download')
-
-    def create_shape(self, shp_creator, queryset):
-        """Split a shapes into one or more shapes (one for point and one for linestring)"""
-        fieldmap = self.get_fieldmap(queryset)
-        # Don't use this - projection does not work yet (looses z dimension)
-        # srid_out = settings.API_SRID
-
-        get_geom, geom_type, srid = self.get_geom_info(queryset.model)
-
-        if geom_type in (GeometryField.geom_type, GeometryCollectionField.geom_type):
-            by_points, by_linestrings = self.split_points_linestrings(queryset, get_geom)
-
-            for split_qs, split_geom_field in ((by_points, PointField), (by_linestrings, LineStringField)):
-                split_geom_type = split_geom_field.geom_type
-
-                shp_filepath = shape_exporter.shape_write(
-                                    split_qs, fieldmap, get_geom, split_geom_type, srid)
-
-                shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
-        else:
-            shp_filepath = shape_exporter.shape_write(
-                                queryset, fieldmap, get_geom, geom_type, srid)
-
-            shp_creator.add_shape('shp_download', shp_filepath)
-
-    def split_points_linestrings(self, queryset, get_geom):
-        from django.contrib.gis.geos import LineString, Point
-
-        def split_bygeom(iterable, geom_getter=lambda x: x.geom):
-            """Split an iterable in two list (points, linestring)"""
-            points, linestrings = [], []
-            
-            for x in iterable:
-                geom = geom_getter(x)
-                if geom is None:
-                    pass
-                elif isinstance(geom, Point):
-                    points.append(x)
-                elif isinstance(geom, LineString):
-                    linestrings.append(x)
-                else:
-                    raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
-            return points, linestrings
-        return split_bygeom(queryset, geom_getter=get_geom)
-
-    def get_fieldmap(self, qs):
-        return shape_exporter.fieldmap_from_fields(qs.model, self.columns)
-
-    def get_geom_info(self, model):
-        geo_field = shape_exporter.geo_field_from_model(model, 'geom')
-        get_geom, geom_type, srid = shape_exporter.info_from_geo_field(geo_field)
-        return get_geom, geom_type, srid
+    def shape_view(self, request, context, **kwargs):
+        serializer = ZipShapeSerializer()
+        response = HttpResponse(mimetype='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=list.zip'
+        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+                             fields=self.columns)
+        response['Content-length'] = str(len(response.content))
+        return response
 
     def gpx_view(self, request, context, **kwargs):
         serializer = GPXSerializer()

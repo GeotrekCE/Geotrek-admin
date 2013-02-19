@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
@@ -162,6 +163,10 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
             total += md.cost
         return total
 
+    @classproperty
+    def geomfield(cls):
+        return Topology._meta.get_field('geom')
+
     @property
     def geom(self):
         if self.topology:
@@ -310,6 +315,10 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         verbose_name = _(u"Project")
         verbose_name_plural = _(u"Projects")
 
+    def __init__(self, *args, **kwargs):
+        super(Project, self).__init__(*args, **kwargs)
+        self._geom = None
+
     @property
     def paths(self):
         s = []
@@ -340,15 +349,28 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
             s += i.infrastructures
         return list(set(s))
 
+    @classproperty
+    def geomfield(cls):
+        from django.contrib.gis.geos import LineString
+        # Fake field, TODO: still better than overkill code in views, but can do neater.
+        c = GeometryCollection([LineString((0,0), (1,1))], srid=settings.SRID)
+        c.name = 'geom'
+        return c
+
     @property
     def geom(self):
         """ Merge all interventions geometry into a collection
         """
-        interventions = Intervention.objects.existing().filter(project=self)
-        geoms = [i.geom for i in interventions if i.geom is not None]
-        if geoms:
-            return GeometryCollection(*geoms, srid=settings.SRID)
-        return None
+        if self._geom is None:
+            interventions = Intervention.objects.existing().filter(project=self)
+            geoms = [i.geom for i in interventions if i.geom is not None]
+            if geoms:
+                self._geom = GeometryCollection(*geoms, srid=settings.SRID)
+        return self._geom
+
+    @geom.setter
+    def geom(self, value):
+        self._geom = value
 
     @property
     def name_display(self):

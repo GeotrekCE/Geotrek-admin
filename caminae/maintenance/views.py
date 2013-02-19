@@ -36,13 +36,8 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
+    pass
 
-    def get_geom_info(self, model):
-        get_geom, geom_type, srid = super(InterventionFormatList, self).get_geom_info(Topology)
-        # get_geom returns how to get a geom from a topology, so we give him if we got one
-        new_get_geom = lambda obj: get_geom(obj.topology) if obj.topology else None
-
-        return new_get_geom, geom_type, srid
 
 class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
@@ -139,43 +134,7 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    """
-    For exporting shapes, our iterables will return ** tuples (project, intervention) **.
-    """
-
-    def split_points_linestrings(self, queryset, get_geom):
-        """Yield tuple (project, intervention) - not project /!\ """
-        def gen_from_geom(geom_class):
-            for project in queryset:
-                for it in project.interventions.all():
-                    if it.geom and isinstance(it.geom, geom_class):
-                        yield (project, it)
-
-        return gen_from_geom(Point), gen_from_geom(LineString)
-
-    def get_geom_info(self, model):
-        get_geom, geom_type, srid = super(ProjectFormatList, self).get_geom_info(Topology)
-
-        # project_it being: (project, it)
-        new_get_geom = lambda project_it: get_geom(project_it[1].topology) if project_it[1].topology else None
-
-        return new_get_geom, geom_type, srid
-
-    def get_fieldmap(self, qs):
-        fieldmap = shape_exporter.fieldmap_from_fields(qs.model, self.columns)
-
-        # project_it being: (project, it)
-
-        # As we will get interventions from iterable convert to project
-        fieldmap_from_project_it = dict(
-                (k, lambda project_it, getter=project_getter: getter(project_it[0]))
-                for k, project_getter in fieldmap.iteritems())
-
-        # project_it[1] => use current intervention
-        fieldmap_from_project_it['it_pk'] = lambda project_it: str(project_it[1].pk)
-        fieldmap_from_project_it['it_name'] = lambda project_it: str(project_it[1].name)
-
-        return fieldmap_from_project_it
+    pass
 
 
 class ProjectDetail(MapEntityDetail):

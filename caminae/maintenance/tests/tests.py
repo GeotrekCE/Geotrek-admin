@@ -15,6 +15,7 @@ from caminae.core.models import Topology
 from caminae.common.factories import OrganismFactory
 
 from caminae.mapentity import shape_exporter
+from caminae.mapentity.serializers import ZipShapeSerializer
 
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
 from caminae.maintenance.views import ProjectFormatList
@@ -346,8 +347,8 @@ class ExportTest(TestCase):
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
-        pfl = ProjectFormatList()
-        pfl.create_shape(shp_creator, Project.objects.all())
+        pfl = ZipShapeSerializer()
+        pfl.create_shape(shp_creator, Project.objects.all(), ProjectFormatList.columns)
 
         self.assertEquals(len(shp_creator.shapes), 2)
 
@@ -356,12 +357,11 @@ class ExportTest(TestCase):
         ds_line = gdal.DataSource(shp_creator.shapes[1][1])
         layer_line = ds_line[0]
 
-        self.assertEquals(layer_point.geom_type.name, 'Point')
+        self.assertEquals(layer_point.geom_type.name, 'MultiPoint')
         self.assertEquals(layer_line.geom_type.name, 'LineString')
 
         for layer in [layer_point, layer_line]:
             self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
-            print layer.fields
             self.assertItemsEqual(layer.fields,
                 ['it_name', 'domain', 'name', 'type', 'period', 'it_pk', 'id'])
 
