@@ -369,6 +369,17 @@
         }
     },
     {
+        "pk": 11,
+        "model": "trekking.theme",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/theme-history@2x.png",
+            "label_en": null,
+            "label_fr": "Archelogie et histoire",
+            "label": "Archelogie et histoire"
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.route",
         "fields": {
