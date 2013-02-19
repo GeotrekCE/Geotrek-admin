@@ -105,7 +105,7 @@ class TopoFilter(ModelChoiceFilter):
         super(TopoFilter, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
-        if self.queryset:
+        if self.queryset is not None:
             return self.queryset
         return self.model.objects.all()
 
