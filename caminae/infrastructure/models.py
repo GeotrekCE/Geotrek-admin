@@ -4,6 +4,7 @@ from django.contrib.gis.db import models as gismodels
 
 from extended_choices import Choices
 
+from caminae.common.utils import classproperty
 from caminae.core.models import Topology, Path
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelatedManager, StructureRelated
@@ -88,8 +89,8 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
             return [unicode(c) for c in self.cities]
         return []
 
-    @property
-    def cities_verbose_name(self):
+    @classproperty
+    def cities_verbose_name(cls):
         return _("Cities")
 
 
