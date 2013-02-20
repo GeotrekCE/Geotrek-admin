@@ -39,7 +39,6 @@ class InterventionViewsTest(MapEntityTest):
             'name': 'test',
             'date': '2012-08-23',
             'structure': default_structure().pk,
-            'stake': '',
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
@@ -362,18 +361,15 @@ class ExportTest(TestCase):
 
         for layer in [layer_point, layer_line]:
             self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
-            self.assertItemsEqual(layer.fields,
-                ['it_name', 'domain', 'name', 'type', 'period', 'it_pk', 'id'])
+            self.assertItemsEqual(layer.fields, ['domain', 'name', 'type', 'period', 'id'])
 
         self.assertEquals(len(layer_point), 1)
         self.assertEquals(len(layer_line), 1)
 
         for feature in layer_point:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertEquals(str(feature['it_pk']), str(it_point.pk))
             self.assertTrue(feature.geom.geos.equals(it_point.geom))
 
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertEquals(str(feature['it_pk']), str(it_line.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
