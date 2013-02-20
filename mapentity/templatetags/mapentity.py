@@ -8,7 +8,7 @@ register = template.Library()
 
 class SmartIncludeNode(template.Node):
     def __init__(self, viewname):
-        super(SmartIncludeNode, self).__init__(self)
+        super(SmartIncludeNode, self).__init__()
         self.viewname = viewname
 
     def render(self, context):
