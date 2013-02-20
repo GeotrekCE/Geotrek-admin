@@ -1,11 +1,9 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.db.models.fields import FieldDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
-from django.forms.models import model_to_dict
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -21,7 +19,7 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 
 
 class TrekLayer(MapEntityLayer):
-    fields = ['name', 'slug']
+    fields = ['name', 'published']
     queryset = Trek.objects.existing()
 
 
@@ -38,24 +36,24 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'description',
-              'description_teaser', 'length', 'ascent', 'descent', 
-              'max_elevation', 'min_elevation', 'published',
-              'networks', 'advice', 'ambiance', 'difficulty',
-              'themes', 'usages', 'access', 'route',
-              'web_links', 'is_park_centered', 'disabled_infrastructure',
-              'parking_location', 'thumbnail', 'pictures',
-              'cities', 'districts', 'relationships']
+               'description_teaser', 'length', 'ascent', 'descent',
+               'max_elevation', 'min_elevation', 'published',
+               'networks', 'advice', 'ambiance', 'difficulty',
+               'themes', 'usages', 'access', 'route',
+               'web_links', 'is_park_centered', 'disabled_infrastructure',
+               'parking_location', 'thumbnail', 'pictures',
+               'cities', 'districts', 'relationships']
 
     def get_context_data(self, **kwargs):
         ctx = {}
         for fname in self.columns:
-            ctx[fname] = getattr(self.object, 'serializable_%s' % fname, 
+            ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
                                  getattr(self.object, fname))
         return ctx
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['thumbnail',])
+    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['thumbnail'])
 
 
 class TrekGPXDetail(BaseDetailView):
@@ -74,8 +72,8 @@ class TrekKMLDetail(BaseDetailView):
 
     def render_to_response(self, context):
         trek = self.get_object()
-        response = HttpResponse(trek.kml(), 
-                                content_type = 'application/vnd.google-earth.kml+xml')
+        response = HttpResponse(trek.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
         return response
 
 
@@ -105,9 +103,9 @@ class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_trekking_manager())
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_trekking_manager())
 
 
 class TrekDocument(MapEntityDocument):
@@ -167,9 +165,9 @@ class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_trekking_manager())
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_trekking_manager())
 
 
 class POIDocument(MapEntityDocument):
@@ -200,7 +198,6 @@ class POIDelete(MapEntityDelete):
     @method_decorator(trekking_manager_required('trekking:poi_detail'))
     def dispatch(self, *args, **kwargs):
         return super(POIDelete, self).dispatch(*args, **kwargs)
-
 
 
 class WebLinkCreatePopup(CreateView):
