@@ -1,28 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# taken from shapes
-
-from operator import attrgetter
-from django.db.models.query import QuerySet
-
 import os
 import zipfile
 import tempfile
-import datetime
-from django.http import HttpResponse
-from django.conf import settings
-from django.utils.encoding import smart_str
-from django.contrib.gis.db.models.fields import GeometryField
-from django.contrib.gis.gdal import check_err, OGRGeomType
-
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
+from django.conf import settings
+from django.utils.encoding import smart_str
+from django.contrib.gis.db.models.fields import GeometryField
+from django.contrib.gis.gdal import check_err, OGRGeomType
+
 from osgeo import ogr, osr
-
-
 
 
 def zip_shapes(shapes, delete=True):
@@ -42,22 +33,12 @@ def zip_shapes(shapes, delete=True):
 
 
 def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
-    files = ['shp','shx','prj','dbf']
+    files = ['shp', 'shx', 'prj', 'dbf']
     for item in files:
         filename = '%s.%s' % (shapefile_path.replace('.shp',''), item)
         zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp',''), item))
         if delete:
             os.remove(filename)
-
-
-def zip_stream_to_response(zip_stream, zip_file_name, mimetype='application/zip'):
-    # Stick it all in a django HttpResponse
-    response = HttpResponse()
-    response['Content-Disposition'] = 'attachment; filename=%s.zip' % zip_file_name
-    response['Content-length'] = str(len(zip_stream))
-    response['Content-Type'] = mimetype
-    response.write(zip_stream)
-    return response
 
 
 class ShapeCreator(object):
@@ -67,8 +48,6 @@ class ShapeCreator(object):
 
     def add_shape(self, shp_name, shp_filepath):
         self.shapes.append((shp_name, shp_filepath))
-
-    # def add_shapes_from_callable(self, fun):
 
     def add_shape_from_qs(self, qs, srid_out=None, shp_name='shp_download'):
         self.add_shape_from_model(qs, qs.model, srid_out, shp_name)
@@ -82,10 +61,6 @@ class ShapeCreator(object):
 
     def as_zip(self):
         return zip_shapes(self.shapes)
-
-    def as_zipped_response(self, zip_file_name='shp_download'):
-        zip_file_name = smart_str(zip_file_name)
-        return zip_stream_to_response(self.as_zip(), zip_file_name)
 
 
 def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
@@ -148,6 +123,8 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
         output_srs = native_srs
 
     layer = ds.CreateLayer('lyr', srs=output_srs, geom_type=ogr_type)
+    if layer is None:
+        raise ValueError('Could not create layer (type=%s, srs=%s)' % (geom_type, output_srs))
 
     # Create other fields
     for fieldname in fieldnames:
@@ -175,6 +152,11 @@ def fieldmap_from_model(model):
 
 def geo_field_from_model(model, default_geo_field_name=None):
     """Look for a geo field - taken from shapes"""
+    try:
+        # If the class defines a geomfield property, use it !
+        return model.geomfield
+    except AttributeError:
+        pass
 
     fields = model._meta.fields
     geo_fields = [f for f in fields if isinstance(f, GeometryField)]

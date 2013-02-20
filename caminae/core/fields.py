@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 import floppyforms as forms
 
 from .models import Topology
-from .widgets import BaseTopologyWidget, PointLineTopologyWidget
+from .widgets import PointLineTopologyWidget
 
 
 logger = logging.getLogger(__name__)

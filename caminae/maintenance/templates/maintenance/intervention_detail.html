@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n field_verbose_name %}
+{% load i18n static field_verbose_name %}
 
 {% block detailspanel %}
     {{ block.super }}
@@ -83,14 +83,14 @@
         {% if intervention.is_infrastructure %}
         <tr>
             <th>{% trans "Related infrastructure" %}</th>
-            <td>{{ intervention.infrastructure.name_display|safe }}</td>
+            <td><img src="{% static "images/infrastructure-16.png" %}"/> {{ intervention.infrastructure.name_display|safe }}</td>
         </tr>
         {% endif %}
 
         {% if intervention.is_signage %}
         <tr>
             <th>{% trans "Related signage" %}</th>
-            <td>{{ intervention.infrastructure.name_display|safe }}</td>
+            <td><img src="{% static "images/signage-16.png" %}"/> {{ intervention.signage.name_display|safe }}</td>
         </tr>
         {% endif %}
         <tr>

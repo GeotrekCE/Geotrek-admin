@@ -442,7 +442,6 @@ class Topology(NoDeleteMixin):
                 paths = subtopology['paths']
                 # Create path aggregations
                 for i, path in enumerate(paths):
-                    first_path = i == 0
                     last_path = i == len(paths)-1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)
@@ -666,7 +665,7 @@ class Trail(MapEntityMixin, StructureRelated):
     name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
-    comments = models.TextField(default="", verbose_name=_(u"Comments"), db_column='commentaire')
+    comments = models.TextField(default="", blank=True, verbose_name=_(u"Comments"), db_column='commentaire')
 
     class Meta:
         db_table = 'l_t_sentier'

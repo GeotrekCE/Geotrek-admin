@@ -3,12 +3,14 @@ from datetime import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
 from caminae.core.models import NoDeleteMixin, Topology, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
+from caminae.common.utils import classproperty
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
@@ -18,7 +20,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                                          db_column='maintenance', help_text=_(u"Recurrent"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Intervention date"), db_column='date',
+    date = models.DateField(default=datetime.now, verbose_name=_(u"Date"), db_column='date',
                             help_text=_(u"When ?"))
     comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire',
                                 help_text=_(u"Remarks and notes"))
@@ -47,10 +49,10 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
-    status = models.ForeignKey('InterventionStatus', verbose_name=_("Intervention status"), db_column='status')
+    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')
 
     type = models.ForeignKey('InterventionType', null=True, blank=True,
-            verbose_name=_(u"Intervention type"), db_column='type')
+            verbose_name=_(u"Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
             db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
@@ -100,6 +102,19 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                 return self.infrastructures[0]
         return None
 
+    @classproperty
+    def infrastructure_verbose_name(cls):
+        return _("On")
+
+    @property
+    def infrastructure_display(self):
+        if self.on_infrastructure:
+            return '<img src="%simages/%s-16.png" title="%s">' % (
+                    settings.STATIC_URL,
+                    self.topology.kind.lower(),
+                    unicode(_(self.topology.kind)))
+        return ''
+
     @property
     def is_infrastructure(self):
         if self.topology:
@@ -147,6 +162,10 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
         for md in self.manday_set.all():
             total += md.cost
         return total
+
+    @classproperty
+    def geomfield(cls):
+        return Topology._meta.get_field('geom')
 
     @property
     def geom(self):
@@ -296,6 +315,10 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
         verbose_name = _(u"Project")
         verbose_name_plural = _(u"Projects")
 
+    def __init__(self, *args, **kwargs):
+        super(Project, self).__init__(*args, **kwargs)
+        self._geom = None
+
     @property
     def paths(self):
         s = []
@@ -326,15 +349,28 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
             s += i.infrastructures
         return list(set(s))
 
+    @classproperty
+    def geomfield(cls):
+        from django.contrib.gis.geos import LineString
+        # Fake field, TODO: still better than overkill code in views, but can do neater.
+        c = GeometryCollection([LineString((0,0), (1,1))], srid=settings.SRID)
+        c.name = 'geom'
+        return c
+
     @property
     def geom(self):
         """ Merge all interventions geometry into a collection
         """
-        interventions = Intervention.objects.existing().filter(project=self)
-        geoms = [i.geom for i in interventions if i.geom is not None]
-        if geoms:
-            return GeometryCollection(*geoms, srid=settings.SRID)
-        return None
+        if self._geom is None:
+            interventions = Intervention.objects.existing().filter(project=self)
+            geoms = [i.geom for i in interventions if i.geom is not None]
+            if geoms:
+                self._geom = GeometryCollection(*geoms, srid=settings.SRID)
+        return self._geom
+
+    @geom.setter
+    def geom(self, value):
+        self._geom = value
 
     @property
     def name_display(self):
@@ -343,6 +379,18 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     @property
     def name_csv_display(self):
         return unicode(self.name)
+
+    @property
+    def period(self):
+        return "%s - %s" % (self.begin_year, self.end_year)
+
+    @property
+    def period_display(self):
+        return self.period
+
+    @classproperty
+    def period_verbose_name(cls):
+        return _("Period")
 
     def __unicode__(self):
         deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""

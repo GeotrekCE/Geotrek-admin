@@ -15,6 +15,7 @@ from caminae.core.models import Topology
 from caminae.common.factories import OrganismFactory
 
 from caminae.mapentity import shape_exporter
+from caminae.mapentity.serializers import ZipShapeSerializer
 
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
 from caminae.maintenance.views import ProjectFormatList
@@ -38,7 +39,6 @@ class InterventionViewsTest(MapEntityTest):
             'name': 'test',
             'date': '2012-08-23',
             'structure': default_structure().pk,
-            'stake': '',
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
@@ -346,8 +346,8 @@ class ExportTest(TestCase):
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
-        pfl = ProjectFormatList()
-        pfl.create_shape(shp_creator, Project.objects.all())
+        pfl = ZipShapeSerializer()
+        pfl.create_shape(shp_creator, Project.objects.all(), ProjectFormatList.columns)
 
         self.assertEquals(len(shp_creator.shapes), 2)
 
@@ -356,23 +356,20 @@ class ExportTest(TestCase):
         ds_line = gdal.DataSource(shp_creator.shapes[1][1])
         layer_line = ds_line[0]
 
-        self.assertEquals(layer_point.geom_type.name, 'Point')
+        self.assertEquals(layer_point.geom_type.name, 'MultiPoint')
         self.assertEquals(layer_line.geom_type.name, 'LineString')
 
         for layer in [layer_point, layer_line]:
             self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
-            self.assertItemsEqual(layer.fields,
-                ['it_name', 'name', 'end_year', 'begin_year', 'cost', 'it_pk', 'id'])
+            self.assertItemsEqual(layer.fields, ['domain', 'name', 'type', 'period', 'id'])
 
         self.assertEquals(len(layer_point), 1)
         self.assertEquals(len(layer_line), 1)
 
         for feature in layer_point:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertEquals(str(feature['it_pk']), str(it_point.pk))
             self.assertTrue(feature.geom.geos.equals(it_point.geom))
 
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertEquals(str(feature['it_pk']), str(it_line.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))

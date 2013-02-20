@@ -4,9 +4,10 @@ from HTMLParser import HTMLParser
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q
 from django.utils.html import strip_tags
+from django.template.defaultfilters import slugify
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 
@@ -14,7 +15,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
-from caminae.common.utils import elevation_profile, serialize_imagefield
+from caminae.common.utils import elevation_profile
 from caminae.maintenance.models import Intervention, Project
 
 logger = logging.getLogger(__name__)
@@ -47,7 +48,7 @@ class Trek(MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                               help_text=_(u"Any specific infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"duration"), default=0, blank=True, null=True, db_column='duree',
+    duration = models.IntegerField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
                                    help_text=_(u"In hours"))
 
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
@@ -75,12 +76,12 @@ class Trek(MapEntityMixin, Topology):
             blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
 
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Difficulty level"), db_column='difficulte')
+            blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
             db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
 
-    related_treks = models.ManyToManyField('self', through='TrekRelationship', 
+    related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            related_name='related_treks+')  # Hide reverse attribute
 
@@ -91,6 +92,10 @@ class Trek(MapEntityMixin, Topology):
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
+
+    @property
+    def slug(self):
+        return slugify(self.name)
 
     @property
     def related(self):
@@ -110,9 +115,28 @@ class Trek(MapEntityMixin, Topology):
         return POIType.objects.filter(pk__in=pks)
 
     @property
+    def serializable_relationships(self):
+        return [{
+                'has_common_departure': rel.has_common_departure,
+                'has_common_edge': rel.has_common_edge,
+                'is_circuit_step': rel.is_circuit_step,
+                'trek': {
+                    'pk': rel.trek_b.pk,
+                    'slug': rel.trek_b.slug,
+                    'url': reverse('trekking:trek_json_detail', args=(rel.trek_b.pk,)),
+                },
+                'published': rel.trek_b.published,
+            } for rel in self.relationships]
+
+    @property
     def serializable_cities(self):
         return [{'code': city.code,
                  'name': city.name} for city in self.cities]
+
+    @property
+    def serializable_networks(self):
+        return [{'id': network.id,
+                 'name': network.network} for network in self.networks.all()]
 
     @property
     def serializable_difficulty(self):
@@ -124,14 +148,14 @@ class Trek(MapEntityMixin, Topology):
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
-                 'pictogram': serialize_imagefield(t.pictogram),
+                 'pictogram': os.path.join(settings.MEDIA_URL, t.pictogram.name),
                  'label': t.label,
                 } for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
-                 'pictogram': serialize_imagefield(u.pictogram),
+                 'pictogram': os.path.join(settings.MEDIA_URL, u.pictogram.name),
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -140,7 +164,14 @@ class Trek(MapEntityMixin, Topology):
                  'name': d.name} for d in self.districts]
 
     @property
-    def serializable_weblinks(self):
+    def serializable_route(self):
+        if not self.route:
+            return None
+        return {'id': self.route.pk,
+                'label': self.route.route}
+
+    @property
+    def serializable_web_links(self):
         return [{'id': w.pk,
                  'name': w.name,
                  'category': w.serializable_category,
@@ -153,28 +184,34 @@ class Trek(MapEntityMixin, Topology):
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
 
     @property
-    def picture(self):
+    def pictures(self):
         """
         Find first image among attachments.
         """
-        for attachment in self.attachments.all():
-            if attachment.is_image:
-                return attachment.attachment_file
+        return [a.attachment_file for a in self.attachments.all() if a.is_image]
+
+    @property
+    def serializable_pictures(self):
+        serialized = []
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture)
+            thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            serialized.append(os.path.join(settings.MEDIA_URL, thdetail.name))
+        return serialized
+
+    @property
+    def thumbnail(self):
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture)
+            return thumbnailer.get_thumbnail(aliases.get('small-square'))
         return None
 
     @property
-    def serializable_picture(self):
-        picture = self.picture
-        if not picture:
+    def serializable_thumbnail(self):
+        th = self.thumbnail
+        if not th:
             return None
-        # Thumbnails
-        thumbnailer = get_thumbnailer(picture)
-        thlist = thumbnailer.get_thumbnail(aliases.get('small-square'))
-        thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
-        return {
-            'thumbnail': os.path.join(settings.MEDIA_URL, thlist.name),
-            'preview': os.path.join(settings.MEDIA_URL, thdetail.name)
-        }
+        return os.path.join(settings.MEDIA_URL, th.name)
 
     @property
     def elevation_profile(self):
@@ -183,12 +220,11 @@ class Trek(MapEntityMixin, Topology):
         return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
-    def is_loop(self):
-        return self.departure == self.arrival
-
-    @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        if self.published:
+            s = u'<span class="badge badge-success">&#x2606;</span> ' + s
+        return s
 
     @property
     def name_csv_display(self):
@@ -267,7 +303,7 @@ Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
 class TrekRelationship(models.Model):
     """
-    Relationships between treks : symmetrical aspect is managed by a trigger that 
+    Relationships between treks : symmetrical aspect is managed by a trigger that
     duplicates all couples (trek_a, trek_b)
     """
     has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun', default=False)
@@ -303,7 +339,7 @@ class TrekNetwork(models.Model):
 class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR, 
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
                                  db_column='picto')
 
     class Meta:
@@ -333,7 +369,7 @@ class Route(models.Model):
 
 class DifficultyLevel(models.Model):
 
-    difficulty = models.CharField(verbose_name=_(u"Difficulty level"), 
+    difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
 
     class Meta:
@@ -355,7 +391,7 @@ class WebLink(models.Model):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     url = models.URLField(verbose_name=_(u"URL"), max_length=128, db_column='url')
     category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
-                                 related_name='links', null=True, blank=True, 
+                                 related_name='links', null=True, blank=True,
                                  db_column='categorie')
 
     objects = WebLinkManager()
@@ -366,7 +402,7 @@ class WebLink(models.Model):
         verbose_name_plural = _(u"Web links")
 
     def __unicode__(self):
-        category =  "%s - " % self.category.label if self.category else ""
+        category = "%s - " % self.category.label if self.category else ""
         return u"%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
@@ -380,8 +416,7 @@ class WebLink(models.Model):
             return None
         return {
            'label': self.category.label,
-           'pictogram': serialize_imagefield(self.category.pictogram),
-        }
+           'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
 
 
 class WebLinkCategory(models.Model):
@@ -424,6 +459,11 @@ class Theme(models.Model):
     pictogram_img.allow_tags = True
 
 
+class POIManager(models.GeoManager):
+    def get_queryset(self):
+        return super(POIManager, self).get_queryset().select_related('type')
+
+
 class POI(MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -440,10 +480,10 @@ class POI(MapEntityMixin, Topology):
         verbose_name_plural = _(u"POI")
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(POIManager)()
 
     def __unicode__(self):
-        return self.name
+        return u"%s (%s)" % (self.name, self.type)
 
     @property
     def type_display(self):
@@ -504,4 +544,4 @@ class POIType(models.Model):
 
     @property
     def serializable_pictogram(self):
-        return  serialize_imagefield(self.pictogram)
+        return os.path.join(settings.MEDIA_URL, self.pictogram.name)

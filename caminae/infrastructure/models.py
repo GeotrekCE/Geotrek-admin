@@ -4,6 +4,7 @@ from django.contrib.gis.db import models as gismodels
 
 from extended_choices import Choices
 
+from caminae.common.utils import classproperty
 from caminae.core.models import Topology, Path
 from caminae.mapentity.models import MapEntityMixin
 from caminae.authent.models import StructureRelatedManager, StructureRelated
@@ -57,10 +58,10 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                       db_column='evenement')
     
     name = models.CharField(db_column="nom", max_length=128,
-                            help_text=_(u"Reference, code, ..."))
+                            help_text=_(u"Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True, db_column='description',
                                    help_text=_(u"Specificites"))
-    type = models.ForeignKey(InfrastructureType, db_column='type')
+    type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
 
     class Meta:
         db_table = 'a_t_amenagement'
@@ -81,6 +82,16 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     @property
     def type_display(self):
         return unicode(self.type)
+
+    @property
+    def cities_display(self):
+        if hasattr(self, 'cities'):
+            return [unicode(c) for c in self.cities]
+        return []
+
+    @classproperty
+    def cities_verbose_name(cls):
+        return _("Cities")
 
 
 class InfrastructureGISManager(gismodels.GeoManager):

@@ -1,69 +1,13 @@
-from django.core.serializers import serialize
-from django.core.serializers.json import DateTimeAwareJSONEncoder
-from django.core.urlresolvers import reverse_lazy
-from django.db.models.query import QuerySet
-from django.http import HttpResponse
-from django.utils.encoding import force_unicode
-from django.utils.functional import Promise, curry
 from django.utils import simplejson
+from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-
-class HttpJSONResponse(HttpResponse):
-    def __init__(self, content='', **kwargs):
-        kwargs['content_type'] = 'application/json'
-        super(HttpJSONResponse, self).__init__(content, **kwargs)
-
-
-class DjangoJSONEncoder(DateTimeAwareJSONEncoder):
-    """
-    Taken (slightly modified) from:
-    http://stackoverflow.com/questions/2249792/json-serializing-django-models-with-simplejson
-    """
-    def default(self, obj):
-        # https://docs.djangoproject.com/en/dev/topics/serialization/#id2
-        if isinstance(obj, Promise):
-            return force_unicode(obj)
-        if isinstance(obj, QuerySet):
-            # `default` must return a python serializable
-            # structure, the easiest way is to load the JSON
-            # string produced by `serialize` and return it
-            return simplejson.loads(serialize('json', obj))
-        return super(DjangoJSONEncoder, self).default(obj)
-
-# partial function, we can now use dumps(my_dict) instead
-# of dumps(my_dict, cls=DjangoJSONEncoder)
-json_django_dumps = curry(simplejson.dumps, cls=DjangoJSONEncoder)
-
-class JSONResponseMixin(object):
-    """
-    A mixin that can be used to render a JSON response.
-    """
-    response_class = HttpJSONResponse
-
-    def render_to_response(self, context, **response_kwargs):
-        """
-        Returns a JSON response, transforming 'context' to make the payload.
-        """
-        return self.response_class(
-            self.convert_context_to_json(context),
-            **response_kwargs
-        )
-
-    def convert_context_to_json(self, context):
-        "Convert the context dictionary into a JSON object"
-        return json_django_dumps(context)
-
-
-class JSONListView(JSONResponseMixin, ListView):
-    """
-    A generic view to serve a model as a layer.
-    """
-    pass
+from caminae import __version__
+from caminae.mapentity.views import HttpJSONResponse
 
 
 class FormsetMixin(object):
@@ -130,11 +74,23 @@ def qunit_tests_list_json(request):
 
 def settings_json(request):
     dictsettings = {}
-    # 
     dictsettings['map'] = dict(
-        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT')
+        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT'),
+
+        colors=dict(
+            paths=settings.LAYERCOLOR_PATHS,
+            land=settings.LAYERCOLOR_LAND,
+            others=settings.LAYERCOLOR_OTHERS,
+        ),
+
+        snap_distance = settings.SNAP_DISTANCE,
     )
+    dictsettings['server'] = request.build_absolute_uri('/')
+    dictsettings['version'] = __version__
+    dictsettings['date_format'] = settings.DATE_INPUT_FORMATS[0].replace('%Y', 'yyyy').replace('%m', 'mm').replace('%d', 'dd')
+
     # Languages
     dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
                                      default=settings.LANGUAGE_CODE)
-    return HttpJSONResponse(json_django_dumps(dictsettings))
+
+    return HttpJSONResponse(simplejson.dumps(dictsettings))

@@ -30,21 +30,22 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-        $('#id_date').datepicker({format: '{{ DATE_INPUT_FORMAT_JS }}'});
-        
-        // TODO: do this with crispyforms !
-        $("fieldset.formset").detach().appendTo('#mainform fieldset');
-        
-        $(".clearfix").removeClass("clearfix");
-        
-        $('.form-row.inline.{{ manday_formset.prefix }}').formset({
-            prefix: '{{ manday_formset.prefix }}',
-            keepFieldValues: "[name='csrfmiddlewaretoken']",
-            addCssClass: 'btn btn-success add-row',
-            deleteCssClass: 'delete-row',
-            addText: '{% trans "Add manday" %}',
-            deleteText: '{% trans "Remove" %}', 
-        })
-        
+        $(window).ready(function () {
+            $('#id_date').datepicker({format: window.SETTINGS.date_format});
+            
+            // TODO: do this with crispyforms !
+            $("fieldset.formset").detach().appendTo('#mainform fieldset');
+            
+            $(".clearfix").removeClass("clearfix");
+            
+            $('.form-row.inline.{{ manday_formset.prefix }}').formset({
+                prefix: '{{ manday_formset.prefix }}',
+                keepFieldValues: "[name='csrfmiddlewaretoken']",
+                addCssClass: 'btn btn-success add-row',
+                deleteCssClass: 'delete-row',
+                addText: '{% trans "Add manday" %}',
+                deleteText: '{% trans "Remove" %}', 
+            });
+        });
     </script>
 {% endblock extrabody %}

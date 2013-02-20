@@ -1,6 +1,4 @@
-from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.utils import simplejson
 
 from caminae.authent.factories import PathManagerFactory
 from caminae.core.factories import PathFactory
@@ -18,7 +16,7 @@ class PathAttachmentTestCase(TestCase):
     def setUp(self):
         self.password = 'toto'
         self.user = PathManagerFactory(password=self.password)
-        self.assertTrue(self.client.login(username=self.user.username,password=self.password))
+        self.assertTrue(self.client.login(username=self.user.username, password=self.password))
 
     def test_list_attachments_in_details(self):
         """Test that the list is correctly displayed on the detail page of path"""

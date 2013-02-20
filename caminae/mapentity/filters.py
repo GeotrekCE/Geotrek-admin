@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django import forms as django_forms
 from django.conf import settings
@@ -61,7 +61,7 @@ class PolygonFilter(Filter):
 
 class PythonPolygonFilter(PolygonFilter):
     widget = GeomWidget
-    
+
     def filter(self, qs, value):
         if not value:
             return qs
@@ -81,12 +81,12 @@ class MapEntityFilterSet(FilterSet):
     bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=GeomWidget)
 
     class Meta:
-        fields = ['bbox',]
+        fields = ['bbox']
 
     def __init__(self, *args, **kwargs):
         super(MapEntityFilterSet, self).__init__(*args, **kwargs)
         self.__bypass_labels()
-    
+
     def __bypass_labels(self):
         """
         These hacks allow to bypass field labels. Using either placeholders,

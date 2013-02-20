@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.db.models.fields import FieldDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
@@ -10,77 +9,61 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
+                                     JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
-from caminae.common.views import FormsetMixin, json_django_dumps, HttpJSONResponse
+from caminae.common.views import FormsetMixin
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 
 
-
 class TrekLayer(MapEntityLayer):
+    fields = ['name', 'published']
     queryset = Trek.objects.existing()
-    fields = ['name', 'departure', 'arrival', 'serializable_difficulty',
-              'description', 'description_teaser', 'duration', 'ascent', 'descent', 
-              'min_elevation', 'max_elevation', 'serializable_themes', 
-              'serializable_usages', 'is_loop', 'published']
 
 
 class TrekList(MapEntityList):
     queryset = Trek.objects.existing()
     filterform = TrekFilter
-    columns = ['id', 'name', 'departure', 'arrival']
+    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'arrival']
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
     pass
 
 
-class TrekFormatList(MapEntityFormat, TrekList):
-    pass
-
-
-class TrekJsonDetail(BaseDetailView):
+class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
-    fields = ['name', 'departure', 'arrival', 'duration', 'description',
-              'description_teaser', 'length', 'ascent', 'max_elevation',
-              'advice', 'networks', 'ambiance', 'serializable_districts',
-              'serializable_themes', 'serializable_usages',
-              'serializable_cities', 'serializable_districts', 'access', 'ambiance',
-              'serializable_weblinks', 'is_park_centered', 'disabled_infrastructure',
-              'serializable_parking_location', 'serializable_picture']
+    columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'description',
+               'description_teaser', 'length', 'ascent', 'descent',
+               'max_elevation', 'min_elevation', 'published',
+               'networks', 'advice', 'ambiance', 'difficulty',
+               'themes', 'usages', 'access', 'route',
+               'web_links', 'is_park_centered', 'disabled_infrastructure',
+               'parking_location', 'thumbnail', 'pictures',
+               'cities', 'districts', 'relationships']
 
     def get_context_data(self, **kwargs):
-        o = self.object
         ctx = {}
-
-        for fname in self.fields:
-            prettyname = fname.replace('serializable_', '')
-            ctx[prettyname] = getattr(o, fname)
-            try:
-                field = o._meta.get_field_by_name(fname)[0]
-            except FieldDoesNotExist: # fname may refer to non-field properties
-                pass
-            else:
-                if field in o._meta.many_to_many:
-                    ctx[fname] = ctx[fname].all()
-
+        for fname in self.columns:
+            ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
+                                 getattr(self.object, fname))
         return ctx
 
-    def render_to_response(self, context):
-        return HttpJSONResponse(json_django_dumps(context))
+
+class TrekFormatList(MapEntityFormat, TrekList):
+    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['thumbnail'])
 
 
 class TrekGPXDetail(BaseDetailView):
     queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
-        geom_field = 'geom'
         gpx_serializer = GPXSerializer()
-        gpx_xml = gpx_serializer.serialize(self.get_queryset(), geom_field=geom_field)
-        response = HttpResponse(gpx_xml, mimetype='application/gpx+xml')
+        response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
+        gpx_serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
         return response
 
 
@@ -89,18 +72,17 @@ class TrekKMLDetail(BaseDetailView):
 
     def render_to_response(self, context):
         trek = self.get_object()
-        response = HttpResponse(trek.kml(), 
-                                content_type = 'application/vnd.google-earth.kml+xml')
+        response = HttpResponse(trek.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
         return response
 
 
-class TrekJsonProfile(BaseDetailView):
+class TrekJsonProfile(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        profile = self.object.elevation_profile
-        return HttpJSONResponse(json_django_dumps({'profile': profile}))
+    def get_context_data(self, **kwargs):
+        t = self.get_object()
+        return {'profile': t.elevation_profile}
 
 
 class TrekPOIGeoJSON(GeoJSONLayerView):
@@ -121,9 +103,9 @@ class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_trekking_manager())
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_trekking_manager())
 
 
 class TrekDocument(MapEntityDocument):
@@ -176,16 +158,16 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-        pass
+    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas'])
 
 
 class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_trekking_manager())
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_trekking_manager())
 
 
 class POIDocument(MapEntityDocument):
@@ -218,14 +200,12 @@ class POIDelete(MapEntityDelete):
         return super(POIDelete, self).dispatch(*args, **kwargs)
 
 
-
 class WebLinkCreatePopup(CreateView):
     model = WebLink
     form_class = WebLinkCreateFormPopup
 
     def form_valid(self, form):
         self.object = form.save()
-        print form.instance
         return HttpResponse("""
             <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))

@@ -8,7 +8,7 @@ for (var i=0; i<landLayers.length; i++) {
     var landLayer = landLayers[i];
     var layer = new L.ObjectsLayer(null, {
         indexing: false,
-        style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:'{{ LAYERCOLOR_LAND }}'}
+        style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:window.SETTINGS.map.colors.land}
     });
     layer.addTo(map)
     layer.load(landLayer.url);

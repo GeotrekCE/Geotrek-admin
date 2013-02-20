@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 
+from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -10,9 +11,9 @@ from django.shortcuts import redirect
 
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                                      MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                                     MapEntityDelete, MapEntityFormat)
+                                     MapEntityDelete, MapEntityFormat,
+                                     JSONResponseMixin, HttpJSONResponse)
 from caminae.authent.decorators import path_manager_required, same_structure_required
-from caminae.common.views import JSONResponseMixin, json_django_dumps, HttpJSONResponse
 
 from .models import Path, Trail
 from .forms import PathForm
@@ -35,9 +36,9 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    model = Path
+    queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
     filterform = PathFilter
-    columns = ['id', 'name', 'date_update', 'length', 'trail']
+    columns = ['id', 'name', 'networks', 'stake', 'trail']
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -132,7 +133,7 @@ def get_graph_json(request):
                 Path.objects.all(),
                 value_modifier=path_modifier,
                 key_modifier=graph_lib.get_key_optimizer())
-    json_graph = json_django_dumps(graph)
+    json_graph = simplejson.dumps(graph)
 
     cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)

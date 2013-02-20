@@ -131,7 +131,7 @@
             
             var objectsLayer = new L.ObjectsLayer(null, {
                 objectUrl: getUrl,
-                style: {opacity: 1.0, fillOpacity:0.7, color: '{{ LAYERCOLOR_OTHERS }}'}
+                style: {opacity: 1.0, fillOpacity:0.7, color: window.SETTINGS.map.colors.others}
             });
             map.addLayer(objectsLayer);
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');

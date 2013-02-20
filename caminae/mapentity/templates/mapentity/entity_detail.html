@@ -4,7 +4,7 @@
 {% block nav-detail %}active{% endblock nav-detail %}
 
 {% block mainpanel %}
-    <div class="details-panel span7 {{ modelname }}">
+    <div class="details-panel detail span7 {{ modelname }}">
 
         {% block detailshead %}
         <h2>
@@ -47,7 +47,7 @@
         </div>
     </div><!-- span7 -->
 
-    <div class="map-panel span5">
+    <div class="map-panel detail span5">
         {% block mappanel %}
         
         {% if object.geom %}

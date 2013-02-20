@@ -2568,3 +2568,95 @@ De plus, lors de la sauvegarde d'un itinéraire, les itinéraires qui ont le mê
 ----------------------------------------------------
 
 Fixé.
+
+
+#497 - Intégrer pictos
+----------------------
+
+Fait.
+
+Pour les pictogrammes de thème, voici les informations nécessaires pour les constuire :
+
+* Utiliser Inkscape (éditeur SVG libre)
+* Dessiner un pictogramme gris (#776b73), dans un cadre carré.
+* Disposer deux copies côte-à-côte
+* Appliquer l'effet *Pourtour assombri* au premier
+* Colorier en orange (#ff7b00) et appliquer l'effet *Lueur externe* en Jaune (#ffff00)
+
+
+#193 - Navigation par onglets
+-----------------------------
+
+Le premier élément de la barre de navigation est un lien vers la liste. Le type d'objet et le nombre de résultats de la dernière recherche est rappellé pour guider l'utilisateur.
+Une liste déroulante permet d'accéder à un type d'objet particulier directement.
+
+Lorsque la page affichée est la liste, ce menu est désactivé.
+
+Le deuxième élément est la fiche en cours de consultation.
+Les onglets suivants présentent les dernières fiches consultées dans la session utilisateur. 
+
+Il est possible de les fermer. Les onglets des objets supprimés sont retirés (même si ce sont des objets supprimés par d'autres utilisateurs). Lorsque l'onglet courrant est fermé, le suivant est activé. S'il s'agit du dernier la page liste est affichée.
+
+
+#503 - Vues liste
+-----------------
+
+Fait.
+
+#489 - Traduction gérant -> référent Formulaire tronçon
+-------------------------------------------------------
+
+Fait.
+
+#501 - FILTRES - Itinéraires et POI
+-----------------------------------
+
+Ajouté partout :
+
+* Commune
+* Secteur
+
+Ajouté sur itinéraires
+
+* Usage
+* Durée
+* Parcours
+* Coeur
+* Thématique
+* Réseaux
+
+Ajouté sur POI :
+
+* Itinéraire
+
+
+#494 - Sentiers CRUD - commentaire facultatif
+---------------------------------------------
+
+Fait.
+
+#371 - ADMIN - Export des champs N-N
+------------------------------------
+
+Fait. Valeurs séparées par des virgules.
+
+
+#500 - ADMIN - EXPORT - Itineraires et POI
+------------------------------------------
+
+Itinéraires: 
+
+* Tous les champs
+* POIs associés
+* Communes
+
+POIs:
+* Tous les champs
+* Itinéraires associés
+* Secteurs
+* Communes
+* Zones réglementaires.
+
+:note:
+
+    L'ordre des colonnes est automatique, et pourrait par conséquent ne pas convenir.

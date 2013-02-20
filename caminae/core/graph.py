@@ -1,5 +1,5 @@
 from collections import defaultdict
-from .models import Path
+
 
 def graph_edges_nodes_of_qs(qs, key_modifier=lambda x: x, value_modifier=lambda x: x):
     """
@@ -70,6 +70,7 @@ def graph_of_qs(qs, key_modifier=lambda x: x, value_modifier=lambda x: x):
 
 json_key_point_modifier = lambda x: '%s_%s' % (x[0], x[1])
 
+
 def get_key_optimizer():
     next_id = iter(xrange(1, 1000000)).next
     mapping = defaultdict(next_id)
@@ -79,6 +80,7 @@ def get_key_optimizer():
 
 def graph_of_qs_string_keys(qs, **kwargs):
     return graph_of_qs(qs, json_key_point_modifier, **kwargs)
+
 
 def graph_of_qs_optimize(qs, **kwargs):
     key_optimizer = get_key_optimizer()
@@ -95,4 +97,3 @@ def optimize_graph(orig_graph):
             g[get_mapping(p2)] = path
 
     return graph
-

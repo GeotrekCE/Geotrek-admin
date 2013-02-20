@@ -15,7 +15,7 @@ class PathFilterTest(TestCase):
         
         password = 'toto'
         user = UserFactory(password=password)
-        result = self.client.login(username=user.username,password=password)
+        result = self.client.login(username=user.username, password=password)
         self.assertTrue(result, u"The client successfully logged in")
 
         response = self.client.get(reverse('core:path_list'))
