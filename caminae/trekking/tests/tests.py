@@ -251,10 +251,10 @@ class RelatedObjectsTest(TestCase):
         trek = TrekFactory.create()
         AttachmentFactory.create(obj=trek)
         self.assertEqual(len(trek.attachments), 1)
-        self.assertEqual(trek.picture, None)
+        self.assertEqual(trek.thumbnail, None)
+        self.assertEqual(trek.pictures, [])
 
         AttachmentFactory.create(obj=trek, attachment_file=get_dummy_uploaded_image())
         self.assertEqual(len(trek.attachments), 2)
-        self.assertNotEqual(trek.picture, None)
-
-
+        self.assertEqual(len(trek.pictures), 1)
+        self.assertNotEqual(trek.thumbnail, None)

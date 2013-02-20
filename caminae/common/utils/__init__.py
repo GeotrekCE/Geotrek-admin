@@ -128,15 +128,3 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
-
-
-def serialize_imagefield(imagefield):
-    try:
-        pictopath = imagefield.name
-        mimetype = mimetypes.guess_type(pictopath)
-        mimetype = mimetype[0] if mimetype else 'application/octet-stream'
-        encoded = imagefield.read().encode('base64').replace("\n", '')
-        return "%s;base64,%s" % (mimetype, encoded)
-    except (IOError, ValueError), e:
-        logger.warning(e)
-        return ''

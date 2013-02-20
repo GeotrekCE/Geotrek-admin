@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
+from django.forms.models import model_to_dict
 
 from djgeojson.views import GeoJSONLayerView
 
@@ -20,10 +21,8 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 
 
 class TrekLayer(MapEntityLayer):
+    fields = ['name', 'slug']
     queryset = Trek.objects.existing()
-    fields = ['arrival', 'ascent', 'departure', 'descent', 'description', 'description_teaser', 
-              'duration', 'is_loop', 'max_elevation', 'min_elevation', 'name', 'published', 
-              'serializable_difficulty', 'serializable_themes', 'serializable_usages']
 
 
 class TrekList(MapEntityList):
@@ -38,34 +37,25 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
-    columns = ['name', 'departure', 'arrival', 'duration', 'description',
+    columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'description',
               'description_teaser', 'length', 'ascent', 'descent', 
               'max_elevation', 'min_elevation', 'published',
-              'advice', 'networks', 'ambiance', 'difficulty',
+              'networks', 'advice', 'ambiance', 'difficulty',
               'themes', 'usages', 'access', 'route',
               'web_links', 'is_park_centered', 'disabled_infrastructure',
-              'parking_location', 'picture',
-              'cities', 'districts']
+              'parking_location', 'thumbnail', 'pictures',
+              'cities', 'districts', 'relationships']
 
     def get_context_data(self, **kwargs):
-        o = self.object
         ctx = {}
-
         for fname in self.columns:
-            ctx[fname] = getattr(o, 'serializable_%s' % fname, getattr(o, fname))
-            try:
-                field = o._meta.get_field_by_name(fname)[0]
-            except FieldDoesNotExist: # fname may refer to non-field properties
-                pass
-            else:
-                if field in o._meta.many_to_many:
-                    ctx[fname] = getattr(o, fname).all()
-
+            ctx[fname] = getattr(self.object, 'serializable_%s' % fname, 
+                                 getattr(self.object, fname))
         return ctx
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['picture',])
+    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['thumbnail',])
 
 
 class TrekGPXDetail(BaseDetailView):
