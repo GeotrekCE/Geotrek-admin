@@ -53,7 +53,7 @@ class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = set(TrekList.columns + TrekJsonDetail.columns + ['pois']) - set(['thumbnail'])
+    columns = set(TrekList.columns + TrekJsonDetail.columns + ['related', 'pois']) - set(['relationships', 'thumbnail'])
 
 
 class TrekGPXDetail(BaseDetailView):
