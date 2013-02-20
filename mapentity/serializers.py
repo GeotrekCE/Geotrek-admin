@@ -75,10 +75,13 @@ class CSVSerializer(Serializer):
         ascii = options.get('ensure_ascii', True)
 
         def proc_string(s):
-            us = unicode(s)
-            if ascii:
-                return smart_str(us)
-            return us
+            try:
+                us = unicode(s)
+                if ascii:
+                    return smart_str(us)
+                return us
+            except UnicodeDecodeError:
+                return smart_str(s)
 
         headers = []
         for field in columns:
@@ -99,7 +102,7 @@ class CSVSerializer(Serializer):
             if isinstance(modelfield, ForeignKey):
                 attr_getters[field] = lambda obj, field: proc_string(getattr(obj, field) or '')
             elif isinstance(modelfield, ManyToManyField):
-                attr_getters[field] = lambda obj, field: [proc_string(o) for o in getattr(obj, field).all()] or ''
+                attr_getters[field] = lambda obj, field: ','.join([proc_string(o) for o in getattr(obj, field).all()] or '')
             else:
                 def simple(obj, field):
                     value = getattr(obj, field + '_csv_display', 
@@ -107,7 +110,7 @@ class CSVSerializer(Serializer):
                                              getattr(obj, field)))
                     if hasattr(value, '__iter__'):
                         value = ','.join([proc_string(value) for value in value])
-                    return proc_string(value)
+                    return proc_string(value) if value is not None else ''
                 attr_getters[field] = simple
 
         def get_lines():
