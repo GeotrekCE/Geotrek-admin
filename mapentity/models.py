@@ -28,6 +28,7 @@ ENTITY_KINDS = (
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
+
 class MapImageError(Exception):
     pass
 
@@ -90,8 +91,8 @@ class MapEntityMixin(object):
 
     @classmethod
     @models.permalink
-    def get_generic_detail_url(self):
-        return (self.get_url_name(ENTITY_DETAIL), [str(0)])
+    def get_generic_detail_url(cls):
+        return (cls.get_url_name(ENTITY_DETAIL), [str(0)])
 
     @models.permalink
     def get_detail_url(self):

@@ -50,6 +50,15 @@
     {% leaflet_js %}
     <script type="text/javascript">
         L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
+        // Global Javascript
+        $.ajax({
+          url: "{% url common:settings_json %}",
+          async: false,
+          dataType: 'json',
+          success: function (data) {
+              window.SETTINGS = data;
+          }
+        });
     </script>
 
     <script type="text/javascript" src="{% static "mapentity/dataTables/js/jquery.dataTables.js" %}"></script>
@@ -112,7 +121,10 @@
             {% for item in request.session.history %}
                 {% if forloop.first and view != "list" %}
                     <li class="{{ modelname }} active history">
-                        <a href="#">{% if title %}{{ title }}{% else %}{{ request.session.history.0.title }}{% endif %}</a>
+                        <a href="{{ item.path }}">
+                            <span class="content">{% if title %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
+                            <button class="close hidden">&times;</button>
+                        </a>
                     </li>
                 {% else %}
                     <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history">

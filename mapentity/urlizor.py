@@ -21,7 +21,7 @@ def url_json_list(kind, model):
     return r'^api/{0}/{1}s.json$'.format(model_str, model_str)
 
 def url_format_list(kind, model):
-    return r'^{0}/list_format/$'.format(frommodel(model))
+    return r'^{0}/list/export/$'.format(frommodel(model))
 
 def url_detail(kind, model):
     return r'^{0}/(?P<pk>\d+)/$'.format(frommodel(model))

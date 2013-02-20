@@ -11,8 +11,8 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
     template_name = 'mapentity/fieldgeometry_fragment.html'
     display_wkt = settings.DEBUG
 
-    def get_context(self, name, value, attrs=None, extra_context={}):
-        context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context)
+    def get_context(self, name, value, attrs=None, extra_context=None):
+        context = super(LeafletMapWidget, self).get_context(name, value, attrs, extra_context or {})
         context['update'] = bool(value)
         context['field'] = value
         return context
@@ -24,8 +24,8 @@ class GeometryWidget(LeafletMapWidget):
         wkt = super(GeometryWidget, self).value_from_datadict(data, files, name)
         return None if not wkt else transform_wkt(wkt, settings.API_SRID, settings.SRID)
 
-    def get_context(self, name, value, attrs=None, extra_context={}):
-        context = super(GeometryWidget, self).get_context(name, value, attrs, extra_context)
+    def get_context(self, name, value, attrs=None, extra_context=None):
+        context = super(GeometryWidget, self).get_context(name, value, attrs, extra_context or {})
         # Be careful, on form error, value is not a GEOSGeometry
         if value:
             if isinstance(value, basestring):
@@ -33,9 +33,6 @@ class GeometryWidget(LeafletMapWidget):
                 context['field'] = wkt_to_geom(value)
             else:
                 value.transform(settings.API_SRID)
-        context['LAYERCOLOR_PATHS'] = settings.LAYERCOLOR_PATHS
-        context['LAYERCOLOR_LAND'] = settings.LAYERCOLOR_LAND
-        context['LAYERCOLOR_OTHERS'] = settings.LAYERCOLOR_OTHERS
         return context
 
 
@@ -71,4 +68,4 @@ class SelectMultipleWithPop(forms.SelectMultiple):
         html = super(SelectMultipleWithPop, self).render(name, *args, **kwargs)
         context = {'field': name, 'add_url': self.add_url}
         popupplus = render_to_string("mapentity/popupplus.html", context)
-        return html+popupplus
+        return html + popupplus
