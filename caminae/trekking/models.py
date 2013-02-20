@@ -426,6 +426,11 @@ class Theme(models.Model):
     pictogram_img.allow_tags = True
 
 
+class POIManager(models.GeoManager):
+    def get_queryset(self):
+        return super(POIManager, self).get_queryset().select_related('type')
+
+
 class POI(MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -442,10 +447,10 @@ class POI(MapEntityMixin, Topology):
         verbose_name_plural = _(u"POI")
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(POIManager)()
 
     def __unicode__(self):
-        return self.name
+        return u"%s (%s)" % (self.name, self.type)
 
     @property
     def type_display(self):
