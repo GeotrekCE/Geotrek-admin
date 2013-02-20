@@ -287,6 +287,57 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         return serializer.serialize(self.get_queryset(), fields=self.columns)
 
 
+class MapEntityFormat(MapEntityList):
+    """Make it  extends your EntityList"""
+    DEFAULT_FORMAT = 'csv'
+
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_FORMAT_LIST
+
+    def get_context_data(self, **kwargs):
+        return {}
+
+    def render_to_response(self, context, **response_kwargs):
+        """Delegate to the fmt view function found at dispatch time"""
+        formats = {
+            'csv': self.csv_view,
+            'shp': self.shape_view,
+            'gpx': self.gpx_view,
+        }
+        fmt_str = self.request.GET.get('format', self.DEFAULT_FORMAT)
+        formatter = formats.get(fmt_str)
+        if not formatter:
+            logger.warning("Unknown serialization format '%s'" % fmt_str)
+            return HttpResponseBadRequest()
+
+        return formatter(request = self.request, context = context, **response_kwargs)
+
+    def csv_view(self, request, context, **kwargs):
+        serializer = CSVSerializer()
+        response = HttpResponse(mimetype='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=list.csv'
+        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+                             fields=self.columns, ensure_ascii=True)
+        return response
+
+    def shape_view(self, request, context, **kwargs):
+        serializer = ZipShapeSerializer()
+        response = HttpResponse(mimetype='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=list.zip'
+        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+                             fields=self.columns)
+        response['Content-length'] = str(len(response.content))
+        return response
+
+    def gpx_view(self, request, context, **kwargs):
+        serializer = GPXSerializer()
+        response = HttpResponse(mimetype='application/gpx+xml')
+        response['Content-Disposition'] = 'attachment; filename=list.gpx'
+        serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
+        return response
+
+
 class MapEntityDetail(ModelMetaMixin, DetailView):
     @classmethod
     def get_entity_kind(cls):
@@ -448,54 +499,3 @@ class MapEntityDelete(DeleteView):
 
     def get_success_url(self):
         return self.model.get_list_url()
-
-
-class MapEntityFormat(MapEntityList):
-    """Make it  extends your EntityList"""
-    DEFAULT_FORMAT = 'csv'
-
-    @classmethod
-    def get_entity_kind(cls):
-        return mapentity_models.ENTITY_FORMAT_LIST
-
-    def get_context_data(self, **kwargs):
-        return {}
-
-    def render_to_response(self, context, **response_kwargs):
-        """Delegate to the fmt view function found at dispatch time"""
-        formats = {
-            'csv': self.csv_view,
-            'shp': self.shape_view,
-            'gpx': self.gpx_view,
-        }
-        fmt_str = self.request.GET.get('format', self.DEFAULT_FORMAT)
-        formatter = formats.get(fmt_str)
-        if not formatter:
-            logger.warning("Unknown serialization format '%s'" % fmt_str)
-            return HttpResponseBadRequest()
-
-        return formatter(request = self.request, context = context, **response_kwargs)
-
-    def csv_view(self, request, context, **kwargs):
-        serializer = CSVSerializer()
-        response = HttpResponse(mimetype='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=list.csv'
-        serializer.serialize(queryset=self.get_queryset(), stream=response, 
-                             fields=self.columns, ensure_ascii=True)
-        return response
-
-    def shape_view(self, request, context, **kwargs):
-        serializer = ZipShapeSerializer()
-        response = HttpResponse(mimetype='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=list.zip'
-        serializer.serialize(queryset=self.get_queryset(), stream=response, 
-                             fields=self.columns)
-        response['Content-length'] = str(len(response.content))
-        return response
-
-    def gpx_view(self, request, context, **kwargs):
-        serializer = GPXSerializer()
-        response = HttpResponse(mimetype='application/gpx+xml')
-        response['Content-Disposition'] = 'attachment; filename=list.gpx'
-        serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
-        return response
