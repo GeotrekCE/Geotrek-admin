@@ -188,21 +188,26 @@ class Trek(MapEntityMixin, Topology):
         """
         Find first image among attachments.
         """
-        return [a.attachment_file for a in self.attachments.all() if a.is_image]
+        return [a for a in self.attachments.all() if a.is_image]
 
     @property
     def serializable_pictures(self):
         serialized = []
         for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture)
+            thumbnailer = get_thumbnailer(picture.attachment_file)
             thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
-            serialized.append(os.path.join(settings.MEDIA_URL, thdetail.name))
+            serialized.append({
+                'author': picture.author,
+                'title': picture.title,
+                'legend': picture.legend,
+                'url': os.path.join(settings.MEDIA_URL, thdetail.name)
+            })
         return serialized
 
     @property
     def thumbnail(self):
         for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture)
+            thumbnailer = get_thumbnailer(picture.attachment_file)
             return thumbnailer.get_thumbnail(aliases.get('small-square'))
         return None
 
