@@ -35,7 +35,7 @@ class DatabaseBackend(object):
             profile.structure, created = Structure.objects.get_or_create(name=credentials.structure)
             profile.language = credentials.lang
             profile.save()
-            
+
             # Set groups according to level
             if credentials.level == 0:
                 user.is_active = False
@@ -52,7 +52,7 @@ class DatabaseBackend(object):
             if credentials.level == 4:
                 trek_manager_group, created = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER)
                 user.groups.add(trek_manager_group)   # Trekking manager
-            
+
             if credentials.level >= 3:
                 user.is_staff = True   # can access adminsite
             if credentials.level >= 6:

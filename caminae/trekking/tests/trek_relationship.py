@@ -1,9 +1,6 @@
-from operator import attrgetter
-
 from django.test import TestCase
 from django.db import IntegrityError
 
-from ..models import Trek
 from ..factories import TrekFactory, TrekRelationshipFactory
 from caminae.core.factories import PathFactory
 
@@ -45,5 +42,4 @@ class TrekTestCase(TestCase):
         trek4.add_path(p2)
         trek4.add_path(p3)
         trek4.save()
-        print trek3.related.all()
         self.assertItemsEqual(trek3.related.all(), [ trek4 ])

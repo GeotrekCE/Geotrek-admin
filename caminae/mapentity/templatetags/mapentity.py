@@ -8,6 +8,7 @@ register = template.Library()
 
 class SmartIncludeNode(template.Node):
     def __init__(self, viewname):
+        super(SmartIncludeNode, self).__init__(self)
         self.viewname = viewname
 
     def render(self, context):
@@ -27,6 +28,7 @@ class SmartIncludeNode(template.Node):
             except TemplateDoesNotExist:
                 pass
         return result
+
 
 @register.tag(name="smart_include")
 def do_smart_include(parser, token):
@@ -49,7 +51,7 @@ def latlngbounds(obj, fieldname='geom'):
         return 'null'
     obj.transform(settings.API_SRID)
     if isinstance(obj, Point):
-        extent = [obj.x-0.005, obj.y-0.005, obj.x+0.005, obj.y+0.005]
+        extent = [obj.x - 0.005, obj.y - 0.005, obj.x + 0.005, obj.y + 0.005]
     else:
         extent = list(obj.extent)
     return [[extent[1], extent[0]], [extent[3], extent[2]]]

@@ -7,7 +7,7 @@ from caminae.land.factories import (
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
 
-from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
+from caminae.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds
 
 class LandFiltersTest(TestCase):
 

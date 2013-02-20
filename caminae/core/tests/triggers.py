@@ -1,8 +1,8 @@
 from django.test import TestCase
-from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import fromstr
+
 
 class TriggerTest(TestCase):
 

@@ -4,7 +4,7 @@ from django import forms as django_forms
 
 import floppyforms as forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Div, Button, HTML, Field
+from crispy_forms.layout import Layout, Submit, Div, Button, HTML
 from crispy_forms.bootstrap import FormActions
 from tinymce.widgets import TinyMCE
 from modeltranslation.translator import translator, NotRegistered
@@ -41,7 +41,7 @@ class MapEntityForm(forms.ModelForm):
         self.__expand_translatable_fields()
 
         # Get fields from subclasses
-        fields = ('pk','model','structure') + self.modelfields
+        fields = ('pk', 'model', 'structure') + self.modelfields
         leftpanel = Div(
             *fields,
             css_class="span4"
@@ -51,7 +51,7 @@ class MapEntityForm(forms.ModelForm):
             *self.geomfields,
             css_class="span8"
         )
-        
+
         # Main form layout
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
@@ -70,15 +70,15 @@ class MapEntityForm(forms.ModelForm):
     @staticmethod
     def make_tinymce_widget(f):
         formfield = f.formfield()
-        if formfield and isinstance(formfield.widget, (forms.widgets.Textarea, 
+        if formfield and isinstance(formfield.widget, (forms.widgets.Textarea,
                                                        django_forms.widgets.Textarea)):
             formfield.widget = TinyMCE()
         return formfield
 
     """
-    
+
     Auto-expand translatable fields.
-    
+
     """
 
     def __expand_translatable_fields(self):
@@ -93,11 +93,11 @@ class MapEntityForm(forms.ModelForm):
             for f in mto.fields:
                 self.fields.pop(f)
             # Switch to mutable sequence
-            self.modelfields = list(self.modelfields) 
+            self.modelfields = list(self.modelfields)
             for f in mto.fields:
                 self.__replace_translatable_field(f, self.modelfields)
             # Switch back to unmutable sequence
-            self.modelfields = tuple(self.modelfields) 
+            self.modelfields = tuple(self.modelfields)
 
     def __replace_translatable_field(self, field, modelfields):
         for i, modelfield in enumerate(modelfields):
@@ -111,7 +111,7 @@ class MapEntityForm(forms.ModelForm):
                 if modelfield == field:
                     # Replace i18n field by dynamic l10n fields
                     i = modelfields.index(modelfield)
-                    modelfields[i:i+1] = self.__tabbed_translatable_field(modelfield)
+                    modelfields[i:i + 1] = self.__tabbed_translatable_field(modelfield)
 
     def __tabbed_translatable_field(self, field):
         fields = []
@@ -120,10 +120,8 @@ class MapEntityForm(forms.ModelForm):
             fields.append(Div(
                 '%s_%s' % (field, l[0]),
                 css_class="tab-pane " + active,
-                css_id="%s_%s" % (field, l[0])
-                )
-            )
-        
+                css_id="%s_%s" % (field, l[0])))
+
         layout = Div(
             HTML("""
             <ul class="nav nav-pills">

@@ -126,7 +126,7 @@ class TopologyFactory(factory.Factory):
     date_update = dbnow()
 
     @classmethod
-    def create_pathaggregation_from_topo(self, topo_mixin):
+    def create_pathaggregation_from_topo(cls, topo_mixin):
         return PathAggregationFactory.create(topo_object=topo_mixin)
 
     @classmethod
