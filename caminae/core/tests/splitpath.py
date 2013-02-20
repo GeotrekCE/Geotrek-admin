@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
-from django.conf import settings
-from django.utils import simplejson
-from django.contrib.gis.geos import Point, LineString
-from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
+from django.contrib.gis.geos import LineString
 
-from caminae.mapentity.tests import MapEntityTest
-from caminae.common.utils import dbnow, almostequal
-from caminae.authent.factories import UserFactory, PathManagerFactory, StructureFactory
-from caminae.authent.models import Structure, default_structure
-from caminae.core.factories import (PathFactory, PathAggregationFactory, 
-    TopologyFactory, StakeFactory, TrailFactory, ComfortFactory)
-from caminae.core.models import Path, Topology, PathAggregation
+from caminae.core.factories import PathFactory, TopologyFactory
+from caminae.core.models import Path
 
 
 

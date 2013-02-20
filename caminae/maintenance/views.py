@@ -3,11 +3,9 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from django.contrib.gis.geos import LineString, Point
 
 from caminae.common.views import FormsetMixin
 from caminae.authent.decorators import same_structure_required, path_manager_required
-from caminae.core.models import Topology
 from caminae.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from caminae.infrastructure.models import Infrastructure, Signage
@@ -16,7 +14,6 @@ from .filters import InterventionFilter, ProjectFilter
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
 
-from caminae.mapentity import shape_exporter
 
 logger = logging.getLogger(__name__)
 

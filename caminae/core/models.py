@@ -442,7 +442,6 @@ class Topology(NoDeleteMixin):
                 paths = subtopology['paths']
                 # Create path aggregations
                 for i, path in enumerate(paths):
-                    first_path = i == 0
                     last_path = i == len(paths)-1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)

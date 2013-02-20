@@ -10,7 +10,7 @@ from caminae.core.models import Topology
 from caminae.core.factories import PathFactory, PathAggregationFactory
 from caminae.common.factories import OrganismFactory
 from caminae.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
-    WorkManagementEdge, SignageManagementEdge, City, RestrictedArea)
+    WorkManagementEdge, SignageManagementEdge, City)
 
 
 from caminae.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory, 

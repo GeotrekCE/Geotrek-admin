@@ -13,7 +13,7 @@ from caminae.mapentity.filters import MapEntityFilterSet
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
     SignageManagementEdge, WorkManagementEdge,
-    City, District, RestrictedArea
+    City, District
 )
 
 
