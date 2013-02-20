@@ -2660,3 +2660,22 @@ POIs:
 :note:
 
     L'ordre des colonnes est automatique, et pourrait par conséquent ne pas convenir.
+
+
+#404 - OFFRE RANDO - Modifier Boucle
+------------------------------------
+
+Liste de choix sur bibliothèque parcours.
+
+
+#459 - OFFRE RANDO - Utiliser les vignettes
+-------------------------------------------
+
+Fait.
+
+#411 - OFFRE RANDO - Détail : Icones de liens
+---------------------------------------------
+
+Fait.
+
+
