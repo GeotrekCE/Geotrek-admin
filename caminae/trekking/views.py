@@ -19,7 +19,6 @@ from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 
 
-
 class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
     fields = ['arrival', 'ascent', 'departure', 'descent', 'description', 'description_teaser', 
@@ -43,7 +42,7 @@ class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
               'description_teaser', 'length', 'ascent', 'descent', 
               'max_elevation', 'min_elevation', 'published',
               'advice', 'networks', 'ambiance', 'difficulty',
-              'themes', 'usages', 'access', 
+              'themes', 'usages', 'access', 'route',
               'web_links', 'is_park_centered', 'disabled_infrastructure',
               'parking_location', 'picture',
               'cities', 'districts']

@@ -2639,3 +2639,24 @@ Fait.
 ------------------------------------
 
 Fait. Valeurs séparées par des virgules.
+
+
+#500 - ADMIN - EXPORT - Itineraires et POI
+------------------------------------------
+
+Itinéraires: 
+
+* Tous les champs
+* POIs associés
+* Communes
+
+POIs:
+* Tous les champs
+* Itinéraires associés
+* Secteurs
+* Communes
+* Zones réglementaires.
+
+:note:
+
+    L'ordre des colonnes est automatique, et pourrait par conséquent ne pas convenir.
