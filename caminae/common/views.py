@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from caminae import __version__
-from caminae.mapentity.views import HttpJSONResponse
+from caminae.mapentity.views import HttpJSONResponse, json_django_dumps
 
 
 class FormsetMixin(object):
@@ -17,7 +17,7 @@ class FormsetMixin(object):
     def form_valid(self, form):
         context = self.get_context_data()
         formset_form = context[self.context_name]
-        
+
         if formset_form.is_valid():
             self.object = form.save()
             formset_form.instance = self.object
@@ -64,12 +64,12 @@ qunit_views = dict(
 
 # Reversing directly function using qunit_views.values() does not work, eg:
 # [ reverse_lazy(qunit_view) for qunit_view in qunit_views.values() ]
-qunit_views_urls = dict((name, reverse_lazy('common:jstest_%s' % name )) for name in qunit_views.keys())
+qunit_views_urls = dict((name, reverse_lazy('common:jstest_%s' % name)) for name in qunit_views.keys())
+
 
 def qunit_tests_list_json(request):
     """List all urls that may be test by an headless browser"""
     return HttpResponse(json_django_dumps(qunit_views_urls), content_type='application/json')
-
 
 
 def settings_json(request):
@@ -83,9 +83,9 @@ def settings_json(request):
             others=settings.LAYERCOLOR_OTHERS,
         ),
 
-        snap_distance = settings.SNAP_DISTANCE,
+        snap_distance=settings.SNAP_DISTANCE,
     )
-    dictsettings['server'] = request.build_absolute_uri('/')
+    dictsettings['server'] = settings.ROOT_URL if settings.ROOT_URL.endswith('/') else settings.ROOT_URL + '/'
     dictsettings['version'] = __version__
     dictsettings['date_format'] = settings.DATE_INPUT_FORMATS[0].replace('%Y', 'yyyy').replace('%m', 'mm').replace('%d', 'dd')
 
