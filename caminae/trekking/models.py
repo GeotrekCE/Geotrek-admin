@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class Trek(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
-                                      db_column='evenement')
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
                             help_text=_(u"Public name (Change carefully)"), db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
@@ -47,7 +47,7 @@ class Trek(MapEntityMixin, Topology):
     access = models.TextField(verbose_name=_(u"Access"), blank=True, db_column='acces',
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
-                              help_text=_(u"Any specific infrastructure"))
+                                               help_text=_(u"Any specific infrastructure"))
     duration = models.IntegerField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
                                    help_text=_(u"In hours"))
 
@@ -64,22 +64,22 @@ class Trek(MapEntityMixin, Topology):
                               help_text=_(u"Risks, danger, best period, ..."))
 
     themes = models.ManyToManyField('Theme', related_name="treks",
-            db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
+                                    db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
 
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-            db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"))
+                                      db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"))
 
     usages = models.ManyToManyField('Usage', related_name="treks",
-            db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
+                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
 
     route = models.ForeignKey('Route', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
+                              blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
 
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-            blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
+                                   blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
 
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-            db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
+                                       db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
 
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
@@ -125,8 +125,7 @@ class Trek(MapEntityMixin, Topology):
                     'slug': rel.trek_b.slug,
                     'url': reverse('trekking:trek_json_detail', args=(rel.trek_b.pk,)),
                 },
-                'published': rel.trek_b.published,
-            } for rel in self.relationships]
+                'published': rel.trek_b.published} for rel in self.relationships]
 
     @property
     def serializable_cities(self):
@@ -149,8 +148,7 @@ class Trek(MapEntityMixin, Topology):
     def serializable_themes(self):
         return [{'id': t.pk,
                  'pictogram': os.path.join(settings.MEDIA_URL, t.pictogram.name),
-                 'label': t.label,
-                } for t in self.themes.all()]
+                 'label': t.label} for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
@@ -306,6 +304,16 @@ Intervention.add_property('treks', lambda self: self.topology.treks if self.topo
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
 
+class TrekRelationshipManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_query_set(self):
+        # Select treks foreign keys by default
+        qs = super(TrekRelationshipManager, self).get_query_set().select_related('trek_a', 'trek_b')
+        # Exclude deleted treks
+        return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
+
+
 class TrekRelationship(models.Model):
     """
     Relationships between treks : symmetrical aspect is managed by a trigger that
@@ -317,6 +325,8 @@ class TrekRelationship(models.Model):
 
     trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
     trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b', verbose_name=_(u"Trek"))
+
+    objects = TrekRelationshipManager()
 
     class Meta:
         db_table = 'o_r_itineraire_itineraire'
@@ -419,9 +429,8 @@ class WebLink(models.Model):
     def serializable_category(self):
         if not self.category:
             return None
-        return {
-           'label': self.category.label,
-           'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
+        return {'label': self.category.label,
+                'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
 
 
 class WebLinkCategory(models.Model):
@@ -472,7 +481,7 @@ class POIManager(models.GeoManager):
 class POI(MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
-                                      db_column='evenement')
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Official name"))
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
