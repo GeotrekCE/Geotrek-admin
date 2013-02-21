@@ -7,7 +7,7 @@ from .models import Trek, POI
 class TrekFilter(EdgeFilterSet):
     class Meta(EdgeFilterSet.Meta):
         model = Trek
-        fields = EdgeFilterSet.Meta.fields + ['difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
+        fields = EdgeFilterSet.Meta.fields + ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
 
 
 class POITrekFilter(TopoFilter):

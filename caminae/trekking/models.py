@@ -99,11 +99,12 @@ class Trek(MapEntityMixin, Topology):
 
     @property
     def related(self):
-        return self.related_treks.exclude(pk=self.pk)
+        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk)
 
     @property
     def relationships(self):
-        return TrekRelationship.objects.filter(trek_a=self)  # Does not matter if a or b
+        # Does not matter if a or b
+        return TrekRelationship.objects.filter(trek_a=self)
 
     @property
     def pois(self):
@@ -123,6 +124,7 @@ class Trek(MapEntityMixin, Topology):
                 'trek': {
                     'pk': rel.trek_b.pk,
                     'slug': rel.trek_b.slug,
+                    'name': rel.trek_b.name,
                     'url': reverse('trekking:trek_json_detail', args=(rel.trek_b.pk,)),
                 },
                 'published': rel.trek_b.published} for rel in self.relationships]
@@ -274,10 +276,12 @@ class Trek(MapEntityMixin, Topology):
         if self.pk:
             self.refresh_altimetry()
         super(Trek, self).save(*args, **kwargs)
+        if self.deleted:
+            return
         # Create relationships automatically
         # Same departure
         if self.departure.strip() != '':
-            for t in Trek.objects.filter(departure=self.departure):
+            for t in Trek.objects.existing().filter(departure=self.departure):
                 r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
                 r.has_common_departure = True
                 r.save()
@@ -292,11 +296,11 @@ class Trek(MapEntityMixin, Topology):
 
     @classmethod
     def path_treks(cls, path):
-        return cls.objects.filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_treks(cls, topology):
-        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.objects.existing().filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
 Path.add_property('treks', lambda self: Trek.path_treks(self))
 Topology.add_property('treks', lambda self: Trek.topology_treks(self))
