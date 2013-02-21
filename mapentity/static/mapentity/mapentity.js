@@ -258,6 +258,9 @@ MapEntity.History = L.Control.extend({
                     $(entry).remove();
                 }
             }
+            else {
+                $(entry).remove();
+            }
         });
     },
 
