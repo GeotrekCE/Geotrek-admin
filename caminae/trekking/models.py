@@ -465,8 +465,8 @@ class Theme(models.Model):
 
 
 class POIManager(models.GeoManager):
-    def get_queryset(self):
-        return super(POIManager, self).get_queryset().select_related('type')
+    def get_query_set(self):
+        return super(POIManager, self).get_query_set().select_related('type')
 
 
 class POI(MapEntityMixin, Topology):
