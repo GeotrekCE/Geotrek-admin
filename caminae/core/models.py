@@ -294,7 +294,7 @@ class Topology(NoDeleteMixin):
         TODO: So far, the algorithm is quite simple, and not precise. Indeed
         it returns edges that "share" the same paths, and not exactly overlapping.
         """
-        return cls.objects.filter(aggregations__path__in=topologyqs.values_list('aggregations__path', flat=True))
+        return cls.objects.existing().filter(aggregations__path__in=topologyqs.values_list('aggregations__path', flat=True))
 
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
