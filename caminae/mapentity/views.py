@@ -41,6 +41,8 @@ logger = logging.getLogger(__name__)
     Reusables
 
 """
+
+
 class HttpJSONResponse(HttpResponse):
     def __init__(self, content='', **kwargs):
         kwargs['content_type'] = 'application/json'
@@ -88,28 +90,40 @@ class JSONResponseMixin(object):
         return json_django_dumps(context)
 
 
+class LastModifiedMixin(object):
+    def dispatch(self, *args, **kwargs):
+        model = self.model or self.queryset.model
+
+        @cache_last_modified(lambda request, pk: model.objects.get(pk=pk).date_update)
+        def _dispatch(*args, **kwargs):
+            return super(LastModifiedMixin, self).dispatch(*args, **kwargs)
+        return _dispatch(*args, **kwargs)
+
+
 """
 
     Concrete views
 
 """
+
+
 @csrf_exempt
 @login_required
 def map_screenshot(request):
     """
     This view allows to take screenshots, via django-screamshot, of
     the map currently viewed by the user.
-    
+
     - A context full of information is built on client-side and posted here.
     - We reproduce this context, via headless browser, and take a capture
     - We return the resulting image as attachment.
-    
+
     This seems overkill ? Please look around and find a better way.
     """
     try:
         printcontext = request.POST['printcontext']
         assert len(printcontext) < 512, "Print context is way too big."
-        
+
         # Prepare context, extract and add infos
         context = simplejson.loads(printcontext.encode("utf-8"))
         map_url = context.pop('url').split('?', 1)[0]
@@ -129,7 +143,7 @@ def map_screenshot(request):
         casperjs_capture(response, map_url, width=width, height=height, selector='#mainmap')
         return response
 
-    except Exception, e: 
+    except Exception, e:
         logger.exception(e)
         return HttpResponseBadRequest(e)
 
@@ -146,15 +160,12 @@ def history_delete(request, path=None):
     return HttpResponse()
 
 
-
-
 """
 
     Generic views
 
 """
 
-# Generic views, to be overriden
 
 class MapEntityLayer(GeoJSONLayerView):
     """
@@ -201,7 +212,7 @@ class MapEntityLayer(GeoJSONLayerView):
 
 class ModelMetaMixin(object):
     """
-    Add model meta information in context data 
+    Add model meta information in context data
     """
 
     def get_entity_kind(self):
@@ -226,9 +237,9 @@ class ModelMetaMixin(object):
 
 class MapEntityList(ModelMetaMixin, ListView):
     """
-    
+
     A generic view list web page.
-    
+
     """
     model = None
     filterform = None
@@ -314,13 +325,13 @@ class MapEntityFormat(MapEntityList):
             logger.warning("Unknown serialization format '%s'" % fmt_str)
             return HttpResponseBadRequest()
 
-        return formatter(request = self.request, context = context, **response_kwargs)
+        return formatter(request=self.request, context=context, **response_kwargs)
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVSerializer()
         response = HttpResponse(mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=list.csv'
-        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+        serializer.serialize(queryset=self.get_queryset(), stream=response,
                              fields=self.columns, ensure_ascii=True)
         return response
 
@@ -328,7 +339,7 @@ class MapEntityFormat(MapEntityList):
         serializer = ZipShapeSerializer()
         response = HttpResponse(mimetype='application/zip')
         response['Content-Disposition'] = 'attachment; filename=list.zip'
-        serializer.serialize(queryset=self.get_queryset(), stream=response, 
+        serializer.serialize(queryset=self.get_queryset(), stream=response,
                              fields=self.columns)
         response['Content-length'] = str(len(response.content))
         return response
@@ -380,7 +391,7 @@ class MapEntityDocument(DetailView):
         found = None
         for lang in langs:
             try:
-                template_name = name_for(self.model._meta.app_label, 
+                template_name = name_for(self.model._meta.app_label,
                                          self.model._meta.object_name.lower(),
                                          lang)
                 get_template(template_name)
@@ -391,7 +402,7 @@ class MapEntityDocument(DetailView):
         if not found:
             for lang in langs:
                 try:
-                    template_name = name_for("mapentity", "entity", lang) 
+                    template_name = name_for("mapentity", "entity", lang)
                     get_template(template_name)
                     found = template_name
                     break

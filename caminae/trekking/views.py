@@ -10,7 +10,7 @@ from djgeojson.views import GeoJSONLayerView
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                                     JSONResponseMixin)
+                                     LastModifiedMixin, JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
 from caminae.common.views import FormsetMixin
 from .models import Trek, POI, WebLink
@@ -33,7 +33,7 @@ class TrekJsonList(MapEntityJsonList, TrekList):
     pass
 
 
-class TrekJsonDetail(JSONResponseMixin, BaseDetailView):
+class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'description',
                'description_teaser', 'length', 'ascent', 'descent',
@@ -56,7 +56,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
     columns = set(TrekList.columns + TrekJsonDetail.columns + ['related', 'pois']) - set(['relationships', 'thumbnail'])
 
 
-class TrekGPXDetail(BaseDetailView):
+class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
@@ -67,7 +67,7 @@ class TrekGPXDetail(BaseDetailView):
         return response
 
 
-class TrekKMLDetail(BaseDetailView):
+class TrekKMLDetail(LastModifiedMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
     def render_to_response(self, context):
@@ -77,7 +77,7 @@ class TrekKMLDetail(BaseDetailView):
         return response
 
 
-class TrekJsonProfile(JSONResponseMixin, BaseDetailView):
+class TrekJsonProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
@@ -85,7 +85,7 @@ class TrekJsonProfile(JSONResponseMixin, BaseDetailView):
         return {'profile': t.elevation_profile}
 
 
-class TrekPOIGeoJSON(GeoJSONLayerView):
+class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
     fields = ['name', 'description', 'serializable_type']
