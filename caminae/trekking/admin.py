@@ -10,7 +10,7 @@ from .models import (
 
 
 class POITypeAdmin(TranslationAdmin):
-    list_display = ('label',)
+    list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 

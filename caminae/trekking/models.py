@@ -563,3 +563,8 @@ class POIType(models.Model):
     @property
     def serializable_pictogram(self):
         return os.path.join(settings.MEDIA_URL, self.pictogram.name)
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
