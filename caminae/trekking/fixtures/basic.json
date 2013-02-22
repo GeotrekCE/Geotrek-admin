@@ -4,7 +4,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Picolo patrimonio",
-            "pictogram": "upload/heritage.png",
+            "pictogram": "upload/poi-patrimony.png",
             "label_en": "Small patrimony",
             "label_fr": "Petit patrimoine",
             "label": "Petit patrimoine"
@@ -15,7 +15,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Flora",
-            "pictogram": "upload/flora.png",
+            "pictogram": "upload/poi-flora.png",
             "label_en": "Flora",
             "label_fr": "Flore",
             "label": "Flore"
@@ -26,7 +26,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Fauna",
-            "pictogram": "upload/fauna.png",
+            "pictogram": "upload/poi-fauna.png",
             "label_en": "Fauna",
             "label_fr": "Faune",
             "label": "Faune"
@@ -37,7 +37,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Panorama",
-            "pictogram": "upload/panorama.png",
+            "pictogram": "upload/poi-panorama.png",
             "label_en": "Panorama",
             "label_fr": "Point de vue",
             "label": "Point de vue"
@@ -48,7 +48,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Rifugio",
-            "pictogram": "upload/refuge.png",
+            "pictogram": "upload/poi-refuge.png",
             "label_en": "Refuge",
             "label_fr": "Refuge",
             "label": "Refuge"
@@ -59,7 +59,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Lago",
-            "pictogram": "upload/lake.png",
+            "pictogram": "upload/poi-lake.png",
             "label_en": "Lake",
             "label_fr": "Lac",
             "label": "Lac"
@@ -70,7 +70,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Picco",
-            "pictogram": "upload/peak.png",
+            "pictogram": "upload/poi-peak.png",
             "label_en": "Peak",
             "label_fr": "Sommet",
             "label": "Sommet"
@@ -81,7 +81,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": "Geologia",
-            "pictogram": "upload/geology.png",
+            "pictogram": "upload/poi-geology.png",
             "label_en": "Geology",
             "label_fr": "Géologie",
             "label": "Géologie"
@@ -92,7 +92,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/archeo.png",
+            "pictogram": "upload/poi-archeology.png",
             "label_en": null,
             "label_fr": "Arch\u00e9ologie",
             "label": "Arch\u00e9ologie"
@@ -103,7 +103,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/histoire.png",
+            "pictogram": "upload/poi-history.png",
             "label_en": null,
             "label_fr": "Histoire",
             "label": "Histoire"
@@ -114,7 +114,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/histoire.png",
+            "pictogram": "upload/poi-architecture.png",
             "label_en": null,
             "label_fr": "Architecture",
             "label": "Architecture"
@@ -125,7 +125,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/histoire.png",
+            "pictogram": "upload/poi-glacier.png",
             "label_en": null,
             "label_fr": "Glacier",
             "label": "Glacier"
@@ -136,7 +136,7 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/histoire.png",
+            "pictogram": "upload/poi-knowhow.png",
             "label_en": null,
             "label_fr": "Savoir-faire",
             "label": "Savoir-faire"
@@ -147,20 +147,21 @@
         "model": "trekking.poitype",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/histoire.png",
+            "pictogram": "upload/poi-pastoral.png",
             "label_en": null,
             "label_fr": "Pastoralisme",
             "label": "Pastoralisme"
         }
     },
     {
-        "pk": 1,
-        "model": "trekking.treknetwork",
+        "pk": 15,
+        "model": "trekking.poitype",
         "fields": {
-            "network_it": "Villas",
-            "network": "City",
-            "network_en": "City",
-            "network_fr": "En ville"
+            "label_it": null,
+            "pictogram": "upload/poi-pass.png",
+            "label_en": null,
+            "label_fr": "Col",
+            "label": "Col"
         }
     },
     {
@@ -487,7 +488,7 @@
         "model": "trekking.weblinkcategory",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/weblink-bus.png",
+            "pictogram": "upload/weblink-book.png",
             "label_en": null,
             "label_fr": "A lire",
             "label": "A lire"
@@ -498,10 +499,21 @@
         "model": "trekking.weblinkcategory",
         "fields": {
             "label_it": null,
-            "pictogram": "upload/weblink-bus.png",
+            "pictogram": "upload/weblink-tourism.png",
             "label_en": null,
             "label_fr": "Information touristique",
             "label": "Information touristique"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.weblinkcategory",
+        "fields": {
+            "label_it": null,
+            "pictogram": "upload/weblink-camping.png",
+            "label_en": null,
+            "label_fr": "Camping",
+            "label": "Camping"
         }
     }
 ]
