@@ -2678,4 +2678,43 @@ Fait.
 
 Fait.
 
+#409 - OFFRE RANDO - Détail : informations manquantes
+-----------------------------------------------------
 
+* Parcours
+* Réseaux
+* Itinéraires liés
+
+:note:
+
+        Notion "type de destination" n'est plus d'actualité.
+
+
+#413 - OFFRE RANDO - Restaurer les filtres au chargement
+--------------------------------------------------------
+
+Les listes déroulantes sont désormais restaurées.
+
+
+#65 - Intégrer Google Analytics parametrable selon la structure
+---------------------------------------------------------------
+
+Fait. Voir fichier ``settings_local.py.sample``.
+
+
+#416 - OFFRE RANDO - Personnaliser le footer
+--------------------------------------------
+
+Fait. Voir fichier README pour explications.
+
+
+#417 - OFFRE RANDO - Personnaliser le CSS
+--------------------------------------------
+
+Fait. Voir fichier README pour explications.
+
+
+#408 - OFFRE RANDO - Détail : parking conseillé sous forme d'infobulle
+----------------------------------------------------------------------
+
+Fait.
