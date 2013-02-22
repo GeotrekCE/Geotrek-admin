@@ -86,6 +86,7 @@ class TrekJsonProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
 
 
 class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
+    model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
     fields = ['name', 'description', 'serializable_type']
