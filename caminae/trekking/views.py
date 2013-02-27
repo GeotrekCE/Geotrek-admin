@@ -89,7 +89,7 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    fields = ['name', 'description', 'serializable_type']
+    fields = ['name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
 
     def get_queryset(self):
         try:
@@ -97,6 +97,8 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
             trek = Trek.objects.get(pk=trek_pk)
         except Trek.DoesNotExist:
             raise Http404
+        # All POIs of this trek
+        print [p.serializable_thumbnail for p in trek.pois.select_related(depth=1)]
         return trek.pois.select_related(depth=1)
 
 
