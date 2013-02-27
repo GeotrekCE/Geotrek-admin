@@ -21,7 +21,47 @@ from caminae.maintenance.models import Intervention, Project
 logger = logging.getLogger(__name__)
 
 
-class Trek(MapEntityMixin, Topology):
+class PicturesMixin(object):
+    """A common class to share code between Trek and POI regarding
+    attached pictures"""
+
+    @property
+    def pictures(self):
+        """
+        Find first image among attachments.
+        """
+        return [a for a in self.attachments.all() if a.is_image]
+
+    @property
+    def serializable_pictures(self):
+        serialized = []
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            serialized.append({
+                'author': picture.author,
+                'title': picture.title,
+                'legend': picture.legend,
+                'url': os.path.join(settings.MEDIA_URL, thdetail.name)
+            })
+        return serialized
+
+    @property
+    def thumbnail(self):
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            return thumbnailer.get_thumbnail(aliases.get('small-square'))
+        return None
+
+    @property
+    def serializable_thumbnail(self):
+        th = self.thumbnail
+        if not th:
+            return None
+        return os.path.join(settings.MEDIA_URL, th.name)
+
+
+class Trek(PicturesMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
@@ -182,41 +222,6 @@ class Trek(MapEntityMixin, Topology):
         if not self.parking_location:
             return None
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
-
-    @property
-    def pictures(self):
-        """
-        Find first image among attachments.
-        """
-        return [a for a in self.attachments.all() if a.is_image]
-
-    @property
-    def serializable_pictures(self):
-        serialized = []
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
-            serialized.append({
-                'author': picture.author,
-                'title': picture.title,
-                'legend': picture.legend,
-                'url': os.path.join(settings.MEDIA_URL, thdetail.name)
-            })
-        return serialized
-
-    @property
-    def thumbnail(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            return thumbnailer.get_thumbnail(aliases.get('small-square'))
-        return None
-
-    @property
-    def serializable_thumbnail(self):
-        th = self.thumbnail
-        if not th:
-            return None
-        return os.path.join(settings.MEDIA_URL, th.name)
 
     @property
     def elevation_profile(self):
@@ -482,7 +487,7 @@ class POIManager(models.GeoManager):
         return super(POIManager, self).get_query_set().select_related('type')
 
 
-class POI(MapEntityMixin, Topology):
+class POI(PicturesMixin, MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
