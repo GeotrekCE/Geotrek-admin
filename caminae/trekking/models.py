@@ -139,7 +139,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def related(self):
-        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk)
+        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
     @property
     def relationships(self):
