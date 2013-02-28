@@ -2718,3 +2718,120 @@ Fait. Voir fichier README pour explications.
 ----------------------------------------------------------------------
 
 Fait.
+
+#504 - OFFRE RANDO - Bouton fermeture volet liste
+
+Bouton sur toute la hauteur.
+
+#450
+
+OFFRE RANDO - Mettre en évidence si filtre actif
+
+#449
+
+OFFRE RANDO - Effacer tous les filtres
+
+#63
+
+Paramétrer les couleurs du portail
+
+#62
+
+Paramétrer logo et titre
+
+==========================
+Sprint 13 - Version 0.13.0
+==========================
+
+#506 - OFFRE RANDO - Retravailler le filtre par emprise
+-------------------------------------------------------
+
+Désormais, les résultats ne sont plus masqués mais atténués.
+
+#446 - OFFRE RANDO - [BUG] Filtre emprise selon liste visible ou pas
+--------------------------------------------------------------------
+
+Fixé.
+
+#507 - OFFRE RANDO - Emprise initiale
+-------------------------------------
+
+S'ajuste aux randonnées disponibles.
+
+#414 - OFFRE RANDO - Restaurer la position de la carte au chargement
+--------------------------------------------------------------------
+
+Fait.
+
+#448 - OFFRE RANDO - Modifier le pointeur de la souris au survol des filtres
+----------------------------------------------------------------------------
+
+Fait.
+
+#445 - OFFRE RANDO - [BUG] Filtre commune code postal commençant par 0
+----------------------------------------------------------------------
+
+Fixé.
+
+#60 - OFFRE RANDO - Optimiser le référencement des randonnées
+-------------------------------------------------------------
+
+Les éléments suivants ont été mis en place : 
+
+* balises titre cohérentes
+* meta description (à partir des valeurs du setting DESCRIPTION)
+* meta language
+* Sitemap XML pour chaque langue
+* Geositemap (liens vers fichiers KML)
+
+Pour ajouter des médias aux résultats, il y a des pistes comme OpenGraph, Twitter cards, Schema.org, mais celles-ci sont hors contrat.
+
+
+#519 - OFFRE RANDO - Afficher filtres avancés si valeurs saisie
+---------------------------------------------------------------
+
+Fait.
+
+#520 - OFFRE RANDO - Fixer readme
+---------------------------------
+
+* Corrigé soucis
+* Ajouté section mise à jour (UPGRADE)
+* Ajouté informations sur les pages statiques
+
+
+#521 - OFFRE RANDO - Bouton sac à dos sur fiche detail
+------------------------------------------------------
+
+Fait.
+
+#524 - OFFRE RANDO - Clusters de POIs
+-------------------------------------
+
+Les POIs ne se superposent plus, et forme des groupes lorsqu'ils sont trop proches.
+
+
+#522 - OFFRE RANDO - Boutons partager
+-------------------------------------
+
+Un seul bouton "Partager", pour éviter les confusions.
+
+* L'URL partagée s'adapte à la page en cours.
+* Le texte des boutons s'adapte à langue en cours.
+* Les boutons de partage ne sont chargés que si le visiteur clique sur "Partager".
+* Si l'utilisateur a activé l'option "Do-Not-Track" de son navigateur, les boutons "Partager" ne seront pas affichés.
+
+Afficher la page d'accueil, vérifier que le lien partagé est bien celui du site. Puis naviguer sur une fiche, vérifier que cette fois c'est bien la fiche qui est partagée. 
+
+
+#512 - OFFRE RANDO - Images sur les pictogrammes
+------------------------------------------------
+
+Les images des POIs sont désormais affichées en carroussel dans le paneau des POIs d'un itinéraire.
+
+Pour chaque POI le nombre d'images disponible est affiché pour inviter le visiteur à les consulter.
+
+Si le POI n'a pas d'image, contrairement à l'itinéraire, aucune image n'est affichée.
+
+Les boutons du carroussel ne sont visibles que s'il y a au moins une image.
+

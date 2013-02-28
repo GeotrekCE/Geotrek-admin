@@ -31,6 +31,11 @@
 
     {% if not trek.published %}
         <div class="alert alert-error"><strong>{% trans "Not published" %}</strong></div>
+    
+    {% else %}
+        {% if not trek.is_publishable %}
+            <div class="alert alert-error"><strong>{% trans "Trek is published, but loiks incomplete or has invalid geometry." %}</strong></div>
+        {% endif %}
     {% endif %}
 
     <table class="table-striped table-bordered table">
