@@ -319,7 +319,7 @@ L.GeomUtils = (function() {
         },
 
         lineReverse: function (line) {
-            return L.polyline(line.getLatLngs().reverse());
+            return L.polyline(line.getLatLngs().slice(0).reverse());
         }
     };
 })();
