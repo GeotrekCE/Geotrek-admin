@@ -124,6 +124,11 @@ $(document).ready(function() {
                 val = $(field).val(),
                 set = val != '' && val != [''];
 
+            // Consider a value set if it is not the first option selected
+            if ($(field).is('select')) {
+                set = val != $(field).find('option').first().val();
+            }
+
             // Displayed value
             var value = val;
             if (field.tagName == 'SELECT') {
