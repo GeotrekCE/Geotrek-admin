@@ -98,7 +98,6 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
         except Trek.DoesNotExist:
             raise Http404
         # All POIs of this trek
-        print [p.serializable_thumbnail for p in trek.pois.select_related(depth=1)]
         return trek.pois.select_related(depth=1)
 
 

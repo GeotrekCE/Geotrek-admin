@@ -258,12 +258,22 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                          coords=[place.coords])
         return kml._genkml()
 
-    def is_publishable(self):
-        """A trek should be a LineString, even if it's a loop.
-        It should also have a description, etc.
+    def is_complete(self):
+        """It should also have a description, etc.
         """
-        return self.geom and self.geom.geom_type.lower() == 'linestring' and \
-               self.departure and self.arrival and self.description and self.description_teaser
+        mandatory = ['departure', 'arrival', 'description_teaser']
+        for f in mandatory:
+            if not getattr(self, f):
+                return False
+        return True
+
+    def has_geom_valid(self):
+        """A trek should be a LineString, even if it's a loop.
+        """
+        return self.geom and self.geom.geom_type.lower() == 'linestring'
+
+    def is_publishable(self):
+        return self.is_complete() and self.has_geom_valid()
 
     def refresh_altimetry(self):
         # Store 3D profile information, take them from aggregated paths
