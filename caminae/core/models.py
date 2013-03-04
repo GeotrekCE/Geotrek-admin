@@ -19,7 +19,17 @@ from caminae.mapentity.models import MapEntityMixin
 logger = logging.getLogger(__name__)
 
 
+class TrackingMixin(models.Model):
+    # Computed values (managed at DB-level with triggers)
+    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
+    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update')
+
+    class Meta:
+        abstract = True
+
+
 class AltimetryMixin(models.Model):
+    # Computed values (managed at DB-level with triggers)
     length = models.FloatField(editable=False, default=0.0, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
@@ -36,7 +46,7 @@ class AltimetryMixin(models.Model):
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(MapEntityMixin, AltimetryMixin, StructureRelated):
+class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
@@ -58,10 +68,6 @@ class Path(MapEntityMixin, AltimetryMixin, StructureRelated):
                                  verbose_name=_("Comfort"), db_column='confort')
     # Override default manager
     objects = models.GeoManager()
-
-    # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
 
     trail = models.ForeignKey('Trail',
             null=True, blank=True, related_name='paths',
@@ -257,17 +263,13 @@ class NoDeleteMixin(models.Model):
         return NoDeleteManager
 
 
-class Topology(AltimetryMixin, NoDeleteMixin):
+class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
 
     # Override default manager
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
-
-    # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 blank=True, spatial_index=False, dim=3)

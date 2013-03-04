@@ -7,14 +7,14 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import NoDeleteMixin, Topology, AltimetryMixin, Path, Trail
+from caminae.core.models import NoDeleteMixin, TrackingMixin, Topology, AltimetryMixin, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.common.utils import classproperty
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, AltimetryMixin, StructureRelated, NoDeleteMixin):
+class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
 
     in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
                                          db_column='maintenance', help_text=_(u"Recurrent"))
@@ -34,10 +34,6 @@ class Intervention(MapEntityMixin, AltimetryMixin, StructureRelated, NoDeleteMix
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
-
-    #TODO: remove this --> abstract class
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
 
     """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
@@ -273,7 +269,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
+class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
@@ -288,11 +284,6 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
                              verbose_name=_(u"Project type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
                              verbose_name=_(u"Project domain"), db_column='domaine')
-
-
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
-
     ## Relations ##
     contractors = models.ManyToManyField('Contractor', related_name="projects",
             db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
