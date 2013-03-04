@@ -26,7 +26,7 @@ class TrekLayer(MapEntityLayer):
 class TrekList(MapEntityList):
     queryset = Trek.objects.existing()
     filterform = TrekFilter
-    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'arrival']
+    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -152,7 +152,7 @@ class POILayer(MapEntityLayer):
 class POIList(MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilter
-    columns = ['id', 'name', 'type']
+    columns = ['id', 'name', 'type', 'thumbnail']
 
 
 class POIJsonList(MapEntityJsonList, POIList):

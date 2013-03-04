@@ -15,7 +15,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
-from caminae.common.utils import elevation_profile
+from caminae.common.utils import elevation_profile, classproperty
 from caminae.maintenance.models import Intervention, Project
 
 logger = logging.getLogger(__name__)
@@ -52,6 +52,17 @@ class PicturesMixin(object):
             thumbnailer = get_thumbnailer(picture.attachment_file)
             return thumbnailer.get_thumbnail(aliases.get('small-square'))
         return None
+
+    @classproperty
+    def thumbnail_verbose_name(self):
+        return _("Thumbnail")
+
+    @property
+    def thumbnail_display(self):
+        thumbnail = self.thumbnail
+        if thumbnail is None:
+            return _("None")
+        return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
 
     @property
     def serializable_thumbnail(self):
