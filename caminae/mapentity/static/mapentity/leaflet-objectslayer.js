@@ -18,7 +18,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
         // Hold the currently visible layers (subset of _objects)
         this._current_objects = {};
         this.rtree = new RTree();
-        this.spinning = false;
         this.loading = false;
 
         var options = options || {};
@@ -116,42 +115,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
             console.error("No bounds found for layer " + pk);
     },
 
-    onRemove: function (map) {
-        this.spin(false, map);
-        L.GeoJSON.prototype.onRemove.call(this, map);
-    },
-
-    onAdd: function (map) {
-        this.spin(this.spinning, map);
-        L.GeoJSON.prototype.onAdd.call(this, map);
-    },
-
-    spin: function (state, map) {
-        var _map = map || this._map;
-        this.spinning = state;
-        
-        if (!_map) return;
-
-        if (state) {
-            // start spinning !
-            if (!_map._spinner) {
-                _map._spinner = new Spinner().spin(_map._container);
-                _map._spinning = 0;
-            }
-            _map._spinning++;
-        }
-        else {
-            _map._spinning--;
-            if (_map._spinning <= 0) {
-                // end spinning !
-                if (_map._spinner) {
-                    _map._spinner.stop();
-                    _map._spinner = null;
-                }
-            }
-        }
-    },
-
     load: function (url, force) {
         if (!!force && url.indexOf("?") != -1) {
             url += '?_u=' + (new Date().getTime());
@@ -163,17 +126,16 @@ L.ObjectsLayer = L.GeoJSON.extend({
             data.features = features;
             this.addData(data);
             this.loading = false;
-            this.spin(false);
-            this.fire('load');
+            this.fire('loaded');
         };
         var jsonError = function () {
             this.loading = false;
-            this.spin(false);
+            this.fire('loaded');
             console.error("Could not load url '" + url + "'");
             if (this._map) $(this._map._container).addClass('map-error');
         };
         this.loading = true;
-        this.spin(true);
+        this.fire('loading');
         $.getJSON(url, L.Util.bind(jsonLoad, this))
          .error(L.Util.bind(jsonError, this));
     },
@@ -245,7 +207,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             layer._defaultStyle = layer._defaultStyle ? layer._defaultStyle : this.options.styles.default;
             layer.setStyle(this.options.styles.highlight);
             // Pop on top
-            this._map.removeLayer(layer).addLayer(layer);
+            if (this._map) this._map.removeLayer(layer).addLayer(layer);
         }
         else {
             layer.setStyle(layer._defaultStyle);
@@ -261,7 +223,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             layer._defaultStyle = this.options.styles.select;
             layer.setStyle(layer._defaultStyle);
             // Pop on top
-            this._map.removeLayer(layer).addLayer(layer);
+            if (this._map) this._map.removeLayer(layer).addLayer(layer);
         }
         else {
             layer._defaultStyle = this.options.styles.default;

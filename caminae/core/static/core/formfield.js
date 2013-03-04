@@ -170,7 +170,7 @@ FormField.makeModule = function(module, module_settings) {
             layerStore.storeLayerGeomInField(e.topology);
         });
         
-        objectsLayer.on('load', function() {
+        objectsLayer.on('loaded', function() {
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, function (graph) {
                 // Load graph
                 multipath_control.setGraph(graph);
