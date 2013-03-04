@@ -63,3 +63,20 @@ AFTER INSERT OR UPDATE OF longueur, pente,
     altitude_minimum, altitude_maximum,
     denivelee_positive, denivelee_negative ON e_t_evenement
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
+
+-------------------------------------------------------------------------------
+-- Compute area
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS m_t_interventions_iu_tgr ON m_t_intervention;
+
+CREATE OR REPLACE FUNCTION update_area_intervention() RETURNS trigger AS $$
+BEGIN
+   NEW.surface := NEW.largeur * NEW.hauteur;
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER m_t_interventions_iu_tgr
+AFTER INSERT OR UPDATE OF largeur, hauteur ON m_t_intervention
+FOR EACH ROW EXECUTE PROCEDURE update_area_intervention();

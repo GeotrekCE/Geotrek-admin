@@ -18,12 +18,25 @@ from caminae.mapentity.models import MapEntityMixin
 
 logger = logging.getLogger(__name__)
 
+
+class AltimetryMixin(models.Model):
+    length = models.FloatField(editable=False, default=0.0, db_column='longueur', verbose_name=_(u"Length"))
+    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
+    slope = models.FloatField(editable=False, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+
+    class Meta:
+        abstract = True
+
+
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(MapEntityMixin, StructureRelated):
+class Path(MapEntityMixin, AltimetryMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
@@ -49,16 +62,6 @@ class Path(MapEntityMixin, StructureRelated):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
-    length = models.FloatField(editable=False, default=0, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(
-            editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(
-            editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(
-            editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(
-            editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-
 
     trail = models.ForeignKey('Trail',
             null=True, blank=True, related_name='paths',
@@ -161,6 +164,7 @@ class Path(MapEntityMixin, StructureRelated):
         self.date_insert = tmp.date_insert
         self.date_update = tmp.date_update
         self.length = tmp.length
+        self.slope = tmp.slope
         self.ascent = tmp.ascent
         self.descent = tmp.descent
         self.min_elevation = tmp.min_elevation
@@ -253,7 +257,7 @@ class NoDeleteMixin(models.Model):
         return NoDeleteManager
 
 
-class Topology(NoDeleteMixin):
+class Topology(AltimetryMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -264,12 +268,6 @@ class Topology(NoDeleteMixin):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
-    length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-    slope = models.FloatField(default=0.0, verbose_name=_(u"Slope"), db_column='pente')
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 blank=True, spatial_index=False, dim=3)
@@ -356,10 +354,15 @@ class Topology(NoDeleteMixin):
             self.date_insert = tmp.date_insert
             self.date_update = tmp.date_update
             self.length = tmp.length
+            self.slope = tmp.slope
+            self.ascent = tmp.ascent
+            self.descent = tmp.descent
+            self.min_elevation = tmp.min_elevation
+            self.max_elevation = tmp.max_elevation
+            self.geom = tmp.geom
             self.offset = tmp.offset # /!\ offset may be set by a trigger OR in
                                      # the django code, reload() will override
                                      # any unsaved value
-            self.geom = tmp.geom
         return self
 
     def save(self, *args, **kwargs):

@@ -52,8 +52,20 @@ $$ LANGUAGE plpgsql;
 
 
 -------------------------------------------------------------------------------
--- Convert 2D points and linestring to 3D using a DEM
+-- Convert 2D to 3D using a DEM
 -------------------------------------------------------------------------------
+
+DROP TYPE IF EXISTS elevation_infos CASCADE;
+CREATE TYPE elevation_infos AS (
+    geom3d geometry,
+    slope float,
+    min_elevation integer,
+    max_elevation integer,
+    positive_gain integer,
+    negative_gain integer
+);
+
+
 
 CREATE OR REPLACE FUNCTION add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
@@ -79,31 +91,38 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION elevation_infos(geom geometry) RETURNS record AS $$
+CREATE OR REPLACE FUNCTION ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current_point geometry;
     points3d geometry[];
     ele integer;
     last_ele integer;
-    max_ele integer;
-    min_ele integer;
-    positive_gain integer := 0;
-    negative_gain integer := 0;
-    geom3d geometry;
-    result record;
+    result elevation_infos;
 BEGIN
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF NOT FOUND THEN
-        SELECT ST_Force_3DZ(geom), 0, 0, 0, 0 INTO result;
+        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
-        SELECT ST_Force_3DZ(geom), 0, 0, 0, 0 INTO result;
+        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
+    END IF;
+
+    result.min_elevation := NULL;
+    result.max_elevation := NULL;
+    result.positive_gain := 0;
+    result.negative_gain := 0;
+
+    -- Compute slope:
+    IF ST_GeometryType(geom) = 'ST_LineString' THEN
+        SELECT (ST_ZMax(geom) - ST_ZMin(geom))/ST_Length2D(geom) INTO result.slope;
+    ELSE
+        result.slope := 0.0;
     END IF;
 
     -- Obtain point number
@@ -128,20 +147,19 @@ BEGIN
         points3d := array_append(points3d, ST_MakePoint(ST_X(current_point), ST_Y(current_point), ele));
 
         -- Compute indicators
-        min_ele := least(coalesce(min_ele, ele), ele);
-        max_ele := greatest(coalesce(max_ele, ele), ele);
-        positive_gain := positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
-        negative_gain := negative_gain + least(ele - coalesce(last_ele, ele), 0);
+        result.min_elevation := least(coalesce(result.min_elevation, ele), ele);
+        result.max_elevation := greatest(coalesce(result.max_elevation, ele), ele);
+        result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
+        result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
         last_ele := ele;
     END LOOP;
 
     IF ST_GeometryType(geom) = 'ST_Point' THEN
-        geom3d := ST_SetSRID(points3d[0], ST_SRID(geom));
+        result.geom3d := ST_SetSRID(points3d[0], ST_SRID(geom));
     ELSE
-        geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
+        result.geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
     END IF;
 
-    SELECT geom3d, min_ele, max_ele, positive_gain, negative_gain INTO result;
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;

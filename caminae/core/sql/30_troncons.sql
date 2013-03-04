@@ -121,36 +121,27 @@ ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSim
 
 DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION troncons_elevation_iu() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION elevation_troncon_iu() RETURNS trigger AS $$
 DECLARE
-    line3d geometry;
-    max_ele integer;
-    min_ele integer;
-    positive_gain integer;
-    negative_gain integer;
+    elevation elevation_infos;
 BEGIN
 
-    SELECT *
-    FROM elevation_infos(NEW.geom) AS (line3d geometry, min_ele integer, max_ele integer, positive_gain integer, negative_gain integer)
-    INTO line3d, min_ele, max_ele, positive_gain, negative_gain;
-
+    SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
     -- Update path geometry
-    NEW.geom := line3d;
-
-    -- Update path indicators
-    NEW.longueur := ST_3DLength(line3d);
-    NEW.altitude_minimum := min_ele;
-    NEW.altitude_maximum := max_ele;
-    NEW.denivelee_positive := positive_gain;
-    NEW.denivelee_negative := negative_gain;
-
+    NEW.geom := elevation.geom3d;
+    NEW.longueur := ST_3DLength(elevation.geom3d);
+    NEW.pente := elevation.slope;
+    NEW.altitude_minimum := elevation.min_elevation;
+    NEW.altitude_maximum := elevation.max_elevation;
+    NEW.denivelee_positive := elevation.positive_gain;
+    NEW.denivelee_negative := elevation.negative_gain;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_elevation_iu_tgr
 BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
-FOR EACH ROW EXECUTE PROCEDURE troncons_elevation_iu();
+FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
 
 
 -------------------------------------------------------------------------------

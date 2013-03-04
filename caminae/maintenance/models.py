@@ -7,14 +7,14 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import NoDeleteMixin, Topology, Path, Trail
+from caminae.core.models import NoDeleteMixin, Topology, AltimetryMixin, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.common.utils import classproperty
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
+class Intervention(MapEntityMixin, AltimetryMixin, StructureRelated, NoDeleteMixin):
 
     in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
                                          db_column='maintenance', help_text=_(u"Recurrent"))
@@ -30,14 +30,6 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
     area = models.IntegerField(default=0, verbose_name=_(u"Area"), db_column='surface')
 
-    # Denormalized fields from related topology. Updated via trigger.
-    slope = models.FloatField(default=0.0, verbose_name=_(u"Slope"), db_column='pente')
-    length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-
     ## Costs ##
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
@@ -51,6 +43,7 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
+    # AltimetyMixin for denormalized fields from related topology, updated via trigger.
 
     stake = models.ForeignKey('core.Stake', null=True,
             related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')

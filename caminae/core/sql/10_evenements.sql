@@ -7,6 +7,14 @@ DROP INDEX IF EXISTS e_t_evenement_geom_idx;
 CREATE INDEX e_t_evenement_geom_idx ON e_t_evenement USING gist(geom);
 
 
+ALTER TABLE e_t_evenement ALTER COLUMN longueur SET DEFAULT 0.0;
+ALTER TABLE e_t_evenement ALTER COLUMN pente SET DEFAULT 0.0;
+ALTER TABLE e_t_evenement ALTER COLUMN altitude_minimum SET DEFAULT 0;
+ALTER TABLE e_t_evenement ALTER COLUMN altitude_maximum SET DEFAULT 0;
+ALTER TABLE e_t_evenement ALTER COLUMN denivelee_positive SET DEFAULT 0;
+ALTER TABLE e_t_evenement ALTER COLUMN denivelee_negative SET DEFAULT 0;
+
+
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
@@ -31,6 +39,7 @@ DECLARE
     egeom geometry;
     lines_only boolean;
     points_only boolean;
+    elevation elevation_infos;
     t_count integer;
     t_offset float;
 
@@ -88,7 +97,16 @@ BEGIN
         IF t_offset > 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
         END IF;
-        UPDATE e_t_evenement SET geom = ST_Force_3DZ(egeom), longueur = ST_3DLength(egeom) WHERE id = eid;
+
+        SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
+        UPDATE e_t_evenement SET geom = elevation.geom3d,
+                                 longueur = ST_3DLength(elevation.geom3d),
+                                 pente = elevation.slope,
+                                 altitude_minimum = elevation.min_elevation,
+                                 altitude_maximum = elevation.max_elevation,
+                                 denivelee_positive = elevation.positive_gain,
+                                 denivelee_negative = elevation.negative_gain
+                             WHERE id = eid;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
