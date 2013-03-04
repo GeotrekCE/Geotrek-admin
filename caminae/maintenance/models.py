@@ -26,11 +26,17 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                                 help_text=_(u"Remarks and notes"))
 
     ## Technical information ##
-    length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
     area = models.IntegerField(default=0, verbose_name=_(u"Area"), db_column='surface')
-    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"), db_column='pente')
+
+    # Denormalized fields from related topology. Updated via trigger.
+    slope = models.FloatField(default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+    length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
+    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
 
     ## Costs ##
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')

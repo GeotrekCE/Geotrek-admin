@@ -40,3 +40,26 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER m_t_evenement_interventions_d_tgr
 AFTER UPDATE OF supprime ON e_t_evenement
 FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
+
+
+-------------------------------------------------------------------------------
+-- Denormalized altimetry information
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS m_t_evenement_interventions_iu_tgr ON e_t_evenement;
+
+CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
+BEGIN
+    UPDATE m_t_intervention SET longueur = NEW.longueur, pente = NEW.pente,
+        altitude_minimum = NEW.altitude_minimum, altitude_maximum = NEW.altitude_maximum,
+        denivelee_positive = NEW.denivelee_positive, denivelee_negative = NEW.denivelee_negative
+     WHERE topology_id = NEW.id;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER m_t_evenement_interventions_iu_tgr
+AFTER INSERT OR UPDATE OF longueur, pente, 
+    altitude_minimum, altitude_maximum,
+    denivelee_positive, denivelee_negative ON e_t_evenement
+FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
