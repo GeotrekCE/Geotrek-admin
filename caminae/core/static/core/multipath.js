@@ -50,12 +50,6 @@ L.Control.Multipath = L.Control.extend({
 
     initialize: function (map, graph_layer, snapObserver, options) {
         L.Control.prototype.initialize.call(this, options);
-
-        graph_layer.registerStyle('dijkstra_from', 10, {'color': 'yellow', 'weight': 5, 'opacity': 1})
-                   .registerStyle('dijkstra_to', 11, {'color': 'yellow', 'weight': 5, 'opacity': 1})
-                   .registerStyle('dijkstra_step', 9, {'color': 'yellow', 'weight': 5, 'opacity': 1})
-                   .registerStyle('dijkstra_computed', 8, {'color': 'yellow', 'weight': 5, 'opacity': 1});
-
         this.handler = new L.Handler.MultiPath(
             map, graph_layer, snapObserver, this.options.handler
         );
@@ -135,7 +129,6 @@ L.Handler.MultiPath = L.Handler.extend({
         this._container = map._container;
         this.graph_layer = graph_layer;
         this.snapObserver = snapObserver;
-        this.cameleon = this.graph_layer._cameleon;
         this.options = options;
 
         this.graph = null;
@@ -561,12 +554,11 @@ L.Handler.MultiPath = L.Handler.extend({
 
                         if (prev_path_layer) {
                             self.map.removeLayer(prev_path_layer);
-                            self.cameleon.deactivate('dijkstra_computed', prev_path_layer);
                         }
 
                         if (new_path_layer) {
                             self.map.addLayer(new_path_layer);
-                            self.cameleon.activate('dijkstra_computed', new_path_layer);
+                            new_path_layer.setStyle({'color': 'yellow', 'weight': 5, 'opacity': 1});
                         }
                     }
                 }
