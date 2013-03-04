@@ -253,6 +253,16 @@ class RelatedObjectsTest(TestCase):
             Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
         self.assertItemsEqual(trek.districts, [d1, d2])
 
+    def test_deleted_pois(self):
+        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(p1, start=0.6, end=0.6)
+        self.assertItemsEqual(trek.pois, [poi])
+        poi.delete()
+        self.assertItemsEqual(trek.pois, [])
+
     def test_picture(self):
         trek = TrekFactory.create()
         AttachmentFactory.create(obj=trek)
