@@ -131,7 +131,7 @@ L.MapListSync = L.Class.extend({
             else {
                 if (self.layer.loading) {
                     // Layer is not loaded yet, delay object filtering
-                    self.layer.on('load', function (e) {
+                    self.layer.on('loaded', function (e) {
                         self.layer.updateFromPks(callback_args.map_obj_pk);
                     }, self);
                 }
