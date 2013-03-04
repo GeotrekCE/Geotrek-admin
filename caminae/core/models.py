@@ -265,6 +265,12 @@ class Topology(NoDeleteMixin):
     date_insert = models.DateTimeField(editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
     date_update = models.DateTimeField(editable=False, verbose_name=_(u"Update date"), db_column='date_update')
     length = models.FloatField(default=0.0, editable=False, db_column='longueur', verbose_name=_(u"Length"))
+    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
+    slope = models.FloatField(default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 blank=True, spatial_index=False, dim=3)
 

@@ -83,12 +83,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                help_text=_(u"Arrival description"), db_column='arrivee')
     published = models.BooleanField(verbose_name=_(u"Published"),
                                     help_text=_(u"Online"), db_column='public')
-
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
@@ -286,28 +280,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
 
-    def refresh_altimetry(self):
-        # Store 3D profile information, take them from aggregated paths
-        # instead of using PostGIS trigger on each point.
-        ascent = 0
-        descent = 0
-        minele = 0
-        maxele = 0
-        for path in self.paths.all():
-            ascent += path.ascent
-            descent += path.descent
-            if minele == 0 or path.min_elevation < minele:
-                minele = path.min_elevation
-            if path.max_elevation > maxele:
-                maxele = path.max_elevation
-        self.ascent = ascent
-        self.descent = descent
-        self.min_elevation = minele
-        self.max_elevation = maxele
-
     def save(self, *args, **kwargs):
-        if self.pk:
-            self.refresh_altimetry()
         super(Trek, self).save(*args, **kwargs)
         if self.deleted:
             return
