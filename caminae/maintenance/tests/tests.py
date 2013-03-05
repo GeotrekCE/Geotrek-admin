@@ -20,9 +20,9 @@ from caminae.mapentity.serializers import ZipShapeSerializer
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
 from caminae.maintenance.views import ProjectFormatList
 from caminae.core.factories import (PathFactory, PathAggregationFactory,
-                                   TopologyFactory, TrailFactory)
-from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
-from caminae.maintenance.factories import (InterventionFactory, 
+                                   TopologyFactory)
+from caminae.infrastructure.factories import InfrastructureFactory
+from caminae.maintenance.factories import (InterventionFactory,
     InterventionDisorderFactory, InterventionStatusFactory,
     ProjectFactory, ContractorFactory, InterventionJobFactory)
 
@@ -53,16 +53,16 @@ class InterventionViewsTest(MapEntityTest):
             'heliport_cost': 0.0,
             'material_cost': 0.0,
             'topology': '{"paths": [%s]}' % path.pk,
-            
+
             'manday_set-TOTAL_FORMS': '2',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
-            
+
             'manday_set-0-nb_days': '48.75',
             'manday_set-0-job': InterventionJobFactory.create().pk,
             'manday_set-0-id': '',
             'manday_set-0-DELETE': '',
-            
+
             'manday_set-1-nb_days': '12',
             'manday_set-1-job': InterventionJobFactory.create().pk,
             'manday_set-1-id': '',
@@ -71,7 +71,7 @@ class InterventionViewsTest(MapEntityTest):
 
     def test_form_on_infrastructure(self):
         self.login()
-        
+
         infra = InfrastructureFactory.create()
         infrastr = u"%s" % infra
         # For creation
@@ -143,11 +143,11 @@ class ProjectViewsTest(MapEntityTest):
             'contractors':  ContractorFactory.create().pk,
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
-            
+
             'funding_set-TOTAL_FORMS': '2',
             'funding_set-INITIAL_FORMS': '0',
             'funding_set-MAX_NUM_FORMS': '',
-            
+
             'funding_set-0-amount': '468.0',
             'funding_set-0-organism': OrganismFactory.create().pk,
             'funding_set-0-project': '',
@@ -165,13 +165,13 @@ class ProjectViewsTest(MapEntityTest):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         InterventionFactory.create(project=p1)
-        
+
         # Check that only p1 is in geojson
         response = self.client.get(self.model.get_layer_url())
         self.assertEqual(response.status_code, 200)
         geojson = simplejson.loads(response.content)
         features = geojson['features']
-        
+
         self.assertEqual(len(Project.objects.all()), 2)
         self.assertEqual(len(features), 1)
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
@@ -180,17 +180,17 @@ class ProjectViewsTest(MapEntityTest):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
-        
+
         t = TopologyFactory.create()
         InterventionFactory.create(project=p1, topology=t)
-        
+
         def jsonlist(bbox):
             url = self.model.get_jsonlist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             json = simplejson.loads(response.content)
             return json['aaData']
-        
+
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)
         self.assertEqual(len(jsonlist('')), 3)
@@ -199,128 +199,6 @@ class ProjectViewsTest(MapEntityTest):
         # Give a bbox that match intervention, and check that all 3 projects are back
         bbox = '?bbox=POLYGON((-1.3630753338765911%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838497371070440))'
         self.assertEqual(len(jsonlist(bbox)), 3)
-
-
-class InterventionTest(TestCase):
-
-    def test_path_helpers(self):
-        p = PathFactory.create()
-
-        self.assertEquals(len(p.interventions), 0)
-        self.assertEquals(len(p.projects), 0)
-
-        sign = SignageFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=sign, path=p,
-                                      start_position=0.5, end_position=0.5)
-
-        infra = InfrastructureFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=infra, path=p)
-
-        i1 = InterventionFactory.create()
-        i1.set_infrastructure(sign)
-        i1.save()
-
-        self.assertItemsEqual(p.interventions, [i1])
-
-        i2 = InterventionFactory.create()
-        i2.set_infrastructure(infra)
-        i2.save()
-
-        self.assertItemsEqual(p.interventions, [i1, i2])
-
-        proj = ProjectFactory.create()
-        proj.interventions.add(i1)
-        proj.interventions.add(i2)
-
-        self.assertItemsEqual(p.projects, [proj])
-
-    def test_trail_helpers(self):
-        t = TrailFactory.create()
-        self.assertEqual(0, len(t.interventions))
-        
-        p = PathFactory.create()
-        t.paths.add(p)
-        
-        topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p)
-        i = InterventionFactory(topology=topo)
-        self.assertEqual(1, len(t.interventions))
-        self.assertEqual([i], t.interventions)
-
-    def test_helpers(self):
-        infra = InfrastructureFactory.create()
-        sign = SignageFactory.create()
-        interv = InterventionFactory.create()
-        proj = ProjectFactory.create()
-
-        self.assertFalse(interv.on_infrastructure)
-        self.assertEquals(interv.infrastructure, None)
-
-        interv.set_infrastructure(infra)
-        self.assertTrue(interv.on_infrastructure)
-        self.assertFalse(interv.is_signage())
-        self.assertTrue(interv.is_infrastructure())
-        self.assertEquals(interv.signages, [])
-        self.assertEquals(interv.infrastructures, [infra])
-        self.assertEquals(interv.infrastructure, infra)
-
-        interv.set_infrastructure(sign)
-        self.assertTrue(interv.on_infrastructure())
-        self.assertTrue(interv.is_signage())
-        self.assertFalse(interv.is_infrastructure())
-        self.assertEquals(interv.signages, [sign])
-        self.assertEquals(interv.infrastructures, [])
-        self.assertEquals(interv.infrastructure, sign)
-
-        self.assertFalse(interv.in_project())
-        interv.project = proj
-        self.assertTrue(interv.in_project())
-
-    def test_delete_topology(self):
-        infra = InfrastructureFactory.create()
-        interv = InterventionFactory.create()
-        interv.set_infrastructure(infra)
-        infra.delete()
-        self.assertEqual(Intervention.objects.existing().count(), 0)
-
-
-class ProjectTest(TestCase):
-    def test_helpers(self):
-        i1 = InterventionFactory.create()
-        i2 = InterventionFactory.create()
-        i3 = InterventionFactory.create()
-
-        sign = SignageFactory.create()
-        i1.set_infrastructure(sign)
-        p1 = sign.paths.get()
-
-        infra = InfrastructureFactory.create()
-        i2.set_infrastructure(infra)
-        p2 = infra.paths.get()
-
-        t = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=t, path=p1)
-        i3.topology = t
-
-        proj = ProjectFactory.create()
-        self.assertItemsEqual(proj.paths.all(), [])
-        self.assertEquals(proj.signages, [])
-        self.assertEquals(proj.infrastructures, [])
-
-        proj.interventions.add(i1)
-        self.assertItemsEqual(proj.paths.all(), [p1])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [])
-
-        proj.interventions.add(i2)
-        self.assertItemsEqual(proj.paths.all(), [p1, p2])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
-
-        proj.interventions.add(i3)
-        self.assertItemsEqual(proj.paths.all(), [p1, p2])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
 
 
 class ExportTest(TestCase):
@@ -334,7 +212,7 @@ class ExportTest(TestCase):
 
         # Create topology line
         topo_line = TopologyFactory.create(no_path=True)
-        line = PathFactory.create(geom=LineString(Point(10,10,0), Point(11, 10, 0)))
+        line = PathFactory.create(geom=LineString(Point(10, 10, 0), Point(11, 10, 0)))
         PathAggregationFactory.create(topo_object=topo_line, path=line)
 
         # Create a topology point

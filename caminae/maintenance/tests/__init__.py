@@ -2,4 +2,5 @@
 
 from .tests import *
 from .intervention import *
+from .project import *
 from .filters import *
