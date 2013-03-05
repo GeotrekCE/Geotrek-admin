@@ -287,7 +287,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         # Create relationships automatically
         # Same departure
         if self.departure.strip() != '':
-            for t in Trek.objects.existing().filter(pk=self.pk).filter(departure=self.departure):
+            for t in Trek.objects.existing().exclude(pk=self.pk).filter(departure=self.departure):
                 r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
                 r.has_common_departure = True
                 r.save()
