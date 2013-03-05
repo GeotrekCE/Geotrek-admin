@@ -28,7 +28,7 @@ L.Map.addInitHook(function () {
     this.on('layeradd', function (e) {
         if (!(e.layer instanceof L.GeoJSON)) return;
         if (e.layer.loading) this.spin(true);
-        e.layer.on('loading', function (f) { console.log(f); this.spin(true) }, this);
+        e.layer.on('loading', function (f) { this.spin(true) }, this);
         e.layer.on('loaded',  function (f) { this.spin(false) }, this);
     }, this);
     this.on('layerremove', function (e) {
