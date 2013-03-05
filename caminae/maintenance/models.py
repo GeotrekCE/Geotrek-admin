@@ -392,15 +392,15 @@ class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
 
     @classmethod
     def path_projects(cls, path):
-        return cls.objects.filter(interventions__in=path.interventions)
+        return cls.objects.filter(interventions__in=path.interventions).distinct()
 
     @classmethod
     def trail_projects(cls, trail):
-        return cls.objects.filter(interventions__in=trail.interventions)
+        return cls.objects.filter(interventions__in=trail.interventions).distinct()
 
     @classmethod
     def topology_projects(cls, topology):
-        return cls.objects.filter(interventions__in=topology.interventions)
+        return cls.objects.filter(interventions__in=topology.interventions).distinct()
 
     def edges_by_attr(self, interventionattr):
         pks = []

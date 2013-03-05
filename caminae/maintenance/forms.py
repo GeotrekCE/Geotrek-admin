@@ -90,8 +90,6 @@ class InterventionForm(CommonForm):
         if 'infrastructure' in self.cleaned_data and \
            'topology' not in self.cleaned_data:
             self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
-        print cleaned_data
-        print self.errors
         return cleaned_data
 
     def save(self, *args, **kwargs):

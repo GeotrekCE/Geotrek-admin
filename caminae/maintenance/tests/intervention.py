@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from caminae.infrastructure.models import Infrastructure
 from caminae.infrastructure.factories import InfrastructureFactory, SignageFactory
 from caminae.maintenance.models import Intervention
 from caminae.maintenance.factories import InterventionFactory, ProjectFactory
@@ -84,7 +85,7 @@ class InterventionTest(TestCase):
         topo.add_path(p)
         i = InterventionFactory(topology=topo)
         self.assertEqual(1, len(t.interventions))
-        self.assertEqual([i], t.interventions)
+        self.assertItemsEqual([i], t.interventions)
 
     def test_helpers(self):
         infra = InfrastructureFactory.create()
@@ -97,29 +98,31 @@ class InterventionTest(TestCase):
 
         interv.set_infrastructure(infra)
         self.assertTrue(interv.on_infrastructure)
-        self.assertFalse(interv.is_signage())
-        self.assertTrue(interv.is_infrastructure())
+        self.assertFalse(interv.is_signage)
+        self.assertTrue(interv.is_infrastructure)
         self.assertEquals(interv.signages, [])
         self.assertEquals(interv.infrastructures, [infra])
         self.assertEquals(interv.infrastructure, infra)
 
         interv.set_infrastructure(sign)
-        self.assertTrue(interv.on_infrastructure())
-        self.assertTrue(interv.is_signage())
-        self.assertFalse(interv.is_infrastructure())
+        self.assertTrue(interv.on_infrastructure)
+        self.assertTrue(interv.is_signage)
+        self.assertFalse(interv.is_infrastructure)
         self.assertEquals(interv.signages, [sign])
         self.assertEquals(interv.infrastructures, [])
         self.assertEquals(interv.infrastructure, sign)
 
-        self.assertFalse(interv.in_project())
+        self.assertFalse(interv.in_project)
         interv.project = proj
-        self.assertTrue(interv.in_project())
+        self.assertTrue(interv.in_project)
 
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()
         interv = InterventionFactory.create()
         interv.set_infrastructure(infra)
+        interv.save()
         infra.delete()
+        self.assertEqual(Infrastructure.objects.existing().count(), 0)
         self.assertEqual(Intervention.objects.existing().count(), 0)
 
     def test_denormalized_fields(self):
