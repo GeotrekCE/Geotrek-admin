@@ -26,6 +26,9 @@ class MapEntityForm(forms.ModelForm):
 
     helper = FormHelper()
 
+    class Meta:
+        pass
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(MapEntityForm, self).__init__(*args, **kwargs)
