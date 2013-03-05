@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
@@ -28,7 +27,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
     ## Technical information ##
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
-    area = models.IntegerField(default=0, verbose_name=_(u"Area"), db_column='surface')
+    area = models.IntegerField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
 
     ## Costs ##
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
@@ -36,27 +35,26 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
 
     """ Topology can be of type Infrastructure or of own type Intervention """
-    topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
+    topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
 
     stake = models.ForeignKey('core.Stake', null=True,
-            related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
+                              related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')
 
     type = models.ForeignKey('InterventionType', null=True, blank=True,
-            verbose_name=_(u"Type"), db_column='type')
+                             verbose_name=_(u"Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-            db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
+                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
 
-    jobs = models.ManyToManyField('InterventionJob', through='ManDay',
-            verbose_name=_(u"Jobs"))
+    jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_(u"Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-            verbose_name=_(u"Project"), db_column='chantier')
+                                verbose_name=_(u"Project"), db_column='chantier')
 
     # Special manager
     objects = Topology.get_manager_cls()()
@@ -79,10 +77,23 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
                     stake = path.stake
         return stake
 
+    def reload(self):
+        tmp = self.__class__.objects.get(pk=self.pk)
+        self.date_insert = tmp.date_insert
+        self.date_update = tmp.date_update
+        self.area = tmp.area
+        self.length = tmp.length
+        self.min_elevation = tmp.min_elevation
+        self.max_elevation = tmp.max_elevation
+        self.slope = tmp.slope
+        self.ascent = tmp.ascent
+        self.descent = tmp.descent
+
     def save(self, *args, **kwargs):
         if self.stake is None:
             self.stake = self.default_stake()
         super(Intervention, self).save(*args, **kwargs)
+        self.reload()
 
     @property
     def on_infrastructure(self):
@@ -104,10 +115,9 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
     @property
     def infrastructure_display(self):
         if self.on_infrastructure:
-            return '<img src="%simages/%s-16.png" title="%s">' % (
-                    settings.STATIC_URL,
-                    self.topology.kind.lower(),
-                    unicode(_(self.topology.kind)))
+            return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                  self.topology.kind.lower(),
+                                                                  unicode(_(self.topology.kind)))
         return ''
 
     @property
@@ -283,21 +293,15 @@ class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
     type = models.ForeignKey('ProjectType', null=True, blank=True,
                              verbose_name=_(u"Project type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
-                             verbose_name=_(u"Project domain"), db_column='domaine')
-    ## Relations ##
+                               verbose_name=_(u"Project domain"), db_column='domaine')
     contractors = models.ManyToManyField('Contractor', related_name="projects",
-            db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
-
+                                         db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
     project_owner = models.ForeignKey(Organism, related_name='own',
-            verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
-
+                                      verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
     project_manager = models.ForeignKey(Organism, related_name='manage',
-            verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
+                                        verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
+    founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_(u"Founders"))
 
-    founders = models.ManyToManyField(Organism, through='Funding',
-            verbose_name=_(u"Founders"))
-
-    # Special manager
     objects = Topology.get_manager_cls()()
 
     class Meta:
@@ -343,7 +347,7 @@ class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
     def geomfield(cls):
         from django.contrib.gis.geos import LineString
         # Fake field, TODO: still better than overkill code in views, but can do neater.
-        c = GeometryCollection([LineString((0,0), (1,1))], srid=settings.SRID)
+        c = GeometryCollection([LineString((0, 0), (1, 1))], srid=settings.SRID)
         c.name = 'geom'
         return c
 

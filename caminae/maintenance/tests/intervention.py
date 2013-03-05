@@ -122,3 +122,16 @@ class InterventionTest(TestCase):
         infra.delete()
         self.assertEqual(Intervention.objects.existing().count(), 0)
 
+    def test_denormalized_fields(self):
+        interv = InterventionFactory.create(width = 10.0, height = 10.0)
+        interv.reload()
+        self.assertEqual(interv.area, 100.0)
+
+        infra = InfrastructureFactory.create()
+        infra.save()
+        self.assertNotEqual(infra.length, 0.0)
+
+        interv.set_infrastructure(infra)
+        interv.save()
+        self.assertEqual(interv.length, infra.length)
+

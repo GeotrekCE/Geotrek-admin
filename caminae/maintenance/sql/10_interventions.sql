@@ -48,7 +48,7 @@ FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
 
 DROP TRIGGER IF EXISTS m_t_evenement_interventions_iu_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION update_altimetry_evenement_intervention() RETURNS trigger AS $$
 BEGIN
     UPDATE m_t_intervention SET longueur = NEW.longueur, pente = NEW.pente,
         altitude_minimum = NEW.altitude_minimum, altitude_maximum = NEW.altitude_maximum,
@@ -59,16 +59,41 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER m_t_evenement_interventions_iu_tgr
-AFTER INSERT OR UPDATE OF longueur, pente, 
+AFTER UPDATE OF longueur, pente, 
     altitude_minimum, altitude_maximum,
     denivelee_positive, denivelee_negative ON e_t_evenement
+FOR EACH ROW EXECUTE PROCEDURE update_altimetry_evenement_intervention();
+
+
+DROP TRIGGER IF EXISTS m_t_intervention_altimetry_iu_tgr ON m_t_intervention;
+
+CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
+DECLARE
+    elevation elevation_infos;
+BEGIN
+    SELECT geom, pente, altitude_minimum, altitude_maximum, denivelee_positive, denivelee_negative
+    FROM e_t_evenement WHERE id = NEW.topology_id INTO elevation;
+
+    NEW.longueur := ST_3DLength(elevation.geom3d);
+    NEW.pente := elevation.slope;
+    NEW.altitude_minimum := elevation.min_elevation;
+    NEW.altitude_maximum := elevation.max_elevation;
+    NEW.denivelee_positive := elevation.positive_gain;
+    NEW.denivelee_negative := elevation.negative_gain;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER m_t_intervention_altimetry_iu_tgr
+BEFORE UPDATE OF topology_id ON m_t_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
+
 
 -------------------------------------------------------------------------------
 -- Compute area
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS m_t_interventions_iu_tgr ON m_t_intervention;
+DROP TRIGGER IF EXISTS m_t_evenement_interventions_area_iu_tgr ON m_t_intervention;
 
 CREATE OR REPLACE FUNCTION update_area_intervention() RETURNS trigger AS $$
 BEGIN
@@ -77,6 +102,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER m_t_interventions_iu_tgr
-AFTER INSERT OR UPDATE OF largeur, hauteur ON m_t_intervention
+CREATE TRIGGER m_t_evenement_interventions_area_iu_tgr
+BEFORE INSERT OR UPDATE OF largeur, hauteur ON m_t_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_area_intervention();
