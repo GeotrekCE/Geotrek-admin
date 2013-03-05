@@ -294,7 +294,7 @@ MapEntity.History = L.Control.extend({
             }
         );
 
-        window.setInterval(function () {
+        window.setTimeout(function () {
             // Remove all entries returning 404 :) Useful to remove deleted entries
             $('#historylist li.history > a').each(function () {
                 var path = $(this).attr('href');
