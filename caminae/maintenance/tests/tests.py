@@ -99,6 +99,20 @@ class InterventionViewsTest(MapEntityTest):
         intervention = response.context['object']
         self.assertFalse(intervention.stake is None)
 
+    def test_form_deleted_projects(self):
+        self.login()
+        p1 = ProjectFactory.create()
+        p2 = ProjectFactory.create()
+        i = InterventionFactory.create(project=p1)
+        response = self.client.get(i.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        projects = form.fields['project'].queryset.all()
+        self.assertItemsEqual(projects, [p1, p2])
+        p2.delete()
+        projects = form.fields['project'].queryset.all()
+        self.assertItemsEqual(projects, [p1])
+
 
 class ProjectViewsTest(MapEntityTest):
     model = Project

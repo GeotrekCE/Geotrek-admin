@@ -65,7 +65,7 @@ class InterventionForm(CommonForm):
     geomfields = ('topology',
                   Fieldset(_("Mandays"),))
 
-    class Meta:
+    class Meta(CommonForm.Meta):
         model = Intervention
         exclude = ('deleted', 'geom', 'jobs')
 
@@ -108,16 +108,13 @@ class InterventionCreateForm(InterventionForm):
 
     class Meta(InterventionForm.Meta):
         exclude = InterventionForm.Meta.exclude + (
-            'length',
             'height',
             'width',
-            'area',
-            'slope',
             'material_cost',
             'heliport_cost',
             'subcontract_cost',
             'stake',
-            'project', )
+            'project',)
 
 
 class ProjectForm(CommonForm):

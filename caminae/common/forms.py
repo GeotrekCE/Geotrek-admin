@@ -3,12 +3,16 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDo
 
 import floppyforms as forms
 
+from caminae.core.models import NoDeleteMixin
 from caminae.authent.models import (default_structure, StructureRelated,
                                     StructureRelatedQuerySet)
 from caminae.mapentity.forms import MapEntityForm
 
 
 class CommonForm(MapEntityForm):
+
+    class Meta(MapEntityForm.Meta):
+        pass
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
@@ -23,7 +27,6 @@ class CommonForm(MapEntityForm):
                     structure = self.user.profile.structure
                 self.fields['structure'].initial = structure
 
-        # Filter structured choice fields according to user's structure
         for name, field in self.fields.items():
             if isinstance(field, django_forms.models.ModelChoiceField):
                 try:
@@ -33,5 +36,8 @@ class CommonForm(MapEntityForm):
                     modelfield = None
                 if isinstance(modelfield, (ForeignKey, ManyToManyField)):
                     model = modelfield.related.parent_model
+                    # Filter structured choice fields according to user's structure
                     if issubclass(model, StructureRelated):
                         field.queryset = StructureRelatedQuerySet.queryset_for_user(field.queryset, self.user)
+                    if issubclass(model, NoDeleteMixin):
+                        field.queryset = field.queryset.filter(deleted=False)
