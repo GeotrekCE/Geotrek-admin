@@ -2855,3 +2855,38 @@ Colonne aperçu ajoutée.
 :notes:
 
     Possible perte de performance. Solution: dénormaliser le champ aperçu en base.
+
+
+#474 - [BUG] LISTE DES CHANTIERS
+--------------------------------
+
+Fixé.
+
+#470 - [BUG] POIs d'un ITINERAIRE
+---------------------------------
+
+Fixé.
+
+#499 - FORMULAIRE ITINERAIRES LIES
+----------------------------------
+
+Fixé.
+
+#284 - Intervention (longueur et dénivelé)
+------------------------------------------
+
+Les champs dénormalisés sont mis à jour automatiquement via trigger, et ne sont plus proposés
+dans le formulaire d'édition.
+
+De même pour surface qui est calculé à partir de hauteur/largeur.
+
+
+#483 - OFFRE de RANDO - Calcul du dénivelé des itinéraires
+----------------------------------------------------------
+
+Désormais les champs liés à l'altimétrie sont stockés dans la table évènement.
+
+Si la géométrie de l'évènement n'est pas de type Point ou Ligne, les valeurs ne sont pas calculées.
+
+Pour une ligne, la pente est le ratio entre (Zmax - Zmin) et la longueur de la ligne projetée sur z=0.
+
