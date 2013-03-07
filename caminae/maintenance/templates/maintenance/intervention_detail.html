@@ -94,20 +94,13 @@
         </tr>
         {% endif %}
         <tr>
-            <th>{{ intervention|verbose:"length" }}</th>
-            <td>{{ intervention.length|stringformat:".2f" }}m</td>
-        </tr>
-        <tr>
             <th>{% trans "Surface" %}</th>
             <td>{% trans "H:" %} {{ intervention.height|stringformat:".2f" }}m ,
                 {% trans "W:" %} {{ intervention.width|stringformat:".2f" }}m :
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
             </td>
         </tr>
-        <tr>
-            <th>{{ intervention|verbose:"slope" }}</th>
-            <td>{{ intervention.slope|stringformat:".2f" }} m</td>
-        </tr>
+        {% include "core/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ intervention|verbose:"comments" }}</th>
             <td>{% if intervention.comments %}{{ intervention.comments|safe }}

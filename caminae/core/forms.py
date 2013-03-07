@@ -65,6 +65,10 @@ class PathForm(CommonForm):
     geomfields = ('geom',
                   'reverse_geom',)
 
+    class Meta:
+        model = Path
+        exclude = ('geom_cadastre',)
+
     def clean_geom(self):
         data = self.cleaned_data['geom']
         if not data.simple:
@@ -84,7 +88,3 @@ class PathForm(CommonForm):
             self.save_m2m()
 
         return path
-
-    class Meta:
-        model = Path
-        exclude = ('geom_cadastre',)

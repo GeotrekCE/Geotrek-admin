@@ -15,10 +15,12 @@ from .models import Intervention, Project
 
 class ManDayForm(forms.ModelForm):
     helper = FormHelper()
+
     def __init__(self, *args, **kwargs):
         super(ManDayForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
-        self.helper.layout = Layout(Div('nb_days', css_class="span1"),
+        self.helper.layout = Layout('id',
+                                    Div('nb_days', css_class="span1"),
                                     Div('job', css_class="span4"))
         self.fields['nb_days'].widget.attrs['class'] = 'span12'
 
@@ -28,10 +30,12 @@ ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, f
 
 class FundingForm(forms.ModelForm):
     helper = FormHelper()
+
     def __init__(self, *args, **kwargs):
         super(FundingForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
-        self.helper.layout = Layout(Div('amount', css_class="span1"),
+        self.helper.layout = Layout('id',
+                                    Div('amount', css_class="span1"),
                                     Div('organism', css_class="span4"))
         self.fields['amount'].widget.attrs['class'] = 'span12'
         self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
@@ -46,29 +50,25 @@ class InterventionForm(CommonForm):
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
-    modelfields = (
-            'name',
-            'date',
-            'status',
-            'disorders',
-            'type',
-            'comments',
-            'in_maintenance',
-            'length',
-            'height',
-            'width',
-            'area',
-            'slope',
-            'material_cost',
-            'heliport_cost',
-            'subcontract_cost',
-            'stake',
-            'project',
-            'infrastructure')
+    modelfields = ('name',
+                   'date',
+                   'status',
+                   'disorders',
+                   'type',
+                   'comments',
+                   'in_maintenance',
+                   'height',
+                   'width',
+                   'material_cost',
+                   'heliport_cost',
+                   'subcontract_cost',
+                   'stake',
+                   'project',
+                   'infrastructure')
     geomfields = ('topology',
                   Fieldset(_("Mandays"),))
 
-    class Meta:
+    class Meta(CommonForm.Meta):
         model = Intervention
         exclude = ('deleted', 'geom', 'jobs')
 
@@ -111,32 +111,28 @@ class InterventionCreateForm(InterventionForm):
 
     class Meta(InterventionForm.Meta):
         exclude = InterventionForm.Meta.exclude + (
-            'length',
             'height',
             'width',
-            'area',
-            'slope',
             'material_cost',
             'heliport_cost',
             'subcontract_cost',
             'stake',
-            'project', )
+            'project',)
 
 
 class ProjectForm(CommonForm):
-    modelfields = (
-            'name',
-            'type',
-            'domain',
-            'begin_year',
-            'end_year',
-            'constraint',
-            'cost',
-            'comments')
+    modelfields = ('name',
+                   'type',
+                   'domain',
+                   'begin_year',
+                   'end_year',
+                   'constraint',
+                   'cost',
+                   'comments')
     geomfields = ('contractors',
-            'project_owner',
-            'project_manager',
-            Fieldset(_("Fundings"),))  # no geom field in project
+                  'project_owner',
+                  'project_manager',
+                  Fieldset(_("Fundings"),))  # no geom field in project
 
     class Meta:
         model = Project

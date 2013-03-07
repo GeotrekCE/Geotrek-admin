@@ -294,19 +294,21 @@ MapEntity.History = L.Control.extend({
             }
         );
 
-        // Remove all entries returning 404 :) Useful to remove deleted entries
-        $('#historylist li.history > a').each(function () {
-            var path = $(this).attr('href');
-            $.ajax({
-                type: "HEAD",
-                url: path,
-                statusCode: {
-                    404: function() {
-                        history.remove(path);
+        window.setTimeout(function () {
+            // Remove all entries returning 404 :) Useful to remove deleted entries
+            $('#historylist li.history > a').each(function () {
+                var path = $(this).attr('href');
+                $.ajax({
+                    type: "HEAD",
+                    url: path,
+                    statusCode: {
+                        404: function() {
+                            history.remove(path);
+                        }
                     }
-                }
+                });
             });
-        });
+        }, 5000);  // Don't stress loading.
     },
 });
 

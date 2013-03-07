@@ -30,11 +30,14 @@
     {{ block.super }}
 
     {% if not trek.published %}
-        <div class="alert alert-error"><strong>{% trans "Not published" %}</strong></div>
+        <div class="alert alert-warning"><strong>{% trans "Not published" %}</strong></div>
     
     {% else %}
         {% if not trek.is_publishable %}
-            <div class="alert alert-error"><strong>{% trans "Trek is published, but loiks incomplete or has invalid geometry." %}</strong></div>
+            <div class="alert alert-error"><strong>{% trans "Trek is published but" %}</strong>
+            {% if not self.is_complete %}{% trans "looks incomplete;" %}{% endif %}
+            {% if not self.has_geom_valid %}{% trans "has invalid geometry;" %}{% endif %}
+            </div>
         {% endif %}
     {% endif %}
 
@@ -203,3 +206,9 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}
+
+
+{% block mappanel %}
+    {{ block.super }}
+    {% include "core/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile" %}
+{% endblock mappanel %}

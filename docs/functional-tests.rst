@@ -2835,3 +2835,58 @@ Si le POI n'a pas d'image, contrairement à l'itinéraire, aucune image n'est af
 
 Les boutons du carroussel ne sont visibles que s'il y a au moins une image.
 
+
+#508 - [BUG] Calcul topology complexe
+-------------------------------------
+
+Fixé.
+
+
+#492 - BUG - Selection objet sur la carte. 
+------------------------------------------
+
+Fixé.
+
+#502 - ADMIN - VUE LISTE - Itinéraires et POI
+---------------------------------------------
+
+Colonne aperçu ajoutée.
+
+:notes:
+
+    Possible perte de performance. Solution: dénormaliser le champ aperçu en base.
+
+
+#474 - [BUG] LISTE DES CHANTIERS
+--------------------------------
+
+Fixé.
+
+#470 - [BUG] POIs d'un ITINERAIRE
+---------------------------------
+
+Fixé.
+
+#499 - FORMULAIRE ITINERAIRES LIES
+----------------------------------
+
+Fixé.
+
+#284 - Intervention (longueur et dénivelé)
+------------------------------------------
+
+Les champs dénormalisés sont mis à jour automatiquement via trigger, et ne sont plus proposés
+dans le formulaire d'édition.
+
+De même pour surface qui est calculé à partir de hauteur/largeur.
+
+
+#483 - OFFRE de RANDO - Calcul du dénivelé des itinéraires
+----------------------------------------------------------
+
+Désormais les champs liés à l'altimétrie sont stockés dans la table évènement.
+
+Si la géométrie de l'évènement n'est pas de type Point ou Ligne, les valeurs ne sont pas calculées.
+
+Pour une ligne, la pente est le ratio entre (Zmax - Zmin) et la longueur de la ligne projetée sur z=0.
+

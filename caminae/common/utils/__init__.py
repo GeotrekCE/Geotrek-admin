@@ -1,5 +1,4 @@
 import math
-import mimetypes
 from urlparse import urljoin
 import logging
 
@@ -45,8 +44,12 @@ def elevation_profile(g, maxitems=None):
     """
     if g.geom_type == 'MultiLineString':
         profile = []
+        offset = 0.0
         for subcoords in g.coords:
-            profile.extend(elevation_profile(LineString(subcoords), maxitems=maxitems))
+            subline = LineString(subcoords)
+            subprofile = elevation_profile(subline, maxitems=maxitems)
+            profile.extend(subprofile)
+            offset += subprofile[-1][0]
         return profile
 
     step = 1
@@ -83,6 +86,7 @@ def wkt_to_geom(wkt, srid_from=None, silent=False):
             raise e
         return None
 
+
 def transform_wkt(wkt, srid_from=None, srid_to=None):
     """
     Changes SRID, and returns 3D wkt
@@ -104,6 +108,7 @@ def transform_wkt(wkt, srid_from=None, srid_to=None):
             logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
         return None
 
+
 def sqlfunction(function, *args):
     """
     Executes the SQL function with the specified args, and returns the result.
@@ -119,7 +124,7 @@ def sqlfunction(function, *args):
 
 
 def almostequal(v1, v2, precision=2):
-    return abs(v1 - v2) < 10**-precision
+    return abs(v1 - v2) < 10 ** -precision
 
 
 def smart_urljoin(base, path):

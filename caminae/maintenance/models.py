@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
 from caminae.authent.models import StructureRelated
-from caminae.core.models import NoDeleteMixin, Topology, Path, Trail
+from caminae.core.models import NoDeleteMixin, TrackingMixin, Topology, AltimetryMixin, Path, Trail
 from caminae.mapentity.models import MapEntityMixin
 from caminae.common.models import Organism
 from caminae.common.utils import classproperty
 from caminae.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
+class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
 
     in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
                                          db_column='maintenance', help_text=_(u"Recurrent"))
@@ -26,42 +25,36 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                                 help_text=_(u"Remarks and notes"))
 
     ## Technical information ##
-    length = models.FloatField(default=0.0, verbose_name=_(u"Length"), db_column='longueur')
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
-    area = models.IntegerField(default=0, verbose_name=_(u"Area"), db_column='surface')
-    slope = models.IntegerField(default=0, verbose_name=_(u"Slope"), db_column='pente')
+    area = models.IntegerField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
 
     ## Costs ##
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
 
-    #TODO: remove this --> abstract class
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
-
     """ Topology can be of type Infrastructure or of own type Intervention """
-    topology = models.ForeignKey(Topology, null=True,  #TODO: why null ?
+    topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
                                  related_name="interventions",
                                  verbose_name=_(u"Interventions"))
+    # AltimetyMixin for denormalized fields from related topology, updated via trigger.
 
     stake = models.ForeignKey('core.Stake', null=True,
-            related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
+                              related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')
 
     type = models.ForeignKey('InterventionType', null=True, blank=True,
-            verbose_name=_(u"Type"), db_column='type')
+                             verbose_name=_(u"Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-            db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
+                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
 
-    jobs = models.ManyToManyField('InterventionJob', through='ManDay',
-            verbose_name=_(u"Jobs"))
+    jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_(u"Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-            verbose_name=_(u"Project"), db_column='chantier')
+                                verbose_name=_(u"Project"), db_column='chantier')
 
     # Special manager
     objects = Topology.get_manager_cls()()
@@ -84,10 +77,23 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
                     stake = path.stake
         return stake
 
+    def reload(self):
+        tmp = self.__class__.objects.get(pk=self.pk)
+        self.date_insert = tmp.date_insert
+        self.date_update = tmp.date_update
+        self.area = tmp.area
+        self.length = tmp.length
+        self.min_elevation = tmp.min_elevation
+        self.max_elevation = tmp.max_elevation
+        self.slope = tmp.slope
+        self.ascent = tmp.ascent
+        self.descent = tmp.descent
+
     def save(self, *args, **kwargs):
         if self.stake is None:
             self.stake = self.default_stake()
         super(Intervention, self).save(*args, **kwargs)
+        self.reload()
 
     @property
     def on_infrastructure(self):
@@ -109,10 +115,9 @@ class Intervention(MapEntityMixin, StructureRelated, NoDeleteMixin):
     @property
     def infrastructure_display(self):
         if self.on_infrastructure:
-            return '<img src="%simages/%s-16.png" title="%s">' % (
-                    settings.STATIC_URL,
-                    self.topology.kind.lower(),
-                    unicode(_(self.topology.kind)))
+            return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                  self.topology.kind.lower(),
+                                                                  unicode(_(self.topology.kind)))
         return ''
 
     @property
@@ -274,7 +279,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
+class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
@@ -288,26 +293,15 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     type = models.ForeignKey('ProjectType', null=True, blank=True,
                              verbose_name=_(u"Project type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
-                             verbose_name=_(u"Project domain"), db_column='domaine')
-
-
-    date_insert = models.DateTimeField(verbose_name=_(u"Insertion date"), auto_now_add=True, db_column='date_insert')
-    date_update = models.DateTimeField(verbose_name=_(u"Update date"), auto_now=True, db_column='date_update')
-
-    ## Relations ##
+                               verbose_name=_(u"Project domain"), db_column='domaine')
     contractors = models.ManyToManyField('Contractor', related_name="projects",
-            db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
-
+                                         db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
     project_owner = models.ForeignKey(Organism, related_name='own',
-            verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
-
+                                      verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
     project_manager = models.ForeignKey(Organism, related_name='manage',
-            verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
+                                        verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
+    founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_(u"Founders"))
 
-    founders = models.ManyToManyField(Organism, through='Funding',
-            verbose_name=_(u"Founders"))
-
-    # Special manager
     objects = Topology.get_manager_cls()()
 
     class Meta:
@@ -353,7 +347,7 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
     def geomfield(cls):
         from django.contrib.gis.geos import LineString
         # Fake field, TODO: still better than overkill code in views, but can do neater.
-        c = GeometryCollection([LineString((0,0), (1,1))], srid=settings.SRID)
+        c = GeometryCollection([LineString((0, 0), (1, 1))], srid=settings.SRID)
         c.name = 'geom'
         return c
 
@@ -398,15 +392,15 @@ class Project(MapEntityMixin, StructureRelated, NoDeleteMixin):
 
     @classmethod
     def path_projects(cls, path):
-        return cls.objects.filter(interventions__in=path.interventions)
+        return cls.objects.filter(interventions__in=path.interventions).distinct()
 
     @classmethod
     def trail_projects(cls, trail):
-        return cls.objects.filter(interventions__in=trail.interventions)
+        return cls.objects.filter(interventions__in=trail.interventions).distinct()
 
     @classmethod
     def topology_projects(cls, topology):
-        return cls.objects.filter(interventions__in=topology.interventions)
+        return cls.objects.filter(interventions__in=topology.interventions).distinct()
 
     def edges_by_attr(self, interventionattr):
         pks = []

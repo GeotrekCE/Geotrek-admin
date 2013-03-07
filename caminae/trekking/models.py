@@ -15,7 +15,7 @@ import simplekml
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
-from caminae.common.utils import elevation_profile
+from caminae.common.utils import elevation_profile, classproperty
 from caminae.maintenance.models import Intervention, Project
 
 logger = logging.getLogger(__name__)
@@ -53,6 +53,17 @@ class PicturesMixin(object):
             return thumbnailer.get_thumbnail(aliases.get('small-square'))
         return None
 
+    @classproperty
+    def thumbnail_verbose_name(self):
+        return _("Thumbnail")
+
+    @property
+    def thumbnail_display(self):
+        thumbnail = self.thumbnail
+        if thumbnail is None:
+            return _("None")
+        return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
+
     @property
     def serializable_thumbnail(self):
         th = self.thumbnail
@@ -72,12 +83,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                help_text=_(u"Arrival description"), db_column='arrivee')
     published = models.BooleanField(verbose_name=_(u"Published"),
                                     help_text=_(u"Online"), db_column='public')
-
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
@@ -258,42 +263,31 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                          coords=[place.coords])
         return kml._genkml()
 
-    def is_publishable(self):
-        """A trek should be a LineString, even if it's a loop.
-        It should also have a description, etc.
+    def is_complete(self):
+        """It should also have a description, etc.
         """
-        return self.geom and self.geom.geom_type.lower() == 'linestring' and \
-               self.departure and self.arrival and self.description and self.description_teaser
+        mandatory = ['departure', 'arrival', 'description_teaser']
+        for f in mandatory:
+            if not getattr(self, f):
+                return False
+        return True
 
-    def refresh_altimetry(self):
-        # Store 3D profile information, take them from aggregated paths
-        # instead of using PostGIS trigger on each point.
-        ascent = 0
-        descent = 0
-        minele = 0
-        maxele = 0
-        for path in self.paths.all():
-            ascent += path.ascent
-            descent += path.descent
-            if minele == 0 or path.min_elevation < minele:
-                minele = path.min_elevation
-            if path.max_elevation > maxele:
-                maxele = path.max_elevation
-        self.ascent = ascent
-        self.descent = descent
-        self.min_elevation = minele
-        self.max_elevation = maxele
+    def has_geom_valid(self):
+        """A trek should be a LineString, even if it's a loop.
+        """
+        return self.geom and self.geom.geom_type.lower() == 'linestring'
+
+    def is_publishable(self):
+        return self.is_complete() and self.has_geom_valid()
 
     def save(self, *args, **kwargs):
-        if self.pk:
-            self.refresh_altimetry()
         super(Trek, self).save(*args, **kwargs)
         if self.deleted:
             return
         # Create relationships automatically
         # Same departure
         if self.departure.strip() != '':
-            for t in Trek.objects.existing().filter(departure=self.departure):
+            for t in Trek.objects.existing().exclude(pk=self.pk).filter(departure=self.departure):
                 r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
                 r.has_common_departure = True
                 r.save()

@@ -1,11 +1,6 @@
 {% extends "mapentity/entity_detail.html" %}
 {% load i18n static field_verbose_name %}
 
-{% block extrahead %}
-    {{ block.super }}
-    <script type="text/javascript" src="{% static "mapentity/jquery.sparkline.js" %}"></script>
-{% endblock extrahead %}
-
 {% block extratitle %}{% endblock extratitle %}
 
 {% block detailspanel %}
@@ -80,34 +75,5 @@
 
 {% block mappanel %}
     {{ block.super }}
-    <div id="altitudegraph">
-        <h4>{% trans "Altitude profile" %}</h4>
-        <p class="axislabel">{% trans "Altitude (m)" %}</p>
-        <span id="profilealtitude"></span> <span class="axislabel" style="position:relative; top:85px">{% trans "Distance (m)" %}</span>
-        <p id="mouseoverprofil" class="axislabel" >&nbsp;</p>
-    </div>
-
-    <div class="span11"></div><!-- clear -->
+    {% include "core/altimetric_profile_fragment.html" with profile_url="core:path_profile" %}
 {% endblock mappanel %}
-
-{% block extrabody %}
-    {{ block.super }}
-    <script type="text/javascript">
-        $(function() {
-            /* 
-             * Load altimetric profile from JSON
-             */
-            $.getJSON("{% url core:path_profile path.pk %}", function(data) {
-                $('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
-                $('#profilealtitude').bind('sparklineRegionChange', function(ev) {
-                    var sparkline = ev.sparklines[0],
-                        region = sparkline.getCurrentRegionFields();
-                        value = region.y;
-                    $('#mouseoverprofil').text(Math.round(region.x) +" m");
-                }).bind('mouseleave', function() {
-                    $('#mouseoverprofil').text('');
-                });
-            });
-        });
-    </script>
-{% endblock extrabody %}
