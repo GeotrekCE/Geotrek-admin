@@ -9,6 +9,10 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{{ object.type }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description" }}</th>
             <td>{% if path.description %}{{ path.description|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
