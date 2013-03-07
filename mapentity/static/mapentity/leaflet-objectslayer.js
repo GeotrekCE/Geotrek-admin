@@ -17,7 +17,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this._objects = {};
         // Hold the currently visible layers (subset of _objects)
         this._current_objects = {};
-        this.rtree = new RTree();
         this.loading = false;
 
         var options = options || {};
@@ -68,51 +67,11 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
     },
 
-    _rtbounds: function (bounds) {
-        return {x: bounds.getSouthWest().lng,
-                y: bounds.getSouthWest().lat,
-                w: bounds.getSouthEast().lng - bounds.getSouthWest().lng,
-                h: bounds.getNorthWest().lat - bounds.getSouthWest().lat};
-    },
-
     _mapObjects: function (geojson, layer) {
         var pk = geojson.properties.pk
         this._objects[pk] = this._current_objects[pk] = layer;
         layer.properties = geojson.properties;
-        
-        // Spatial indexing
-        if (!this.options.indexing)
-            return;
-        var bounds = null;
-        if (layer instanceof L.MultiPolyline) {
-            bounds = new L.LatLngBounds();
-            for (var i in layer._layers) {
-                bounds.extend(layer._layers[i].getBounds());
-            }
-        }
-        else if (layer instanceof L.FeatureGroup) {
-            // Leaflet uses project() in Circle's getBounds() method.
-            // We cannot call it yet, we are adding the feature to the map.
-            // Thus, rewrote that part and switch on Circle.
-            bounds = new L.LatLngBounds();
-            for (var i in layer._layers) {
-                var sublayer = layer._layers[i];
-                if (sublayer instanceof L.Circle)
-                    bounds.extend(sublayer.getLatLng());
-                else
-                    bounds.extend(sublayer.getBounds());
-            }
-        }
-        else if (typeof layer.getLatLngs == 'function') {
-            bounds = layer.getBounds();
-        }
-        else if (typeof layer.getLatLng == 'function') {
-            bounds = new L.LatLngBounds(layer.getLatLng(), layer.getLatLng());
-        }
-        if (bounds.getSouthWest() && bounds.getNorthEast())
-            this.rtree.insert(this._rtbounds(bounds), layer);
-        else
-            console.error("No bounds found for layer " + pk);
+        this.indexLayer(layer);
     },
 
     load: function (url, force) {
@@ -146,19 +105,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
 
     getPk: function(layer) {
         return layer.properties && layer.properties.pk;
-    },
-
-    search: function (bounds) {
-        var rtbounds = this._rtbounds(bounds);
-        return this.rtree.search(rtbounds) || [];
-    },
-
-    searchBuffer: function (latlng, radius) {
-        var around = L.latLngBounds(L.latLng(latlng.lat - radius,
-                                             latlng.lng - radius),
-                                    L.latLng(latlng.lat + radius,
-                                             latlng.lng + radius));
-        return this.search(around);
     },
 
     // Show all layers matching the pks
@@ -231,3 +177,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
     }
 });
+
+
+L.ObjectsLayer.include(L.LayerIndexMixin);
