@@ -203,6 +203,9 @@ tr.selected-row td {
 #list-panel .table td {
     padding: 5px;
     white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #list-panel .pagination a, .pagination span {
     line-height: 30px;
