@@ -25,7 +25,7 @@ setup(
         'psycopg2 == 2.4.1',
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'gpxpy == 0.7.1',
-        'appy == 0.8.2',
+        'appy == 0.8.3',
         'django-shapes == 0.2.0',
         'django-modeltranslation == 0.5b1',
         'django-floppyforms == 1.0',
