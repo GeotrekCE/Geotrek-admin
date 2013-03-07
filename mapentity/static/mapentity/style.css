@@ -221,7 +221,7 @@ tr.selected-row td {
     opacity: 0.3;
 }
 
-#entitylist li.active img {
+#entitylist li.active img, #entitylist li a:hover img {
     opacity: 1.0;
 }
 

@@ -101,6 +101,10 @@ class MapEntityFilterSet(FilterSet):
             elif isinstance(field, django_forms.ChoiceField):
                 field.empty_label = field.label
                 self.__set_placeholder(field, field.widget)
+            elif isinstance(field, django_forms.NullBooleanField):
+                choices = [(u'1', field.label)] + field.widget.choices[1:]
+                field.widget.choices = choices
+                self.__set_placeholder(field, field.widget)
             else:
                 self.__set_placeholder(field, field.widget)
 
