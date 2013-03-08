@@ -133,6 +133,9 @@
                 objectUrl: getUrl,
                 style: {opacity: 1.0, fillOpacity:0.7, color: window.SETTINGS.map.colors.others}
             });
+            objectsLayer.on('highlight select', function (e) {
+                e.layer.bringToFront();
+            });
             map.addLayer(objectsLayer);
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
