@@ -29,6 +29,10 @@ class MapEntityForm(forms.ModelForm):
     class Meta:
         pass
 
+    # TODO: this is obvisouly wrong MapEntity should not depend on core
+    # TODO: Django inserts Media in <head> https://code.djangoproject.com/ticket/13978
+    MEDIA_JS = ("core/formfield.js",)
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(MapEntityForm, self).__init__(*args, **kwargs)

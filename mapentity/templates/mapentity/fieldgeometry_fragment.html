@@ -5,17 +5,18 @@
     {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
 </style>
 
-{% block requirements %}
-    <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
-{% endblock requirements %}
-
 {% if display_wkt %}<p> Geom debugging window:</p>{% endif %}
 {% include "floppyforms/textarea.html" %}
 
 <script type="text/javascript">
-if (! {{ module }}); var {{ module }} = {};
+// Lazy load : TODO : remove after refactor of formfield.js FormField
+var FormField = window.FormField || {};
+var MapEntity = window.MapEntity || {};
+
+var {{ module }} = {{ module }} || {};
 
 {% block settings %}
+
 var {{ module }}_settings = {
     'enableDrawing': {
         'is_polygon': {{ is_polygone|yesno:"true,false" }},
@@ -45,9 +46,7 @@ var {{ module }}_settings = {
 };
 {% endblock settings %}
 
-FormField.makeModule({{ module }}, {{ module }}_settings);
-
-// Callback
+// Django Leaflet callback
 {{ module }}Init = function (map, bounds) {
     {% smart_include "mapinit" %}
     
@@ -68,5 +67,8 @@ FormField.makeModule({{ module }}, {{ module }}_settings);
 };
 
 
+$(document).ready(function (e) {
+    FormField.makeModule({{ module }}, {{ module }}_settings);
+});
 
 </script>

@@ -64,7 +64,7 @@
             <div id="maphead">
                 {% smart_include "maphead" %}
             </div>
-            {% leaflet_map "mainmap" fitextent=False %}
+            <div id="mainmap"/>
         {% endblock mainmap %}
         </div>
     </div>
@@ -75,6 +75,8 @@
 
 {% block extrabody %}
     {{ block.super }}
+
+    {% leaflet_map "mainmap" fitextent=False creatediv=False %}
 
     <script type="text/javascript">
         function adjustDisplayLength(dTable) {
