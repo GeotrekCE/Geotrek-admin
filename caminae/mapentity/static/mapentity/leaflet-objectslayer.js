@@ -152,8 +152,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         if (on) {
             layer._defaultStyle = layer._defaultStyle ? layer._defaultStyle : this.options.styles.default;
             layer.setStyle(this.options.styles.highlight);
-            // Pop on top
-            if (this._map) this._map.removeLayer(layer).addLayer(layer);
+            this.fire('highlight', {layer: layer});
         }
         else {
             layer.setStyle(layer._defaultStyle);
@@ -168,8 +167,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         if (on) {
             layer._defaultStyle = this.options.styles.select;
             layer.setStyle(layer._defaultStyle);
-            // Pop on top
-            if (this._map) this._map.removeLayer(layer).addLayer(layer);
+            this.fire('select', {layer: layer});
         }
         else {
             layer._defaultStyle = this.options.styles.default;
