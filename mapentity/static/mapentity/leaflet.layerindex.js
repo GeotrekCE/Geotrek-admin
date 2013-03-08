@@ -29,7 +29,7 @@ L.LayerIndexMixin = {
     },
 
     indexLayer: function (layer) {
-        if (!!!this.options.indexing)
+        if (this.options.indexing !== undefined && !this.options.indexing)
             return;
 
         var bounds = this._layerBounds(layer);
