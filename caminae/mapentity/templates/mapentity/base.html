@@ -28,15 +28,15 @@
     </style>
     {% endif %}
 
+    {% block extracss %}
+    {% endblock extracss %}
+  {% endcompress %}
+
     {% if DEBUG %}
         <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
     {% else %}
         <script type="text/javascript" src="{% static "js/jquery.min.js" %}"></script>
     {% endif %}
-
-    {% block extracss %}
-    {% endblock extracss %}
-  {% endcompress %}
 
 {% endblock head %}
 
