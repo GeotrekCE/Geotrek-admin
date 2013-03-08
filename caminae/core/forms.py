@@ -41,6 +41,11 @@ class TopologyForm(CommonForm):
     class Meta:
         exclude = ('offset', 'geom')
 
+    MEDIA_JS = ("core/dijkstra.js",
+                "core/multipath.js",
+                "core/topology_helper.js",
+                "core/debugging.js") + CommonForm.MEDIA_JS
+
 
 class PathForm(CommonForm):
     geom = forms.gis.LineStringField(widget=SnappedLineStringWidget)

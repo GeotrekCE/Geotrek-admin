@@ -46,6 +46,11 @@
 
 {% block extrabody %}
     {{ block.super }}
+
+    {% for m in form.MEDIA_JS %}
+        <script type="text/javascript" src="{% static m %}"></script>
+    {% endfor %}
+
     <script type="text/javascript">
         $('#button-id-cancel').click(function (){ window.location = '{{ object.get_list_url }}';});
     </script>

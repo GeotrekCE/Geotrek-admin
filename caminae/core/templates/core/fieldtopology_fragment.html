@@ -1,21 +1,6 @@
 {% extends "mapentity/fieldgeometry_fragment.html" %}
 {% load static mapentity %}
 
-
-{% block requirements %}
-
-    {{ block.super }}
-    <script type="text/javascript" src="{% static "core/dijkstra.js" %}"></script>
-    <script type="text/javascript" src="{% static "core/multipath.js" %}"></script>
-    <script type="text/javascript" src="{% static "core/topology_helper.js" %}"></script>
-    {# keep this for development - provides helper #}
-
-    <script type="text/javascript" src="{% static "core/formfield.js" %}"></script>
-    <script type="text/javascript" src="{% static "core/debugging.js" %}"></script>
-
-{% endblock requirements %}
-
-
 {% block settings %}
 
     {{ block.super }}
