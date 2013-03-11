@@ -58,17 +58,17 @@
           <li class="history {% if view == "list" %}{{ modelname }} active{% endif %}">
             <div id="entitylist-dropdown" class="btn-group">
                   <button class="btn {% if view == "list" %}disabled{% endif %}" {% if view != "list" %} onclick="javascript:location='{% url home %}';"{% endif %}>{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
-                  <button class="btn dropdown-toggle {% if view == "list" %}disabled{% endif %}"data-toggle="dropdown">
+                  <button class="btn dropdown-toggle {% if view == "list" %}disabled{% endif %}" data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a href="{% url core:path_list %}"><img src="{% static "images/path-16.png" %}"></img> {% trans "Path" %}</a></li>
-                    <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/intervention-16.png" %}"></img> {% trans "Intervention" %}</a></li>
-                    <li><a href="{% url maintenance:project_list %}"><img src="{% static "images/project-16.png" %}"></img> {% trans "Project" %}</a></li>
-                    <li><a href="{% url infrastructure:signage_list %}"><img src="{% static "images/signage-16.png" %}"></img> {% trans "Signage" %}</a></li>
-                    <li><a href="{% url infrastructure:infrastructure_list %}"><img src="{% static "images/infrastructure-16.png" %}"></img> {% trans "Infrastructure" %}</a></li>
-                    <li><a href="{% url trekking:trek_list %}"><img src="{% static "images/trek-16.png" %}"></img> {% trans "Trek" %}</a></li>
-                    <li><a href="{% url trekking:poi_list %}"><img src="{% static "images/poi-16.png" %}"></img> {% trans "POI" %}</a></li>
+                    <li><a href="{% url core:path_list %}"><img src="{% static "images/path-16.png" %}"/> {% trans "Path" %}</a></li>
+                    <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/intervention-16.png" %}"/> {% trans "Intervention" %}</a></li>
+                    <li><a href="{% url maintenance:project_list %}"><img src="{% static "images/project-16.png" %}"/> {% trans "Project" %}</a></li>
+                    <li><a href="{% url infrastructure:signage_list %}"><img src="{% static "images/signage-16.png" %}"/> {% trans "Signage" %}</a></li>
+                    <li><a href="{% url infrastructure:infrastructure_list %}"><img src="{% static "images/infrastructure-16.png" %}"/> {% trans "Infrastructure" %}</a></li>
+                    <li><a href="{% url trekking:trek_list %}"><img src="{% static "images/trek-16.png" %}"/> {% trans "Trek" %}</a></li>
+                    <li><a href="{% url trekking:poi_list %}"><img src="{% static "images/poi-16.png" %}"/> {% trans "POI" %}</a></li>
                   </ul>
             </div>
           </li>
