@@ -43,11 +43,18 @@ Keep previous versions in separate folders (**recommended**) :
 
 ::
 
+    # Shutdown previous version
+    ../previous-version/bin/supervisorctl stop all
+    sudo service supervisor stop
+
     # Copy previous settings
     cp ../previous-version/etc/settings.ini  etc/settings.ini
 
     # Re-run install
     ./install.sh
+
+    # Reload configuration
+    sudo service supervisor restart
 
 
 Or instead, if you prefer, you can overwrite the source code (or use symlinks), 
