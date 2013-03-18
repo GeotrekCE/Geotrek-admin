@@ -19,7 +19,7 @@ setup(
     url='http://makina-corpus.com',
     description="Caminae",
     long_description=open(os.path.join(here, 'README.rst')).read(),
-    install_requires = [
+    install_requires=[
         'django',  # pinned by buildout
         'South == 0.7.6',
         'psycopg2 == 2.4.1',
@@ -35,18 +35,18 @@ setup(
         'Pillow == 1.7.8',
         'easy-thumbnails == 1.1',
         'simplekml == 1.2.1',
-        'django-appypod == 0.0.1',
-        'django-screamshot',   # pinned by buildout
+        'django-appypod',   # pinned by buildout
+        'django-screamshot',  # pinned by buildout
         'django-leaflet',   # pinned by buildout
         'django-geojson',   # pinned by buildout
         'django-extended-choices',  # pinned by buildout
         'django-tinymce',  # pinned by buildout
     ] + test_requirements,
-    tests_requires = test_requirements,
+    tests_requires=test_requirements,
     packages=find_packages(),
-    classifiers  = ['Natural Language :: English',
-                    'Environment :: Web Environment',
-                    'Framework :: Django',
-                    'Development Status :: 5 - Production/Stable',
-                    'Programming Language :: Python :: 2.5'],
+    classifiers=['Natural Language :: English',
+                 'Environment :: Web Environment',
+                 'Framework :: Django',
+                 'Development Status :: 5 - Production/Stable',
+                 'Programming Language :: Python :: 2.5'],
 )
