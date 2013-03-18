@@ -356,6 +356,7 @@ class TrekNetwork(models.Model):
         db_table = 'o_b_reseau'
         verbose_name = _(u"Trek network")
         verbose_name_plural = _(u"Trek networks")
+        ordering = ['network']
 
     def __unicode__(self):
         return self.network
@@ -369,6 +370,7 @@ class Usage(models.Model):
 
     class Meta:
         db_table = 'o_b_usage'
+        ordering = ['usage']
 
     def __unicode__(self):
         return self.usage
@@ -387,6 +389,7 @@ class Route(models.Model):
         db_table = 'o_b_parcours'
         verbose_name = _(u"Route")
         verbose_name_plural = _(u"Routes")
+        ordering = ['route']
 
     def __unicode__(self):
         return self.route
@@ -401,6 +404,7 @@ class DifficultyLevel(models.Model):
         db_table = 'o_b_difficulte'
         verbose_name = _(u"Difficulty level")
         verbose_name_plural = _(u"Difficulty levels")
+        ordering = ['id']
 
     def __unicode__(self):
         return self.difficulty
@@ -453,6 +457,7 @@ class WebLinkCategory(models.Model):
         db_table = 'o_b_web_category'
         verbose_name = _(u"Web link category")
         verbose_name_plural = _(u"Web link categories")
+        ordering = ['label']
 
     def __unicode__(self):
         return u"%s" % self.label
@@ -473,6 +478,7 @@ class Theme(models.Model):
         db_table = 'o_b_theme'
         verbose_name = _(u"Theme")
         verbose_name_plural = _(u"Theme")
+        ordering = ['label']
 
     def __unicode__(self):
         return self.label
@@ -562,6 +568,7 @@ class POIType(models.Model):
         db_table = 'o_b_poi'
         verbose_name = _(u"POI")
         verbose_name_plural = _(u"POI")
+        ordering = ['label']
 
     def __unicode__(self):
         return self.label

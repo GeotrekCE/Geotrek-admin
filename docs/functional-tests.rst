@@ -2890,3 +2890,22 @@ Si la géométrie de l'évènement n'est pas de type Point ou Ligne, les valeurs
 
 Pour une ligne, la pente est le ratio entre (Zmax - Zmin) et la longueur de la ligne projetée sur z=0.
 
+
+
+==========================
+Sprint 14 - Version 0.14.0
+==========================
+
+
+#299 - Ordres des bibliothèques
+-------------------------------
+
+Par défault, l'ordre est celui retourné par les requêtes en base. Par défaut, l'ordre est
+presque aléatoire.
+
+Désormais, les listes déroulantes des bibliothèques sont triées par ordre alphabétique. À l'exception des *status d'intervention* et des *niveaux de difficulté* qui sont triés dans l'ordre de la colonne ``id``.
+
+:notes:
+
+    Pour les bibliothèques multilingue, le tri s'effectue sur la valeur dans la langue du projet (setting ``language``), et non celle de l'utilisateur.
+

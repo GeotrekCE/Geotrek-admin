@@ -47,6 +47,7 @@ class InfrastructureType(StructureRelated):
         db_table = 'a_b_amenagement'
         verbose_name = _(u"Infrastructure Type")
         verbose_name_plural = _(u"Infrastructure Types")
+        ordering = ['label', 'type']
 
     def __unicode__(self):
         return self.label

@@ -228,6 +228,7 @@ class InterventionType(StructureRelated):
         db_table = 'm_b_intervention'
         verbose_name = _(u"Intervention's type")
         verbose_name_plural = _(u"Intervention's types")
+        ordering = ['type']
 
     def __unicode__(self):
         return self.type
@@ -241,6 +242,7 @@ class InterventionDisorder(StructureRelated):
         db_table = 'm_b_desordre'
         verbose_name = _(u"Intervention's disorder")
         verbose_name_plural = _(u"Intervention's disorders")
+        ordering = ['disorder']
 
     def __unicode__(self):
         return self.disorder
@@ -255,6 +257,7 @@ class InterventionJob(StructureRelated):
         db_table = 'm_b_fonction'
         verbose_name = _(u"Intervention's job")
         verbose_name_plural = _(u"Intervention's jobs")
+        ordering = ['job']
 
     def __unicode__(self):
         return self.job
@@ -308,6 +311,7 @@ class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
         db_table = 'm_t_chantier'
         verbose_name = _(u"Project")
         verbose_name_plural = _(u"Projects")
+        ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -421,6 +425,7 @@ class ProjectType(StructureRelated):
         db_table = 'm_b_chantier'
         verbose_name = _(u"Project type")
         verbose_name_plural = _(u"Project types")
+        ordering = ['type']
 
     def __unicode__(self):
         return self.type
@@ -434,6 +439,7 @@ class ProjectDomain(StructureRelated):
         db_table = 'm_b_domaine'
         verbose_name = _(u"Project domain")
         verbose_name_plural = _(u"Project domains")
+        ordering = ['domain']
 
     def __unicode__(self):
         return self.domain
@@ -447,6 +453,7 @@ class Contractor(StructureRelated):
         db_table = 'm_b_prestataire'
         verbose_name = _(u"Contractor")
         verbose_name_plural = _(u"Contractors")
+        ordering = ['contractor']
 
     def __unicode__(self):
         return self.contractor

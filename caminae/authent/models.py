@@ -33,6 +33,7 @@ class Structure(models.Model):
     class Meta:
         verbose_name = _(u"Structure")
         verbose_name_plural = _(u"Structures")
+        ordering = ['name']
 
 
 def default_structure():
