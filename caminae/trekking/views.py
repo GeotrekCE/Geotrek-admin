@@ -42,7 +42,13 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'themes', 'usages', 'access', 'route',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships']
+               'cities', 'districts', 'relationships', 'map_image_url']
+
+    def dispatch(self, *args, **kwargs):
+        handler = BaseDetailView.dispatch(self, *args, **kwargs)
+        # Screenshot of object map
+        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+        return handler
 
     def get_context_data(self, **kwargs):
         ctx = {}
