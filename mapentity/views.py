@@ -385,7 +385,7 @@ class MapEntityDocument(DetailView):
     def __init__(self, *args, **kwargs):
         super(MapEntityDocument, self).__init__(*args, **kwargs)
         # Try to load template for each lang and object detail
-        name_for = lambda app, object, lang: "%s/%s%s%s.odt" % (app, object, lang, self.template_name_suffix)
+        name_for = lambda app, modelname, lang: "%s/%s%s%s.odt" % (app, modelname, lang, self.template_name_suffix)
         langs = ['_%s' % lang for lang, langname in settings.LANGUAGES]
         langs.append('')   # Will also try without lang
         found = None
@@ -419,6 +419,7 @@ class MapEntityDocument(DetailView):
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         context['MEDIA_URL'] = self.request.build_absolute_uri(settings.MEDIA_URL)[:-1]
         context['MEDIA_ROOT'] = settings.MEDIA_ROOT
+        context['_'] = lambda s: _(s)
         return context
 
     def dispatch(self, *args, **kwargs):
