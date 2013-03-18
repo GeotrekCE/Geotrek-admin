@@ -127,7 +127,8 @@ class MapEntityMixin(object):
             os.mkdir(basefolder)
         return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
 
-    def get_map_image_url(self):
+    @property
+    def map_image_url(self):
         return os.path.join(settings.MEDIA_URL, 'maps', '%s-%s.png' % (self._meta.module_name, self.pk))
 
     @models.permalink
