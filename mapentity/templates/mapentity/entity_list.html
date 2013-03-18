@@ -196,12 +196,15 @@
 
             // We can have several contexts in the application (mainly 'detail' and 'list')
             // Using prefixes is a way to manage this.
-            MapEntity.Context.restoreFullContext(map, {
-                filter: '#mainfilter',
-                datatable: dt,
-                objectsname: '{{ objectsname|title }}',
-                prefix: 'list',
-            });
+            MapEntity.Context.restoreFullContext(map,
+                getURLParameter('context'),
+                {
+                    filter: '#mainfilter',
+                    datatable: dt,
+                    objectsname: '{{ objectsname|title }}',
+                    prefix: 'list',
+                }
+            );
             $(window).unload(function () {
                 MapEntity.Context.saveFullContext(map, {
                     filter: '#mainfilter',

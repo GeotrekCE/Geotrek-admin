@@ -42,7 +42,15 @@ function detailmapInit(map, bounds) {
                  {clickable: false,
                   icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
     {% endif %}
-    
+
+    // Restore map context, only for screenshoting purposing
+    var context = getURLParameter('context');
+    if (context && typeof context == 'object') {
+        delete context.mapview;
+        delete context.maplayers;
+        MapEntity.Context.restoreFullContext(map, context);
+    }
+
     // Save map context : will be restored on next form (e.g. interventions, ref story #182)
     $(window).unload(function () {
         MapEntity.Context.saveFullContext(map, {prefix: 'detail'});

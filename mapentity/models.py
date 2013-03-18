@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+import urllib
+import json
 
 from django.db import models
 from django.conf import settings
@@ -115,6 +117,8 @@ class MapEntityMixin(object):
                 os.remove(path)
         # Run head-less capture (takes time)
         url = smart_urljoin(rooturl, self.get_detail_url())
+        printcontext = dict(mapsize=dict(width=500, height=400))
+        url += '?context=' + json.dumps(printcontext)
         with open(path, 'wb') as f:
             casperjs_capture(f, url, selector='.map-panel')
         if not os.path.exists(path) or os.path.getsize(path) == 0:
