@@ -87,9 +87,10 @@ load_data:
 	bin/django loaddata basic
 	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
-deploy: install clean_harmless all_compilemessages
+deploy: install clean_harmless
 	bin/buildout -Nvc buildout-prod.cfg
 	touch lib/parts/django/django_extrasettings/settings_production.py
+	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --clear --noinput
