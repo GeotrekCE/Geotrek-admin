@@ -47,6 +47,13 @@ class PicturesMixin(object):
         return serialized
 
     @property
+    def picture_print(self):
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            return thumbnailer.get_thumbnail(aliases.get('print'))
+        return None
+
+    @property
     def thumbnail(self):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)

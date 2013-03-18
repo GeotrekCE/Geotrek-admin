@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
@@ -123,8 +125,14 @@ class TrekDocument(MapEntityDocument):
 class TrekDocumentPublic(TrekDocument):
     template_name_suffix = "_public"
 
+    def get_context_data(self, **kwargs):
+        context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
+        trek = self.get_object()
+        context['picturepath'] = os.path.join(settings.MEDIA_ROOT, trek.picture_print.name)
+        return context
 
-class TrekDocumentPublicPOI(TrekDocument):
+
+class TrekDocumentPublicPOI(TrekDocumentPublic):
     template_name_suffix = "_public"  # TODO : change suffix when template is ready
 
 
