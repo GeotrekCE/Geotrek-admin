@@ -4,8 +4,14 @@
 
 {% block download %}
     {{ block.super }}
+  </div>
+
+  <div class="btn-group">
     <a class="btn btn-mini" href="{% url trekking:trek_gpx_detail object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
     <a class="btn btn-mini" href="{% url trekking:trek_kml_detail object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+
+    <a class="btn btn-mini" href="{% url trekking:trek_document_public object.pk %}" title="{% trans "Public print" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-mini" href="{% url trekking:trek_document_public_poi object.pk %}" title="{% trans "Public print with POIs" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print+POI" %}</a>
 {% endblock download %}
 
 

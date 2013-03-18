@@ -120,6 +120,14 @@ class TrekDocument(MapEntityDocument):
     model = Trek
 
 
+class TrekDocumentPublic(TrekDocument):
+    template_name_suffix = "_public"
+
+
+class TrekDocumentPublicPOI(TrekDocument):
+    template_name_suffix = "_public"  # TODO : change suffix when template is ready
+
+
 class TrekRelationshipFormsetMixin(FormsetMixin):
     context_name = 'relationship_formset'
     formset_class = TrekRelationshipFormSet
