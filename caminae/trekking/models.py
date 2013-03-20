@@ -12,6 +12,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 
 import simplekml
+from PIL import Image
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
@@ -251,6 +252,18 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def name_csv_display(self):
         return unicode(self.name)
+
+    @property
+    def networks_display(self):
+        return ', '.join([unicode(n) for n in self.networks.all()])
+
+    @property
+    def themes_display(self):
+        return ', '.join([unicode(n) for n in self.themes.all()])
+
+    @property
+    def usages_display(self):
+        return ', '.join([unicode(n) for n in self.usages.all()])
 
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
@@ -494,6 +507,28 @@ class Theme(models.Model):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
     pictogram_img.allow_tags = True
+
+    @property
+    def pictogram_off(self):
+        """
+        Since pictogram can be a sprite, we want to return the left part of 
+        the picture (crop right 50%).
+        If the pictogram is a square, do not crop.
+        """
+        pictogram, ext = os.path.splitext(self.pictogram.name)
+        pictopath = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
+        output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
+
+        # Recreate only if necessary !
+        if not os.path.exists(output) or \
+           os.path.getsize(output) == 0 or \
+           os.path.getmtime(pictopath) > os.path.getmtime(output):
+            image = Image.open(pictopath)
+            w, h = image.size
+            if w > h:
+                image = image.crop((0, 0, w/2, h))
+            image.save(output)
+        return open(output)
 
 
 class POIManager(models.GeoManager):
