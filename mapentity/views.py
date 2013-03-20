@@ -418,7 +418,7 @@ class MapEntityDocument(DetailView):
         context['datetime'] = datetime.now()
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         context['MEDIA_URL'] = self.request.build_absolute_uri(settings.MEDIA_URL)[:-1]
-        context['MEDIA_ROOT'] = settings.MEDIA_ROOT
+        context['MEDIA_ROOT'] = settings.MEDIA_ROOT + '/'
         context['_'] = _
         return context
 
