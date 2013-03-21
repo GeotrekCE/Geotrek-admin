@@ -1,6 +1,7 @@
 import os
 import logging
 from HTMLParser import HTMLParser
+import shutil
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -175,6 +176,36 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def poi_types(self):
         pks = set(self.pois.values_list('type', flat=True))
         return POIType.objects.filter(pk__in=pks)
+
+    def prepare_map_image(self, rooturl):
+        """
+        We override the default behaviour of map image preparation :
+        if the trek has a attached picture file with *title* ``mapimage``, we use it
+        as a screenshot.
+
+        Mainly because of BUG #282 : vectorial objects are offsetted on background.
+        Seems to be a PhantomJS/CasperJS bug.
+        TODO: remove this when ready ?
+        """
+        attached = None
+        for picture in [a for a in self.attachments.all() if a.is_image]:
+            if picture.title == 'mapimage':
+                attached = picture.attachment_file
+                break
+        if attached is None:
+            super(Trek, self).prepare_map_image(rooturl)
+        else:
+            # Copy it along other screenshots
+            src = os.path.join(settings.MEDIA_ROOT, attached.name)
+            dst = self.get_map_image_path()
+            shutil.copyfile(src, dst)
+
+    @property
+    def pictures(self):
+        """
+        Override pictures list. See Trek.prepare_map_image()
+        """
+        return [a for a in self.attachments.all() if a.is_image and a.title != 'mapimage']
 
     @property
     def serializable_relationships(self):
