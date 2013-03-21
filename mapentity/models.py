@@ -19,6 +19,7 @@ ENTITY_LIST = "list"
 ENTITY_JSON_LIST = "json_list"
 ENTITY_FORMAT_LIST = "format_list"
 ENTITY_DETAIL = "detail"
+ENTITY_MAPIMAGE = "mapimage"
 ENTITY_DOCUMENT = "document"
 ENTITY_CREATE = "add"
 ENTITY_UPDATE = "update"
@@ -26,7 +27,7 @@ ENTITY_DELETE = "delete"
 
 ENTITY_KINDS = (
     ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
-    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_DOCUMENT, ENTITY_CREATE,
+    ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_MAPIMAGE, ENTITY_DOCUMENT, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE,
 )
 
@@ -133,7 +134,11 @@ class MapEntityMixin(object):
 
     @property
     def map_image_url(self):
-        return os.path.join(settings.MEDIA_URL, 'maps', '%s-%s.png' % (self._meta.module_name, self.pk))
+        return self.get_map_image_url()
+
+    @models.permalink
+    def get_map_image_url(self):
+        return (self.get_url_name(ENTITY_MAPIMAGE), [str(self.pk)])
 
     @models.permalink
     def get_document_url(self):
