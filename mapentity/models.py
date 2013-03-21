@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
-import urllib
+import requests
+import bs4
 import json
 
 from django.db import models
@@ -151,3 +152,36 @@ class MapEntityMixin(object):
     @models.permalink
     def get_delete_url(self):
         return (self.get_url_name(ENTITY_DELETE), [str(self.pk)])
+
+    def get_attributes_html(self, rooturl):
+        """
+        The tidy XHTML version of objects attributes.
+        
+        Since we have to insert them in document exports, we extract the 
+        ``details-panel`` of the detail page, using BeautifulSoup.
+        With this, we save a lot of efforts, since we do have to build specific Appy.pod
+        templates for each model.
+        """
+        url = smart_urljoin(rooturl, self.get_detail_url())
+        r = requests.get(url)
+        if r.status_code != 200:
+            raise ValueError('Could not reach %s' % url)
+
+        soup = bs4.BeautifulSoup(r.content)
+        details = soup.find(id="details-body")
+        # Remove "Add" buttons
+        for p in details('p'):
+            if 'autohide' in p.get('class', ''):
+                p.extract()
+        # Remove Javascript
+        for s in details('script'):
+            s.extract()
+        # Remove images (Appy.pod fails with them)
+        for i in details('img'):
+            i.replaceWith(i.get('title', ''))
+        # Remove links (Appy.pod sometimes shows empty strings)
+        for a in details('a'):
+            a.replaceWith(a.text)
+        # Prettify (ODT compat.) and convert unicode to XML entities
+        cooked = details.prettify('ascii', formatter='html')
+        return cooked
