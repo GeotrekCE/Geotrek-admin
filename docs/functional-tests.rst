@@ -2909,3 +2909,17 @@ Désormais, les listes déroulantes des bibliothèques sont triées par ordre al
 
     Pour les bibliothèques multilingue, le tri s'effectue sur la valeur dans la langue du projet (setting ``language``), et non celle de l'utilisateur.
 
+
+#69 - Faire deux versions ODT de l'itinéraire avec carte/POI ou sans
+--------------------------------------------------------------------
+
+Une première ébauche de l'export PDF des itinéraires est désormais accessible, avec et sans POIs.
+
+:notes:
+
+    En attendant que le BUG #282 soit fixé, nous offrons la possibilité (pour les itinéraires seulement), de fournir manuellement une image en guise d'aperçu de carte.
+    Pour cela il suffit d'attacher un fichier PNG dont le nom est ``mapimage``. Celui-ci ne sera pas listé dans les images sur l'OFFRE RANDO, mais sera utilisé dans les exports PDF en tant que carte.
+
+Se rendre dans l'admin, sur la fiche détail d'un itinéraire, accéder aux versions imprimables, et valider la mise en page, ainsi que l'apparence de la carte.
+
+Ajouter un fichier au format ``.png`` avec comme titre ``mapimage`` et observer que c'est bien cette image qui est utilisée comme aperçu carto.
