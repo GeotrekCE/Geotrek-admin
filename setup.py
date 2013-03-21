@@ -7,7 +7,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 test_requirements = [
     'factory_boy == 1.1.5',
-    'requests == 1.1.0',
 ]
 
 
@@ -26,6 +25,8 @@ setup(
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'gpxpy == 0.7.1',
         'appy == 0.8.3',
+        'BeautifulSoup4 == 4.1.3',
+        'requests == 1.1.0',
         'django-shapes == 0.2.0',
         'django-modeltranslation == 0.5b1',
         'django-floppyforms == 1.0',

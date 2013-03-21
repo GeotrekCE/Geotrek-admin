@@ -2910,6 +2910,16 @@ Désormais, les listes déroulantes des bibliothèques sont triées par ordre al
     Pour les bibliothèques multilingue, le tri s'effectue sur la valeur dans la langue du projet (setting ``language``), et non celle de l'utilisateur.
 
 
+#253 - Terminer les templates OpenOffice
+----------------------------------------
+
+Sur chaque fiche détail, il est désormais possible d'obtenir la version OpenOffice, Word et PDF de tous ses attributs, des objets liés, et de la carte.
+
+:notes:
+
+    Problème connu : BUG #282 - les objets sont décalés sur la carte.
+
+
 #69 - Faire deux versions ODT de l'itinéraire avec carte/POI ou sans
 --------------------------------------------------------------------
 
