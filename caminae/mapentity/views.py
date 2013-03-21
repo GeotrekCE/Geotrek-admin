@@ -6,7 +6,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.detail import DetailView
@@ -112,7 +112,7 @@ class LastModifiedMixin(object):
 def map_screenshot(request):
     """
     This view allows to take screenshots, via django-screamshot, of
-    the map currently viewed by the user.
+    the map **currently viewed by the user**.
 
     - A context full of information is built on client-side and posted here.
     - We reproduce this context, via headless browser, and take a capture
@@ -375,6 +375,29 @@ class MapEntityDetail(ModelMetaMixin, DetailView):
         return context
 
 
+class MapEntityMapImage(ModelMetaMixin, DetailView):
+    """
+    A static file view, that serves the up-to-date map image (detail screenshot)
+    On error, returns 404 status.
+    """
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_MAPIMAGE
+
+    def render_to_response(self, context, **response_kwargs):
+        try:
+            obj = self.get_object()
+            obj.prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+            response = HttpResponse(mimetype='image/png')
+            # Open image file, and writes to response
+            with open(obj.get_map_image_path(), 'rb') as f:
+                response.write(f.read())
+            return response
+        except mapentity_models.MapImageError as e:
+            logger.exception(e)
+            return HttpResponseNotFound(repr(e))
+
+
 class MapEntityDocument(DetailView):
     response_class = OdtTemplateResponse
 
@@ -424,7 +447,7 @@ class MapEntityDocument(DetailView):
 
     def dispatch(self, *args, **kwargs):
         handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
-        # Screenshot of object map
+        # Screenshot of object map is required, since present in document
         self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
         return handler
 
