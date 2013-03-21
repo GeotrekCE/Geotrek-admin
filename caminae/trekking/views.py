@@ -9,7 +9,7 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
+                                     MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                                      LastModifiedMixin, JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
 from caminae.common.views import FormsetMixin
@@ -44,12 +44,6 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
                'cities', 'districts', 'relationships', 'map_image_url']
-
-    def dispatch(self, *args, **kwargs):
-        handler = BaseDetailView.dispatch(self, *args, **kwargs)
-        # Screenshot of object map
-        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
-        return handler
 
     def get_context_data(self, **kwargs):
         ctx = {}
@@ -117,6 +111,10 @@ class TrekDetail(MapEntityDetail):
             self.request.user.profile.is_trekking_manager())
 
 
+class TrekMapImage(MapEntityMapImage):
+    model = Trek
+
+
 class TrekDocument(MapEntityDocument):
     model = Trek
 
@@ -134,6 +132,7 @@ class TrekDocumentPublic(TrekDocument):
         context['object'] = trek
         context['trek'] = trek
         return context
+
 
 class TrekDocumentPublicPOI(TrekDocumentPublic):
     template_name_suffix = "_public_poi"

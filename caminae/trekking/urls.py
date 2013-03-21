@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from .views import (
-    TrekLayer, TrekList, TrekDetail, TrekDocument, TrekCreate,
+    TrekLayer, TrekList, TrekDetail, TrekMapImage, TrekDocument, TrekCreate,
     TrekUpdate, TrekDelete, TrekJsonList, TrekFormatList,
     TrekDocumentPublic, TrekDocumentPublicPOI,
     POILayer, POIList, POIDetail, POIDocument, POICreate,
@@ -14,7 +14,7 @@ from caminae.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('', *view_classes_to_url(
-    TrekLayer, TrekList, TrekDetail, TrekDocument, TrekCreate,
+    TrekLayer, TrekList, TrekDetail, TrekMapImage, TrekDocument, TrekCreate,
     TrekUpdate, TrekDelete, TrekJsonList, TrekFormatList,
     POILayer, POIList, POIDetail, POIDocument, POICreate,
     POIUpdate, POIDelete, POIJsonList, POIFormatList,
