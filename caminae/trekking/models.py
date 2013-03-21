@@ -339,23 +339,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
 
-    def save(self, *args, **kwargs):
-        super(Trek, self).save(*args, **kwargs)
-        if self.deleted:
-            return
-        # Create relationships automatically
-        # Same departure
-        if self.departure.strip() != '':
-            for t in Trek.objects.existing().exclude(pk=self.pk).filter(departure=self.departure):
-                r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
-                r.has_common_departure = True
-                r.save()
-        # Sharing edges
-        for t in self.treks.exclude(pk=self.pk):
-            r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
-            r.has_common_edge = True
-            r.save()
-
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
