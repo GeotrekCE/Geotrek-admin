@@ -9,7 +9,7 @@ DECLARE
     troncon record;
     tid_clone integer;
     
-    pk float;  -- "P"oint "K"ilometrique
+    fraction float;
     a float;
     b float;
     segment geometry;
@@ -35,27 +35,27 @@ BEGIN
 
         -- Locate intersecting point(s) on NEW, for later use
         intersections_on_new := ARRAY[0::float];
-        FOR pk IN SELECT ST_Line_Locate_Point(NEW.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_Line_Locate_Point(NEW.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
         LOOP
-            intersections_on_new := array_append(intersections_on_new, pk);
+            intersections_on_new := array_append(intersections_on_new, fraction);
         END LOOP;
         intersections_on_new := array_append(intersections_on_new, 1::float);
         
         -- Sort intersection points and remove duplicates (0 and 1 can appear twice)
-        SELECT array_agg(sub.pk) INTO intersections_on_new
-            FROM (SELECT DISTINCT unnest(intersections_on_new) AS pk ORDER BY pk) AS sub;
+        SELECT array_agg(sub.fraction) INTO intersections_on_new
+            FROM (SELECT DISTINCT unnest(intersections_on_new) AS fraction ORDER BY fraction) AS sub;
         
         -- Locate intersecting point(s) on current path (array of  : {0, 0.32, 0.89, 1})
         intersections_on_current := ARRAY[0::float];
-        FOR pk IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
         LOOP
-            intersections_on_current := array_append(intersections_on_current, pk);
+            intersections_on_current := array_append(intersections_on_current, fraction);
         END LOOP;
         intersections_on_current := array_append(intersections_on_current, 1::float);
         
         -- Sort intersection points and remove duplicates (0 and 1 can appear twice)
-        SELECT array_agg(sub.pk) INTO intersections_on_current
-            FROM (SELECT DISTINCT unnest(intersections_on_current) AS pk ORDER BY pk) AS sub;
+        SELECT array_agg(sub.fraction) INTO intersections_on_current
+            FROM (SELECT DISTINCT unnest(intersections_on_current) AS fraction ORDER BY fraction) AS sub;
 
         IF array_length(intersections_on_new, 1) > 2 AND array_length(intersections_on_current, 1) > 2 THEN
             -- If both intersects, one is enough, since split trigger will be applied recursively.
@@ -164,7 +164,7 @@ BEGIN
                                 segment)
                         RETURNING id INTO tid_clone;
                     
-                    -- Copy topologies matching pk start/end
+                    -- Copy topologies matching start/end
                     -- RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;                    
                     INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                         SELECT
@@ -187,9 +187,9 @@ BEGIN
                     END IF;
                     -- Special case : point topology exactly where NEW path intersects
                     IF a > 0 THEN
-                        pk := ST_Line_Locate_Point(NEW.geom, ST_Line_Substring(troncon.geom, a, a));
+                        fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Substring(troncon.geom, a, a));
                         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
-                            SELECT NEW.id, et.evenement, pk, pk
+                            SELECT NEW.id, et.evenement, fraction, fraction
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
                               AND pk_debut = pk_fin AND pk_debut = a;
