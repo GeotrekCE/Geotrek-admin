@@ -150,6 +150,14 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def slug(self):
         return slugify(self.name)
 
+    @models.permalink
+    def get_document_public_url(self):
+        return ('trekking:trek_document_public', [str(self.pk)])
+
+    @models.permalink
+    def get_document_public_poi_url(self):
+        return ('trekking:trek_document_public_poi', [str(self.pk)])
+
     @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
@@ -511,7 +519,7 @@ class Theme(models.Model):
     @property
     def pictogram_off(self):
         """
-        Since pictogram can be a sprite, we want to return the left part of 
+        Since pictogram can be a sprite, we want to return the left part of
         the picture (crop right 50%).
         If the pictogram is a square, do not crop.
         """
@@ -520,13 +528,13 @@ class Theme(models.Model):
         output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
 
         # Recreate only if necessary !
-        if not os.path.exists(output) or \
-           os.path.getsize(output) == 0 or \
-           os.path.getmtime(pictopath) > os.path.getmtime(output):
+        is_empty = os.path.getsize(output) == 0
+        is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
+        if not os.path.exists(output) or is_empty or is_newer:
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:
-                image = image.crop((0, 0, w/2, h))
+                image = image.crop((0, 0, w / 2, h))
             image.save(output)
         return open(output)
 
