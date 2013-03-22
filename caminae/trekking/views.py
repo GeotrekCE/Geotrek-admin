@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
@@ -12,6 +13,7 @@ from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJso
                                      MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                                      LastModifiedMixin, JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
+from caminae.mapentity.templatetags.convert_tags import convert_url
 from caminae.common.views import FormsetMixin
 from caminae.common.utils import plain_text
 from .models import Trek, POI, WebLink
@@ -50,6 +52,16 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         for fname in self.columns:
             ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
                                  getattr(self.object, fname))
+
+        trek = self.get_object()
+        ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
+        ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
+        ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
+        ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
+        ctx['print'] = convert_url(self.request,
+                                   reverse('trekking:trek_document_public', args=(trek.pk,)))
+        ctx['print_poi'] = convert_url(self.request,
+                                       reverse('trekking:trek_document_public_poi', args=(trek.pk,)))
         return ctx
 
 
