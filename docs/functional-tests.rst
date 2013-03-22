@@ -2933,3 +2933,11 @@ Une première ébauche de l'export PDF des itinéraires est désormais accessibl
 Se rendre dans l'admin, sur la fiche détail d'un itinéraire, accéder aux versions imprimables, et valider la mise en page, ainsi que l'apparence de la carte.
 
 Ajouter un fichier au format ``.png`` avec comme titre ``mapimage`` et observer que c'est bien cette image qui est utilisée comme aperçu carto.
+
+
+#514 - Formulaire itinéraires liés
+----------------------------------
+
+Il est désormais possible de supprimer les itinéraires liés, de la même façon que les hommes-jours sur les interventions et financements sur les projets.
+
+Les itinéraires ne sont plus liés automatiquement, ni par leur départ commun, ni par leurs tronçons communs.

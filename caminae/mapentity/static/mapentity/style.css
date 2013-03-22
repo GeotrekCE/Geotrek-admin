@@ -410,3 +410,13 @@ label.requiredField {
 .form-horizontal .control-group {
     margin-bottom: 5px;
 }
+
+.form-row.inline.controls {
+    border: solid 1px lightgray;
+    padding: 5px;
+    margin: 1px;
+}
+
+.form-row.inline.controls:last-of-type {
+    border: none;
+}
