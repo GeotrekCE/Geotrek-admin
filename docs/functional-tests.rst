@@ -2941,3 +2941,11 @@ Ajouter un fichier au format ``.png`` avec comme titre ``mapimage`` et observer 
 Il est désormais possible de supprimer les itinéraires liés, de la même façon que les hommes-jours sur les interventions et financements sur les projets.
 
 Les itinéraires ne sont plus liés automatiquement, ni par leur départ commun, ni par leurs tronçons communs.
+
+
+#591 - [BUG] Formulaire intervention : pas de bouton topologie
+--------------------------------------------------------------
+
+Fixé.
+
+
