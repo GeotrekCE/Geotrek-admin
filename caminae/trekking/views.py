@@ -57,8 +57,8 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
         ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
         ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
-        ctx['print'] = reverse('trekking:trek_print', args=(trek.pk,))
-        ctx['print_poi'] = reverse('trekking:trek_print_poi', args=(trek.pk,))
+        ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
+        ctx['printable_poi'] = reverse('trekking:trek_printable_poi', args=(trek.pk,))
         return ctx
 
 
