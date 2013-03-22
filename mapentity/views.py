@@ -117,7 +117,7 @@ class DocumentConvert(DetailView):
         url = convert_url(self.request, self.source_url(), self.format)
         try:
             source = requests.get(url)
-            response = HttpResponse(source.content)
+            response = HttpResponse(source.content, status=source.status_code)
         except requests.exceptions.RequestException as e:
             logger.exception(e)
             raise
