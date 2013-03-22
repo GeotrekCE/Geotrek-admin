@@ -2961,3 +2961,8 @@ Désormais, si le titre est renseigné, c'est celui-ci qui est utilisé pour le 
 
 Fixé.
 
+
+#68, #523 -OFFRE RANDO - Boutons imprimer
+-----------------------------------------
+
+Les exports PDF des itinéraires sont désormais synchronisés. Un bouton *Imprimer* présente les deux versions, et dans la langue du site sélectionnée.
