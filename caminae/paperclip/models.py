@@ -69,7 +69,10 @@ class Attachment(models.Model):
 
     @property
     def mimetype(self):
-        return mimetypes.guess_type(self.attachment_file.name, strict=True)[0].split('/')
+        mt = mimetypes.guess_type(self.attachment_file.name, strict=True)[0]
+        if mt is None:
+            return ('application', 'octet-stream')
+        return mt.split('/')
 
     @property
     def is_image(self):
