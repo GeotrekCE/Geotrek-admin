@@ -113,6 +113,16 @@ class InterventionViewsTest(MapEntityTest):
         projects = form.fields['project'].queryset.all()
         self.assertItemsEqual(projects, [p1])
 
+    def test_structurerelated_not_loggedin(self):
+        # Test that it does not fail on update if not logged in
+        self.client.logout()
+        response = self.client.get(Intervention.get_add_url())
+        self.assertEqual(response.status_code, 302)
+
+        i = InterventionFactory.create()
+        response = self.client.get(i.get_update_url())
+        self.assertEqual(response.status_code, 302)
+
 
 class ProjectViewsTest(MapEntityTest):
     model = Project

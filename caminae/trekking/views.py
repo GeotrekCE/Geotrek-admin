@@ -9,10 +9,11 @@ from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
+                                     MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                                      LastModifiedMixin, JSONResponseMixin)
 from caminae.mapentity.serializers import GPXSerializer
 from caminae.common.views import FormsetMixin
+from caminae.common.utils import plain_text
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
@@ -42,7 +43,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'themes', 'usages', 'access', 'route',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships']
+               'cities', 'districts', 'relationships', 'map_image_url']
 
     def get_context_data(self, **kwargs):
         ctx = {}
@@ -110,8 +111,31 @@ class TrekDetail(MapEntityDetail):
             self.request.user.profile.is_trekking_manager())
 
 
+class TrekMapImage(MapEntityMapImage):
+    model = Trek
+
+
 class TrekDocument(MapEntityDocument):
     model = Trek
+
+
+class TrekDocumentPublic(TrekDocument):
+    template_name_suffix = "_public"
+
+    def get_context_data(self, **kwargs):
+        context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
+        # Replace HTML text with plain text
+        trek = self.get_object()
+        for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
+                     'public_transport', 'advised_parking', 'disabled_infrastructure']:
+            setattr(trek, attr, plain_text(getattr(trek, attr)))
+        context['object'] = trek
+        context['trek'] = trek
+        return context
+
+
+class TrekDocumentPublicPOI(TrekDocumentPublic):
+    template_name_suffix = "_public_poi"
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):

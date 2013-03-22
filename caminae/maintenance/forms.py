@@ -7,6 +7,7 @@ from crispy_forms.layout import Fieldset, Layout, Div
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
+from caminae.core.forms import TopologyForm
 from caminae.core.widgets import TopologyReadonlyWidget
 from caminae.infrastructure.models import BaseInfrastructure
 
@@ -71,6 +72,9 @@ class InterventionForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Intervention
         exclude = ('deleted', 'geom', 'jobs')
+
+    MEDIA_JS = TopologyForm.MEDIA_JS
+
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)

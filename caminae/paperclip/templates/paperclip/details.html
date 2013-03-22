@@ -22,9 +22,9 @@
             <td>
                 <a href="{{ att.attachment_file.url }}" target="_blank">
                     {% if att.is_image %}
-                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}">
+                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
                     {% else %}
-                        <img src="{% get_static_prefix %}paperclip/fileicons/{{ att.mimetype.1 }}.png"/>&nbsp;{{ att.title|default:att.filename }}
+                        <img src="{% get_static_prefix %}paperclip/fileicons/{% if att.mimetype.1 %}{{ att.mimetype.1 }}{% else %}bin{% endif %}.png"/>&nbsp;{{ att.title|default:att.filename }}
                     {% endif %}
                 </a> 
             </td>

@@ -1,11 +1,17 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n static field_verbose_name thumbnail %}
+{% load i18n static field_verbose_name thumbnail convert_tags %}
 
 
 {% block download %}
     {{ block.super }}
+  </div>
+
+  <div class="btn-group">
     <a class="btn btn-mini" href="{% url trekking:trek_gpx_detail object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
     <a class="btn btn-mini" href="{% url trekking:trek_kml_detail object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+
+    <a class="btn btn-mini" href="{% convert_url request object.get_document_public_url format="pdf" %}" title="{% trans "Public print" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-mini" href="{% convert_url request object.get_document_public_poi_url format="pdf" %}" title="{% trans "Public print with POIs" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print+POI" %}</a>
 {% endblock download %}
 
 

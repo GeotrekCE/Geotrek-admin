@@ -1,5 +1,6 @@
 [cache]
 type=GoogleDisk
+expire=2592000
 base=${options.cachedir}
 
 [scan]

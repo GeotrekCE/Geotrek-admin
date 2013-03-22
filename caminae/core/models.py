@@ -611,6 +611,7 @@ class Datasource(StructureRelated):
         db_table = 'l_b_source'
         verbose_name = _(u"Datasource")
         verbose_name_plural = _(u"Datasources")
+        ordering = ['source']
 
     def __unicode__(self):
         return self.source
@@ -624,6 +625,7 @@ class Stake(StructureRelated):
         db_table = 'l_b_enjeu'
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
+        ordering = ['stake']
 
     def __lt__(self, other):
         return self.pk < other.pk
@@ -640,6 +642,7 @@ class Comfort(StructureRelated):
         db_table = 'l_b_confort'
         verbose_name = _(u"Comfort")
         verbose_name_plural = _(u"Comforts")
+        ordering = ['comfort']
 
     def __unicode__(self):
         return self.comfort
@@ -653,6 +656,7 @@ class Usage(StructureRelated):
         db_table = 'l_b_usage'
         verbose_name = _(u"Usage")
         verbose_name_plural = _(u"Usages")
+        ordering = ['usage']
 
     def __unicode__(self):
         return self.usage
@@ -666,6 +670,7 @@ class Network(StructureRelated):
         db_table = 'l_b_reseau'
         verbose_name = _(u"Network")
         verbose_name_plural = _(u"Networks")
+        ordering = ['network']
 
     def __unicode__(self):
         return self.network
@@ -682,6 +687,7 @@ class Trail(MapEntityMixin, StructureRelated):
         db_table = 'l_t_sentier'
         verbose_name = _(u"Trails")
         verbose_name_plural = _(u"Trails")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name

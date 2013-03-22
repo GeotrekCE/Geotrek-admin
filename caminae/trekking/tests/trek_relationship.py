@@ -25,23 +25,3 @@ class TrekRelationshipsTestCase(TestCase):
         TrekRelationshipFactory(trek_a=trek1, trek_b=trek2)
         # This should fail, since it already exists
         self.assertRaises(IntegrityError, lambda: TrekRelationshipFactory(trek_a=trek2, trek_b=trek1))
-
-    def test_relationship_auto(self):
-        trek1 = TrekFactory(departure="Labelle")
-        trek2 = TrekFactory(departure="Labelle")
-        self.assertItemsEqual(trek1.related.all(), [trek2])
-        self.assertItemsEqual(trek2.related.all(), [trek1])
-
-        p1 = PathFactory.create()
-        p2 = PathFactory.create()
-        p3 = PathFactory.create()
-        trek3 = TrekFactory.create(no_path=True)
-        trek3.add_path(p1)
-        trek3.add_path(p2)
-        trek3.save()
-        trek4 = TrekFactory.create(no_path=True)
-        trek4.add_path(p2)
-        trek4.add_path(p3)
-        trek4.save()
-        self.assertItemsEqual(trek3.related.all(), [trek4])
-        self.assertItemsEqual(trek4.related.all(), [trek3])

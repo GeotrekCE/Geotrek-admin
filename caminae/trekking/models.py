@@ -1,6 +1,7 @@
 import os
 import logging
 from HTMLParser import HTMLParser
+import shutil
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -12,6 +13,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 
 import simplekml
+from PIL import Image
 
 from caminae.mapentity.models import MapEntityMixin
 from caminae.core.models import Path, Topology
@@ -45,6 +47,13 @@ class PicturesMixin(object):
                 'url': os.path.join(settings.MEDIA_URL, thdetail.name)
             })
         return serialized
+
+    @property
+    def picture_print(self):
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            return thumbnailer.get_thumbnail(aliases.get('print'))
+        return None
 
     @property
     def thumbnail(self):
@@ -142,6 +151,14 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def slug(self):
         return slugify(self.name)
 
+    @models.permalink
+    def get_document_public_url(self):
+        return ('trekking:trek_document_public', [str(self.pk)])
+
+    @models.permalink
+    def get_document_public_poi_url(self):
+        return ('trekking:trek_document_public_poi', [str(self.pk)])
+
     @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
@@ -159,6 +176,36 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def poi_types(self):
         pks = set(self.pois.values_list('type', flat=True))
         return POIType.objects.filter(pk__in=pks)
+
+    def prepare_map_image(self, rooturl):
+        """
+        We override the default behaviour of map image preparation :
+        if the trek has a attached picture file with *title* ``mapimage``, we use it
+        as a screenshot.
+
+        Mainly because of BUG #282 : vectorial objects are offsetted on background.
+        Seems to be a PhantomJS/CasperJS bug.
+        TODO: remove this when ready ?
+        """
+        attached = None
+        for picture in [a for a in self.attachments.all() if a.is_image]:
+            if picture.title == 'mapimage':
+                attached = picture.attachment_file
+                break
+        if attached is None:
+            super(Trek, self).prepare_map_image(rooturl)
+        else:
+            # Copy it along other screenshots
+            src = os.path.join(settings.MEDIA_ROOT, attached.name)
+            dst = self.get_map_image_path()
+            shutil.copyfile(src, dst)
+
+    @property
+    def pictures(self):
+        """
+        Override pictures list. See Trek.prepare_map_image()
+        """
+        return [a for a in self.attachments.all() if a.is_image and a.title != 'mapimage']
 
     @property
     def serializable_relationships(self):
@@ -245,6 +292,18 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def name_csv_display(self):
         return unicode(self.name)
 
+    @property
+    def networks_display(self):
+        return ', '.join([unicode(n) for n in self.networks.all()])
+
+    @property
+    def themes_display(self):
+        return ', '.join([unicode(n) for n in self.themes.all()])
+
+    @property
+    def usages_display(self):
+        return ', '.join([unicode(n) for n in self.usages.all()])
+
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
         as place marks """
@@ -279,23 +338,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
-
-    def save(self, *args, **kwargs):
-        super(Trek, self).save(*args, **kwargs)
-        if self.deleted:
-            return
-        # Create relationships automatically
-        # Same departure
-        if self.departure.strip() != '':
-            for t in Trek.objects.existing().exclude(pk=self.pk).filter(departure=self.departure):
-                r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
-                r.has_common_departure = True
-                r.save()
-        # Sharing edges
-        for t in self.treks.exclude(pk=self.pk):
-            r = TrekRelationship.objects.get_or_create(trek_a=self, trek_b=t)[0]
-            r.has_common_edge = True
-            r.save()
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -356,6 +398,7 @@ class TrekNetwork(models.Model):
         db_table = 'o_b_reseau'
         verbose_name = _(u"Trek network")
         verbose_name_plural = _(u"Trek networks")
+        ordering = ['network']
 
     def __unicode__(self):
         return self.network
@@ -365,10 +408,11 @@ class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_usage'
+        ordering = ['usage']
 
     def __unicode__(self):
         return self.usage
@@ -387,6 +431,7 @@ class Route(models.Model):
         db_table = 'o_b_parcours'
         verbose_name = _(u"Route")
         verbose_name_plural = _(u"Routes")
+        ordering = ['route']
 
     def __unicode__(self):
         return self.route
@@ -401,6 +446,7 @@ class DifficultyLevel(models.Model):
         db_table = 'o_b_difficulte'
         verbose_name = _(u"Difficulty level")
         verbose_name_plural = _(u"Difficulty levels")
+        ordering = ['id']
 
     def __unicode__(self):
         return self.difficulty
@@ -447,12 +493,13 @@ class WebLinkCategory(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_web_category'
         verbose_name = _(u"Web link category")
         verbose_name_plural = _(u"Web link categories")
+        ordering = ['label']
 
     def __unicode__(self):
         return u"%s" % self.label
@@ -467,12 +514,13 @@ class Theme(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_theme'
         verbose_name = _(u"Theme")
         verbose_name_plural = _(u"Theme")
+        ordering = ['label']
 
     def __unicode__(self):
         return self.label
@@ -481,6 +529,28 @@ class Theme(models.Model):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
     pictogram_img.allow_tags = True
+
+    @property
+    def pictogram_off(self):
+        """
+        Since pictogram can be a sprite, we want to return the left part of
+        the picture (crop right 50%).
+        If the pictogram is a square, do not crop.
+        """
+        pictogram, ext = os.path.splitext(self.pictogram.name)
+        pictopath = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
+        output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
+
+        # Recreate only if necessary !
+        is_empty = os.path.getsize(output) == 0
+        is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
+        if not os.path.exists(output) or is_empty or is_newer:
+            image = Image.open(pictopath)
+            w, h = image.size
+            if w > h:
+                image = image.crop((0, 0, w / 2, h))
+            image.save(output)
+        return open(output)
 
 
 class POIManager(models.GeoManager):
@@ -556,12 +626,13 @@ class POIType(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_poi'
         verbose_name = _(u"POI")
         verbose_name_plural = _(u"POI")
+        ordering = ['label']
 
     def __unicode__(self):
         return self.label

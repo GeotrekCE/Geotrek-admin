@@ -166,7 +166,7 @@ class MapEntityTest(TestCase):
             return  # Abstract test should not run
 
         self.login()
-        
+
         obj = self.modelfactory()
         response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
         self.assertEqual(response.status_code, 404)
@@ -188,6 +188,16 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         self._post_add_form()
+
+        # Test to update without login
+        self.logout()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(obj.get_update_url())
+        self.assertEqual(response.status_code, 302)
 
     def test_attachment(self):
         if self.model is None:

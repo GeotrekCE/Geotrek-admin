@@ -91,8 +91,8 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     queryset = Intervention.objects.existing()
     form_class = InterventionForm
 
-    @same_structure_required('maintenance:intervention_detail')
     @method_decorator(path_manager_required('maintenance:intervention_detail'))
+    @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
         return super(InterventionUpdate, self).dispatch(*args, **kwargs)
 
@@ -105,8 +105,8 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 class InterventionDelete(MapEntityDelete):
     model = Intervention
 
-    @same_structure_required('maintenance:intervention_detail')
     @method_decorator(path_manager_required('maintenance:intervention_detail'))
+    @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
         return super(InterventionDelete, self).dispatch(*args, **kwargs)
 
@@ -162,8 +162,8 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
     queryset = Project.objects.existing()
     form_class = ProjectForm
 
-    @same_structure_required('maintenance:project_detail')
     @method_decorator(path_manager_required('maintenance:project_detail'))
+    @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
         return super(ProjectUpdate, self).dispatch(*args, **kwargs)
 
@@ -171,7 +171,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 class ProjectDelete(MapEntityDelete):
     model = Project
 
-    @same_structure_required('maintenance:project_detail')
     @method_decorator(path_manager_required('maintenance:project_detail'))
+    @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
         return super(ProjectDelete, self).dispatch(*args, **kwargs)

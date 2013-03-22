@@ -39,25 +39,53 @@ See information below for configuration and loading initial demonstration data.
 Software update
 ---------------
 
-Keep previous versions in separate folders (**recommended**) :
+Keep previous versions in separate folders (**recommended**).
+
+First, copy your old configuration and uploaded files to your new folder.
 
 ::
 
-    # Copy previous settings
-    cp ../previous-version/etc/settings.ini  etc/settings.ini
+    # Configuration files
+    mkdir -p etc/
+    cp ../previous-version/etc/settings.ini etc/
+    # Uploaded files
+    mkdir -p var/
+    cp -R ../previous-version/var/tiles var/tiles
+    cp -R ../previous-version/var/media var/media
+
+Shutdown previous running version, and run install :
+
+::
+
+    # Shutdown previous version
+    ../previous-version/bin/supervisorctl stop all
+    sudo service supervisor stop
 
     # Re-run install
     ./install.sh
 
+    # Reload configuration
+    sudo service supervisor restart
 
-Or instead, if you prefer, you can overwrite the source code (or use symlinks), 
-and run ``./install.sh``.
+
+Or instead, if you prefer, you can overwrite the source code and run ``./install.sh``.
 
 
 Tips and Tricks
 ---------------
 
-Speed-up upgrades by caching downloads :
+* Use symlinks for uploaded files and cached tiles to avoid duplicating them on disk:
+
+::
+
+    mv var/tiles ~/tiles
+    ln -s ~/tiles `pwd`/var/tiles
+
+    mv var/media ~/media
+    ln -s ~/media `pwd`/var/media
+
+
+* Speed-up upgrades by caching downloads :
 
 ::
 

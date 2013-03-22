@@ -30,7 +30,6 @@ class PathAttachmentTestCase(TestCase):
         self.assertItemsEqual(Attachment.objects.attachments_for_object(path),
                               response.context['attachments_list'], )
 
-
     def test_upload(self):
         path = PathFactory(length=1)
         response = self.client.get(path.get_update_url())
@@ -54,3 +53,11 @@ class PathAttachmentTestCase(TestCase):
         f.open()
         self.assertEqual(att.attachment_file.readlines(), f.readlines())
 
+        # Check that if title is given, filename is title
+        self.assertTrue(att.attachment_file.name, 'title1')
+
+        # Check that if no title is give, filename is original name
+        data['title'] = ''
+        response = self.client.post(add_url_for_obj(path), data=data)
+        att = Attachment.objects.attachments_for_object(path)[0]
+        self.assertTrue(att.attachment_file.name, 'image')

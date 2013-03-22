@@ -78,15 +78,15 @@ body {
     box-shadow: 0 0px 0px;
 }
 
-.navbar .nav > li > a,
+.navbar .nav > li.history > a,
 .navbar .nav > li.history button:first-child {
     padding-left: 18px;
     padding-right: 10px;
 }
 
-.navbar .nav > li.active > a,
-.navbar .nav > li.active > a:hover,
-.navbar .nav > li > a:hover {
+.navbar .nav > li.history.active > a,
+.navbar .nav > li.history.active > a:hover,
+.navbar .nav > li.history > a:hover {
     border-bottom: 1px solid white;
     margin-bottom: -1px;
     border-left: 1px solid #d4d4d4;
@@ -409,4 +409,14 @@ label.requiredField {
 
 .form-horizontal .control-group {
     margin-bottom: 5px;
+}
+
+.form-row.inline.controls {
+    border: solid 1px lightgray;
+    padding: 5px;
+    margin: 1px;
+}
+
+.form-row.inline.controls:last-of-type {
+    border: none;
 }

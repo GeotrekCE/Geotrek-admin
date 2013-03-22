@@ -295,6 +295,7 @@ THUMBNAIL_ALIASES = {
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
         'medium': {'size': (500, 500)},
+        'print': {'size': (1024, 200), 'crop': 'smart'},
     },
 }
 

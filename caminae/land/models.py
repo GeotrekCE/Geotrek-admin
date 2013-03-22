@@ -20,6 +20,7 @@ class PhysicalType(models.Model):
         db_table = 'f_b_nature'
         verbose_name = _(u"Physical type")
         verbose_name_plural = _(u"Physical types")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -77,6 +78,7 @@ class LandType(StructureRelated):
         db_table = 'f_b_foncier'
         verbose_name = _(u"Land type")
         verbose_name_plural = _(u"Land types")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -335,9 +337,9 @@ class City(models.Model):
 
     class Meta:
         db_table = 'l_commune'
-        ordering = ['name', ]
         verbose_name = _(u"City")
         verbose_name_plural = _(u"Cities")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -387,9 +389,9 @@ class District(models.Model):
 
     class Meta:
         db_table = 'l_secteur'
-        ordering = ['name', ]
         verbose_name = _(u"District")
         verbose_name_plural = _(u"Districts")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name

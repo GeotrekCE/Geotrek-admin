@@ -25,7 +25,8 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'trek_b',
                                     'has_common_departure',
                                     'has_common_edge',
-                                    'is_circuit_step')
+                                    'is_circuit_step',
+                                    'DELETE')
 
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
 

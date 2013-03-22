@@ -2890,3 +2890,74 @@ Si la géométrie de l'évènement n'est pas de type Point ou Ligne, les valeurs
 
 Pour une ligne, la pente est le ratio entre (Zmax - Zmin) et la longueur de la ligne projetée sur z=0.
 
+
+
+==========================
+Sprint 14 - Version 0.14.0
+==========================
+
+
+#299 - Ordres des bibliothèques
+-------------------------------
+
+Par défault, l'ordre est celui retourné par les requêtes en base. Par défaut, l'ordre est
+presque aléatoire.
+
+Désormais, les listes déroulantes des bibliothèques sont triées par ordre alphabétique. À l'exception des *status d'intervention* et des *niveaux de difficulté* qui sont triés dans l'ordre de la colonne ``id``.
+
+:notes:
+
+    Pour les bibliothèques multilingue, le tri s'effectue sur la valeur dans la langue du projet (setting ``language``), et non celle de l'utilisateur.
+
+
+#253 - Terminer les templates OpenOffice
+----------------------------------------
+
+Sur chaque fiche détail, il est désormais possible d'obtenir la version OpenOffice, Word et PDF de tous ses attributs, des objets liés, et de la carte.
+
+:notes:
+
+    Problème connu : BUG #282 - les objets sont décalés sur la carte.
+
+
+#69 - Faire deux versions ODT de l'itinéraire avec carte/POI ou sans
+--------------------------------------------------------------------
+
+Une première ébauche de l'export PDF des itinéraires est désormais accessible, avec et sans POIs.
+
+:notes:
+
+    En attendant que le BUG #282 soit fixé, nous offrons la possibilité (pour les itinéraires seulement), de fournir manuellement une image en guise d'aperçu de carte.
+    Pour cela il suffit d'attacher un fichier PNG dont le nom est ``mapimage``. Celui-ci ne sera pas listé dans les images sur l'OFFRE RANDO, mais sera utilisé dans les exports PDF en tant que carte.
+
+Se rendre dans l'admin, sur la fiche détail d'un itinéraire, accéder aux versions imprimables, et valider la mise en page, ainsi que l'apparence de la carte.
+
+Ajouter un fichier au format ``.png`` avec comme titre ``mapimage`` et observer que c'est bien cette image qui est utilisée comme aperçu carto.
+
+
+#514 - Formulaire itinéraires liés
+----------------------------------
+
+Il est désormais possible de supprimer les itinéraires liés, de la même façon que les hommes-jours sur les interventions et financements sur les projets.
+
+Les itinéraires ne sont plus liés automatiquement, ni par leur départ commun, ni par leurs tronçons communs.
+
+
+#591 - [BUG] Formulaire intervention : pas de bouton topologie
+--------------------------------------------------------------
+
+Fixé.
+
+
+#530 - [BUG] Accents dans le titre des fichiers joints
+------------------------------------------------------
+
+Fixé.
+
+Désormais, si le titre est renseigné, c'est celui-ci qui est utilisé pour le nom du fichier uploadé.
+
+#531 - [BUG] Crash si mise à jour sans avoir les droits
+-------------------------------------------------------
+
+Fixé.
+
