@@ -2956,3 +2956,8 @@ Fixé.
 
 Désormais, si le titre est renseigné, c'est celui-ci qui est utilisé pour le nom du fichier uploadé.
 
+#531 - [BUG] Crash si mise à jour sans avoir les droits
+-------------------------------------------------------
+
+Fixé.
+

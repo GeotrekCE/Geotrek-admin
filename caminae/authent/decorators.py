@@ -57,7 +57,7 @@ def same_structure_required(redirect_to):
             # Staff is always allowed
             if request.user.is_staff:
                 return result
-            obj = self.get_object()
+            obj = hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None)
             if obj.same_structure(request.user):
                 return result
             messages.warning(request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
