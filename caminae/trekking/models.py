@@ -408,7 +408,7 @@ class Usage(models.Model):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_usage'
@@ -493,7 +493,7 @@ class WebLinkCategory(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_web_category'
@@ -514,7 +514,7 @@ class Theme(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_theme'
@@ -626,7 +626,7 @@ class POIType(models.Model):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto')
+                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_poi'
