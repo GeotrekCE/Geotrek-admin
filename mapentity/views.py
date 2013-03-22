@@ -23,6 +23,8 @@ from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
 
+import requests
+
 from djgeojson.views import GeoJSONLayerView
 from djappypod.odt import get_template
 from djappypod.response import OdtTemplateResponse
@@ -32,6 +34,8 @@ from screamshot.utils import casperjs_capture
 from . import models as mapentity_models
 from .decorators import save_history
 from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer, ZipShapeSerializer
+from .templatetags.convert_tags import convert_url
+
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +102,29 @@ class LastModifiedMixin(object):
         def _dispatch(*args, **kwargs):
             return super(LastModifiedMixin, self).dispatch(*args, **kwargs)
         return _dispatch(*args, **kwargs)
+
+
+class DocumentConvert(DetailView):
+    """
+    A proxy view to conversion server.
+    """
+    format = 'pdf'
+
+    def source_url(self):
+        raise NotImplementedError
+
+    def render_to_response(self, context):
+        url = convert_url(self.request, self.source_url(), self.format)
+        try:
+            source = requests.get(url)
+            response = HttpResponse(source.content)
+        except requests.exceptions.RequestException as e:
+            logger.exception(e)
+            raise
+        # Copy headers
+        for header, value in source.headers.items():
+            response[header] = value
+        return response
 
 
 """
