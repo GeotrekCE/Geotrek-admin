@@ -6,7 +6,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.detail import DetailView
@@ -112,7 +112,7 @@ class LastModifiedMixin(object):
 def map_screenshot(request):
     """
     This view allows to take screenshots, via django-screamshot, of
-    the map currently viewed by the user.
+    the map **currently viewed by the user**.
 
     - A context full of information is built on client-side and posted here.
     - We reproduce this context, via headless browser, and take a capture
@@ -375,6 +375,29 @@ class MapEntityDetail(ModelMetaMixin, DetailView):
         return context
 
 
+class MapEntityMapImage(ModelMetaMixin, DetailView):
+    """
+    A static file view, that serves the up-to-date map image (detail screenshot)
+    On error, returns 404 status.
+    """
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_MAPIMAGE
+
+    def render_to_response(self, context, **response_kwargs):
+        try:
+            obj = self.get_object()
+            obj.prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+            response = HttpResponse(mimetype='image/png')
+            # Open image file, and writes to response
+            with open(obj.get_map_image_path(), 'rb') as f:
+                response.write(f.read())
+            return response
+        except mapentity_models.MapImageError as e:
+            logger.exception(e)
+            return HttpResponseNotFound(repr(e))
+
+
 class MapEntityDocument(DetailView):
     response_class = OdtTemplateResponse
 
@@ -385,47 +408,41 @@ class MapEntityDocument(DetailView):
     def __init__(self, *args, **kwargs):
         super(MapEntityDocument, self).__init__(*args, **kwargs)
         # Try to load template for each lang and object detail
-        name_for = lambda app, object, lang: "%s/%s%s%s.odt" % (app, object, lang, self.template_name_suffix)
+        name_for = lambda app, modelname, lang: "%s/%s%s%s.odt" % (app, modelname, lang, self.template_name_suffix)
         langs = ['_%s' % lang for lang, langname in settings.LANGUAGES]
         langs.append('')   # Will also try without lang
-        found = None
-        for lang in langs:
-            try:
-                template_name = name_for(self.model._meta.app_label,
-                                         self.model._meta.object_name.lower(),
-                                         lang)
-                get_template(template_name)
-                found = template_name
-                break
-            except TemplateDoesNotExist:
-                pass
-        if not found:
-            for lang in langs:
-                try:
-                    template_name = name_for("mapentity", "entity", lang)
-                    get_template(template_name)
-                    found = template_name
-                    break
-                except TemplateDoesNotExist:
-                    pass
+
+        def smart_get_template():
+            for appname, modelname in [(self.model._meta.app_label, self.model._meta.object_name.lower()),
+                                       ("mapentity", "entity")]:
+                for lang in langs:
+                    try:
+                        template_name = name_for(appname, modelname, lang)
+                        get_template(template_name)  # Will raise if not exist
+                        return template_name
+                    except TemplateDoesNotExist:
+                        pass
+            return None
+
+        found = smart_get_template()
         if not found:
             raise TemplateDoesNotExist(name_for(self.model._meta.app_label, self.model._meta.object_name.lower(), ''))
         self.template_name = found
 
     def get_context_data(self, **kwargs):
+        rooturl = self.request.build_absolute_uri(settings.ROOT_URL or '/')
+        # Screenshot of object map is required, since present in document
+        self.get_object().prepare_map_image(rooturl)
+        html = self.get_object().get_attributes_html(rooturl)
+
         context = super(MapEntityDocument, self).get_context_data(**kwargs)
-        # ODT template requires absolute URL for images insertion
         context['datetime'] = datetime.now()
         context['STATIC_URL'] = self.request.build_absolute_uri(settings.STATIC_URL)[:-1]
         context['MEDIA_URL'] = self.request.build_absolute_uri(settings.MEDIA_URL)[:-1]
-        context['MEDIA_ROOT'] = settings.MEDIA_ROOT
+        context['MEDIA_ROOT'] = settings.MEDIA_ROOT + '/'
+        context['attributeshtml'] = html
+        context['_'] = _
         return context
-
-    def dispatch(self, *args, **kwargs):
-        handler = super(MapEntityDocument, self).dispatch(*args, **kwargs)
-        # Screenshot of object map
-        self.get_object().prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
-        return handler
 
 
 class MapEntityCreate(ModelMetaMixin, CreateView):

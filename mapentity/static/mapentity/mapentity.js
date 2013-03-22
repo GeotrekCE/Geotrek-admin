@@ -39,7 +39,13 @@ L.Control.Screenshot = L.Control.extend({
 function getURLParameter(name) {
     var paramEncoded = (RegExp('[?|&]' + name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1],
         paramDecoded = decodeURIComponent(paramEncoded);
-    return paramDecoded == 'null' ? null : paramDecoded;
+    if (typeof paramDecoded == 'string') {
+        try {
+            return JSON.parse(paramDecoded);
+        }
+        catch (e) {}
+    }
+    return paramDecoded;
 }
 
 /**
@@ -132,16 +138,13 @@ MapEntity.Context = new function() {
         return false;
     };
 
-    self.restoreFullContext = function(map, kwargs) {
+    self.restoreFullContext = function(map, context, kwargs) {
         if (!kwargs) kwargs = {};
-        var context = getURLParameter('context'),
-            filter = kwargs.filter,
+        var filter = kwargs.filter,
             datatable = kwargs.datatable,
             objectsname = kwargs.objectsname;
-        if (context) {
-            context = JSON.parse(context);
-        }
-        else {
+
+        if (!context || typeof context != 'object') {
             // If not received from URL, load from LocalStorage
             context = self.__loadFullContext(kwargs);
         }
@@ -158,8 +161,19 @@ MapEntity.Context = new function() {
             $(map._container).removeClass('leaflet-fade-anim');
         }
 
+        if (context.mapsize) {
+            // Override min-height style
+            map._container.style.minHeight = '0';
+            // Force map size
+            if (context.mapsize.width && context.mapsize.width > 0)
+                $('.map-panel').width(context.mapsize.width);
+            if (context.mapsize.height && context.mapsize.height > 0)
+                $('.map-panel').height(context.mapsize.height);
+            map.invalidateSize();
+        }
+
         self.restoreMapView(map, context, kwargs);
-        
+
         if (filter && context.filter) {
             $(filter).deserialize(context.filter);
         }

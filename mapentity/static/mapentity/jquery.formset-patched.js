@@ -115,7 +115,11 @@
             }
             if (hasChildElements(row)) {
                 row.addClass(options.formCssClass);
-                if (row.is(':visible')) {
+
+                // Hack Caminae story #514
+                // See https://code.google.com/p/django-dynamic-formset/issues/detail?id=54
+                //if (row.is(':visible')) {
+                if (true) {
                     insertDeleteLink(row);
                     applyExtraClasses(row, i);
                 }
