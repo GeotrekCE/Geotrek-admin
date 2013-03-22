@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
 
 from caminae.common.models import FileType
 
@@ -20,11 +21,13 @@ class AttachmentManager(models.Manager):
 
 def attachment_upload(instance, filename):
     """Stores the attachment in a "per module/appname/primary key" folder"""
+    name, ext = os.path.splitext(filename)
+    renamed = slugify(instance.title or name) + ext
     return 'paperclip/%s/%s/%s' % (
         '%s_%s' % (instance.content_object._meta.app_label,
                    instance.content_object._meta.object_name.lower()),
                    instance.content_object.pk,
-                   filename)
+                   renamed)
 
 
 class Attachment(models.Model):

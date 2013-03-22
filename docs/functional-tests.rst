@@ -2949,3 +2949,10 @@ Les itinéraires ne sont plus liés automatiquement, ni par leur départ commun,
 Fixé.
 
 
+#530 - [BUG] Accents dans le titre des fichiers joints
+------------------------------------------------------
+
+Fixé.
+
+Désormais, si le titre est renseigné, c'est celui-ci qui est utilisé pour le nom du fichier uploadé.
+
