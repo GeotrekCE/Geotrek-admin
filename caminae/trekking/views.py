@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
@@ -10,7 +11,7 @@ from djgeojson.views import GeoJSONLayerView
 from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                                     LastModifiedMixin, JSONResponseMixin)
+                                     LastModifiedMixin, JSONResponseMixin, DocumentConvert)
 from caminae.mapentity.serializers import GPXSerializer
 from caminae.common.views import FormsetMixin
 from caminae.common.utils import plain_text
@@ -50,6 +51,14 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         for fname in self.columns:
             ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
                                  getattr(self.object, fname))
+
+        trek = self.get_object()
+        ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
+        ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
+        ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
+        ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
+        ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
+        ctx['printable_poi'] = reverse('trekking:trek_printable_poi', args=(trek.pk,))
         return ctx
 
 
@@ -136,6 +145,18 @@ class TrekDocumentPublic(TrekDocument):
 
 class TrekDocumentPublicPOI(TrekDocumentPublic):
     template_name_suffix = "_public_poi"
+
+
+class TrekPrint(DocumentConvert):
+    queryset = Trek.objects.existing()
+
+    def source_url(self):
+        return reverse('trekking:trek_document_public', args=(self.get_object().pk,))
+
+
+class TrekPrintPOI(TrekPrint):
+    def source_url(self):
+        return reverse('trekking:trek_document_public_poi', args=(self.get_object().pk,))
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
