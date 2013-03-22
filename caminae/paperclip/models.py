@@ -48,7 +48,7 @@ class Attachment(models.Model):
     title = models.CharField(blank=True, default='', max_length=128, db_column='titre', verbose_name=_(u"Title"),
                              help_text=_("Official title"))
     legend = models.CharField(blank=True, default='', max_length=128, db_column='legende', verbose_name=_(u"Legend"),
-                             help_text=_("Details"))
+                              help_text=_("Details"))
 
     date_insert = models.DateTimeField(editable=False, auto_now_add=True, verbose_name=_(u"Insertion date"))
     date_update = models.DateTimeField(editable=False, auto_now=True, verbose_name=_(u"Update date"))
