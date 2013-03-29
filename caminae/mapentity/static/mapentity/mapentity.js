@@ -268,7 +268,7 @@ MapEntity.History = L.Control.extend({
                 }
                 else {
                     // No more, redirect to list view 
-                    window.location = '/';
+                    window.location = window.SETTINGS.server;
                     $(entry).remove();
                 }
             }

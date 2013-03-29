@@ -2966,3 +2966,14 @@ Fixé.
 -----------------------------------------
 
 Les exports PDF des itinéraires sont désormais synchronisés. Un bouton *Imprimer* présente les deux versions, et dans la langue du site sélectionnée.
+
+#593 - OFFRE RANDO - Vérifier si addresse serveur contient déja http
+--------------------------------------------------------------------
+
+Fait.
+
+
+#537 - Redirection à la fermeture du dernier onglet
+---------------------------------------------------
+
+Fait.
