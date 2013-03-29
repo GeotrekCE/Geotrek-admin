@@ -179,9 +179,9 @@ def geomToGPX(gpx, geom):
 
 
 def lineString_to_GPX(geom):
-    return [ point_to_GPX(point) for point in geom ]
+    return [ point_to_GPX(point, klass=gpxpy.gpx.GPXRoutePoint) for point in geom ]
 
-def point_to_GPX(point):
+def point_to_GPX(point, klass=gpxpy.gpx.GPXWaypoint):
     """Should be a tuple with 3 coords or a Point"""
     # FIXME: suppose point are in the settings.SRID format
     # Set point SRID to such srid if invalid or missing
@@ -194,7 +194,7 @@ def point_to_GPX(point):
     x, y = point.transform(4326, clone=True) # transformation: gps uses 4326
     z = point.z # transform looses the Z parameter - reassign it
 
-    return gpxpy.gpx.GPXWaypoint(latitude=y, longitude=x, elevation=z)
+    return klass(latitude=y, longitude=x, elevation=z)
 
 
 

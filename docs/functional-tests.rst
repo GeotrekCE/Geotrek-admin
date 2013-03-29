@@ -2977,3 +2977,9 @@ Fait.
 ---------------------------------------------------
 
 Fait.
+
+
+#598 - [BUG] Export GPX : utiliser des points de segments au lieu des waypoint pour les linestring
+--------------------------------------------------------------------------------------------------
+
+Fait.
