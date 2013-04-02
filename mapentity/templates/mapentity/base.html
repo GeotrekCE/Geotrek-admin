@@ -157,6 +157,14 @@
             {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
         {% endfor %}
 
+        {# If context, we screenshot with CasperJS.
+           Wait or backport Leaflet commit 1c8e0c6 torevent offset on PhantomJS captures #}
+        {% if request.GET.context %}
+        <script type="text/javascript">
+            L_DISABLE_3D = true;
+        </script>
+        {% endif %}
+
         {% leaflet_js %}
         <script type="text/javascript">
             L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
