@@ -5,8 +5,6 @@
 {% block extrahead %}
     {{ block.super }}
     {{ form.media }}
-    <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
-    <script src="{% static "mapentity/jquery.formset-patched.js" %}"></script>
 {% endblock extrahead %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
@@ -44,14 +42,11 @@
     </div>
 {% endblock mainpanel %}
 
-{% block extrabody %}
+{% block extrajs %}
     {{ block.super }}
-
+    <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
+    <script src="{% static "mapentity/jquery.formset-patched.js" %}"></script>
     {% for m in form.MEDIA_JS %}
         <script type="text/javascript" src="{% static m %}"></script>
     {% endfor %}
-
-    <script type="text/javascript">
-        $('#button-id-cancel').click(function (){ window.history.go(-1); });
-    </script>
-{% endblock extrabody %}
+{% endblock extrajs %}
