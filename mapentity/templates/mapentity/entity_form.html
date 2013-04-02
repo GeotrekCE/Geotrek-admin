@@ -52,6 +52,6 @@
     {% endfor %}
 
     <script type="text/javascript">
-        $('#button-id-cancel').click(function (){ window.location = '{{ object.get_list_url }}';});
+        $('#button-id-cancel').click(function (){ window.history.go(-1); });
     </script>
 {% endblock extrabody %}
