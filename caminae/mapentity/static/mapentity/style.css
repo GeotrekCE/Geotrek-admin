@@ -403,6 +403,7 @@ span.filter-info {
 
 .form-panel form {
     padding-left: 10px;
+    margin-bottom: 0px;
 }
 
 .form-panel .form-actions {
@@ -436,11 +437,26 @@ span.filter-info {
     color: #B94A48;
 }
 
-#geomfield {position: absolute; top: 2px; bottom: 51px; right: 0px;}
+#geomfield {
+    position: absolute;
+    top: 2px;
+    bottom: 51px;
+    right: 0px;
+}
 #geomfield .leaflet-container,
 #geomfield .control-group,
 #geomfield .controls {
     height: 100%;
+}
+
+/* Tired of bootstrap ? 
+TODO: please help;
+ */
+#modelfields.span4 {
+    width: 33%;
+}
+#geomfield.span8 {
+    width: 66%;
 }
 
 .form-horizontal #geomfield .controls {

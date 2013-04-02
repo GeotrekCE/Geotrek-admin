@@ -35,10 +35,7 @@ class FundingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FundingForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
-        self.helper.layout = Layout('id',
-                                    Div('amount', css_class="span1"),
-                                    Div('organism', css_class="span4"))
-        self.fields['amount'].widget.attrs['class'] = 'span12'
+        self.helper.layout = Layout('id', 'amount', 'organism')
         self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
 
 
@@ -150,18 +147,28 @@ class InterventionCreateForm(InterventionForm):
 
 
 class ProjectForm(CommonForm):
-    modelfields = ('name',
-                   'type',
-                   'domain',
-                   'begin_year',
-                   'end_year',
-                   'constraint',
-                   'cost',
-                   'comments')
-    geomfields = ('contractors',
-                  'project_owner',
-                  'project_manager',
-                  Fieldset(_("Fundings"),))  # no geom field in project
+    modelfields = (
+        Div(
+            Div(
+                Div('name',
+                    'type',
+                    'domain',
+                    'begin_year',
+                    'end_year',
+                    'constraint',
+                    'cost',
+                    'comments',
+                    css_class="span6"),
+                Div('project_owner',
+                    'project_manager',
+                    'contractors',
+                    Fieldset(_("Fundings")),
+                    css_class="span6"),
+                css_class="row-fluid"
+            ),
+            css_class="container-fluid"
+        ),
+    )
 
     class Meta:
         model = Project

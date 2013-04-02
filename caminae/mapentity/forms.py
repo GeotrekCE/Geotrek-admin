@@ -57,17 +57,21 @@ class MapEntityForm(forms.ModelForm):
 
         # Get fields from subclasses
         fields = ('pk', 'model', 'structure') + self.modelfields
+
+        has_geomfield = len(self.geomfields) > 0
         leftpanel = Div(
             *fields,
-            css_class="span4 scrollable",
+            css_class="scrollable span" + ('4' if has_geomfield else '12'),
             css_id="modelfields"
         )
 
-        rightpanel = Div(
-            *self.geomfields,
-            css_class="span8",
-            css_id="geomfield"
-        )
+        rightpanel = (),
+        if has_geomfield:
+            rightpanel = Div(
+                *self.geomfields,
+                css_class="span8",
+                css_id="geomfield"
+            )
 
         # Main form layout
         self.helper.help_text_inline = True
