@@ -399,6 +399,7 @@ class MapEntityDetail(ModelMetaMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
         context['can_edit'] = self.can_edit()
+        context['can_add_attachment'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
 
@@ -535,11 +536,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
-
-    def get_context_data(self, **kwargs):
-        context = super(MapEntityUpdate, self).get_context_data(**kwargs)
-        context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
-        return context
 
 
 class MapEntityDelete(DeleteView):
