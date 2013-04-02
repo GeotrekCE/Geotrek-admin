@@ -3001,3 +3001,8 @@ Fixé.
 
 Fixé.
 
+#490 - ADMIN - Saisie signalétique : point uniquement
+-----------------------------------------------------
+
+Fixé.
+
