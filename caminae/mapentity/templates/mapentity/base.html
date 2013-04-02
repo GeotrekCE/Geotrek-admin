@@ -202,6 +202,8 @@
                 // Fade out success/infos messages
                 $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
 
+                $('#button-id-cancel').click(function (){ window.history.go(-1); });
+
                 MapEntity.history.render();
 
                 // Auto-hide elements
