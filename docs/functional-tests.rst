@@ -2989,3 +2989,5 @@ Fait.
 
 Fait. La version texte de l'objet est utilisée (cf. titre des onglets, titres fiches detail etc.)
 
+De plus, le nom de fichier ne s'appelle plus simplement ``list`` mais contient la date, l'heure et le type d'objet.
+
