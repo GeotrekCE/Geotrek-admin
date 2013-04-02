@@ -2991,3 +2991,8 @@ Fait. La version texte de l'objet est utilisée (cf. titre des onglets, titres f
 
 De plus, le nom de fichier ne s'appelle plus simplement ``list`` mais contient la date, l'heure et le type d'objet.
 
+#617 - [BUG] Erreur Django Compressor pour projection UTM32
+-----------------------------------------------------------
+
+Fixé.
+
