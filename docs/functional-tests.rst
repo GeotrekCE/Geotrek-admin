@@ -3006,3 +3006,17 @@ Fixé.
 
 Fixé.
 
+#389 - [BUG] Le selecteur de couches est visible sur les exports odt
+--------------------------------------------------------------------
+
+Fixé.
+
+#282 - [BUG] Export image carte : les objets sont décalés sur le fond
+---------------------------------------------------------------------
+
+Fixé.
+
+:notes:
+
+    Dans la story #69, nous avions offert la possibilité de forcer l'utilisation d'une image attachée en tant qu'image principale pour les itinéraires.
+    Le fonctionnement est conservé. À discuter.
