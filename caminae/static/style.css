@@ -1,26 +1,8 @@
-/***** Bootstrap customizations ******/
-
-.groupfields {
-    margin-bottom: 15px;
-}
-
-.dropdown-menu {
-    z-index: 9999;
-}
-
-h2 {
-	text-align: center;
-}
-
-.form-panel h2 {
-	text-align: left;
-}
-
-
-#div_id_topology .controls {
-    margin-left: 30px;
-}
-
+/*
+ * This file contains styles that are specific to Caminae, 
+ * with no reason to be in MapEntity.
+ * (paths, aggregations, altimetric profile, etc.)
+ */
 
 .details-panel td.paths li {
     float: left;

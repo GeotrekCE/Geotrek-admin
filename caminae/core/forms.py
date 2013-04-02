@@ -72,6 +72,10 @@ class PathForm(CommonForm):
         model = Path
         exclude = ('geom_cadastre',)
 
+    def __init__(self, *args, **kwargs):
+        super(PathForm, self).__init__(*args, **kwargs)
+        self.fields['geom'].label = ''
+
     def clean_geom(self):
         data = self.cleaned_data['geom']
         if not data.simple:
