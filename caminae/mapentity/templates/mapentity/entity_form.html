@@ -10,10 +10,6 @@
 
 {% block mainpanel %}
     <div class="form-panel {{ modelname }}">
-        {% if object %}
-            <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
-        {% endif %}</h2>
-        
         {% block mainform %}
         {% crispy form %}
         {% endblock mainform %}
