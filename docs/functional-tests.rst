@@ -2996,3 +2996,8 @@ De plus, le nom de fichier ne s'appelle plus simplement ``list`` mais contient l
 
 Fixé.
 
+#563 - ADMIN - Taille police aide 'inline'
+------------------------------------------
+
+Fixé.
+
