@@ -40,10 +40,11 @@ class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager and \
-                self.get_object().same_structure(self.request.user))
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager and
+            self.get_object().same_structure(self.request.user)
+        )
 
 
 class InterventionDocument(MapEntityDocument):
@@ -96,11 +97,6 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     def dispatch(self, *args, **kwargs):
         return super(InterventionUpdate, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(InterventionUpdate, self).get_context_data(**kwargs)
-        context['infrastructure'] = self.object.infrastructure
-        return context
-
 
 class InterventionDelete(MapEntityDelete):
     model = Intervention
@@ -109,7 +105,6 @@ class InterventionDelete(MapEntityDelete):
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
         return super(InterventionDelete, self).dispatch(*args, **kwargs)
-
 
 
 class ProjectLayer(MapEntityLayer):
@@ -138,10 +133,11 @@ class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager and \
-            self.get_object().same_structure(self.request.user))
+        return self.request.user.is_staff or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager and
+            self.get_object().same_structure(self.request.user)
+        )
 
 
 class ProjectDocument(MapEntityDocument):

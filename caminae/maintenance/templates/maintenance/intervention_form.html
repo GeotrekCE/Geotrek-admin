@@ -1,14 +1,6 @@
 {% extends "mapentity/entity_form.html" %}
 {% load i18n crispy_forms_tags %}
 
-{% block paneltitle %}
-    {{ block.super }}
-    {% if infrastructure %}
-        {% trans "on" %} <a href="{{ infrastructure.get_detail_url }}">{{ infrastructure }}</a>
-    {% endif %}
-{% endblock paneltitle %}
-
-
 {% block mainform %}
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" method="POST">
     

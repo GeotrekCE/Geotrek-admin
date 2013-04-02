@@ -75,7 +75,6 @@ class InterventionForm(CommonForm):
 
     MEDIA_JS = TopologyForm.MEDIA_JS
 
-
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
         # If we create or edit an intervention on infrastructure, set
@@ -86,7 +85,11 @@ class InterventionForm(CommonForm):
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
-            self.fields['topology'].label = _(infrastructure.kind.capitalize())
+            self.fields['topology'].label = '%s%s %s' % (
+                self.instance.infrastructure_display,
+                unicode(_("On %s") % _(self.instance.infrastructure.kind.lower())),
+                '<a href="%s">%s</a>' % (self.instance.infrastructure.get_detail_url(), self.instance.infrastructure)
+            )
 
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
