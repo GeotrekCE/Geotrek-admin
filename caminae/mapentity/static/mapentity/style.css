@@ -102,6 +102,11 @@ body {
     background-repeat: no-repeat;
 }
 
+.navbar .nav > li.history.first > a {
+    font-weight: bolder;
+    font-size: 16px;
+}
+
 .navbar .nav .close {
     float: none;
 }
@@ -363,12 +368,19 @@ span.filter-info {
     margin: 0px;
 }
 
-.details-panel h2 { 
-    min-height: 75px; 
-}
-
 #details-body {
     padding-right: 10px;
+}
+
+.download-group {
+    clear: both;
+    line-height: 35px;
+    display: block;
+    height: 35px;
+}
+
+.details-panel .nav-tabs li.active a {
+    background-color: rgba(255,255,255,0.9);
 }
 
 
