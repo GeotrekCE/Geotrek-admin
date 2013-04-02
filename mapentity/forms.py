@@ -16,7 +16,8 @@ class MapEntityForm(forms.ModelForm):
     modelfields = tuple()
     geomfields = tuple()
     actions = FormActions(
-        Button('cancel', _('Cancel'), ),
+        HTML('<!-- delete button -->'),
+        Button('cancel', _('Cancel'), css_class="offset1"),
         Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
         css_class="form-actions",
     )
@@ -40,8 +41,15 @@ class MapEntityForm(forms.ModelForm):
         # Generic behaviour
         if self.instance.pk:
             self.helper.form_action = self.instance.get_update_url()
+            # Put delete url in Delete button
+            self.actions.fields[0] = HTML('<a class="btn btn-danger delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
+                self.instance.get_delete_url(),
+                unicode(_("Delete"))))
         else:
             self.helper.form_action = self.instance.get_add_url()
+            # Remove Delete if adding new instance
+            self.actions.fields.remove(self.actions.fields[0])
+
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
 

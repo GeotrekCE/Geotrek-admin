@@ -386,6 +386,10 @@ span.filter-info {
 
 /***** Entity form ******/
 
+.form-panel {
+    margin-top: 10px;
+}
+
 .form-panel form {
     padding-left: 10px;
 }
