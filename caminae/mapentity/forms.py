@@ -59,12 +59,14 @@ class MapEntityForm(forms.ModelForm):
         fields = ('pk', 'model', 'structure') + self.modelfields
         leftpanel = Div(
             *fields,
-            css_class="span4"
+            css_class="span4 scrollable",
+            css_id="modelfields"
         )
 
         rightpanel = Div(
             *self.geomfields,
-            css_class="span8"
+            css_class="span8",
+            css_id="geomfield"
         )
 
         # Main form layout

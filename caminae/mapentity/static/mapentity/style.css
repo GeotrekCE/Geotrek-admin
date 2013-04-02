@@ -185,10 +185,6 @@ tr.selected-row td {
     width: 100%;
 }
 
-
-/***** Entity List ******/
-
-
 /* Layout (based on "Conflicting position" trick) */
 #container {position: absolute; top: 39px; bottom: 0; left: 0; right: 0;}
 #panelleft {position: absolute; top: 2px; bottom: 0; width: 50%; left: 0;}
@@ -197,6 +193,15 @@ tr.selected-row td {
 #mainmap {position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;}
 .map-panel.detail {position: absolute; top: 0px; bottom: 0px; right: 0px;}
 #detailmap {height: 100%;}
+#geomfield {position: absolute; top: 1px; bottom: 51px; right: 0px;}
+#geomfield .leaflet-container,
+#geomfield .control-group,
+#geomfield .controls {
+    height: 100%;
+}
+
+
+/***** Entity List ******/
 
 #list-panel {
     margin-left: 60px;
@@ -394,8 +399,18 @@ span.filter-info {
     padding-left: 10px;
 }
 
-.form-panel h2 { 
-    padding-left: 100px; 
+.form-panel .form-actions {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: 0px;
+    padding: 10px;
+    height: 30px;
+}
+
+.form-panel #modelfields {
+    margin-bottom: 55px;
 }
 
 .form-panel .tab-content .nav { 

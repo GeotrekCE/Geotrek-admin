@@ -219,9 +219,10 @@
                 // Scrollable panels
                 var fillmax = function () {
                     $('.scrollable').each(function () {
-                        var top = $(this).position().top,
-                            height = $(window).height() - top - 50; // margin
-                        $(this).css('max-height', height);
+                        var top = $(this).offset().top,
+                            height = $(window).height() - top - parseFloat($(this).css('margin-top'))
+                                                              - parseFloat($(this).css('margin-bottom'));
+                        $(this).css('max-height', height + 'px');
                         
                     });
                 }
