@@ -76,10 +76,12 @@
           {% block toolbar %}
             {% for item in request.session.history %}
                 {% if forloop.first and view != "list" %}
-                    <li class="{{ modelname }} active history">
+                    <li class="{{ modelname }} active history first">
                         <a href="{{ item.path }}">
                             <span class="content">{% if title %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
+                            {% if view == "detail" %}
                             <button class="close hidden">&times;</button>
+                            {% endif %}
                         </a>
                     </li>
                 {% else %}
@@ -202,8 +204,10 @@
                 // Fade out success/infos messages
                 $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
 
+                // Form Cancel buttons
                 $('#button-id-cancel').click(function (){ window.history.go(-1); });
 
+                // Top-navigation tabs
                 MapEntity.history.render();
 
                 // Auto-hide elements
