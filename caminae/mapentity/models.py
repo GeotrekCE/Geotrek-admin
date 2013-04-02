@@ -119,7 +119,7 @@ class MapEntityMixin(object):
                 os.remove(path)
         # Run head-less capture (takes time)
         url = smart_urljoin(rooturl, self.get_detail_url())
-        printcontext = dict(mapsize=dict(width=500, height=400))
+        printcontext = dict(mapsize=dict(width=800, height=600))
         printcontext['print'] = True
         url += '?context=' + json.dumps(printcontext)
         with open(path, 'wb') as f:
@@ -157,8 +157,8 @@ class MapEntityMixin(object):
     def get_attributes_html(self, rooturl):
         """
         The tidy XHTML version of objects attributes.
-        
-        Since we have to insert them in document exports, we extract the 
+
+        Since we have to insert them in document exports, we extract the
         ``details-panel`` of the detail page, using BeautifulSoup.
         With this, we save a lot of efforts, since we do have to build specific Appy.pod
         templates for each model.
