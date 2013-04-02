@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Fieldset, Layout, Div
+from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from caminae.common.forms import CommonForm
 from caminae.core.fields import TopologyField
@@ -21,8 +21,8 @@ class ManDayForm(forms.ModelForm):
         super(ManDayForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
         self.helper.layout = Layout('id',
-                                    Div('nb_days', css_class="span1"),
-                                    Div('job', css_class="span4"))
+                                    Div('nb_days', css_class="span2"),
+                                    Div('job', css_class="span3"))
         self.fields['nb_days'].widget.attrs['class'] = 'span12'
 
 
@@ -51,23 +51,45 @@ class InterventionForm(CommonForm):
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
-    modelfields = ('name',
-                   'date',
-                   'status',
-                   'disorders',
-                   'type',
-                   'comments',
-                   'in_maintenance',
-                   'height',
-                   'width',
-                   'material_cost',
-                   'heliport_cost',
-                   'subcontract_cost',
-                   'stake',
-                   'project',
-                   'infrastructure')
-    geomfields = ('topology',
-                  Fieldset(_("Mandays"),))
+    modelfields = (
+        Div(
+            HTML("""
+            <ul class="nav nav-tabs">
+                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+            Div(
+                Div(
+                    'name',
+                    'date',
+                    'status',
+                    'disorders',
+                    'type',
+                    'comments',
+                    'in_maintenance',
+                    'height',
+                    'width',
+                    'stake',
+                    'project',
+                    'infrastructure',
+                    css_id="main",
+                    css_class="tab-pane active"
+                ),
+                Div(
+                    'material_cost',
+                    'heliport_cost',
+                    'subcontract_cost',
+                    Fieldset(_("Mandays")),
+                    css_id="advanced",  # used in Javascript for activating tab if error
+                    css_class="tab-pane"
+                ),
+                css_class="tab-content"
+            ),
+            css_class="tabbable"
+        ),
+    )
+
+    geomfields = ('topology',)
 
     class Meta(CommonForm.Meta):
         model = Intervention
