@@ -2983,3 +2983,9 @@ Fait.
 --------------------------------------------------------------------------------------------------
 
 Fait.
+
+#308 - ADMIN - Export GPX - champ Name
+--------------------------------------
+
+Fait. La version texte de l'objet est utilisée (cf. titre des onglets, titres fiches detail etc.)
+
