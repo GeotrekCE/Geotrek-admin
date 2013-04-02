@@ -9,7 +9,7 @@
         {% block detailshead %}
         <h2>
             {% if object.structure %}
-                <span class="badge badge-info">{{ object.structure }}</span>
+                <span class="badge badge-info" title="{% trans "Structure" %}">{{ object.structure }}</span>
             {% endif %}
             {{ object }}
             {% block extratitle %}{% endblock extratitle %}
@@ -29,21 +29,34 @@
         </h2>
         {% endblock detailshead %}
         
-        <div id="details-body" class="scrollable">
-            {% block detailspanel %}
-            {% endblock detailspanel %}
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li id="tab-properties" class="active">
+                    <a href="#properties" data-toggle="tab"><i class="icon-tasks"></i> {% trans "Properties" %}</a>
+                </li>
+                <li id="tab-attachments">
+                    <a href="#attachments" data-toggle="tab"><i class="icon-file"></i> {% trans "Attached files" %}</a>
+                </li>
+            </ul>
+            <div class="tab-content scrollable">
+                <div id="properties" class="tab-pane active">
+                    {% block detailspanel %}
+                    {% endblock detailspanel %}
 
-            {% smart_include "detail" %}
+                    {% smart_include "detail" %}
+                </div>
+                <div id="attachments" class="tab-pane">
+                    {% block attachmentpanel %}
+                    <div class="file-attachment file-attachment-detail">
+                        <h3>{% trans "Attached files" %}</h3>
 
-            {% block attachmentpanel %}
-            <div class="file-attachment file-attachment-detail">
-                <h3>{% trans "Attached files" %}</h3>
-
-                {% with object=object can_delete_attachment=can_delete_attachment attachment_delete_next=object.get_detail_url %}
-                    {% include 'paperclip/details.html' %}
-                {% endwith %}
+                        {% with object=object can_delete_attachment=can_delete_attachment attachment_delete_next=object.get_detail_url %}
+                            {% include 'paperclip/details.html' %}
+                        {% endwith %}
+                    </div>
+                    {% endblock attachmentpanel %}
+                </div>
             </div>
-            {% endblock attachmentpanel %}
         </div>
     </div><!-- span7 -->
 
