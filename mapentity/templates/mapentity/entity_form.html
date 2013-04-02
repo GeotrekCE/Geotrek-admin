@@ -10,7 +10,6 @@
 
 {% block mainpanel %}
     <div class="form-panel {{ modelname }}">
-        <h2>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
         {% if object %}
             <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
         {% endif %}</h2>
