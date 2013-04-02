@@ -120,6 +120,7 @@ class MapEntityMixin(object):
         # Run head-less capture (takes time)
         url = smart_urljoin(rooturl, self.get_detail_url())
         printcontext = dict(mapsize=dict(width=500, height=400))
+        printcontext['print'] = True
         url += '?context=' + json.dumps(printcontext)
         with open(path, 'wb') as f:
             casperjs_capture(f, url, selector='.map-panel')
