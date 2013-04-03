@@ -17,8 +17,8 @@ class MapEntityForm(forms.ModelForm):
     geomfields = tuple()
     actions = FormActions(
         HTML('<!-- delete button -->'),
-        Button('cancel', _('Cancel'), css_class="offset1"),
-        Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
+        Submit('save_changes', _('Save changes'), css_class="btn-primary pull-right offset1"),
+        Button('cancel', _('Cancel'), css_class="pull-right offset1"),
         css_class="form-actions",
     )
 
