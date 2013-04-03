@@ -47,7 +47,7 @@ var {{ module }}_settings = {
 // Django Leaflet callback
 {{ module }}Init = function (map, bounds) {
     {% smart_include "mapinit" %}
-    
+
     var module = {{ module }};
     var fitToBounds = true;
 
@@ -62,6 +62,22 @@ var {{ module }}_settings = {
         }
     }
     module.init(map, bounds, fitToBounds);
+
+
+    /* 
+     * Allow to load files locally.
+     */
+    L.Control.FileLayerLoad.LABEL = '<i class="icon-folder-open"></i>';
+    var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: false},
+        filecontrol = L.Control.fileLayerLoad({
+            fitBounds: true,
+            layerOptions: {style: style,
+                           pointToLayer: function (data, latlng) {
+                              return L.circle(latlng, 8, {style: style});
+                           }},
+        });
+    map.filecontrol = filecontrol;
+    map.addControl(filecontrol);
 };
 
 
