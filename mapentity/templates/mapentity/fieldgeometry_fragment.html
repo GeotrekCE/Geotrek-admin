@@ -1,12 +1,10 @@
 {% load leaflet_tags geojson_tags static mapentity %}
 
 {% leaflet_map module fitextent=False %}
-<style type="text/css">
-    {% if not display_wkt %}#{{ attrs.id }} { display: none; }{% endif %}
-</style>
 
-{% if display_wkt %}<p> Geom debugging window:</p>{% endif %}
-{% include "floppyforms/textarea.html" %}
+<div style="{% if not display_wkt %}display:none{% endif %}">
+    {% include "floppyforms/textarea.html" %}
+</div>
 
 <script type="text/javascript">
 // Lazy load : TODO : remove after refactor of formfield.js FormField
