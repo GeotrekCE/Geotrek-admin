@@ -100,14 +100,14 @@ class InterventionForm(CommonForm):
         # topology field as read-only
         infrastructure = kwargs.get('initial', {}).get('infrastructure')
         if self.instance.on_infrastructure:
-            infrastructure = self.instance.topology
+            infrastructure = self.instance.infrastructure
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.infrastructure_display,
-                unicode(_("On %s") % _(self.instance.infrastructure.kind.lower())),
-                '<a href="%s">%s</a>' % (self.instance.infrastructure.get_detail_url(), self.instance.infrastructure)
+                unicode(_("On %s") % _(infrastructure.kind.lower())),
+                '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure)
             )
 
     def clean(self, *args, **kwargs):
