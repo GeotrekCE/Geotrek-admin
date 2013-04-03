@@ -21,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "mapentity/dataTables/css/dataTables.bootstrap.css" %}">
     {% leaflet_css %}
     <link rel="stylesheet" href="{% static "mapentity/Leaflet.draw/leaflet.draw.css" %}"></link>
+    <link rel="stylesheet" href="{% static "mapentity/Leaflet.label/leaflet.label.css" %}"></link>
     <link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
     {% if not DEBUG %}
     <style>
@@ -184,13 +185,16 @@
         <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.ajax_list.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.plugins.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/Leaflet.draw/leaflet.draw.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/Leaflet.label/leaflet.label.js" %}"></script>
+
         <script type="text/javascript" src="{% static "mapentity/leaflet-measure.js" %}"></script>
-        
         <script type="text/javascript" src="{% static "mapentity/leaflet-geomutils.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/spin.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/leaflet.spin.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/rtree.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/leaflet.layerindex.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/togeojson.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/leaflet.filelayer.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/leaflet-objectslayer.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/leaflet-snapping.js" %}"></script>
         <script type="text/javascript" src="{% static "mapentity/leaflet-serializers.js" %}"></script>

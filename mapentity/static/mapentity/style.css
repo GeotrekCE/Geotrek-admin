@@ -169,6 +169,15 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
     background-image: url(images/screenshot-control.png);
 }
 
+.leaflet-control-filelayer .leaflet-bar-part {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.leaflet-control-filelayer.leaflet-control-zoom-in {
+    background-image: none;
+}
+
 /**** Widgets ****/
 
 .axislabel {
