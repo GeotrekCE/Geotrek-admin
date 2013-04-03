@@ -1,57 +1,26 @@
 {% extends "mapentity/base.html" %}
 {% load i18n static crispy_forms_tags %}
-{% load attachments_tags %}
 
 {% block extrahead %}
     {{ block.super }}
     {{ form.media }}
-    <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
-    <script src="{% static "mapentity/jquery.formset-patched.js" %}"></script>
 {% endblock extrahead %}
 
 {% block nav-detail %}active{% endblock nav-detail %}
 
 {% block mainpanel %}
     <div class="form-panel {{ modelname }}">
-        <h2>{% block paneltitle %}{{ title }}{% endblock paneltitle %}
-        {% if object %}
-            <a class="btn btn-danger" href="{{ object.get_delete_url }}">{% trans "Delete" %}</a>
-        {% endif %}</h2>
-        
         {% block mainform %}
         {% crispy form %}
         {% endblock mainform %}
-        
-        <div style="clear:both"></div>
-
-        {% if object.pk %}
-        <div class="file-attachment span6">
-            <h3>{% trans "Attached files" %}</h3>
-            <div class="file-attachment-update">
-                <h4>{% trans "New file attachment" %}</h4>
-                {% attachment_form object %}
-            </div>
-
-            <div class="file-attachment file-attachment-detail">
-                <h4>{% trans "Existing file attachment" %}</h4>
-                {% with object=object can_delete_attachment=can_delete_attachment attachment_delete_next=object.get_update_url %}
-                    {% include 'paperclip/details.html' %}
-                {% endwith %}
-            </div>
-        </div>
-        {% endif %}
-
     </div>
 {% endblock mainpanel %}
 
-{% block extrabody %}
+{% block extrajs %}
     {{ block.super }}
-
+    <script src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
+    <script src="{% static "mapentity/jquery.formset-patched.js" %}"></script>
     {% for m in form.MEDIA_JS %}
         <script type="text/javascript" src="{% static m %}"></script>
     {% endfor %}
-
-    <script type="text/javascript">
-        $('#button-id-cancel').click(function (){ window.location = '{{ object.get_list_url }}';});
-    </script>
-{% endblock extrabody %}
+{% endblock extrajs %}

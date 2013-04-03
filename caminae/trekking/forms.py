@@ -17,6 +17,7 @@ from .models import Trek, POI, WebLink
 
 class TrekRelationshipForm(forms.ModelForm):
     helper = FormHelper()
+
     def __init__(self, *args, **kwargs):
         super(TrekRelationshipForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
@@ -40,7 +41,7 @@ class TrekForm(TopologyForm):
             <ul class="nav nav-tabs">
                 <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-            </ul>""" % (_("Main"), _("Advanced"))),
+            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
                 Div(
                     'name',
@@ -58,7 +59,8 @@ class TrekForm(TopologyForm):
                     css_id="main",
                     css_class="tab-pane active"
                 ),
-                Div('disabled_infrastructure',
+                Div(
+                    'disabled_infrastructure',
                     'advised_parking',
                     'parking_location',
                     'public_transport',
@@ -80,9 +82,8 @@ class TrekForm(TopologyForm):
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = LineTopologyWidget()
-        self.fields['web_links'].widget = SelectMultipleWithPop(
-                                                choices=self.fields['web_links'].choices, 
-                                                add_url=WebLink.get_add_url())
+        self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
+                                                                add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
         self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
@@ -92,11 +93,9 @@ class TrekForm(TopologyForm):
 
 
 class POIForm(TopologyForm):
-    modelfields = (
-            'name',
-            'description',
-            'type',
-            )
+    modelfields = ('name',
+                   'description',
+                   'type')
 
     def __init__(self, *args, **kwargs):
         super(POIForm, self).__init__(*args, **kwargs)
@@ -121,6 +120,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
             css_class="form-actions",
         )]
         self.helper.layout = Layout(*arg_list)
+
     class Meta:
         model = WebLink
         exclude = ('name',)

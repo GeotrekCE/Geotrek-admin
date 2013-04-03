@@ -352,12 +352,15 @@ class MapEntityFormat(MapEntityList):
             logger.warning("Unknown serialization format '%s'" % fmt_str)
             return HttpResponseBadRequest()
 
-        return formatter(request=self.request, context=context, **response_kwargs)
+        filename = '%s-%s-list' % (datetime.now().strftime('%Y%m%d-%H%M'),
+                                   unicode(self.model._meta.verbose_name))
+        response = formatter(request=self.request, context=context, **response_kwargs)
+        response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, fmt_str)
+        return response
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVSerializer()
         response = HttpResponse(mimetype='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=list.csv'
         serializer.serialize(queryset=self.get_queryset(), stream=response,
                              fields=self.columns, ensure_ascii=True)
         return response
@@ -365,7 +368,6 @@ class MapEntityFormat(MapEntityList):
     def shape_view(self, request, context, **kwargs):
         serializer = ZipShapeSerializer()
         response = HttpResponse(mimetype='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=list.zip'
         serializer.serialize(queryset=self.get_queryset(), stream=response,
                              fields=self.columns)
         response['Content-length'] = str(len(response.content))
@@ -374,7 +376,6 @@ class MapEntityFormat(MapEntityList):
     def gpx_view(self, request, context, **kwargs):
         serializer = GPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
-        response['Content-Disposition'] = 'attachment; filename=list.gpx'
         serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
         return response
 
@@ -398,6 +399,7 @@ class MapEntityDetail(ModelMetaMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
         context['can_edit'] = self.can_edit()
+        context['can_add_attachment'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
         return context
 
@@ -534,11 +536,6 @@ class MapEntityUpdate(ModelMetaMixin, UpdateView):
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
-
-    def get_context_data(self, **kwargs):
-        context = super(MapEntityUpdate, self).get_context_data(**kwargs)
-        context['can_delete_attachment'] = True   # Consider that if can edit, then can delete
-        return context
 
 
 class MapEntityDelete(DeleteView):

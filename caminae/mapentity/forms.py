@@ -15,11 +15,6 @@ class MapEntityForm(forms.ModelForm):
 
     modelfields = tuple()
     geomfields = tuple()
-    actions = FormActions(
-        Button('cancel', _('Cancel'), ),
-        Submit('save_changes', _('Save changes'), css_class="btn-primary offset1"),
-        css_class="form-actions",
-    )
 
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
     model = forms.Field(required=False, widget=forms.Field.hidden_widget)
@@ -37,11 +32,21 @@ class MapEntityForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super(MapEntityForm, self).__init__(*args, **kwargs)
 
+        actions = [
+            Submit('save_changes', _('Save changes'), css_class="btn-primary pull-right offset1"),
+            Button('cancel', _('Cancel'), css_class="pull-right offset1"),
+        ]
+
         # Generic behaviour
         if self.instance.pk:
             self.helper.form_action = self.instance.get_update_url()
+            # Put delete url in Delete button
+            actions.insert(0, HTML('<a class="btn btn-danger delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
+                self.instance.get_delete_url(),
+                unicode(_("Delete")))))
         else:
             self.helper.form_action = self.instance.get_add_url()
+
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
 
@@ -49,15 +54,21 @@ class MapEntityForm(forms.ModelForm):
 
         # Get fields from subclasses
         fields = ('pk', 'model', 'structure') + self.modelfields
+
+        has_geomfield = len(self.geomfields) > 0
         leftpanel = Div(
             *fields,
-            css_class="span4"
+            css_class="scrollable span" + ('4' if has_geomfield else '12'),
+            css_id="modelfields"
         )
 
-        rightpanel = Div(
-            *self.geomfields,
-            css_class="span8"
-        )
+        rightpanel = (),
+        if has_geomfield:
+            rightpanel = Div(
+                *self.geomfields,
+                css_class="span8",
+                css_id="geomfield"
+            )
 
         # Main form layout
         self.helper.help_text_inline = True
@@ -71,7 +82,7 @@ class MapEntityForm(forms.ModelForm):
                 ),
                 css_class="container-fluid"
             ),
-            self.actions
+            FormActions(*actions, css_class="form-actions"),
         )
 
     @staticmethod

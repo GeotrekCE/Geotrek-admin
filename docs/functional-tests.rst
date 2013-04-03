@@ -2961,3 +2961,62 @@ Désormais, si le titre est renseigné, c'est celui-ci qui est utilisé pour le 
 
 Fixé.
 
+
+#68, #523 -OFFRE RANDO - Boutons imprimer
+-----------------------------------------
+
+Les exports PDF des itinéraires sont désormais synchronisés. Un bouton *Imprimer* présente les deux versions, et dans la langue du site sélectionnée.
+
+#593 - OFFRE RANDO - Vérifier si addresse serveur contient déja http
+--------------------------------------------------------------------
+
+Fait.
+
+
+#537 - Redirection à la fermeture du dernier onglet
+---------------------------------------------------
+
+Fait.
+
+
+#598 - [BUG] Export GPX : utiliser des points de segments au lieu des waypoint pour les linestring
+--------------------------------------------------------------------------------------------------
+
+Fait.
+
+#308 - ADMIN - Export GPX - champ Name
+--------------------------------------
+
+Fait. La version texte de l'objet est utilisée (cf. titre des onglets, titres fiches detail etc.)
+
+De plus, le nom de fichier ne s'appelle plus simplement ``list`` mais contient la date, l'heure et le type d'objet.
+
+#617 - [BUG] Erreur Django Compressor pour projection UTM32
+-----------------------------------------------------------
+
+Fixé.
+
+#563 - ADMIN - Taille police aide 'inline'
+------------------------------------------
+
+Fixé.
+
+#490 - ADMIN - Saisie signalétique : point uniquement
+-----------------------------------------------------
+
+Fixé.
+
+#389 - [BUG] Le selecteur de couches est visible sur les exports odt
+--------------------------------------------------------------------
+
+Fixé.
+
+#282 - [BUG] Export image carte : les objets sont décalés sur le fond
+---------------------------------------------------------------------
+
+Fixé.
+
+:notes:
+
+    Dans la story #69, nous avions offert la possibilité de forcer l'utilisation d'une image attachée en tant qu'image principale pour les itinéraires.
+    Le fonctionnement est conservé. À discuter.

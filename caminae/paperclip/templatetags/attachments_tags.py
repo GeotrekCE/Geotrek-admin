@@ -1,3 +1,5 @@
+import mimetypes
+
 from django.template import Library, Node, Variable
 from django.core.urlresolvers import reverse
 
@@ -7,6 +9,16 @@ from caminae.paperclip.models import Attachment
 
 
 register = Library()
+
+
+@register.filter
+def icon_name(value):
+    mimetype = value.mimetype
+    if not mimetype or mimetype == ('application', 'octet-stream'):
+        return 'bin'
+    ext = mimetypes.guess_extension('/'.join(mimetype))
+    return ext[1:] if ext else 'bin'
+
 
 @register.inclusion_tag('paperclip/add_form.html', takes_context=True)
 def attachment_form(context, obj):
@@ -18,6 +30,7 @@ def attachment_form(context, obj):
         'attachment_form_url': add_url_for_obj(obj),
         'next': context['request'].build_absolute_uri(),
     }
+
 
 @register.inclusion_tag('paperclip/delete_link.html', takes_context=True)
 def attachment_delete_link(context, attachment):
@@ -48,6 +61,7 @@ class AttachmentsForObjectNode(Node):
         var_name = self.resolve(self.var_name, context)
         context[var_name] = Attachment.objects.attachments_for_object(obj)
         return ''
+
 
 @register.tag
 def get_attachments_for(parser, token):

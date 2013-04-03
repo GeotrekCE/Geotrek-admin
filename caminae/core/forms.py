@@ -10,16 +10,16 @@ from .widgets import SnappedLineStringWidget
 
 class TopologyForm(CommonForm):
     """
-    This form is a bit specific : 
-    
+    This form is a bit specific :
+
         We use a field (topology) in order to edit the whole instance.
         Thus, at init, we load the instance into field, and at save, we
         save the field into the instance.
-        
+
     The geom field is fully ignored, since we edit a topology.
     """
     topology = TopologyField(label="")
-    geomfields = ('topology', )
+    geomfields = ('topology',)
 
     def __init__(self, *args, **kwargs):
         super(TopologyForm, self).__init__(*args, **kwargs)
@@ -50,29 +50,31 @@ class TopologyForm(CommonForm):
 class PathForm(CommonForm):
     geom = forms.gis.LineStringField(widget=SnappedLineStringWidget)
 
-    reverse_geom = forms.BooleanField(
-           required=False,
-           label = _("Reverse path"),
-           help_text = _("The path will be reversed once saved"),
-       )
+    reverse_geom = forms.BooleanField(required=False,
+                                      label=_("Reverse path"),
+                                      help_text=_("The path will be reversed once saved"))
 
     modelfields = ('name',
-              'stake',
-              'comfort',
-              'trail',
-              'departure',
-              'arrival',
-              'comments',
-              'datasource',
-              'networks',
-              'usages',
-              'valid')
-    geomfields = ('geom',
-                  'reverse_geom',)
+                   'stake',
+                   'comfort',
+                   'trail',
+                   'departure',
+                   'arrival',
+                   'comments',
+                   'datasource',
+                   'networks',
+                   'usages',
+                   'valid',
+                   'reverse_geom')
+    geomfields = ('geom',)
 
     class Meta:
         model = Path
         exclude = ('geom_cadastre',)
+
+    def __init__(self, *args, **kwargs):
+        super(PathForm, self).__init__(*args, **kwargs)
+        self.fields['geom'].label = ''
 
     def clean_geom(self):
         data = self.cleaned_data['geom']

@@ -1,26 +1,19 @@
-/***** Bootstrap customizations ******/
+/*
+ * This file contains styles that are specific to Caminae, 
+ * with no reason to be in MapEntity.
+ * (paths, aggregations, altimetric profile, etc.)
+ */
 
-.groupfields {
-    margin-bottom: 15px;
+
+/* Force tiles opacity and no transition on every tile layer */
+.leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
+.leaflet-tile-pane .leaflet-fade-anim .leaflet-tile {
+    opacity: 0.6;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
 }
-
-.dropdown-menu {
-    z-index: 9999;
-}
-
-h2 {
-	text-align: center;
-}
-
-.form-panel h2 {
-	text-align: left;
-}
-
-
-#div_id_topology .controls {
-    margin-left: 30px;
-}
-
 
 .details-panel td.paths li {
     float: left;

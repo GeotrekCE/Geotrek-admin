@@ -4,15 +4,26 @@ L.Control.Screenshot = L.Control.extend({
     includes: L.Mixin.Events,
     options: {
         position: 'topleft',
-        title: 'Screenshot',
+        title: 'Screenshot'
     },
-    
+
+    initialize: function (url, getcontext) {
+        this.url = url;
+        this.getcontext = getcontext;
+    },
+
     screenshot: function () {
         // Screenshot effect
-        $('<div id="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color: white;"> </div>')
+        $('<div id="overlay" style="z-index: 5000; position:fixed; top:0; left:0; width:100%; height:100%; background-color: white;"> </div>')
             .appendTo(document.body)
             .fadeOut();
-        this.fire('trigger');
+
+        var fullContext = this.getcontext();
+        // Hack to download response attachment in Ajax
+        $('<form action="' + this.url + '" method="post">' +
+        '<textarea name="printcontext">' + fullContext + '</textarea>' +
+        '</form>').appendTo('body').submit().remove();
+        this.fire('triggered');
     },
 
     onAdd: function(map) {
@@ -155,6 +166,8 @@ MapEntity.Context = new function() {
         }
         
         if (context.print) {
+            // Hide map head
+            $('#maphead').hide();
             // Hide controls
             $('.leaflet-control').hide();   // Hide all
             $('.leaflet-control-scale').show(); // Show scale
@@ -268,7 +281,7 @@ MapEntity.History = L.Control.extend({
                 }
                 else {
                     // No more, redirect to list view 
-                    window.location = '/';
+                    window.location = window.SETTINGS.server;
                     $(entry).remove();
                 }
             }
