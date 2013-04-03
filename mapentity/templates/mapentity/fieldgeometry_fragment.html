@@ -68,13 +68,19 @@ var {{ module }}_settings = {
      * Allow to load files locally.
      */
     L.Control.FileLayerLoad.LABEL = '<i class="icon-folder-open"></i>';
-    var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: false},
-        filecontrol = L.Control.fileLayerLoad({
+
+    var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, radius: 8},
+        pointToLayer = function (feature, latlng) {
+            return L.circle(latlng, 8, {style: style});
+        },
+        onEachFeature = function (feature, layer) {
+            if (feature.properties.name) {
+                layer.bindLabel(feature.properties.name);
+            }
+        };
+    var filecontrol = L.Control.fileLayerLoad({
             fitBounds: true,
-            layerOptions: {style: style,
-                           pointToLayer: function (data, latlng) {
-                              return L.circle(latlng, 8, {style: style});
-                           }},
+            layerOptions: {style: style, pointToLayer: pointToLayer, onEachFeature: onEachFeature}
         });
     map.filecontrol = filecontrol;
     map.addControl(filecontrol);
