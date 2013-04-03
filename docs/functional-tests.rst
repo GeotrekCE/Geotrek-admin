@@ -2984,6 +2984,7 @@ Fait.
 
 Fait.
 
+
 #308 - ADMIN - Export GPX - champ Name
 --------------------------------------
 
@@ -2991,25 +2992,30 @@ Fait. La version texte de l'objet est utilisée (cf. titre des onglets, titres f
 
 De plus, le nom de fichier ne s'appelle plus simplement ``list`` mais contient la date, l'heure et le type d'objet.
 
+
 #617 - [BUG] Erreur Django Compressor pour projection UTM32
 -----------------------------------------------------------
 
 Fixé.
+
 
 #563 - ADMIN - Taille police aide 'inline'
 ------------------------------------------
 
 Fixé.
 
+
 #490 - ADMIN - Saisie signalétique : point uniquement
 -----------------------------------------------------
 
 Fixé.
 
+
 #389 - [BUG] Le selecteur de couches est visible sur les exports odt
 --------------------------------------------------------------------
 
 Fixé.
+
 
 #282 - [BUG] Export image carte : les objets sont décalés sur le fond
 ---------------------------------------------------------------------
@@ -3020,3 +3026,58 @@ Fixé.
 
     Dans la story #69, nous avions offert la possibilité de forcer l'utilisation d'une image attachée en tant qu'image principale pour les itinéraires.
     Le fonctionnement est conservé. À discuter.
+
+
+#510 - Onglet fichiers attachés
+-------------------------------
+
+Désormais la liste des fichiers attachés est dans un onglet sur la page détail.
+
+
+#572 - Gestion des fichiers liés directement sur fiche détails
+--------------------------------------------------------------
+
+L 'ajout et la suppression de fichiers attachés s'effectue désormais dans l'onglet fichiers attachés sur la page détail.
+
+Le formulaire et les liens de suppression ne sont disponible que si l'utilisateur possède les droits d'édition sur l'objet.
+
+
+#586 - Fiche détail : Afficher infobulle sur étiquette de structure
+-------------------------------------------------------------------
+
+Fait.
+
+
+#585 - Fiche détail : répéter titre de l'objet dans l'onglet et au dessus des attributs ?
+-----------------------------------------------------------------------------------------
+
+Désormais, l'onglet actif a une police plus grosse, et s'affiche en gras.
+
+Le titre (niveau 2) tel qu'il était présenté avant en doublon a été retiré.
+
+
+#534 - ADMIN - Carte
+--------------------
+
+Dans le formulaire d'ajout et d'édition :
+
+* Les boutons d'actions sont en bas, toujours visibles. (*Supprimer* n'apparait qu'à l'édition)
+* La carte est plein écran
+* La barre de défilement ne concerne que la partie des champs
+* Pour les formulaires longs (Trek, Intervention), des onglets permettent d'organiser les champs
+* Les champs sont présentés en 3 colonnes : Label, Champ, Aide.
+* Le bouton *Annuler* ne renvoit plus à la liste, mais à la page précédente (i.e. détail).
+
+
+#306 - ADMIN - Importer un GPX
+------------------------------
+
+Dans le formulaire d'édition (Tronçon, Topologie, etc.), il est possible de charger des fichiers GPX.
+
+Après chargement, la carte est centrée sur la couche ajoutée. Il est possible d'ajouter plusieurs couches.
+
+
+#547 - ADMIN - Importer un GPX et afficher le champ NAME
+--------------------------------------------------------
+
+Au survol des objets importés, un label s'affiche avec la propriété du champ NAME du GPX.
