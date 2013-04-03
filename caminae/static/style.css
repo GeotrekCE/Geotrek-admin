@@ -4,6 +4,17 @@
  * (paths, aggregations, altimetric profile, etc.)
  */
 
+
+/* Force tiles opacity and no transition on every tile layer */
+.leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
+.leaflet-tile-pane .leaflet-fade-anim .leaflet-tile {
+    opacity: 0.6;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
 .details-panel td.paths li {
     float: left;
     width: 25%;
