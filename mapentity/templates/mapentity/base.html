@@ -76,10 +76,12 @@
           {% block toolbar %}
             {% for item in request.session.history %}
                 {% if forloop.first and view != "list" %}
-                    <li class="{{ modelname }} active history">
+                    <li class="{{ modelname }} active history first">
                         <a href="{{ item.path }}">
                             <span class="content">{% if title %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
-                            <button class="close hidden">&times;</button>
+                            {% if view == "detail" %}
+                               <button class="close hidden">&times;</button>
+                            {% endif %}
                         </a>
                     </li>
                 {% else %}
@@ -157,6 +159,13 @@
             {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
         {% endfor %}
 
+        {# If context, we screenshot with CasperJS. Wait or backport Leaflet commit 1c8e0c6 torevent offset on PhantomJS captures #}
+        {% if request.GET.context %}
+        <script type="text/javascript">
+            L_DISABLE_3D = true;
+        </script>
+        {% endif %}
+
         {% leaflet_js %}
         <script type="text/javascript">
             L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
@@ -195,6 +204,10 @@
                 // Fade out success/infos messages
                 $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
 
+                // Form Cancel buttons
+                $('#button-id-cancel').click(function (){ window.history.go(-1); });
+
+                // Top-navigation tabs
                 MapEntity.history.render();
 
                 // Auto-hide elements
@@ -206,9 +219,10 @@
                 // Scrollable panels
                 var fillmax = function () {
                     $('.scrollable').each(function () {
-                        var top = $(this).position().top,
-                            height = $(window).height() - top - 50; // margin
-                        $(this).css('max-height', height);
+                        var top = $(this).offset().top,
+                            height = $(window).height() - top - parseFloat($(this).css('margin-top'))
+                                                              - parseFloat($(this).css('margin-bottom'));
+                        $(this).css('max-height', height + 'px');
                         
                     });
                 }

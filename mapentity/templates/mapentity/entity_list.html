@@ -184,13 +184,8 @@
                 t.setsubmit();
             });
             
-            var screenshot = new L.Control.Screenshot()
-            screenshot.on('trigger', function () {
-                var fullContext = MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
-                // Hack to download response attachment in Ajax
-                $('<form action="{% url mapentity:map_screenshot %}" method="post">' + 
-                '<textarea name="printcontext">' + fullContext + '</textarea>' + 
-                '</form>').appendTo('body').submit().remove();
+            var screenshot = new L.Control.Screenshot('{% url mapentity:map_screenshot %}', function () {
+                return MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
             });
             map.addControl(screenshot);
 

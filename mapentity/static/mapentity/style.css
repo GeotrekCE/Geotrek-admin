@@ -18,6 +18,16 @@ body {
 
 }
 
+/***** Bootstrap customizations ******/
+
+.groupfields {
+    margin-bottom: 15px;
+}
+
+.dropdown-menu {
+    z-index: 9999;
+}
+
 /***** Reusables ******/
 
 .centered {
@@ -102,6 +112,11 @@ body {
     background-repeat: no-repeat;
 }
 
+.navbar .nav > li.history.first > a {
+    font-weight: bolder;
+    font-size: 16px;
+}
+
 .navbar .nav .close {
     float: none;
 }
@@ -180,18 +195,19 @@ tr.selected-row td {
     width: 100%;
 }
 
-
-/***** Entity List ******/
-
-
 /* Layout (based on "Conflicting position" trick) */
 #container {position: absolute; top: 39px; bottom: 0; left: 0; right: 0;}
 #panelleft {position: absolute; top: 2px; bottom: 0; width: 50%; left: 0;}
 #panelright {position: absolute; top: 2px; bottom: 0; width: 50%; right: 0;}
 
 #mainmap {position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;}
+
+
 .map-panel.detail {position: absolute; top: 0px; bottom: 0px; right: 0px;}
 #detailmap {height: 100%;}
+
+
+/***** Entity List ******/
 
 #list-panel {
     margin-left: 60px;
@@ -363,23 +379,49 @@ span.filter-info {
     margin: 0px;
 }
 
-.details-panel h2 { 
-    min-height: 75px; 
-}
-
 #details-body {
     padding-right: 10px;
+}
+
+.download-group {
+    clear: both;
+    line-height: 35px;
+    display: block;
+    height: 35px;
+}
+
+.details-panel .nav-tabs {
+    margin-left: 40px;
+}
+
+.details-panel .nav-tabs li:first-child {
+    margin-left: 10px;
 }
 
 
 /***** Entity form ******/
 
-.form-panel form {
-    padding-left: 10px;
+.form-panel {
+    margin-top: 10px;
 }
 
-.form-panel h2 { 
-    padding-left: 100px; 
+.form-panel form {
+    padding-left: 10px;
+    margin-bottom: 0px;
+}
+
+.form-panel .form-actions {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: 0px;
+    padding: 10px;
+    height: 30px;
+}
+
+.form-panel #modelfields {
+    margin-bottom: 55px;
 }
 
 .form-panel .tab-content .nav { 
@@ -399,12 +441,52 @@ span.filter-info {
     color: #B94A48;
 }
 
+#geomfield {
+    position: absolute;
+    top: 2px;
+    bottom: 51px;
+    right: 0px;
+}
+#geomfield .leaflet-container,
+#geomfield .control-group,
+#geomfield .controls {
+    height: 100%;
+}
+
+/* Tired of bootstrap ? 
+TODO: please help;
+ */
+#modelfields.span4 {
+    width: 33%;
+}
+#geomfield.span8 {
+    width: 66%;
+}
+
+.form-horizontal #modelfields .nav-tabs {
+    margin-left: 80px;
+}
+
+.form-horizontal #geomfield .controls {
+    margin-left: 0px;
+}
+
+#geomfield label {
+    position: absolute;
+    z-index: 2000;
+    background-color: rgba(255,255,255,0.7);
+    padding: 5px;
+    border-radius: 5px;
+    top: 5px;
+    left: 5px;
+}
+
 label.requiredField {
     font-weight: bold;
 }
 
 .help-inline {
-    font-size: 0.5em;
+    font-size: 0.7em;
 }
 
 .form-horizontal .control-group {
