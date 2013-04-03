@@ -15,12 +15,6 @@ class MapEntityForm(forms.ModelForm):
 
     modelfields = tuple()
     geomfields = tuple()
-    actions = FormActions(
-        HTML('<!-- delete button -->'),
-        Submit('save_changes', _('Save changes'), css_class="btn-primary pull-right offset1"),
-        Button('cancel', _('Cancel'), css_class="pull-right offset1"),
-        css_class="form-actions",
-    )
 
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
     model = forms.Field(required=False, widget=forms.Field.hidden_widget)
@@ -38,17 +32,20 @@ class MapEntityForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super(MapEntityForm, self).__init__(*args, **kwargs)
 
+        actions = [
+            Submit('save_changes', _('Save changes'), css_class="btn-primary pull-right offset1"),
+            Button('cancel', _('Cancel'), css_class="pull-right offset1"),
+        ]
+
         # Generic behaviour
         if self.instance.pk:
             self.helper.form_action = self.instance.get_update_url()
             # Put delete url in Delete button
-            self.actions.fields[0] = HTML('<a class="btn btn-danger delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
+            actions.insert(0, HTML('<a class="btn btn-danger delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
                 self.instance.get_delete_url(),
-                unicode(_("Delete"))))
+                unicode(_("Delete")))))
         else:
             self.helper.form_action = self.instance.get_add_url()
-            # Remove Delete if adding new instance
-            self.actions.fields.remove(self.actions.fields[0])
 
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
@@ -85,7 +82,7 @@ class MapEntityForm(forms.ModelForm):
                 ),
                 css_class="container-fluid"
             ),
-            self.actions
+            FormActions(*actions, css_class="form-actions"),
         )
 
     @staticmethod
