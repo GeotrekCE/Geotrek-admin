@@ -459,6 +459,10 @@ TODO: please help;
     width: 66%;
 }
 
+.form-horizontal #modelfields .nav-tabs {
+    margin-left: 80px;
+}
+
 .form-horizontal #geomfield .controls {
     margin-left: 0px;
 }
