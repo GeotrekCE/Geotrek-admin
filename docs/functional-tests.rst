@@ -3081,3 +3081,9 @@ Après chargement, la carte est centrée sur la couche ajoutée. Il est possible
 --------------------------------------------------------
 
 Au survol des objets importés, un label s'affiche avec la propriété du champ NAME du GPX.
+
+
+#588 - Apparence bouton User barre navigation (n'est pas un onglet!)
+--------------------------------------------------------------------
+
+Fait.
