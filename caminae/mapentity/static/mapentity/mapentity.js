@@ -264,6 +264,7 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
 MapEntity.History = L.Control.extend({
 
     saveListInfo: function (infos) {
+        $('#nbresults').text(infos.nb);
         localStorage.setItem('list-search-results', JSON.stringify(infos));
     },
 

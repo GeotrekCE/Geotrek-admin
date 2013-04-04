@@ -3087,3 +3087,10 @@ Au survol des objets importés, un label s'affiche avec la propriété du champ 
 --------------------------------------------------------------------
 
 Fait.
+
+#548 - [BUG] ADMIN - Nombre d'éléments
+--------------------------------------
+
+Fixé.
+
+En plus, le nombre d'éléments apparait aussi sur la carte.
