@@ -3111,7 +3111,6 @@ Fait.
 #528 - Fiche itinéraire : afficher couche POIs comme sur OFFRE RANDO
 --------------------------------------------------------------------
 
-Fait.
+Fait. L'emplacement du parking est également affiché.
 
-Double-clic sur POI redirige vers la page détail.
-
+Un double-clic sur un POI redirige vers la page détail.

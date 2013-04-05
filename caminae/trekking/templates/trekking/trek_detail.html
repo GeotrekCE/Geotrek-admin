@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n static field_verbose_name thumbnail %}
+{% load i18n l10n static field_verbose_name thumbnail %}
 
 
 {% block download %}
@@ -210,6 +210,21 @@
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
+
+            // Parking
+            {% if object.parking_location %}
+                var parkingIcon = L.icon({
+                    iconUrl: "{% static "trekking/parking.png" %}",
+                    iconSize: [24, 24],
+                    iconAnchor: [0, 0],
+                });
+                var location = [{{ object.serializable_parking_location.1|unlocalize }},
+                                {{ object.serializable_parking_location.0|unlocalize }}];
+                L.marker(location, {icon: parkingIcon})
+                 .bindPopup("{{ object.advised_parking|default:_("None") }}")
+                 .addTo(map);
+            {% endif %}
+
             // Trek POIs layer
             $.getJSON('{% url trekking:trek_poi_geojson object.pk %}', function (data) {
                 for (var i=0, n = data.features.length; i<n; i++) {
