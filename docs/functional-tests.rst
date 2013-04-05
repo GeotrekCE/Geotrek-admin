@@ -3100,3 +3100,11 @@ En plus, le nombre d'éléments apparait aussi sur la carte.
 ---------------------------------------------------------------------------
 
 Fixé.
+
+
+#601 - ADMIN - Résumé -> Chapeau
+--------------------------------
+
+Fait.
+
+
