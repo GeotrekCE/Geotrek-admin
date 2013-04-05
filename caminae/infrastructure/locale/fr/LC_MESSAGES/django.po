@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-01 17:07+0100\n"
+"POT-Creation-Date: 2013-04-04 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,60 +22,72 @@ msgstr ""
 msgid "Intervention year"
 msgstr "Année d'intervention"
 
-#: models.py:13
+#: models.py:14
 msgid "Building"
 msgstr ""
 
-#: models.py:14
+#: models.py:15
 msgid "Facility"
 msgstr "Équipement"
 
-#: models.py:15
+#: models.py:16
 msgid "Signage"
 msgstr "Signalétique"
 
-#: models.py:47
+#: models.py:48
 msgid "Infrastructure Type"
 msgstr "Type d'aménagement"
 
-#: models.py:48
+#: models.py:49
 msgid "Infrastructure Types"
 msgstr "Types d'aménagement"
 
-#: models.py:60
+#: models.py:62
 msgid "Reference, code, ..."
 msgstr "Référence, code, ..."
 
 #: models.py:62
+msgid "Name"
+msgstr "Nom"
+
+#: models.py:64
 msgid "Specificites"
 msgstr "Spécificités"
 
-#: models.py:67 models.py:68
+#: models.py:65
+msgid "Type"
+msgstr "Type"
+
+#: models.py:69 models.py:70
 #: templates/infrastructure/infrastructure_detail_fragment.html:2
 msgid "Infrastructure"
 msgstr "Aménagement"
 
-#: templates/infrastructure/baseinfrastructure_detail.html:13
-msgid "Management"
-msgstr "Gestion"
+#: models.py:95
+msgid "Cities"
+msgstr "Communes"
+
+#: templates/infrastructure/baseinfrastructure_detail.html:18
+#: templates/infrastructure/infrastructure_detail_fragment.html:17
+#: templates/infrastructure/infrastructure_detail_fragment.html:33
+msgid "None"
+msgstr "Aucun(e)"
 
 #: templates/infrastructure/infrastructure_detail_fragment.html:5
 msgid "Infrastructures"
 msgstr "Aménagements"
 
-#: templates/infrastructure/infrastructure_detail_fragment.html:17
-#: templates/infrastructure/infrastructure_detail_fragment.html:33
-msgid "None"
-msgstr "Aucun(e)"
+#: templates/infrastructure/infrastructure_detail_fragment.html:9
+msgid "Add a new infrastructure"
+msgstr "Ajouter un aménagement"
 
 #: templates/infrastructure/infrastructure_detail_fragment.html:21
 msgid "Signages"
 msgstr "Signalétiques"
 
 #: templates/infrastructure/infrastructure_detail_fragment.html:25
-
-msgid "Add intervention"
-msgstr "Ajouter une intervention"
+msgid "Add a new signage"
+msgstr "Ajouter une signalétique"
 
 #: templates/infrastructure/infrastructure_list.html:7
 msgid "Add infrastructure"
@@ -84,3 +96,9 @@ msgstr "Ajouter un aménagement"
 #: templates/infrastructure/signage_list.html:7
 msgid "Add signage"
 msgstr "Ajouter une signalétique"
+
+msgid "Management"
+msgstr "Gestion"
+
+msgid "Add intervention"
+msgstr "Ajouter une intervention"
