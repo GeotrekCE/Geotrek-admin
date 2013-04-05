@@ -3094,3 +3094,9 @@ Fait.
 Fixé.
 
 En plus, le nombre d'éléments apparait aussi sur la carte.
+
+
+#620 -[BUG] La projection des settings est ignorée à cause des migrations !
+---------------------------------------------------------------------------
+
+Fixé.

@@ -3,6 +3,7 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -67,7 +68,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='zonage')),
             ('order', self.gf('django.db.models.fields.IntegerField')(db_column='order')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
         ))
         db.send_create_signal('land', ['RestrictedArea'])
 
@@ -82,7 +83,7 @@ class Migration(SchemaMigration):
         db.create_table('couche_communes', (
             ('code', self.gf('django.db.models.fields.CharField')(max_length=6, primary_key=True, db_column='insee')),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='commune')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
         ))
         db.send_create_signal('land', ['City'])
 
@@ -97,7 +98,7 @@ class Migration(SchemaMigration):
         db.create_table('couche_secteurs', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='secteur')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
         ))
         db.send_create_signal('land', ['District'])
 
@@ -185,8 +186,8 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
@@ -219,7 +220,7 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.TopologyKind']"}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
@@ -239,7 +240,7 @@ class Migration(SchemaMigration):
         'land.city': {
             'Meta': {'object_name': 'City', 'db_table': "'couche_communes'"},
             'code': ('django.db.models.fields.CharField', [], {'max_length': '6', 'primary_key': 'True', 'db_column': "'insee'"}),
-            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'commune'"})
         },
         'land.cityedge': {
@@ -254,7 +255,7 @@ class Migration(SchemaMigration):
         },
         'land.district': {
             'Meta': {'object_name': 'District', 'db_table': "'couche_secteurs'"},
-            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'secteur'"})
         },
@@ -290,7 +291,7 @@ class Migration(SchemaMigration):
         },
         'land.restrictedarea': {
             'Meta': {'object_name': 'RestrictedArea', 'db_table': "'couche_zonage_reglementaire'"},
-            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'zonage'"}),
             'order': ('django.db.models.fields.IntegerField', [], {'db_column': "'order'"})

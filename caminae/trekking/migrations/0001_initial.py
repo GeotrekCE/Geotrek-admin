@@ -3,6 +3,7 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -49,13 +50,13 @@ class Migration(SchemaMigration):
             ('is_park_centered', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_transborder', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('advised_parking', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('parking_location', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154, spatial_index=False)),
+            ('parking_location', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=settings.SRID, spatial_index=False)),
             ('public_transport', self.gf('django.db.models.fields.TextField')()),
             ('advice', self.gf('django.db.models.fields.TextField')()),
             ('advice_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('advice_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('advice_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=2154, dim=3, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, dim=3, spatial_index=False)),
             ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
@@ -240,8 +241,8 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
@@ -330,7 +331,7 @@ class Migration(SchemaMigration):
             'destination': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Destination']"}),
             'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.DifficultyLevel']"}),
             'duration': ('django.db.models.fields.IntegerField', [], {}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'dim': '3', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
             'handicapped_infrastructure': ('django.db.models.fields.TextField', [], {}),
             'handicapped_infrastructure_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'handicapped_infrastructure_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -347,7 +348,7 @@ class Migration(SchemaMigration):
             'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
             'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.TrekNetwork']"}),
-            'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['core.Path']"}),
             'public_transport': ('django.db.models.fields.TextField', [], {}),
             'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Route']"}),
