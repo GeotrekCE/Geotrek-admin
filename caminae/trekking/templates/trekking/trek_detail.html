@@ -15,23 +15,6 @@
 {% endblock download %}
 
 
-{% block mapinit %}
-    // POIs markers
-    var pointToLayer = function (geojson, latlng) {
-        var url = "{% url trekking:poi_detail 0 %}".replace('0', geojson.properties.pk);
-        return L.marker(latlng).bindPopup('<a href="' + url + '">{% trans "Details" %}</a>');;
-    };
-
-    // Trek POIs layer
-    var pois = new L.ObjectsLayer(null, {
-        pointToLayer: pointToLayer, 
-        indexing: false
-    });
-    pois.load('{% url trekking:trek_poi_geojson object.pk %}');
-    map.addLayer(pois);
-{% endblock mapinit %}
-
-
 {% block detailspanel %}
     {{ block.super }}
 
@@ -218,3 +201,32 @@
     {{ block.super }}
     {% include "core/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile" %}
 {% endblock mappanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script src="{% static "trekking/leaflet.markercluster.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "trekking/MarkerCluster.css" %}">
+    <script src="{% static "trekking/poilayer.js" %}"></script>
+    <script type="text/javascript">
+        $(window).on('detailmap:ready', function (e, data) {
+            var map = data.map;
+            // Trek POIs layer
+            $.getJSON('{% url trekking:trek_poi_geojson object.pk %}', function (data) {
+                for (var i=0, n = data.features.length; i<n; i++) {
+                    var f = data.features[i];
+                    f.properties.type = f.properties.serializable_type;
+                    f.properties.thumbnail = f.properties.serializable_thumbnail;
+                }
+
+                var pois = new POILayer(data),
+                    poiUrl = "{% url trekking:poi_detail 0 %}";
+                pois.eachLayer(function (layer) {
+                    layer.on('dblclick', function (e) {
+                        window.location = poiUrl.replace('0', layer.properties.pk);
+                    });
+                });
+                map.addLayer(pois);
+            });
+        });
+    </script>
+{% endblock extrabody %}

@@ -3108,3 +3108,10 @@ Fixé.
 Fait.
 
 
+#528 - Fiche itinéraire : afficher couche POIs comme sur OFFRE RANDO
+--------------------------------------------------------------------
+
+Fait.
+
+Double-clic sur POI redirige vers la page détail.
+
