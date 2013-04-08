@@ -3114,3 +3114,9 @@ Fait.
 Fait. L'emplacement du parking est également affiché.
 
 Un double-clic sur un POI redirige vers la page détail.
+
+
+#621 - [BUG] Crash sur export itinéraires en langue FR
+------------------------------------------------------
+
+Fixé.

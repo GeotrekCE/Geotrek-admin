@@ -22,6 +22,7 @@ from django.core.serializers import serialize
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
+from django.template.defaultfilters import slugify
 
 import requests
 
@@ -353,7 +354,7 @@ class MapEntityFormat(MapEntityList):
             return HttpResponseBadRequest()
 
         filename = '%s-%s-list' % (datetime.now().strftime('%Y%m%d-%H%M'),
-                                   unicode(self.model._meta.verbose_name))
+                                   str(slugify(unicode(self.model._meta.verbose_name))))
         response = formatter(request=self.request, context=context, **response_kwargs)
         response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, fmt_str)
         return response
