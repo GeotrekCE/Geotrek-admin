@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-01 17:07+0100\n"
+"POT-Creation-Date: 2013-04-04 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,30 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: filters.py:151 filters.py:163 models.py:21 models.py:31
+#: filters.py:176 filters.py:191 models.py:340 models.py:352
+#: templates/land/bbox.html:5 templates/land/land_mapinit_fragment.html:5
+msgid "City"
+msgstr "Commune"
+
+#: filters.py:179 filters.py:194 models.py:21 models.py:32
 msgid "Physical type"
 msgstr "Type physique"
 
-#: filters.py:152 filters.py:164 models.py:78 models.py:88
+#: filters.py:180 filters.py:195 models.py:79 models.py:90
 msgid "Land type"
 msgstr "Type foncier"
 
-#: filters.py:154 filters.py:166
+#: filters.py:182 filters.py:197
 msgid "Competence"
 msgstr "Compétence"
 
-#: filters.py:155 filters.py:167
+#: filters.py:183 filters.py:198
 #: templates/land/land_listactions_fragment.html:18
 msgid "Signage management"
 msgstr "Gestion signalétique"
 
-#: filters.py:156 filters.py:168
+#: filters.py:184 filters.py:199
 #: templates/land/land_listactions_fragment.html:19
 msgid "Work management"
 msgstr "Gestion de travaux"
 
-#: models.py:17 models.py:73 models.py:263 models.py:276 models.py:330
-#: models.py:382
+#: models.py:17 models.py:74 models.py:265 models.py:278 models.py:332
+#: models.py:384
 msgid "Name"
 msgstr "Nom"
 
@@ -49,109 +54,104 @@ msgstr "Nom"
 msgid "Physical types"
 msgstr "Types physique"
 
-#: models.py:39 models.py:43
+#: models.py:40 models.py:44
 msgid "Physical edge"
 msgstr "Tronçon physique"
 
-#: models.py:40 templates/land/land_detail_fragment.html:29
+#: models.py:41 templates/land/land_detail_fragment.html:29
 msgid "Physical edges"
 msgstr "Tronçons physique"
 
-#: models.py:74
+#: models.py:75
 msgid "Right of way"
 msgstr "Droit de passage"
 
-#: models.py:79 templates/land/land_listactions_fragment.html:16
+#: models.py:80 templates/land/land_listactions_fragment.html:16
 msgid "Land types"
 msgstr "Types foncier"
 
-#: models.py:95 models.py:99
+#: models.py:97 models.py:101
 msgid "Land edge"
 msgstr "Tronçon foncier"
 
-#: models.py:96 templates/land/land_detail_fragment.html:18
+#: models.py:98 templates/land/land_detail_fragment.html:18
 msgid "Land edges"
 msgstr "Tronçons foncier"
 
-#: models.py:131 models.py:173 models.py:215
+#: models.py:133 models.py:175 models.py:217
 msgid "Organism"
 msgstr "Organisme"
 
-#: models.py:138 models.py:142
+#: models.py:140 models.py:144
 msgid "Competence edge"
 msgstr "Tronçon de compétence"
 
-#: models.py:139 templates/land/land_detail_fragment.html:40
+#: models.py:141 templates/land/land_detail_fragment.html:40
 msgid "Competence edges"
 msgstr "Tronçons de compétence"
 
-#: models.py:180 models.py:184
+#: models.py:182 models.py:186
 msgid "Work management edge"
 msgstr "Tronçon de gestion de travaux"
 
-#: models.py:181 templates/land/land_detail_fragment.html:49
+#: models.py:183 templates/land/land_detail_fragment.html:49
 msgid "Work management edges"
 msgstr "Tronçons de gestion de travaux"
 
-#: models.py:222 models.py:226
+#: models.py:224 models.py:228
 msgid "Signage management edge"
 msgstr "Tronçon de gestion signalétique"
 
-#: models.py:223 templates/land/land_detail_fragment.html:60
+#: models.py:225 templates/land/land_detail_fragment.html:60
 msgid "Signage management edges"
 msgstr "Tronçons de gestion signalétique"
 
-#: models.py:267
+#: models.py:269
 msgid "Restricted area type"
 msgstr "Type de zonage réglementaire"
 
-#: models.py:278 models.py:286 models.py:296
+#: models.py:280 models.py:288 models.py:298
 msgid "Restricted area"
 msgstr "Zonage réglementaire"
 
-#: models.py:287 templates/land/land_detail_fragment.html:14
+#: models.py:289 templates/land/land_detail_fragment.html:14
 msgid "Restricted areas"
 msgstr "Zonage réglementaire"
 
-#: models.py:304 models.py:308
+#: models.py:306 models.py:310
 msgid "Restricted area edge"
 msgstr "Tronçon de zonage réglementaire"
 
-#: models.py:305
+#: models.py:307
 msgid "Restricted area edges"
 msgstr "Tronçons de zonage réglementaire"
 
-#: models.py:339 models.py:350 templates/land/bbox.html:5
-#: templates/land/land_mapinit_fragment.html:5
-msgid "City"
-msgstr "Commune"
-
-#: models.py:340 templates/land/land_detail_fragment.html:6
+#: models.py:341 templates/land/land_detail_fragment.html:6
 msgid "Cities"
 msgstr "Communes"
 
-#: models.py:357 models.py:361
+#: models.py:359 models.py:363
 msgid "City edge"
 msgstr "Tronçon de commune"
 
-#: models.py:358
+#: models.py:360
 msgid "City edges"
 msgstr "Tronçons de commune"
 
-#: models.py:391 models.py:401 templates/land/bbox.html:12
+#: models.py:392 models.py:403 templates/land/bbox.html:12
 #: templates/land/land_mapinit_fragment.html:4
 msgid "District"
 msgstr "Secteur"
 
-#: models.py:392 templates/land/land_detail_fragment.html:10
+#: models.py:393 templates/land/land_detail_fragment.html:10
 msgid "Districts"
 msgstr "Secteurs"
 
-#: models.py:408 models.py:412
+#: models.py:410 models.py:414
 msgid "District edge"
 msgstr "Tronçon de secteur"
 
-#: models.py:409
+#: models.py:411
 msgid "District edges"
 msgstr "Tronçons de secteur"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-01 17:07+0100\n"
+"POT-Creation-Date: 2013-04-04 11:10+0200\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,11 +36,11 @@ msgstr "Organismo"
 msgid "Organisms"
 msgstr "Organismi"
 
-#: models.py:19 models.py:23
+#: models.py:20 models.py:24
 msgid "File type"
 msgstr "Tipo di file"
 
-#: models.py:24
+#: models.py:25
 msgid "File types"
 msgstr "Tipi di file"
 

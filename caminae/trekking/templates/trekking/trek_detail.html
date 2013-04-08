@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n static field_verbose_name thumbnail %}
+{% load i18n l10n static field_verbose_name thumbnail %}
 
 
 {% block download %}
@@ -13,23 +13,6 @@
     <a class="btn btn-mini" href="{% url trekking:trek_printable object.pk %}" title="{% trans "Public print" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
     <a class="btn btn-mini" href="{% url trekking:trek_printable_poi object.pk %}" title="{% trans "Public print with POIs" %}"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print+POI" %}</a>
 {% endblock download %}
-
-
-{% block mapinit %}
-    // POIs markers
-    var pointToLayer = function (geojson, latlng) {
-        var url = "{% url trekking:poi_detail 0 %}".replace('0', geojson.properties.pk);
-        return L.marker(latlng).bindPopup('<a href="' + url + '">{% trans "Details" %}</a>');;
-    };
-
-    // Trek POIs layer
-    var pois = new L.ObjectsLayer(null, {
-        pointToLayer: pointToLayer, 
-        indexing: false
-    });
-    pois.load('{% url trekking:trek_poi_geojson object.pk %}');
-    map.addLayer(pois);
-{% endblock mapinit %}
 
 
 {% block detailspanel %}
@@ -218,3 +201,47 @@
     {{ block.super }}
     {% include "core/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile" %}
 {% endblock mappanel %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script src="{% static "trekking/leaflet.markercluster.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "trekking/MarkerCluster.css" %}">
+    <script src="{% static "trekking/poilayer.js" %}"></script>
+    <script type="text/javascript">
+        $(window).on('detailmap:ready', function (e, data) {
+            var map = data.map;
+
+            // Parking
+            {% if object.parking_location %}
+                var parkingIcon = L.icon({
+                    iconUrl: "{% static "trekking/parking.png" %}",
+                    iconSize: [24, 24],
+                    iconAnchor: [0, 0],
+                });
+                var location = [{{ object.serializable_parking_location.1|unlocalize }},
+                                {{ object.serializable_parking_location.0|unlocalize }}];
+                L.marker(location, {icon: parkingIcon})
+                 .bindPopup("{{ object.advised_parking|default:_("None") }}")
+                 .addTo(map);
+            {% endif %}
+
+            // Trek POIs layer
+            $.getJSON('{% url trekking:trek_poi_geojson object.pk %}', function (data) {
+                for (var i=0, n = data.features.length; i<n; i++) {
+                    var f = data.features[i];
+                    f.properties.type = f.properties.serializable_type;
+                    f.properties.thumbnail = f.properties.serializable_thumbnail;
+                }
+
+                var pois = new POILayer(data),
+                    poiUrl = "{% url trekking:poi_detail 0 %}";
+                pois.eachLayer(function (layer) {
+                    layer.on('dblclick', function (e) {
+                        window.location = poiUrl.replace('0', layer.properties.pk);
+                    });
+                });
+                map.addLayer(pois);
+            });
+        });
+    </script>
+{% endblock extrabody %}

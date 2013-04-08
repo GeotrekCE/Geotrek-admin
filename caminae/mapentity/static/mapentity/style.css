@@ -157,6 +157,10 @@ img.marker-drag { background-image: url('images/osrm_markers/marker-drag.png') }
  	background-color: rgba(0, 0, 0, 0.25);
 }
 
+.leaflet-container .leaflet-control-information {
+    font-size: 1.2em;
+}
+
 .leaflet-control-draw-measure {
 	background-image: url(images/measure-control.png);
 }

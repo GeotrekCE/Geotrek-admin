@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-01 17:07+0100\n"
+"POT-Creation-Date: 2013-04-04 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,27 +60,27 @@ msgstr "Structure"
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:67 models.py:84
+#: models.py:68 models.py:85
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:83
+#: models.py:84
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:93
+#: models.py:94
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:97
+#: models.py:98
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:98
+#: models.py:99
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:101
+#: models.py:102
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"

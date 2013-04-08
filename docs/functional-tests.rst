@@ -3081,3 +3081,42 @@ Après chargement, la carte est centrée sur la couche ajoutée. Il est possible
 --------------------------------------------------------
 
 Au survol des objets importés, un label s'affiche avec la propriété du champ NAME du GPX.
+
+
+#588 - Apparence bouton User barre navigation (n'est pas un onglet!)
+--------------------------------------------------------------------
+
+Fait.
+
+#548 - [BUG] ADMIN - Nombre d'éléments
+--------------------------------------
+
+Fixé.
+
+En plus, le nombre d'éléments apparait aussi sur la carte.
+
+
+#620 -[BUG] La projection des settings est ignorée à cause des migrations !
+---------------------------------------------------------------------------
+
+Fixé.
+
+
+#601 - ADMIN - Résumé -> Chapeau
+--------------------------------
+
+Fait.
+
+
+#528 - Fiche itinéraire : afficher couche POIs comme sur OFFRE RANDO
+--------------------------------------------------------------------
+
+Fait. L'emplacement du parking est également affiché.
+
+Un double-clic sur un POI redirige vers la page détail.
+
+
+#621 - [BUG] Crash sur export itinéraires en langue FR
+------------------------------------------------------
+
+Fixé.

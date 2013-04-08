@@ -29,7 +29,7 @@ function detailmapInit(map, bounds) {
     var objectBounds = {{ object|latlngbounds }},
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
-    
+
     {% if object.geom.geom_type == "LineString" %}
     // Add origin and destination markers if geometry is a line
         var originlonlat = [{{ object.geom.coords|first|join:"," }}],
@@ -50,6 +50,8 @@ function detailmapInit(map, bounds) {
         delete context.maplayers;
         MapEntity.Context.restoreFullContext(map, context);
     }
+
+    $(window).trigger('detailmap:ready', {map:map});
 
     // Save map context : will be restored on next form (e.g. interventions, ref story #182)
     $(window).unload(function () {
