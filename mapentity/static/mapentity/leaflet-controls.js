@@ -6,7 +6,7 @@ L.Control.Information = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-attribution');
+        this._container = L.DomUtil.create('div', 'leaflet-control-information leaflet-control-attribution');
         L.DomEvent.disableClickPropagation(this._container);
 
         map.on('layeradd', this._onLayerAdd, this)

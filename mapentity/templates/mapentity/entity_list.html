@@ -109,23 +109,19 @@
 
         function mainmapInit(map, bounds) {
             {% smart_include "mapinit" %}
-            
+
             map.removeControl(map.attributionControl);
             map.doubleClickZoom.disable();
-            
-            {% if DEBUG %}
-            map.on('viewreset moveend', function () {
-                if (!map._loaded)
-                    return;
-                var n = objectsLayer.search(map.getBounds()).length;
-                objectsLayer.fire('info', {info : n + ' objects shown'});
-            });
-            map.addControl(new L.Control.Information());
-            {% endif %}
 
+            map.addControl(new L.Control.Information());
             map.addControl(new L.Control.ResetView(bounds));
             map.addControl(new L.Control.Measurement());
-            
+
+
+            /*
+             * Objects Layer
+             * .......................
+             */
             var getUrl = function (properties, layer) {
                 //TODO use nice JS url rewriting
                 return "{{ model.get_generic_detail_url }}".replace('0', properties.pk);
@@ -142,6 +138,11 @@
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
+
+            /*
+             * Datatables
+             * .......................
+             */
             var dt = JQDataTable.init($('#objects-list'), null /* no load at startup */, {
                 // Hide pk column
                 aoColumnDefs: [ { "bVisible": false, "aTargets": [ 0 ] } ],
@@ -162,6 +163,11 @@
             $('#objects-list_filter input').attr('placeHolder', "{% trans "Search" %}");
             $('#objects-list_filter label').contents().filter(function() {return this.nodeType === 3;/*Node.TEXT_NODE*/}).remove();
 
+
+            /*
+             * Assemble components
+             * .......................
+             */
             var mapsync = new L.MapListSync(dt,
                                             map, 
                                             objectsLayer, {
@@ -177,8 +183,10 @@
                 // Show and save number of results
                 MapEntity.history.saveListInfo({model:'{{ modelname }}', 
                                                 nb: data.nbrecords});
+                // Show layer info
+                objectsLayer.fire('info', {info : (data.nbrecords + ' ' + '{% trans "results" %}')});
             });
-            
+
             var t = new MapEntity.TogglableFilter();
             mapsync.on('reloaded', function (data) {
                 t.setsubmit();
