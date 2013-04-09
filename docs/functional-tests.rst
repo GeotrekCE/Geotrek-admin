@@ -3126,3 +3126,61 @@ Fixé.
 Sprint 15 - Version 0.15.0
 ==========================
 
+
+#559 - OFFRE DE RANDO - Page réglementation
+-------------------------------------------
+
+Documentation (*README*) mise à jour (nommer page réglementation ``01-*.html``).
+
+
+#604 - OFFRE DE RANDO - Fiche itinéraire - Longueur
+---------------------------------------------------
+
+Fait.
+
+
+#540 - OFFRE RANDO - [BUG] Lien detail popup cassé
+--------------------------------------------------
+
+Fixé.
+
+
+#561 - OFFRE DE RANDO - Légende des images
+------------------------------------------
+
+Fait.
+
+
+#605 - OFFRE RANDO - Profil altimétrique
+----------------------------------------
+
+Fait.
+
+
+#556 - OFFRE DE RANDO - Carte de situation
+------------------------------------------
+
+Fait, plié par défaut sur la page détail seulement.
+
+
+#557 - OFFRE DE RANDO - Etendue globale
+---------------------------------------
+
+Fait. Bouton ajouté, restore la vue adapté à l'étendue des itinéraires.
+
+
+#609 - OFFRE DE RANDO - Couleur des itinéraires
+-----------------------------------------------
+
+Fait, documenté dans (*README*).
+
+
+#564 - OFFRE DE RANDO - Carroussel de photos
+--------------------------------------------
+
+Fait.
+
+#553 - OFFRE DE RANDO - Retracter bandeau et filtres
+----------------------------------------------------
+
+Bouton plein écran ajouté.
