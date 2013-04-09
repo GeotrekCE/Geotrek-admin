@@ -172,7 +172,10 @@ class MapEntityMixin(object):
             raise ValueError('Could not reach %s' % url)
 
         soup = bs4.BeautifulSoup(r.content)
-        details = soup.find(id="details-body")
+        details = soup.find(id="properties")
+        if details is None:
+            raise ValueError('Content is of detail page is invalid')
+
         # Remove "Add" buttons
         for p in details('p'):
             if 'autohide' in p.get('class', ''):
