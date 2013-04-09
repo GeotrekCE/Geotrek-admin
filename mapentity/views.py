@@ -97,9 +97,13 @@ class JSONResponseMixin(object):
 
 class LastModifiedMixin(object):
     def dispatch(self, *args, **kwargs):
-        model = self.model or self.queryset.model
+        qs = self.queryset or self.model.objects
+        try:
+            obj = qs.get(pk=kwargs['pk'])
+        except (KeyError, self.model.DoesNotExist):
+            return HttpResponseNotFound()
 
-        @cache_last_modified(lambda request, pk: model.objects.get(pk=pk).date_update)
+        @cache_last_modified(lambda request, pk: obj.date_update)
         def _dispatch(*args, **kwargs):
             return super(LastModifiedMixin, self).dispatch(*args, **kwargs)
         return _dispatch(*args, **kwargs)
