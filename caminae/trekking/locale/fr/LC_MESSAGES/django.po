@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2013-04-10 11:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "Basique"
 msgid "Advanced"
 msgstr "Avancé"
 
-#: forms.py:72 models.py:139 templates/trekking/trek_detail.html:169
+#: forms.py:72 models.py:139 templates/trekking/trek_detail.html:160
 msgid "Related treks"
 msgstr "Itinéraires liés"
 
@@ -42,27 +42,28 @@ msgstr "Annuler"
 msgid "Create"
 msgstr "Créer"
 
-#: models.py:67 templates/trekking/trek_detail.html:209
+#: models.py:67 templates/trekking/trek_detail.html:200
 msgid "Thumbnail"
 msgstr "Vignette"
 
 #: models.py:73 templates/trekking/poi_detail.html:18
-#: templates/trekking/trek_detail.html:71
-#: templates/trekking/trek_detail.html:77
-#: templates/trekking/trek_detail.html:87
-#: templates/trekking/trek_detail.html:93
-#: templates/trekking/trek_detail.html:99
-#: templates/trekking/trek_detail.html:105
-#: templates/trekking/trek_detail.html:111
-#: templates/trekking/trek_detail.html:117
-#: templates/trekking/trek_detail.html:123
-#: templates/trekking/trek_detail.html:129
-#: templates/trekking/trek_detail.html:140
-#: templates/trekking/trek_detail.html:152
-#: templates/trekking/trek_detail.html:164
-#: templates/trekking/trek_detail.html:180
-#: templates/trekking/trek_detail.html:192
-#: templates/trekking/trek_detail.html:204
+#: templates/trekking/trek_detail.html:62
+#: templates/trekking/trek_detail.html:68
+#: templates/trekking/trek_detail.html:78
+#: templates/trekking/trek_detail.html:84
+#: templates/trekking/trek_detail.html:90
+#: templates/trekking/trek_detail.html:96
+#: templates/trekking/trek_detail.html:102
+#: templates/trekking/trek_detail.html:108
+#: templates/trekking/trek_detail.html:114
+#: templates/trekking/trek_detail.html:120
+#: templates/trekking/trek_detail.html:131
+#: templates/trekking/trek_detail.html:143
+#: templates/trekking/trek_detail.html:155
+#: templates/trekking/trek_detail.html:171
+#: templates/trekking/trek_detail.html:183
+#: templates/trekking/trek_detail.html:195
+#: templates/trekking/trek_detail.html:232
 #: templates/trekking/trekking_detail_fragment.html:18
 #: templates/trekking/trekking_detail_fragment.html:36
 msgid "None"
@@ -77,7 +78,7 @@ msgstr "Nom"
 msgid "Public name (Change carefully)"
 msgstr "Nom public (attention si changement)"
 
-#: models.py:89 templates/trekking/trek_detail.html:174
+#: models.py:89 templates/trekking/trek_detail.html:165
 msgid "Departure"
 msgstr "Départ"
 
@@ -330,39 +331,42 @@ msgstr "Impression grand public avec POIs"
 msgid "Print+POI"
 msgstr "Impr.+POI"
 
-#: templates/trekking/trek_detail.html:22
-msgid "Details"
-msgstr "Détails"
+#: templates/trekking/trek_detail.html:20
+msgid ""
+"Your <strong>pictures should have the same ratio<strong> (height/width) for "
+"a better apparence in public portal."
+msgstr "Vos <strong>images doivent avoir le même ratio</strong> (height/width) pour "
+"une meilleure integration dans le portail public."
 
-#: templates/trekking/trek_detail.html:39
+#: templates/trekking/trek_detail.html:30
 msgid "Not published"
 msgstr "Non publié"
 
-#: templates/trekking/trek_detail.html:43
+#: templates/trekking/trek_detail.html:34
 msgid "Trek is published but"
 msgstr "L'itinéraire est publié mais"
 
-#: templates/trekking/trek_detail.html:44
+#: templates/trekking/trek_detail.html:35
 msgid "looks incomplete;"
 msgstr "semble incomplet;"
 
-#: templates/trekking/trek_detail.html:45
+#: templates/trekking/trek_detail.html:36
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
 
-#: templates/trekking/trek_detail.html:82
+#: templates/trekking/trek_detail.html:73
 msgid "yes,no"
 msgstr "oui,non"
 
-#: templates/trekking/trek_detail.html:175
+#: templates/trekking/trek_detail.html:166
 msgid "Path"
 msgstr "Tronçons"
 
-#: templates/trekking/trek_detail.html:176
+#: templates/trekking/trek_detail.html:167
 msgid "Circuit"
 msgstr "Circuit"
 
-#: templates/trekking/trek_detail.html:197
+#: templates/trekking/trek_detail.html:188
 msgid "POI types"
 msgstr "Types de POI"
 
@@ -399,41 +403,3 @@ msgstr "Ajouter un POI"
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
-#~ msgid "Ascent"
-#~ msgstr "Dénivelée positive"
-
-#~ msgid "Descent"
-#~ msgstr "Dénivelée négative"
-
-#~ msgid "Minimum elevation"
-#~ msgstr "Altitude minimum"
-
-#~ msgid "Maximum elevation"
-#~ msgstr "Altitude maximum"
-
-#~ msgid "Management"
-#~ msgstr "Gestion"
-
-#~ msgid "Is transborder"
-#~ msgstr "Transfrontalier"
-
-#~ msgid "Main themes"
-#~ msgstr "Thématique majeure"
-
-#~ msgid "Destination"
-#~ msgstr "Destination"
-
-#~ msgid "Destinations"
-#~ msgstr "Destinations"
-
-#~ msgid "Length"
-#~ msgstr "Longueur"
-
-#~ msgid "Insertion date"
-#~ msgstr "Date d'insertion"
-
-#~ msgid "Update date"
-#~ msgstr "Date de modification"
-
-#~ msgid "Deleted"
-#~ msgstr "Supprimé"

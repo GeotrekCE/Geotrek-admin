@@ -15,6 +15,12 @@
 {% endblock download %}
 
 
+{% block attachmentspanel %}
+    {% include "trekking/ratio_info_fragment.html" %}
+    {{ block.super }}
+{% endblock attachmentspanel %}
+
+
 {% block detailspanel %}
     {{ block.super }}
 
