@@ -98,9 +98,10 @@ class JSONResponseMixin(object):
 class LastModifiedMixin(object):
     def dispatch(self, *args, **kwargs):
         qs = self.queryset or self.model.objects
+        model = self.model or self.queryset.model
         try:
             obj = qs.get(pk=kwargs['pk'])
-        except (KeyError, self.model.DoesNotExist):
+        except (KeyError, model.DoesNotExist):
             return HttpResponseNotFound()
 
         @cache_last_modified(lambda request, pk: obj.date_update)
@@ -120,6 +121,10 @@ class DocumentConvert(DetailView):
 
     def render_to_response(self, context):
         url = convert_url(self.request, self.source_url(), self.format)
+        if not url.startswith('http'):
+            url = '%s://%s%s' % (self.request.is_secure() and 'https' or 'http',
+                                 self.request.get_host(),
+                                 url)
         try:
             source = requests.get(url)
             response = HttpResponse(source.content, status=source.status_code)
@@ -421,7 +426,7 @@ class MapEntityMapImage(ModelMetaMixin, DetailView):
     def render_to_response(self, context, **response_kwargs):
         try:
             obj = self.get_object()
-            obj.prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+            obj.prepare_map_image(self.request.build_absolute_uri('/'))
             response = HttpResponse(mimetype='image/png')
             # Open image file, and writes to response
             with open(obj.get_map_image_path(), 'rb') as f:
@@ -464,7 +469,7 @@ class MapEntityDocument(DetailView):
         self.template_name = found
 
     def get_context_data(self, **kwargs):
-        rooturl = self.request.build_absolute_uri(settings.ROOT_URL or '/')
+        rooturl = self.request.build_absolute_uri('/')
         # Screenshot of object map is required, since present in document
         self.get_object().prepare_map_image(rooturl)
         html = self.get_object().get_attributes_html(rooturl)

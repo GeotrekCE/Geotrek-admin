@@ -199,7 +199,7 @@ msgstr "Parcours"
 
 #: models.py:133
 msgid "Difficulty"
-msgstr "Niveau de difficulté"
+msgstr "Difficulté"
 
 #: models.py:136 models.py:473
 msgid "Web links"
