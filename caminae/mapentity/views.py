@@ -426,7 +426,7 @@ class MapEntityMapImage(ModelMetaMixin, DetailView):
     def render_to_response(self, context, **response_kwargs):
         try:
             obj = self.get_object()
-            obj.prepare_map_image(self.request.build_absolute_uri(settings.ROOT_URL or '/'))
+            obj.prepare_map_image(self.request.build_absolute_uri('/'))
             response = HttpResponse(mimetype='image/png')
             # Open image file, and writes to response
             with open(obj.get_map_image_path(), 'rb') as f:
@@ -469,7 +469,7 @@ class MapEntityDocument(DetailView):
         self.template_name = found
 
     def get_context_data(self, **kwargs):
-        rooturl = self.request.build_absolute_uri(settings.ROOT_URL or '/')
+        rooturl = self.request.build_absolute_uri('/')
         # Screenshot of object map is required, since present in document
         self.get_object().prepare_map_image(rooturl)
         html = self.get_object().get_attributes_html(rooturl)
