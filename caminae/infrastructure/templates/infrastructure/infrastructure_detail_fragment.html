@@ -1,6 +1,7 @@
 {% load i18n %}
 <h3>{% trans "Infrastructure" %}</h3>
 <table class="table">
+    {% if modelname != "infrastructure" %}
     <tr>
         <th>{% trans "Infrastructures" %}</th>
         <td>
@@ -17,7 +18,11 @@
                 <span class="none">{% trans "None" %}</span>
             {% endfor %}
         </td>
-    </tr><tr>
+    </tr>
+    {% endif %}
+
+    {% if modelname != "signage" %}
+    <tr>
         <th>{% trans "Signages" %}</th>
         <td>
             {% if user.profile.is_editor %}
@@ -34,4 +39,5 @@
             {% endfor %}
         </td>
     </tr>
+    {% endif %}
 </table>

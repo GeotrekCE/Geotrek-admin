@@ -20,6 +20,8 @@
         </td>
     </tr>
     {% endif %}
+
+    {% if modelname != "poi" %}
     <tr>
         <th>{% trans "POIs" %}</th>
         <td>
@@ -37,4 +39,5 @@
             {% endfor %}
         </td>
     </tr>
+    {% endif %}
 </table>

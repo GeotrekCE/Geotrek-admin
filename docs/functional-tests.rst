@@ -3279,3 +3279,9 @@ Désormais, on a le curseur de chargement jusqu'à ce que le graphe des tronçon
 
 Fait.
 
+
+#439 - Enlever l'encart du même type dans la fiche détaillée
+------------------------------------------------------------
+
+Fait.
+

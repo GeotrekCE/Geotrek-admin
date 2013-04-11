@@ -14,6 +14,8 @@
         <th>{% trans "Restricted areas" %}</th>
         <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.areas %}</td>
     </tr>
+
+    {% if modelname != "landedge" %}
     <tr>
         <th>{% trans "Land edges" %}</th>
         <td>
@@ -25,6 +27,9 @@
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.land_edges %}
         </td>
     </tr>
+    {% endif %}
+
+    {% if modelname != "physicaledge" %}
     <tr>
         <th>{% trans "Physical edges" %}</th>
         <td>
@@ -36,6 +41,9 @@
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.physical_edges %}
         </td>
     </tr>
+    {% endif %}
+
+    {% if modelname != "competenceedge" %}
     <tr>
         <th>{% trans "Competence edges" %}</th>
         <td>
@@ -45,6 +53,9 @@
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.competence_edges %}
         </td>
     </tr>
+    {% endif %}
+
+    {% if modelname != "workmanagementedge" %}
     <tr>
         <th>{% trans "Work management edges" %}</th>
         <td>
@@ -56,6 +67,9 @@
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.work_edges %}
         </td>
     </tr>
+    {% endif %}
+
+    {% if modelname != "signagemanagementedge" %}
     <tr>
         <th>{% trans "Signage management edges" %}</th>
         <td>
@@ -67,4 +81,5 @@
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.signage_edges %}
         </td>
     </tr>
+    {% endif %}
 </table>
