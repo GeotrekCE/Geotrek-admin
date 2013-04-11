@@ -1,4 +1,10 @@
 {% load i18n field_verbose_name %}
+{% if object.ispoint %}
+    <tr>
+        <th>{% trans "Elevation" %}</th>
+        <td>{{ object.min_elevation|floatformat }}m</td>
+    </tr>
+{% else %}
 <tr>
     <th>{{ object|verbose:"length" }}</th>
     <td>{{ object.length|floatformat }}m</td>
@@ -11,3 +17,4 @@
     <th>{% trans "Elevation" %}</th>
     <td>Min: {{ object.min_elevation|floatformat }}m, Max: {{ object.max_elevation|floatformat }}m</td>
 </tr>
+{% endif %}

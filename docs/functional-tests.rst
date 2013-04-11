@@ -3273,3 +3273,9 @@ Fixé.
 
 Désormais, on a le curseur de chargement jusqu'à ce que le graphe des tronçons et l'évènement soient chargés.
 
+
+#635 - ADMIN - Informations d'altimétrie pour les aménagements
+--------------------------------------------------------------
+
+Fait.
+
