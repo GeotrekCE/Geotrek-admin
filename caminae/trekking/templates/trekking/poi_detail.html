@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <th>{% trans "Elevation" %}</th>
-            <td>{{ poi.geom.z }}m</td>
+            <td>{{ poi.geom.z|floatformat }}m</td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

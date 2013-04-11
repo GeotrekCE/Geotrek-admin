@@ -1,13 +1,13 @@
 {% load i18n field_verbose_name %}
 <tr>
     <th>{{ object|verbose:"length" }}</th>
-    <td>{{ object.length|stringformat:".2f" }}m</td>
+    <td>{{ object.length|floatformat }}m</td>
 </tr>
 <tr>
     <th>{% trans "Slope" %}</th>
-    <td>{{ object.descent }} m  +{{ object.ascent }}m ({{ object.slope }})</td>
+    <td>{{ object.descent|floatformat }}m  +{{ object.ascent|floatformat }}m ({{ object.slope|floatformat }})</td>
 </tr>
 <tr>
     <th>{% trans "Elevation" %}</th>
-    <td>Min: {{ object.min_elevation }} m, Max: {{ object.max_elevation }} m</td>
+    <td>Min: {{ object.min_elevation|floatformat }}m, Max: {{ object.max_elevation|floatformat }}m</td>
 </tr>
