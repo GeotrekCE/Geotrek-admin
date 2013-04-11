@@ -3285,3 +3285,8 @@ Fait.
 
 Fait.
 
+
+#560 - OFFRE DE RANDO - Grossier les boutons Sac à dos et Zoom
+--------------------------------------------------------------
+
+Fait.
