@@ -62,6 +62,11 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
         L.GeoJSON.prototype.initialize.call(this, geojson, this.options);
 
+        // Fire Leaflet.Spin events
+        this.on('loaded loading', function (e) {
+            this.fire('data:' + e.type);
+        }, this);
+
         if (dataurl) {
             this.load(dataurl);
         }
