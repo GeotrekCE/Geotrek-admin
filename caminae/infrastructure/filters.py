@@ -8,7 +8,7 @@ from .models import INFRASTRUCTURE_TYPES, Infrastructure, Signage
 
 
 class InfrastructureFilter(EdgeStructureRelatedFilterSet):
-    intervention_year = YearFilter(name='interventions__date', widget=Select, label=_(u"Intervention year"))
+    intervention_year = YearFilter(name='interventions_set__date', widget=Select, label=_(u"Intervention year"))
 
     def __init__(self, *args, **kwargs):
         super(InfrastructureFilter, self).__init__(*args, **kwargs)
@@ -21,7 +21,7 @@ class InfrastructureFilter(EdgeStructureRelatedFilterSet):
 
 
 class SignageFilter(EdgeStructureRelatedFilterSet):
-    intervention_year = YearFilter(name='interventions__date', widget=Select, label=_(u"Intervention year"))
+    intervention_year = YearFilter(name='interventions_set__date', widget=Select, label=_(u"Intervention year"))
 
     def __init__(self, *args, **kwargs):
         super(SignageFilter, self).__init__(*args, **kwargs)
@@ -31,4 +31,3 @@ class SignageFilter(EdgeStructureRelatedFilterSet):
     class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Signage
         fields = EdgeStructureRelatedFilterSet.Meta.fields + ['type']
-
