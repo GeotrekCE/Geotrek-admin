@@ -107,7 +107,7 @@ class InterventionForm(CommonForm):
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.infrastructure_display,
                 unicode(_("On %s") % _(infrastructure.kind.lower())),
-                '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure)
+                u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), unicode(infrastructure))
             )
 
     def clean(self, *args, **kwargs):
