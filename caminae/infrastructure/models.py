@@ -56,12 +56,12 @@ class InfrastructureType(StructureRelated):
 class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
-                                      db_column='evenement')
-    
+                                       db_column='evenement')
+
     name = models.CharField(db_column="nom", max_length=128,
                             help_text=_(u"Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True, db_column='description',
-                                   help_text=_(u"Specificites"))
+                                   verbose_name=_("Description"), help_text=_(u"Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
 
     class Meta:
@@ -111,6 +111,7 @@ class Infrastructure(BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
     in_structure = InfrastructureStructureManager()
+
     class Meta:
         proxy = True
 
@@ -142,6 +143,7 @@ class Signage(BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
     in_structure = SignageStructureManager()
+
     class Meta:
         proxy = True
 
