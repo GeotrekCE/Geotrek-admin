@@ -171,6 +171,9 @@ FormField.makeModule = function(module, module_settings) {
         });
         
         objectsLayer.on('loaded', function() {
+            // Objects layer is ready, load graph !
+            objectsLayer.fire('data:loading');
+
             $.getJSON(module_settings.enableMultipath.path_json_graph_url, function (graph) {
                 // Load graph
                 multipath_control.setGraph(graph);
@@ -186,8 +189,12 @@ FormField.makeModule = function(module, module_settings) {
                         multipath_handler.restoreTopology(topo);
                     }
                 }
+
+                // Stop spinning !
+                objectsLayer.fire('data:loaded');
             })
             .error(function (jqXHR, textStatus, errorThrown) {
+                objectsLayer.fire('data:loaded');
                 $(map._container).addClass('map-error');
                 console.error("Could not load url '" + module_settings.enableMultipath.path_json_graph_url + "': " + textStatus);
                 console.error(errorThrown);

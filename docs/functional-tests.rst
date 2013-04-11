@@ -3267,3 +3267,9 @@ Fixé.
 
 Fixé.
 
+
+#575 - Afficher curseur Spin au chargement de l'édition de topologie
+--------------------------------------------------------------------
+
+Désormais, on a le curseur de chargement jusqu'à ce que le graphe des tronçons et l'évènement soient chargés.
+
