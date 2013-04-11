@@ -90,7 +90,7 @@
         {% if intervention.is_signage %}
         <tr>
             <th>{% trans "Related signage" %}</th>
-            <td><img src="{% static "images/signage-16.png" %}"/> {{ intervention.signage.name_display|safe }}</td>
+            <td><img src="{% static "images/signage-16.png" %}"/> {{ intervention.infrastructure.name_display|safe }}</td>
         </tr>
         {% endif %}
         <tr>
