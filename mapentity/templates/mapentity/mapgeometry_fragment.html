@@ -18,11 +18,13 @@ function detailmapInit(map, bounds) {
     {% endif %}
     map.removeControl(map.zoomControl);
     map.removeControl(map.attributionControl);
-    
+
+    var DETAIL_STYLE = {weight: 5, opacity: 1, clickable: false, color:window.SETTINGS.map.colors.others, arrowColor: '#FF5E00', arrowSize: 8};
+
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
     var objectLayer = new L.ObjectsLayer(geojson, {
-        style: {weight: 5, opacity: 1, clickable: false, color:window.SETTINGS.map.colors.others},
+        style: DETAIL_STYLE,
         indexing: false
     });
     map.addLayer(objectLayer);
@@ -45,6 +47,11 @@ function detailmapInit(map, bounds) {
         L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
                  {clickable: false,
                   icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
+
+        // Also add line orientation
+        objectLayer.setText('>     ', {repeat:true, 
+                                       offset: DETAIL_STYLE.weight,
+                                       attributes: {'fill': DETAIL_STYLE.arrowColor, 'font-size': DETAIL_STYLE.arrowSize}});
     {% endif %}
 
     // Restore map context, only for screenshoting purposing
