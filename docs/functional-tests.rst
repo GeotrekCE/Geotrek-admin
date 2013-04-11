@@ -3225,3 +3225,34 @@ Une légère transparence a également été ajoutée.
 
 Fait. Utilise le champ Nom, si rempli.
 
+
+#477 - OFFRE DE RANDO - Info bulle itinéraire
+---------------------------------------------
+
+Désormais, c'est le chapeau qui est affiché dans la popup.
+
+
+#532 - OFFRE DE RANDO - Nom d'itinéraire long
+---------------------------------------------
+
+Fait.
+
+
+#565 - OFFRE DE RANDO - Carrousel des photos - Style
+----------------------------------------------------
+
+Les flèches sont un petit peu plus petites, et n'apparaissent qu'au survol.
+
+
+#369 - ADMIN - CARTE - Objets affichés au dessus
+------------------------------------------------
+
+Dans la fiche détail, l'objet reste au dessus des autres couches.
+
+
+#596 - ADMIN - Altitude des points
+----------------------------------
+
+Fait.
+
+
