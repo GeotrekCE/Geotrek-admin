@@ -192,6 +192,7 @@ class TrekDelete(MapEntityDelete):
 
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
+    fields = ['name']
 
 
 class POIList(MapEntityList):

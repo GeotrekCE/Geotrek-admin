@@ -33,6 +33,7 @@ home = last_list
 
 class PathLayer(MapEntityLayer):
     model = Path
+    fields = ['name']
 
 
 class PathList(MapEntityList):

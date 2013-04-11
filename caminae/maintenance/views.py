@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class InterventionLayer(MapEntityLayer):
     queryset = Intervention.objects.existing()
+    fields = ['name']
 
 
 class InterventionList(MapEntityList):
@@ -109,6 +110,7 @@ class InterventionDelete(MapEntityDelete):
 
 class ProjectLayer(MapEntityLayer):
     queryset = Project.objects.existing()
+    fields = ['name']
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
