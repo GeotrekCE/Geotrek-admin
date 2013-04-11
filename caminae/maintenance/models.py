@@ -36,7 +36,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
 
     """ Topology can be of type Infrastructure or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
-                                 related_name="interventions",
+                                 related_name="interventions_set",
                                  verbose_name=_(u"Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
 
@@ -105,6 +105,9 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
 
     @property
     def infrastructure(self):
+        """
+        Equivalent of topology attribute, but casted to related type (Infrastructure or Signage)
+        """
         if self.on_infrastructure:
             if self.is_signage:
                 return self.signages[0]
@@ -201,19 +204,20 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
 
     @classmethod
     def path_interventions(cls, path):
-        return Intervention.objects.filter(topology__aggregations__path=path)
+        return cls.objects.existing().filter(topology__aggregations__path=path)
 
     @classmethod
     def trail_interventions(cls, trail):
         """ Interventions of a trail is the union of interventions on all its paths """
-        return Intervention.objects.filter(topology__aggregations__path__trail=trail)
+        return cls.objects.existing().filter(topology__aggregations__path__trail=trail)
 
     @classmethod
     def topology_interventions(cls, topology):
-        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.objects.existing().filter(topology__aggregations__path__in=topology.paths.all()).distinct('pk')
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
 Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
+Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self))
 
 
 class InterventionStatus(StructureRelated):

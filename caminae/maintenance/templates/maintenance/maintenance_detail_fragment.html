@@ -12,16 +12,30 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
             </p>
             {% endif %}
-            {% for i in object.interventions.all %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ i.name_display|safe }}
-                    {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
-                    ({{ i.date }})
-                </li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+            {% if modelname == "infrastructure" or modelname == "signage" %}
+                {% for i in object.interventions_set.existing %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ i.name_display|safe }}
+                        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
+                        ({{ i.date }})
+                    </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            {% else %}
+                {% for i in object.interventions.all %}
+                    {% if forloop.first %}<ul>{% endif %}
+                    <li>{{ i.name_display|safe }}
+                        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
+                        ({{ i.date }})
+                    </li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            {% endif %}
+            
         </td>
     </tr>
 
