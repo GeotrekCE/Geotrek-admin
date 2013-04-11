@@ -356,6 +356,9 @@ class MapEntityFormat(MapEntityList):
             'shp': self.shape_view,
             'gpx': self.gpx_view,
         }
+        extensions = {
+            'shp': 'zip'
+        }
         fmt_str = self.request.GET.get('format', self.DEFAULT_FORMAT)
         formatter = formats.get(fmt_str)
         if not formatter:
@@ -364,8 +367,9 @@ class MapEntityFormat(MapEntityList):
 
         filename = '%s-%s-list' % (datetime.now().strftime('%Y%m%d-%H%M'),
                                    str(slugify(unicode(self.model._meta.verbose_name))))
+        filename += '.%s' % extensions.get(fmt_str, fmt_str)
         response = formatter(request=self.request, context=context, **response_kwargs)
-        response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, fmt_str)
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response
 
     def csv_view(self, request, context, **kwargs):
