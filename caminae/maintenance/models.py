@@ -64,6 +64,10 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
         verbose_name = _(u"Intervention")
         verbose_name_plural = _(u"Interventions")
 
+    def __init__(self, *args, **kwargs):
+        super(Intervention, self).__init__(*args, **kwargs)
+        self._geom = None
+
     def set_infrastructure(self, baseinfra):
         self.topology = baseinfra
         if not self.on_infrastructure:
@@ -174,9 +178,15 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
 
     @property
     def geom(self):
-        if self.topology:
-            return self.topology.geom
-        return None
+        if self._geom is None:
+            if self.topology:
+                return self.topology.geom
+            return None
+        return self._geom
+
+    @geom.setter
+    def geom(self, value):
+        self._geom = value
 
     @property
     def name_display(self):

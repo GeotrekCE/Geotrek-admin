@@ -3256,3 +3256,7 @@ Dans la fiche détail, l'objet reste au dessus des autres couches.
 Fait.
 
 
+#638 - [BUG] CRASH Export SHP Intervention
+------------------------------------------
+
+Fixé.
