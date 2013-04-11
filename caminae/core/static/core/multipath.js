@@ -558,7 +558,12 @@ L.Handler.MultiPath = L.Handler.extend({
 
                         if (new_path_layer) {
                             self.map.addLayer(new_path_layer);
-                            new_path_layer.setStyle({'color': 'yellow', 'weight': 5, 'opacity': 1});
+                            new_path_layer.setStyle({'color': 'yellow', 'weight': 5, 'opacity': 0.8});
+                            new_path_layer.eachLayer(function (l) {
+                                if (typeof l.setText == 'function') {
+                                    l.setText('>  ', {repeat: true, attributes: {'fill': '#FF5E00'}});
+                                }
+                            });
                         }
                     }
                 }
