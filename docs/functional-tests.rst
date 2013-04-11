@@ -3184,3 +3184,44 @@ Fait.
 ----------------------------------------------------
 
 Bouton plein écran ajouté.
+
+
+#532 - OFFRE DE RANDO - Nom d'itinéraire long
+---------------------------------------------
+
+Fixé.
+
+
+#539 - OFFRE RANDO - Ne pas écraser les fichiers existants si synchro échoue
+----------------------------------------------------------------------------
+
+Fait.
+
+Les données modifiées sont téléchargées dans ``var/tmp`` puis recopiées à la fin dans ``var/input`` seulement si tout se passe bien.
+
+
+#606 - OFFRE DE RANDO - Sens de la boucle
+-----------------------------------------
+
+L'orientation est donnée en affichant des '>' sur les lignes.
+
+
+#603 - OFFRE DE RANDO - Enlever le mot Filtres
+----------------------------------------------
+
+Fait.
+
+
+#533 - ADMIN - Itinéraires BOUCLE
+---------------------------------
+
+L'orientation est donnée en affichant des '>' sur les lignes.
+
+Une légère transparence a également été ajoutée.
+
+
+#570 - Étiquette au survol des objets de la carte
+-------------------------------------------------
+
+Fait. Utilise le champ Nom, si rempli.
+
