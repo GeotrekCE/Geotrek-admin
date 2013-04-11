@@ -26,6 +26,10 @@ function detailmapInit(map, bounds) {
         indexing: false
     });
     map.addLayer(objectLayer);
+    map.on('layeradd', function () {
+        objectLayer.bringToFront();
+    })
+
     var objectBounds = {{ object|latlngbounds }},
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
