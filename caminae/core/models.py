@@ -62,33 +62,34 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
                                  help_text=_(u"Departure place"))
     arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
                                help_text=_(u"Arrival place"))
-    
-    comfort =  models.ForeignKey('Comfort',
-                                 null=True, blank=True, related_name='paths',
-                                 verbose_name=_("Comfort"), db_column='confort')
+
+    comfort = models.ForeignKey('Comfort',
+                                null=True, blank=True, related_name='paths',
+                                verbose_name=_("Comfort"), db_column='confort')
+
     # Override default manager
     objects = models.GeoManager()
 
     trail = models.ForeignKey('Trail',
-            null=True, blank=True, related_name='paths',
-            verbose_name=_("Trail"), db_column='sentier')
+                              null=True, blank=True, related_name='paths',
+                              verbose_name=_("Trail"), db_column='sentier')
     datasource = models.ForeignKey('Datasource',
-            null=True, blank=True, related_name='paths',
-            verbose_name=_("Datasource"), db_column='source')
+                                   null=True, blank=True, related_name='paths',
+                                   verbose_name=_("Datasource"), db_column='source')
     stake = models.ForeignKey('Stake',
-            null=True, blank=True, related_name='paths',
-            verbose_name=_("Stake"), db_column='enjeu')
+                              null=True, blank=True, related_name='paths',
+                              verbose_name=_("Stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
-            blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
+                                    blank=True, null=True, related_name="paths",
+                                    verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
     networks = models.ManyToManyField('Network',
-            blank=True, null=True, related_name="paths",
-            verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
+                                      blank=True, null=True, related_name="paths",
+                                      verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
 
     is_reversed = False
 
     def __unicode__(self):
-        return self.name or 'path %d' % self.pk
+        return self.name or _('path %d') % self.pk
 
     class Meta:
         db_table = 'l_t_troncon'
@@ -123,8 +124,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
             p1 = Path.objects.get(pk=p1)
         if not isinstance(p2, Path):
             p2 = Path.objects.get(pk=p2)
-        return p1.geom.coords[-1] == p2.geom.coords[0] or \
-               p2.geom.coords[0] == p1.geom.coords[-1]
+        return p1.geom.coords[-1] == p2.geom.coords[0] or p2.geom.coords[0] == p1.geom.coords[-1]
 
     def is_overlap(self):
         return not Path.disjoint(self.geom, self.pk)
@@ -137,7 +137,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
         # path.geom.reverse() won't work for 3D coords
         reversed_coord = self.geom.coords[-1::-1]
         # TODO: Why do we have to filter nan variable ?! Why are they here in the first place ?
-        valid_coords = [ (x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord ]
+        valid_coords = [(x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord]
         self.geom = LineString(valid_coords)
         self.is_reversed = True
         return self
@@ -315,9 +315,9 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
         Shortcut function to add paths into this topology.
         """
         from .factories import PathAggregationFactory
-        aggr = PathAggregationFactory.create(topo_object=self, 
-                                             path=path, 
-                                             start_position=start, 
+        aggr = PathAggregationFactory.create(topo_object=self,
+                                             path=path,
+                                             start_position=start,
                                              end_position=end,
                                              order=order)
         # Since a trigger modifies geom, we reload the object
@@ -362,9 +362,9 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
             self.min_elevation = tmp.min_elevation
             self.max_elevation = tmp.max_elevation
             self.geom = tmp.geom
-            self.offset = tmp.offset # /!\ offset may be set by a trigger OR in
-                                     # the django code, reload() will override
-                                     # any unsaved value
+            self.offset = tmp.offset  # /!\ offset may be set by a trigger OR in
+                                      # the django code, reload() will override
+                                      # any unsaved value
         return self
 
     def save(self, *args, **kwargs):
@@ -400,11 +400,11 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
         Topologies can be points or lines. Serialized topologies come from Javascript
         module ``topology_helper.js``.
 
-        Example of linear point topology (snapped with path 1245): 
+        Example of linear point topology (snapped with path 1245):
 
             {"lat":5.0, "lng":10.2, "snap":1245}
 
-        Example of linear serialized topology : 
+        Example of linear serialized topology :
 
         [
             {"offset":0,"positions":{"0":[0,0.3],"1":[0.2,1]},"paths":[1264,1208]},
@@ -448,19 +448,19 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
         try:
             counter = 0
             for j, subtopology in enumerate(objdict):
-                last_topo = j == len(objdict)-1
+                last_topo = j == len(objdict) - 1
                 positions = subtopology.get('positions', {})
                 paths = subtopology['paths']
                 # Create path aggregations
                 for i, path in enumerate(paths):
-                    last_path = i == len(paths)-1
+                    last_path = i == len(paths) - 1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
                     path = Path.objects.get(pk=path)
                     topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
                     if not last_topo and last_path:
-                        # Intermediary marker.       
+                        # Intermediary marker.
                         # make sure pos will be [X, X]
                         # [0, X] or [X, 1] --> X
                         # [0.0, 0.0] --> 0.0  : marker at beginning of path
@@ -561,7 +561,7 @@ class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon',
                              verbose_name=_(u"Path"),
                              related_name="aggregations",
-                             on_delete=models.DO_NOTHING) # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
+                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
@@ -581,7 +581,6 @@ class PathAggregation(models.Model):
         except ValueError:
             return -1
 
-
     @property
     def end_meter(self):
         try:
@@ -591,8 +590,8 @@ class PathAggregation(models.Model):
 
     @property
     def is_full(self):
-        return self.start_position == 0.0 and self.end_position == 1.0 or \
-               self.start_position == 1.0 and self.end_position == 0.0
+        return (self.start_position == 0.0 and self.end_position == 1.0 or
+                self.start_position == 1.0 and self.end_position == 0.0)
 
     class Meta:
         db_table = 'e_r_evenement_troncon'
@@ -600,7 +599,6 @@ class PathAggregation(models.Model):
         verbose_name_plural = _(u"Path aggregations")
         # Important - represent the order of the path in the Topology path list
         ordering = ['id', ]
-
 
 
 class Datasource(StructureRelated):
