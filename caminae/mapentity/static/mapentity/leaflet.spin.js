@@ -26,16 +26,16 @@ L.Map.include(L.SpinMapMixin);
 
 L.Map.addInitHook(function () {
     this.on('layeradd', function (e) {
-        if (!(e.layer instanceof L.GeoJSON)) return;
+        // If added layer is currently loading, spin !
         if (e.layer.loading) this.spin(true);
-        e.layer.on('loading', function (f) { this.spin(true) }, this);
-        e.layer.on('loaded',  function (f) { this.spin(false) }, this);
+        e.layer.on('data:loading', function () { this.spin(true) }, this);
+        e.layer.on('data:loaded',  function () { this.spin(false) }, this);
     }, this);
     this.on('layerremove', function (e) {
-        if (!(e.layer instanceof L.GeoJSON)) return;
+        // Clean-up
         if (e.layer.loading) this.spin(false);
-        e.layer.off('loaded');
-        e.layer.off('loading');
+        e.layer.off('data:loaded');
+        e.layer.off('data:loading');
     }, this);
 });
 
