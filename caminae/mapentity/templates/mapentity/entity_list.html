@@ -129,7 +129,7 @@
             
             var objectsLayer = new L.ObjectsLayer(null, {
                 objectUrl: getUrl,
-                style: {opacity: 1.0, fillOpacity:0.7, color: window.SETTINGS.map.colors.others},
+                style: {opacity: 0.9, fillOpacity:0.7, color: window.SETTINGS.map.colors.others},
                 onEachFeature: function (geojson, layer) {
                     if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
                 }
@@ -138,6 +138,12 @@
                 e.layer.bringToFront();
             });
             map.addLayer(objectsLayer);
+
+            // 
+            map.on('layeradd', function () {
+                objectsLayer.bringToFront();
+            });
+
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
