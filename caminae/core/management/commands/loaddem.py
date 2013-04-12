@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
         # GDAL dataset check 2: ensure dataset bbox matches project extent
         if not bbox_p.Intersects(bbox_r):
-            raise CommandError('DEM file does not match project extent.')
+            raise CommandError('DEM file does not match project extent (%s <> %s).' % (bbox_r, bbox_p))
 
         # Allow GDAL objects to be garbage-collected
         ds = None
@@ -118,15 +118,13 @@ class Command(BaseCommand):
 
         # Step 1: process raster (clip, project)
         new_dem = tempfile.NamedTemporaryFile()
-        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (
-                    settings.SRID,
-                    settings.SPATIAL_EXTENT[0],
-                    settings.SPATIAL_EXTENT[1],
-                    settings.SPATIAL_EXTENT[2],
-                    settings.SPATIAL_EXTENT[3],
-                    dem_path,
-                    new_dem.name,
-                    )
+        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (settings.SRID,
+                                                                 settings.SPATIAL_EXTENT[0],
+                                                                 settings.SPATIAL_EXTENT[1],
+                                                                 settings.SPATIAL_EXTENT[2],
+                                                                 settings.SPATIAL_EXTENT[3],
+                                                                 dem_path,
+                                                                 new_dem.name)
         try:
             self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
             ret = call(cmd, shell=True)
