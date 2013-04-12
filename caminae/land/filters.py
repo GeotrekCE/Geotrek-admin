@@ -57,6 +57,7 @@ class SignageManagementEdgeFilter(OrganismFilter):
 
 """
 
+
 def filter(qs, edges):
     """
     This piece of code was moved from core, and should be rewritten nicely
@@ -72,16 +73,16 @@ def filter(qs, edges):
         paths = []
         for o in overlapping:
             paths.extend(o.paths.all())
-        return qs.filter(pk__in=[ path.pk for path in set(paths) ])
+        return qs.filter(pk__in=[path.pk for path in set(paths)])
 
     # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
     elif issubclass(qs.model, maintenance.models.Intervention):
-        return qs.filter(topology__in=[ topo.pk for topo in overlapping ])
+        return qs.filter(topology__in=[topo.pk for topo in overlapping])
     elif issubclass(qs.model, maintenance.models.Project):
         # Find all interventions overlapping those edges
-        interventions = filter(maintenance.models.Intervention.objects.existing()\
-                                                              .select_related(depth=1)\
-                                                              .filter(project__in=qs), 
+        interventions = filter(maintenance.models.Intervention.objects.existing()
+                                                              .select_related(depth=1)
+                                                              .filter(project__in=qs),
                                edges)
         # Return only the projects concerned by the interventions
         projects = []
@@ -91,8 +92,7 @@ def filter(qs, edges):
 
     else:
         assert issubclass(qs.model, Topology), "%s is not a Topology as expected" % qs.model
-        return qs.filter(pk__in=[ topo.pk for topo in overlapping ])
-
+        return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
 class TopoFilter(ModelChoiceFilter):
