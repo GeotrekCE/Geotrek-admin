@@ -378,9 +378,22 @@ MapEntity.TogglableFilter = L.Class.extend({
             self.setfield(this);
         });
 
+        // Move all topology-filters to separate tab
+        $('#mainfilter .topology-filter').parent('p')
+                                         .detach().appendTo('#mainfilter > .right');
+
         // Use chosen for multiple values
+        // Remove empty value (set with empty_label in Django for all choice fields)
+        $('#mainfilter select[multiple] option:first-child').remove();
+        $("form#mainfilter").bind("reset", function() {
+            setTimeout(function() {
+                $('form#mainfilter select[multiple]').trigger('liszt:updated');
+            }, 1);
+        });
+        // Make sure filter-set class is added if a choice is selected.
         $('#mainfilter select[multiple]').chosen().on('change', function (e) {
-            var name = $(e.target).attr('name'),
+            var $target = $(e.target),
+                name = $target.attr('name'),
                 $container = $('div#id_' + name + '_chzn > ul');
             if ($(e.target).find('option:selected').length > 0) {
                 $container.addClass('filter-set');
@@ -452,8 +465,7 @@ MapEntity.TogglableFilter = L.Class.extend({
             
             // Adjust popover width
             this.tip()
-              .width(this.tip().find('#filters-panel form').outerWidth())
-              .height(this.tip().find('#filters-panel form').outerHeight());
+              .width(this.tip().find('#filters-panel form').outerWidth());
             
             this.__reposition(this.tip());
         }
@@ -466,7 +478,10 @@ MapEntity.TogglableFilter = L.Class.extend({
             set = val != '' && val != [''];
 
         // Consider a value set if it is not the first option selected
-        if ($(field).is('select')) {
+        if ($(field).is('select[multiple]')) {
+            set = val != null;
+        }
+        else if ($(field).is('select')) {
             set = val != $(field).find('option').first().val();
         }
 
