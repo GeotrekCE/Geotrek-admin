@@ -189,6 +189,7 @@ MapEntity.Context = new function() {
 
         if (filter && context.filter) {
             $(filter).deserialize(context.filter);
+            $(filter).find('select').trigger("liszt:updated");
         }
         if (datatable && context.sortcolumns) {
             datatable.fnSort(context.sortcolumns);
@@ -375,6 +376,18 @@ MapEntity.TogglableFilter = L.Class.extend({
         var self = this;
         $('#mainfilter').find('select,input').change(function (e) {
             self.setfield(this);
+        });
+
+        // Use chosen for multiple values
+        $('#mainfilter select[multiple]').chosen().on('change', function (e) {
+            var name = $(e.target).attr('name'),
+                $container = $('div#id_' + name + '_chzn > ul');
+            if ($(e.target).find('option:selected').length > 0) {
+                $container.addClass('filter-set');
+            }
+            else {
+                $container.removeClass('filter-set');
+            }
         });
     },
 

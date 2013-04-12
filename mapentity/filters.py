@@ -110,5 +110,6 @@ class MapEntityFilterSet(FilterSet):
 
     def __set_placeholder(self, field, widget):
         widget.attrs['placeholder'] = field.label
+        widget.attrs['data-placeholder'] = field.label
         widget.attrs['title'] = field.label
         widget.attrs['data-label'] = field.label
