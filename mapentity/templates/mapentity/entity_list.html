@@ -117,7 +117,6 @@
             map.addControl(new L.Control.ResetView(bounds));
             map.addControl(new L.Control.Measurement());
 
-
             /*
              * Objects Layer
              * .......................
@@ -129,7 +128,7 @@
             
             var objectsLayer = new L.ObjectsLayer(null, {
                 objectUrl: getUrl,
-                style: {opacity: 0.9, fillOpacity:0.7, color: window.SETTINGS.map.colors.others},
+                style: window.SETTINGS.map.styles.others,
                 onEachFeature: function (geojson, layer) {
                     if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
                 }
