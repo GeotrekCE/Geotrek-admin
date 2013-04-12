@@ -18,14 +18,14 @@
 
         <div class="tabbable">
             <ul class="nav nav-tabs">
-                <li id="tab-properties" class="active">
+                <li id="tab-properties" class="{% if activetab != "attachments" %}active{% endif %}">
                     <a href="#properties" data-toggle="tab"><i class="icon-tasks"></i> {% trans "Properties" %}
                     {% if object.structure %}
                         <span class="label" title="{% trans "Structure" %}">{{ object.structure }}</span>
                     {% endif %}
                     </a>
                 </li>
-                <li id="tab-attachments">
+                <li id="tab-attachments" class="{% if activetab == "attachments" %}active{% endif %}">
                     <a href="#attachments" data-toggle="tab"><i class="icon-file"></i> {% trans "Attached files" %}</a>
                 </li>
                 {% if can_edit %}
@@ -33,7 +33,7 @@
                 {% endif %}
             </ul>
             <div class="tab-content scrollable">
-                <div id="properties" class="tab-pane active">
+                <div id="properties" class="tab-pane {% if activetab != "attachments" %}active{% endif %}">
 
                     {% block detailspanel %}
                     {% endblock detailspanel %}
@@ -41,7 +41,7 @@
                     {% smart_include "detail" %}
                 </div>
 
-                <div id="attachments" class="tab-pane">
+                <div id="attachments" class="tab-pane {% if activetab == "attachments" %}active{% endif %}">
 
                     {% block attachmentspanel %}
                     {% endblock attachmentspanel %}
