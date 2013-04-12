@@ -412,6 +412,7 @@ class MapEntityDetail(ModelMetaMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(MapEntityDetail, self).get_context_data(**kwargs)
+        context['activetab'] = self.request.GET.get('tab')
         context['can_edit'] = self.can_edit()
         context['can_add_attachment'] = self.can_edit()
         context['can_delete_attachment'] = self.can_edit()
