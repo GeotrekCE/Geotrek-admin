@@ -346,6 +346,25 @@ div.dataTables_paginate {
 
 /* Filters popover */
 
+#mainfilter {
+    width: 480px;
+}
+
+#mainfilter .left {
+    width: 240px;
+    float: left;
+}
+
+#mainfilter .right {
+    width: 240px;
+    float: right;
+}
+
+#mainfilter .actions {
+    clear: both;
+    text-align: right;
+}
+
 #mainfilter label {
     display: none;
 }
@@ -380,6 +399,7 @@ div.dataTables_paginate {
 .popover {
     border: 5px solid rgba(0, 0, 0, 0.5);
     font-size: 14px;
+    max-width: none;
 }
 
 span.filter-info {

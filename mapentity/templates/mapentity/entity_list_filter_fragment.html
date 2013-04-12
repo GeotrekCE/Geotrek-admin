@@ -8,9 +8,14 @@
 <div id="filters-wrapper" style="display:None">
     <div id="filters-panel">
         <form id="mainfilter" action="{{ datatables_ajax_url }}" class="well form-inline">
-            {{ filterform.form.as_p }}
-            <input id="reset" type="reset" class="btn" />
-            <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+            <div class="left">
+                {{ filterform.form.as_p }}
+            </div>
+            <div class="right"></div>
+            <div class="actions">
+                <input id="reset" type="reset" class="btn" />
+                <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+            </div>
         </form>
     </div>
 </div>
