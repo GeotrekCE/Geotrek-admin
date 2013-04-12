@@ -1,21 +1,21 @@
 {% load i18n %}
 
 <!-- begin land/bbox.html -->
-<select id="bbox_cities" class="input-medium">
+<select id="bbox_cities" class="input-medium chzn-select">
     <option value="" selected>{% trans "City" %}</li>
     {% for bbox in bbox_cities %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
 </select>
 
-<select id="bbox_districts" class="input-medium">
+<select id="bbox_districts" class="input-medium chzn-select">
     <option value="" selected>{% trans "District" %}</li>
     {% for bbox in bbox_districts %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
 </select>
 
-<select id="bbox_areas" class="input-medium">
+<select id="bbox_areas" class="input-medium chzn-select">
     <option value="" selected>{% trans "Restricted Area" %}</li>
     {% for bbox in bbox_areas %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>

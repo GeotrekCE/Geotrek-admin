@@ -3295,7 +3295,7 @@ Fait.
 #513 - ADMIN - Filtres vue liste
 --------------------------------
 
-Désormais Chosen est activé pour les listes de choix de multiple dans le filtre.
+Désormais Chosen est activé pour les listes de choix de multiple dans le filtre. Ainsi que pour les sélecteur d'emprise (Commune, District, Zones).
 
 Les valeurs sélectionnées s'affichent en gras, et le nom du champ s'affiche différemment des valeurs.
 

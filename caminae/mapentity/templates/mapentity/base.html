@@ -221,7 +221,10 @@
                     function() { $(this).children(".autohide").show(); },
                     function() { $(this).children(".autohide").hide(); }
                 );
-                
+
+                // Chosen-ify elements
+                 $(".chzn-select").chosen();
+
                 // Scrollable panels
                 var fillmax = function () {
                     $('.scrollable').each(function () {
