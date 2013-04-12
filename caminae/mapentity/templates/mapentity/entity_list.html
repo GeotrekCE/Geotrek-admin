@@ -143,8 +143,6 @@
             map.on('layeradd', function () {
                 objectsLayer.bringToFront();
             });
-
-            map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname|title }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
 
