@@ -3290,3 +3290,12 @@ Fait.
 --------------------------------------------------------------
 
 Fait.
+
+
+#513 - ADMIN - Filtres vue liste
+--------------------------------
+
+Désormais Chosen est activé pour les listes de choix de multiple dans le filtre.
+
+Les valeurs sélectionnées s'affichent en gras, et le nom du champ s'affiche différemment des valeurs.
+

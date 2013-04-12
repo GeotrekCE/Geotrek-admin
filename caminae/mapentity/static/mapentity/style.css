@@ -28,6 +28,30 @@ body {
     z-index: 9999;
 }
 
+/***** Chosen override ******/
+
+.chzn-container-active .chzn-choices {
+    border: 1px solid #AAA;
+}
+
+.chzn-container .chzn-results .highlighted {
+    background-color: #919191;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#919191', endColorstr='#747474', GradientType=0 );  
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(20%, #919191), color-stop(90%, #747474));
+    background-image: -webkit-linear-gradient(top, #919191 20%, #747474 90%);
+    background-image: -moz-linear-gradient(top, #919191 20%, #747474 90%);
+    background-image: -o-linear-gradient(top, #919191 20%, #747474 90%);
+    background-image: linear-gradient(#919191 20%, #747474 90%);
+    color: #fff;
+}
+
+.chzn-container .chzn-choices {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+
 /***** Reusables ******/
 
 .centered {
@@ -42,6 +66,7 @@ body {
     overflow-y: auto;
     clear: both;
 }
+
 
 /***** Alerts ******/
 
@@ -197,8 +222,8 @@ tr.selected-row td {
 
 .filter-set {
     font-weight: bold;
+    color: black !important;
     border: 2px solid black !important;
-    color: black;
 }
 
 #maphead {
@@ -324,6 +349,25 @@ div.dataTables_paginate {
 #mainfilter label {
     display: none;
 }
+
+#mainfilter input, #mainfilter select {
+    font-family: sans-serif;
+    font-size: 13px;
+    border: 1px solid #AAA;
+}
+
+#mainfilter select {
+    color: #999;
+}
+
+#mainfilter select option {
+    color: black;
+}
+
+#mainfilter select option:first-child {
+    color: #999;
+}
+
 
 #filters-panel .well {
     padding: 5px;
