@@ -135,7 +135,7 @@
                 }
             });
             objectsLayer.on('highlight select', function (e) {
-                e.layer.bringToFront();
+                if (e.layer._map !== null) e.layer.bringToFront();
             });
             map.addLayer(objectsLayer);
 
@@ -196,11 +196,13 @@
                 objectsLayer.fire('info', {info : (data.nbrecords + ' ' + '{% trans "results" %}')});
             });
 
+            // Main filter
             var t = new MapEntity.TogglableFilter();
             mapsync.on('reloaded', function (data) {
                 t.setsubmit();
             });
-            
+
+            // Map screenshot button
             var screenshot = new L.Control.Screenshot('{% url mapentity:map_screenshot %}', function () {
                 return MapEntity.Context.serializeFullContext(map, '#mainfilter', dt);
             });
