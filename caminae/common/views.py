@@ -87,6 +87,7 @@ def settings_json(request):
 
             'land':              {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
             'physical':          {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
+            'competence':        {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
             'workmanagement':    {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
             'signagemanagement': {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
 

@@ -39,6 +39,7 @@ class DistrictGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
 
 class PhysicalEdgeLayer(MapEntityLayer):
     queryset = PhysicalEdge.objects.existing()
+    fields = ['color_index', 'name']
 
 
 class PhysicalEdgeList(MapEntityList):
@@ -60,8 +61,8 @@ class PhysicalEdgeDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager)
+            (hasattr(self.request.user, 'profile') and
+             self.request.user.profile.is_path_manager)
 
 
 class PhysicalEdgeDocument(MapEntityDocument):
@@ -92,6 +93,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
 
 class LandEdgeLayer(MapEntityLayer):
     queryset = LandEdge.objects.existing()
+    fields = ['color_index', 'name']
 
 
 class LandEdgeList(MapEntityList):
@@ -113,8 +115,8 @@ class LandEdgeDetail(MapEntityDetail):
 
     def can_edit(self):
         return self.request.user.is_staff or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager)
+           (hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class LandEdgeDocument(MapEntityDocument):
@@ -145,6 +147,7 @@ class LandEdgeDelete(MapEntityDelete):
 
 class CompetenceEdgeLayer(MapEntityLayer):
     queryset = CompetenceEdge.objects.existing()
+    fields = ['color_index', 'name']
 
 
 class CompetenceEdgeList(MapEntityList):
@@ -198,6 +201,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
 
 class WorkManagementEdgeLayer(MapEntityLayer):
     queryset = WorkManagementEdge.objects.existing()
+    fields = ['color_index', 'name']
 
 
 class WorkManagementEdgeList(MapEntityList):
@@ -251,6 +255,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
 
 class SignageManagementEdgeLayer(MapEntityLayer):
     queryset = SignageManagementEdge.objects.existing()
+    fields = ['color_index', 'name']
 
 
 class SignageManagementEdgeList(MapEntityList):

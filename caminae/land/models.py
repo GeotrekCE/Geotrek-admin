@@ -44,6 +44,14 @@ class PhysicalEdge(MapEntityMixin, Topology):
         return _(u"Physical edge") + u": %s" % self.physical_type
 
     @property
+    def color_index(self):
+        return self.physical_type_id
+
+    @property
+    def name(self):
+        return self.physical_type_csv_display
+
+    @property
     def physical_type_display(self):
         return self.display
 
@@ -101,6 +109,14 @@ class LandEdge(MapEntityMixin, Topology):
         return _(u"Land edge") + u": %s" % self.land_type
 
     @property
+    def color_index(self):
+        return self.land_type_id
+
+    @property
+    def name(self):
+        return self.land_type_csv_display
+
+    @property
     def land_type_display(self):
         return self.display
 
@@ -142,6 +158,14 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     def __unicode__(self):
         return _(u"Competence edge") + u": %s" % self.organization
+
+    @property
+    def color_index(self):
+        return self.organization_id
+
+    @property
+    def name(self):
+        return self.organization_csv_display
 
     @property
     def organization_display(self):
@@ -186,6 +210,14 @@ class WorkManagementEdge(MapEntityMixin, Topology):
         return _(u"Work management edge") + u": %s" % self.organization
 
     @property
+    def color_index(self):
+        return self.organization_id
+
+    @property
+    def name(self):
+        return self.organization_csv_display
+
+    @property
     def organization_display(self):
         return self.display
 
@@ -226,6 +258,14 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     def __unicode__(self):
         return _(u"Signage management edge") + u": %s" % self.organization
+
+    @property
+    def color_index(self):
+        return self.organization_id
+
+    @property
+    def name(self):
+        return self.organization_csv_display
 
     @property
     def organization_display(self):
