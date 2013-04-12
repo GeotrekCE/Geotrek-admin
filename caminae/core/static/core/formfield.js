@@ -66,7 +66,7 @@ FormField.makeModule = function(module, module_settings) {
         // Allows to save loading twice the same layer.
         if (modelname != 'path') {
             var pathsLayer = new L.ObjectsLayer(null, {
-                style: {weight: 2, clickable: true, color: window.SETTINGS.map.colors.paths},
+                style: L.Util.extend(window.SETTINGS.map.styles.path, {clickable: true})
             });
             map.addLayer(pathsLayer);
             snapObserver = new L.SnapObserver(map, pathsLayer);
@@ -122,9 +122,10 @@ FormField.makeModule = function(module, module_settings) {
         }
 
         // Start loading all objects, readonly
-        var color = modelname == 'path' ? window.SETTINGS.map.colors.paths : window.SETTINGS.map.colors.others;
+        var style = modelname == 'path' ? window.SETTINGS.map.styles.path : window.SETTINGS.map.styles.others;
+        style = L.Util.extend(style, {weight: 2, clickable: true});
         var objectsLayer = new L.ObjectsLayer(null, {
-            style: {weight: 2, clickable: true, 'color': color},
+                style: style,
                 filter: exclude_current_object
             }),
             url = module_settings.addObjectsLayer.getUrl(modelname);

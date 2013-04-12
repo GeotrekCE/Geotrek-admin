@@ -5,7 +5,7 @@
 if (window.{{ module }}_settings === undefined && '{{ model.get_layer_url }}' != '{% url core:path_layer %}') {
     var paths = new L.ObjectsLayer(null, {
         indexing: false,
-        style: { clickable:false, weight:2, color:window.SETTINGS.map.colors.paths}
+        style: L.Util.extend(window.SETTINGS.map.styles.path, { clickable:false })
     });
     paths.addTo(map)
     paths.load('{% url core:path_layer %}');

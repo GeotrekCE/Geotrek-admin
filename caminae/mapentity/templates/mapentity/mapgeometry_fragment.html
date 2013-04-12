@@ -19,7 +19,7 @@ function detailmapInit(map, bounds) {
     map.removeControl(map.zoomControl);
     map.removeControl(map.attributionControl);
 
-    var DETAIL_STYLE = {weight: 5, opacity: 1, clickable: false, color:window.SETTINGS.map.colors.others, arrowColor: '#FF5E00', arrowSize: 8};
+    var DETAIL_STYLE = L.Util.extend(window.SETTINGS.map.styles.detail, {clickable: false});
 
     // Add layers
     var geojson = {{ object|geojsonfeature|safe }};
