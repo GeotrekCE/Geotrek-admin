@@ -10,7 +10,6 @@ for (var i=0; i<landLayers.length; i++) {
         indexing: false,
         style: { clickable:false, weight:4, opacity: 0.3, fillOpacity: 0.0, color:window.SETTINGS.map.colors.land}
     });
-    layer.addTo(map)
     layer.load(landLayer.url);
     map.layerscontrol.addOverlay(layer, landLayer.name);
 }
