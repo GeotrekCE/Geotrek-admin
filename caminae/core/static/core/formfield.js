@@ -123,7 +123,7 @@ FormField.makeModule = function(module, module_settings) {
 
         // Start loading all objects, readonly
         var style = modelname == 'path' ? window.SETTINGS.map.styles.path : window.SETTINGS.map.styles.others;
-        style = L.Util.extend(style, {weight: 2, clickable: true});
+        style = L.Util.extend(style, {weight: modelname == 'path' ? 2 : 4, clickable: true});
         var objectsLayer = new L.ObjectsLayer(null, {
                 style: style,
                 filter: exclude_current_object
@@ -141,7 +141,7 @@ FormField.makeModule = function(module, module_settings) {
             handler: {
                 'iconUrl': module_settings.init.iconUrl,
                 'shadowUrl': module_settings.init.shadowUrl,
-                'iconDragUrl': module_settings.init.iconDragUrl,
+                'iconDragUrl': module_settings.init.iconDragUrl
             }
         }),
         multipath_handler = multipath_control.handler;
