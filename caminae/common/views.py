@@ -93,6 +93,7 @@ def settings_json(request):
 
             'detail':            {'weight': 5, 'opacity': 1, 'color': settings.LAYERCOLOR_OTHERS, 'arrowColor': '#FF5E00', 'arrowSize': 8},
             'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': settings.LAYERCOLOR_OTHERS},
+            'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
         },
 
         colorspool=settings.LAND_COLORS_POOL,
