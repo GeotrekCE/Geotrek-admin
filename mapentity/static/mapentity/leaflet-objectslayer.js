@@ -19,7 +19,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this._current_objects = {};
         this.loading = false;
 
-        options = options || {};
+        options = L.Util.extend({}, options);
 
         var onFeatureParse = function (geojson, layer) {
             this._mapObjects(geojson, layer);
@@ -34,9 +34,10 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this._pointToLayer = options.pointToLayer;
         options.pointToLayer = L.Util.bind(pointToLayer, this);
 
-        options.style = options.style || this.options.styles['default'];
+        options.style = options.style || L.Util.extend({}, this.options.styles['default']);
         L.Util.setOptions(this, options);
-        this.options.styles['default'] = options.style || this.options.styles['default'];
+        this.options.styles = L.Util.extend({}, this.options.styles);
+        this.options.styles['default'] = L.Util.extend({}, this.options.style);
 
         // Highlight on mouse over
         if (this.options.highlight) {
