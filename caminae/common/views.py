@@ -85,15 +85,17 @@ def settings_json(request):
             'district':       {'weight': 4, 'color': settings.LAYERCOLOR_LAND, 'opacity': 0.3, 'fillOpacity': 0.0},
             'restrictedarea': {'weight': 4, 'color': settings.LAYERCOLOR_LAND, 'opacity': 0.3, 'fillOpacity': 0.0},
 
-            'land':              {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
-            'physical':          {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
-            'competence':        {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
-            'workmanagement':    {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
-            'signagemanagement': {'weight': 2, 'color': 'red', 'opacity': 0.8, 'fillOpacity': 0.0},
+            'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
+            'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
+            'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
+            'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
+            'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
 
             'detail':            {'weight': 5, 'opacity': 1, 'color': settings.LAYERCOLOR_OTHERS, 'arrowColor': '#FF5E00', 'arrowSize': 8},
             'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': settings.LAYERCOLOR_OTHERS},
-        }
+        },
+
+        colorspool=settings.LAND_COLORS_POOL,
     )
     dictsettings['server'] = settings.ROOT_URL if settings.ROOT_URL.endswith('/') else settings.ROOT_URL + '/'
     dictsettings['version'] = __version__

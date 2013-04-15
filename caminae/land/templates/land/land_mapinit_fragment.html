@@ -1,67 +1,53 @@
 {% load i18n %}
 
-// Add land layers
-var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}', id: 'district'},
-                  {url:'{% url land:city_layer %}', name: '{% trans "City" %}', id: 'city'},
-                  {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
-for (var i=0; i<landLayers.length; i++) {
-    var landLayer = landLayers[i];
-    var layer = new L.ObjectsLayer(null, {
-        indexing: false,
-        style: L.Util.extend(window.SETTINGS.map.styles[landLayer.id], { clickable:false })
-    });
-    layer.load(landLayer.url);
-    map.layerscontrol.addOverlay(layer, landLayer.name);
-}
-
 (function () {
 
-var PASTEL_COLORS = [['#f37e79',
-                      '#7998f3',
-                      '#bbf379',
-                      '#f379df',
-                      '#f3bf79'],
-                     ['#9c79f3',
-                      '#7af379',
-                      '#f3799d',
-                      '#79c1f3',
-                      '#e4f379'],
-                     ['#de79f3',
-                      '#79f3ba',
-                      '#f39779',
-                      '#797ff3',
-                      '#a2f379'],
-                     ['#f379c6',
-                      '#79e9f3',
-                      '#f3d979',
-                      '#b579f3',
-                      '#79f392'],
-                     ['#f37984',
-                      '#79a8f3',
-                      '#cbf379',
-                      '#f379ee',
-                      '#79f3e3',
-                      '#79f3d3']];
+    // Add land layers
+    var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}', id: 'district'},
+                      {url:'{% url land:city_layer %}', name: '{% trans "City" %}', id: 'city'},
+                      {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
+    for (var i=0; i<landLayers.length; i++) {
+        var landLayer = landLayers[i];
+        var layer = new L.ObjectsLayer(null, {
+            indexing: false,
+            style: L.Util.extend(window.SETTINGS.map.styles[landLayer.id], { clickable:false })
+        });
+        layer.load(landLayer.url);
+        map.layerscontrol.addOverlay(layer, landLayer.name);
+    }
 
-// Add management layers
-var managementLayers = [{url:'{% url land:landedge_layer %}', name: '{% trans "Land type" %}', id: 'land'},
-                        {url:'{% url land:physicaledge_layer %}', name: '{% trans "Physical type" %}', id: 'physical'},
-                        {url:'{% url land:competenceedge_layer %}', name: '{% trans "Competence" %}', id: 'competence'},
-                        {url:'{% url land:signagemanagementedge_layer %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
-                        {url:'{% url land:workmanagementedge_layer %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
-for (var i=0; i<managementLayers.length; i++) {
-    var managementLayer = managementLayers[i],
-        colors = PASTEL_COLORS[i % PASTEL_COLORS.length];
-    var layer = new L.ObjectsLayer(null, {
-        indexing: false,
-        style: L.Util.extend(window.SETTINGS.map.styles[managementLayer.id], {clickable:false}),
-        onEachFeature: function (data, layer) {
-            var idx = parseInt(data.properties.color_index);
-            layer.setStyle({color: colors[idx % colors.length]});
-        },
-    });
-    layer.load(managementLayer.url);
-    map.layerscontrol.addOverlay(layer, managementLayer.name);
-}
+    // Add management layers
+    var managementLayers = [{url:'{% url land:landedge_layer %}', name: '{% trans "Land type" %}', id: 'land'},
+                            {url:'{% url land:physicaledge_layer %}', name: '{% trans "Physical type" %}', id: 'physical'},
+                            {url:'{% url land:competenceedge_layer %}', name: '{% trans "Competence" %}', id: 'competence'},
+                            {url:'{% url land:signagemanagementedge_layer %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
+                            {url:'{% url land:workmanagementedge_layer %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
+
+    // We have a list of colors, each layer has a *color_index*, and will *consume* a color 
+    // from the list. This way we may not have the same color twice on the map.
+    var colors = window.SETTINGS.map.colorspool;
+        colorspools = L.Util.extend({}, colors);
+    for (var i=0; i<managementLayers.length; i++) {
+        var managementLayer = managementLayers[i],
+            colorspool = colorspools[managementLayer.id];
+
+        // If we have no more colors in pool, start again with original list of colors.
+        if(colorspool.length == 0) {
+            colorspools[managementLayer.id] = colors[managementLayer.id].slice(0);
+            colorspool = colorspools[managementLayer.id];
+        }
+
+        var layer = new L.ObjectsLayer(null, {
+            indexing: false,
+            style: L.Util.extend(window.SETTINGS.map.styles[managementLayer.id], {clickable:false}),
+            onEachFeature: function (data, layer) {
+                var idx = parseInt(data.properties.color_index),
+                    color = colorspool.splice(idx % colors.length, 1)[0];
+                layer.setStyle({color: color});
+            },
+        });
+        layer.load(managementLayer.url);
+        map.layerscontrol.addOverlay(layer, managementLayer.name);
+    }
 
 })();
