@@ -207,24 +207,6 @@
 
         <script type="text/javascript">
             $(document).ready(function (e) {
-                // Fade out success/infos messages
-                $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
-
-                // Form Cancel buttons
-                $('#button-id-cancel').click(function (){ window.history.go(-1); });
-
-                // Top-navigation tabs
-                MapEntity.history.render();
-
-                // Auto-hide elements
-                $('.autohide').parents().hover(
-                    function() { $(this).children(".autohide").show(); },
-                    function() { $(this).children(".autohide").hide(); }
-                );
-
-                // Chosen-ify elements
-                 $(".chzn-select").chosen();
-
                 // Scrollable panels
                 var fillmax = function () {
                     $('.scrollable').each(function () {
@@ -235,8 +217,26 @@
                         
                     });
                 }
-                fillmax();
+                setTimeout(fillmax, 0);
                 $(window).resize(fillmax);
+
+                // Chosen-ify elements
+                $(".chzn-select").chosen();
+
+                // Top-navigation tabs
+                MapEntity.history.render();
+
+                // Fade out success/infos messages
+                $('.alert-info, .alert-success').delay(2000).fadeOut('slow');
+
+                // Form Cancel buttons
+                $('#button-id-cancel').click(function (){ window.history.go(-1); });
+
+                // Auto-hide elements
+                $('.autohide').parents().hover(
+                    function() { $(this).children(".autohide").show(); },
+                    function() { $(this).children(".autohide").hide(); }
+                );
             })
         </script>
 
