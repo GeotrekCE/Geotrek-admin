@@ -15,10 +15,10 @@ var PolylineTextPath = {
         this._textRedraw();
     },
 
-    onRemove: function (map) {
-        this.__onRemove.call(this, map);
+    onRemove: function () {
         if (this._textNode)
             map._pathRoot.removeChild(this._textNode);
+        this.__onRemove.call(this, this._map);
     },
 
     bringToFront: function () {
