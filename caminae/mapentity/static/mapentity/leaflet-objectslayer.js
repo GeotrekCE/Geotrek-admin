@@ -4,9 +4,9 @@ L.ObjectsLayer = L.GeoJSON.extend({
         highlight: true,
         objectUrl: null,
         styles: {
-            default: {'color': 'blue', 'weight': 2, 'opacity': 0.8},
+            'default': {'color': 'blue', 'weight': 2, 'opacity': 0.8},
             highlight: {'color': 'red', 'weight': 5, 'opacity': 1},
-            select: {'color': 'red', 'weight': 7, 'opacity': 1},
+            select: {'color': 'red', 'weight': 7, 'opacity': 1}
         }
     },
 
@@ -19,7 +19,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this._current_objects = {};
         this.loading = false;
 
-        var options = options || {};
+        options = options || {};
 
         var onFeatureParse = function (geojson, layer) {
             this._mapObjects(geojson, layer);
@@ -34,9 +34,9 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this._pointToLayer = options.pointToLayer;
         options.pointToLayer = L.Util.bind(pointToLayer, this);
 
-        options.style = options.style || this.options.styles.default;
+        options.style = options.style || this.options.styles['default'];
         L.Util.setOptions(this, options);
-        this.options.styles.default = options.style || this.options.styles.default;
+        this.options.styles['default'] = options.style || this.options.styles['default'];
 
         // Highlight on mouse over
         if (this.options.highlight) {
@@ -73,7 +73,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
     },
 
     _mapObjects: function (geojson, layer) {
-        var pk = geojson.properties.pk
+        var pk = geojson.properties.pk;
         this._objects[pk] = this._current_objects[pk] = layer;
         layer.properties = geojson.properties;
         this.indexLayer(layer);
@@ -85,7 +85,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
         var jsonLoad = function (data) {
             var features = jQuery.grep(data.features, function(obj, i) {
-                return obj.geometry != null;
+                return obj.geometry !== null;
             });
             data.features = features;
             this.addData(data);
@@ -114,11 +114,10 @@ L.ObjectsLayer = L.GeoJSON.extend({
 
     // Show all layers matching the pks
     updateFromPks: function(pks) {
-        var self = this
-          , new_objects = {}
-          , already_added_layer
-          , to_add_layer
-        ;
+        var self = this,
+            new_objects = {},
+            already_added_layer,
+            to_add_layer;
 
         // Gather all layer to see in new objects
         // Remove them from _current_objects if they are already shown
@@ -127,7 +126,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             already_added_layer = self._current_objects[to_add_pk];
             if (already_added_layer) {
                 new_objects[to_add_pk] = already_added_layer;
-                delete self._current_objects[to_add_pk]
+                delete self._current_objects[to_add_pk];
             } else {
                 to_add_layer = new_objects[to_add_pk] = self._objects[to_add_pk];
                 // list can be ready before map, on first load
@@ -150,12 +149,12 @@ L.ObjectsLayer = L.GeoJSON.extend({
     },
 
     highlight: function (pk, on) {
-        var on = on === undefined ? true : on,
-            layer = this.getLayer(pk);
+        var layer = this.getLayer(pk);
+        on = on === undefined ? true : on;
         if (!layer) return;
-        
+
         if (on) {
-            layer._defaultStyle = layer._defaultStyle ? layer._defaultStyle : this.options.styles.default;
+            layer._defaultStyle = layer._defaultStyle || this.options.styles['default'];
             layer.setStyle(this.options.styles.highlight);
             this.fire('highlight', {layer: layer});
         }
@@ -165,8 +164,8 @@ L.ObjectsLayer = L.GeoJSON.extend({
     },
 
     select: function(pk, on) {
-        var on = on === undefined ? true : on,
-            layer = this.getLayer(pk);
+        var layer = this.getLayer(pk);
+        on = on === undefined ? true : on;
         if (!layer) return;
 
         if (on) {
@@ -175,7 +174,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             this.fire('select', {layer: layer});
         }
         else {
-            layer._defaultStyle = this.options.styles.default;
+            layer._defaultStyle = this.options.styles['default'];
             layer.setStyle(layer._defaultStyle);
         }
     }
