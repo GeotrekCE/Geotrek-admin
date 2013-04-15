@@ -27,6 +27,7 @@
     // from the list. This way we may not have the same color twice on the map.
     var colors = window.SETTINGS.map.colorspool;
         colorspools = L.Util.extend({}, colors);
+
     for (var i=0; i<managementLayers.length; i++) {
         var managementLayer = managementLayers[i],
             colorspool = colorspools[managementLayer.id];
@@ -40,11 +41,24 @@
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
             style: L.Util.extend(window.SETTINGS.map.styles[managementLayer.id], {clickable:false}),
-            onEachFeature: function (data, layer) {
-                var idx = parseInt(data.properties.color_index),
-                    color = colorspool.splice(idx % colors.length, 1)[0];
-                layer.setStyle({color: color});
-            },
+
+            onEachFeature: (function (layergroup) {
+                return function (data, layer) {
+                    var idx = parseInt(data.properties.color_index),
+                        color = colorspool.splice(idx % colors.length, 1)[0];
+                    layer.setStyle({color: color});
+
+                    // Add label in the middle of the line
+                    if (data.properties.name) {
+                        MapEntity.showLineLabel(layer, {
+                            color: color,
+                            text: data.properties.name,
+                            title: layergroup.name,
+                            className: 'landlabel ' + layergroup.id + ' ' + idx
+                        });
+                    }
+                };
+            })(managementLayer),
         });
         layer.load(managementLayer.url);
         map.layerscontrol.addOverlay(layer, managementLayer.name);

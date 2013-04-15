@@ -8,7 +8,7 @@
 /* Force tiles opacity and no transition on every tile layer */
 .leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
 .leaflet-tile-pane .leaflet-fade-anim .leaflet-tile {
-    opacity: 0.8;
+    opacity: 0.75;
     -webkit-transition: none;
     -moz-transition: none;
     -o-transition: none;
@@ -18,6 +18,14 @@
 .leaflet-container {
     background-color: #000;
 }
+
+
+/* Land labels */
+.leaflet-label.landlabel {
+    font-weight: normal;
+    font: 10px/12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
 
 .details-panel td.paths li {
     float: left;
