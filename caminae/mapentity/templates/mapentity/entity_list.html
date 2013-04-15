@@ -137,11 +137,6 @@
                 if (e.layer._map !== null) e.layer.bringToFront();
             });
             map.addLayer(objectsLayer);
-
-            // 
-            map.on('layeradd', function () {
-                objectsLayer.bringToFront();
-            });
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
 
