@@ -32,7 +32,7 @@ DATABASES = {
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
-# Settings required for caminae.authent.backend.DatabaseBackend : 
+# Settings required for caminae.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
 AUTHENT_TABLENAME = None
 
@@ -181,7 +181,6 @@ PROJECT_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-#    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
@@ -212,7 +211,7 @@ INSTALLED_APPS = PROJECT_APPS + (
 )
 
 SERIALIZATION_MODULES = {
-    'geojson' : 'djgeojson.serializers'
+    'geojson': 'djgeojson.serializers'
 }
 
 CACHES = {
@@ -249,9 +248,9 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
     },
@@ -319,9 +318,9 @@ PROFILE_MAXSIZE = 100  # Maximum number of points in an altimetric profile
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
-    'TILES_URL' : [],
-    'TILES_EXTENT' : None,
-    'SPATIAL_EXTENT' : None
+    'TILES_URL': [],
+    'TILES_EXTENT': None,
+    'SPATIAL_EXTENT': None
 }
 
 LAYERCOLOR_PATHS = ''      # Hex color for paths
