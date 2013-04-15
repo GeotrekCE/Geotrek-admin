@@ -25,18 +25,10 @@
 
     // We have a list of colors, each layer has a *color_index*, and will *consume* a color 
     // from the list. This way we may not have the same color twice on the map.
-    var colors = window.SETTINGS.map.colorspool;
-        colorspools = L.Util.extend({}, colors);
+    var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool);
 
     for (var i=0; i<managementLayers.length; i++) {
-        var managementLayer = managementLayers[i],
-            colorspool = colorspools[managementLayer.id];
-
-        // If we have no more colors in pool, start again with original list of colors.
-        if(colorspool.length == 0) {
-            colorspools[managementLayer.id] = colors[managementLayer.id].slice(0);
-            colorspool = colorspools[managementLayer.id];
-        }
+        var managementLayer = managementLayers[i];
 
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
@@ -45,7 +37,8 @@
             onEachFeature: (function (layergroup) {
                 return function (data, layer) {
                     var idx = parseInt(data.properties.color_index),
-                        color = colorspool.splice(idx % colors.length, 1)[0];
+                        colorspool = colorspools[layergroup.id],
+                        color = colorspool[idx % colorspool.length];
                     layer.setStyle({color: color});
 
                     // Add label in the middle of the line
