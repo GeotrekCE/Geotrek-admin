@@ -126,7 +126,10 @@ FormField.makeModule = function(module, module_settings) {
         style = L.Util.extend(style, {weight: modelname == 'path' ? 2 : 4, clickable: true});
         var objectsLayer = new L.ObjectsLayer(null, {
                 style: style,
-                filter: exclude_current_object
+                filter: exclude_current_object,
+                onEachFeature: function (geojson, layer) {
+                    if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+                }
             }),
             url = module_settings.addObjectsLayer.getUrl(modelname);
         map.addLayer(objectsLayer);
