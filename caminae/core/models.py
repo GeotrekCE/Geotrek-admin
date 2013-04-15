@@ -384,6 +384,10 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.__class__.KIND
 
+        shortmodelname = self._meta.object_name.lower().replace('edge', '')
+        self.offset = settings.TOPOLOGY_STATIC_OFFSETS.get(shortmodelname, self.offset)
+        print self.offset
+
         before = len(connection.connection.notices) if connection.connection else 0
         try:
             super(Topology, self).save(*args, **kwargs)

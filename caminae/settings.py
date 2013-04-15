@@ -340,6 +340,13 @@ LAYER_PRECISION_LAND = 4   # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 
+# Static offsets in projection units
+TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+                           'physical': 0,
+                           'competence': 5,
+                           'signagemanagement': -10,
+                           'workmanagement': 10}
+
 # Navigation history tabs
 HISTORY_ITEMS_MAX = 7
 

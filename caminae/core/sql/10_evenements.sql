@@ -94,7 +94,7 @@ BEGIN
 
         egeom := ft_Smart_MakeLine(tomerge);
         -- Add some offset if necessary.
-        IF t_offset > 0 THEN
+        IF t_offset != 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
         END IF;
 
