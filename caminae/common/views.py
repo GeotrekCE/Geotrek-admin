@@ -77,25 +77,7 @@ def settings_json(request):
     dictsettings['map'] = dict(
         extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT'),
         snap_distance=settings.SNAP_DISTANCE,
-
-        styles={
-            'path':           {'weight': 2, 'opacity': 1.0, 'color': settings.LAYERCOLOR_PATHS},
-
-            'city':           {'weight': 4, 'color': settings.LAYERCOLOR_LAND, 'opacity': 0.3, 'fillOpacity': 0.0},
-            'district':       {'weight': 4, 'color': settings.LAYERCOLOR_LAND, 'opacity': 0.3, 'fillOpacity': 0.0},
-            'restrictedarea': {'weight': 4, 'color': settings.LAYERCOLOR_LAND, 'opacity': 0.3, 'fillOpacity': 0.0},
-
-            'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
-            'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
-            'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
-            'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
-            'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-            'detail':            {'weight': 5, 'opacity': 1, 'color': settings.LAYERCOLOR_OTHERS, 'arrowColor': '#FF5E00', 'arrowSize': 8},
-            'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': settings.LAYERCOLOR_OTHERS},
-            'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
-        },
-
+        styles=settings.MAP_STYLES,
         colorspool=settings.LAND_COLORS_POOL,
     )
     dictsettings['server'] = settings.ROOT_URL if settings.ROOT_URL.endswith('/') else settings.ROOT_URL + '/'

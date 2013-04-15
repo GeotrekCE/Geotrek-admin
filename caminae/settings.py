@@ -323,18 +323,34 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': None
 }
 
-LAYERCOLOR_PATHS = ''      # Hex color for paths
-LAYERCOLOR_LAND = ''       # Hex color for land layers
-LAYERCOLOR_OTHERS = ''     # Hex color for entity layers
-
-"""
-    This *pool* of colors is used to colorized lands records.
+""" This *pool* of colors is used to colorized lands records.
 """
 LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                     'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
                     'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
                     'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
+
+""" All layers styles. Overriden in buildout.
+"""
+MAP_STYLES = {
+    'path':           {'weight': 2, 'opacity': 1.0, 'color': 'blue'},
+
+    'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district':       {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'restrictedarea': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+
+    'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
+    'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+    'detail':            {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
+    'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
+    'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
+}
+
 
 LAYER_PRECISION_LAND = 4   # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
