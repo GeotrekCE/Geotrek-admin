@@ -3299,3 +3299,14 @@ Désormais Chosen est activé pour les listes de choix de multiple dans le filtr
 
 Les valeurs sélectionnées s'affichent en gras, et le nom du champ s'affiche différemment des valeurs.
 
+
+#386 - Couches informations foncieres
+-------------------------------------
+
+Dans le sélecteur de couches, sont listés les évènements du module Foncier. Deux enregistrements qui ont le même attribut (ex: même type physique) auront la même couleur. Lorsque le zoom est suffisamment élevé, des étiquettes s'affichent. 
+
+Désormais, les évènements du module foncier ont un décalage constant (*foncier: -5m, physique: 0m, compétence: 5m, signalétique: -10m, travaux: 10m*).
+
+:notes:
+
+    Avec un décalage sur les linéaires, il faudra réfléchir pour l'implémentation du snapping entre éléments du même type (extra).
