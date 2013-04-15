@@ -17,7 +17,7 @@ var PolylineTextPath = {
 
     onRemove: function () {
         if (this._textNode)
-            map._pathRoot.removeChild(this._textNode);
+            this._map._pathRoot.removeChild(this._textNode);
         this.__onRemove.call(this, this._map);
     },
 
