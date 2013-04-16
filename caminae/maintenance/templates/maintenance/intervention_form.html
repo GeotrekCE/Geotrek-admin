@@ -23,7 +23,7 @@
     {{ block.super }}
     <script type="text/javascript">
         $(window).ready(function () {
-            $('#id_date').datepicker({format: window.SETTINGS.date_format});
+            $('#id_date').datepicker({language: '{{ request.LANGUAGE_CODE }}', format: window.SETTINGS.date_format});
             
             // TODO: do this with crispyforms !
             $("fieldset.formset").detach().appendTo('#mainform fieldset');

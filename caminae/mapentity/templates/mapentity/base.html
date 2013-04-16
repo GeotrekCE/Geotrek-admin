@@ -157,7 +157,7 @@
         <script src="{% static "bootstrap/js/bootstrap-confirm.js" %}"></script>
         <script src="{% static "bootstrap/js/bootstrap-datepicker.js" %}"></script>
         {% for lang in LANGUAGES %}
-            {% if lang.0 != 'en' %}<script src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"></script>{% endif %}
+            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap/js/bootstrap-datepicker.{{ lang.0 }}.js"  charset="UTF-8"></script>{% endif %}
         {% endfor %}
 
         {# If context, we screenshot with CasperJS. Wait or backport Leaflet commit 1c8e0c6 torevent offset on PhantomJS captures #}
