@@ -3,6 +3,7 @@ SHELL = /bin/bash
 listen=localhost:8000
 baseurl=http://$(listen)
 root=$(shell pwd)
+user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
 arch=$(shell uname -p)
 
@@ -89,6 +90,8 @@ load_data:
 
 deploy: install clean_harmless
 	bin/buildout -Nvc buildout-prod.cfg
+	sudo chgrp -R $(user) var/static/CACHE
+	sudo chmod -R g+w var/static/CACHE
 	touch lib/parts/django/django_extrasettings/settings_production.py
 	make all_compilemessages
 	bin/develop update -f

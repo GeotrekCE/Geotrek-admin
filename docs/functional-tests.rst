@@ -3310,3 +3310,9 @@ Désormais, les évènements du module foncier ont un décalage constant (*fonci
 :notes:
 
     Avec un décalage sur les linéaires, il faudra réfléchir pour l'implémentation du snapping entre éléments du même type (extra).
+
+
+#641 - Droit d'écriture sur var/static/CACHE à l'installation
+-------------------------------------------------------------
+
+Fixé.
