@@ -3316,3 +3316,24 @@ Désormais, les évènements du module foncier ont un décalage constant (*fonci
 -------------------------------------------------------------
 
 Fixé.
+
+
+#555 - OFFRE DE RANDO - Icone jumelles
+--------------------------------------
+
+L'icône était superflue.
+
+Désormais la popup est sur deux colonnes, l'image est cliquable. La popup s'affiche correctement s'il n'y a pas de description.
+
+
+#643 - OFFRE RANDO - Afficher les filtres avancés si une valeur est saisie
+--------------------------------------------------------------------------
+
+À l'arrivée sur la home, ou au retour d'une fiche détail. Le panneau de filtres avancés est affiché si une valeur a été saisie.
+
+
+#358 - ADMIN - Interventions - Traduction calendrier
+----------------------------------------------------
+
+Les traductions du calendrier sont chargées dans la page à partir du settings ``LANGUAGES``, et la langue de l'utilisateur courant est utilisée.
+
