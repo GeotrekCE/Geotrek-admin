@@ -3337,3 +3337,8 @@ Désormais la popup est sur deux colonnes, l'image est cliquable. La popup s'aff
 
 Les traductions du calendrier sont chargées dans la page à partir du settings ``LANGUAGES``, et la langue de l'utilisateur courant est utilisée.
 
+
+#648 - ADMIN - Authentification PNE : enlever les groupes si changement de niveau d'accès
+-----------------------------------------------------------------------------------------
+
+Fait. Auparavant si un utilisateur voyait son niveau d'accès diminuer, cela n'était pas pris en compte.
