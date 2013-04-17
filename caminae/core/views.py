@@ -54,7 +54,7 @@ class PathDetail(MapEntityDetail):
     model = Path
 
     def can_edit(self):
-        return self.request.user.is_staff or \
+        return self.request.user.is_superuser or \
                (hasattr(self.request.user, 'profile') and \
                 self.request.user.profile.is_path_manager and \
                 self.get_object().same_structure(self.request.user))

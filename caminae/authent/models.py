@@ -110,19 +110,19 @@ class UserProfile(StructureRelated):
     def is_path_manager(self):
         """ Returns True if the user belongs to path managers group. """
         g = Group.objects.get_or_create(name=GROUP_PATH_MANAGER)[0]
-        return self.has_group(g) or self.user.is_staff
+        return self.has_group(g) or self.user.is_superuser
 
     @reify
     def is_trekking_manager(self):
         """ Returns True if the user belongs to comm managers group. """
         g = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER)[0]
-        return self.has_group(g) or self.user.is_staff
+        return self.has_group(g) or self.user.is_superuser
 
     @reify
     def is_editor(self):
         """ Returns True if the user belongs to editors group. """
         g = Group.objects.get_or_create(name=GROUP_EDITOR)[0]
-        return self.has_group(g) or self.user.is_staff
+        return self.has_group(g) or self.user.is_superuser
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
