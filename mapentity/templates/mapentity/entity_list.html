@@ -137,6 +137,8 @@
                 if (e.layer._map !== null) e.layer.bringToFront();
             });
             map.addLayer(objectsLayer);
+
+            map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
 
