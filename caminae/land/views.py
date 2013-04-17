@@ -60,9 +60,9 @@ class PhysicalEdgeDetail(MapEntityDetail):
     queryset = PhysicalEdge.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-            (hasattr(self.request.user, 'profile') and
-             self.request.user.profile.is_path_manager)
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class PhysicalEdgeDocument(MapEntityDocument):
@@ -118,8 +118,8 @@ class LandEdgeDetail(MapEntityDetail):
     queryset = LandEdge.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-           (hasattr(self.request.user, 'profile') and
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
             self.request.user.profile.is_path_manager)
 
 
@@ -176,9 +176,9 @@ class CompetenceEdgeDetail(MapEntityDetail):
     queryset = CompetenceEdge.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager)
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class CompetenceEdgeDocument(MapEntityDocument):
@@ -234,9 +234,9 @@ class WorkManagementEdgeDetail(MapEntityDetail):
     queryset = WorkManagementEdge.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager)
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class WorkManagementEdgeDocument(MapEntityDocument):
@@ -292,9 +292,9 @@ class SignageManagementEdgeDetail(MapEntityDetail):
     queryset = SignageManagementEdge.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager)
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class SignageManagementEdgeDocument(MapEntityDocument):
