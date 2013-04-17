@@ -73,6 +73,10 @@ class PhysicalEdgeCreate(MapEntityCreate):
     model = PhysicalEdge
     form_class = PhysicalEdgeForm
 
+    @method_decorator(path_manager_required('land:physicaledge_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(PhysicalEdgeCreate, self).dispatch(*args, **kwargs)
+
 
 class PhysicalEdgeUpdate(MapEntityUpdate):
     queryset = PhysicalEdge.objects.existing()
@@ -126,6 +130,10 @@ class LandEdgeDocument(MapEntityDocument):
 class LandEdgeCreate(MapEntityCreate):
     model = LandEdge
     form_class = LandEdgeForm
+
+    @method_decorator(path_manager_required('land:landedge_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(LandEdgeCreate, self).dispatch(*args, **kwargs)
 
 
 class LandEdgeUpdate(MapEntityUpdate):
@@ -181,6 +189,10 @@ class CompetenceEdgeCreate(MapEntityCreate):
     model = CompetenceEdge
     form_class = CompetenceEdgeForm
 
+    @method_decorator(path_manager_required('land:competenceedge_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(CompetenceEdgeCreate, self).dispatch(*args, **kwargs)
+
 
 class CompetenceEdgeUpdate(MapEntityUpdate):
     queryset = CompetenceEdge.objects.existing()
@@ -235,6 +247,10 @@ class WorkManagementEdgeCreate(MapEntityCreate):
     model = WorkManagementEdge
     form_class = WorkManagementEdgeForm
 
+    @method_decorator(path_manager_required('land:workmanagementedge_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(WorkManagementEdgeCreate, self).dispatch(*args, **kwargs)
+
 
 class WorkManagementEdgeUpdate(MapEntityUpdate):
     queryset = WorkManagementEdge.objects.existing()
@@ -288,6 +304,10 @@ class SignageManagementEdgeDocument(MapEntityDocument):
 class SignageManagementEdgeCreate(MapEntityCreate):
     model = SignageManagementEdge
     form_class = SignageManagementEdgeForm
+
+    @method_decorator(path_manager_required('land:signagemanagementedge_list'))
+    def dispatch(self, *args, **kwargs):
+        return super(SignageManagementEdgeCreate, self).dispatch(*args, **kwargs)
 
 
 class SignageManagementEdgeUpdate(MapEntityUpdate):
