@@ -66,8 +66,6 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     class Meta:
         db_table = 'a_t_amenagement'
-        verbose_name = _(u"Infrastructure")
-        verbose_name_plural = _(u"Infrastructure")
 
     def __unicode__(self):
         return self.name
@@ -114,6 +112,8 @@ class Infrastructure(BaseInfrastructure):
 
     class Meta:
         proxy = True
+        verbose_name = _(u"Infrastructure")
+        verbose_name_plural = _(u"Infrastructures")
 
     @classmethod
     def path_infrastructures(cls, path):
@@ -146,6 +146,8 @@ class Signage(BaseInfrastructure):
 
     class Meta:
         proxy = True
+        verbose_name = _(u"Signage")
+        verbose_name_plural = _(u"Signages")
 
     @classmethod
     def path_signages(cls, path):
