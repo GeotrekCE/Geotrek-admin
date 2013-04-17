@@ -3350,3 +3350,13 @@ Fait. Auparavant si un utilisateur voyait son niveau d'accès diminuer, cela n'�
 Les référants Communication et Sentiers ont accès aux listes de leur volet dans l'interface d'administration.
 
 Les superutilisateurs peuvent voir toutes les listes.
+
+
+#199 - ADMIN - Finaliser gestion des droits
+-------------------------------------------
+
+* LECTEUR : Peut consulter l'ensemble de l'administration mais ne peut ni créer, ni modifier, ni supprimer des objets.
+* REDACTEUR : Il accède à tout en lecture mais ne peut créer/modifier/supprimer que des interventions, chantiers, signalétique et aménagements
+* REFERENT SENTIERS : Idem Rédacteur + création/modification/suppression des tronçons et 5 types d'informations foncières.
+* REFERENT COMMUNICATION : Accède à tout en lecture mais il peut aussi créer/modifier/supprimer des itinéraires et POIs.
+* ADMINISTRATEUR : Il peut tout modifier, créer ou supprimer

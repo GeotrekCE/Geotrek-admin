@@ -122,7 +122,7 @@ class UserProfile(StructureRelated):
     def is_editor(self):
         """ Returns True if the user belongs to editors group. """
         g = Group.objects.get_or_create(name=GROUP_EDITOR)[0]
-        return self.has_group(g) or self.user.is_superuser
+        return self.has_group(g) or self.is_path_manager or self.user.is_superuser
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 

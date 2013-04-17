@@ -1,8 +1,8 @@
 from django.utils.decorators import method_decorator
 
-from caminae.authent.decorators import same_structure_required, path_manager_required
+from caminae.authent.decorators import same_structure_required, editor_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilter, SignageFilter
 from .forms import InfrastructureForm, SignageForm
@@ -45,7 +45,7 @@ class InfrastructureCreate(MapEntityCreate):
     model = Infrastructure
     form_class = InfrastructureForm
 
-    @method_decorator(path_manager_required('infrastructure:infrastructure_list'))
+    @method_decorator(editor_required('infrastructure:infrastructure_list'))
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureCreate, self).dispatch(*args, **kwargs)
 
@@ -54,7 +54,7 @@ class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
     form_class = InfrastructureForm
 
-    @method_decorator(path_manager_required('infrastructure:infrastructure_detail'))
+    @method_decorator(editor_required('infrastructure:infrastructure_detail'))
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
@@ -63,7 +63,7 @@ class InfrastructureUpdate(MapEntityUpdate):
 class InfrastructureDelete(MapEntityDelete):
     model = Infrastructure
 
-    @method_decorator(path_manager_required('infrastructure:infrastructure_detail'))
+    @method_decorator(editor_required('infrastructure:infrastructure_detail'))
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureDelete, self).dispatch(*args, **kwargs)
@@ -94,7 +94,7 @@ class SignageDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
+            self.request.user.profile.is_editor)
 
 
 class SignageDocument(MapEntityDocument):
@@ -105,7 +105,7 @@ class SignageCreate(MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
-    @method_decorator(path_manager_required('infrastructure:signage_list'))
+    @method_decorator(editor_required('infrastructure:signage_list'))
     def dispatch(self, *args, **kwargs):
         return super(SignageCreate, self).dispatch(*args, **kwargs)
 
@@ -114,7 +114,7 @@ class SignageUpdate(MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 
-    @method_decorator(path_manager_required('infrastructure:signage_detail'))
+    @method_decorator(editor_required('infrastructure:signage_detail'))
     def dispatch(self, *args, **kwargs):
         return super(SignageUpdate, self).dispatch(*args, **kwargs)
 
@@ -122,6 +122,6 @@ class SignageUpdate(MapEntityUpdate):
 class SignageDelete(MapEntityDelete):
     model = Signage
 
-    @method_decorator(path_manager_required('infrastructure:signage_detail'))
+    @method_decorator(editor_required('infrastructure:signage_detail'))
     def dispatch(self, *args, **kwargs):
         return super(SignageDelete, self).dispatch(*args, **kwargs)
