@@ -107,8 +107,8 @@
                <ul class="dropdown-menu">
                   {% if request.user.is_staff %}
                     <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+                    <li class="divider"></li>
                   {% endif %}
-                  <li class="divider"></li>
                   <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
                   <li class="divider"></li>
                   
