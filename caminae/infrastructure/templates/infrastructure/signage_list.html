@@ -4,5 +4,9 @@
 {% block nav-signage %}active{% endblock nav-signage %}
 
 {% block mainactions %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add signage" %}</a>
+    {% if user.profile.is_editor %}
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add signage" %}</a>
+    {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add signage" %}</a>
+    {% endif %}
 {% endblock mainactions %}

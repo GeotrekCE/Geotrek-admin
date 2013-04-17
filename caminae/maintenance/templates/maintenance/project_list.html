@@ -4,5 +4,9 @@
 {% block nav-project %}active{% endblock nav-project %}
 
 {% block mainactions %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add project" %}</a>
+    {% if user.profile.is_editor %}
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add project" %}</a>
+    {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add project" %}</a>
+    {% endif %}
 {% endblock mainactions %}

@@ -3360,3 +3360,5 @@ Les superutilisateurs peuvent voir toutes les listes.
 * REFERENT SENTIERS : Idem Rédacteur + création/modification/suppression des tronçons et 5 types d'informations foncières.
 * REFERENT COMMUNICATION : Accède à tout en lecture mais il peut aussi créer/modifier/supprimer des itinéraires et POIs.
 * ADMINISTRATEUR : Il peut tout modifier, créer ou supprimer
+
+Les boutons d'ajout (comme de modification) sont désormais grisés si l'utilisateur n'a pas les droits.

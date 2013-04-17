@@ -5,6 +5,10 @@
 
 {% block mainactions %}
 	<div class="btn-group">
-	    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add physical edge" %}</a>
+	    {% if user.profile.is_path_manager %}
+            <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add physical edge" %}</a>
+        {% else %}
+            <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add physical edge" %}</a>
+        {% endif %}
 	</div>
 {% endblock mainactions %}

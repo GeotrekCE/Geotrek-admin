@@ -4,5 +4,9 @@
 {% block nav-trekking %}active{% endblock nav-trekking %}
 
 {% block mainactions %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add trek" %}</a>
+    {% if user.profile.is_trekking_manager %}
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add trek" %}</a>
+    {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add trek" %}</a>
+    {% endif %}
 {% endblock mainactions %}

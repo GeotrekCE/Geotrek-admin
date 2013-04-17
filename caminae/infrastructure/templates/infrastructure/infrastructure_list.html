@@ -4,5 +4,9 @@
 {% block nav-infrastructure %}active{% endblock nav-infrastructure %}
 
 {% block mainactions %}
-    <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add infrastructure" %}</a>
+    {% if user.profile.is_editor %}
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add infrastructure" %}</a>
+    {% else %}
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add infrastructure" %}</a>
+    {% endif %}
 {% endblock mainactions %}
