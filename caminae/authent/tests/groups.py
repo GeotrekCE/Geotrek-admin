@@ -16,10 +16,10 @@ class GroupTest(TestCase):
         populate_groups() # TODO not best :/
 
     def test_path_manager_restricted(self):
-        p = PathFactory()        
+        p = PathFactory()
         # Try to edit path as user
         user = UserFactory(password="foo")
-        self.assertFalse(user.profile.is_path_manager())
+        self.assertFalse(user.profile.is_path_manager)
         success = self.client.login(username=user.username, password="foo")
         self.assertTrue(success)
         response = self.client.get(p.get_update_url())
@@ -28,7 +28,7 @@ class GroupTest(TestCase):
 
         # Try to edit path as manager
         manager = PathManagerFactory(password="foo")
-        self.assertTrue(manager.profile.is_path_manager())
+        self.assertTrue(manager.profile.is_path_manager)
         success = self.client.login(username=manager.username, password="foo")
         self.assertTrue(success)
         response = self.client.get(p.get_update_url())
@@ -40,11 +40,11 @@ class GroupTest(TestCase):
                   Group.objects.get(name=auth_models.GROUP_TREKKING_MANAGER),
                  )
         user = UserFactory()
-        self.assertFalse(user.profile.is_editor())
-        self.assertFalse(user.profile.is_path_manager())
-        self.assertFalse(user.profile.is_trekking_manager())
+        self.assertFalse(user.profile.is_editor)
+        self.assertFalse(user.profile.is_path_manager)
+        self.assertFalse(user.profile.is_trekking_manager)
         
         user = UserFactory(groups=groups)
-        self.assertTrue(user.profile.is_editor())
-        self.assertTrue(user.profile.is_path_manager())
-        self.assertTrue(user.profile.is_trekking_manager())
+        self.assertTrue(user.profile.is_editor)
+        self.assertTrue(user.profile.is_path_manager)
+        self.assertTrue(user.profile.is_trekking_manager)

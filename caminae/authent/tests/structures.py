@@ -22,7 +22,7 @@ class StructureTest(TestCase):
         p = PathFactory()
         # Login
         user = PathManagerFactory(password="foo")
-        self.assertTrue(user.profile.is_path_manager())
+        self.assertTrue(user.profile.is_path_manager)
         success = self.client.login(username=user.username, password="foo")
         self.assertTrue(success)
         # Try to edit path from same structure

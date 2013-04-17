@@ -117,7 +117,7 @@ class TrekDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager())
+            self.request.user.profile.is_trekking_manager)
 
 
 class TrekMapImage(MapEntityMapImage):
@@ -215,7 +215,7 @@ class POIDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager())
+            self.request.user.profile.is_trekking_manager)
 
 
 class POIDocument(MapEntityDocument):

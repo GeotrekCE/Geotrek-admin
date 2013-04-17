@@ -27,19 +27,19 @@ def user_passes_test_or_redirect(f, redirect_to, msg):
 
 def path_manager_required(redirect_to):
     # TODO : decorate wrapped fonction with login_required instead of testing is_authenticated
-    f = lambda u: u.is_authenticated() and u.profile.is_path_manager()
+    f = lambda u: u.is_authenticated() and u.profile.is_path_manager
     m = _(u'Access to the requested resource is restricted to path managers. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
 
 
 def trekking_manager_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_trekking_manager()
+    f = lambda u: u.is_authenticated() and u.profile.is_trekking_manager
     m = _(u'Access to the requested resource is restricted to communication managers. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
 
 
 def editor_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_editor()
+    f = lambda u: u.is_authenticated() and u.profile.is_editor
     m = _(u'Access to the requested resource is restricted to work editor. You have been redirected.')
     return user_passes_test_or_redirect(f, redirect_to, m)
 

@@ -31,10 +31,10 @@ class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager() and \
-                self.get_object().same_structure(self.request.user))
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager and
+            self.get_object().same_structure(self.request.user))
 
 
 class InfrastructureDocument(MapEntityDocument):
@@ -92,9 +92,9 @@ class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
 
     def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager())
+        return self.request.user.is_superuser or (
+            hasattr(self.request.user, 'profile') and
+            self.request.user.profile.is_path_manager)
 
 
 class SignageDocument(MapEntityDocument):
