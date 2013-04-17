@@ -126,6 +126,11 @@ class UserProfile(StructureRelated):
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
+# Force all apps to appear in Admin
+# TODO: this is obviously wrong: using Django perms instead of groups, it can be removed.
+User.has_module_perms = lambda u, app_label: True
+
+
 
 @receiver(user_logged_in)
 def lang(sender, **kwargs):

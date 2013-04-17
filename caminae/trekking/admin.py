@@ -4,47 +4,48 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
+from caminae.authent.admin import TrekkingManagerModelAdmin
 from .models import (
     POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink, WebLinkCategory
 )
 
 
-class POITypeAdmin(TranslationAdmin):
+class POITypeAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 
-class ThemeAdmin(TranslationAdmin):
+class ThemeAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 
-class TrekNetworkAdmin(TranslationAdmin):
+class TrekNetworkAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('network',)
     search_fields = ('network',)
 
 
-class UsageAdmin(TranslationAdmin):
+class UsageAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('usage', 'pictogram_img')
     search_fields = ('usage',)
 
 
-class RouteAdmin(TranslationAdmin):
+class RouteAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('route',)
     search_fields = ('route',)
 
 
-class DifficultyLevelAdmin(TranslationAdmin):
+class DifficultyLevelAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('difficulty',)
     search_fields = ('difficulty',)
 
 
-class WebLinkAdmin(TranslationAdmin):
+class WebLinkAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
 
 
-class WebLinkCategoryAdmin(TranslationAdmin):
+class WebLinkCategoryAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
 

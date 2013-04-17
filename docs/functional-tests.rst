@@ -3342,3 +3342,11 @@ Les traductions du calendrier sont chargées dans la page à partir du settings 
 -----------------------------------------------------------------------------------------
 
 Fait. Auparavant si un utilisateur voyait son niveau d'accès diminuer, cela n'était pas pris en compte.
+
+
+#647 - ADMIN - Droits accès CRUD
+--------------------------------
+
+Les référants Communication et Sentiers ont accès aux listes de leur volet dans l'interface d'administration.
+
+Les superutilisateurs peuvent voir toutes les listes.
