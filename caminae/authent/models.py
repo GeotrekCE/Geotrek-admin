@@ -10,6 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 
+from caminae.common.utils import reify
+
 
 """
     Groups required for managing permissions.
@@ -104,16 +106,19 @@ class UserProfile(StructureRelated):
     def has_group(self, g):
         return self.user.groups.filter(pk=g.pk).exists()
 
+    @reify
     def is_path_manager(self):
         """ Returns True if the user belongs to path managers group. """
         g = Group.objects.get_or_create(name=GROUP_PATH_MANAGER)[0]
         return self.has_group(g) or self.user.is_staff
 
+    @reify
     def is_trekking_manager(self):
         """ Returns True if the user belongs to comm managers group. """
         g = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER)[0]
         return self.has_group(g) or self.user.is_staff
 
+    @reify
     def is_editor(self):
         """ Returns True if the user belongs to editors group. """
         g = Group.objects.get_or_create(name=GROUP_EDITOR)[0]
