@@ -3362,3 +3362,29 @@ Les superutilisateurs peuvent voir toutes les listes.
 * ADMINISTRATEUR : Il peut tout modifier, créer ou supprimer
 
 Les boutons d'ajout (comme de modification) sont désormais grisés si l'utilisateur n'a pas les droits.
+
+
+#538 - Traductions dans le sélecteur de couche
+----------------------------------------------
+
+Fait.
+
+
+#649 - OFFRE RANDO - Profil altimétrique et documents inaccessibles
+-------------------------------------------------------------------
+
+Fait.
+
+
+#607 - OFFRE DE RANDO - Clic sur POI clusterisé
+-----------------------------------------------
+
+Désormais, le marker est "déclusterisé" lorsque l'accordion est déplié.
+
+
+#59 - OFFRE RANDO - Respecter les normes d'accessibilité (auditif/visuel)
+-------------------------------------------------------------------------
+
+Fait. Pas d'erreur sur `WAVE <http://wave.webaim.org/report#/http://rando.makina-corpus.net>`_, et aucun remarque bloquante sur `OpQuast <https://reporting.opquast.com/fr/inspector/18W9KCMldae28_M7Z4QT1j>`_.
+
+Toute demande supplémentaire sera étudiée mais probablement considérée comme EXTRA.

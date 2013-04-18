@@ -1,5 +1,16 @@
 * Check form non field error
 
+
+===
+1.5
+===
+
+* POST (printcontext, historydelete)
+* PostGIS indexes
+* WKT Z-dim
+
+
+
 ==============
 Known problems
 ==============
@@ -12,6 +23,7 @@ Known problems
   further investigated.
 * mapentity/widgets.py does too much. Should not transform data. If 'abc' is submitted in
   parking location field, error is silent.
+* Something is wrong with logger configuration, nothing in logs in production for authenbackend failure
 
 ==========
 Soon...
@@ -42,8 +54,6 @@ Soon...
   for all declared languages ?
 
 * Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
-* Something is wrong with logger configuration, messages coming from caminae
-  appear twice in the console (see syncdb output)
 
 * Switch to django-bootstrapped instead of embedding it
 
@@ -80,17 +90,11 @@ One day...
   SELECT {% field Path.name %} FROM {% table Path %}
 
 * Docstrings for each model
-* Help text for each model field
 * Test cache (locmem + files + expires)
 
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
 * See how django manage an instance being a parent of two different child
   instance in the case of multi-table inheritance. Could it be troublesome?
-
-* Fix bug db_column in django-modeltranslation https://code.google.com/p/django-modeltranslation/issues/detail?id=83
-
-* Improve installation of GDAL
-* Clean-up buildout directory (all in one "env")
 * When changing ``dim`` parameter on a GeometryField, South does not alter nor
   drop/create the field

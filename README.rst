@@ -237,6 +237,21 @@ Expected columns in table/view are :
     Caminae can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
 
+===============
+TROUBLESHOOTING
+===============
+
+Installation script hangs on syncdb --migrate
+---------------------------------------------
+
+This command is in charge of changing the database schema [1].
+
+Make sure you close every *pgADMIN* session on the database while upgrading.
+
+[1] http://south.aeracode.org/ticket/209
+
+
+
 ===========
 DEVELOPMENT
 ===========
