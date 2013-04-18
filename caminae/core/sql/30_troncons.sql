@@ -111,6 +111,10 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 -------------------------------------------------------------------------------
 
 ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
+
+ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
+ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_isvalid CHECK (ST_IsValid(geom));
+
 ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
 ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSimple(geom));
 

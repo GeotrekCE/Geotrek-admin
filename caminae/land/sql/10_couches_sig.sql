@@ -16,6 +16,19 @@ CREATE INDEX l_zonage_reglementaire_geom_idx ON l_zonage_reglementaire USING gis
 
 
 -------------------------------------------------------------------------------
+-- Ensure land layers have valid geometries
+-------------------------------------------------------------------------------
+
+ALTER TABLE l_commune DROP CONSTRAINT IF EXISTS l_commune_geom_isvalid;
+ALTER TABLE l_commune ADD CONSTRAINT l_commune_geom_isvalid CHECK (ST_IsValid(geom));
+
+ALTER TABLE l_secteur DROP CONSTRAINT IF EXISTS l_secteur_geom_isvalid;
+ALTER TABLE l_secteur ADD CONSTRAINT l_secteur_geom_isvalid CHECK (ST_IsValid(geom));
+
+ALTER TABLE l_zonage_reglementaire DROP CONSTRAINT IF EXISTS l_zonage_reglementaire_geom_isvalid;
+ALTER TABLE l_zonage_reglementaire ADD CONSTRAINT l_zonage_reglementaire_geom_isvalid CHECK (ST_IsValid(geom));
+
+-------------------------------------------------------------------------------
 -- Automatic link between Troncon and Commune/Zonage/Secteur
 -------------------------------------------------------------------------------
 
