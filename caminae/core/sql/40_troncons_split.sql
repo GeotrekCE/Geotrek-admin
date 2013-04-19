@@ -3,12 +3,16 @@
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_00_split_geom_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
     troncon record;
     tid_clone integer;
-    
+    t_count integer;
+    existing_et integer[];
+    t_geom geometry;
+
     fraction float;
     a float;
     b float;
@@ -31,7 +35,7 @@ BEGIN
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
 
-        -- RAISE NOTICE '% intersects % : %', NEW.id, troncon.id, ST_AsEWKT(ST_Intersection(troncon.geom, NEW.geom));
+        RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.nom, ST_AsText(NEW.geom), troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(ST_Intersection(troncon.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
         intersections_on_new := ARRAY[0::float];
@@ -69,7 +73,7 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_new, 1) > 2 THEN
-            -- RAISE NOTICE 'New: % intersecting on NEW % : %', NEW.id, troncon.id, intersections_on_new;
+            RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.nom, troncon.id, troncon.nom, intersections_on_new;
             
             FOR i IN 1..(array_length(intersections_on_new, 1) - 1)
             LOOP
@@ -113,8 +117,7 @@ BEGIN
                 END IF;
             END LOOP;
         END IF;
-        
-    END LOOP;
+
 
     --------------------------------------------------------------------
     -- 2. Handle paths intersecting with NEW
@@ -122,8 +125,11 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
-            -- RAISE NOTICE 'Current: % intersecting on current % : %', NEW.id, troncon.id, intersections_on_current;
-            
+            RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.nom, troncon.id, troncon.nom, intersections_on_current;
+
+            SELECT array_agg(id) INTO existing_et FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id;
+            RAISE NOTICE 'Existing: %', existing_et;
+
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
             LOOP
                 a := intersections_on_current[i];
@@ -133,11 +139,11 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    -- RAISE NOTICE 'Current: Skrink % : geom is %', troncon.id, ST_AsEWKT(segment);
+                    RAISE NOTICE 'Current: Skrink %-% (%) to %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                     UPDATE l_t_troncon SET geom = segment WHERE id = troncon.id;
                 ELSE
                     -- Next ones : create clones !
-                    -- RAISE NOTICE 'Current: Create geom is %', ST_AsEWKT(segment);
+                    RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                     INSERT INTO l_t_troncon (structure, 
                                           valide,
                                           nom, 
@@ -165,7 +171,6 @@ BEGIN
                         RETURNING id INTO tid_clone;
                     
                     -- Copy topologies matching start/end
-                    -- RAISE NOTICE 'Current: Duplicate topologies on [% ; %]', a, b;                    
                     INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                         SELECT
                             tid_clone,
@@ -176,14 +181,24 @@ BEGIN
                         WHERE et.troncon = troncon.id 
                               AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
                                    (pk_debut = pk_fin AND pk_debut = a)); -- Point
+                    GET DIAGNOSTICS t_count = ROW_COUNT;
+                    IF t_count > 0 THEN
+                        RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), a, b, tid_clone, troncon.nom, ST_AsText(segment);
+                    END IF;
                     -- Special case : point topology at the end of path
                     IF b = 1 THEN
+                        SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
+                        fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
                         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                             SELECT tid_clone, evenement, pk_debut, pk_fin
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id AND 
                                   pk_debut = pk_fin AND 
                                   pk_debut = 1;
+                        GET DIAGNOSTICS t_count = ROW_COUNT;
+                        IF t_count > 0 THEN
+                            RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(t_geom), tid_clone, troncon.nom, ST_AsText(segment), fraction;
+                        END IF;
                     END IF;
                     -- Special case : point topology exactly where NEW path intersects
                     IF a > 0 THEN
@@ -193,6 +208,10 @@ BEGIN
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
                               AND pk_debut = pk_fin AND pk_debut = a;
+                        GET DIAGNOSTICS t_count = ROW_COUNT;
+                        IF t_count > 0 THEN
+                            RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
+                        END IF;
                     END IF;
                 END IF;
             END LOOP;
@@ -200,23 +219,35 @@ BEGIN
             -- Now handle first path topologies
             a := intersections_on_current[1];
             b := intersections_on_current[2];
-            -- RAISE NOTICE 'Current: Remove topologies of % on [% ; %]', troncon.id, a, b;
             DELETE FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id
+                                                 AND id = ANY(existing_et)
                                                  AND (pk_debut > b OR pk_fin < a);
+            GET DIAGNOSTICS t_count = ROW_COUNT;
+            IF t_count > 0 THEN
+                RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
+            END IF;
 
             -- Update topologies overlapping
-            -- RAISE NOTICE 'Current: Update topologies of % on [% ; %]', troncon.id, a, b;
             UPDATE e_r_evenement_troncon et SET pk_debut = pk_debut / (b - a),
                                                 pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
                 WHERE et.troncon = troncon.id
                 AND pk_debut <= b AND pk_fin >= a; 
+            GET DIAGNOSTICS t_count = ROW_COUNT;
+            IF t_count > 0 THEN
+                RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
+            END IF;
         END IF;
 
+    END LOOP;
+
+    IF array_length(intersections_on_new, 1) > 0 OR array_length(intersections_on_current, 1) > 0 THEN
+        RAISE NOTICE 'Done %-% (%).', NEW.id, NEW.nom, ST_AsText(NEW.geom);
+    END IF;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER l_t_troncon_split_geom_iu_tgr
+CREATE TRIGGER l_t_troncon_00_split_geom_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();

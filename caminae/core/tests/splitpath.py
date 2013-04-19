@@ -555,10 +555,11 @@ class SplitPathPointTopologyTest(TestCase):
         ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
 
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(ab2.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 1)
+        self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 4)
 
         aggr_ab = ab.aggregations.all()[0]
         aggr_ab2 = ab2.aggregations.all()[0]
@@ -679,10 +680,12 @@ class SplitPathPointTopologyTest(TestCase):
         cd.geom = LineString((2, -2, 0), (2, 0, 0))
         cd.save()
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 3)
+
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 3)
+
         aggr_ab = ab.aggregations.all()[0]
         aggr_cb = cb.aggregations.all()[0]
         aggr_cd = cd.aggregations.all()[0]
@@ -707,10 +710,12 @@ class SplitPathPointTopologyTest(TestCase):
         cd.geom = LineString((2, 0, 0), (2, -2, 0))
         cd.save()
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 3)
+
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 3)
+
         aggr_ab = ab.aggregations.all()[0]
         aggr_cb = cb.aggregations.all()[0]
         aggr_cd = cd.aggregations.all()[0]
