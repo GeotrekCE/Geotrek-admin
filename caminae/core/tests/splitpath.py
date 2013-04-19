@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import LineString
 
 from caminae.core.factories import PathFactory, TopologyFactory
-from caminae.core.models import Path
+from caminae.core.models import Path, Topology, PathAggregation
 
 
 class SplitPathTest(TestCase):
@@ -155,7 +155,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="GH")), 2)
         self.assertEqual(len(Path.objects.filter(name="IJ")), 2)
 
-    def failing_test_split_multiple_2(self):
+    def test_split_multiple_2(self):
         """
               C              D
                +            +
@@ -535,13 +535,13 @@ class SplitPathPointTopologyTest(TestCase):
         aggr_cb = cb.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
 
-    def failing_test_split_on_update(self):
-        """                               + E
+    def test_split_on_update(self):
+        """                               + D
                                           :
                                           :
         A +-----------+ B         A +-----X---+ B
                                           :
-        C +---X---+ D              C +----+ D
+        C +---X---+ D              C +----+
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1, 0), (4, 1, 0)))
@@ -662,7 +662,7 @@ class SplitPathPointTopologyTest(TestCase):
         aggr_cd2 = cd2.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
-    def failing_test_split_on_update_6(self):
+    def test_split_on_update_6(self):
         """
                                           D
         A +-----------+ B         A +-----X---+ B
@@ -693,7 +693,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
         self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
 
-    def failing_test_split_on_update_7(self):
+    def test_split_on_update_7(self):
         """
                                           C
         A +-----------+ B         A +-----X---+ B
