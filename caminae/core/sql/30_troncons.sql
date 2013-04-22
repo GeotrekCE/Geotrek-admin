@@ -70,6 +70,7 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
 DECLARE
@@ -101,7 +102,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_evenements_geom_u_tgr
+CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
 AFTER UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 

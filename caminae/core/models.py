@@ -205,9 +205,29 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
             self.reload()
         finally:
             # Show triggers output
+            allnotices = []
+            current = ''
             if connection.connection:
+                notices = []
                 for notice in connection.connection.notices[before:]:
-                    logger.debug(notice)
+                    try:
+                        notice, context = notice.split('CONTEXT:', 1)
+                    except ValueError:
+                        context = ''
+                    notices.append((context, notice))
+                    if context != current:
+                        allnotices.append(notices)
+                        notices = []
+                        current = context
+                allnotices.append(notices)
+            current = ''
+            for notices in allnotices:
+                for context, notice in notices:
+                    if context != current:
+                        if context != '': logger.debug('Context %s:' % context.strip())
+                        current = context
+                    prefix = '' if context == '' else '        '
+                    logger.debug('%s%s' % (prefix, notice.strip()))
 
     def get_elevation_profile(self):
         """

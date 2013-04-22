@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import LineString
 
 from caminae.core.factories import PathFactory, TopologyFactory
-from caminae.core.models import Path
+from caminae.core.models import Path, Topology, PathAggregation
 
 
 class SplitPathTest(TestCase):
@@ -155,7 +155,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="GH")), 2)
         self.assertEqual(len(Path.objects.filter(name="IJ")), 2)
 
-    def failing_test_split_multiple_2(self):
+    def test_split_multiple_2(self):
         """
               C              D
                +            +
@@ -526,7 +526,7 @@ class SplitPathPointTopologyTest(TestCase):
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=1.0, end=1.0)
         self.assertEqual(len(topology.paths.all()), 1)
-        PathFactory.create(geom=LineString((2, 0, 0), (2, 2, 0)))
+        PathFactory.create(name="CD", geom=LineString((2, 0, 0), (2, 2, 0)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
         self.assertEqual(len(topology.paths.all()), 1)
@@ -535,13 +535,13 @@ class SplitPathPointTopologyTest(TestCase):
         aggr_cb = cb.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
 
-    def failing_test_split_on_update(self):
-        """                               + E
+    def test_split_on_update(self):
+        """                               + D
                                           :
                                           :
         A +-----------+ B         A +-----X---+ B
                                           :
-        C +---X---+ D              C +----+ D
+        C +---X---+ D              C +----+
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1, 0), (4, 1, 0)))
@@ -554,28 +554,29 @@ class SplitPathPointTopologyTest(TestCase):
         cd.save()
         ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 4)
-        self.assertEqual(len(ab.aggregations.all()), 1)
+
         self.assertEqual(len(ab2.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 1)
+        self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 4)
 
         aggr_ab = ab.aggregations.all()[0]
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_cd = cd.aggregations.all()[0]
         aggr_cd2 = cd2.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((1.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+        self.assertEqual((0.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
+        self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_2(self):
-        """                               + E
+        """                               + D
                                           :
                                           :
         A +-----------+ B         A +-----+---+ B
                                           :
-        C +-X-----+ D              C +--X-+ D
+        C +-X-----+ D              C +--X-+
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1, 0), (4, 1, 0)))
@@ -661,7 +662,7 @@ class SplitPathPointTopologyTest(TestCase):
         aggr_cd2 = cd2.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
-    def failing_test_split_on_update_6(self):
+    def test_split_on_update_6(self):
         """
                                           D
         A +-----------+ B         A +-----X---+ B
@@ -678,19 +679,21 @@ class SplitPathPointTopologyTest(TestCase):
 
         cd.geom = LineString((2, -2, 0), (2, 0, 0))
         cd.save()
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 3)
+        db = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+
         self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
+        self.assertEqual(len(db.aggregations.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 3)
+
         aggr_ab = ab.aggregations.all()[0]
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_db = db.aggregations.all()[0]
         aggr_cd = cd.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
+        self.assertEqual((0.0, 0.0), (aggr_db.start_position, aggr_db.end_position))
         self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
 
-    def failing_test_split_on_update_7(self):
+    def test_split_on_update_7(self):
         """
                                           C
         A +-----------+ B         A +-----X---+ B
@@ -701,16 +704,18 @@ class SplitPathPointTopologyTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1, 0), (4, 1, 0)))
         topology = TopologyFactory.create(no_path=True)
-        topology.add_path(cd, start=1.0, end=1.0)
+        topology.add_path(cd, start=0.0, end=0.0)
         self.assertEqual(len(topology.paths.all()), 1)
 
         cd.geom = LineString((2, 0, 0), (2, -2, 0))
         cd.save()
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 3)
+
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
+        self.assertEqual(len(topology.paths.all()), 3)
+
         aggr_ab = ab.aggregations.all()[0]
         aggr_cb = cb.aggregations.all()[0]
         aggr_cd = cd.aggregations.all()[0]
