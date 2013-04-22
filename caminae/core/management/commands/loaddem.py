@@ -127,6 +127,7 @@ class Command(BaseCommand):
                                                                  new_dem.name)
         try:
             self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
+            self.stdout.write(cmd)
             ret = call(cmd, shell=True)
             if ret != 0:
                 raise Exception('gdalwarp failed with exit code %d' % ret)
@@ -141,6 +142,7 @@ class Command(BaseCommand):
         cmd = 'raster2pgsql -c -C -I -M -t 100x100 %s mnt' % new_dem.name
         try:
             self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
+            self.stdout.write(cmd)
             ret = call(cmd, stdout=output.file, shell=True)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
