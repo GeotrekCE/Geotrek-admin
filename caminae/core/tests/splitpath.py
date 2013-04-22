@@ -180,13 +180,12 @@ class SplitPathTest(TestCase):
 
     def test_split_multiple_3(self):
         """
-              C              D
                +            +
              E  \          /  F
         A +---+--+--------+--+---+ B
-               \  \      /  /            AB exists. Create EF. Create CD.
-                \  \    /  /
-                 +--+--+--+
+              |   \      /   |            AB exists. Create EF. Create CD.
+              +----+----+----+
+                    \  /
                      \/
         """
         PathFactory.create(name="AB", geom=LineString((0, 0, 0), (10, 0, 0)))
@@ -197,6 +196,28 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="AB")), 5)
         self.assertEqual(len(Path.objects.filter(name="EF")), 3)
         self.assertEqual(len(Path.objects.filter(name="CD")), 5)
+
+    def test_split_multiple_4(self):
+        """
+        Same as previous, without round values for intersections.
+
+              C              D
+               +            +
+             E  \          /  F
+        A +---+--+--------+--+---+ B
+               \  \      /  /            AB exists. Create EF. Create CD.
+                \  \    /  /
+                 ---+--+---
+                     \/
+        """
+        PathFactory.create(name="AB", geom=LineString((0, 0, 0), (10, 0, 0)))
+        PathFactory.create(name="EF", geom=LineString((2, 0, 0), (2, -1, 0), (8, -1, 0), (8, 0, 0)))
+
+        PathFactory.create(name="CD", geom=LineString((2, 1, 0), (5, -2, 0), (8, 1, 0)))
+        PathFactory.create(name="CD", geom=LineString((3, 1, 0), (5, -2, 0), (7, 1, 0)))
+
+        self.assertEqual(len(Path.objects.filter(name="AB")), 5)
+        self.assertEqual(len(Path.objects.filter(name="EF")), 3)
 
 
 class SplitPathLineTopologyTest(TestCase):

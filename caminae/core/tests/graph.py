@@ -17,7 +17,7 @@ class SimpleGraph(TestCase):
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""
-            return ((x + 0., x + 1., 0.) for x in xrange(10, 100))
+            return ((0., x + 1., 0.) for x in xrange(10, 100))
 
         r_point = gen_random_point().next
 
@@ -42,13 +42,9 @@ class SimpleGraph(TestCase):
                 p_2_2: e_2_3,
             },
             # Non connex
-            p_4_4: { p_5_5: e_4_5, },
-            p_5_5: { p_4_4: e_4_5, },
+            p_4_4: {p_5_5: e_4_5},
+            p_5_5: {p_4_4: e_4_5},
         }
 
         computed_graph = graph_of_qs(Path.objects.all())
-
         self.assertDictEqual(computed_graph, graph)
-
-
-

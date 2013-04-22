@@ -125,6 +125,7 @@ ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSim
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION elevation_troncon_iu() RETURNS trigger AS $$
 DECLARE
@@ -144,7 +145,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_elevation_iu_tgr
+CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr
 BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
 

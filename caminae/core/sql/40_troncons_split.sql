@@ -1,9 +1,87 @@
+DROP TRIGGER IF EXISTS l_t_troncon_00_snap_geom_iu_tgr ON l_t_troncon;
+
+CREATE OR REPLACE FUNCTION troncons_snap_extremities() RETURNS trigger AS $$
+DECLARE
+    linestart geometry;
+    lineend geometry;
+    other geometry;
+    result geometry;
+    newline geometry[];
+    d float8;
+
+    DISTANCE float8;
+BEGIN
+    DISTANCE := 1;
+
+    linestart := ST_StartPoint(NEW.geom);
+    lineend := ST_EndPoint(NEW.geom);
+
+    result := NULL;
+    SELECT ST_3DClosestPoint(geom, linestart), geom INTO result, other
+      FROM l_t_troncon
+      WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
+        AND id != NEW.id
+        AND ST_3DDistance(geom, linestart) < DISTANCE
+      ORDER BY ST_3DDistance(geom, linestart)
+      LIMIT 1;
+
+    IF result IS NULL THEN
+        result := linestart;
+    ELSE
+        d := DISTANCE;
+        FOR i IN 1..ST_NPoints(other) LOOP
+            IF ST_3DDistance(result, ST_PointN(other, i)) < DISTANCE AND ST_3DDistance(result, ST_PointN(other, i)) < d THEN
+                d := ST_3DDistance(result, ST_PointN(other, i));
+                result := ST_PointN(other, i);
+            END IF;
+        END LOOP;
+        RAISE NOTICE 'Snapped % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
+    END IF;
+    newline := array_append(newline, result);
+
+    FOR i IN 2..ST_NPoints(NEW.geom)-1 LOOP
+        newline := array_append(newline, ST_PointN(NEW.geom, i));
+    END LOOP;
+
+    result := NULL;
+    SELECT ST_3DClosestPoint(geom, lineend), geom INTO result, other
+      
+      FROM l_t_troncon
+      WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
+        AND id != NEW.id
+        AND ST_3DDistance(geom, lineend) < DISTANCE
+      ORDER BY ST_3DDistance(geom, lineend)
+      LIMIT 1;
+    IF result IS NULL THEN
+        result := lineend;
+    ELSE
+        d := DISTANCE;
+        FOR i IN 1..ST_NPoints(other) LOOP
+            IF ST_3DDistance(result, ST_PointN(other, i)) < DISTANCE AND ST_3DDistance(result, ST_PointN(other, i)) < d THEN
+                d := ST_3DDistance(result, ST_PointN(other, i));
+                result := ST_PointN(other, i);
+            END IF;
+        END LOOP;
+        RAISE NOTICE 'Snapped % to %, from %', ST_AsText(lineend), ST_AsText(result), ST_AsText(other);
+    END IF;
+    newline := array_append(newline, result);
+
+    NEW.geom := ST_MakeLine(newline);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER l_t_troncon_00_snap_geom_iu_tgr
+BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
+FOR EACH ROW EXECUTE PROCEDURE troncons_snap_extremities();
+
+
 -------------------------------------------------------------------------------
 -- Split paths when crossing each other
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON l_t_troncon;
-DROP TRIGGER IF EXISTS l_t_troncon_00_split_geom_iu_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_10_split_geom_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
@@ -13,14 +91,14 @@ DECLARE
     existing_et integer[];
     t_geom geometry;
 
-    fraction float;
-    a float;
-    b float;
+    fraction float8;
+    a float8;
+    b float8;
     segment geometry;
     newgeom geometry;
     
-    intersections_on_new float[];
-    intersections_on_current float[];
+    intersections_on_new float8[];
+    intersections_on_current float8[];
 BEGIN
 
     -- Copy original geometry
@@ -81,6 +159,11 @@ BEGIN
                 b := intersections_on_new[i+1];
 
                 segment := ST_Line_Substring(newgeom, a, b);
+
+                IF coalesce(ST_Length(segment), 0) < 1 THEN
+                     intersections_on_new[i+1] := a;
+                     CONTINUE;
+                END IF;
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
@@ -144,6 +227,11 @@ BEGIN
                 b := intersections_on_current[i+1];
 
                 segment := ST_Line_Substring(troncon.geom, a, b);
+
+                IF coalesce(ST_Length(segment), 0) < 1 THEN
+                     intersections_on_new[i+1] := a;
+                     CONTINUE;
+                END IF;
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
@@ -267,6 +355,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER l_t_troncon_00_split_geom_iu_tgr
+CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();
