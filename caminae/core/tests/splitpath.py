@@ -190,12 +190,12 @@ class SplitPathTest(TestCase):
                      \/
         """
         PathFactory.create(name="AB", geom=LineString((0, 0, 0), (10, 0, 0)))
-        PathFactory.create(name="EF", geom=LineString((2, 0, 0), (2, -1, 0), (6, -1, 0), (6, 0, 0)))
+        PathFactory.create(name="EF", geom=LineString((2, 0, 0), (2, -1, 0), (8, -1, 0), (8, 0, 0)))
 
-        PathFactory.create(name="CD", geom=LineString((4, 1, 0), (5, -2, 0), (6, 1, 0)))
+        PathFactory.create(name="CD", geom=LineString((2, 1, 0), (5, -2, 0), (8, 1, 0)))
 
         self.assertEqual(len(Path.objects.filter(name="AB")), 5)
-        self.assertEqual(len(Path.objects.filter(name="EF")), 5)
+        self.assertEqual(len(Path.objects.filter(name="EF")), 3)
         self.assertEqual(len(Path.objects.filter(name="CD")), 5)
 
 
