@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 from math import isnan
 import logging
 from datetime import datetime
@@ -212,6 +213,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
                 for notice in connection.connection.notices[before:]:
                     try:
                         notice, context = notice.split('CONTEXT:', 1)
+                        context = re.sub("\s+", " ", context)
                     except ValueError:
                         context = ''
                     notices.append((context, notice))
@@ -224,7 +226,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
             for notices in allnotices:
                 for context, notice in notices:
                     if context != current:
-                        if context != '': logger.debug('Context %s:' % context.strip())
+                        if context != '': logger.debug('Context %s...:' % context.strip()[:80])
                         current = context
                     prefix = '' if context == '' else '        '
                     logger.debug('%s%s' % (prefix, notice.strip()))

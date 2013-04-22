@@ -149,13 +149,36 @@ class SplitPathTest(TestCase):
         PathFactory.create(name="GH", geom=LineString((3, -2, 0), (3, 2, 0)))
         PathFactory.create(name="IJ", geom=LineString((4, -2, 0), (4, 2, 0)))
         PathFactory.create(name="AB", geom=LineString((0,  0, 0), (5, 0, 0)))
-        self.assertEqual(len(Path.objects.filter(name="AB")), 5)
+
         self.assertEqual(len(Path.objects.filter(name="CD")), 2)
         self.assertEqual(len(Path.objects.filter(name="EF")), 2)
         self.assertEqual(len(Path.objects.filter(name="GH")), 2)
         self.assertEqual(len(Path.objects.filter(name="IJ")), 2)
+        self.assertEqual(len(Path.objects.filter(name="AB")), 5)
 
     def test_split_multiple_2(self):
+        """
+
+             C   E   G   I
+             +   +   +   +
+             |   |   |   |
+             |   |   |   |
+        A +--+---+---+---+--+ B
+             D   F   H   J
+        """
+        PathFactory.create(name="CD", geom=LineString((1, -2, 0), (1, 2, 0)))
+        PathFactory.create(name="EF", geom=LineString((2, -2, 0), (2, 2, 0)))
+        PathFactory.create(name="GH", geom=LineString((3, -2, 0), (3, 2, 0)))
+        PathFactory.create(name="IJ", geom=LineString((4, -2, 0), (4, 2, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, -2, 0), (5, -2, 0)))
+
+        self.assertEqual(len(Path.objects.filter(name="CD")), 1)
+        self.assertEqual(len(Path.objects.filter(name="EF")), 1)
+        self.assertEqual(len(Path.objects.filter(name="GH")), 1)
+        self.assertEqual(len(Path.objects.filter(name="IJ")), 1)
+        self.assertEqual(len(Path.objects.filter(name="AB")), 5)
+
+    def test_split_multiple_3(self):
         """
               C              D
                +            +
