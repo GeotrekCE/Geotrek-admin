@@ -128,7 +128,9 @@ BEGIN
             RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.nom, troncon.id, troncon.nom, intersections_on_current;
 
             SELECT array_agg(id) INTO existing_et FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id;
-            RAISE NOTICE 'Existing: %', existing_et;
+             IF existing_et IS NOT NULL THEN
+                 RAISE NOTICE 'Existing topologies id for %-% (%): %', troncon.id, troncon.nom, ST_AsText(troncon.geom), existing_et;
+             END IF;
 
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
             LOOP
@@ -215,7 +217,13 @@ BEGIN
                     END IF;
                 END IF;
             END LOOP;
-            
+
+            -- Update point topologies at intersection
+            -- Trigger e_r_evenement_troncon_junction_point_iu_tgr
+            UPDATE e_r_evenement_troncon et SET pk_debut = pk_debut
+             WHERE et.troncon = NEW.id 
+               AND pk_debut = pk_fin;
+
             -- Now handle first path topologies
             a := intersections_on_current[1];
             b := intersections_on_current[2];
@@ -237,7 +245,6 @@ BEGIN
                 RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
             END IF;
         END IF;
-
     END LOOP;
 
     IF array_length(intersections_on_new, 1) > 0 OR array_length(intersections_on_current, 1) > 0 THEN

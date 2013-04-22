@@ -704,7 +704,7 @@ class SplitPathPointTopologyTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1, 0), (4, 1, 0)))
         topology = TopologyFactory.create(no_path=True)
-        topology.add_path(cd, start=1.0, end=1.0)
+        topology.add_path(cd, start=0.0, end=0.0)
         self.assertEqual(len(topology.paths.all()), 1)
 
         cd.geom = LineString((2, 0, 0), (2, -2, 0))
