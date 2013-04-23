@@ -3388,3 +3388,76 @@ Désormais, le marker est "déclusterisé" lorsque l'accordion est déplié.
 Fait. Pas d'erreur sur `WAVE <http://wave.webaim.org/report#/http://rando.makina-corpus.net>`_, et aucun remarque bloquante sur `OpQuast <https://reporting.opquast.com/fr/inspector/18W9KCMldae28_M7Z4QT1j>`_.
 
 Toute demande supplémentaire sera étudiée mais probablement considérée comme EXTRA.
+
+
+==========================
+Sprint 16 - Version 0.16.0
+==========================
+
+#384 - [BUG] Découpage de tronçons et evenement ponctuels
+---------------------------------------------------------
+
+Fixé.
+
+::
+
+                                      + E
+                                      :
+                                     F:
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +---X---+ D              C +----+ D
+    
+    BUG: AD,DB segment not associated to X
+    
+                                      D
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C +-------X D                     :
+                                      +
+                                      C
+    
+    BUG: AC,CB segment not associated to X
+    
+                                      C
+    A +-----------+ B         A +-----X---+ B
+                                      :
+    C X-------+ D                     :
+                                      + D
+
+
+#654 - [BUG] Découpage de tronçons multiple 2
+---------------------------------------------
+
+Fixé.
+
+::
+
+          C   E   G   I
+         +   +   +   +
+         |   |   |   |
+         |   |   |   |
+    A +--+---+---+---+--+ B
+         D   F   H   J
+    
+    CD, EF, GH, IJ exist. Create AB.
+
+
+#653 - [BUG] Découpage de tronçons multiple
+-------------------------------------------
+
+Fixé.
+
+::
+
+    BUG: AB, EF, CD are split into 3 parts instead of 5.
+    
+           C              D
+           +            +
+         E  \          /  F
+    A +---+--+--------+--+---+ B
+           \  \      /  /   AB exists. Create EF. Create CD.
+            \  \    /  /
+             +--+--+--+ 
+                 \/
+
