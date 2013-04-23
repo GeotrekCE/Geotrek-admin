@@ -133,6 +133,43 @@ class SplitPathTest(TestCase):
                                                        (3, -2, 0), (3, 0, 0)))
         self.assertEqual(cd_clones[1].geom, LineString((3, 0, 0), (3, 2, 0)))
 
+    def test_split_almost(self):
+        """
+
+           C   D
+           +   +
+            \ /
+        A +--V--+ B
+             E
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
+        cd = PathFactory.create(name="CD", geom=LineString((1, 1, 0), (2, -0.2, 0),
+                                                           (3, 1, 0)))
+        ab.reload()
+        cd.reload()
+        eb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        ed = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
+        self.assertEqual(ab.geom, LineString((0, 0, 0), (2, -0.2, 0)))
+        self.assertEqual(cd.geom, LineString((1, 1, 0), (2, -0.2, 0)))
+        self.assertEqual(eb.geom, LineString((2, -0.2, 0), (4, 0, 0)))
+        self.assertEqual(ed.geom, LineString((2, -0.2, 0), (3, 1, 0)))
+
+    def test_split_almost_2(self):
+        """
+           + C
+           |
+        A +------- ... ----+ B
+           |
+           + D
+        """
+        cd = PathFactory.create(name="CD", geom=LineString((0.1, 1, 0), (0.1, -1, 0)))
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (10000000, 0, 0)))
+        ab.reload()
+        cd.reload()
+        self.assertEqual(ab.geom, LineString((0.1, 0, 0), (10000000, 0, 0)))
+        self.assertEqual(cd.geom, LineString((0.1, 1, 0), (0.1, 0, 0)))
+        self.assertEqual(len(Path.objects.all()), 3)
+
     def test_split_multiple(self):
         """
 
