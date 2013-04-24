@@ -127,6 +127,7 @@ def transform_wkt(wkt, srid_from=None, srid_to=None):
         dim = 3
         extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
         wkt3d = geom.wkt.replace(',', extracoords + ',')
+        wkt3d = wkt3d.replace(')', extracoords + ')')
         return wkt3d
     except (OGRException, GEOSException, TypeError, ValueError), e:
         if not settings.TEST:
