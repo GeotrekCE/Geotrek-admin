@@ -35,7 +35,9 @@ BEGIN
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;
-        RAISE NOTICE 'Snapped % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
+        IF NOT ST_Equals(linestart, result) THEN
+            RAISE NOTICE 'Snapped start % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
+        END IF;
     END IF;
     newline := array_append(newline, result);
 
@@ -62,7 +64,9 @@ BEGIN
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;
-        RAISE NOTICE 'Snapped % to %, from %', ST_AsText(lineend), ST_AsText(result), ST_AsText(other);
+        IF NOT ST_Equals(lineend, result) THEN
+            RAISE NOTICE 'Snapped end % to %, from %', ST_AsText(lineend), ST_AsText(result), ST_AsText(other);
+        END IF;
     END IF;
     newline := array_append(newline, result);
 
