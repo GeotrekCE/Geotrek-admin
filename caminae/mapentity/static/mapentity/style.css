@@ -506,7 +506,7 @@ span.filter-info {
     margin-top: 10px;
 }
 
-.form-panel form {
+.form-panel > form {
     padding-left: 10px;
     margin-bottom: 0px;
 }
@@ -572,7 +572,7 @@ TODO: please help;
     margin-left: 0px;
 }
 
-#geomfield label {
+#geomfield label.control-label {
     position: absolute;
     z-index: 2000;
     background-color: rgba(255,255,255,0.7);

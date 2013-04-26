@@ -3461,3 +3461,9 @@ Fixé.
              +--+--+--+ 
                  \/
 
+
+#646 - [BUG] Sélecteur de couches dans les formulaires d'édition
+----------------------------------------------------------------
+
+Fixé.
+
