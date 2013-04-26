@@ -29,6 +29,14 @@ class Command(BaseCommand):
             msg = 'GDAL Python bindings are not available. Can not proceed.'
             raise CommandError(msg)
 
+        try:
+            ret = call('raster2pgsql -G', shell=True)
+            if ret != 0:
+                raise Exception('raster2pgsql failed with exit code %d' % ret)
+        except Exception as e:
+            msg = 'Caught %s: %s' % (e.__class__.__name__, e,)
+            raise CommandError(msg)
+
         self.stdout.write('-- Checking input DEM ------------------\n')
 
         # Validate arguments
