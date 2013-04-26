@@ -42,7 +42,7 @@ install: etc/settings.ini bin/python bin/casperjs
 
 clean_harmless:
 	find caminae/ -name "*.pyc" -exec rm -f {} \;
-	rm install
+	rm -f install
 
 clean: clean_harmless
 	rm -rf bin/ lib/ local/ include/ *.egg-info/
