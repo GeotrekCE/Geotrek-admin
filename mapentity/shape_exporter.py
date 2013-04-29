@@ -35,8 +35,8 @@ def zip_shapes(shapes, delete=True):
 def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
     files = ['shp', 'shx', 'prj', 'dbf']
     for item in files:
-        filename = '%s.%s' % (shapefile_path.replace('.shp',''), item)
-        zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp',''), item))
+        filename = '%s.%s' % (shapefile_path.replace('.shp', ''), item)
+        zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp', ''), item))
         if delete:
             os.remove(filename)
 
@@ -44,7 +44,7 @@ def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
 class ShapeCreator(object):
 
     def __init__(self):
-        self.shapes = [] # list of pair (shp name, shp path)
+        self.shapes = []  # list of pair (shp name, shp path)
 
     def add_shape(self, shp_name, shp_filepath):
         self.shapes.append((shp_name, shp_filepath))
@@ -78,12 +78,13 @@ def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
     # omg.. will not work for 3D coords
     if native_srs != output_srs:
         ct = osr.CoordinateTransformation(native_srs, output_srs)
+
         def transform(ogr_geom):
             ogr_geom.Transform(ct)
             return ogr_geom
 
     for item in iterable:
-        feat = ogr.Feature( feature_def )
+        feat = ogr.Feature(feature_def)
 
         for fieldname, getter in fieldmap.iteritems():
             feat.SetField(fieldname, getter(item))
@@ -99,9 +100,10 @@ def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
 
     return tmp_file.name
 
+
 def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
     # Create temp file
-    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode = 'w+b', dir=settings.TEMP_DIR)
+    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode='w+b', dir=settings.TEMP_DIR)
     # we must close the file for GDAL to be able to open and write to it
     tmp.close()
     # create shape format
@@ -129,7 +131,7 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
     # Create other fields
     for fieldname in fieldnames:
         field_defn = ogr.FieldDefn(fieldname, ogr.OFTString)
-        field_defn.SetWidth( 255 )
+        field_defn.SetWidth(255)
         if layer.CreateField(field_defn) != 0:
             raise Exception('Faild to create field')
 
@@ -143,6 +145,7 @@ def fieldmap_from_fields(model, fieldnames):
                                                             getattr(x, fname + '_display', getattr(x, fname))))))
         for fname in fieldnames
     )
+
 
 def fieldmap_from_model(model):
     """Extract all non geometry fields from model"""
@@ -182,6 +185,7 @@ def geo_field_from_model(model, default_geo_field_name=None):
 
     return geo_field
 
+
 def info_from_geo_field(geo_field):
     """Extract relevant info from geofield"""
 
@@ -200,4 +204,3 @@ def info_from_geo_field(geo_field):
         srid = geo_field._srid
 
     return get_geom, geom_type, srid
-
