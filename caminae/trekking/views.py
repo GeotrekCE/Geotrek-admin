@@ -73,7 +73,7 @@ class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
         gpx_serializer = GPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
-        gpx_serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
+        gpx_serializer.serialize([self.get_object()], stream=response, geom_field='geom')
         return response
 
 

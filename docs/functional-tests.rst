@@ -3467,3 +3467,8 @@ Fixé.
 
 Fixé.
 
+
+#637 - [BUG] OFFRE de RANDO - EXPORT GPX d'un itinéraire
+--------------------------------------------------------
+
+Un seul itinéraire par export. Utilisation de ``rte`` et ``rtept``.

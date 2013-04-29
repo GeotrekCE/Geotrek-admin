@@ -143,9 +143,12 @@ class TrekCustomViewTests(TestCase):
 
     def test_gpx(self):
         trek = TrekFactory.create()
+        trek = TrekFactory.create()
         url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.count('<rte>'), 1)
+        self.assertTrue(response.content.count('<rtept>') > 2)
 
     def test_kml(self):
         trek = TrekFactory.create()
