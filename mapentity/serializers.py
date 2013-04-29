@@ -21,6 +21,12 @@ from .templatetags.timesince import humanize_timesince
 from . import shape_exporter
 
 
+def plain_text(html):
+    h = HTMLParser()
+    return h.unescape(strip_tags(html))
+
+
+
 class DatatablesSerializer(Serializer):
     def serialize(self, queryset, **options):
         model = queryset.model
@@ -73,12 +79,10 @@ class CSVSerializer(Serializer):
         stream = options.pop('stream')
         ascii = options.get('ensure_ascii', True)
 
-        html = HTMLParser()
-
         def proc_string(s):
             try:
                 # Converts to unicode, remove HTML tags, convert HTML entities
-                us = html.unescape(strip_tags(unicode(s)))
+                us = plain_text(unicode(s))
                 if ascii:
                     return smart_str(us)
                 return us
