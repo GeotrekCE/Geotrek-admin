@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 
 from caminae.authent.decorators import same_structure_required, editor_required
+from caminae.core.models import AltimetryMixin
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Infrastructure, Signage
@@ -24,7 +25,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
-    pass
+    columns = InfrastructureList.columns + AltimetryMixin.COLUMNS
 
 
 class InfrastructureDetail(MapEntityDetail):
@@ -85,7 +86,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
-    pass
+    columns = SignageList.columns + AltimetryMixin.COLUMNS
 
 
 class SignageDetail(MapEntityDetail):

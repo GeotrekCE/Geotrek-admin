@@ -9,6 +9,7 @@ from django.views.generic.detail import BaseDetailView
 from djgeojson.views import GeoJSONLayerView
 
 from caminae.authent.decorators import trekking_manager_required
+from caminae.core.models import AltimetryMixin
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                                      LastModifiedMixin, JSONResponseMixin, DocumentConvert)
@@ -37,8 +38,7 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'description',
-               'description_teaser', 'length', 'ascent', 'descent',
-               'max_elevation', 'min_elevation', 'published',
+               'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
                'networks', 'advice', 'ambiance', 'difficulty',
                'themes', 'usages', 'access', 'route',
                'web_links', 'is_park_centered', 'disabled_infrastructure',

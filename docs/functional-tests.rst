@@ -3502,3 +3502,10 @@ Retiré colonnes SLUG et Map_Image_Url.
 --------------------------------------
 
 Fixé.
+
+
+#639 - EXPORT Informations d'altimétrie pour les aménagements
+-------------------------------------------------------------
+
+Fait.
+

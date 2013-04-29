@@ -38,6 +38,8 @@ class AltimetryMixin(models.Model):
     max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
     slope = models.FloatField(editable=False, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
 
+    COLUMNS = ['length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope']
+
     class Meta:
         abstract = True
 
