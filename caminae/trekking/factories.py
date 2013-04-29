@@ -66,21 +66,21 @@ class TrekFactory(TopologyFactory):
     min_elevation = 0
     max_elevation = 0
 
-    description_teaser = factory.Sequence(lambda n: u"description_teaser %s" % n)
-    description = factory.Sequence(lambda n: u"description %s" % n)
-    ambiance = factory.Sequence(lambda n: u"ambiance %s" % n)
-    access = factory.Sequence(lambda n: u"access %s" % n)
-    disabled_infrastructure = factory.Sequence(lambda n: u"disabled_infrastructure %s" % n)
+    description_teaser = factory.Sequence(lambda n: u"<p>description_teaser %s</p>" % n)
+    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
+    ambiance = factory.Sequence(lambda n: u"<p>ambiance %s</p>" % n)
+    access = factory.Sequence(lambda n: u"<p>access %s</p>" % n)
+    disabled_infrastructure = factory.Sequence(lambda n: u"<p>disabled_infrastructure %s</p>" % n)
     # 60 minutes (1 hour)
     duration = 60
 
     is_park_centered = False
 
-    advised_parking = factory.Sequence(lambda n: u"Advised parking %s" % n)
+    advised_parking = factory.Sequence(lambda n: u"<p>Advised parking %s</p>" % n)
     parking_location = Point(1, 1)
 
-    public_transport = factory.Sequence(lambda n: u"Public transport %s" % n)
-    advice = factory.Sequence(lambda n: u"Advice %s" % n)
+    public_transport = factory.Sequence(lambda n: u"<p>Public transport %s</p>" % n)
+    advice = factory.Sequence(lambda n: u"<p>Advice %s</p>" % n)
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
@@ -99,13 +99,14 @@ class TrekRelationshipFactory(factory.Factory):
 
 class POITypeFactory(factory.Factory):
     FACTORY_FOR = models.POIType
-    
+
     label = factory.Sequence(lambda n: u"POIType %s" % n)
-    pictogram =  dummy_filefield_as_sequence('pictogram %s')
+    pictogram = dummy_filefield_as_sequence('pictogram %s')
 
 
 class POIFactory(TopologyFactory):
     FACTORY_FOR = models.POI
 
     name = factory.Sequence(lambda n: u"POI %s" % n)
+    description = factory.Sequence(lambda n: u"<p>escription %s</p> % n)")
     type = factory.SubFactory(POITypeFactory)

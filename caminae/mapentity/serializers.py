@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 import csv
 import math
+from HTMLParser import HTMLParser
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
+from django.utils.html import strip_tags
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 from django.core.serializers.base import Serializer
 from django.contrib.gis.geos import Point, LineString, MultiPoint, MultiLineString
 from django.contrib.gis.geos.collections import GeometryCollection
-from django.contrib.gis.db.models.fields import (
-        GeometryField, GeometryCollectionField,
-        PointField, LineStringField,
-        MultiPointField, MultiLineStringField,
-)
+from django.contrib.gis.db.models.fields import (GeometryField, GeometryCollectionField,
+                                                 PointField, LineStringField,
+                                                 MultiPointField, MultiLineStringField)
 
 import gpxpy
 
 from .templatetags.timesince import humanize_timesince
 from . import shape_exporter
-
 
 
 class DatatablesSerializer(Serializer):
@@ -59,7 +58,6 @@ class DatatablesSerializer(Serializer):
         }
 
 
-
 class CSVSerializer(Serializer):
     def serialize(self, queryset, **options):
         """
@@ -75,9 +73,12 @@ class CSVSerializer(Serializer):
         stream = options.pop('stream')
         ascii = options.get('ensure_ascii', True)
 
+        html = HTMLParser()
+
         def proc_string(s):
             try:
-                us = unicode(s)
+                # Converts to unicode, remove HTML tags, convert HTML entities
+                us = html.unescape(strip_tags(unicode(s)))
                 if ascii:
                     return smart_str(us)
                 return us
@@ -106,9 +107,8 @@ class CSVSerializer(Serializer):
                 attr_getters[field] = lambda obj, field: ','.join([proc_string(o) for o in getattr(obj, field).all()] or '')
             else:
                 def simple(obj, field):
-                    value = getattr(obj, field + '_csv_display', 
-                                    getattr(obj, field + '_display',
-                                             getattr(obj, field)))
+                    value = getattr(obj, field + '_csv_display',
+                                    getattr(obj, field + '_display', getattr(obj, field)))
                     if hasattr(value, '__iter__'):
                         value = ','.join([proc_string(value) for value in value])
                     return proc_string(value) if value is not None else ''
@@ -122,11 +122,14 @@ class CSVSerializer(Serializer):
         writer.writerows(get_lines())
 
 
-
 class GPXSerializer(Serializer):
     """
     GPX serializer class. Very rough implementation, but better than inline code.
     """
+    # TODO : this should definitely respect Serializer abstraction :
+    # LineString -> Route with Point
+    # Collection -> route with all merged
+
     def serialize(self, queryset, **options):
         gpx = gpxpy.gpx.GPX()
 
@@ -152,9 +155,7 @@ class GPXSerializer(Serializer):
                 geomToGPX(gpx, geom, name, description)
         stream.write(gpx.to_xml())
 
-#TODO : this should definitely respect Serializer abstraction :
-# LineString -> Route with Point
-# Collection -> route with all merged
+
 def geomToGPX(gpx, geom, name, description):
     """Convert a geometry to a gpx entity.
     Raise ValueError if it is not a Point, LineString or a collection of those
@@ -191,6 +192,7 @@ def geomToGPX(gpx, geom, name, description):
 def lineString_to_GPX(geom):
     return [point_to_GPX(point, klass=gpxpy.gpx.GPXRoutePoint) for point in geom]
 
+
 def point_to_GPX(point, klass=gpxpy.gpx.GPXWaypoint):
     """Should be a tuple with 3 coords or a Point"""
     # FIXME: suppose point are in the settings.SRID format
@@ -201,14 +203,16 @@ def point_to_GPX(point, klass=gpxpy.gpx.GPXWaypoint):
     elif (point.srid is None or point.srid < 0):
         point.srid = settings.SRID
 
-    x, y = point.transform(4326, clone=True) # transformation: gps uses 4326
-    z = point.z # transform looses the Z parameter - reassign it
+    x, y = point.transform(4326, clone=True)  # transformation: gps uses 4326
+    z = point.z  # transform looses the Z parameter - reassign it
 
     return klass(latitude=y, longitude=x, elevation=z)
 
 
-
 class ZipShapeSerializer(Serializer):
+    def start_object(self, *args, **kwargs):
+        pass
+
     def serialize(self, queryset, **options):
         columns = options.pop('fields')
         stream = options.pop('stream')
@@ -236,20 +240,18 @@ class ZipShapeSerializer(Serializer):
                 if len(split_qs) == 0:
                     continue
                 split_geom_type = split_geom_field.geom_type
-                shp_filepath = shape_exporter.shape_write(
-                                    split_qs, fieldmap, get_geom, split_geom_type, srid)
+                shp_filepath = shape_exporter.shape_write(split_qs, fieldmap, get_geom, split_geom_type, srid)
 
                 shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
         else:
-            shp_filepath = shape_exporter.shape_write(
-                                queryset, fieldmap, get_geom, geom_type, srid)
+            shp_filepath = shape_exporter.shape_write(queryset, fieldmap, get_geom, geom_type, srid)
 
             shp_creator.add_shape('shp_download', shp_filepath)
 
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         """Split an iterable in two list (points, linestring)"""
         points, linestrings, multipoints, multilinestrings = [], [], [], []
-        
+
         for x in iterable:
             geom = geom_getter(x)
             if geom is None:
