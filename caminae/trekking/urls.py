@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 from .views import (
     TrekLayer, TrekList, TrekDetail, TrekMapImage, TrekDocument, TrekCreate,
     TrekUpdate, TrekDelete, TrekJsonList, TrekFormatList,
-    TrekDocumentPublic, TrekDocumentPublicPOI, TrekPrint, TrekPrintPOI,
+    TrekDocumentPublic, TrekPrint,
     POILayer, POIList, POIDetail, POIDocument, POICreate,
     POIUpdate, POIDelete, POIJsonList, POIFormatList,
     TrekJsonDetail, TrekGPXDetail, TrekKMLDetail, TrekJsonProfile, TrekPOIGeoJSON,
@@ -23,9 +23,7 @@ urlpatterns = patterns('', *view_classes_to_url(
 
 urlpatterns += patterns('',
     url(r'^document/print-trek-(?P<pk>\d+).odt$', TrekDocumentPublic.as_view(), name="trek_document_public"),
-    url(r'^document/print-trek-(?P<pk>\d+)-detail.odt$', TrekDocumentPublicPOI.as_view(), name="trek_document_public_poi"),
     url(r'^api/trek/trek-(?P<pk>\d+).pdf$', TrekPrint.as_view(), name="trek_printable"),
-    url(r'^api/trek/trek-(?P<pk>\d+)-detail.pdf$', TrekPrintPOI.as_view(), name="trek_printable_poi"),
 
     url(r'^api/trek/trek-(?P<pk>\d+).json$', TrekJsonDetail.as_view(), name="trek_json_detail"),
     url(r'^api/trek/trek-(?P<pk>\d+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),

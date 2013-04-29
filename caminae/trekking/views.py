@@ -58,7 +58,6 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
         ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
         ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
-        ctx['printable_poi'] = reverse('trekking:trek_printable_poi', args=(trek.pk,))
         return ctx
 
 
@@ -143,20 +142,11 @@ class TrekDocumentPublic(TrekDocument):
         return context
 
 
-class TrekDocumentPublicPOI(TrekDocumentPublic):
-    template_name_suffix = "_public_poi"
-
-
 class TrekPrint(DocumentConvert):
     queryset = Trek.objects.existing()
 
     def source_url(self):
         return reverse('trekking:trek_document_public', args=(self.get_object().pk,))
-
-
-class TrekPrintPOI(TrekPrint):
-    def source_url(self):
-        return reverse('trekking:trek_document_public_poi', args=(self.get_object().pk,))
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):

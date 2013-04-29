@@ -3472,3 +3472,10 @@ Fixé.
 --------------------------------------------------------
 
 Un seul itinéraire par export. Utilisation de ``rte`` et ``rtept``.
+
+
+#656, #628 - Itineraires - Ne proposer qu'un seul export PDF
+------------------------------------------------------------
+
+Fait. S'ouvre dans un nouvel onglet.
+
