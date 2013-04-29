@@ -3479,3 +3479,26 @@ Un seul itinéraire par export. Utilisation de ``rte`` et ``rtept``.
 
 Fait. S'ouvre dans un nouvel onglet.
 
+
+#629 - [BUG] ADMIN - Export CSV problèmes d'accent
+--------------------------------------------------
+
+Il faut charger le fichier au format UTF-8. S'il faut exporter les données avec l'encodage Latin-1 (*ISO-8859-1*), ou produire un *.ODS* ou *.XLS*, alors créer une nouvelle story EXTRA.
+
+
+#636 - HTML dans les exports CSV
+--------------------------------
+
+Fixé : 
+
+* INTERVENTION : colonne SUR
+* POI : colonne Description, Vignette
+* ITINERAIRES : colonnes TEXTE
+
+Retiré colonnes SLUG et Map_Image_Url.
+
+
+#657 - HTML dans les exports ShapeFile
+--------------------------------------
+
+Fixé.
