@@ -203,7 +203,7 @@ class SplitPathTest(TestCase):
                                                            (999098.044800479, 6380955.51783641, 0)))
         ab.reload()
         cd.reload()
-        self.assertEqual(len(Path.objects.all()), 4)
+        self.assertEqual(len(Path.objects.all()), 3)
 
     def test_split_multiple(self):
         """
