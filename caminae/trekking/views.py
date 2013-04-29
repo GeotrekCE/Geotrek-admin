@@ -12,9 +12,8 @@ from caminae.authent.decorators import trekking_manager_required
 from caminae.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                      MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                                      LastModifiedMixin, JSONResponseMixin, DocumentConvert)
-from caminae.mapentity.serializers import GPXSerializer
+from caminae.mapentity.serializers import plain_text, GPXSerializer
 from caminae.common.views import FormsetMixin
-from caminae.common.utils import plain_text
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup

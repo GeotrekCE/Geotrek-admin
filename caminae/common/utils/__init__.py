@@ -1,12 +1,10 @@
 import math
 from urlparse import urljoin
 import logging
-import HTMLParser
 
 from django.db import connection
 from django.conf import settings
 from django.utils.timezone import utc
-from django.utils.html import escape, strip_tags
 from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr, LineString, Point
 
@@ -159,8 +157,3 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
-
-
-def plain_text(html):
-    h = HTMLParser.HTMLParser()
-    return h.unescape(strip_tags(html))
