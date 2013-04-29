@@ -128,6 +128,12 @@ class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelat
         return ''
 
     @property
+    def infrastructure_csv_display(self):
+        if self.on_infrastructure:
+            return unicode(self.infrastructure)
+        return ''
+
+    @property
     def is_infrastructure(self):
         if self.topology:
             return self.topology.kind == Infrastructure.KIND

@@ -20,11 +20,11 @@ from caminae.mapentity.serializers import ZipShapeSerializer
 from caminae.maintenance.models import Intervention, InterventionStatus, Project
 from caminae.maintenance.views import ProjectFormatList
 from caminae.core.factories import (PathFactory, PathAggregationFactory,
-                                   TopologyFactory)
+                                    TopologyFactory)
 from caminae.infrastructure.factories import InfrastructureFactory
-from caminae.maintenance.factories import (InterventionFactory,
-    InterventionDisorderFactory, InterventionStatusFactory,
-    ProjectFactory, ContractorFactory, InterventionJobFactory)
+from caminae.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
+                                           InterventionDisorderFactory, InterventionStatusFactory,
+                                           ProjectFactory, ContractorFactory, InterventionJobFactory)
 
 
 class InterventionViewsTest(MapEntityTest):
@@ -112,6 +112,10 @@ class InterventionViewsTest(MapEntityTest):
         p2.delete()
         projects = form.fields['project'].queryset.all()
         self.assertItemsEqual(projects, [p1])
+
+    def test_no_html_in_csv(self):
+        InfrastructureInterventionFactory.create()
+        super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
         # Test that it does not fail on update if not logged in

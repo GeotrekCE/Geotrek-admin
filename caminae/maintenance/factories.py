@@ -2,6 +2,7 @@ import factory
 
 from caminae.core.factories import StakeFactory
 from caminae.common.factories import OrganismFactory
+from caminae.infrastructure.factories import InfrastructureFactory
 from . import models
 
 
@@ -50,6 +51,17 @@ class InterventionFactory(factory.Factory):
         if intervention.pk:
             intervention.disorders.add(InterventionDisorderFactory.create())
             ManDayFactory.create(intervention=intervention)
+        return intervention
+
+
+class InfrastructureInterventionFactory(InterventionFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        intervention = super(InfrastructureInterventionFactory, cls)._prepare(create, **kwargs)
+        infra = InfrastructureFactory.create()
+        intervention.set_infrastructure(infra)
+        if create:
+            intervention.save()
         return intervention
 
 
