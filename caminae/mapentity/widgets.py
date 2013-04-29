@@ -19,17 +19,18 @@ class LeafletMapWidget(forms.gis.BaseGeometryWidget):
 
 
 class GeometryWidget(LeafletMapWidget):
+    dim = 3
 
     def value_from_datadict(self, data, files, name):
         wkt = super(GeometryWidget, self).value_from_datadict(data, files, name)
-        return None if not wkt else transform_wkt(wkt, settings.API_SRID, settings.SRID)
+        return None if not wkt else transform_wkt(wkt, settings.API_SRID, settings.SRID, self.dim)
 
     def get_context(self, name, value, attrs=None, extra_context=None):
         context = super(GeometryWidget, self).get_context(name, value, attrs, extra_context or {})
         # Be careful, on form error, value is not a GEOSGeometry
         if value:
             if isinstance(value, basestring):
-                value = transform_wkt(value, settings.SRID, settings.API_SRID)
+                value = transform_wkt(value, settings.SRID, settings.API_SRID, self.dim)
                 context['field'] = wkt_to_geom(value)
             else:
                 value.transform(settings.API_SRID)
@@ -39,6 +40,11 @@ class GeometryWidget(LeafletMapWidget):
 class PointWidget(GeometryWidget,
                   forms.gis.PointWidget):
     pass
+
+
+class Point2DWidget(GeometryWidget,
+                    forms.gis.PointWidget):
+    dim = 2
 
 
 class LineStringWidget(GeometryWidget,

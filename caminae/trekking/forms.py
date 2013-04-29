@@ -8,7 +8,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 
 from caminae.core.forms import TopologyForm
-from caminae.mapentity.widgets import PointWidget
+from caminae.mapentity.widgets import Point2DWidget
 from caminae.core.widgets import LineTopologyWidget, PointTopologyWidget
 from caminae.mapentity.widgets import SelectMultipleWithPop
 
@@ -33,7 +33,7 @@ TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through
 
 
 class TrekForm(TopologyForm):
-    parking_location = forms.gis.GeometryField(widget=PointWidget, required=False)
+    parking_location = forms.gis.GeometryField(widget=Point2DWidget, required=False)
 
     modelfields = (
         Div(

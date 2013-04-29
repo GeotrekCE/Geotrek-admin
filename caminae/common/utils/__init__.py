@@ -110,7 +110,7 @@ def wkt_to_geom(wkt, srid_from=None, silent=False):
         return None
 
 
-def transform_wkt(wkt, srid_from=None, srid_to=None):
+def transform_wkt(wkt, srid_from=None, srid_to=None, dim=3):
     """
     Changes SRID, and returns 3D wkt
     """
@@ -122,7 +122,6 @@ def transform_wkt(wkt, srid_from=None, srid_to=None):
         geom = fromstr(wkt, srid=srid_from)
         if srid_from != srid_to:
             geom.transform(srid_to)
-        dim = 3
         extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
         wkt3d = geom.wkt.replace(',', extracoords + ',')
         wkt3d = wkt3d.replace(')', extracoords + ')')

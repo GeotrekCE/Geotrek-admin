@@ -80,7 +80,7 @@ class TrekViewsTest(MapEntityTest):
             'duration': '0',
             'is_park_centered': '',
             'advised_parking': 'Very close',
-            'parking_location': 'POINT (1.0 1.0 0.0)',
+            'parking_location': 'POINT (1.0 1.0)',
             'public_transport': 'huhu',
             'advice_fr': '',
             'advice_it': '',
@@ -112,7 +112,7 @@ class TrekViewsTest(MapEntityTest):
         self.login()
 
         bad_data, form_error = self.get_bad_data()
-        bad_data['parking_location'] = 'POINT (1.0 1.0 0.0)'
+        bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
         self.assertEqual(response.status_code, 200)
