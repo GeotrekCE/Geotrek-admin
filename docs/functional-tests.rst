@@ -3509,3 +3509,13 @@ Fixé.
 
 Fait.
 
+#658 - [BUG] Supervisor processes run as root
+---------------------------------------------
+
+Fixé. Il n'y aura plus de fichiers créé par "root" dans le répertoire ``var/``.
+
+:notes:
+
+    Pour que cela pris en compte, il faut redémarrer le service *supervisor*, avec la commande ``sudo service supervisor restart``, ou
+    tout simplement redémarrer la machine après la mise à jour.
+

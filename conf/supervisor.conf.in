@@ -1,8 +1,11 @@
-description     "supervisor"
+description     "${parts['django'].project} supervisor"
 
 start on started networking
 stop on stopping networking
 stop on starting shutdown
+
+setuid ${parts['buildout'].user}
+setgid ${parts['buildout'].user}
 
 exec ${parts['buildout'].directory}/bin/supervisord --nodaemon
 
