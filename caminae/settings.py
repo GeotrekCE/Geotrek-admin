@@ -3,6 +3,7 @@ import sys
 
 from django.contrib.messages import constants as messages
 
+from . import __version__
 
 gettext_noop = lambda s: s
 
@@ -11,6 +12,7 @@ PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 TEST = 'test' in sys.argv
+VERSION = __version__
 
 ADMINS = (
     ('Makina Corpus', 'geobi@makina-corpus.com'),
@@ -153,7 +155,7 @@ ROOT_URLCONF = 'caminae.urls'
 WSGI_APPLICATION = 'caminae.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT_PATH, 'templates'),
+    os.path.join(PROJECT_ROOT_PATH, 'mapentity', 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -169,7 +171,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
 
-    'caminae.common.context_processors.settings',
+    'caminae.mapentity.context_processors.settings',
 )
 
 #
