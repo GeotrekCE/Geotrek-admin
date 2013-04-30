@@ -97,7 +97,7 @@ class DatabaseBackend(object):
             raise
         except Exception as e:
             connections[settings.AUTHENT_DATABASE].close()
-            if not settings.TEST:
+            if settings.DEBUG or not settings.TEST:
                 logger.exception(e)
         if result:
             return Credentials(*result)
