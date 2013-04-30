@@ -89,14 +89,14 @@ load_data:
 	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
 deploy: install clean_harmless
-	bin/buildout -Nvc buildout-prod.cfg buildout:user=$(user)
+	bin/buildout -Nc buildout-prod.cfg buildout:user=$(user)
 	sudo chgrp -R $(user) var/static/CACHE
 	sudo chmod -R g+w var/static/CACHE
 	touch lib/parts/django/django_extrasettings/settings_production.py
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
-	bin/django collectstatic --clear --noinput
+	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django update_translation_fields
 	bin/supervisorctl restart all
 
