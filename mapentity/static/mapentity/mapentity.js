@@ -392,7 +392,7 @@ MapEntity.History = L.Control.extend({
         var history = this;
 
         // Show number of results
-        infos = localStorage.getItem('list-search-results') || "{nb: '?', model: null}";
+        infos = localStorage.getItem('list-search-results') || '{"nb": "?", "model": null}';
         infos = JSON.parse(infos)
         $('#nbresults').text(infos.nb);
         $('#entitylist-dropdown').parent('li').addClass(infos.model);
