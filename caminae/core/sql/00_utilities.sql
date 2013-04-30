@@ -80,7 +80,7 @@ BEGIN
         RETURN geom3d;
     END IF;
 
-    SELECT ST_Value(rast, 1, geom) INTO ele FROM mnt WHERE ST_Intersects(rast, geom);
+    SELECT ST_Value(rast, 1, geom)::integer INTO ele FROM mnt WHERE ST_Intersects(rast, geom);
     IF NOT FOUND THEN
         ele := 0;
     END IF;
@@ -138,7 +138,7 @@ BEGIN
         END IF;
 
         -- Obtain elevation
-        SELECT ST_Value(rast, 1, current_point) INTO ele FROM mnt WHERE ST_Intersects(rast, current_point);
+        SELECT ST_Value(rast, 1, current_point)::integer INTO ele FROM mnt WHERE ST_Intersects(rast, current_point);
         IF NOT FOUND THEN
             ele := 0;
         END IF;

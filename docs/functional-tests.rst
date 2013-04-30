@@ -3519,3 +3519,8 @@ Fixé. Il n'y aura plus de fichiers créé par "root" dans le répertoire ``var/
     Pour que cela pris en compte, il faut redémarrer le service *supervisor*, avec la commande ``sudo service supervisor restart``, ou
     tout simplement redémarrer la machine après la mise à jour.
 
+
+#659 - [BUG] - CRASH si MNT contient des float au lieu des integer
+------------------------------------------------------------------
+
+Fixé.
