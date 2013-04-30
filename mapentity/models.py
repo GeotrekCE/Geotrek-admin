@@ -163,7 +163,7 @@ class MapEntityMixin(object):
         With this, we save a lot of efforts, since we do have to build specific Appy.pod
         templates for each model.
         """
-        if settings.TEST:
+        if getattr(settings, 'TEST', False):
             return '<p>Mock</p>'  # TODO: better run in LiveServerTestCase instead !
 
         url = smart_urljoin(rooturl, self.get_detail_url())
