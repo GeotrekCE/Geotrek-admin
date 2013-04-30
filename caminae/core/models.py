@@ -228,7 +228,8 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
             for notices in allnotices:
                 for context, notice in notices:
                     if context != current:
-                        if context != '': logger.debug('Context %s...:' % context.strip()[:80])
+                        if context != '':
+                            logger.debug('Context %s...:' % context.strip()[:80])
                         current = context
                     prefix = '' if context == '' else '        '
                     logger.debug('%s%s' % (prefix, notice.strip()))
@@ -410,7 +411,6 @@ class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
 
         shortmodelname = self._meta.object_name.lower().replace('edge', '')
         self.offset = settings.TOPOLOGY_STATIC_OFFSETS.get(shortmodelname, self.offset)
-        print self.offset
 
         before = len(connection.connection.notices) if connection.connection else 0
         try:
