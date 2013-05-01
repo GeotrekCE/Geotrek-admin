@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+import sys
 import urllib2
 import logging
+import traceback
 from datetime import datetime
+
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseNotFound, HttpResponseServerError)
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.detail import DetailView
@@ -23,6 +27,7 @@ from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.core.cache import get_cache
 from django.template.base import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
+from django.template import RequestContext, Context, loader
 
 import requests
 
@@ -142,6 +147,28 @@ class DocumentConvert(DetailView):
     Concrete views
 
 """
+
+
+def handler500(request, template_name='500.html'):
+    """
+    500 error handler which tries to use a RequestContext - unless an error
+    is raised, in which a normal Context is used with just the request
+    available.
+
+    Templates: `500.html`
+    Context: None
+    """
+    # Try returning using a RequestContext
+    try:
+        context = RequestContext(request)
+    except:
+        logger.warn('Error getting RequestContext for ServerError page.')
+        context = Context({'request': request})
+    e, name, tb = sys.exc_info()
+    context['exception'] = repr(name)
+    context['stack'] = "\n".join(traceback.format_tb(tb))
+    t = loader.get_template('500.html')
+    return HttpResponseServerError(t.render(context))
 
 
 @csrf_exempt

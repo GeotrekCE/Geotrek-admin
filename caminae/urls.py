@@ -5,6 +5,10 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 
+
+handler500 = 'caminae.mapentity.views.handler500'
+
+
 urlpatterns = patterns('',
 
     url(r'^$',        'caminae.core.views.home', name='home'),
