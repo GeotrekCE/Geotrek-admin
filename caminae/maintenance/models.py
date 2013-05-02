@@ -314,9 +314,9 @@ class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
                                 help_text=_(u"Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
-                             verbose_name=_(u"Project type"), db_column='type')
+                             verbose_name=_(u"Type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
-                               verbose_name=_(u"Project domain"), db_column='domaine')
+                               verbose_name=_(u"Domain"), db_column='domaine')
     contractors = models.ManyToManyField('Contractor', related_name="projects",
                                          db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
     project_owner = models.ForeignKey(Organism, related_name='own',
