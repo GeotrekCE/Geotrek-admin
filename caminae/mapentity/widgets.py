@@ -52,11 +52,11 @@ class LineStringWidget(GeometryWidget,
     pass
 
 
-class GeomWidget(django_widgets.HiddenInput):
+class HiddenGeometryWidget(django_widgets.HiddenInput):
     # hidden by default
 
     def value_from_datadict(self, data, files, name):
-        wkt = super(GeomWidget, self).value_from_datadict(data, files, name)
+        wkt = super(HiddenGeometryWidget, self).value_from_datadict(data, files, name)
         return None if not wkt else wkt_to_geom(wkt, silent=True)
 
     def _format_value(self, value):

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from caminae.core.models import Topology
 from caminae.mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
-from caminae.mapentity.widgets import GeomWidget
+from caminae.mapentity.widgets import HiddenGeometryWidget
 
 from caminae.land.filters import EdgeStructureRelatedFilterSet
 
@@ -20,7 +20,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 
 class InterventionFilter(EdgeStructureRelatedFilterSet):
-    bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects', widget=GeomWidget)
+    bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects', widget=HiddenGeometryWidget)
     year = YearFilter(name='date', widget=Select, label=_(u"Year"))
 
     class Meta(EdgeStructureRelatedFilterSet.Meta):
@@ -31,11 +31,10 @@ class InterventionFilter(EdgeStructureRelatedFilterSet):
 
 
 class ProjectFilter(EdgeStructureRelatedFilterSet):
-    bbox = PythonPolygonFilter(name='geom', widget=GeomWidget)
+    bbox = PythonPolygonFilter(name='geom', widget=HiddenGeometryWidget)
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'), widget=Select,
-                    label=_(u"Year of activity"))
+                                label=_(u"Year of activity"))
 
     class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Project
         fields = EdgeStructureRelatedFilterSet.Meta.fields
-

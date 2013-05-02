@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_filters import FilterSet, Filter, ChoiceFilter
 import floppyforms as forms
 
-from .widgets import GeomWidget
+from .widgets import HiddenGeometryWidget
 
 
 class YearFilter(ChoiceFilter):
@@ -60,7 +60,7 @@ class PolygonFilter(Filter):
 
 
 class PythonPolygonFilter(PolygonFilter):
-    widget = GeomWidget
+    widget = HiddenGeometryWidget
 
     def filter(self, qs, value):
         if not value:
@@ -78,7 +78,7 @@ class PythonPolygonFilter(PolygonFilter):
 
 
 class MapEntityFilterSet(FilterSet):
-    bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=GeomWidget)
+    bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=HiddenGeometryWidget)
 
     class Meta:
         fields = ['bbox']
