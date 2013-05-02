@@ -26,7 +26,6 @@ def plain_text(html):
     return h.unescape(strip_tags(html))
 
 
-
 class DatatablesSerializer(Serializer):
     def serialize(self, queryset, **options):
         model = queryset.model
@@ -132,10 +131,12 @@ class GPXSerializer(Serializer):
     """
     # TODO : this should definitely respect Serializer abstraction :
     # LineString -> Route with Point
-    # Collection -> route with all merged
+    # Collection -> One route/waypoint per item
+    def __init__(self, *args, **kwargs):
+        self.gpx = None
 
     def serialize(self, queryset, **options):
-        gpx = gpxpy.gpx.GPX()
+        self.gpx = gpxpy.gpx.GPX()
 
         stream = options.pop('stream')
         geom_field = options.pop('geom_field')
@@ -149,68 +150,40 @@ class GPXSerializer(Serializer):
             objupdate = getattr(obj, 'date_update')
             if objupdate:
                 description = _('Modified') + ': ' + humanize_timesince(objupdate)
-
-            # geom.transform(settings.API_SRID, clone=True)) does not work as it looses the Z
-            # All geometries will looses their SRID being convert to simple tuples
-            # They must have the same SRID to be treated equally.
-            # Converting at point level only avoid creating unused point only to carry SRID (could be a param too..)
             if geom:
                 assert geom.srid == settings.SRID, "Invalid srid"
-                geomToGPX(gpx, geom, name, description)
-        stream.write(gpx.to_xml())
+                self.geomToGPX(geom, name, description)
+        stream.write(self.gpx.to_xml())
 
+    def _point_to_GPX(self, point, klass=gpxpy.gpx.GPXWaypoint):
+        if isinstance(point, (tuple, list)):
+            point = Point(*point, srid=settings.SRID)
+        x, y = point.transform(4326, clone=True)  # transformation: gps uses 4326
+        z = point.z  # transform looses the Z parameter
+        return klass(latitude=y, longitude=x, elevation=z)
 
-def geomToGPX(gpx, geom, name, description):
-    """Convert a geometry to a gpx entity.
-    Raise ValueError if it is not a Point, LineString or a collection of those
+    def geomToGPX(self, geom, name, description):
+        """Convert a geometry to a gpx entity.
+        Raise ValueError if it is not a Point, LineString or a collection of those
 
-    Point -> add as a Way Point
-    LineString -> add all Points in a Route
-    Collection (of LineString or Point) -> add as a route, concatening all points
-    """
-    if isinstance(geom, Point):
-        wp = point_to_GPX(geom)
-        wp.name = name
-        wp.description = description
-        gpx.waypoints.append(wp)
-    else:
-        gpx_route = gpxpy.gpx.GPXRoute(name=name, description=description)
-        gpx.routes.append(gpx_route)
-
-        if isinstance(geom, LineString):
-            gpx_route.points = lineString_to_GPX(geom)
-        # Accept collections composed of Point and LineString mixed or not
-        elif isinstance(geom, GeometryCollection):
-            points = gpx_route.points
-            for g in geom:
-                if isinstance(g, Point):
-                    points.append(point_to_GPX(g))
-                elif isinstance(g, LineString):
-                    points.extend(lineString_to_GPX(g))
-                else:
-                    raise ValueError("Unsupported geometry %s" % geom)
+        Point -> add as a Way Point
+        LineString -> add all Points in a Route
+        Collection (of LineString or Point) -> add as a route, concatening all points
+        """
+        if isinstance(geom, GeometryCollection):
+            for i, g in enumerate(geom):
+                self.geomToGPX(g, u"%s (%s)" % (name, i), description)
+        elif isinstance(geom, Point):
+            wp = self._point_to_GPX(geom)
+            wp.name = name
+            wp.description = description
+            self.gpx.waypoints.append(wp)
+        elif isinstance(geom, LineString):
+            gpx_route = gpxpy.gpx.GPXRoute(name=name, description=description)
+            gpx_route.points = [self._point_to_GPX(point, klass=gpxpy.gpx.GPXRoutePoint) for point in geom]
+            self.gpx.routes.append(gpx_route)
         else:
             raise ValueError("Unsupported geometry %s" % geom)
-
-
-def lineString_to_GPX(geom):
-    return [point_to_GPX(point, klass=gpxpy.gpx.GPXRoutePoint) for point in geom]
-
-
-def point_to_GPX(point, klass=gpxpy.gpx.GPXWaypoint):
-    """Should be a tuple with 3 coords or a Point"""
-    # FIXME: suppose point are in the settings.SRID format
-    # Set point SRID to such srid if invalid or missing
-
-    if not isinstance(point, Point):
-        point = Point(*point, srid=settings.SRID)
-    elif (point.srid is None or point.srid < 0):
-        point.srid = settings.SRID
-
-    x, y = point.transform(4326, clone=True)  # transformation: gps uses 4326
-    z = point.z  # transform looses the Z parameter - reassign it
-
-    return klass(latitude=y, longitude=x, elevation=z)
 
 
 class ZipShapeSerializer(Serializer):
