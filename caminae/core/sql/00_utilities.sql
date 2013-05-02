@@ -257,7 +257,7 @@ BEGIN
     t_failed := ST_Length(result) < ST_Length(ST_Union(lines));
     IF NOT t_found OR t_failed THEN
         result := ST_Union(lines);
-        -- RAISE WARNING 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
+        RAISE NOTICE 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
     ELSE
         result := ST_SetSRID(result, ST_SRID(lines[1]));
     END IF;

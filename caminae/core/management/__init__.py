@@ -37,13 +37,16 @@ def run_initial_sql(sender, **kwargs):
             if not settings.TEST and not settings.DEBUG:
                 # Remove RAISE NOTICE (/!\ only one-liners)
                 sql = re.sub("^.*RAISE NOTICE.*$", "", sql)
+            # TODO: this is the ugliest driver hack ever
+            sql = sql.replace('%', '%%')
             cursor.execute(sql)
-        except Exception, e:
+        except Exception as e:
+            print sql
             logger.error("Failed to install custom SQL file '%s': %s\n" %
                          (sql_file, e))
             traceback.print_exc()
             transaction.rollback_unless_managed()
-            raise e
+            raise
         else:
             transaction.commit_unless_managed()
 
