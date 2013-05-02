@@ -7,6 +7,32 @@ import floppyforms as forms
 from caminae.common.utils import transform_wkt, wkt_to_geom
 
 
+class HiddenGeometryWidget(django_widgets.HiddenInput):
+    # hidden by default
+
+    def value_from_datadict(self, data, files, name):
+        """
+        From WKT to Geometry (TODO: should be done in Field clean())
+        """
+        wkt = super(HiddenGeometryWidget, self).value_from_datadict(data, files, name)
+        return None if not wkt else wkt_to_geom(wkt, silent=True)
+
+    def _format_value(self, value):
+        """
+        Before serialization, reprojects to API_SRID
+        """
+        if value and not isinstance(value, basestring):
+            value.transform(settings.API_SRID)
+        return value
+
+
+"""
+
+Floppyforms widgets
+
+"""
+
+
 class LeafletMapWidget(forms.gis.BaseGeometryWidget):
     template_name = 'mapentity/fieldgeometry_fragment.html'
     display_wkt = settings.DEBUG
@@ -22,10 +48,19 @@ class GeometryWidget(LeafletMapWidget):
     dim = 3
 
     def value_from_datadict(self, data, files, name):
+        """
+        From WKT to post-processed WKT (TODO: should be done in Field clean())
+        """
         wkt = super(GeometryWidget, self).value_from_datadict(data, files, name)
         return None if not wkt else transform_wkt(wkt, settings.API_SRID, settings.SRID, self.dim)
 
     def get_context(self, name, value, attrs=None, extra_context=None):
+        """
+        Before serialization, reprojects to API_SRID. But handles the form validation error, where
+        value is a string.
+        TODO: There should be a simpler way.
+        TODO: This fails if WKT is invalid.
+        """
         context = super(GeometryWidget, self).get_context(name, value, attrs, extra_context or {})
         # Be careful, on form error, value is not a GEOSGeometry
         if value:
@@ -50,19 +85,6 @@ class Point2DWidget(GeometryWidget,
 class LineStringWidget(GeometryWidget,
                        forms.gis.LineStringWidget):
     pass
-
-
-class HiddenGeometryWidget(django_widgets.HiddenInput):
-    # hidden by default
-
-    def value_from_datadict(self, data, files, name):
-        wkt = super(HiddenGeometryWidget, self).value_from_datadict(data, files, name)
-        return None if not wkt else wkt_to_geom(wkt, silent=True)
-
-    def _format_value(self, value):
-        if value and not isinstance(value, basestring):
-            value.transform(settings.API_SRID)
-        return value
 
 
 class SelectMultipleWithPop(forms.SelectMultiple):
