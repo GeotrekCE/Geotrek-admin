@@ -11,8 +11,6 @@ from caminae.common.models import Organism
 from caminae.maintenance.models import Intervention, Project
 
 
-# Physical nature of paths
-
 class PhysicalType(models.Model):
     name = models.CharField(max_length=128, verbose_name=_(u"Name"), db_column='nom')
 
@@ -71,12 +69,11 @@ class PhysicalEdge(MapEntityMixin, Topology):
     def topology_physicals(cls, topology):
         return cls.objects.select_related('physical_type').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('physical_edges', lambda self: PhysicalEdge.path_physicals(self))
-Topology.add_property('physical_edges', lambda self: PhysicalEdge.topology_physicals(self))
+Path.add_property('physical_edges', PhysicalEdge.path_physicals)
+Topology.add_property('physical_edges', PhysicalEdge.topology_physicals)
 Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [])
 Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'))
 
-# Type of land under paths
 
 class LandType(StructureRelated):
     name = models.CharField(max_length=128, db_column='foncier', verbose_name=_(u"Name"))
@@ -136,12 +133,11 @@ class LandEdge(MapEntityMixin, Topology):
     def topology_lands(cls, topology):
         return cls.objects.select_related('land_type').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('land_edges', lambda self: LandEdge.path_lands(self))
-Topology.add_property('land_edges', lambda self: LandEdge.topology_lands(self))
+Path.add_property('land_edges', LandEdge.path_lands)
+Topology.add_property('land_edges', LandEdge.topology_lands)
 Intervention.add_property('land_edges', lambda self: self.topology.land_edges if self.topology else [])
 Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges'))
 
-# Interaction with external structures
 
 class CompetenceEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -187,8 +183,8 @@ class CompetenceEdge(MapEntityMixin, Topology):
     def topology_competences(cls, topology):
         return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('competence_edges', lambda self: CompetenceEdge.path_competences(self))
-Topology.add_property('competence_edges', lambda self: CompetenceEdge.topology_competences(self))
+Path.add_property('competence_edges', CompetenceEdge.path_competences)
+Topology.add_property('competence_edges', CompetenceEdge.topology_competences)
 Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [])
 Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'))
 
@@ -237,8 +233,8 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     def topology_works(cls, topology):
         return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('work_edges', lambda self: WorkManagementEdge.path_works(self))
-Topology.add_property('work_edges', lambda self: WorkManagementEdge.topology_works(self))
+Path.add_property('work_edges', WorkManagementEdge.path_works)
+Topology.add_property('work_edges', WorkManagementEdge.topology_works)
 Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [])
 Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'))
 
@@ -287,11 +283,10 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     def topology_signages(cls, topology):
         return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('signage_edges', lambda self: SignageManagementEdge.path_signages(self))
-Topology.add_property('signage_edges', lambda self: SignageManagementEdge.topology_signages(self))
+Path.add_property('signage_edges', SignageManagementEdge.path_signages)
+Topology.add_property('signage_edges', SignageManagementEdge.topology_signages)
 Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [])
 Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'))
-
 
 
 """
@@ -300,6 +295,7 @@ Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_e
    (not MapEntity : just layers, on which intersections with objects is done in triggers)
 
 """
+
 
 class RestrictedAreaType(models.Model):
     name = models.CharField(max_length=200, verbose_name=_(u"Name"), db_column='nom')
@@ -323,7 +319,7 @@ class RestrictedArea(models.Model):
     objects = RestrictedAreaManager()
 
     class Meta:
-        ordering = ['area_type', 'name',]
+        ordering = ['area_type', 'name']
         db_table = 'l_zonage_reglementaire'
         verbose_name = _(u"Restricted area")
         verbose_name_plural = _(u"Restricted areas")
@@ -351,15 +347,19 @@ class RestrictedAreaEdge(Topology):
 
     @classmethod
     def path_area_edges(cls, path):
-        return cls.objects.select_related('restricted_area').select_related('restricted_area__area_type').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.select_related('restricted_area')\
+                          .select_related('restricted_area__area_type')\
+                          .filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_area_edges(cls, topology):
-        return cls.objects.select_related('restricted_area').select_related('restricted_area__area_type').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.objects.select_related('restricted_area')\
+                          .select_related('restricted_area__area_type')\
+                          .filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('area_edges', lambda self: RestrictedAreaEdge.path_area_edges(self))
+Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges)
 Path.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
-Topology.add_property('area_edges', lambda self: RestrictedAreaEdge.topology_area_edges(self))
+Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges)
 Topology.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
 Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [])
 Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [])
@@ -410,9 +410,9 @@ class CityEdge(Topology):
     def topology_city_edges(cls, topology):
         return cls.objects.select_related('city').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('city_edges', lambda self: CityEdge.path_city_edges(self))
+Path.add_property('city_edges', CityEdge.path_city_edges)
 Path.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
-Topology.add_property('city_edges', lambda self: CityEdge.topology_city_edges(self))
+Topology.add_property('city_edges', CityEdge.topology_city_edges)
 Topology.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
 Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [])
 Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [])
@@ -461,9 +461,9 @@ class DistrictEdge(Topology):
     def topology_district_edges(cls, topology):
         return cls.objects.select_related('district').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
 
-Path.add_property('district_edges', lambda self: DistrictEdge.path_district_edges(self))
+Path.add_property('district_edges', DistrictEdge.path_district_edges)
 Path.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
-Topology.add_property('district_edges', lambda self: DistrictEdge.topology_district_edges(self))
+Topology.add_property('district_edges', DistrictEdge.topology_district_edges)
 Topology.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
 Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [])
 Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [])
