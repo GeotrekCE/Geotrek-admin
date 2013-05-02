@@ -330,8 +330,8 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
             var serialized = '';
             if (topologyMode) {
                 if (layer instanceof L.Marker) {
-                    var p = layer.getLatLng(),
-                        serialized = {lat: p.lat, lng: p.lng};
+                    var p = layer.getLatLng();
+                    serialized = {lat: p.lat, lng: p.lng};
                     // In case the marker is snapped, serialize this information.
                     if (layer.snap) {
                         serialized['snap'] = layer.snap.properties.pk;
@@ -342,7 +342,23 @@ MapEntity.makeGeoFieldProxy = function($field, layer) {
                     serialized = JSON.stringify(layer);
             }
             else {
-                if (layer) serialized = L.Util.getWKT(layer);
+                if (layer) {
+                    if (layer instanceof L.Polyline) {
+                        var n = layer.getLatLngs().length,
+                            snaplist = new Array(n);
+                        for (var i=0; i<n; i++) {
+                            var marker = layer.editing._markers[i];
+                            if (marker.snap && marker.snap.properties && marker.snap.properties.pk)
+                                snaplist[i] = marker.snap.properties.pk;
+                        }
+                        serialized = {geom: L.Util.getWKT(layer),
+                                      snap: snaplist};
+                        serialized = JSON.stringify(serialized);
+                    }
+                    else {
+                        serialized = L.Util.getWKT(layer);
+                    }
+                }
             }
             $field.val(serialized);
             return old_layer;
@@ -393,7 +409,7 @@ MapEntity.History = L.Control.extend({
 
         // Show number of results
         infos = localStorage.getItem('list-search-results') || '{"nb": "?", "model": null}';
-        infos = JSON.parse(infos)
+        infos = JSON.parse(infos);
         $('#nbresults').text(infos.nb);
         $('#entitylist-dropdown').parent('li').addClass(infos.model);
 
