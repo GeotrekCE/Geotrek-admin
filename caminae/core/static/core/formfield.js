@@ -9,11 +9,7 @@ FormField.makeModule = function(module, module_settings) {
             circle: false,
             marker: module_settings.enableDrawing.is_marker,
             polyline: module_settings.enableDrawing.is_polyline && {
-                shapeOptions: {
-                    color: '#35FF00',
-                    opacity: 0.8,
-                    weight: 3
-                }
+                shapeOptions: window.SETTINGS.map.styles.draw
             }
         });
         map.addControl(drawControl);
@@ -324,7 +320,7 @@ FormField.makeModule = function(module, module_settings) {
         var geojson = module_settings.init.geojson;  // If no field, will be null.
         if (geojson) {
             var objectLayer = new L.GeoJSON(geojson, {
-                style: {weight: 5, opacity: 1, clickable: true},
+                style: L.Util.extend(window.SETTINGS.map.styles.draw, {clickable: true}),
             });
             map.addLayer(objectLayer);
             objectLayer.eachLayer(function (layer) {
