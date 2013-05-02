@@ -300,7 +300,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         as place marks """
         kml = simplekml.Kml()
         # Main itinerary
-        geom = self.geom.transform(settings.API_SRID, clone=True)
+        geom = self.geom.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.description),
                                  coords=geom.coords)
