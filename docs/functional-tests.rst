@@ -3532,3 +3532,9 @@ Fixé.
 Selon le niveau de zoom dans lequel est saisi la géométrie, la précision n'était pas suffisante côté Javascript pour déclencher le snapping côté BDD.
 
 Désormais, les points snappés sont explicitement transmis dans le formulaire, et chaque vertex est snappé à l'aide de la fonction ``ST_3DClosestPoint``.
+
+
+#625 - [BUG] ADMIN - Export KML - geometries
+--------------------------------------------
+
+Fixé. Les géométries sont désormais exportées en coordonnées WGS84.

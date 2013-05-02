@@ -1,13 +1,11 @@
 import os
 import logging
-from HTMLParser import HTMLParser
 import shutil
 
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -16,9 +14,11 @@ import simplekml
 from PIL import Image
 
 from caminae.mapentity.models import MapEntityMixin
+from caminae.mapentity.serializers import plain_text
 from caminae.core.models import Path, Topology
 from caminae.common.utils import elevation_profile, classproperty
 from caminae.maintenance.models import Intervention, Project
+
 
 logger = logging.getLogger(__name__)
 
@@ -298,18 +298,20 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
         as place marks """
-        html = HTMLParser()
         kml = simplekml.Kml()
         # Main itinerary
-        kml.newlinestring(name=self.name,
-                          description=html.unescape(strip_tags(self.description)),
-                          coords=self.geom.coords)
+        geom = self.geom.transform(settings.API_SRID, clone=True)
+        line = kml.newlinestring(name=self.name,
+                                 description=plain_text(self.description),
+                                 coords=geom.coords)
+        line.style.linestyle.color = simplekml.Color.red  # Red
+        line.style.linestyle.width = 4  # pixels
         # Place marks
         for poi in self.pois:
             place = poi.geom_as_point()
             place.transform(settings.API_SRID)
             kml.newpoint(name=poi.name,
-                         description=html.unescape(strip_tags(poi.description)),
+                         description=plain_text(poi.description),
                          coords=[place.coords])
         return kml._genkml()
 
