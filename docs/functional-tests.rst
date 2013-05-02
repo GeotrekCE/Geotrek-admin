@@ -3538,3 +3538,9 @@ Désormais, les points snappés sont explicitement transmis dans le formulaire, 
 --------------------------------------------
 
 Fixé. Les géométries sont désormais exportées en coordonnées WGS84.
+
+
+#630, #631 - ADMIN - EXPORT GPX - Chantiers
+-------------------------------------------
+
+Pour les chantiers (collection de geométries ponctuelles et linéaires), des objets distincts sont désormais créés.
