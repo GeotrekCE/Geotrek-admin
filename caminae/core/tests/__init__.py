@@ -8,5 +8,5 @@ from .topology import *
 from .splitpath import *
 from .filters import *
 from .graph import *
-from .widgets import *
+from .fields import *
 from .test_attachment import *

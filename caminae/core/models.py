@@ -152,8 +152,8 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
         """
         if not self.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
-        if point.srid != settings.SRID:
-            point.transform(settings.SRID)
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
         cursor = connection.cursor()
         sql = """
         SELECT position, distance
@@ -162,10 +162,29 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
         """ % {'pk': self.pk,
                'x': point.x,
                'y': point.y,
-               'srid': settings.SRID}
+               'srid': self.srid}
         cursor.execute(sql)
         result = cursor.fetchall()
         return result[0]
+
+    def snap(self, point):
+        """
+        Returns the point snapped (i.e closest) to the path line geometry.
+        """
+        if not self.pk:
+            raise ValueError("Cannot compute snap on unsaved path")
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        WITH p AS (SELECT ST_3DClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+                   FROM %(table)s
+                   WHERE id = '%(pk)s')
+        SELECT ST_X(p.geom), ST_Y(p.geom), ST_Z(p.geom) FROM p
+        """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return Point(*result[0], srid=self.geom.srid)
 
     def reload(self):
         # Update object's computed values (reload from database)

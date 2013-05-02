@@ -34,11 +34,11 @@ def run_initial_sql(sender, **kwargs):
             f = open(sql_file)
             sql = f.read()
             f.close()
-            if not settings.TEST and not settings.DEBUG:
+            if not settings.TEST:
                 # Remove RAISE NOTICE (/!\ only one-liners)
                 sql = re.sub("^.*RAISE NOTICE.*$", "", sql)
-            # TODO: this is the ugliest driver hack ever
-            sql = sql.replace('%', '%%')
+                # TODO: this is the ugliest driver hack ever
+                sql = sql.replace('%', '%%')
             cursor.execute(sql)
         except Exception as e:
             print sql

@@ -4,8 +4,7 @@ import floppyforms as forms
 
 from caminae.common.forms import CommonForm
 from .models import Path
-from .fields import TopologyField
-from .widgets import SnappedLineStringWidget
+from .fields import TopologyField, SnappedLineStringField
 
 
 class TopologyForm(CommonForm):
@@ -48,7 +47,7 @@ class TopologyForm(CommonForm):
 
 
 class PathForm(CommonForm):
-    geom = forms.gis.LineStringField(widget=SnappedLineStringWidget)
+    geom = SnappedLineStringField()
 
     reverse_geom = forms.BooleanField(required=False,
                                       label=_("Reverse path"),

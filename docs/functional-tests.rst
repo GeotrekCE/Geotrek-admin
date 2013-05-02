@@ -3524,3 +3524,11 @@ Fixé. Il n'y aura plus de fichiers créé par "root" dans le répertoire ``var/
 ------------------------------------------------------------------
 
 Fixé.
+
+
+#465 - [BUG] Découpage tronçon
+------------------------------
+
+Selon le niveau de zoom dans lequel est saisi la géométrie, la précision n'était pas suffisante côté Javascript pour déclencher le snapping côté BDD.
+
+Désormais, les points snappés sont explicitement transmis dans le formulaire, et chaque vertex est snappé à l'aide de la fonction ``ST_3DClosestPoint``.
