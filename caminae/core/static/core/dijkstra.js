@@ -175,3 +175,77 @@ Caminae.Dijkstra = (function() {
     };
 })();
 
+
+
+// Computed_paths:
+//
+// Returns:
+//   Array of {
+//       path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
+//       weight: Int
+//   }
+//
+Caminae.shortestPath = (function() {
+
+    function computePaths(graph, steps) {
+        /*
+         *  Returns list of paths, and null if not found.
+         */
+        var paths = [];
+        for (var j = 0; j < steps.length - 1; j++) {
+            var path = computeTwoStepsPath(graph, steps[j], steps[j + 1]);
+            if (!path)
+                return null;
+
+            path.from_pop = steps[j];
+            path.to_pop = steps[j+1];
+            paths.push(path);
+        }
+        return paths;
+    }
+
+    function computeTwoStepsPath(graph, from_pop, to_pop) {
+
+        // alter graph
+        var from_pop_opt = from_pop.addToGraph(graph)
+          , to_pop_opt = to_pop.addToGraph(graph);
+
+        var from_nodes = [ from_pop_opt.new_node_id ]
+          , to_nodes = [ to_pop_opt.new_node_id ];
+
+        // weighted_path: {
+        //   path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
+        //   weight: Int
+        // }
+
+        var weighted_path = Caminae.Dijkstra.get_shortest_path_from_graph(graph, from_nodes, to_nodes);
+
+        // restore graph
+        from_pop_opt.rmFromGraph();
+        to_pop_opt.rmFromGraph();
+
+        if(!weighted_path)
+            return null;
+
+        // Some path component may use an edge that does not belong to the graph
+        // (a transient edge that was created from a transient point - a marker).
+        // In this case, the path component gets a new `real_edge' attribute
+        // which is the edge that the virtual edge is part of.
+        var pops_opt = [ from_pop_opt, to_pop_opt ];
+        $.each(weighted_path.path, function(i, path_component) {
+            var edge_id = path_component.edge.id;
+            // Those PointOnPolylines knows the virtual edge and the initial one
+            for (var i = 0; i < pops_opt.length; i++) {
+                var pop_opt = pops_opt[i],
+                    edge = pop_opt.new_edges[edge_id];
+                if (edge !== undefined) {
+                    path_component.real_edge = pop_opt.initial_edge;
+                    break;
+                }
+            }
+        });
+        return weighted_path;
+    }
+
+    return computePaths;
+})();

@@ -315,7 +315,7 @@ L.Handler.MultiPath = L.Handler.extend({
     createStep: function(marker, idx) {
         var self = this;
 
-        var pop = new Caminae.TopologyHelper.PointOnPolyline(marker);
+        var pop = new Caminae.PointOnPolyline(marker);
         this.steps.splice(idx, 0, pop);  // Insert pop at position idx
 
         pop.events.on('valid', function() {
@@ -376,12 +376,12 @@ L.Handler.MultiPath = L.Handler.extend({
             if (this.steps[i].marker === marker)
                 return i;
         }
-        return -1
+        return -1;
     },
 
     computePaths: function() {
         if (this.canCompute()) {
-            var computed_paths = Caminae.compute_path(this.graph, this.steps)
+            var computed_paths = Caminae.shortestPath(this.graph, this.steps);
             this._onComputedPaths(computed_paths);
         }
     },
@@ -724,98 +724,131 @@ L.Handler.MultiPath = L.Handler.extend({
 
 });
 
-// Computed_paths:
-//
-// Returns:
-//   Array of {
-//       path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
-//       weight: Int
-//   }
-//
-Caminae.compute_path = (function() {
-    // Some path component may use an edge that does not belong to the graph
-    // (a transient edge that was created from a transient point - a marker).
-    // In this case, the path component gets a new `real_edge' attribute
-    // which is the edge that the virtual edge is part of.
-    function markVirtualPath(path, pops_opt) {
-        $.each(path, function(i, path_component) {
-            var edge_id = path_component.edge.id;
-            var pop_opt, edge;
 
-            // Those PointOnPolylines knows the virtual edge and the initial one
-            for (var i = 0; i < pops_opt.length; i++) {
-                pop_opt = pops_opt[i];
-                edge = pop_opt.new_edges[edge_id]
-                if (edge !== undefined) {
-                    path_component.real_edge = pop_opt.initial_edge;
-                    break;
-                }
-            }
-        });
-    }
-
-    function computePaths(graph, steps) {
-        /*
-         *  Returns list of paths, and null if not found.
-         */
-
-        /*
-        if (steps.length < 2) {
-            return null;
-        }
-
-        for (var i = 0; i < steps.length; i ++) {
-            if (! steps[i].isValid())
-                return null;
-        }
-        */
-
-        var paths = [], path;
-        for (var j = 0; j < steps.length - 1; j++) {
-            path = computeTwoStepsPath(graph, steps[j], steps[j + 1]);
-
-            if (! path)
-                return null;
-
-            // may be usefull to check back
-            path.from_pop = steps[j];
-            path.to_pop = steps[j+1];
-
-            paths.push(path);
-        }
-
-        return paths;
-    }
-
-    function computeTwoStepsPath(graph, from_pop, to_pop) {
-
-        // alter graph
-        var from_pop_opt = from_pop.addToGraph(graph)
-          , to_pop_opt = to_pop.addToGraph(graph);
-
-        var from_nodes = [ from_pop_opt.new_node_id ]
-          , to_nodes = [ to_pop_opt.new_node_id ];
-
-        // weighted_path: {
-        //   path : Array of { start: Node_id, end: Node_id, edge: Edge, weight: Int (edge.length) }
-        //   weight: Int
-        // }
-        var weighted_path = Caminae.Dijkstra.get_shortest_path_from_graph(graph, from_nodes, to_nodes);
-
-        // restore graph
-        from_pop_opt.rmFromGraph();
-        to_pop_opt.rmFromGraph();
-
-        if(! weighted_path)
-            return null;
-
-        markVirtualPath(weighted_path.path, [ from_pop_opt, to_pop_opt ]);
-
-        // return an array as we may compute more than two steps path
-        return weighted_path;
-    }
-
-    // TODO: compute more than two steps
-    return computePaths;
-
+Caminae.getNextId = (function() {
+    var next_id = 100000;
+    return function() {
+        return next_id++;
+    };
 })();
+
+// pol: point on polyline
+Caminae.PointOnPolyline = function (marker) {
+    this.marker = marker;
+    // if valid
+    this.ll = null;
+    this.polyline = null;
+    this.length = null;
+    this.percent_distance = null;
+    this._activated = false;
+
+    this.events = L.Util.extend({}, L.Mixin.Events);
+
+    this.markerEvents = {
+        'move': function onMove (e) {
+            var marker = e.target;
+            if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
+        },
+        'snap': function onSnap(e) {
+            this.ll = e.location;
+            this.polyline = e.object;
+
+            this.length = L.GeomUtils.length(this.polyline.getLatLngs());
+            var dd = L.GeomUtils.getPercentageDistanceFromPolyline(this.ll, this.polyline);
+            if (dd) {
+                this.percent_distance = dd.distance;
+                this.events.fire('valid');
+            }
+        },
+        'unsnap': function onUnsnap(e) {
+            this.ll = null;
+            this.polyline = null;
+            this.events.fire('invalid');
+        }
+    };
+};
+
+Caminae.PointOnPolyline.prototype.activated = function() {
+    return this._activated;
+};
+
+Caminae.PointOnPolyline.prototype.toggleActivate = function(activate) {
+    activate = activate === undefined ? true : activate;
+
+    if ((activate && this._activated) || (!activate && !this._activated))
+        return;
+
+    this._activated = activate;
+
+    var method = activate ? 'on' : 'off';
+
+    var marker = this.marker
+      , markerEvents = this.markerEvents;
+
+    marker[method]('move', markerEvents.move, this);
+    marker[method]('snap', markerEvents.snap, this);
+    marker[method]('unsnap', markerEvents.unsnap, this);
+};
+
+Caminae.PointOnPolyline.prototype.isValid = function(graph) {
+    return (this.ll && this.polyline);
+};
+
+// Alter the graph: adding two edges and one node (the polyline gets break in two parts by the point)
+// The polyline MUST be an edge of the graph.
+Caminae.PointOnPolyline.prototype.addToGraph = function(graph) {
+    if (! this.isValid())
+        return null;
+
+    var self = this;
+
+    // var edge_id = this.layerToId(layer);
+    var edge = graph.edges[this.polyline.properties.pk]
+      , first_node_id = edge.nodes_id[0]
+      , last_node_id = edge.nodes_id[1];
+
+    // To which nodes dist start_point/end_point corresponds ?
+    // The edge.nodes_id are ordered, it corresponds to polylines: coords[0] and coords[coords.length - 1]
+    var dist_start_point = this.percent_distance * this.length
+      , dist_end_point = (1 - this.percent_distance) * this.length
+    ;
+
+    var new_node_id = Caminae.getNextId();
+
+    var edge1 = {'id': Caminae.getNextId(), 'length': dist_start_point, 'nodes_id': [first_node_id, new_node_id] };
+    var edge2 = {'id': Caminae.getNextId(), 'length': dist_end_point, 'nodes_id': [new_node_id, last_node_id]};
+
+    var first_node = {}, last_node = {}, new_node = {};
+    first_node[new_node_id] = new_node[first_node_id] = edge1.id;
+    last_node[new_node_id] = new_node[last_node_id] = edge2.id;
+
+    // <Alter Graph>
+    var new_edges = {};
+    new_edges[edge1.id] = graph.edges[edge1.id] = edge1;
+    new_edges[edge2.id] = graph.edges[edge2.id] = edge2;
+
+    graph.nodes[new_node_id] = new_node;
+    $.extend(graph.nodes[first_node_id], first_node);
+    $.extend(graph.nodes[last_node_id], last_node);
+    // </Alter Graph>
+
+    function rmFromGraph() {
+        delete graph.edges[edge1.id];
+        delete graph.edges[edge2.id];
+
+        delete graph.nodes[new_node_id];
+        delete graph.nodes[first_node_id][new_node_id];
+        delete graph.nodes[last_node_id][new_node_id];
+    }
+
+    return {
+        self: self,
+        new_node_id: new_node_id,
+        new_edges: new_edges,
+        dist_start_point: dist_start_point,
+        dist_end_point: dist_end_point,
+        initial_edge: edge,
+        rmFromGraph: rmFromGraph
+    };
+};
+
