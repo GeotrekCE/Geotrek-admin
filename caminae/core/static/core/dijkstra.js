@@ -77,7 +77,7 @@ Caminae.Dijkstra = (function() {
                 return null;
 
             // The node exist
-            current_djk_node = djk[djk_current_node];
+            var current_djk_node = djk[djk_current_node];
             // Mark as visited (won't be chosen)
             current_djk_node.visited = true;
             // we could del it out of djk

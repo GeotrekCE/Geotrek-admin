@@ -59,19 +59,37 @@ Caminae.TopologyHelper = (function() {
              */
             var polyline_next = polylines[1],
                 start_bound_by_first_point = L.GeomUtils.isStartAtEdges(polyline_start, polyline_next);
+
+            var start_lls = polyline_start.getLatLngs(),
+                start_on_loop = start_lls[0].equals(start_lls[start_lls.length-1]);
+
             if (start_bound_by_first_point) {
                 /*
-                 *        A               B
-                 *   <----|------++-------|----
-                 *
-                 *   <----|=====|++=======|----
-                 *
-                 * first point is shared ; include closest
+                 *       A
+                 *    /--|===+    B
+                 *  +/       \\+==|---
+                 *   \       /
+                 *    \-----+
                  */
-                lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1);
-                lls_tmp.push(ll_start);
-                polylines[0] = L.GeomUtils.lineReverse(polyline_start);
-                positions[0] = [start.distance, 0.0];
+                if (start_on_loop && start.distance > 0.5) {
+                    lls_tmp = polyline_start.getLatLngs().slice(closest_first_idx + 1);
+                    lls_tmp.unshift(ll_start);
+                    positions[0] = [start.distance, 1.0];
+                }
+                else {
+                    /*
+                     *        A               B
+                     *   <----|------++-------|----
+                     *
+                     *   <----|=====|++=======|----
+                     *
+                     * first point is shared ; include closest
+                     */
+                    lls_tmp = polyline_start.getLatLngs().slice(0, closest_first_idx + 1);
+                    lls_tmp.push(ll_start);
+                    polylines[0] = L.GeomUtils.lineReverse(polyline_start);
+                    positions[0] = [start.distance, 0.0];
+                }
             } else {
                 /*
                  *        A               B
@@ -92,7 +110,7 @@ Caminae.TopologyHelper = (function() {
              * Add all intermediary lines
              */
             for (var i=1; i<polylines.length-1; i++) {
-                var previous = polylines[0],
+                var previous = polylines[i-1],
                     polyline = polylines[i];
                 if (!L.GeomUtils.isAfter(polyline, previous)) {
                     positions[i] = [1.0, 0.0];
@@ -105,17 +123,35 @@ Caminae.TopologyHelper = (function() {
              * Add last portion of line
              */
             var end_bound_by_first_point = L.GeomUtils.isStartAtEdges(polyline_end, polylines[polylines.length - 2]);
+
+            var end_lls = polyline_end.getLatLngs(),
+                end_on_loop = end_lls[0].equals(end_lls[end_lls.length-1]);
+
             if (end_bound_by_first_point) {
-                /*
-                 *        A               B
-                 *   -----|------++-------|---->
-                 *
-                 *   -----|======+|=======>---->
-                 */
-                 // first point is shared ; include closest
-                lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
-                lls_tmp.push(ll_end);
-                positions[polylines.length - 1] = [0.0, end.distance];
+                if (end_on_loop && end.distance > 0.5) {
+                    /*
+                     *              B
+                     *     A    //==|-+
+                     *  ---|==+//     |
+                     *         \      |
+                     *          \-----+
+                     */
+                    lls_tmp = polyline_end.getLatLngs().slice(closest_end_idx + 1);
+                    lls_tmp.unshift(ll_end);
+                    positions[polylines.length - 1] = [end.distance, 1.0];
+                }
+                else {
+                    /*
+                     *        A               B
+                     *   -----|------++-------|---->
+                     *
+                     *   -----|======+|=======>---->
+                     */
+                     // first point is shared ; include closest
+                    lls_tmp = polyline_end.getLatLngs().slice(0, closest_end_idx + 1);
+                    lls_tmp.push(ll_end);
+                    positions[polylines.length - 1] = [0.0, end.distance];
+                }
             } else {
                 /*
                  *        A               B
