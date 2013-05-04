@@ -276,7 +276,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def name_display(self):
         s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
         if self.published:
-            s = u'<span class="badge badge-success">&#x2606;</span> ' + s
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
 
     @property
