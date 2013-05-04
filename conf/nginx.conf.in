@@ -18,6 +18,8 @@ server {
 
     keepalive_timeout 5;
 
+    client_max_body_size 10M;
+
     location ${parts['django'].staticurl} {
         expires ${options.expiretime};
         alias ${parts['django'].staticroot};
