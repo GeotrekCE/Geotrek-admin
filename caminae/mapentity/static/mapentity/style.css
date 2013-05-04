@@ -293,6 +293,15 @@ tr.selected-row td {
     line-height: 30px;
 }
 
+#list-panel .table tbody tr.success > td {
+    font-weight: bold;
+    background-color: #FFA5A2;
+}
+
+#list-panel .table tbody tr.success > td a {
+    color: black;
+    text-decoration: underline;
+}
 
 /* Left menu */
 #entitylist {
