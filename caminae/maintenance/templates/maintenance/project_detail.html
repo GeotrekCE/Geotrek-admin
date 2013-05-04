@@ -87,3 +87,12 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}
+
+
+{% block mappanel %}
+{% if object.geom %}
+    {% include "mapentity/mapgeometry_fragment.html" %}
+{% else %}
+    <p class="nomap">{% trans "No intervention related." %}</p>
+{% endif %}
+{% endblock mappanel %}

@@ -508,6 +508,13 @@ span.filter-info {
     margin-left: 10px;
 }
 
+.map-panel p.nomap {
+    color: lightgray;
+    font-size: 2em;
+    text-align: center;
+    margin-top: 2em;
+}
+
 
 /***** Entity form ******/
 
