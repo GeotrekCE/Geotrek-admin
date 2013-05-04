@@ -70,7 +70,7 @@
         {% if object.geom %}
             {% include "mapentity/mapgeometry_fragment.html" %}
         {% else %}
-            {% trans "No map available for this object." %}
+            <p class="nomap">{% trans "No map available for this object." %}</p>
         {% endif %}
         {% endblock mappanel %}
     </div><!-- span5 -->
