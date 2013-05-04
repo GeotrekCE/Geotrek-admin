@@ -162,7 +162,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
         """ % {'pk': self.pk,
                'x': point.x,
                'y': point.y,
-               'srid': self.srid}
+               'srid': self.geom.srid}
         cursor.execute(sql)
         result = cursor.fetchall()
         return result[0]
