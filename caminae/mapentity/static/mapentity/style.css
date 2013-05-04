@@ -294,12 +294,12 @@ tr.selected-row td {
 }
 
 #list-panel .table tbody tr.success > td {
-    font-weight: bold;
-    background-color: #FFA5A2;
+    background-color: #75E376;
 }
 
 #list-panel .table tbody tr.success > td a {
     color: black;
+    font-weight: bold;
     text-decoration: underline;
 }
 
