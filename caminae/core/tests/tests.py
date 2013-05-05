@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
+from django.utils.translation import ugettext_lazy as _
 
 from caminae.mapentity.tests import MapEntityTest
 from caminae.common.utils import dbnow
@@ -17,7 +18,7 @@ class ViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_bad_data(self):
-        return {'geom': 'argh !'}, u'Acune valeur g\xe9om\xe9trique fournie.'
+        return {'geom': 'argh !'}, _("Invalid snapped geometry.")
 
     def get_good_data(self):
         return {
@@ -31,7 +32,7 @@ class ViewsTest(MapEntityTest):
             'arrival': '',
             'datasource': '',
             'valid': 'on',
-            'geom': 'LINESTRING Z (99.0 89.0 0.0, 100.0 88.0 1.0)',
+            'geom': '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
         }
 
     def _post_add_form(self):
