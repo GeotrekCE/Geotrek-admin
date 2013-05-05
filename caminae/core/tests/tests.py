@@ -18,7 +18,7 @@ class ViewsTest(MapEntityTest):
     userfactory = PathManagerFactory
 
     def get_bad_data(self):
-        return {'geom': 'argh !'}, _("Invalid snapped geometry.")
+        return {'geom': '{"geom": "argh !"}'}, _("Invalid snapped geometry.")
 
     def get_good_data(self):
         return {
