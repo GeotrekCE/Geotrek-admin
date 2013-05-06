@@ -3583,3 +3583,14 @@ Fait.
 -------------------------------------------
 
 Fixé. Plus de scroll sur les fiches détail.
+
+
+==========================
+Sprint 17 - Version 0.17.0
+==========================
+
+#670 - [BUG] Plus court chemin avec départ et arrivée sur une boucle
+--------------------------------------------------------------------
+
+Fixé.
+

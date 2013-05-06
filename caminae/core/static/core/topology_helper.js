@@ -2,10 +2,16 @@ var Caminae = Caminae || {};
 
 Caminae.TopologyHelper = (function() {
 
+    /**
+     * This static function takes a list of Dijkstra results, and returns
+     * a serialized topology, as expected by form widget, as well as a 
+     * multiline geometry for highlight the result.
+     */
     function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
         var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
           , single_path = paths.length == 1 || polyline_start == polyline_end
+          , single_path_loop = false
           , positions = {};
 
         if (!polyline_start || !polyline_end) {
@@ -31,26 +37,65 @@ Caminae.TopologyHelper = (function() {
         var lls_tmp, lls_end, latlngs = [];
 
         if (single_path) {
-            paths = paths.unique();
-            positions[0] = [start.distance, end.distance];
+            var path_pk = paths[0],
+                lls = polyline_start.getLatLngs(),
+                single_path_loop = lls[0].equals(lls[lls.length-1]);
 
-            var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
-            if (closest_first_idx < closest_end_idx) {
-                /*        A     B 
-                 *   +----|=====|---->
+            if (single_path_loop && Math.abs(end.distance - start.distance) > 0.5) {
+                /*
+                 *        A
+                 *     //=|---+
+                 *   +//      |   It is shorter to go through
+                 *    \\      |   extremeties than the whole loop
+                 *     \\=|---+
+  i              *        B
                  */
-                _ll_end = ll_end, _ll_start = ll_start;
-                _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
-            } else {
-                /*        B     A 
-                 *   +----|=====|---->
-                 */
-                _ll_end = ll_start, _ll_start = ll_end;
-                _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
+                if (end.distance - start.distance > 0.5) {
+                    paths = [path_pk, path_pk];
+                    positions[0] = [start.distance, 0.0];
+                    positions[1] = [1.0, end.distance];
+                    lls_tmp = lls.slice(0, closest_first_idx+1);
+                    lls_tmp.reverse();
+                    lls_tmp.unshift(ll_start);
+                    lls_tmp.push(lls[0]);
+                    var _end = lls.slice(closest_end_idx+1);
+                    _end.reverse();
+                    lls_tmp = lls_tmp.concat(_end);
+                    lls_tmp.push(ll_end);
+                }
+                else if (end.distance - start.distance < -0.5) {
+                    paths = [path_pk, path_pk];
+                    positions[0] = [end.distance, 0.0];
+                    positions[1] = [1.0, start.distance];
+                    lls_tmp = lls.slice(closest_first_idx+1);
+                    lls_tmp.unshift(ll_start);
+                    lls_tmp.push(lls[0]);
+                    lls_tmp = lls_tmp.concat(lls.slice(0, closest_end_idx+1));
+                    lls_tmp.push(ll_end);
+                }
             }
-            lls_tmp = polyline_start.getLatLngs().slice(_closest_first_idx+1, _closest_end_idx+1);
-            lls_tmp.unshift(_ll_start);
-            lls_tmp.push(_ll_end);
+            else {
+                paths = paths.unique();
+                positions[0] = [start.distance, end.distance];
+
+                var _ll_end, _ll_start, _closest_first_idx, _closest_end_idx;
+                if (closest_first_idx < closest_end_idx) {
+                    /*        A     B 
+                     *   +----|=====|---->
+                     */
+                    _ll_end = ll_end, _ll_start = ll_start;
+                    _closest_first_idx = closest_first_idx, _closest_end_idx = closest_end_idx;
+                } else {
+                    /*        B     A 
+                     *   +----|=====|---->
+                     */
+                    _ll_end = ll_start, _ll_start = ll_end;
+                    _closest_first_idx = closest_end_idx, _closest_end_idx = closest_first_idx;
+                }
+                lls_tmp = lls.slice(_closest_first_idx+1, _closest_end_idx+1);
+                lls_tmp.unshift(_ll_start);
+                lls_tmp.push(_ll_end);
+            }
             latlngs.push(lls_tmp);
         }
         else {
@@ -171,22 +216,24 @@ Caminae.TopologyHelper = (function() {
         // Clean-up :
         // We basically remove all points where position is [x,x]
         // This can happen at extremity points...
-        var cleanpaths = []
-          , cleanpositions = {};
-        for (var i=0; i<paths.length; i++) {
-            var path = paths[i];
-            if (i in positions) {
-                if (positions[i][0] != positions[i][1] && cleanpaths.indexOf(path) == -1) {
+        if (!single_path_loop) {
+            var cleanpaths = [],
+                cleanpositions = {};
+            for (var i=0; i<paths.length; i++) {
+                var path = paths[i];
+                if (i in positions) {
+                    if (positions[i][0] != positions[i][1] && cleanpaths.indexOf(path) == -1) {
+                        cleanpaths.push(path);
+                        cleanpositions[i] = positions[i];
+                    }
+                }
+                else {
                     cleanpaths.push(path);
-                    cleanpositions[i] = positions[i];
                 }
             }
-            else {
-                cleanpaths.push(path);
-            }
+            paths = cleanpaths;
+            positions = cleanpositions;
         }
-        paths = cleanpaths;
-        positions = cleanpositions;
 
         // Safety warning.
         if (paths.length == 0)
