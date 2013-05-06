@@ -137,7 +137,7 @@ class MapEntityTest(TestCase):
         # no data
         response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
-        
+
         bad_data, form_error = self.get_bad_data()
         response = self.client.post(url, bad_data)
         self.assertEqual(response.status_code, 200)
@@ -145,8 +145,10 @@ class MapEntityTest(TestCase):
         form = self.get_form(response)
 
         fields_errors = form.errors[bad_data.keys()[0]]
-        for err in to_list(form_error):
-            self.assertTrue(err in fields_errors)
+        form_errors = to_list(form_error)
+        for err in form_errors:
+            self.assertTrue(unicode(err) in fields_errors,
+                            "'%s' not in %s" % (unicode(err), fields_errors))
 
         response = self.client.post(url, self.get_good_data())
         if response.status_code != 302:
