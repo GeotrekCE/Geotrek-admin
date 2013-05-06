@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from django.test import TestCase
-from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
+from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 
@@ -19,7 +19,20 @@ from caminae.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
 class TrekTest(TestCase):
     def test_is_publishable(self):
         t = TrekFactory.create()
-        t.description = ''
+        t.geom = LineString((0, 0, 0), (1, 1, 1))
+        self.assertTrue(t.has_geom_valid())
+
+        t.description_teaser = ''
+        self.assertFalse(t.is_complete())
+        self.assertFalse(t.is_publishable())
+        t.description_teaser = 'ba'
+        t.departure = 'zin'
+        t.arrival = 'ga'
+        self.assertTrue(t.is_complete())
+        self.assertTrue(t.is_publishable())
+
+        t.geom = MultiLineString([LineString((0, 0), (1, 1)), LineString((2, 2), (3, 3))])
+        self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
 
 

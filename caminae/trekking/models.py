@@ -327,7 +327,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def has_geom_valid(self):
         """A trek should be a LineString, even if it's a loop.
         """
-        return self.geom and self.geom.geom_type.lower() == 'linestring'
+        return (self.geom is not None and self.geom.geom_type.lower() == 'linestring')
 
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
