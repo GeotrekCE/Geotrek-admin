@@ -3544,3 +3544,42 @@ Fixé. Les géométries sont désormais exportées en coordonnées WGS84.
 -------------------------------------------
 
 Pour les chantiers (collection de geométries ponctuelles et linéaires), des objets distincts sont désormais créés.
+
+
+Version 0.16.1
+==============
+
+#614 - Chemin le plus court sur un tronçon en boucle
+----------------------------------------------------
+
+Fixé.
+
+
+#613 - ADMIN - Liste et surbrillance
+------------------------------------
+
+Foncé la couleur, mis le nom en gras.
+
+
+#215 - Augmenter la taille maximum d'upload
+-------------------------------------------
+
+Passé à 10Mo.
+
+
+#568 - Afficher une info-bulle sur le symbole "Publié" des itinéraires
+----------------------------------------------------------------------
+
+Fait.
+
+
+#428 - Remplacer "Pas de carte disponible" sur les chantiers, par "Pas d'intervention liée"
+-------------------------------------------------------------------------------------------
+
+Fait.
+
+
+#577 - [BUG] Scroll sur profil altimétrique
+-------------------------------------------
+
+Fixé. Plus de scroll sur les fiches détail.
