@@ -1,2 +1,2 @@
-recursive-include caminae/static *.css
-recursive-include caminae/templates *.html
+recursive-include geotrek/static *.css
+recursive-include geotrek/templates *.html

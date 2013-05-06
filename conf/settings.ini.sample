@@ -1,5 +1,5 @@
 #
-#  Caminae Settings
+#  Geotrek Settings
 #..........................
 # 
 #  Press "Esc" and then ":wq" to save and exit.
@@ -19,9 +19,9 @@ language = fr
 languages = en,fr,it
 
 # Database
-dbname = caminaedb
-dbuser = caminae
-dbpassword = caminae
+dbname = geotrekdb
+dbuser = geotrek
+dbpassword = geotrek
 dbhost = localhost
 dbport = 5432
 

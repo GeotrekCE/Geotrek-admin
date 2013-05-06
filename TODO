@@ -43,7 +43,7 @@ Soon...
 
 * Make application optional (ex: remove dependancies from core)
 
-* Make mapentity generic : no notion of Caminae (move templates to common/, move attachments)
+* Make mapentity generic : no notion of Geotrek (move templates to common/, move attachments)
 * Split django-mapentity
 
 * Put bbox only once (4326 = human readable, usual form, cf. docs écrins)

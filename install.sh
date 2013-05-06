@@ -150,11 +150,11 @@ function ubuntu_precise {
             
             # Open local and host connection for this user as md5
             sudo sed -i "/DISABLE/a \
-# Automatically added by Caminae installation :\
+# Automatically added by Geotrek installation :\
 local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
 
             cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
-# Automatically added by Caminae installation :
+# Automatically added by Geotrek installation :
 local    ${dbname}     ${dbuser}                   md5
 host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
 _EOF_
@@ -204,15 +204,15 @@ _EOF_
         # If buildout was successful, deploy really !
         if [ -f etc/nginx.conf ]; then
             sudo rm /etc/nginx/sites-enabled/default
-            sudo cp etc/nginx.conf /etc/nginx/sites-available/caminae
-            sudo ln -sf /etc/nginx/sites-available/caminae /etc/nginx/sites-enabled/caminae
+            sudo cp etc/nginx.conf /etc/nginx/sites-available/geotrek
+            sudo ln -sf /etc/nginx/sites-available/geotrek /etc/nginx/sites-enabled/geotrek
             sudo /etc/init.d/nginx restart
             
             sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
             sudo stop supervisor
             sudo start supervisor
         else
-            echo "Caminae package could not be installed."
+            echo "Geotrek package could not be installed."
             exit 6
         fi
     fi

@@ -21,13 +21,3 @@ lib/
 local/
 *.egg-info/
 
-# buildout stuff for poc
-poc/.installed.cfg
-poc/bin/
-poc/downloads/
-poc/eggs/
-poc/parts/
-poc/docs/_build/
-poc/var/
-# Do not track javascript lib that get downloaded by the buildout
-poc/shared/js/lib/

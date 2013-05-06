@@ -41,7 +41,7 @@ bin/python:
 install: etc/settings.ini bin/python bin/casperjs
 
 clean_harmless:
-	find caminae/ -name "*.pyc" -exec rm -f {} \;
+	find geotrek/ -name "*.pyc" -exec rm -f {} \;
 	rm -f install
 
 clean: clean_harmless
@@ -54,13 +54,13 @@ clean: clean_harmless
 .PHONY: all_makemessages all_compilemessages
 
 all_makemessages: install
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
 
 all_compilemessages: install
-	for dir in `find caminae/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
 release:
-	git archive --format=zip --prefix="caminae-$(version)/" $(version) > ../caminae-src-$(version).zip
+	git archive --format=zip --prefix="geotrek-$(version)/" $(version) > ../geotrek-src-$(version).zip
 
 unit_tests: install clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
@@ -68,12 +68,12 @@ unit_tests: install clean_harmless
 	bin/django jenkins --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
 
 unit_tests_js:
-	casperjs --baseurl=$(baseurl) --reportdir=var/reports caminae/tests/test_qunit.js
+	casperjs --baseurl=$(baseurl) --reportdir=var/reports geotrek/tests/test_qunit.js
 
 functional_tests:
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-auth.xml caminae/tests/auth.js
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml caminae/tests/story_88_user_creation.js
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-test_utils.xml caminae/tests/test_utils.js
+	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-auth.xml geotrek/tests/auth.js
+	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml geotrek/tests/story_88_user_creation.js
+	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-test_utils.xml geotrek/tests/test_utils.js
 
 tests: unit_tests functional_tests
 
@@ -86,7 +86,7 @@ load_data:
 	# /!\ will delete existing data
 	bin/django loaddata minimal
 	bin/django loaddata basic
-	for dir in `find caminae/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
 
 deploy: install clean_harmless
 	bin/buildout -Nc buildout-prod.cfg buildout:user=$(user)

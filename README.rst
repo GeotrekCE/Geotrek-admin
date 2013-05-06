@@ -1,4 +1,4 @@
-*Caminae*, a National Park Manager :)
+*Geotrek*, a National Park Manager :)
 
 =====
 SETUP
@@ -234,7 +234,7 @@ Expected columns in table/view are :
     In order to disable remote login, just remove *authent_dbname* value in settings
     file, and update instance (see paragraph above).
     
-    Caminae can support many types of users authentication (LDAP, oauth, ...), contact-us
+    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
 
 

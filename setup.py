@@ -11,12 +11,12 @@ test_requirements = [
 
 
 setup(
-    name='caminae',
+    name='geotrek',
     version=open(os.path.join(here, 'VERSION')).read().strip(),
     author='Makina Corpus',
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
-    description="Caminae",
+    description="Geotrek",
     long_description=open(os.path.join(here, 'README.rst')).read(),
     install_requires=[
         'django',  # pinned by buildout

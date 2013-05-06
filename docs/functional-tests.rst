@@ -447,7 +447,7 @@ Désormais, la liste des modules n'est présente que dans l'onglet recherche.
 
 Story purement technique (pour réutilisabiliter notamment).
 
-Création d'une app dans caminae, mapentity (pas de repo git à part pour l'instant)
+Création d'une app dans geotrek, mapentity (pas de repo git à part pour l'instant)
 contenant les différents aspects génériques (MapEntityMixin et création d'url principalement).
 
 Le code JS présent dans formfieldmap.html fera aussi l'objet d'une extraction dans un JS à part
@@ -1402,7 +1402,7 @@ Pour un itinéraire, sa trace GPX est disponible à l'adresse
 
 Lors de l'exécution de ``./install.sh``, des nouveaux paramètres vont
 être ajoutés au fichier de configuration ``etc/settings.ini``. Pour avoir
-leur description, reportez vous au nouveau fichier d'exemple situé dans *caminae/conf/settings.ini.sample*.
+leur description, reportez vous au nouveau fichier d'exemple situé dans *geotrek/conf/settings.ini.sample*.
 
 Un paragraphe a également été ajouté au README décrivant la structure de la
 table/vue attendue.
@@ -2062,7 +2062,7 @@ un un seul, grâce à la commande ``msgcat``.
 
 ::
 
-    msgcat caminae/*/locale/fr/LC_MESSAGES/django.po > caminae-fr.po
+    msgcat geotrek/*/locale/fr/LC_MESSAGES/django.po > geotrek-fr.po
 
 #254 - Gérer les langues depuis settings.ini
 --------------------------------------------
