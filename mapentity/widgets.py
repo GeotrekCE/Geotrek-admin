@@ -4,7 +4,7 @@ from django.forms import widgets as django_widgets
 
 import floppyforms as forms
 
-from caminae.common.utils import transform_wkt, wkt_to_geom
+from .helpers import transform_wkt, wkt_to_geom
 
 
 class HiddenGeometryWidget(django_widgets.HiddenInput):

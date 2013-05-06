@@ -15,12 +15,12 @@ from django.test.testcases import to_list
 
 from django.utils import html
 
-from caminae.common.utils import smart_urljoin
-from caminae.mapentity.forms import MapEntityForm
-from caminae.paperclip.factories import AttachmentFactory
+from mapentity.helpers import smart_urljoin
+from mapentity.forms import MapEntityForm
+from paperclip.factories import AttachmentFactory
 
 
-@override_settings(MEDIA_ROOT='/tmp/caminae-media')
+@override_settings(MEDIA_ROOT='/tmp/mapentity-media')
 class MapEntityTest(TestCase):
     model = None
     modelfactory = None

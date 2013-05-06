@@ -10,8 +10,8 @@ from django.utils import timezone
 
 from screamshot.utils import casperjs_capture
 
-from caminae.common.utils import smart_urljoin
-from caminae.paperclip.models import Attachment
+from .helpers import smart_urljoin
+from paperclip.models import Attachment
 
 
 # Used to create the matching url name
