@@ -1,4 +1,4 @@
-*Geotrek*, a National Park Manager :)
+**Geotrek**, a *Natural Park* Manager
 
 =====
 SETUP
@@ -103,17 +103,17 @@ LOADING DATA
 ============
 
 Prerequisites
-=============
+-------------
 
 Layers
-------
+~~~~~~
 
 * WMS (scan + ortho)
 * Projection
 * Bounding box in native projection
 
 Core
-----
+~~~~
 
 * Only LineString geometries
 * Simple geometries
@@ -129,21 +129,21 @@ Formats: Shapefile or pure SQL dump SQL (CREATE TABLE + INSERT)
 
 
 Land
-----
+~~~~
 
 * Cities polygons (Shapefile or SQL, simple and valid Multi-Polygons)
 * Districts (Shapefile ou SQL, simple and valid Multi-Polygons)
 * Restricted Areas (Shapefile ou SQL, simple and valid Multi-Polygons)
 
 Extras
-------
+~~~~~~
 
 * Languages list
 * Structures list (and default one)
 
 
 Load MNT raster
-===============
+---------------
 
 ::
 
@@ -158,7 +158,7 @@ Load MNT raster
 
 
 Initial Data
-============
+------------
 
 Load basic data :
 
@@ -186,7 +186,7 @@ You might also need to deploy logo images in the following places :
 
 
 Development Data
-================
+----------------
 
 ::
 
@@ -324,4 +324,5 @@ AUTHORS
 LICENSE
 =======
 
-    * (c) Makina Corpus
+    * BSD
+    * (c) Parc National des Écrins - Parc National du Mercantour Alpi Marittime - Makina Corpus
