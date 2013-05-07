@@ -17,7 +17,8 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
     description="Geotrek",
-    long_description=open(os.path.join(here, 'README.rst')).read(),
+    long_description=open(os.path.join(here, 'README.rst')).read() + '\n\n' +
+                     open(os.path.join(here, 'CHANGES')).read(),
     install_requires=[
         'South == 0.7.6',
         'psycopg2 == 2.4.1',
@@ -29,6 +30,7 @@ setup(
         'mapentity',  # pinned by buildout
     ] + test_requirements,
     tests_requires=test_requirements,
+    license='BSD, see LICENSE file.',
     packages=find_packages(),
     classifiers=['Natural Language :: English',
                  'Environment :: Web Environment',
