@@ -3598,3 +3598,13 @@ Sprint 17 - Version 0.17.0
 
 Fixé.
 
+#673 - Retirer RAISE NOTICE des triggers
+----------------------------------------
+
+Fixé.
+
+::
+
+    DatabaseError('too many parameters specified for RAISE\nCONTEXT: PL/pgSQL function "ft_smart_makeline"
+
+

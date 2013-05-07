@@ -36,7 +36,7 @@ def run_initial_sql(sender, **kwargs):
             f.close()
             if not settings.TEST:
                 # Remove RAISE NOTICE (/!\ only one-liners)
-                sql = re.sub("^.*RAISE NOTICE.*$", "", sql)
+                sql = re.sub(r"\n.*RAISE NOTICE.*\n", "\n", sql)
                 # TODO: this is the ugliest driver hack ever
                 sql = sql.replace('%', '%%')
             cursor.execute(sql)
