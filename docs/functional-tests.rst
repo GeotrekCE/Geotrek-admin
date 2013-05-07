@@ -2720,24 +2720,28 @@ Fait. Voir fichier README pour explications.
 Fait.
 
 #504 - OFFRE RANDO - Bouton fermeture volet liste
+-------------------------------------------------
 
 Bouton sur toute la hauteur.
 
-#450
+#450 - OFFRE RANDO - Mettre en évidence si filtre actif
+-------------------------------------------------------
 
-OFFRE RANDO - Mettre en évidence si filtre actif
+#449 - OFFRE RANDO - Effacer tous les filtres
+---------------------------------------------
 
-#449
+Fait.
 
-OFFRE RANDO - Effacer tous les filtres
+#63 - OFFRE RANDO - Paramétrer les couleurs du portail
+----------------------------------------
 
-#63
+Fait.
 
-Paramétrer les couleurs du portail
+#62 - OFFRE RANDO - Paramétrer logo et titre
+------------------------------
 
-#62
+Fait.
 
-Paramétrer logo et titre
 
 ==========================
 Sprint 13 - Version 0.13.0
