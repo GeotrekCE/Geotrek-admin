@@ -171,7 +171,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
 
-    'geotrek.mapentity.context_processors.settings',
+    'mapentity.context_processors.settings',
 )
 
 #
@@ -198,6 +198,8 @@ PROJECT_APPS = (
     'tinymce',
     'easy_thumbnails',
     'shapes',
+    'mapentity',
+    'paperclip',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -208,8 +210,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.maintenance',
     'geotrek.land',
     'geotrek.trekking',
-    'geotrek.mapentity',
-    'geotrek.paperclip',
 )
 
 SERIALIZATION_MODULES = {

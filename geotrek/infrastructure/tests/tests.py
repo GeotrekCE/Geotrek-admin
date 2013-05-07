@@ -4,16 +4,16 @@ import datetime
 from django.test import TestCase
 from django.utils import simplejson
 
-from geotrek.mapentity.tests import MapEntityTest
+from geotrek.common.tests import CommonTest
+
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.maintenance.factories import InterventionFactory
-
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
-    Signage, INFRASTRUCTURE_TYPES)
+                                           Signage, INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory, PathAggregationFactory
-from geotrek.infrastructure.factories import (SignageFactory,
-    InfrastructureFactory, InfrastructureTypeFactory)
+from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
+                                              InfrastructureTypeFactory)
 from geotrek.infrastructure.filters import SignageFilter, InfrastructureFilter
 
 
@@ -34,7 +34,7 @@ class InfrastructureTest(TestCase):
         self.assertItemsEqual(p.infrastructures, [infra])
 
 
-class InfrastructureViewsTest(MapEntityTest):
+class InfrastructureViewsTest(CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory

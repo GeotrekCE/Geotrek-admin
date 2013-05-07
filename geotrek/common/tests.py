@@ -1,7 +1,20 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
+from mapentity.tests import MapEntityTest
+
+from .factories import AttachmentFactory
 from .utils import almostequal, smart_urljoin
+
+
+class CommonTest(MapEntityTest):
+    def test_attachment(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        obj = self.modelfactory.create()
+        AttachmentFactory.create(obj=obj)
+        AttachmentFactory.create(obj=obj)
+        self.assertEqual(len(obj.attachments), 2)
 
 
 class ViewsTest(TestCase):

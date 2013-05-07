@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url
 
+from mapentity.urlizor import view_classes_to_url
+
 from . import views
-from geotrek.mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',

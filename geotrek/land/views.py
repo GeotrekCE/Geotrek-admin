@@ -3,10 +3,10 @@ from django.views.decorators.cache import cache_page
 from django.conf import settings
 
 from djgeojson.views import GeoJSONLayerView
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import path_manager_required
-from geotrek.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge, SignageManagementEdge,
                      City, RestrictedArea, District)

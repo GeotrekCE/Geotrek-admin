@@ -7,7 +7,7 @@ from .views import (
     ProjectUpdate, ProjectDelete, ProjectJsonList, ProjectFormatList,
 )
 
-from geotrek.mapentity.urlizor import view_classes_to_url
+from mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('', *view_classes_to_url(

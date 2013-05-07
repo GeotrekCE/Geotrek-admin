@@ -1,9 +1,10 @@
 from django.utils.decorators import method_decorator
 
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+
 from geotrek.authent.decorators import same_structure_required, editor_required
 from geotrek.core.models import AltimetryMixin
-from geotrek.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilter, SignageFilter
 from .forms import InfrastructureForm, SignageForm

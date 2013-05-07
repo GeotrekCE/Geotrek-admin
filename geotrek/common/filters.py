@@ -1,11 +1,10 @@
 import sys
+from decimal import Decimal
 
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import RangeFilter
-from decimal import Decimal
-
-from geotrek.mapentity.filters import MapEntityFilterSet
+from mapentity.filters import MapEntityFilterSet
 
 
 class OptionalRangeFilter(RangeFilter):
@@ -19,7 +18,7 @@ class OptionalRangeFilter(RangeFilter):
             if value.start and not value.stop:
                 value = slice(value.start, Decimal(sys.maxint), value.step)
             if not value.start and value.stop:
-                value = slice(Decimal(-(sys.maxint +1)), value.stop, value.step)
+                value = slice(Decimal(-(sys.maxint + 1)), value.stop, value.step)
         return super(OptionalRangeFilter, self).filter(qs, value)
 
 

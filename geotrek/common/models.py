@@ -14,16 +14,3 @@ class Organism(models.Model):
 
     def __unicode__(self):
         return self.organism
-
-
-class FileType(models.Model):
-    type = models.CharField(max_length=128, verbose_name=_("File type"))
-
-    class Meta:
-        db_table = 'fl_b_fichier'
-        verbose_name = _(u"File type")
-        verbose_name_plural = _(u"File types")
-        ordering = ['type']
-
-    def __unicode__(self):
-        return self.type

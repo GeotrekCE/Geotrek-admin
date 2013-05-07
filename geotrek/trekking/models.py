@@ -7,14 +7,14 @@ from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
-
 import simplekml
 from PIL import Image
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
-from geotrek.mapentity.models import MapEntityMixin
-from geotrek.mapentity.serializers import plain_text
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import elevation_profile, classproperty
 from geotrek.maintenance.models import Intervention, Project

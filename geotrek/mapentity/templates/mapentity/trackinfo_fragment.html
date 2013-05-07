@@ -1,8 +1,0 @@
-{% load field_verbose_name timesince %}
-<tr>
-    <th>{{ object|verbose:"date_insert" }}</th>
-    <td>{{ object.date_insert }} ({{ object.date_insert|timesince }})</td>
-</tr><tr>
-    <th>{{ object|verbose:"date_update" }}</th>
-    <td>{{ object.date_update }} ({{ object.date_update|timesince }})</td>
-</tr>

@@ -4,7 +4,8 @@ from django.contrib.gis.geos import LineString
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.mapentity.tests import MapEntityTest
+from geotrek.common.tests import CommonTest
+
 from geotrek.common.utils import dbnow
 from geotrek.authent.factories import UserFactory, PathManagerFactory, StructureFactory
 from geotrek.authent.models import Structure, default_structure
@@ -12,7 +13,7 @@ from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, Com
 from geotrek.core.models import Path
 
 
-class ViewsTest(MapEntityTest):
+class ViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
     userfactory = PathManagerFactory

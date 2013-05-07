@@ -5,9 +5,11 @@ from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLine
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 
-from geotrek.paperclip.factories import AttachmentFactory
+from mapentity.tests import MapEntityLiveTest
+
+from geotrek.common.factories import AttachmentFactory
+from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.mapentity.tests import MapEntityTest, MapEntityLiveTest
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.land.factories import DistrictFactory
@@ -36,7 +38,7 @@ class TrekTest(TestCase):
         self.assertFalse(t.is_publishable())
 
 
-class POIViewsTest(MapEntityTest):
+class POIViewsTest(CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
@@ -55,7 +57,7 @@ class POIViewsTest(MapEntityTest):
         }
 
 
-class TrekViewsTest(MapEntityTest):
+class TrekViewsTest(CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory

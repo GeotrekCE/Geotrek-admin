@@ -2,11 +2,11 @@ from django import forms as django_forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 
 import floppyforms as forms
+from mapentity.forms import MapEntityForm
 
 from geotrek.core.models import NoDeleteMixin
 from geotrek.authent.models import (default_structure, StructureRelated,
                                     StructureRelatedQuerySet)
-from geotrek.mapentity.forms import MapEntityForm
 
 
 class CommonForm(MapEntityForm):

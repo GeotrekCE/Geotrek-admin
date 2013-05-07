@@ -18,8 +18,7 @@ import json
 from django.conf import settings
 
 import floppyforms as forms
-
-from geotrek.mapentity.widgets import LineStringWidget
+from mapentity.widgets import LineStringWidget
 
 from .models import Topology
 

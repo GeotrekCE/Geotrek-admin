@@ -6,12 +6,10 @@ import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
+from mapentity.widgets import Point2DWidget, SelectMultipleWithPop
 
 from geotrek.core.forms import TopologyForm
-from geotrek.mapentity.widgets import Point2DWidget
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from geotrek.mapentity.widgets import SelectMultipleWithPop
-
 from .models import Trek, POI, WebLink
 
 

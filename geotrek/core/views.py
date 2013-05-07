@@ -9,10 +9,11 @@ from django.views.generic.edit import BaseDetailView
 from django.core.cache import get_cache
 from django.shortcuts import redirect
 
-from geotrek.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                                     MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                                     MapEntityDelete, MapEntityFormat,
-                                     JSONResponseMixin, HttpJSONResponse)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, MapEntityFormat,
+                             JSONResponseMixin, HttpJSONResponse)
+
 from geotrek.authent.decorators import path_manager_required, same_structure_required
 
 from .models import Path, Trail

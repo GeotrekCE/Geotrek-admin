@@ -1,13 +1,12 @@
 from django.test import TestCase
 
+from paperclip.models import Attachment
+from paperclip.views import add_url_for_obj
+
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import PathFactory
-
-from geotrek.common.factories import FileTypeFactory
+from geotrek.common.factories import AttachmentFactory, FileTypeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.paperclip.factories import AttachmentFactory
-from geotrek.paperclip.models import Attachment
-from geotrek.paperclip.views import add_url_for_obj
 
 
 class PathAttachmentTestCase(TestCase):

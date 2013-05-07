@@ -1,7 +1,7 @@
 from django.forms.widgets import Select
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.mapentity.filters import YearFilter
+from mapentity.filters import YearFilter
 from geotrek.land.filters import EdgeStructureRelatedFilterSet
 
 from .models import INFRASTRUCTURE_TYPES, Infrastructure, Signage

@@ -7,16 +7,15 @@ from django.contrib.gis import gdal
 from django.test import TestCase
 from django.utils import simplejson
 
-from geotrek.mapentity.tests import MapEntityTest
+from geotrek.common.tests import CommonTest
+from mapentity import shape_exporter
+from mapentity.serializers import ZipShapeSerializer
+
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
 from geotrek.core.models import Topology
 from geotrek.common.factories import OrganismFactory
-
-from geotrek.mapentity import shape_exporter
-from geotrek.mapentity.serializers import ZipShapeSerializer
-
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
@@ -27,7 +26,7 @@ from geotrek.maintenance.factories import (InterventionFactory, InfrastructureIn
                                            ProjectFactory, ContractorFactory, InterventionJobFactory)
 
 
-class InterventionViewsTest(MapEntityTest):
+class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
@@ -128,7 +127,7 @@ class InterventionViewsTest(MapEntityTest):
         self.assertEqual(response.status_code, 302)
 
 
-class ProjectViewsTest(MapEntityTest):
+class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectFactory
     userfactory = PathManagerFactory

@@ -7,14 +7,15 @@ from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
 
 from djgeojson.views import GeoJSONLayerView
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+                             MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
+                             LastModifiedMixin, JSONResponseMixin, DocumentConvert)
+from mapentity.serializers import plain_text, GPXSerializer
 
 from geotrek.authent.decorators import trekking_manager_required
 from geotrek.core.models import AltimetryMixin
-from geotrek.mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                     MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                                     LastModifiedMixin, JSONResponseMixin, DocumentConvert)
-from geotrek.mapentity.serializers import plain_text, GPXSerializer
 from geotrek.common.views import FormsetMixin
+
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup

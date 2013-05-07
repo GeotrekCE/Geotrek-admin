@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 import factory
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon, MultiPolygon
 
+from mapentity.helpers import bbox_split_srid_2154
+
 from geotrek.core.factories import TopologyFactory
 from geotrek.common.factories import OrganismFactory
-from geotrek.mapentity.helpers import bbox_split_srid_2154
 
 from . import models
 

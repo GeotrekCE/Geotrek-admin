@@ -8,7 +8,7 @@ from .views import (
     TrailDetail, TrailDocument,
 )
 
-from geotrek.mapentity.urlizor import view_classes_to_url
+from mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',

@@ -3,10 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models as gismodels
 
 from extended_choices import Choices
+from mapentity.models import MapEntityMixin
 
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
-from geotrek.mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelatedManager, StructureRelated
 
 

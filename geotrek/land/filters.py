@@ -3,12 +3,11 @@
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import ModelChoiceFilter
+from mapentity.filters import MapEntityFilterSet
 
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.common.filters import StructureRelatedFilterSet
-from geotrek.mapentity.filters import MapEntityFilterSet
-
 
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,

@@ -5,9 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
+from mapentity.models import MapEntityMixin
+
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import NoDeleteMixin, TrackingMixin, Topology, AltimetryMixin, Path, Trail
-from geotrek.mapentity.models import MapEntityMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage

@@ -6,8 +6,9 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
+from mapentity.views import HttpJSONResponse, json_django_dumps
+
 from geotrek import __version__
-from geotrek.mapentity.views import HttpJSONResponse, json_django_dumps
 
 
 class FormsetMixin(object):

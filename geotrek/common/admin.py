@@ -1,7 +1,9 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-from geotrek.common.models import Organism, FileType
+from paperclip.models import FileType
+
+from geotrek.common.models import Organism
 
 
 class OrganismAdmin(admin.ModelAdmin):

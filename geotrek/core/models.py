@@ -12,9 +12,10 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
+from mapentity.models import MapEntityMixin
+
 from geotrek.authent.models import StructureRelated
 from geotrek.common.utils import elevation_profile, classproperty, sqlfunction
-from geotrek.mapentity.models import MapEntityMixin
 
 
 logger = logging.getLogger(__name__)

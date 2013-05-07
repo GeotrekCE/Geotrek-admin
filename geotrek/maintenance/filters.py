@@ -1,10 +1,10 @@
 from django.forms.widgets import Select
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.core.models import Topology
-from geotrek.mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
-from geotrek.mapentity.widgets import HiddenGeometryWidget
+from mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
+from mapentity.widgets import HiddenGeometryWidget
 
+from geotrek.core.models import Topology
 from geotrek.land.filters import EdgeStructureRelatedFilterSet
 
 from .models import Intervention, Project

@@ -3,19 +3,17 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from django.core.urlresolvers import reverse
 
-from geotrek.mapentity.tests import MapEntityTest
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.common.tests import CommonTest
 
+from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.models import Topology
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.common.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
-    WorkManagementEdge, SignageManagementEdge, City)
-
-
-from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory, 
-    CityEdgeFactory, RestrictedAreaFactory, RestrictedAreaEdgeFactory, CompetenceEdgeFactory, WorkManagementEdgeFactory, 
-    SignageManagementEdgeFactory, PhysicalTypeFactory, LandTypeFactory)
+                                 WorkManagementEdge, SignageManagementEdge, City)
+from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory, DistrictEdgeFactory,
+                                    CityEdgeFactory, RestrictedAreaFactory, RestrictedAreaEdgeFactory, CompetenceEdgeFactory,
+                                    WorkManagementEdgeFactory, SignageManagementEdgeFactory, PhysicalTypeFactory, LandTypeFactory)
 
 
 class EdgeHelperTest(TestCase):
@@ -86,7 +84,7 @@ class DistrictEdgeTest(EdgeHelperTest):
 
 
 
-class PhysicalEdgeViewsTest(MapEntityTest):
+class PhysicalEdgeViewsTest(CommonTest):
     model = PhysicalEdge
     modelfactory = PhysicalEdgeFactory
     userfactory = PathManagerFactory
@@ -99,7 +97,7 @@ class PhysicalEdgeViewsTest(MapEntityTest):
         }
 
 
-class LandEdgeViewsTest(MapEntityTest):
+class LandEdgeViewsTest(CommonTest):
     model = LandEdge
     modelfactory = LandEdgeFactory
     userfactory = PathManagerFactory
@@ -112,7 +110,7 @@ class LandEdgeViewsTest(MapEntityTest):
         }
 
 
-class CompetenceEdgeViewsTest(MapEntityTest):
+class CompetenceEdgeViewsTest(CommonTest):
     model = CompetenceEdge
     modelfactory = CompetenceEdgeFactory
     userfactory = PathManagerFactory
@@ -125,7 +123,7 @@ class CompetenceEdgeViewsTest(MapEntityTest):
         }
 
 
-class WorkManagementEdgeViewsTest(MapEntityTest):
+class WorkManagementEdgeViewsTest(CommonTest):
     model = WorkManagementEdge
     modelfactory = WorkManagementEdgeFactory
     userfactory = PathManagerFactory
@@ -139,7 +137,7 @@ class WorkManagementEdgeViewsTest(MapEntityTest):
 
 
 
-class SignageManagementEdgeViewsTest(MapEntityTest):
+class SignageManagementEdgeViewsTest(CommonTest):
     model = SignageManagementEdge
     modelfactory = SignageManagementEdgeFactory
     userfactory = PathManagerFactory

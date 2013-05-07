@@ -2,14 +2,20 @@
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+from django.db import models, connection
+from django.db.utils import DatabaseError
 from django.conf import settings
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.rename_table('types_fichiers', 'fl_b_fichier')
+        try:
+            db.rename_table('types_fichiers', 'fl_b_fichier')
+        except DatabaseError:
+            # Fails if already exists since paperclip became separate app
+            connection.close()
+            db.delete_table('types_fichiers')
         db.rename_table('liste_de_tous_les_organismes', 'm_b_organisme')
 
     def backwards(self, orm):

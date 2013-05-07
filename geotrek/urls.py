@@ -6,7 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-handler500 = 'geotrek.mapentity.views.handler500'
+handler500 = 'mapentity.views.handler500'
 
 
 urlpatterns = patterns('',
@@ -16,9 +16,9 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout',),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^paperclip/', include('geotrek.paperclip.urls')),
+    url(r'^paperclip/', include('paperclip.urls')),
 
-    url(r'', include('geotrek.mapentity.urls', namespace='mapentity', app_name='mapentity')),
+    url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
     url(r'', include('geotrek.land.urls', namespace='land', app_name='land')),
     url(r'', include('geotrek.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')),
