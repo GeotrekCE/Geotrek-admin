@@ -110,8 +110,10 @@ function ubuntu_precise {
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
     sudo apt-get install -y postgresql-client postgis-bin gdal-bin
 
-    # topdf conversion
-    sudo apt-get install -y libreoffice unoconv
+    if ! $dev ; then
+      # convertit dependencies
+      sudo apt-get install -y libreoffice unoconv
+    fi
 
     # Default settings if not any
     make install
