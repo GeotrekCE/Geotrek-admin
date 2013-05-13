@@ -297,7 +297,7 @@ Run unit tests :
 
     make tests
 
-For PDF conversion server, run an instance in a separate terminal :
+For PDF conversion server, run an instance of Convertit in a separate terminal on ``http://localhost:6543``
 
 ::
 
