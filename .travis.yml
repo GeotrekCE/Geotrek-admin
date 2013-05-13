@@ -8,7 +8,7 @@ before_install:
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
   ./install.sh --dev
-script: make tests
+script: make test
 after_success:
   # Report coverage results to coveralls.io
   - pip install coveralls

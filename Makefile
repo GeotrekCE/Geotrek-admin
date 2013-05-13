@@ -62,7 +62,7 @@ all_compilemessages: install
 release:
 	git archive --format=zip --prefix="geotrek-$(version)/" $(version) > ../geotrek-src-$(version).zip
 
-unit_tests: install clean_harmless
+test: install clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/develop update -f
 	bin/django jenkins --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
@@ -75,7 +75,7 @@ functional_tests:
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml geotrek/tests/story_88_user_creation.js
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-test_utils.xml geotrek/tests/test_utils.js
 
-tests: unit_tests functional_tests
+tests: test functional_tests
 
 serve: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
