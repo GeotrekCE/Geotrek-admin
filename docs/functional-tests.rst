@@ -3608,3 +3608,8 @@ Fixé.
     DatabaseError('too many parameters specified for RAISE\nCONTEXT: PL/pgSQL function "ft_smart_makeline"
 
 
+Rétablir traductions Italien
+---------------------------
+
+Fait.
+
