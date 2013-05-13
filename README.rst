@@ -1,5 +1,12 @@
 **Geotrek**, *paths* management for *National Parks* and *Tourism organizations*.
 
+.. image:: https://travis-ci.org/makinacorpus/Geotrek.png
+    :target: https://travis-ci.org/makinacorpus/Geotrek
+
+.. image:: https://coveralls.io/repos/makinacorpus/Geotrek/badge.png
+    :target: https://coveralls.io/r/makinacorpus/Geotrek
+
+
 =====
 SETUP
 =====
