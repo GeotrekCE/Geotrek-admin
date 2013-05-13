@@ -1,0 +1,1 @@
+-e git://github.com/makinacorpus/Geotrek.git@paperclip#egg=paperclip

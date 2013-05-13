@@ -1,0 +1,8 @@
+language: python
+python:
+  - "2.7"
+install:
+script:
+notifications:
+  email: false
+  irc: "irc.freenode.org#geotrek"
