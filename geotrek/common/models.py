@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Manager as DefaultManager
 from django.utils.translation import ugettext_lazy as _
 
+from geotrek.authent.models import StructureRelated
+
 
 class TimeStampedModel(models.Model):
     # Computed values (managed at DB-level with triggers)
@@ -39,7 +41,7 @@ class NoDeleteMixin(models.Model):
         return NoDeleteManager
 
 
-class Organism(models.Model):
+class Organism(StructureRelated):
 
     organism = models.CharField(max_length=128, verbose_name=_(u"Organism"), db_column='organisme')
 

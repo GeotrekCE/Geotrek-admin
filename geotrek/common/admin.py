@@ -7,7 +7,7 @@ from geotrek.common.models import Organism
 
 
 class OrganismAdmin(admin.ModelAdmin):
-    list_display = ('organism',)
+    list_display = ('organism', 'structure')
     search_fields = ('organism',)
 
 
