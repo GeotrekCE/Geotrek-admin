@@ -26,8 +26,8 @@ setup(
         'Pillow == 1.7.8',
         'easy-thumbnails == 1.1',
         'simplekml == 1.2.1',
-        'django-extended-choices',  # pinned by buildout
         'mapentity',  # pinned by buildout
+        'django-extended-choices',  # pinned by buildout
     ] + test_requirements,
     tests_requires=test_requirements,
     license='BSD, see LICENSE file.',
