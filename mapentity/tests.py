@@ -2,7 +2,9 @@
 import os
 import md5
 import time
-import shutil, StringIO, csv
+import shutil
+import StringIO
+import csv
 
 import requests
 from django.conf import settings
@@ -17,7 +19,6 @@ from django.utils import html
 
 from mapentity.helpers import smart_urljoin
 from mapentity.forms import MapEntityForm
-from paperclip.factories import AttachmentFactory
 
 
 @override_settings(MEDIA_ROOT='/tmp/mapentity-media')
@@ -172,10 +173,10 @@ class MapEntityTest(TestCase):
         obj = self.modelfactory()
         response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
         self.assertEqual(response.status_code, 404)
-        
+
         response = self.client.get(obj.get_detail_url())
         self.assertEqual(response.status_code, 200)
-        
+
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 200)
 
@@ -200,16 +201,6 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
-
-    def test_attachment(self):
-        if self.model is None:
-            return  # Abstract test should not run
-
-        obj = self.modelfactory.create()
-        AttachmentFactory.create(obj=obj)
-        AttachmentFactory.create(obj=obj)
-        self.assertEqual(len(obj.attachments), 2)
-
 
 
 class MapEntityLiveTest(LiveServerTestCase):
@@ -275,7 +266,7 @@ class MapEntityLiveTest(LiveServerTestCase):
             return  # Abstract test should not run
 
         obj = self.modelfactory.create()
-        
+
         # Initially, map image does not exists
         self.assertFalse(os.path.exists(obj.get_map_image_path()))
         # TODO: test disabled since not working on CI server
