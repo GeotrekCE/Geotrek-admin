@@ -325,4 +325,4 @@ LICENSE
 =======
 
     * BSD
-    * (c) Parc National des Écrins - Parc National du Mercantour Alpi Marittime - Makina Corpus
+    * (c) Parc National des Écrins - Parc National du Mercantour - Parco delle Alpi Marittime - Makina Corpus
