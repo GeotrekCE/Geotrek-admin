@@ -5,6 +5,7 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
+* Compute max_resolution automatically
 * Fix creation and edition of interventions on infrastructures (fixes #678)
 * Change default objects color to yellow
 * Restored Italian translations
