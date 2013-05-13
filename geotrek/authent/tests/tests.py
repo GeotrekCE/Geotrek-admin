@@ -16,7 +16,7 @@ from geotrek.authent.factories import UserFactory
 class LoginTestCase(TestCase):
     def test_login(self):
         response = self.client.get('/')
-        _next = settings.FORCE_SCRIPT_NAME + '/'
+        _next = (settings.FORCE_SCRIPT_NAME or '') + '/'
         self.assertRedirects(response, '/login/?next=' + _next)
 
 
