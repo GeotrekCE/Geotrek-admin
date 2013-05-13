@@ -4,9 +4,10 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDo
 import floppyforms as forms
 from mapentity.forms import MapEntityForm
 
-from geotrek.core.models import NoDeleteMixin
 from geotrek.authent.models import (default_structure, StructureRelated,
                                     StructureRelatedQuerySet)
+
+from .models import NoDeleteMixin
 
 
 class CommonForm(MapEntityForm):

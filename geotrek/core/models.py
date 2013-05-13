@@ -6,7 +6,6 @@ from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.db import connection
-from django.db.models import Manager as DefaultManager
 from django.utils import simplejson
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -15,19 +14,11 @@ from django.contrib.gis.geos import LineString, Point
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
+from geotrek.common.models import TimeStampedModel, NoDeleteMixin
 from geotrek.common.utils import elevation_profile, classproperty, sqlfunction
 
 
 logger = logging.getLogger(__name__)
-
-
-class TrackingMixin(models.Model):
-    # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update')
-
-    class Meta:
-        abstract = True
 
 
 class AltimetryMixin(models.Model):
@@ -50,7 +41,7 @@ class AltimetryMixin(models.Model):
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
+class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
                                   dim=3)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
@@ -281,34 +272,7 @@ class Path(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated):
         return _("None")
 
 
-class NoDeleteMixin(models.Model):
-    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
-
-    def delete(self, force=False, using=None, **kwargs):
-        if force:
-            super(NoDeleteMixin, self).delete(using, **kwargs)
-        else:
-            self.deleted = True
-            self.save(using=using)
-
-    class Meta:
-        abstract = True
-
-    @classmethod
-    def get_manager_cls(cls, parent_mgr_cls=DefaultManager):
-
-        class NoDeleteManager(parent_mgr_cls):
-            # Use this manager when walking through FK/M2M relationships
-            use_for_related_fields = True
-
-            # Filter out deleted objects
-            def existing(self):
-                return self.get_query_set().filter(deleted=False)
-
-        return NoDeleteManager
-
-
-class Topology(AltimetryMixin, TrackingMixin, NoDeleteMixin):
+class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)

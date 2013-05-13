@@ -8,13 +8,13 @@ from django.contrib.gis.geos import GeometryCollection
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import NoDeleteMixin, TrackingMixin, Topology, AltimetryMixin, Path, Trail
-from geotrek.common.models import Organism
+from geotrek.core.models import Topology, AltimetryMixin, Path, Trail
+from geotrek.common.models import Organism, TimeStampedModel, NoDeleteMixin
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, AltimetryMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
+class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
 
     in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
                                          db_column='maintenance', help_text=_(u"Recurrent"))
@@ -303,7 +303,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(MapEntityMixin, TrackingMixin, StructureRelated, NoDeleteMixin):
+class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
