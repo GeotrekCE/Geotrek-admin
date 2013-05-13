@@ -101,6 +101,7 @@ class InterventionForm(CommonForm):
         infrastructure = kwargs.get('initial', {}).get('infrastructure')
         if self.instance.on_infrastructure:
             infrastructure = self.instance.infrastructure
+            self.fields['infrastructure'].initial = infrastructure
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].widget = TopologyReadonlyWidget()
@@ -113,8 +114,8 @@ class InterventionForm(CommonForm):
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
         cleaned_data = super(InterventionForm, self).clean()
-        if 'infrastructure' in self.cleaned_data and \
-           'topology' not in self.cleaned_data:
+        topology_readonly = self.cleaned_data.get('topology', None) is None
+        if topology_readonly and 'infrastructure' in self.cleaned_data:
             self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
         return cleaned_data
 

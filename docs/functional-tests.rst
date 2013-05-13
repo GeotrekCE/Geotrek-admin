@@ -3613,3 +3613,8 @@ Rétablir traductions Italien
 
 Fait.
 
+
+#678 - Intervention sur infrastructure: champ geometry invalide
+---------------------------------------------------------------
+
+Fixé à la création et à l'édition.

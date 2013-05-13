@@ -25,11 +25,18 @@ class TopologyField(forms.CharField):
 
     default_error_messages = {
         'invalid_topology': _(u'Topology is not valid.'),
+        'unknown_topology': _(u'Topology %s does not exist.'),
     }
 
     def clean(self, value):
         if value in validators.EMPTY_VALUES:
             return None
+        try:
+            return Topology.objects.get(pk=int(value))
+        except Topology.DoesNotExist:
+            raise ValidationError(self.error_messages['unknown_topology'] % value)
+        except ValueError:
+            pass  # value is not integer, thus should be deserialized
         try:
             return Topology.deserialize(value)
         except ValueError as e:

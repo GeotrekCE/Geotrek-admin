@@ -68,21 +68,49 @@ class InterventionViewsTest(CommonTest):
             'manday_set-1-DELETE': '',
         }
 
-    def test_form_on_infrastructure(self):
+    def test_creation_form_on_infrastructure(self):
         self.login()
 
         infra = InfrastructureFactory.create()
         infrastr = u"%s" % infra
-        # For creation
+
         response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
-        # For edition
+        form = response.context['form']
+        self.assertEqual(form.initial['infrastructure'], infra)
+        # Should be able to save form successfully
+        data = self.get_good_data()
+        data['infrastructure'] = infra.pk
+        response = self.client.post(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk, data)
+        self.assertEqual(response.status_code, 302)
+
+    def test_update_form_on_infrastructure(self):
+        self.login()
+
+        infra = InfrastructureFactory.create()
+        infrastr = u"%s" % infra
+
         intervention = InterventionFactory.create()
         intervention.set_infrastructure(infra)
-        response = self.client.get(infra.get_update_url())
+        intervention.save()
+        response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
+        # Should be able to save form successfully
+        form = response.context['form']
+        data = form.initial
+        data['project'] = ''
+        data['infrastructure'] = form.fields['infrastructure'].initial.pk  # because it is set after form init, not form.initial :(
+        data.update(**{
+            'manday_set-TOTAL_FORMS': '0',
+            'manday_set-INITIAL_FORMS': '0',
+            'manday_set-MAX_NUM_FORMS': '',
+        })
+        # Form URL is modified in form init
+        formurl = intervention.get_update_url() + '?infrastructure=%s' % infra.pk
+        response = self.client.post(formurl, data)
+        self.assertEqual(response.status_code, 302)
 
     def test_form_default_stake(self):
         self.login()

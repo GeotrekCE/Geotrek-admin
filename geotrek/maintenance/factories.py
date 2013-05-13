@@ -41,6 +41,7 @@ class ManDayFactory(factory.Factory):
 class InterventionFactory(factory.Factory):
     FACTORY_FOR = models.Intervention
 
+    name = factory.Sequence(lambda n: u"Intervention %s" % n)
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
