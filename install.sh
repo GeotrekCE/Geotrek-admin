@@ -118,9 +118,11 @@ function ubuntu_precise {
     settingsfile=etc/settings.ini
     settingssample=conf/settings.ini.sample
     migrate_settings $settingsfile $settingssample
-    
-    # Prompt user to edit/review settings
-    vim -c 'startinsert' $settingsfile
+
+    if ! $dev ; then
+      # Prompt user to edit/review settings
+      vim -c 'startinsert' $settingsfile
+    fi
 
     #
     # If database is local, install it !
