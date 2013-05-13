@@ -178,8 +178,10 @@ _EOF_
     fi
 
     if $dev ; then
-        # A postgis template is required for django tests
         if [ "${dbhost}" == "localhost" ] ; then
+            # In development give full rights to db user
+            sudo -n -u postgres -s -- psql -c "ALTER ROLE ${dbuser} SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;"
+            # A postgis template is required for django tests
             if ! database_exists template_postgis
             then
                 sudo -n -u postgres -s -- createdb template_postgis
