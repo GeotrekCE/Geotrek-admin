@@ -5,6 +5,8 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
+* Change default objects color to yellow
+* Restored Italian translations
 * Fix regex for RAISE NOTICE (fixes #673)
 * Initial public version
 

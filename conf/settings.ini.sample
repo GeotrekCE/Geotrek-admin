@@ -46,7 +46,7 @@ scan_layers = scan100,scan25
 # Layers colors
 layercolor_paths = #DD00FF
 layercolor_land = #FF9700
-layercolor_others = #00FF00
+layercolor_others = #ffff00
 
 #
 #  Email settings
