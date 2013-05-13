@@ -2,13 +2,17 @@ language: python
 python:
   - "2.7"
 before_install:
-# Download bundle of python eggs, and use it as download cache
+  # Download bundle of python eggs, and use it as download cache
   - "wget http://ubuntuone.com/4XDFKwxMxCLFYNxEH5B1I2 -O /tmp/geotrek-bundle.tar.gz"
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME"
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
   ./install.sh --dev
 script: make tests
+after_success:
+  # Report coverage results to coveralls.io
+  - pip install coveralls
+  - coveralls
 notifications:
   email: false
   irc: "irc.freenode.org#geotrek"
