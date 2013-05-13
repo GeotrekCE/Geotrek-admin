@@ -4,7 +4,7 @@ python:
 before_install:
 # Download bundle of python eggs, and use it as download cache
   - "wget http://ubuntuone.com/4XDFKwxMxCLFYNxEH5B1I2 -O /tmp/geotrek-bundle.tar.gz"
-  - "tar -zx /tmp/geotrek-bundle.tar.gz --directory=$HOME"
+  - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME"
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
   ./install.sh --dev
