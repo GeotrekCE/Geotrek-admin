@@ -1,4 +1,4 @@
-**Geotrek**, a *Natural Park* Manager
+**Geotrek**, *paths* management for *National Parks* and *Tourism organizations*.
 
 =====
 SETUP
