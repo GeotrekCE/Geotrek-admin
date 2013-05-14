@@ -3651,3 +3651,9 @@ Il faut désormais ajouter une ligne dans ``etc/settings.ini`` avec une clé sec
 ---------------------------------------------------
 
 Fixé.
+
+
+#264 - Deconnexion application
+------------------------------
+
+Fixé. Désormais, quand on se déconnecte de l'application, on est redirigé vers le setting ``root_url``.
