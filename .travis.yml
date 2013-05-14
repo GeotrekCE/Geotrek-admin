@@ -7,12 +7,12 @@ before_install:
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME"
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
-  ./install.sh --dev
-script: make test
+  - ./install.sh --dev
+  - ./bin/buildout -Nvc buildout-tests.cfg
+script: coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
 after_success:
   # Report coverage results to coveralls.io
-  - pip install python-coveralls
-  - coveralls --data_file ./var/reports/coverage.xml
+  - coveralls
 notifications:
   email: false
   irc: "irc.freenode.org#geotrek"
