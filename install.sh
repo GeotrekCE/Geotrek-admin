@@ -199,7 +199,7 @@ _EOF_
             fi
         fi
     else
-        sudo apt-get install -y nginx
+        sudo apt-get install -y nginx memcached
 
         make deploy
 
