@@ -103,6 +103,7 @@ function ubuntu_precise {
     sudo dpkg-reconfigure locales
     sudo apt-get update > /dev/null
     sudo apt-get install -y python-software-properties
+    sudo apt-add-repository -y ppa:git-core/ppa
     sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
     sudo apt-add-repository -y ppa:sharpie/postgis-stable
     sudo apt-get update > /dev/null
