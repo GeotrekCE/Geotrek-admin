@@ -5,6 +5,7 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
+* Relate paperclip FileType to Structure (fixes #256)
 * Relate PhysicalTypes to Structure (fixes #255)
 * Relate Organisms to Structure (fixes #263)
 * Compute max_resolution automatically

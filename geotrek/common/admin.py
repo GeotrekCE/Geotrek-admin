@@ -1,9 +1,6 @@
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
 
-from paperclip.models import FileType
-
-from geotrek.common.models import Organism
+from .models import FileType, Organism
 
 
 class OrganismAdmin(admin.ModelAdmin):
@@ -11,7 +8,7 @@ class OrganismAdmin(admin.ModelAdmin):
     search_fields = ('organism',)
 
 
-class FileTypeAdmin(TranslationAdmin):
+class FileTypeAdmin(admin.ModelAdmin):
     list_display = ('type',)
     search_fields = ('type',)
 

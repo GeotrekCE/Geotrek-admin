@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import Manager as DefaultManager
 from django.utils.translation import ugettext_lazy as _
 
+from paperclip.models import FileType as BaseFileType
+
 from geotrek.authent.models import StructureRelated
 
 
@@ -53,3 +55,11 @@ class Organism(StructureRelated):
 
     def __unicode__(self):
         return self.organism
+
+
+class FileType(StructureRelated, BaseFileType):
+    """
+    Attachment FileTypes, related to structure and with custom table name.
+    """
+    class Meta(BaseFileType.Meta):
+        db_table = 'fl_b_fichier'

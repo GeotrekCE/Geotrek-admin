@@ -2,7 +2,7 @@ import factory
 
 from django.contrib.contenttypes.models import ContentType
 
-from paperclip.models import FileType, Attachment
+from paperclip.models import Attachment
 
 from geotrek.authent.factories import UserFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_file
@@ -17,7 +17,7 @@ class OrganismFactory(factory.Factory):
 
 
 class FileTypeFactory(factory.Factory):
-    FACTORY_FOR = FileType
+    FACTORY_FOR = models.FileType
 
     type = factory.Sequence(lambda n: u"FileType %s" % n)
 

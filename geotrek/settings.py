@@ -299,6 +299,13 @@ THUMBNAIL_ALIASES = {
     },
 }
 
+
+PAPERCLIP_CONFIG = {
+    'FILETYPE_MODEL': 'common.FileType',
+    'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
+}
+
+
 SCREAMSHOT_CONFIG = {
     'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
     'CLI_ARGS': ['--disk-cache=true', '--max-disk-cache-size=30000'],

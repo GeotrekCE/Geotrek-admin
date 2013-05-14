@@ -1,16 +1,6 @@
 from modeltranslation.translator import translator, TranslationOptions
 
-from paperclip import models as paperclip_models
-
 from geotrek.trekking import models as trekking_models
-
-
-# Common app
-
-class FileTypeTO(TranslationOptions):
-    fields = ('type', )
-
-translator.register(paperclip_models.FileType, FileTypeTO)
 
 
 # Trek app
