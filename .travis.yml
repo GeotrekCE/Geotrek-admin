@@ -9,7 +9,7 @@ before_install:
 install:
   - ./install.sh --dev
   - ./bin/buildout -Nvc buildout-tests.cfg
-script: coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
+script: ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
 after_success:
   # Report coverage results to coveralls.io
   - coveralls
