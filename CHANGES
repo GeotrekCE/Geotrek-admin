@@ -5,6 +5,7 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
+* Fix redirect to next after login (fixes #381)
 * Switch to Memcached instead of local memory in production
 * Move secret key to settings.ini
 * Relate paperclip FileType to Structure (fixes #256)
