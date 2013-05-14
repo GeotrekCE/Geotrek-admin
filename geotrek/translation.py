@@ -2,7 +2,6 @@ from modeltranslation.translator import translator, TranslationOptions
 
 from paperclip import models as paperclip_models
 
-from geotrek.land import models as land_models
 from geotrek.trekking import models as trekking_models
 
 
@@ -12,14 +11,6 @@ class FileTypeTO(TranslationOptions):
     fields = ('type', )
 
 translator.register(paperclip_models.FileType, FileTypeTO)
-
-
-# Land app
-
-class PhysicalTypeTO(TranslationOptions):
-    fields = ('name', )
-
-translator.register(land_models.PhysicalType, PhysicalTypeTO)
 
 
 # Trek app

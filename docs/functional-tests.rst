@@ -3625,3 +3625,8 @@ Fixé à la création et à l'édition.
 
 Fait.
 
+
+#255 - BDD - Passer type physique à "structure related"
+-------------------------------------------------------
+
+Fait.

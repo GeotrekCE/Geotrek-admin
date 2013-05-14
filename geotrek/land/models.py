@@ -12,7 +12,7 @@ from geotrek.common.models import Organism
 from geotrek.maintenance.models import Intervention, Project
 
 
-class PhysicalType(models.Model):
+class PhysicalType(StructureRelated):
     name = models.CharField(max_length=128, verbose_name=_(u"Name"), db_column='nom')
 
     class Meta:

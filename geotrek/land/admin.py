@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
 
-from geotrek.land.models import PhysicalType, LandType, RestrictedAreaType
+from .models import PhysicalType, LandType, RestrictedAreaType
 
 
-class PhysicalTypeAdmin(TranslationAdmin):
+class PhysicalTypeAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
