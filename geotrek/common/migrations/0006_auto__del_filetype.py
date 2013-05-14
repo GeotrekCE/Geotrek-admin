@@ -3,13 +3,19 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.db.utils import DatabaseError
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        """Fake: filetype is now part of paperclip app"""
-        pass
+        try:
+            db.delete_column('fl_b_fichier', 'type_fr')
+            db.delete_column('fl_b_fichier', 'type_it')
+            db.delete_column('fl_b_fichier', 'type_en')
+        except DatabaseError:
+            # In case they were never created pass.
+            pass
 
     def backwards(self, orm):
         """Fake: filetype is now part of paperclip app"""
