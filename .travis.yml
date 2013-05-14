@@ -13,7 +13,8 @@ script: ./bin/coverage run ./bin/django test authent core land maintenance trekk
 after_success:
   # Report coverage results to coveralls.io
   - ./bin/coverage report -m 
-  - ./bin/coveralls
+  - pip install coveralls
+  - coveralls
 notifications:
   email: false
   irc: "irc.freenode.org#geotrek"

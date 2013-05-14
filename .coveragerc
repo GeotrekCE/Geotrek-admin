@@ -1,14 +1,9 @@
-[run]
-omit =
-    */tests*
-    */migrations/*
-
 [report]
 omit =
-    /home/*/buildout/eggs/*
-    /usr/*
-    /var/lib/hudson/buildout/*
-    eggs/*
-    parts/*
+    */tests*
+    */migrations*
+    lib/eggs/*
+    lib/develop-eggs/*
+    lib/parts/*
 
 ignore_errors = true
