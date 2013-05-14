@@ -25,6 +25,9 @@ dbpassword = geotrek
 dbhost = localhost
 dbport = 5432
 
+# API secret key
+secret_key = change_this_key_with_a_value_of_your_choice
+
 #
 #  GIS settings
 #..........................

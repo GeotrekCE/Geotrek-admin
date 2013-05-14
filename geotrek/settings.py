@@ -129,7 +129,7 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 COMPRESSOR_ENABLED = False
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '4b1f@)*y$hobaevq9j&amp;hdph%&amp;!go0ud1qn0a)2&amp;l$np*el3uj&amp;'
+SECRET_KEY = 'public_key'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

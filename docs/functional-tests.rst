@@ -3636,3 +3636,12 @@ Fait.
 -------------------------------------------------------
 
 Fait.
+
+Clé secrète dans settings.ini
+-----------------------------
+
+Il faut désormais ajouter une ligne dans ``etc/settings.ini`` avec une clé secrète de votre choix.
+
+::
+
+    secret_key = 8b20K49Y7sB6vYVFMk2bDK1R5HC845dT
