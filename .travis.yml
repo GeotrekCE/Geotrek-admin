@@ -12,6 +12,7 @@ install:
 script: ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
 after_success:
   # Report coverage results to coveralls.io
+  - ./bin/coverage report -m 
   - ./bin/coveralls
 notifications:
   email: false
