@@ -1,0 +1,35 @@
+===============
+TROUBLESHOOTING
+===============
+
+Installation script hangs on syncdb --migrate
+---------------------------------------------
+
+This command is in charge of changing the database schema [1].
+
+Make sure you close every *pgADMIN* session on the database while upgrading.
+
+[1] http://south.aeracode.org/ticket/209
+
+
+No paths in list, where table contains records
+----------------------------------------------
+
+Check that the projection of your data is correct. Check that the extent of the map covers your data.
+
+Check the value of the ``spatial_extent_wgs84``` setting.
+
+
+No background tiles
+-------------------
+
+Check the values of your WMS settings (server name should end with ``?``, layers names should exist on server).
+
+Check the values in the generated TileCache configuration in ``etc/tilecache.cfg``.
+
+
+Error at loading DEM
+--------------------
+
+Check that your extent (``spatial_extent``) is completely contained in your DEM.
+
