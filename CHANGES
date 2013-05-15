@@ -5,6 +5,7 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
+* Run API urls on different workers (ref #672)
 * Fix redirect to root url after logout (fixes #264)
 * Fix redirect to next after login (fixes #381)
 * Switch to Memcached instead of local memory in production

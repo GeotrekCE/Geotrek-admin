@@ -1,5 +1,9 @@
 upstream app_server {
-    server ${parts['gunicorn-django-conf'].bind} fail_timeout=0;
+    server ${parts['gunicorn-app-conf'].bind} fail_timeout=0;
+}
+
+upstream api_server {
+    server ${parts['gunicorn-api-conf'].bind} fail_timeout=0;
 }
 
 upstream tile_server {
@@ -64,6 +68,12 @@ server {
         rewrite  ^${parts['settings'].rooturl}/(.*)$$  /$$1  permanent;
         {% end %}
 
+        location ~ ${parts['settings'].rooturl}/api {
+            proxy_pass http://api_server;
+            proxy_read_timeout ${parts['gunicorn-api-conf'].timeout}s;
+        }
+
         proxy_pass  http://app_server;
+        proxy_read_timeout ${parts['gunicorn-app-conf'].timeout}s;
     }
 }

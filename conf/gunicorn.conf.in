@@ -3,5 +3,5 @@ bind = "${options.bind}"
 pidfile = "${options.pidfile}"
 workers = ${options.workers}
 errorlog = "${options.errorlog}"
-timeout = 120
+timeout = ${options.timeout}
 debug = False
