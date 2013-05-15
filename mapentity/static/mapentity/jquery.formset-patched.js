@@ -116,7 +116,7 @@
             if (hasChildElements(row)) {
                 row.addClass(options.formCssClass);
 
-                // Hack Caminae story #514
+                // Hack Geotrek story #514
                 // See https://code.google.com/p/django-dynamic-formset/issues/detail?id=54
                 //if (row.is(':visible')) {
                 if (true) {
