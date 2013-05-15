@@ -19,4 +19,4 @@ CHANGELOG
 * Fix regex for RAISE NOTICE (fixes #673)
 * Initial public version
 
-See project history in `docs/functional-tests.rst`.
+See project history in `docs/history.rst` (French).

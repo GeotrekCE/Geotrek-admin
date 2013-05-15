@@ -51,6 +51,7 @@ First, copy your old configuration and uploaded files to your new folder.
     cp -R ../previous-version/var/tiles var/tiles
     cp -R ../previous-version/var/media var/media
 
+
 Shutdown previous running version, and run install :
 
 ::
@@ -65,8 +66,12 @@ Shutdown previous running version, and run install :
     # Reload configuration
     sudo service supervisor restart
 
+    # Empty cache
+    sudo service memcached restart
 
-Or instead, if you prefer, you can overwrite the source code and run ``./install.sh``.
+:note:
+
+    Shutting down current instead may not be necessary. But this allows us to keep a generic software update procedure.
 
 
 Tips and Tricks
