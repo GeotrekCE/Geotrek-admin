@@ -81,7 +81,7 @@ or change its password :
 
 You might also need to deploy logo images in the following places :
 
-* ``var/media/upload/logo-header.png``
+* ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
 
 
