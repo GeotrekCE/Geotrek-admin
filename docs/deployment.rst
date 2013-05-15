@@ -137,3 +137,40 @@ Expected columns in table/view are :
     Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
 
+
+===========
+MAINTENANCE
+===========
+
+
+Operating system updates
+------------------------
+
+::
+
+    sudo apt-get update
+    sudo apt-get dist-upgrade
+
+
+Application backup
+------------------
+
+Database
+
+::
+
+    sudo su postgres
+    pg_dump -Fc geotrekdb > `date +%Y%m%d%H%M`-database.backup
+
+Media files
+
+::
+
+    tar -zcvf `date +%Y%m%d%H%M`-media.tar.gz var/media/
+
+
+PostgreSQL optimization
+-----------------------
+
+* Increase ``work_mem`` according to your RAM (e.g. 30%)
+
