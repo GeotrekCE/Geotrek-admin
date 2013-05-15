@@ -72,18 +72,6 @@ FormField.makeModule = function(module, module_settings) {
         else {
             snapObserver = new L.SnapObserver(map, objectsLayer);
         }
-        if (window.DEBUG) {
-            snapObserver.guidesLayer().on('click', function (e) {
-            L.circleMarker(
-                $(e.layer.getLatLngs()).first()[0],
-                {fillColor: 'green', radius:5, color: 'green', opacity:1}
-            ).addTo(map);
-            L.circleMarker(
-                $(e.layer.getLatLngs()).last()[0],
-                {fillColor: 'red', radius:5, color: 'red', opacity:1}
-            ).addTo(map);
-            });
-        }
         return snapObserver;
     };
 
