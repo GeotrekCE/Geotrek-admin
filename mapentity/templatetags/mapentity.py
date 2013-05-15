@@ -1,3 +1,5 @@
+import os
+
 from django import template
 from django.conf import settings
 from django.template.base import TemplateDoesNotExist
@@ -55,3 +57,10 @@ def latlngbounds(obj, fieldname='geom'):
     else:
         extent = list(obj.extent)
     return [[extent[1], extent[0]], [extent[3], extent[2]]]
+
+
+@register.simple_tag()
+def media_static_fallback(media_file, static_file, *args, **kwarg):
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, media_file)):
+        return os.path.join(settings.MEDIA_URL, media_file)
+    return os.path.join(settings.STATIC_URL, static_file)

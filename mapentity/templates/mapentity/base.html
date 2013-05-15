@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load static i18n leaflet_tags compress %}
+{% load static i18n leaflet_tags compress mapentity %}
 
 
 {% block head %}
 
   <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
-  <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+  <link rel="icon" type="image/png" href="{% media_static_fallback "upload/favicon.png" "images/favicon.png" %}" />
 
   {% compress css %}
     {% if DEBUG %}
@@ -47,12 +47,6 @@
     {% block navbar %}
     <div class="navbar">
       <div class="navbar-inner">
-
-        {% block brand %}
-            {% if not request.user.is_authenticated %}
-                <a class="brand"><img src="{{ MEDIA_URL }}upload/logo-header.png" /></a>
-            {% endif %}
-        {% endblock brand %}
 
         <ul id="historylist" class="nav">
           {% if request.user.is_authenticated %}
