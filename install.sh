@@ -104,12 +104,11 @@ function ubuntu_precise {
     sudo apt-get update > /dev/null
     sudo apt-get install -y python-software-properties
     sudo apt-add-repository -y ppa:git-core/ppa
-    sudo apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable
-    sudo apt-add-repository -y ppa:sharpie/postgis-stable
+    sudo apt-add-repository -y ppa:ubuntugis/ppa
     sudo apt-get update > /dev/null
     sudo apt-get install -y git gettext python-virtualenv build-essential python-dev unzip
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
-    sudo apt-get install -y postgresql-client postgis-bin gdal-bin
+    sudo apt-get install -y postgresql-client gdal-bin
 
     if ! $dev ; then
       # convertit dependencies
@@ -137,7 +136,7 @@ function ubuntu_precise {
     
     if [ "${dbhost}" == "localhost" ] ; then
         echo "Installing postgresql server locally..."
-        sudo apt-get install -y postgresql postgresql-9.1-postgis2 postgresql-server-dev-9.1
+        sudo apt-get install -y postgresql postgis postgresql-server-dev-9.1
         
         # Activate PostGIS in database
         if ! database_exists ${dbname}
