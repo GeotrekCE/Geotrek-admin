@@ -65,9 +65,33 @@ FormField.makeModule = function(module, module_settings) {
                 style: L.Util.extend(window.SETTINGS.map.styles.path, {clickable: true})
             });
             map.addLayer(pathsLayer);
+
             snapObserver = new L.SnapObserver(map, pathsLayer);
             // Start ajax loading at last
             pathsLayer.load(module_settings.enablePathSnapping.pathsLayer_url, true);
+
+
+            // Propagate mouseover events, from the Path layer (on top)
+            // to the objects layer (below).
+            // This fixes bug #680
+            (function (){
+                // Reference to the object layer hovered before the path is hovered
+                var overlapped = null;
+                objectsLayer.on('mouseover', function (e) {
+                    overlapped = e.layer;
+                });
+                // On path hover, propagate events to overlapped layer
+                pathsLayer.on('mouseover mouseout', function (e) {
+                    if (overlapped !== null) {
+                        e.layer = overlapped;
+                        e.target = overlapped;
+                        overlapped.fire(e.type, e);
+                    }
+                    if (e.type == 'mouseout') {
+                        overlapped = null;
+                    }
+                });
+            })();
         }
         else {
             snapObserver = new L.SnapObserver(map, objectsLayer);
@@ -117,6 +141,10 @@ FormField.makeModule = function(module, module_settings) {
             }),
             url = module_settings.addObjectsLayer.getUrl(modelname);
         map.addLayer(objectsLayer);
+        objectsLayer.on('loaded', function() {
+            // Make sure it stays below other layers
+            objectsLayer.bringToBack();
+        });
         objectsLayer.load(url);
         return objectsLayer;
     };
@@ -159,6 +187,9 @@ FormField.makeModule = function(module, module_settings) {
         });
         
         objectsLayer.on('loaded', function() {
+            // Make sure it stays above other layers
+            objectsLayer.bringToFront();
+
             // Objects layer is ready, load graph !
             objectsLayer.fire('data:loading');
 

@@ -3657,3 +3657,9 @@ Fixé.
 ------------------------------
 
 Fixé. Désormais, quand on se déconnecte de l'application, on est redirigé vers le setting ``root_url``.
+
+
+#680 - Interférences entre le survol des objets et des chemins pour la création de topologies
+---------------------------------------------------------------------------------------------
+
+Fixé.
