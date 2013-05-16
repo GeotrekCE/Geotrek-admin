@@ -199,6 +199,8 @@ _EOF_
             fi
         fi
     else
+        # Production server specifics
+        sudo apt-get install -y ntp fail2ban
         sudo apt-get install -y nginx memcached
 
         make deploy
