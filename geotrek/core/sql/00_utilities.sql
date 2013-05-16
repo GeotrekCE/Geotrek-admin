@@ -119,7 +119,7 @@ BEGIN
     result.negative_gain := 0;
 
     -- Compute slope:
-    IF ST_GeometryType(geom) = 'ST_LineString' THEN
+    IF ST_GeometryType(geom) = 'ST_LineString' AND ST_Length2D(geom) > 0 THEN
         SELECT (ST_ZMax(geom) - ST_ZMin(geom))/ST_Length2D(geom) INTO result.slope;
     ELSE
         result.slope := 0.0;
