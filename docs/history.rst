@@ -3663,3 +3663,9 @@ Fixé. Désormais, quand on se déconnecte de l'application, on est redirigé ve
 ---------------------------------------------------------------------------------------------
 
 Fixé.
+
+
+#599 - OFFRE de rando - Noms longs
+----------------------------------
+
+Fixé. Les noms longs dans la liste sont désormais "élipsés" avec "...".
