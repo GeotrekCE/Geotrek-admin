@@ -3669,3 +3669,10 @@ Fixé.
 ----------------------------------
 
 Fixé. Les noms longs dans la liste sont désormais "élipsés" avec "...".
+
+
+#683 - Durée en minutes, heures et jour
+---------------------------------------
+
+* Champ durée passé en *flottant*.
+* Affiché en minutes, heures et jours sur la fiche détail.

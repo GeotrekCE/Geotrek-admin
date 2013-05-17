@@ -17,6 +17,8 @@ from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory, ThemeFactory)
 
+from ..templatetags import trekking_tags
+
 
 class TrekTest(TestCase):
     def test_is_publishable(self):
@@ -292,3 +294,13 @@ class RelatedObjectsTest(TestCase):
         self.assertEqual(len(trek.attachments), 2)
         self.assertEqual(len(trek.pictures), 1)
         self.assertNotEqual(trek.thumbnail, None)
+
+
+class TemplateTagsTest(TestCase):
+    def test_duration(self):
+        self.assertEqual(u"15 min.", trekking_tags.duration(0.25))
+        self.assertEqual(u"30 min.", trekking_tags.duration(0.5))
+        self.assertEqual(u"1H", trekking_tags.duration(1))
+        self.assertEqual(u"1H45", trekking_tags.duration(1.75))
+        self.assertEqual(u"1 day", trekking_tags.duration(13))
+        self.assertEqual(u"2 days", trekking_tags.duration(48))

@@ -106,8 +106,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                help_text=_(u"Any specific infrastructure"))
-    duration = models.IntegerField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
-                                   help_text=_(u"In hours"))
+    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
+                                 help_text=_(u"In hours"))
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',

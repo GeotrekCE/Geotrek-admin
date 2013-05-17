@@ -1,5 +1,5 @@
 {% extends "mapentity/entity_detail.html" %}
-{% load i18n l10n static field_verbose_name thumbnail %}
+{% load i18n l10n static trekking_tags field_verbose_name thumbnail %}
 
 
 {% block download %}
@@ -49,7 +49,7 @@
         </tr>
         <tr>
             <th>{{ trek|verbose:"duration" }}</th>
-            <td>{{ trek.duration }}h</td>
+            <td>{{ trek.duration|duration }}</td>
         </tr>
         {% include "core/elevationinfo_fragment.html" %}
         <tr>
