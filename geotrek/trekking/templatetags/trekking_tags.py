@@ -14,6 +14,8 @@ def duration(value):
     seconds = timedelta(minutes=float(value) * 60)
     duration = datetime(1, 1, 1) + seconds
     days = duration.day - 1
+    if days >= 8:
+        return _("More than %s days") % 8
     if days > 1:
         return _("%s days") % days
     if days == 1 or 12 <= duration.hour < 24:

@@ -5,7 +5,7 @@ CHANGELOG
 0.17.0 (unreleased)
 -------------------
 
-* Show trek duration as human readable in minutes, hours and days (fixes #683)
+* Show trek duration as human readable in minutes, hours and days (fixes #471, #683)
 * Fix hover on paths that interfered with clic for topology creation (fixes #680)
 * Run API urls on different workers (ref #672)
 * Fix redirect to root url after logout (fixes #264)
