@@ -158,9 +158,9 @@ class GPXSerializer(Serializer):
     def _point_to_GPX(self, point, klass=gpxpy.gpx.GPXWaypoint):
         if isinstance(point, (tuple, list)):
             point = Point(*point, srid=settings.SRID)
-        x, y = point.transform(4326, clone=True)  # transformation: gps uses 4326
-        z = point.z  # transform looses the Z parameter
-        return klass(latitude=y, longitude=x, elevation=z)
+        newpoint = point.transform(4326, clone=True)  # transformation: gps uses 4326
+        # transform looses the Z parameter
+        return klass(latitude=newpoint.y, longitude=newpoint.x, elevation=point.z)
 
     def geomToGPX(self, geom, name, description):
         """Convert a geometry to a gpx entity.
