@@ -1,4 +1,5 @@
 {% load leaflet_tags geojson_tags static mapentity %}
+{% load url from future %}
 
 {% leaflet_map module fitextent=False %}
 
@@ -23,12 +24,12 @@ var {{ module }}_settings = {
     },
     {% if path_snapping %}
     'enablePathSnapping': {
-        'pathsLayer_url': "{% url core:path_layer %}"
+        'pathsLayer_url': "{% url 'core:path_layer' %}"
     },
     {% endif %}
     'addObjectsLayer': {
         'getUrl': function(modelname) {
-            return '{% url core:path_layer %}'.replace(new RegExp('path', 'g'), modelname);
+            return '{% url 'core:path_layer' %}'.replace(new RegExp('path', 'g'), modelname);
         }
     },
     'init': {

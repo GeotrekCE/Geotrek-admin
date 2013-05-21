@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n leaflet_tags compress mapentity %}
+{% load url from future %}
 
 
 {% block head %}
@@ -52,18 +53,18 @@
           {% if request.user.is_authenticated %}
           <li class="history {% if view == "list" %}{{ modelname }} active{% endif %}">
             <div id="entitylist-dropdown" class="btn-group">
-                  <button class="btn {% if view == "list" %}disabled{% endif %}" {% if view != "list" %} onclick="javascript:location='{% url home %}';"{% endif %}>{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
+                  <button class="btn {% if view == "list" %}disabled{% endif %}" {% if view != "list" %} onclick="javascript:location='{% url 'home' %}';"{% endif %}>{% trans "List" %} <span id="nbresults" class="badge">?</span></button>
                   <button class="btn dropdown-toggle {% if view == "list" %}disabled{% endif %}" data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a href="{% url core:path_list %}"><img src="{% static "images/path-16.png" %}"/> {% trans "Path" %}</a></li>
-                    <li><a href="{% url maintenance:intervention_list %}"><img src="{% static "images/intervention-16.png" %}"/> {% trans "Intervention" %}</a></li>
-                    <li><a href="{% url maintenance:project_list %}"><img src="{% static "images/project-16.png" %}"/> {% trans "Project" %}</a></li>
-                    <li><a href="{% url infrastructure:signage_list %}"><img src="{% static "images/signage-16.png" %}"/> {% trans "Signage" %}</a></li>
-                    <li><a href="{% url infrastructure:infrastructure_list %}"><img src="{% static "images/infrastructure-16.png" %}"/> {% trans "Infrastructure" %}</a></li>
-                    <li><a href="{% url trekking:trek_list %}"><img src="{% static "images/trek-16.png" %}"/> {% trans "Trek" %}</a></li>
-                    <li><a href="{% url trekking:poi_list %}"><img src="{% static "images/poi-16.png" %}"/> {% trans "POI" %}</a></li>
+                    <li><a href="{% url 'core:path_list' %}"><img src="{% static "images/path-16.png" %}"/> {% trans "Path" %}</a></li>
+                    <li><a href="{% url 'maintenance:intervention_list' %}"><img src="{% static "images/intervention-16.png" %}"/> {% trans "Intervention" %}</a></li>
+                    <li><a href="{% url 'maintenance:project_list' %}"><img src="{% static "images/project-16.png" %}"/> {% trans "Project" %}</a></li>
+                    <li><a href="{% url 'infrastructure:signage_list' %}"><img src="{% static "images/signage-16.png" %}"/> {% trans "Signage" %}</a></li>
+                    <li><a href="{% url 'infrastructure:infrastructure_list' %}"><img src="{% static "images/infrastructure-16.png" %}"/> {% trans "Infrastructure" %}</a></li>
+                    <li><a href="{% url 'trekking:trek_list' %}"><img src="{% static "images/trek-16.png" %}"/> {% trans "Trek" %}</a></li>
+                    <li><a href="{% url 'trekking:poi_list' %}"><img src="{% static "images/poi-16.png" %}"/> {% trans "POI" %}</a></li>
                   </ul>
             </div>
           </li>
@@ -100,13 +101,13 @@
                     {{ request.user }}&nbsp;<span class="badge badge-info">{{ request.user.profile.structure }}</span> <b class="caret"></b></a>
                <ul class="dropdown-menu">
                   {% if request.user.is_staff %}
-                    <li><a href="{% url admin:index %}">{% trans "Admin" %}</a></li>
+                    <li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
                     <li class="divider"></li>
                   {% endif %}
                   <li class="{% block nav-logbook %}disabled{% endblock nav-logbook %}"><a href="#">{% trans "Logbook" %}</a></li>
                   <li class="divider"></li>
                   
-                  <li><a href="{% url logout %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
+                  <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
                </ul>
             </li>
             {% endif %}  
@@ -166,7 +167,7 @@
             L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
             // Global Javascript
             $.ajax({
-              url: "{% url common:settings_json %}",
+              url: "{% url 'common:settings_json' %}",
               async: false,
               dataType: 'json',
               success: function (data) {

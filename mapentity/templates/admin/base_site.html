@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% load static i18n %}
+{% load url from future %}
 
 {% block title %}{{ title }} | {{ TITLE }} {% trans 'administration' %}{% endblock %}
 
@@ -12,9 +13,9 @@
 {% endblock branding %}
 
 {% block userlinks %}
-    <a href="{% url home %}">{% trans 'Back to application' %}</a> /
-    <a href="{% url admin:password_change %}">{% trans 'Change password' %}</a> /
-    <a href="{% url admin:logout %}">{% trans 'Log out' %}</a>
+    <a href="{% url 'home' %}">{% trans 'Back to application' %}</a> /
+    <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
