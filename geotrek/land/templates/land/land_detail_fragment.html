@@ -20,7 +20,7 @@
         <th>{% trans "Land edges" %}</th>
         <td>
             {% if user.profile.is_path_manager %}
-            <p class="autohide"><a href="{% url land:landedge_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'land:landedge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add land edge" %}</a>
             </p>
             {% endif %}
@@ -34,7 +34,7 @@
         <th>{% trans "Physical edges" %}</th>
         <td>
             {% if user.profile.is_path_manager %}
-            <p class="autohide"><a href="{% url land:physicaledge_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'land:physicaledge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add physical edge" %}</a>
             </p>
             {% endif %}
@@ -47,7 +47,7 @@
     <tr>
         <th>{% trans "Competence edges" %}</th>
         <td>
-            <p class="autohide"><a href="{% url land:competenceedge_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'land:competenceedge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add competence edge" %}</a>
             </p>
             {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.competence_edges %}
@@ -60,7 +60,7 @@
         <th>{% trans "Work management edges" %}</th>
         <td>
             {% if user.profile.is_path_manager %}
-            <p class="autohide"><a href="{% url land:workmanagementedge_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'land:workmanagementedge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add work management edge" %}</a>
             </p>
             {% endif %}
@@ -74,7 +74,7 @@
         <th>{% trans "Signage management edges" %}</th>
         <td>
             {% if user.profile.is_path_manager %}
-            <p class="autohide"><a href="{% url land:signagemanagementedge_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'land:signagemanagementedge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add signage management edge" %}</a>
             </p>
             {% endif %}

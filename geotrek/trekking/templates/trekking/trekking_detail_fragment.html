@@ -6,7 +6,7 @@
         <th>{% trans "Treks" %}</th>
         <td>
             {% if user.profile.is_trekking_manager %}
-            <p class="autohide"><a href="{% url trekking:trek_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'trekking:trek_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new trek" %}</a>
             </p>
             {% endif %}
@@ -26,7 +26,7 @@
         <th>{% trans "POIs" %}</th>
         <td>
             {% if user.profile.is_trekking_manager %}
-            <p class="autohide"><a href="{% url trekking:poi_add %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'trekking:poi_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new POI" %}</a>
             </p>
             {% endif %}

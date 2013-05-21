@@ -8,7 +8,7 @@
         <th>{% trans "Interventions" %}</th>
         <td>
             {% if user.profile.is_editor %}
-            <p><a href="{% url maintenance:intervention_add %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+            <p><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
             </p>
             {% endif %}
