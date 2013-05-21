@@ -4,7 +4,7 @@ import urllib2
 import logging
 import traceback
 from datetime import datetime
-
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,6 @@ from django.db.models.query import QuerySet
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseNotFound, HttpResponseServerError)
 from django.utils.translation import ugettext_lazy as _
-from django.utils import simplejson
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -72,12 +71,12 @@ class DjangoJSONEncoder(DateTimeAwareJSONEncoder):
             # `default` must return a python serializable
             # structure, the easiest way is to load the JSON
             # string produced by `serialize` and return it
-            return simplejson.loads(serialize('json', obj))
+            return json.loads(serialize('json', obj))
         return super(DjangoJSONEncoder, self).default(obj)
 
 # partial function, we can now use dumps(my_dict) instead
 # of dumps(my_dict, cls=DjangoJSONEncoder)
-json_django_dumps = curry(simplejson.dumps, cls=DjangoJSONEncoder)
+json_django_dumps = curry(json.dumps, cls=DjangoJSONEncoder)
 
 
 class JSONResponseMixin(object):
@@ -189,10 +188,10 @@ def map_screenshot(request):
         assert len(printcontext) < 512, "Print context is way too big."
 
         # Prepare context, extract and add infos
-        context = simplejson.loads(printcontext.encode("utf-8"))
+        context = json.loads(printcontext.encode("utf-8"))
         map_url = context.pop('url').split('?', 1)[0]
         context['print'] = True
-        printcontext = simplejson.dumps(context)
+        printcontext = json.dumps(context)
         logger.debug("Print context received : %s" % printcontext)
 
         # Provide print context to destination
