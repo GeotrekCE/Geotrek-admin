@@ -12,7 +12,7 @@ $(function() {
     /* 
      * Load altimetric profile from JSON
      */
-    $.getJSON("{% url 'profile_url' object.pk %}", function loadprofile(data) {
+    $.getJSON("{% url profile_url object.pk %}", function loadprofile(data) {
         $('#profilealtitude').sparkline(data.profile, {tooltipSuffix: ' m', width: 300, height: 100});
         $('#profilealtitude').bind('sparklineRegionChange', function(ev) {
             var sparkline = ev.sparklines[0],

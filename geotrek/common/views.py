@@ -1,4 +1,4 @@
-from django.utils import simplejson
+import json
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.views.generic import TemplateView
@@ -89,4 +89,4 @@ def settings_json(request):
     dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
                                      default=settings.LANGUAGE_CODE)
 
-    return HttpJSONResponse(simplejson.dumps(dictsettings))
+    return HttpJSONResponse(json.dumps(dictsettings))

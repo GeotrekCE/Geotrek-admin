@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.conf import settings
-from django.utils import simplejson
+import json
 from django.contrib.gis.geos import Point, LineString
 
 from geotrek.common.utils import dbnow, almostequal
@@ -474,14 +474,14 @@ class TopologySerialization(TestCase):
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path)
         test_objdict['positions']['0'] = [0.0, 1.0]
-        objdict = simplejson.loads(topo.serialize())
+        objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
 
         # +<========|+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path, start=1.0, end=0.0)
         test_objdict['positions']['0'] = [1.0, 0.0]
-        objdict = simplejson.loads(topo.serialize())
+        objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
 
         # +|========>+<========|+
@@ -491,7 +491,7 @@ class TopologySerialization(TestCase):
         topo.add_path(path2, start=1.0, end=0.0)
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [0.0, 1.0], '1': [1.0, 0.0]}
-        objdict = simplejson.loads(topo.serialize())
+        objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
 
         # +<========|+|========>+
@@ -500,7 +500,7 @@ class TopologySerialization(TestCase):
         topo.add_path(path2, start=0.0, end=1.0)
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [1.0, 0.0], '1': [0.0, 1.0]}
-        objdict = simplejson.loads(topo.serialize())
+        objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
 
     def test_serialize_point(self):
@@ -509,7 +509,7 @@ class TopologySerialization(TestCase):
         topology.add_path(path, start=0.5, end=0.5)
         fieldvalue = topology.serialize()
         # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
-        field = simplejson.loads(fieldvalue)
+        field = json.loads(fieldvalue)
         self.assertTrue(almostequal(field['lat'],  -5.983))
         self.assertTrue(almostequal(field['lng'],  -1.363))
         self.assertEqual(field['kind'],  "TOPOLOGY")

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.db import connection
-from django.utils import simplejson
+import json
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
@@ -436,8 +436,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         objdict = serialized
         if isinstance(serialized, basestring):
             try:
-                objdict = simplejson.loads(serialized)
-            except simplejson.JSONDecodeError, e:
+                objdict = json.loads(serialized)
+            except ValueError as e:
                 raise ValueError("Invalid serialization: %s" % e)
 
         if not isinstance(objdict, (list,)):
@@ -561,7 +561,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                     objdict.append(current)
                     current = {}
                     ipath = 0
-        return simplejson.dumps(objdict)
+        return json.dumps(objdict)
 
 
 class PathAggregationManager(models.GeoManager):
