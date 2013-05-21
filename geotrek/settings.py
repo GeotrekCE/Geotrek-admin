@@ -80,9 +80,9 @@ USE_TZ = True
 DATE_INPUT_FORMATS = ('%d/%m/%Y',)
 
 ROOT_URL = '/'
-LOGIN_URL = '/login/'
-LOGOUT_URL = '/logout/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'home'
 
 TEMP_DIR = '/tmp'
 
