@@ -19,6 +19,8 @@ from geotrek.core.models import Path, Topology
 from geotrek.common.utils import elevation_profile, classproperty
 from geotrek.maintenance.models import Intervention, Project
 
+from .templatetags import trekking_tags
+
 
 logger = logging.getLogger(__name__)
 
@@ -331,6 +333,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
+
+    @property
+    def duration_pretty(self):
+        return trekking_tags.duration(self.duration)
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
