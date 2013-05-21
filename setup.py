@@ -15,7 +15,7 @@ setup(
                      open(os.path.join(here, 'CHANGES')).read(),
     license='LPGL, see LICENSE file.',
     install_requires=[
-        'Django == 1.4.3',
+        'Django >= 1.4',
         'GDAL == 1.9.1',
         'gpxpy == 0.7.1',
         'appy == 0.8.3',
