@@ -42,7 +42,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
                'networks', 'advice', 'ambiance', 'difficulty',
                'themes', 'usages', 'access', 'route',
-               'web_links', 'is_park_centered', 'disabled_infrastructure',
+               'web_links', 'is_park_centered', 'disabled_infrastructure', 'public_transport',
                'parking_location', 'thumbnail', 'pictures',
                'cities', 'districts', 'relationships', 'map_image_url']
 
