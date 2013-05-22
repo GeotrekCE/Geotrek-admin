@@ -2,8 +2,8 @@
 CHANGELOG
 =========
 
-0.17.1 (unreleased)
------------------
+0.17.1 (2013-05-22)
+-------------------
 
 * Add pretty trek duration in JSON
 * Add public transport in trek JSON
