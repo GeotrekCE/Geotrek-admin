@@ -67,6 +67,7 @@ class TrekForm(TopologyForm):
                     'networks',
                     'usages',
                     'web_links',
+                    'information_desk',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"

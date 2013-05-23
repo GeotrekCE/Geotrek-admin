@@ -135,6 +135,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            related_name='related_treks+')  # Hide reverse attribute
+    information_desk = models.ForeignKey('InformationDesk', related_name='treks',
+                                         blank=True, null=True, verbose_name=_(u"Information Desk"), db_column='renseignement')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -550,6 +552,22 @@ class Theme(models.Model):
                 image = image.crop((0, 0, w / 2, h))
             image.save(output)
         return open(output)
+
+
+class InformationDesk(models.Model):
+
+    name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
+                                   help_text=_(u"Brief description"))
+
+    class Meta:
+        db_table = 'o_b_renseignement'
+        verbose_name = _(u"Information desk")
+        verbose_name_plural = _(u"Information desks")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class POIManager(models.GeoManager):
