@@ -6,6 +6,7 @@ CHANGELOG
 -----------------
 
 * Add pretty trek duration in JSON
+* Add information desk field in Trek (fixes #624)
 
 
 0.17 (2013-05-17)

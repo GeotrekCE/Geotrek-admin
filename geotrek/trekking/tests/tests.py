@@ -15,7 +15,8 @@ from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.land.factories import DistrictFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
-                                        TrekNetworkFactory, UsageFactory, WebLinkFactory, ThemeFactory)
+                                        TrekNetworkFactory, UsageFactory, WebLinkFactory,
+                                        ThemeFactory, InformationDeskFactory)
 
 from ..templatetags import trekking_tags
 
@@ -106,6 +107,7 @@ class TrekViewsTest(CommonTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
+            'information_desk': InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
 
             'trek_relationship_a-TOTAL_FORMS': '2',

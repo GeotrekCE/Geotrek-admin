@@ -40,7 +40,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
                'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
-               'networks', 'advice', 'ambiance', 'difficulty',
+               'networks', 'advice', 'ambiance', 'difficulty', 'information_desk',
                'themes', 'usages', 'access', 'route',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',

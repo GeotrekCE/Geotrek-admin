@@ -52,6 +52,13 @@ class WebLinkFactory(factory.Factory):
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
 
 
+class InformationDeskFactory(factory.Factory):
+    FACTORY_FOR = models.InformationDesk
+
+    name = factory.Sequence(lambda n: u"information desk name %s" % n)
+    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
+
+
 class TrekFactory(TopologyFactory):
     FACTORY_FOR = models.Trek
 
@@ -84,6 +91,7 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
+    information_desk = factory.SubFactory(InformationDeskFactory)
 
 
 class TrekRelationshipFactory(factory.Factory):
