@@ -50,7 +50,7 @@ clean: clean_harmless
 .PHONY: all_makemessages all_compilemessages
 
 all_makemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
 
 all_compilemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done

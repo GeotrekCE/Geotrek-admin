@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2013-05-23 15:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: decorators.py:31
 msgid ""
 "Access to the requested resource is restricted to path managers. You have "
 "been redirected."
@@ -25,7 +24,6 @@ msgstr ""
 "L'accès à cette ressource est restreinte aux référants sentiers.Vous avez "
 "été redirigé."
 
-#: decorators.py:37
 msgid ""
 "Access to the requested resource is restricted to communication managers. "
 "You have been redirected."
@@ -33,14 +31,12 @@ msgstr ""
 "L'accès à cette ressource est restreinte aux référants communication.Vous "
 "avez été redirigé."
 
-#: decorators.py:43
 msgid ""
 "Access to the requested resource is restricted to work editor. You have been "
 "redirected."
 msgstr ""
 "L'accès à cette ressource est restreinte aux éditeurs.Vous avez été redirigé."
 
-#: decorators.py:63
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."
@@ -48,47 +44,36 @@ msgstr ""
 "L'accès à cette ressource est restreinte par structure. Vous avez été "
 "redirigé."
 
-#: models.py:28
 msgid "Nom"
 msgstr "Name"
 
-#: models.py:34
 msgid "Structure"
 msgstr "Structure"
 
-#: models.py:35
 msgid "Structures"
 msgstr "Structures"
 
-#: models.py:68 models.py:85
 msgid "Related structure"
 msgstr "Structure liée"
 
-#: models.py:84
 msgid "Related structures"
 msgstr "Structure liée"
 
-#: models.py:94
 msgid "Language"
 msgstr "Langue"
 
-#: models.py:98
 msgid "User's profile"
 msgstr "Profil utilisateur"
 
-#: models.py:99
 msgid "User's profiles"
 msgstr "Profils utilisateur"
 
-#: models.py:102
 #, python-format
 msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
 
-#: tests/tests.py:39 tests/tests.py:49 tests/tests.py:56
 msgid "Logout"
 msgstr ""
 
-#: tests/tests.py:63 tests/tests.py:68
 msgid "Admin"
 msgstr ""

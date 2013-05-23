@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2013-05-23 15:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,280 +17,196 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: filters.py:24
 msgid "Year"
 msgstr "Année"
 
-#: filters.py:36
 msgid "Year of activity"
 msgstr "Année d'activité"
 
-#: forms.py:57
 msgid "Main"
 msgstr "Basique"
 
-#: forms.py:57
 msgid "Advanced"
 msgstr "Avancé"
 
-#: forms.py:79 models.py:268 models.py:275
-#: templates/maintenance/intervention_detail.html:58
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
-#: forms.py:109
 #, python-format
 msgid "On %s"
 msgstr "Sur %s"
 
-#: forms.py:165 models.py:471 templates/maintenance/project_detail.html:66
 msgid "Fundings"
 msgstr "Financements"
 
-#: models.py:18
 msgid "Recurrent intervention"
 msgstr "Entretien courant"
 
-#: models.py:19
 msgid "Recurrent"
 msgstr "Récurrent"
 
-#: models.py:20 models.py:287
 msgid "Name"
 msgstr "Nom"
 
-#: models.py:21
 msgid "Brief summary"
 msgstr "Bref résumé"
 
-#: models.py:22
 msgid "Date"
 msgstr "Date"
 
-#: models.py:23
 msgid "When ?"
 msgstr "Quand ?"
 
-#: models.py:24 models.py:294
 msgid "Comments"
 msgstr "Commentaires"
 
-#: models.py:25 models.py:295
 msgid "Remarks and notes"
 msgstr "Remarques et notes"
 
-#: models.py:28
 msgid "Width"
 msgstr "Largeur"
 
-#: models.py:29
 msgid "Height"
 msgstr "Hauteur"
 
-#: models.py:30
 msgid "Area"
 msgstr "Surface"
 
-#: models.py:33
 msgid "Material cost"
 msgstr "Coût matériel"
 
-#: models.py:34
 msgid "Heliport cost"
 msgstr "Coût héliportage"
 
-#: models.py:35
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-#: models.py:40 models.py:65
-#: templates/maintenance/maintenance_detail_fragment.html:8
 msgid "Interventions"
 msgstr "Interventions"
 
-#: models.py:44
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:46 models.py:211
 msgid "Status"
 msgstr "Statut"
 
-#: models.py:49 models.py:225 models.py:422
 msgid "Type"
 msgstr "Type"
 
-#: models.py:52
 msgid "Disorders"
 msgstr "Désordres"
 
-#: models.py:54
 msgid "Jobs"
 msgstr "Fonctions"
 
-#: models.py:57 models.py:312
 msgid "Project"
 msgstr "Chantier"
 
-#: models.py:64
 msgid "Intervention"
 msgstr "Intervention"
 
-#: models.py:113
 msgid "On"
 msgstr "Sur"
 
-#: models.py:215
 msgid "Intervention's status"
 msgstr "Statut"
 
-#: models.py:216
 msgid "Intervention's statuses"
 msgstr "Statuts"
 
-#: models.py:229
 msgid "Intervention's type"
 msgstr "Type d'intervention"
 
-#: models.py:230
 msgid "Intervention's types"
 msgstr "Types d'intervention"
 
-#: models.py:239
 msgid "Disorder"
 msgstr "Désordre"
 
-#: models.py:243
 msgid "Intervention's disorder"
 msgstr "Désordre"
 
-#: models.py:244
 msgid "Intervention's disorders"
 msgstr "Désordres"
 
-#: models.py:253
 msgid "Job"
 msgstr "Fonction"
 
-#: models.py:254 models.py:292
 msgid "Cost"
 msgstr "Coût"
 
-#: models.py:258
 msgid "Intervention's job"
 msgstr "Fonction"
 
-#: models.py:259
 msgid "Intervention's jobs"
 msgstr "Fonctions"
 
-#: models.py:274
 msgid "Manday"
 msgstr "Jour-Homme"
 
-#: models.py:288
 msgid "Begin year"
 msgstr "Année de début"
 
-#: models.py:289
 msgid "End year"
 msgstr "Année de fin"
 
-#: models.py:290
 msgid "Constraint"
 msgstr "Contraintes"
 
-#: models.py:291
 msgid "Specific conditions, ..."
 msgstr "Conditions particulières, ..."
 
-#: models.py:293
 msgid "€"
 msgstr "€"
 
-#: models.py:297 models.py:426
-msgid "Project type"
-msgstr "Type de chantier"
-
-#: models.py:299 models.py:440
-msgid "Project domain"
-msgstr "Domaine de chantier"
-
-#: models.py:301 models.py:455
-msgid "Contractors"
-msgstr "Prestataires"
-
-#: models.py:303
-msgid "Project owner"
-msgstr "Maître d'ouvrage"
-
-#: models.py:305
-msgid "Project manager"
-msgstr "Maître d'oeuvre"
-
-#: models.py:306
-msgid "Founders"
-msgstr "Financeurs"
-
-#: models.py:313 templates/maintenance/maintenance_detail_fragment.html:30
-msgid "Projects"
-msgstr "Chantiers"
-
-#: models.py:391
-msgid "Period"
-msgstr "Période"
-
-#: models.py:394
-msgid "Deleted"
-msgstr "Supprimé"
-
-#: models.py:427
-msgid "Project types"
-msgstr "Types de chantier"
-
-#: models.py:436
 msgid "Domain"
 msgstr "Domaine"
 
-#: models.py:441
+msgid "Contractors"
+msgstr "Prestataires"
+
+msgid "Project owner"
+msgstr "Maître d'ouvrage"
+
+msgid "Project manager"
+msgstr "Maître d'oeuvre"
+
+msgid "Founders"
+msgstr "Financeurs"
+
+msgid "Projects"
+msgstr "Chantiers"
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Deleted"
+msgstr "Supprimé"
+
+msgid "Project type"
+msgstr "Type de chantier"
+
+msgid "Project types"
+msgstr "Types de chantier"
+
+msgid "Project domain"
+msgstr "Domaine de chantier"
+
 msgid "Project domains"
 msgstr "Domaines de chantier"
 
-#: models.py:450 models.py:454
 msgid "Contractor"
 msgstr "Prestataire"
 
-#: models.py:464
 msgid "Amount"
 msgstr "Montant"
 
-#: models.py:470
 msgid "Funding"
 msgstr "Financement"
 
-msgid "No intervention related."
-msgstr "Pas d'intervention liée."
-
-#: templates/maintenance/intervention_detail.html:18
-#: templates/maintenance/intervention_detail.html:24
-#: templates/maintenance/intervention_detail.html:30
-#: templates/maintenance/intervention_detail.html:41
-#: templates/maintenance/intervention_detail.html:78
-#: templates/maintenance/intervention_detail.html:107
-#: templates/maintenance/maintenance_detail_fragment.html:23
-#: templates/maintenance/maintenance_detail_fragment.html:37
-#: templates/maintenance/project_detail.html:26
-#: templates/maintenance/project_detail.html:32
-#: templates/maintenance/project_detail.html:38
-#: templates/maintenance/project_detail.html:44
-#: templates/maintenance/project_detail.html:50
-#: templates/maintenance/project_detail.html:61
-#: templates/maintenance/project_detail.html:77
-#: templates/maintenance/project_detail.html:84
 msgid "None"
 msgstr "Aucun(e)"
 
-#: templates/maintenance/intervention_detail.html:63
 #, python-format
 msgid ""
 "\n"
@@ -301,61 +217,45 @@ msgstr ""
 "                     %(job)s: %(nb_days)s jours\n"
 "                    "
 
-#: templates/maintenance/intervention_detail.html:69
 msgid "Total:"
 msgstr ""
 
-#: templates/maintenance/intervention_detail.html:69
 msgid "manday"
 msgstr "Jour-Homme"
 
-#: templates/maintenance/intervention_detail.html:70
 msgid "Total cost:"
 msgstr "Coût total:"
 
-#: templates/maintenance/intervention_detail.html:74
 msgid "Related Project"
 msgstr "Chantier"
 
-#: templates/maintenance/intervention_detail.html:85
 msgid "Related infrastructure"
 msgstr "Aménagement lié"
 
-#: templates/maintenance/intervention_detail.html:92
 msgid "Related signage"
 msgstr "Signalétique liée"
 
-#: templates/maintenance/intervention_detail.html:97
 msgid "Surface"
 msgstr ""
 
-#: templates/maintenance/intervention_detail.html:98
 msgid "H:"
 msgstr ""
 
-#: templates/maintenance/intervention_detail.html:99
 msgid "W:"
 msgstr ""
 
-#: templates/maintenance/intervention_form.html:38
 msgid "Add manday"
 msgstr "Ajouter des Jours-Hommes"
 
-#: templates/maintenance/intervention_form.html:39
-#: templates/maintenance/project_form.html:36
 msgid "Remove"
 msgstr "Supprimer"
 
-#: templates/maintenance/intervention_list.html:7
-#: templates/maintenance/maintenance_detail_fragment.html:12
 msgid "Add intervention"
 msgstr "Ajouter une intervention"
 
-#: templates/maintenance/maintenance_detail_fragment.html:5
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#: templates/maintenance/project_detail.html:71
 #, python-format
 msgid ""
 "\n"
@@ -366,11 +266,12 @@ msgstr ""
 "                    %(amount)s€ de %(organism)s\n"
 "                    "
 
-#: templates/maintenance/project_form.html:35
+msgid "No intervention related."
+msgstr "Pas d'intervention liée."
+
 msgid "Add funding"
 msgstr "Ajouter un financement"
 
-#: templates/maintenance/project_list.html:7
 msgid "Add project"
 msgstr "Ajouter un chantier"
 
