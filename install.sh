@@ -205,6 +205,10 @@ _EOF_
 
         make deploy
 
+        # Install system-wide binaries
+        sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/
+        sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/
+
         # Protect files with sensitive information
         chmod -f 700 etc/settings.ini
         chmod -f 700 parts/django/django_extrasettings/settings.py
