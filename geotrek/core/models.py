@@ -205,7 +205,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         """
         Extract elevation profile from path.
         """
-        return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
+        return elevation_profile(self.geom)
 
     @property
     def name_display(self):

@@ -60,35 +60,52 @@ def distance3D(a, b):
                      (b[2] - a[2]) ** 2)
 
 
-def elevation_profile(g, maxitems=None):
+def elevation_profile(geometry, precision=None):
     """
     Extract elevation profile from a 3D geometry.
     - maxitems : maximum number of points
     """
-    if g.geom_type == 'MultiLineString':
+    precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
+
+    cursor = connection.cursor()
+    # First, check if table mnt exists
+    cursor.execute("SELECT * FROM pg_tables WHERE tablename='mnt';")
+    exists = len(cursor.fetchall()) == 1
+    if not exists:
+        return []
+
+    if geometry.geom_type == 'MultiLineString':
         profile = []
-        offset = 0.0
-        for subcoords in g.coords:
+        for subcoords in geometry.coords:
             subline = LineString(subcoords)
-            subprofile = elevation_profile(subline, maxitems=maxitems)
+            subprofile = elevation_profile(subline)
             profile.extend(subprofile)
-            offset += subprofile[-1][0]
         return profile
 
-    step = 1
-    if maxitems is not None:
-        nb = len(g.coords)
-        step = max(1, nb / maxitems)
-    # Initialize with null distance at start point
-    distance = 0.0
-    profile = [(distance, g.coords[0][2])]
-    # Add elevation and cumulative distance at each point
-    for i in range(1, len(g.coords), step):
-        a = g.coords[i - step]
-        b = g.coords[i]
-        distance += distance3D(a, b)
-        profile.append((distance, b[2],))
-    return profile
+    # Build elevation profile from linestring and DEM
+    # http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+    sql = """
+    WITH line AS
+        (SELECT '%(ewkt)s'::geometry AS geom),
+      linemesure AS
+        -- Add a mesure dimension to extract steps
+        (SELECT ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
+                generate_series(0, ST_Length(line.geom)::int, %(precision)s) as i
+         FROM line),
+      points2d AS
+        (SELECT ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
+         UNION
+         SELECT ST_EndPoint(geom) AS geom FROM line),
+      cells AS
+        -- Get DEM elevation for each
+        (SELECT p.geom AS geom, ST_Value(mnt.rast, 1, p.geom) AS val
+         FROM mnt, points2d p
+         WHERE ST_Intersects(mnt.rast, p.geom))
+    SELECT ST_distance(ST_StartPoint(line.geom), cells.geom), cells.val FROM cells, line
+    """ % {'ewkt': geometry.ewkt, 'precision': precision}
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
 
 
 def force3D(geom):

@@ -60,11 +60,6 @@ class PathDetail(MapEntityDetail):
                 self.request.user.profile.is_path_manager and \
                 self.get_object().same_structure(self.request.user))
 
-    def get_context_data(self, **kwargs):
-        context = super(PathDetail, self).get_context_data(**kwargs)
-        context['profile'] = self.get_object().get_elevation_profile()
-        return context
-
 
 class PathDocument(MapEntityDocument):
     model = Path
