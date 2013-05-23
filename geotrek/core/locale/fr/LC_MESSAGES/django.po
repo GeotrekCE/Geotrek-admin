@@ -113,7 +113,7 @@ msgstr "Réseaux"
 
 #, python-format
 msgid "path %d"
-msgstr "tronçon %"
+msgstr "tronçon %d"
 
 msgid "Path"
 msgstr "Tronçon"
