@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-
+from django.db import models
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
+
+from tinymce.widgets import TinyMCE
 
 from geotrek.authent.admin import TrekkingManagerModelAdmin
 from .models import (
@@ -54,6 +56,10 @@ class WebLinkCategoryAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
 class InformationDeskAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+
+    formfield_overrides = {
+        models.TextField: {'widget': TinyMCE},
+    }
 
 
 # Register previously defined modeladmins
