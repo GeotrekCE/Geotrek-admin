@@ -1,4 +1,5 @@
 import os
+import urllib2
 from datetime import datetime
 import requests
 import bs4
@@ -8,7 +9,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-from screamshot.utils import casperjs_capture
+from screamshot.utils import casperjs_capture, CaptureError
 
 from .helpers import smart_urljoin
 from paperclip.models import Attachment
@@ -117,15 +118,28 @@ class MapEntityMixin(object):
                     return
             else:
                 os.remove(path)
-        # Run head-less capture (takes time)
+
+        # Prepare aspect of the detail page
+        # It relies on JS code in MapEntity.Context
         url = smart_urljoin(rooturl, self.get_detail_url())
         printcontext = dict(mapsize=dict(width=800, height=600))
         printcontext['print'] = True
-        url += '?context=' + json.dumps(printcontext)
-        with open(path, 'wb') as f:
-            casperjs_capture(f, url, selector='.map-panel')
-        if not os.path.exists(path) or os.path.getsize(path) == 0:
-            raise MapImageError("%s could not be captured into %s" % (url, path))
+        serialized = json.dumps(printcontext)
+
+        try:
+            # Run head-less capture (takes time)
+            url += '?context=' + urllib.quote(serialized)
+            with open(path, 'wb') as f:
+                casperjs_capture(f, url, selector='.map-panel')
+        except CaptureError as e:
+            raise MapImageError(e)
+
+        # If image is empty or missing, raise error
+        if not os.path.exists(path):
+            raise MapImageError("No image captured from %s into %s" % (url, path))
+        elif os.path.getsize(path) == 0:
+            os.remove(path)
+            raise MapImageError("Image captured from %s into %s is empty" % (url, path))
         # TODO : remove capture image file on delete
 
     def get_map_image_path(self):

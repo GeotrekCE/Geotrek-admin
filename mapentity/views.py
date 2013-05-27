@@ -465,7 +465,7 @@ class MapEntityMapImage(ModelMetaMixin, DetailView):
             return response
         except mapentity_models.MapImageError as e:
             logger.exception(e)
-            return HttpResponseNotFound(repr(e))
+            return HttpResponseServerError(repr(e))
 
 
 class MapEntityDocument(DetailView):
