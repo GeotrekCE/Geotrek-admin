@@ -203,14 +203,17 @@
             });
             map.addControl(screenshot);
 
-            // We can have several contexts in the application (mainly 'detail' and 'list')
-            // Using prefixes is a way to manage this.
+            // Restore map view, layers and filter from any available context
             MapEntity.Context.restoreFullContext(map,
+                // From URL param
                 getURLParameter('context'),
+                // Parameters
                 {
                     filter: '#mainfilter',
                     datatable: dt,
                     objectsname: '{{ objectsname|title }}',
+                    // We can have several contexts in the application (mainly 'detail' and 'list')
+                    // Using prefixes is a way to manage this.
                     prefix: 'list',
                 }
             );
