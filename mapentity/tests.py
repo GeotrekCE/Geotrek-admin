@@ -269,6 +269,5 @@ class MapEntityLiveTest(LiveServerTestCase):
 
         # Initially, map image does not exists
         self.assertFalse(os.path.exists(obj.get_map_image_path()))
-        # TODO: test disabled since not working on CI server
-        # obj.prepare_map_image(self.live_server_url)
-        # self.assertTrue(os.path.exists(obj.get_map_image_path()))
+        obj.prepare_map_image(self.live_server_url)
+        self.assertTrue(os.path.exists(obj.get_map_image_path()))
