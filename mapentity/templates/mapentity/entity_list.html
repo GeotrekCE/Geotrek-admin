@@ -111,6 +111,9 @@
         function mainmapInit(map, bounds) {
             {% smart_include "mapinit" %}
 
+            // Get context from URL parameter, if any
+            var mapViewContext = getURLParameter('context');
+
             map.removeControl(map.attributionControl);
             map.doubleClickZoom.disable();
 
@@ -142,7 +145,6 @@
             map.layerscontrol.addOverlay(objectsLayer, '{{ objectsname }}');
             objectsLayer.load("{{ model.get_layer_url }}", true);
 
-
             /*
              * Datatables
              * .......................
@@ -155,47 +157,52 @@
                 iDeferLoading: 0,
                 iDisplayLength: 15,  // TODO: this is VERY ANNOYING ! I want to fill height !
             });
+
             // Adjust vertically
             adjustDisplayLength(dt);
             $(window).resize(function (e) {
                 adjustDisplayLength(dt);
             });
-            
+
             // Hardcore Datatables customizations
             $('li.next a').html($('li.next a').html().replace('Next', ''));
             $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
             $('#objects-list_filter input').attr('placeHolder', "{% trans "Search" %}");
             $('#objects-list_filter label').contents().filter(function() {return this.nodeType === 3;/*Node.TEXT_NODE*/}).remove();
 
-
             /*
              * Assemble components
              * .......................
              */
-            var mapsync = new L.MapListSync(dt,
-                                            map, 
-                                            objectsLayer, {
-                                                filter: {
-                                                    form: $('#mainfilter'),
-                                                    submitbutton: $('#filter'),
-                                                    resetbutton: $('#reset'),
-                                                    bboxfield: $('#id_bbox'),
-                                                }
-                                            });
-            
-            mapsync.on('reloaded', function (data) {
-                // Show and save number of results
-                MapEntity.history.saveListInfo({model:'{{ modelname }}', 
-                                                nb: data.nbrecords});
-                // Show layer info
-                objectsLayer.fire('info', {info : (data.nbrecords + ' ' + '{% trans "results" %}')});
-            });
+            if (!(mapViewContext && mapViewContext.print == true)) {
+                // If this piece of code runs with phantomJS, it will
+                // just fail. So we bypass it for map printing.
+                // Issue #597
+                // TODO: find out why :)
+                var mapsync = new L.MapListSync(dt,
+                                                map,
+                                                objectsLayer, {
+                                                    filter: {
+                                                        form: $('#mainfilter'),
+                                                        submitbutton: $('#filter'),
+                                                        resetbutton: $('#reset'),
+                                                        bboxfield: $('#id_bbox'),
+                                                    }
+                                                });
+                mapsync.on('reloaded', function (data) {
+                    // Show and save number of results
+                    MapEntity.history.saveListInfo({model:'{{ modelname }}',
+                                                    nb: data.nbrecords});
+                    // Show layer info
+                    objectsLayer.fire('info', {info : (data.nbrecords + ' ' + '{% trans "results" %}')});
+                });
 
-            // Main filter
-            var t = new MapEntity.TogglableFilter();
-            mapsync.on('reloaded', function (data) {
-                t.setsubmit();
-            });
+                // Main filter
+                var t = new MapEntity.TogglableFilter();
+                mapsync.on('reloaded', function (data) {
+                    t.setsubmit();
+                });
+            }
 
             // Map screenshot button
             var screenshot = new L.Control.Screenshot('{% url 'mapentity:map_screenshot' %}', function () {
@@ -206,7 +213,7 @@
             // Restore map view, layers and filter from any available context
             MapEntity.Context.restoreFullContext(map,
                 // From URL param
-                getURLParameter('context'),
+                mapViewContext,
                 // Parameters
                 {
                     filter: '#mainfilter',
