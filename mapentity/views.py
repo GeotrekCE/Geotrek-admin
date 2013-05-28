@@ -188,16 +188,14 @@ def map_screenshot(request):
         assert len(printcontext) < 512, "Print context is way too big."
 
         # Prepare context, extract and add infos
-        context = json.loads(printcontext.encode("utf-8"))
+        context = json.loads(printcontext)
         map_url = context.pop('url').split('?', 1)[0]
         context['print'] = True
         printcontext = json.dumps(context)
-        logger.debug("Print context received : %s" % printcontext)
-
-        # Provide print context to destination
-        printcontext = str(printcontext.encode('latin-1'))  # TODO this is wrong
         contextencoded = urllib2.quote(printcontext)
         map_url += '?context=%s' % contextencoded
+        logger.debug("Capture %s" % map_url)
+
         # Capture image and return it
         width = context.get('viewport', {}).get('width')
         height = context.get('viewport', {}).get('height')
