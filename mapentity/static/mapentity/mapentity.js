@@ -259,15 +259,6 @@ MapEntity.Context = new function() {
             map.fitBounds(map.options.maxBounds);
             return;  // No context, no restore.
         }
-        
-        if (context.print) {
-            // Hide map head
-            $('#maphead').hide();
-            // Hide controls
-            $('.leaflet-control').hide();   // Hide all
-            $('.leaflet-control-scale').show(); // Show scale
-            $(map._container).removeClass('leaflet-fade-anim');
-        }
 
         if (context.mapsize) {
             // Override min-height style
@@ -308,6 +299,15 @@ MapEntity.Context = new function() {
                 });
             }
             map.layerscontrol._onInputClick();
+        }
+
+        if (context.print) {
+            // Hide map head
+            $('#maphead').hide();
+            // Hide controls
+            $('.leaflet-control').hide();   // Hide all
+            $('.leaflet-control-scale').show(); // Show scale
+            $(map._container).removeClass('leaflet-fade-anim');
         }
     };
 };
