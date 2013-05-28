@@ -128,7 +128,7 @@ class MapEntityMixin(object):
 
         try:
             # Run head-less capture (takes time)
-            url += '?context=' + urllib.quote(serialized)
+            url += '?context=' + urllib2.quote(serialized)
             with open(path, 'wb') as f:
                 casperjs_capture(f, url, selector='.map-panel')
         except CaptureError as e:
