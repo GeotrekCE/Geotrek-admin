@@ -7,7 +7,8 @@ CHANGELOG
 
 * Add pretty trek duration in JSON
 * Add information desk field in Trek (fixes #624)
-
+* Map screenshot fix (ref #597)"
+* Default values for most Path DB columns (fixes #965)
 
 0.17 (2013-05-17)
 -----------------

@@ -1,4 +1,17 @@
 -------------------------------------------------------------------------------
+-- Force Path default values
+-- Django does not translate model default value to
+-- database default column values.
+-------------------------------------------------------------------------------
+
+ALTER TABLE l_t_troncon ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE l_t_troncon ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE l_t_troncon ALTER COLUMN depart SET DEFAULT '';
+ALTER TABLE l_t_troncon ALTER COLUMN arrivee SET DEFAULT '';
+
+
+
+-------------------------------------------------------------------------------
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
 

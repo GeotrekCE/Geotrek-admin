@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    length = models.FloatField(editable=False, default=0.0, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-    slope = models.FloatField(editable=False, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+    length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
+    ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
+    slope = models.FloatField(editable=False, null=True, blank=True, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
 
     COLUMNS = ['length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope']
 
@@ -53,9 +53,9 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
                                 help_text=_(u"Remarks"))
 
-    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
                                  help_text=_(u"Departure place"))
-    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
                                help_text=_(u"Arrival place"))
 
     comfort = models.ForeignKey('Comfort',
