@@ -194,7 +194,7 @@ L.MapListSync = L.Class.extend({
                 function toggleSelectObject(pk, on) {
                     on = on === undefined ? true : on;
                     self.layer.select(pk, on);
-                };
+                }
 
                 return {
                     'select': function(pk, row) {
@@ -204,7 +204,7 @@ L.MapListSync = L.Class.extend({
                         }
 
                         var prev = current;
-                        current = {'pk': pk, 'row': row}
+                        current = {'pk': pk, 'row': row};
 
                         toggleSelectRow(prev.row, row);
 

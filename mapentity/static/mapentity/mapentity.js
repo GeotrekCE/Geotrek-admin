@@ -289,6 +289,7 @@ MapEntity.Context = new function() {
         if (datatable && context.sortcolumns) {
             datatable.fnSort(context.sortcolumns);
         }
+
         // Show layers by their name
         if (context.maplayers) {
             var layers = context.maplayers;
@@ -542,13 +543,12 @@ MapEntity.TogglableFilter = L.Class.extend({
     },
 
     infos: function () {
-        if (Object.keys(this.fields).length == 0)
+        if (Object.keys(this.fields).length === 0)
             return "<p>" + tr("No filter") + "</p>";
-        
         // We do not use handlebars just for this. If more to come, we will !
         var p = '<p><span class="filter-info">%name%</span>: %value%</p>';
         var i = '';
-        for (k in this.fields) {
+        for (var k in this.fields) {
             var f = this.fields[k];
             i += p.replace('%name%', f.label).replace('%value%', f.value);
         }
@@ -564,20 +564,20 @@ MapEntity.TogglableFilter = L.Class.extend({
                 this.tip().find('#filters-panel').detach()
             );
         }
-        
+
         this.popover.popover('toggle');
         this.visible = !this.visible;
-        
+
         if (this.visible) {
             this.tip()
               .empty()
               .append('<div class="arrow"/>')
               .append($('#filters-wrapper #filters-panel').detach());
-            
+
             // Adjust popover width
             this.tip()
-              .width(this.tip().find('#filters-panel form').outerWidth());
-            
+                .width(this.tip().find('#filters-panel form').outerWidth());
+
             this.__reposition(this.tip());
         }
     },
@@ -586,11 +586,11 @@ MapEntity.TogglableFilter = L.Class.extend({
         var label = $(field).data('label'),
             name = $(field).attr('name'),
             val = $(field).val(),
-            set = val != '' && val != [''];
+            set = val !== '' && val != [''];
 
         // Consider a value set if it is not the first option selected
         if ($(field).is('select[multiple]')) {
-            set = val != null;
+            set = val !== null;
         }
         else if ($(field).is('select')) {
             set = val != $(field).find('option').first().val();
@@ -608,14 +608,13 @@ MapEntity.TogglableFilter = L.Class.extend({
         else {
             delete this.fields[name];
         }
-        
+
         if (set) {
             $(field).addClass('filter-set');
         }
         else {
             $(field).removeClass('filter-set');
         }
-        
         return set;
     },
 
@@ -623,7 +622,7 @@ MapEntity.TogglableFilter = L.Class.extend({
         this.submitted = true;
         // Show fields as bold
         // Show button as active
-        if (Object.keys(this.fields).length == 0) {
+        if (Object.keys(this.fields).length === 0) {
             $('#filters-btn').addClass('btn-info');
             $('#filters-btn').removeClass('btn-warning');
         }
