@@ -82,6 +82,7 @@ class MapEntityTest(TestCase):
             f.write('This is fake PNG file')
         response = self.client.get(obj.get_document_url())
         self.assertEqual(response.status_code, 200)
+        os.remove(obj.get_map_image_path())
 
     def test_bbox_filter(self):
         if self.model is None:
