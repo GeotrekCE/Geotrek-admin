@@ -53,14 +53,6 @@ ALTER TABLE m_t_intervention ALTER COLUMN altitude_maximum SET DEFAULT 0;
 ALTER TABLE m_t_intervention ALTER COLUMN denivelee_positive SET DEFAULT 0;
 ALTER TABLE m_t_intervention ALTER COLUMN denivelee_negative SET DEFAULT 0;
 
-ALTER TABLE m_t_intervention ALTER COLUMN longueur DROP NOT NULL;
-ALTER TABLE m_t_intervention ALTER COLUMN pente DROP NOT NULL;
-ALTER TABLE m_t_intervention ALTER COLUMN altitude_minimum DROP NOT NULL;
-ALTER TABLE m_t_intervention ALTER COLUMN altitude_maximum DROP NOT NULL;
-ALTER TABLE m_t_intervention ALTER COLUMN denivelee_positive DROP NOT NULL;
-ALTER TABLE m_t_intervention ALTER COLUMN denivelee_negative DROP NOT NULL;
-
-
 DROP TRIGGER IF EXISTS m_t_evenement_interventions_iu_tgr ON e_t_evenement;
 
 CREATE OR REPLACE FUNCTION update_altimetry_evenement_intervention() RETURNS trigger AS $$
