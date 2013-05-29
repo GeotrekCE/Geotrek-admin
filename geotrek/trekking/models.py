@@ -202,6 +202,16 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         """
         return [a for a in self.attachments.all() if a.is_image and a.title != 'mapimage']
 
+    def get_attachment_print(self):
+        """
+        Look in attachment if there is document to be used as print version
+        """
+        overriden = self.attachments.filter(title="docprint").get()
+        # Must have OpenOffice document mimetype
+        if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
+            raise overriden.DoesNotExist()
+        return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
+
     @property
     def serializable_relationships(self):
         return [{

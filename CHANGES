@@ -9,6 +9,7 @@ CHANGELOG
 * Add information desk field in Trek (fixes #624)
 * Map screenshot fix (ref #597)"
 * Default values for most Path DB columns (fixes #965)
+* Trek printable version looks for OpenDocument (*.odt) named "docprint" in attachments (fixes #686)
 
 0.17 (2013-05-17)
 -----------------

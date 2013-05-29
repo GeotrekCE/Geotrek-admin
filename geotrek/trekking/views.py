@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
@@ -140,6 +141,17 @@ class TrekDocumentPublic(TrekDocument):
         context['object'] = trek
         context['trek'] = trek
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        trek = self.get_object()
+        try:
+            overriden = trek.get_attachment_print()
+            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
+            with open(overriden, 'rb') as f:
+                response.write(f.read())
+            return response
+        except ObjectDoesNotExist:
+            return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
 class TrekPrint(DocumentConvert):

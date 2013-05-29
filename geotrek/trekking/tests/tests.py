@@ -9,7 +9,7 @@ from mapentity.tests import MapEntityLiveTest
 
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.land.factories import DistrictFactory
@@ -229,6 +229,20 @@ class TrekCustomViewTests(TestCase):
             obj = simplejson.loads(response.content)
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
+
+    def test_overriden_document(self):
+        trek = TrekFactory.create()
+        # Will have to mock screenshot, though.
+        with open(trek.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+        response = self.client.get(trek.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(trek.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
 
 
 class RelatedObjectsTest(TestCase):
