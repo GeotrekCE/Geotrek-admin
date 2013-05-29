@@ -461,6 +461,34 @@ class TopologyCornerCases(TestCase):
         self.assertEqual(topo.geom, LineString((3, 0, 0), (10, 0, 0), (10, 5, 0), (20, 5, 0), (20, 0, 0),
                                                (10, 0, 0), (3, 0, 0)))
 
+    def test_spoon_loop(self):
+        """
+                            =====<====
+                           ||       ||
+        +-------===<===>===+=====>===
+        """
+        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0, 0), (10, 5, 0),
+                                                (20, 5, 0), (20, 0, 0),
+                                                (10, 0, 0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p1, start=0.3, end=1)
+        topo.add_path(p2, start=1, end=0.4)
+        topo.add_path(p2, start=0.4, end=0.2)
+        topo.add_path(p2, start=0.2, end=0)
+        topo.add_path(p1, start=1, end=0.3)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((3, 0, 0), (10, 0, 0), (20, 0, 0), (20, 5, 0),
+                                               (17, 5, 0), (11, 5, 0),  # extra point due middle aggregation
+                                               (10, 5, 0), (10, 0, 0), (3, 0, 0)))
+
+        # Deserializing should work too
+        topod = Topology.deserialize("""
+           [{"positions":{"0":[0.3,1],"1":[1, 0.4]},"paths":[%(pk1)s,%(pk2)s]},
+            {"positions":{"0":[0.4, 0.2]},"paths":[%(pk2)s]},
+            {"positions":{"0":[0.2,0],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s]}]""" % {'pk1': p1.pk, 'pk2': p2.pk})
+        self.assertEqual(topo.geom, topod.geom)
+
 
 class TopologySerialization(TestCase):
 
