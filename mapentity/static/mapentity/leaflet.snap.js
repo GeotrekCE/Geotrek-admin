@@ -49,7 +49,8 @@ L.Handler.MarkerSnapping = L.Handler.extend({
     _snapMarker: function(e) {
         var marker = e.target,
             snaplist = this._guides.searchBuffer(marker.getLatLng(), this._buffer),
-            closest = L.GeomUtils.closest(this._map, marker, snaplist, this.SNAP_DISTANCE);
+            closest = L.GeometryUtil.closestLayerSnap(this._map, snaplist, marker.getLatLng(), this.SNAP_DISTANCE, true);
+        closest = closest === null ? [null, null] : [closest.layer, closest.latlng];
         this.updateClosest(marker, closest);
     },
 
