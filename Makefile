@@ -69,7 +69,6 @@ unit_tests_js:
 functional_tests:
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-auth.xml geotrek/tests/auth.js
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml geotrek/tests/story_88_user_creation.js
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-test_utils.xml geotrek/tests/test_utils.js
 
 tests: test functional_tests
 

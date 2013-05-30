@@ -59,7 +59,6 @@ class QUnitView(TemplateView):
 # TODO REFACTOR : this is wrong, common should not depend on other apps
 qunit_views = dict(
     dijkstra=QUnitView.as_view(jsfiles=['core/dijkstra.js', 'core/test_dijkstra.js']),
-    utils=QUnitView.as_view(jsfiles=['mapentity/test_utils.js']),
 )
 
 
