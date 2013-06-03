@@ -254,11 +254,10 @@ class PathTest(TestCase):
         # Almost touching twice is also ok
         #PathFactory.create(geom=LineString((0.5,1,0),(1,1,0),(1.5,1,0)))
 
-
     def test_snapping(self):
         # Sinosoid line
         coords = [(x, math.sin(x), 0) for x in range(10)]
-        path = PathFactory.create(geom=LineString(*coords))
+        PathFactory.create(geom=LineString(*coords))
         """
                +
           /--\ |
@@ -280,6 +279,10 @@ class PathTest(TestCase):
         path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (3.0, 0, 0)))
         self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (3.0, math.sin(3), 0)))
 
+    def test_snapping_3d(self):
+        PathFactory.create(geom=LineString(((0, 0, 0), (5, 0, 1000), (6, 0, 0))))
+        path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (5.2, 0, 0)))
+        self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (5, 0, 1000)))
 
 
 class TrailTest(TestCase):

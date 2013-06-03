@@ -21,8 +21,8 @@ BEGIN
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
         AND id != NEW.id
-        AND ST_3DDistance(geom, linestart) < DISTANCE
-      ORDER BY ST_3DDistance(geom, linestart)
+        AND ST_Distance(geom, linestart) < DISTANCE
+      ORDER BY ST_Distance(geom, linestart)
       LIMIT 1;
 
     IF result IS NULL THEN
@@ -30,8 +30,8 @@ BEGIN
     ELSE
         d := DISTANCE;
         FOR i IN 1..ST_NPoints(other) LOOP
-            IF ST_3DDistance(result, ST_PointN(other, i)) < DISTANCE AND ST_3DDistance(result, ST_PointN(other, i)) < d THEN
-                d := ST_3DDistance(result, ST_PointN(other, i));
+            IF ST_Distance(result, ST_PointN(other, i)) < DISTANCE AND ST_Distance(result, ST_PointN(other, i)) < d THEN
+                d := ST_Distance(result, ST_PointN(other, i));
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;
@@ -51,16 +51,16 @@ BEGIN
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
         AND id != NEW.id
-        AND ST_3DDistance(geom, lineend) < DISTANCE
-      ORDER BY ST_3DDistance(geom, lineend)
+        AND ST_Distance(geom, lineend) < DISTANCE
+      ORDER BY ST_Distance(geom, lineend)
       LIMIT 1;
     IF result IS NULL THEN
         result := lineend;
     ELSE
         d := DISTANCE;
         FOR i IN 1..ST_NPoints(other) LOOP
-            IF ST_3DDistance(result, ST_PointN(other, i)) < DISTANCE AND ST_3DDistance(result, ST_PointN(other, i)) < d THEN
-                d := ST_3DDistance(result, ST_PointN(other, i));
+            IF ST_Distance(result, ST_PointN(other, i)) < DISTANCE AND ST_Distance(result, ST_PointN(other, i)) < d THEN
+                d := ST_Distance(result, ST_PointN(other, i));
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;

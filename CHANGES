@@ -11,6 +11,7 @@ CHANGELOG
 * Default values for most Path DB columns (fixes #965)
 * Trek printable version looks for OpenDocument (*.odt) named "docprint" in attachments (fixes #686)
 * Show structure column and filter in admin (fixes #699)
+* Path snapping now uses 2D distance to prevent weird behaviour (fixes #697)
 
 
 0.17 (2013-05-17)
