@@ -1,3 +1,5 @@
+import math
+
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString
@@ -251,6 +253,33 @@ class PathTest(TestCase):
         #PathFactory.create(geom=LineString((4,1,0),(4,0.5,0)))
         # Almost touching twice is also ok
         #PathFactory.create(geom=LineString((0.5,1,0),(1,1,0),(1.5,1,0)))
+
+
+    def test_snapping(self):
+        # Sinosoid line
+        coords = [(x, math.sin(x), 0) for x in range(10)]
+        path = PathFactory.create(geom=LineString(*coords))
+        """
+               +
+          /--\ |
+         /    \|
+        +      +      +
+                \    /
+                 \--/
+        """
+        # Snap end
+        path_snapped = PathFactory.create(geom=LineString((10, 10, 0), (5, -1, 0)))  # math.sin(5) == -0.96..
+        self.assertEqual(len(Path.objects.all()), 3)
+        self.assertEqual(path_snapped.geom.coords, ((10, 10, 0), coords[5]))
+
+        # Snap start
+        path_snapped = PathFactory.create(geom=LineString((3, 0, 0), (5, -5, 0)))  # math.sin(3) == 0.14..
+        self.assertEqual(path_snapped.geom.coords, (coords[3], (5, -5, 0)))
+
+        # Snap both
+        path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (3.0, 0, 0)))
+        self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (3.0, math.sin(3), 0)))
+
 
 
 class TrailTest(TestCase):
