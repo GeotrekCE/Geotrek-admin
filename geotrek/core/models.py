@@ -471,13 +471,15 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
                     path = Path.objects.get(pk=path)
                     topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
-                    if not last_topo and last_path and len(paths) > 1:
+                    if not last_topo and last_path:
                         # Intermediary marker.
                         # make sure pos will be [X, X]
-                        # [0, X] or [X, 1] --> X
+                        # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
                         # [0.0, 0.0] --> 0.0  : marker at beginning of path
                         # [1.0, 1.0] --> 1.0  : marker at end of path
                         pos = -1
+                        if start_position == end_position:
+                            pos = start_position
                         if start_position == 0.0:
                             pos = end_position
                         elif start_position == 1.0:
@@ -486,6 +488,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                             pos = start_position
                         elif end_position == 1.0:
                             pos = start_position
+                        elif len(paths) == 1:
+                            pos = end_position
                         assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
                         topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
                     counter += 1
