@@ -20,10 +20,11 @@ class ManDayForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ManDayForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
-        self.helper.layout = Layout('id',
-                                    Div('nb_days', css_class="span2"),
-                                    Div('job', css_class="span3"))
-        self.fields['nb_days'].widget.attrs['class'] = 'span12'
+        self.helper.layout = Layout('id', 'nb_days', 'job')
+        self.fields['nb_days'].widget.attrs['placeholder'] = _('Days')
+        self.fields['nb_days'].label = ''
+        self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
+        self.fields['job'].widget.attrs['class'] = 'input-medium'
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)

@@ -15,6 +15,7 @@ CHANGELOG
 * Fix display of path comfort in detail page (fixes #701)
 * Compile translations of apps under development (fixes #704)
 * Fix display of total manday in intervention detail
+* Fix field display in intervention creation (fixes #703)
 
 
 0.17 (2013-05-17)
