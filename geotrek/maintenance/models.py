@@ -172,7 +172,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
     def total_manday(self):
         total = 0.0
         for md in self.manday_set.all():
-            total += md.nb_days
+            total += float(md.nb_days)
         return total
 
     @property

@@ -3,7 +3,7 @@ from django.test import TestCase
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
+from geotrek.maintenance.factories import InterventionFactory, ProjectFactory, ManDayFactory
 from geotrek.core.factories import PathFactory, TopologyFactory, TrailFactory, StakeFactory
 
 
@@ -43,6 +43,12 @@ class InterventionTest(TestCase):
         self.assertFalse(i.stake is None)
         # Make sure it took higher stake
         self.assertEqual(i.stake, highstake)
+
+    def test_mandays(self):
+        i = InterventionFactory.create()
+        ManDayFactory.create(intervention=i, nb_days=5)
+        ManDayFactory.create(intervention=i, nb_days=8)
+        self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
 
     def test_path_helpers(self):
         p = PathFactory.create()

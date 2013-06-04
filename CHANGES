@@ -14,6 +14,7 @@ CHANGELOG
 * Path snapping now uses 2D distance to prevent weird behaviour (fixes #697)
 * Fix display of path comfort in detail page (fixes #701)
 * Compile translations of apps under development (fixes #704)
+* Fix display of total manday in intervention detail
 
 
 0.17 (2013-05-17)
