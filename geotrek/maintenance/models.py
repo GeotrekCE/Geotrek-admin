@@ -28,7 +28,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
     ## Technical information ##
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
-    area = models.IntegerField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
+    area = models.FloatField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
 
     ## Costs ##
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')

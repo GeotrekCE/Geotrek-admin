@@ -104,7 +104,7 @@ DROP TRIGGER IF EXISTS m_t_evenement_interventions_area_iu_tgr ON m_t_interventi
 
 CREATE OR REPLACE FUNCTION update_area_intervention() RETURNS trigger AS $$
 BEGIN
-   NEW.surface := NEW.largeur * NEW.hauteur;
+   NEW.surface := NEW.largeur * NEW.longueur;
    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

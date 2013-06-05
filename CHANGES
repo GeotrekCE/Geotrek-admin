@@ -16,6 +16,7 @@ CHANGELOG
 * Compile translations of apps under development (fixes #704)
 * Fix display of total manday in intervention detail
 * Fix field display in intervention creation (fixes #703)
+* Fix surface computation (fixes #708)
 
 
 0.17 (2013-05-17)
