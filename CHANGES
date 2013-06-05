@@ -17,6 +17,7 @@ CHANGELOG
 * Fix display of total manday in intervention detail
 * Fix field display in intervention creation (fixes #703)
 * Fix surface computation (fixes #708)
+* Fix shapefile serialization if path has no trail (fixes #706)
 
 
 0.17 (2013-05-17)

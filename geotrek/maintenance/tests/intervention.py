@@ -148,4 +148,3 @@ class InterventionTest(TestCase):
         interv = InterventionFactory.create(length=0.5, height=0.5)
         interv.reload()
         self.assertEqual(interv.area, 0.25)
-

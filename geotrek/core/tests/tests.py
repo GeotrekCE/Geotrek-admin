@@ -70,6 +70,9 @@ class ViewsTest(CommonTest):
         test_structure(s1, st1)
         test_structure(s2, st2)
 
+    def test_basic_format(self):
+        self.modelfactory.create(trail=None)
+        super(CommonTest, self).test_basic_format()
 
 # FIXME: this test has random results (as reported by Hudson)
 #class StakeTest(TestCase):
