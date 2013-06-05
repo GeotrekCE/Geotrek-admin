@@ -141,8 +141,8 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
 def fieldmap_from_fields(model, fieldnames):
     from .serializers import plain_text
     return dict(
-        (fname, lambda x, fname=fname: smart_str(plain_text(getattr(x, fname + '_csv_display',
-                                                            getattr(x, fname + '_display', getattr(x, fname))))))
+        (fname, lambda x, fname=fname: smart_str(plain_text(unicode(getattr(x, fname + '_csv_display',
+                                                                    getattr(x, fname + '_display', getattr(x, fname)))))))
         for fname in fieldnames
     )
 
