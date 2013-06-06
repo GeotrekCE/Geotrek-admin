@@ -6,6 +6,7 @@ CHANGELOG
 -----------------
 
 * Intervention length field (readonly if geometry is line)
+* Fix apparence bug if no rights to add treks (fixes #713)
 
 
 0.18 (2013-06-06)
