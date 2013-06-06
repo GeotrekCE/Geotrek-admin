@@ -3,7 +3,9 @@ from django.test import TestCase
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory, ManDayFactory
+from geotrek.maintenance.factories import (InterventionFactory,
+                                           InfrastructureInterventionFactory, InfrastructurePointInterventionFactory,
+                                           ProjectFactory, ManDayFactory)
 from geotrek.core.factories import PathFactory, TopologyFactory, TrailFactory, StakeFactory
 
 
@@ -132,19 +134,56 @@ class InterventionTest(TestCase):
         self.assertEqual(Intervention.objects.existing().count(), 0)
 
     def test_denormalized_fields(self):
-        interv = InterventionFactory.create(width=10.0, height=10.0)
-        interv.reload()
-        self.assertEqual(interv.area, 100.0)
-
         infra = InfrastructureFactory.create()
         infra.save()
         self.assertNotEqual(infra.length, 0.0)
 
+        # After setting related infrastructure
+        interv = InterventionFactory.create()
         interv.set_infrastructure(infra)
         interv.save()
         self.assertEqual(interv.length, infra.length)
 
-        # Should work with less than 1m2
-        interv = InterventionFactory.create(length=0.5, height=0.5)
+        # After update related infrastructure
+        infra.length = 3.14
+        infra.save()
+        interv.reload()
+        self.assertEqual(interv.length, infra.length)
+
+    def test_length_auto(self):
+        # Line intervention has auto length from topology
+        interv = InfrastructureInterventionFactory.create()
+        interv.length = 3.14
+        interv.save()
+        self.assertNotEqual(interv.length, 3.14)
+        # Point intervention has manual length
+        interv = InfrastructurePointInterventionFactory.create()
+        interv.length = 3.14
+        interv.save()
+        print interv.length
+        self.assertEqual(interv.length, 3.14)
+
+    def test_area_auto(self):
+        # Line
+        interv = InfrastructureInterventionFactory.create(width=10.0)
+        interv.reload()
+        self.assertEqual(interv.area, interv.length * 10.0)
+
+        # Points
+        interv = InfrastructurePointInterventionFactory.create()
+        interv.reload()
+        self.assertEqual(interv.length, 0.0)
+        self.assertEqual(interv.area, 0.0)
+
+        interv = InfrastructurePointInterventionFactory.create(length=50, width=10.0)
+        interv.reload()
+        print interv.length
+        self.assertEqual(interv.area, 500)
+
+        interv = InfrastructurePointInterventionFactory.create(width=0.5, length=0.5)
         interv.reload()
         self.assertEqual(interv.area, 0.25)
+
+        interv = InfrastructurePointInterventionFactory.create(width=0.5)
+        interv.reload()
+        self.assertEqual(interv.area, 0.0)

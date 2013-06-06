@@ -94,8 +94,9 @@
         </tr>
         {% endif %}
         <tr>
-            <th>{% trans "Surface" %}</th>
+            <th>{% trans "Dimensions" %}</th>
             <td>{% trans "H:" %} {{ intervention.height|stringformat:".2f" }}m ,
+                {% trans "L:" %} {{ intervention.length|stringformat:".2f" }}m ,
                 {% trans "W:" %} {{ intervention.width|stringformat:".2f" }}m :
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
             </td>

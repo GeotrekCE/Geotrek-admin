@@ -5,7 +5,7 @@ CHANGELOG
 0.19 (unreleased)
 -----------------
 
-* Nothing changed
+* Intervention length field (readonly if geometry is line)
 
 
 0.18 (2013-06-06)
