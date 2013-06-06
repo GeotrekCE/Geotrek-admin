@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 
 from django.test import TestCase
@@ -72,6 +73,7 @@ class ViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.modelfactory.create(trail=None)
+        self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 
 # FIXME: this test has random results (as reported by Hudson)
