@@ -67,7 +67,13 @@ test: install clean_harmless
 test_nav:
 	for navtest in `ls geotrek/tests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
 
-tests: test test_nav
+node_modules:
+	npm install geotrek/tests
+
+test_js: node_modules
+	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/tests/index.html
+
+tests: test test_js test_nav
 
 serve: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg

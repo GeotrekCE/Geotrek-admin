@@ -1,0 +1,13 @@
+{
+  "name": "geotrek-tests",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "make test_js"
+  },
+  "dependencies": {
+    "leaflet": "0.5.1",
+    "mocha": "1.9.0",
+    "chai": "1.6.0",
+    "mocha-phantomjs": "2.0.1"
+  }
+}
