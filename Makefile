@@ -64,9 +64,6 @@ test: install clean_harmless
 	bin/develop update -f
 	bin/django jenkins --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
 
-unit_tests_js:
-	casperjs --baseurl=$(baseurl) --reportdir=var/reports geotrek/tests/test_qunit.js
-
 functional_tests:
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-auth.xml geotrek/tests/auth.js
 	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml geotrek/tests/story_88_user_creation.js
