@@ -169,10 +169,10 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
             point.transform(self.geom.srid)
         cursor = connection.cursor()
         sql = """
-        WITH p AS (SELECT ST_3DClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
                    FROM %(table)s
                    WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom), ST_Z(p.geom) FROM p
+        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
         """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
         cursor.execute(sql)
         result = cursor.fetchall()

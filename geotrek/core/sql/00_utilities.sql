@@ -184,14 +184,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
-    RETURN ST_3DDistance(ST_EndPoint(line1), ST_StartPoint(line2)) < 1;
+    RETURN ST_Distance(ST_EndPoint(line1), ST_StartPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
-    RETURN ST_3DDistance(ST_StartPoint(line1), ST_EndPoint(line2)) < 1;
+    RETURN ST_Distance(ST_StartPoint(line1), ST_EndPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
