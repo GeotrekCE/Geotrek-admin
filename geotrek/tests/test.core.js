@@ -108,3 +108,15 @@ describe('Shortest path', function() {
         done();
     });
 });
+
+
+
+
+describe('Topology helper', function() {
+
+    it('It should safely return if computed path is null', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(function idToLayer(){}, {});
+        assert.deepEqual(topo, { layer: null, serialized: null });
+        done();
+    });
+});
