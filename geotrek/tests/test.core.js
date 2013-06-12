@@ -114,9 +114,97 @@ describe('Shortest path', function() {
 
 describe('Topology helper', function() {
 
+    var layer = new L.ObjectsLayer({
+        type: "FeatureCollection",
+        features: [
+            {type: "Feature",
+             geometry: {type: "LineString", coordinates: [[0,0], [10,0], [10,10], [0,10]]},
+             properties: {pk: 1}},
+            {type: "Feature",
+             geometry: {type: "LineString", coordinates: [[0,0], [0,10]]},
+             properties: {pk: 2}},
+            {type: "Feature",
+             geometry: {type: "LineString", coordinates: [[0,10], [0,20]]},
+             properties: {pk: 3}}
+        ]
+    }).addTo(map);
+
+    function idToLayer(pk) { return layer.getLayer(pk); }
+
+    function __inputData(from, to, ids) {
+        /**
+         * As returned by MultipathControl
+         */
+        var edges = $.map(ids, function (id) { return {id: id}; });
+        return {
+            computed_paths: [{
+                from_pop: {ll: from},
+                to_pop: {ll: to}
+            }],
+            new_edges: [edges]
+        };
+    }
+
+
     it('It should safely return if computed path is null', function(done) {
         var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(function idToLayer(){}, {});
         assert.deepEqual(topo, { layer: null, serialized: null });
+        done();
+    });
+
+
+    it('It should work if start and end are on same path', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([0, 5]), L.latLng([0, 10]), [[1]]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.16751709787175395, 0.33503419574350934]
+            },
+            paths: [1]
+        });
+        done();
+    });
+
+
+    it('It should work if start and end are on continous paths', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([5, 0]), L.latLng([15, 0]), [2,3]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.4999999999999995,1],   // [0.5, 1.0]
+                "1": [0, 0.5000000000000009]   // [0.0, 0.5]
+            },
+            paths: [2,3]
+        });
+        done();
+    });
+
+
+    it('It should work if paths have opposite ways', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([0, 5]), L.latLng([5, 0]), [1, 2]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.16751709787175395, 0],
+                "1": [0, 0.4999999999999995]
+            },
+            paths: [1, 2]
+        });
         done();
     });
 });
