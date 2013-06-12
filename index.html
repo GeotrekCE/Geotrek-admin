@@ -110,11 +110,56 @@
 <li>python | Django</li>
 <li>Javascript | Leaflet</li>
 </ul><h2>
+<a name="actualits" class="anchor" href="#actualits"><span class="octicon octicon-link"></span></a>Actualités</h2>
+
+<h3>
+<a name="juin-2012---geotrek-au-frog-2013" class="anchor" href="#juin-2012---geotrek-au-frog-2013"><span class="octicon octicon-link"></span></a>Juin 2012 - Geotrek au FROG 2013</h3>
+
+<p>L'application Geotrek a été présenté à la conférence FROG <a href="http://frog.osgeo.fr">FRancophone Open source Géomatique</a> qui a eu lieu dans les locaux de l'IGN lundi 10 juin 2013. Celle-ci est une journée de conférences dédiées a la géomatique libre et aux données géographiques libres, organisée par l'association OSGeo-fr. <a href="http://fr.slideshare.net/makinacorpus/geotrek-22850719">Visionner la présentation</a></p>
+
+<h3>
+<a name="mai-2012---geotrek-dans-gomatique-expert" class="anchor" href="#mai-2012---geotrek-dans-gomatique-expert"><span class="octicon octicon-link"></span></a>Mai 2012 - Geotrek dans Géomatique Expert</h3>
+
+<p>La revue bimestrielle Géomatique Expert s'est intéressée au projet Geotrek et y consacre un article de 5 pages dans son numéro 32 de Juin-Juillet 2013. Retrouvez l'article page 56 qui s'appuie sur 2 entretiens avec le Parc national des Écrins et la société Makina-Corpus.  <a href="http://www.geomag.fr">http://www.geomag.fr</a></p>
+
+<h2>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
 <p><a href="http://geotrek.readthedocs.org">Installation and configuration instructions</a></p>
 
-<h2>
+<p>Tutoriaux ( <em>en</em> ):</p>
+
+<ul>
+<li><a href="http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.htm">Drappage de lignes sur un MNT</a></li>
+<li><a href="http://blog.mathieu-leplatre.info/cheap-debugging-of-postgresql-triggers-in-django.html">Debug PostgreSQL triggers with Django</a></li>
+<li><a href="http://blog.mathieu-leplatre.info/leaflet-tiles-in-lambert-93-projection-2154.html">Leaflet et tuiles en Lambert-93</a></li>
+</ul><h3>
+<a name="composants-libres" class="anchor" href="#composants-libres"><span class="octicon octicon-link"></span></a>Composants libres</h3>
+
+<p>L'application Geotrek a été conçue et modélisée par le Parc national des Ecrins qui s'est associée au Parc national du Mercantour et au parc italien Alpi-Marittime pour lancer un appel d'offre fin 2010. C'est la société Makina Corpus qui a été retenue pour développer le projet. Rapidement le choix a été fait de développer une application la plus générique et la plus portable possible. Son usage devenait alors potentiellement intéressant pour un grand nombre d'autres structures et les partenaires ont décidé de libérer l'ensemble du projet sous licence open source sur la forge github.</p>
+
+<p>Au-delà, le développement de l'application a reposé exclusivement sur des briques open source dont la librairie javascript Leaflet et le framework Django. Le projet a été l'occasion d'y ajouter de nouvelles fonctionnalités qui ont été publiées sous forme de plugins :</p>
+
+<ul>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.FileLayer">Leaflet.FileLayer</a>: Permet d'ajouter un contrôle à la carte pour charger et afficher des fichiers GPX, GeoJSON ou encore KML.</li>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.GeometryUtil">LeafLet.GeometryUtil</a>: Collection d'outils géométriques (interpolation linéaire, etc.)</li>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.Snap">LeafLet.Snap</a>: Snapping (magnétisme) entre objets pour l'édition avec Leaflet.Draw.</li>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.LayerIndex">LeafLet.LayerIndex</a>: Indexation spatiale des couches vectorielles.</li>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.TextPath">LeafLet.TextPath</a>: Permet d'afficher un texte ou des symboles le long d'une ligne.</li>
+<li>
+<a href="https://github.com/makinacorpus/Leaflet.Spin">LeafLet.Spin</a>: Affichage simplifiée d'un curseur de chargement spin.js.</li>
+<li><p><a href="https://github.com/makinacorpus/Leaflet.RestoreView">LeafLet.RestoreView</a>: Restaure l'emprise de la carte à la précédente visite.</p></li>
+<li><p><a href="https://github.com/makinacorpus/django-leaflet">django-leaflet</a>: Intégrer Leaflet dans un projet Django.</p></li>
+<li><p><a href="https://github.com/makinacorpus/django-geojson">django-geojson</a>: Sérialiser des modèles Django au format GeoJSON.</p></li>
+<li><p><a href="https://github.com/makinacorpus/django-screamshot">django-screamshot</a>: Captures image de pages Web.</p></li>
+<li><p><a href="https://github.com/makinacorpus/django-appypod">django-appypod</a>: Générer des documents LibreOffice depuis des vues Django.</p></li>
+<li><p><a href="https://github.com/makinacorpus/convertit">convertit</a>: Web API de conversion de documents génériques.</p></li>
+</ul><h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <ul>
