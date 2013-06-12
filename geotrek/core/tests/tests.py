@@ -289,6 +289,11 @@ class PathTest(TestCase):
         path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (5.2, 0, 0)))
         self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (5, 0, 1000)))
 
+    def test_snapping_3d_extremities(self):
+        PathFactory.create(geom=LineString(((0, 0, 0), (10, 0, 1000))))
+        path_snapped = PathFactory.create(geom=LineString((8, 0, 0), (-50, -50, 0)))
+        self.assertEqual(path_snapped.geom.coords, ((8, 0, 0), (-50, -50, 0)))
+
 
 class TrailTest(TestCase):
 

@@ -17,7 +17,7 @@ BEGIN
     lineend := ST_EndPoint(NEW.geom);
 
     result := NULL;
-    SELECT ST_3DClosestPoint(geom, linestart), geom INTO result, other
+    SELECT ST_ClosestPoint(geom, linestart), geom INTO result, other
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
         AND id != NEW.id
@@ -46,7 +46,7 @@ BEGIN
     END LOOP;
 
     result := NULL;
-    SELECT ST_3DClosestPoint(geom, lineend), geom INTO result, other
+    SELECT ST_ClosestPoint(geom, lineend), geom INTO result, other
       
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
