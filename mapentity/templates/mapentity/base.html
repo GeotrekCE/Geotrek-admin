@@ -155,25 +155,28 @@
             {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap/js/locales/bootstrap-datepicker.{{ lang.0 }}.js"  charset="UTF-8"></script>{% endif %}
         {% endfor %}
 
+        <script type="text/javascript">
         {# If context, we screenshot with CasperJS. Wait or backport Leaflet commit 1c8e0c6 torevent offset on PhantomJS captures #}
         {% if request.GET.context %}
-        <script type="text/javascript">
             L_DISABLE_3D = true;
-        </script>
         {% endif %}
+        {% if DEBUG %}
+            window.DEBUG = true;
+        {% endif %}
+        // Global Javascript settings : loaded SYNChronously
+        $.ajax({
+            url: "{% url 'common:settings_json' %}",
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+              window.SETTINGS = data;
+            }
+        });
+        </script>
 
         {% leaflet_js %}
         <script type="text/javascript">
             L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
-            // Global Javascript
-            $.ajax({
-              url: "{% url 'common:settings_json' %}",
-              async: false,
-              dataType: 'json',
-              success: function (data) {
-                  window.SETTINGS = data;
-              }
-            });
         </script>
 
         <script type="text/javascript" src="{% static "mapentity/jquery.deserialize.js" %}"></script>
