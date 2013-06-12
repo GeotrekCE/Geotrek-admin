@@ -20,4 +20,4 @@ include/
 lib/
 local/
 *.egg-info/
-
+/node_modules/
