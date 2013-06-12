@@ -60,7 +60,7 @@ Geotrek.TopologyHelper = (function() {
                  *        B     A 
                  *   +----|=====|---->
                  */
-                paths = paths.unique();
+                paths = $.unique(paths);
                 positions[0] = [pk_start, pk_end];
             }
         }
@@ -157,6 +157,7 @@ Geotrek.TopologyHelper = (function() {
         // Clean-up :
         // We basically remove all points where position is [x,x]
         // This can happen at extremity points...
+
         if (!single_path_loop) {
             var cleanpaths = [],
                 cleanpositions = {};
