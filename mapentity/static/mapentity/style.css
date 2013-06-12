@@ -570,6 +570,11 @@ span.filter-info {
     height: 100%;
 }
 
+#geomfield .control-group.error .help-block {
+    z-index: 1;
+    position: absolute;
+}
+
 /* Tired of bootstrap ? 
 TODO: please help;
  */
