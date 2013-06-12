@@ -11,7 +11,9 @@ install:
   - sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/
   - sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/
   - ./bin/buildout -Nvc buildout-tests.cfg
-script: ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
+script:
+  - ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
+  - make test_js
 after_success:
   # Report coverage results to coveralls.io
   - ./bin/coverage report -m 
