@@ -307,7 +307,7 @@ BEGIN
                         END IF;
                         -- Special case : point topology exactly where NEW path intersects
                         IF a > 0 THEN
-                            fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Substring(troncon.geom, a, a));
+                            fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT NEW.id, et.evenement, fraction, fraction
                                 FROM e_r_evenement_troncon et
