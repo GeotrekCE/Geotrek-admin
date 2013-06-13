@@ -314,8 +314,8 @@ class RelatedObjectsTest(TestCase):
 
 class TemplateTagsTest(TestCase):
     def test_duration(self):
-        self.assertEqual(u"15 min.", trekking_tags.duration(0.25))
-        self.assertEqual(u"30 min.", trekking_tags.duration(0.5))
+        self.assertEqual(u"15 min", trekking_tags.duration(0.25))
+        self.assertEqual(u"30 min", trekking_tags.duration(0.5))
         self.assertEqual(u"1H", trekking_tags.duration(1))
         self.assertEqual(u"1H45", trekking_tags.duration(1.75))
         self.assertEqual(u"1 day", trekking_tags.duration(13))
