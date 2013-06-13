@@ -62,7 +62,7 @@ release:
 test: install clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/develop update -f
-	bin/django test --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
+	bin/django test authent core land maintenance trekking common infrastructure mapentity
 
 test_nav:
 	for navtest in `ls geotrek/tests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
