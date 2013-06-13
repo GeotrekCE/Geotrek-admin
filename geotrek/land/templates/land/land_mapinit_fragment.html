@@ -3,9 +3,9 @@
 (function () {
 
     // Add land layers
-    var landLayers = [{url:'{% url land:district_layer %}', name: '{% trans "District" %}', id: 'district'},
-                      {url:'{% url land:city_layer %}', name: '{% trans "City" %}', id: 'city'},
-                      {url:'{% url land:restrictedarea_layer %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
+    var landLayers = [{url:'{% url 'land:district_layer' %}', name: '{% trans "District" %}', id: 'district'},
+                      {url:'{% url 'land:city_layer' %}', name: '{% trans "City" %}', id: 'city'},
+                      {url:'{% url 'land:restrictedarea_layer' %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
     for (var i=0; i<landLayers.length; i++) {
         var landLayer = landLayers[i];
         var layer = new L.ObjectsLayer(null, {
@@ -17,11 +17,11 @@
     }
 
     // Add management layers
-    var managementLayers = [{url:'{% url land:landedge_layer %}', name: '{% trans "Land type" %}', id: 'land'},
-                            {url:'{% url land:physicaledge_layer %}', name: '{% trans "Physical type" %}', id: 'physical'},
-                            {url:'{% url land:competenceedge_layer %}', name: '{% trans "Competence" %}', id: 'competence'},
-                            {url:'{% url land:signagemanagementedge_layer %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
-                            {url:'{% url land:workmanagementedge_layer %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
+    var managementLayers = [{url:'{% url 'land:landedge_layer' %}', name: '{% trans "Land type" %}', id: 'land'},
+                            {url:'{% url 'land:physicaledge_layer' %}', name: '{% trans "Physical type" %}', id: 'physical'},
+                            {url:'{% url 'land:competenceedge_layer' %}', name: '{% trans "Competence" %}', id: 'competence'},
+                            {url:'{% url 'land:signagemanagementedge_layer' %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
+                            {url:'{% url 'land:workmanagementedge_layer' %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
 
     // We have a list of colors, each layer has a *color_index*, and will *consume* a color 
     // from the list. This way we may not have the same color twice on the map.

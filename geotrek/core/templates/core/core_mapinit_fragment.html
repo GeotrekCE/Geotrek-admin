@@ -10,6 +10,6 @@ if (window['{{ module  }}_settings'] === undefined && ('{{ view }}' == 'detail' 
     if ('{{ modelname }}' == 'path') {
         paths.addTo(map);
     }
-    paths.load('{% url core:path_layer %}');
+    paths.load('{% url 'core:path_layer' %}');
     map.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
 }

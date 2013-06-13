@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, LineString
 from django.contrib.gis import gdal
 from django.test import TestCase
-from django.utils import simplejson
+import json
 
 from geotrek.common.tests import CommonTest
 from mapentity import shape_exporter
@@ -210,7 +210,7 @@ class ProjectViewsTest(CommonTest):
         # Check that only p1 is in geojson
         response = self.client.get(self.model.get_layer_url())
         self.assertEqual(response.status_code, 200)
-        geojson = simplejson.loads(response.content)
+        geojson = json.loads(response.content)
         features = geojson['features']
 
         self.assertEqual(len(Project.objects.all()), 2)
@@ -229,8 +229,8 @@ class ProjectViewsTest(CommonTest):
             url = self.model.get_jsonlist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
-            json = simplejson.loads(response.content)
-            return json['aaData']
+            jsondict = json.loads(response.content)
+            return jsondict['aaData']
 
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)

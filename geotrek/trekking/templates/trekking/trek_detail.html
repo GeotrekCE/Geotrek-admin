@@ -7,10 +7,10 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-mini" href="{% url trekking:trek_gpx_detail object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-mini" href="{% url trekking:trek_kml_detail object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_gpx_detail' object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_kml_detail' object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
 
-    <a class="btn btn-mini" href="{% url trekking:trek_printable object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_printable' object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
 {% endblock download %}
 
 
@@ -236,7 +236,7 @@
             {% endif %}
 
             // Trek POIs layer
-            $.getJSON('{% url trekking:trek_poi_geojson object.pk %}', function (data) {
+            $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
                 for (var i=0, n = data.features.length; i<n; i++) {
                     var f = data.features[i];
                     f.properties.type = f.properties.serializable_type;
@@ -244,7 +244,7 @@
                 }
 
                 var pois = new POILayer(data),
-                    poiUrl = "{% url trekking:poi_detail 0 %}";
+                    poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
                         window.location = poiUrl.replace('0', layer.properties.pk);

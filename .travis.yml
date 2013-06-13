@@ -14,6 +14,8 @@ install:
 script:
   - ./bin/django test authent core land maintenance trekking common infrastructure mapentity
   - make test_js
+  # Re-run for coverage
+  - rm -rf ./var/media/maps/*
   - ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure mapentity
 after_success:
   # Report coverage results to coveralls.io
