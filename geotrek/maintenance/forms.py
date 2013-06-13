@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.forms import FloatField
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
@@ -20,10 +21,11 @@ class ManDayForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ManDayForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
-        self.helper.layout = Layout('id',
-                                    Div('nb_days', css_class="span2"),
-                                    Div('job', css_class="span3"))
-        self.fields['nb_days'].widget.attrs['class'] = 'span12'
+        self.helper.layout = Layout('id', 'nb_days', 'job')
+        self.fields['nb_days'].widget.attrs['placeholder'] = _('Days')
+        self.fields['nb_days'].label = ''
+        self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
+        self.fields['job'].widget.attrs['class'] = 'input-medium'
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)
@@ -48,6 +50,7 @@ class InterventionForm(CommonForm):
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
+    length = forms.FloatField(required=False, label=_("Length"))
     modelfields = (
         Div(
             HTML("""
@@ -64,8 +67,9 @@ class InterventionForm(CommonForm):
                     'type',
                     'comments',
                     'in_maintenance',
-                    'height',
+                    'length',
                     'width',
+                    'height',
                     'stake',
                     'project',
                     'infrastructure',
@@ -110,6 +114,10 @@ class InterventionForm(CommonForm):
                 unicode(_("On %s") % _(infrastructure.kind.lower())),
                 u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), unicode(infrastructure))
             )
+        # Length is not editable in AltimetryMixin
+        self.fields['length'].initial = self.instance.length
+        editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
+        self.fields['length'].widget.attrs['readonly'] = editable
 
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
@@ -120,6 +128,7 @@ class InterventionForm(CommonForm):
         return cleaned_data
 
     def save(self, *args, **kwargs):
+        self.instance.length = self.cleaned_data.get('length')
         infrastructure = self.cleaned_data.get('infrastructure')
         if infrastructure:
             self.instance.set_infrastructure(infrastructure)

@@ -19,8 +19,6 @@ bin/phantomjs:
 	tar -jxvf phantomjs.tar.bz2 -C $(root)/lib/
 	rm phantomjs.tar.bz2
 	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/
-	# Install system-wide binary (require sudo)
-	sudo ln -sf $(root)/bin/phantomjs /usr/local/bin/
 
 bin/casperjs: bin/phantomjs
 	wget https://github.com/n1k0/casperjs/zipball/1.0.1 -O casperjs.zip
@@ -28,8 +26,6 @@ bin/casperjs: bin/phantomjs
 	unzip -o casperjs.zip -d $(root)/lib/ > /dev/null
 	rm casperjs.zip
 	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/
-	# Install system-wide binary (require sudo)
-	sudo ln -sf $(root)/bin/casperjs /usr/local/bin/
 
 bin/python:
 	virtualenv .
@@ -54,10 +50,11 @@ clean: clean_harmless
 .PHONY: all_makemessages all_compilemessages
 
 all_makemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages -a; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
 
 all_compilemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
 
 release:
 	git archive --format=zip --prefix="geotrek-$(version)/" $(version) > ../geotrek-src-$(version).zip
@@ -65,17 +62,18 @@ release:
 test: install clean_harmless
 	bin/buildout -Nvc buildout-tests.cfg
 	bin/develop update -f
-	bin/django jenkins --coverage-rcfile=.coveragerc --output-dir=var/reports/ authent core land maintenance trekking common infrastructure mapentity
+	bin/django test authent core land maintenance trekking common infrastructure mapentity
 
-unit_tests_js:
-	casperjs --baseurl=$(baseurl) --reportdir=var/reports geotrek/tests/test_qunit.js
+test_nav:
+	for navtest in `ls geotrek/tests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
 
-functional_tests:
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-auth.xml geotrek/tests/auth.js
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-88.xml geotrek/tests/story_88_user_creation.js
-	casperjs --baseurl=$(baseurl) --save=var/reports/FUNC-test_utils.xml geotrek/tests/test_utils.js
+node_modules:
+	npm install geotrek/tests
 
-tests: test functional_tests
+test_js: node_modules
+	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/tests/index.html
+
+tests: test test_js test_nav
 
 serve: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
@@ -90,8 +88,6 @@ load_data:
 
 deploy: install clean_harmless
 	bin/buildout -Nc buildout-prod.cfg buildout:user=$(user)
-	sudo chgrp -R $(user) var/
-	sudo chmod -R g+w var/
 	touch lib/parts/django/django_extrasettings/settings_production.py
 	make all_compilemessages
 	bin/develop update -f

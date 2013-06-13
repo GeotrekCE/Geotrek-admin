@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    length = models.FloatField(editable=False, default=0.0, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(editable=False, default=0, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-    slope = models.FloatField(editable=False, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+    length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
+    ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
+    slope = models.FloatField(editable=False, null=True, blank=True, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
 
     COLUMNS = ['length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope']
 
@@ -53,9 +53,9 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
                                 help_text=_(u"Remarks"))
 
-    departure = models.CharField(blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
                                  help_text=_(u"Departure place"))
-    arrival = models.CharField(blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
                                help_text=_(u"Arrival place"))
 
     comfort = models.ForeignKey('Comfort',
@@ -169,10 +169,10 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
             point.transform(self.geom.srid)
         cursor = connection.cursor()
         sql = """
-        WITH p AS (SELECT ST_3DClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
                    FROM %(table)s
                    WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom), ST_Z(p.geom) FROM p
+        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
         """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -474,10 +474,12 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                     if not last_topo and last_path:
                         # Intermediary marker.
                         # make sure pos will be [X, X]
-                        # [0, X] or [X, 1] --> X
+                        # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
                         # [0.0, 0.0] --> 0.0  : marker at beginning of path
                         # [1.0, 1.0] --> 1.0  : marker at end of path
                         pos = -1
+                        if start_position == end_position:
+                            pos = start_position
                         if start_position == 0.0:
                             pos = end_position
                         elif start_position == 1.0:
@@ -486,7 +488,9 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                             pos = start_position
                         elif end_position == 1.0:
                             pos = start_position
-                        assert pos >= 0, "Invalid position."
+                        elif len(paths) == 1:
+                            pos = end_position
+                        assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
                         topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
                     counter += 1
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-
+from django.db import models
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
+from tinymce.widgets import TinyMCE
+
 from geotrek.authent.admin import TrekkingManagerModelAdmin
 from .models import (
-    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink, WebLinkCategory
+    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
+    WebLinkCategory, InformationDesk
 )
 
 
@@ -50,6 +53,15 @@ class WebLinkCategoryAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
     search_fields = ('label', )
 
 
+class InformationDeskAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+    formfield_overrides = {
+        models.TextField: {'widget': TinyMCE},
+    }
+
+
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
@@ -60,6 +72,7 @@ trek_admin_to_register = [
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
+    (InformationDesk, InformationDeskAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

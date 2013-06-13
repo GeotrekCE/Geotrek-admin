@@ -1,0 +1,34 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+</head>
+<body>
+  <div id="map" style="display: none; height: 300px"></div>
+  <div id="mocha"></div>
+  <script src="../../node_modules/geotrek-tests/node_modules/chai/chai.js"></script>
+  <script src="../../node_modules/geotrek-tests/node_modules/mocha/mocha.js"></script>
+  <script src="../../node_modules/geotrek-tests/node_modules/leaflet/debug/leaflet-include.js"></script>
+
+  <!-- Use jquery bundled in mapentity -->
+  <script src="../../lib/src/mapentity/mapentity/static/mapentity/jquery.min.js"></script>
+  <script src="../../lib/src/mapentity/mapentity/static/mapentity/rtree.js"></script>
+  <script src="../../lib/src/mapentity/mapentity/static/mapentity/leaflet.layerindex.js"></script>
+  <script src="../../lib/src/mapentity/mapentity/static/mapentity/leaflet.geometryutil.js"></script>
+  <script src="../../lib/src/mapentity/mapentity/static/mapentity/leaflet-objectslayer.js"></script>
+
+  <script src="../core/static/core/dijkstra.js"></script>
+  <script src="../core/static/core/topology_helper.js"></script>
+
+  <script>
+    var map = L.map('map').fitWorld();
+  </script>
+
+  <script>mocha.setup('bdd')</script>
+  <script src="test.core.js"></script>
+  <script>
+    (window.mochaPhantomJS || window.mocha).run();
+  </script>
+</body>
+</html>

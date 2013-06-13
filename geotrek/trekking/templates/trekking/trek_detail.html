@@ -193,6 +193,12 @@
             </td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"information_desk" }}</th>
+            <td>{% if trek.information_desk %}{{ trek.information_desk.name }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.picture|thumbnail_url:"small-square" }}"></td>
         </tr>

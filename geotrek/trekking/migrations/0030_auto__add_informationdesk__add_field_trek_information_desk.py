@@ -9,14 +9,33 @@ from django.conf import settings
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'InformationDesk'
+        db.create_table('o_b_renseignement', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=256, db_column='nom')),
+            ('name_en', self.gf('django.db.models.fields.CharField')(max_length=256, null=True, db_column='nom_en', blank=True)),
+            ('name_fr', self.gf('django.db.models.fields.CharField')(max_length=256, null=True, db_column='nom_fr', blank=True)),
+            ('name_it', self.gf('django.db.models.fields.CharField')(max_length=256, null=True, db_column='nom_it', blank=True)),
+            ('description', self.gf('django.db.models.fields.TextField')(db_column='description', blank=True)),
+            ('description_en', self.gf('django.db.models.fields.TextField')(null=True, db_column='description_en', blank=True)),
+            ('description_fr', self.gf('django.db.models.fields.TextField')(null=True, db_column='description_fr', blank=True)),
+            ('description_it', self.gf('django.db.models.fields.TextField')(null=True, db_column='description_it', blank=True)),
+        ))
+        db.send_create_signal('trekking', ['InformationDesk'])
 
-        # Changing field 'Trek.duration'
-        db.alter_column('o_t_itineraire', 'duree', self.gf('django.db.models.fields.FloatField')(null=True, db_column='duree'))
+        # Adding field 'Trek.information_desk'
+        db.add_column('o_t_itineraire', 'information_desk',
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, db_column='renseignement', to=orm['trekking.InformationDesk']),
+                      keep_default=False)
+
 
     def backwards(self, orm):
+        # Deleting model 'InformationDesk'
+        db.delete_table('o_b_renseignement')
 
-        # Changing field 'Trek.duration'
-        db.alter_column('o_t_itineraire', 'duree', self.gf('django.db.models.fields.IntegerField')(null=True, db_column='duree'))
+        # Deleting field 'Trek.information_desk'
+        db.delete_column('o_t_itineraire', 'renseignement')
+
 
     models = {
         'authent.structure': {
@@ -123,6 +142,18 @@ class Migration(SchemaMigration):
             'difficulty_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'difficulte'", 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
+        'trekking.informationdesk': {
+            'Meta': {'ordering': "['name']", 'object_name': 'InformationDesk', 'db_table': "'o_b_renseignement'"},
+            'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
+            'description_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'description_en'", 'blank': 'True'}),
+            'description_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'description_fr'", 'blank': 'True'}),
+            'description_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'description_it'", 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '256', 'db_column': "'nom'"}),
+            'name_en': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'db_column': "'nom_en'", 'blank': 'True'}),
+            'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'db_column': "'nom_fr'", 'blank': 'True'}),
+            'name_it': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'db_column': "'nom_it'", 'blank': 'True'})
+        },
         'trekking.poi': {
             'Meta': {'object_name': 'POI', 'db_table': "'o_t_poi'", '_ormbases': ['core.Topology']},
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'"}),
@@ -199,6 +230,7 @@ class Migration(SchemaMigration):
             'disabled_infrastructure_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'handicap'", 'blank': 'True'}),
             'disabled_infrastructure_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'handicap'", 'blank': 'True'}),
             'duration': ('django.db.models.fields.FloatField', [], {'default': '0', 'null': 'True', 'db_column': "'duree'", 'blank': 'True'}),
+            'information_desk': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'renseignement'", 'to': "orm['trekking.InformationDesk']"}),
             'is_park_centered': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'coeur'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'nom'", 'blank': 'True'}),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2013-05-23 15:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,32 +18,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: filters.py:14
 #, python-format
 msgid "min %s"
 msgstr "min %s"
 
-#: filters.py:15
 #, python-format
 msgid "max %s"
 msgstr "max %s"
 
-#: models.py:7 models.py:11
+msgid "Insertion date"
+msgstr "Date d'insertion"
+
+msgid "Update date"
+msgstr "Date de mise à jour"
+
+msgid "Deleted"
+msgstr "Supprimé"
+
 msgid "Organism"
 msgstr "Organisme"
 
-#: models.py:12
 msgid "Organisms"
 msgstr "Organismes"
 
-#: models.py:20 models.py:24
 msgid "File type"
 msgstr "Type de fichiers"
 
-#: models.py:25
 msgid "File types"
 msgstr "Types de fichiers"
-
 
 msgid "Add a new intervention"
 msgstr "Ajouter une intervention"
@@ -81,8 +83,3 @@ msgstr "Renseigner le gestionnaire travaux"
 msgid "Add a new signage management edge"
 msgstr "Renseigner le gestionnaire signalétique"
 
-#~ msgid "Cancel"
-#~ msgstr "Annuler"
-
-#~ msgid "Save changes"
-#~ msgstr "Sauvegarder"

@@ -19,6 +19,8 @@ from geotrek.core.models import Path, Topology
 from geotrek.common.utils import elevation_profile, classproperty
 from geotrek.maintenance.models import Intervention, Project
 
+from .templatetags import trekking_tags
+
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +135,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            related_name='related_treks+')  # Hide reverse attribute
+    information_desk = models.ForeignKey('InformationDesk', related_name='treks',
+                                         blank=True, null=True, verbose_name=_(u"Information Desk"), db_column='renseignement')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -198,6 +202,16 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         """
         return [a for a in self.attachments.all() if a.is_image and a.title != 'mapimage']
 
+    def get_attachment_print(self):
+        """
+        Look in attachment if there is document to be used as print version
+        """
+        overriden = self.attachments.filter(title="docprint").get()
+        # Must have OpenOffice document mimetype
+        if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
+            raise overriden.DoesNotExist()
+        return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
+
     @property
     def serializable_relationships(self):
         return [{
@@ -228,6 +242,14 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             return None
         return {'id': self.difficulty.pk,
                 'label': self.difficulty.difficulty}
+
+    @property
+    def serializable_information_desk(self):
+        if not self.information_desk:
+            return None
+        return {'id': self.information_desk.pk,
+                'name': self.information_desk.name,
+                'description': self.information_desk.description}
 
     @property
     def serializable_themes(self):
@@ -331,6 +353,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     def is_publishable(self):
         return self.is_complete() and self.has_geom_valid()
+
+    @property
+    def duration_pretty(self):
+        return trekking_tags.duration(self.duration)
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -544,6 +570,22 @@ class Theme(models.Model):
                 image = image.crop((0, 0, w / 2, h))
             image.save(output)
         return open(output)
+
+
+class InformationDesk(models.Model):
+
+    name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
+                                   help_text=_(u"Brief description"))
+
+    class Meta:
+        db_table = 'o_b_renseignement'
+        verbose_name = _(u"Information desk")
+        verbose_name_plural = _(u"Information desks")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class POIManager(models.GeoManager):

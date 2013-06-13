@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2013-05-23 15:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,234 +17,181 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: fields.py:23
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
-#: filters.py:13
+#, fuzzy, python-format
+msgid "Topology %s does not exist."
+msgstr "La topologie n'est pas valide."
+
+msgid "Linestring invalid snapping."
+msgstr "La line a un snapping invalide"
+
 msgid "length"
 msgstr "Longueur"
 
-#: filters.py:14 models.py:56 models.py:681
 msgid "Name"
 msgstr "Nom"
 
-#: filters.py:15 models.py:58 models.py:684
 msgid "Comments"
 msgstr "Commentaires"
 
-#: forms.py:54
 msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
-#: forms.py:55
 msgid "The path will be reversed once saved"
 msgstr "Le tronçon sera inversé une fois sauvegardé."
 
-#: models.py:24
-msgid "Insertion date"
-msgstr "Date d'insertion"
+msgid "Invalid snapped geometry."
+msgstr "La géométrie snappée est invalide"
 
-#: models.py:25
-msgid "Update date"
-msgstr "Date de modification"
+msgid "Geometry is not simple."
+msgstr "La géométrie est non simple"
 
-#: models.py:33
+msgid "Geometry overlaps another."
+msgstr "La géométrie en superpose une autre"
+
 msgid "Length"
 msgstr "Longueur"
 
-#: models.py:34
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
-#: models.py:35
 msgid "Descent"
 msgstr "Dénivelée négative"
 
-#: models.py:36
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
-#: models.py:37
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
-#: models.py:38 templates/core/elevationinfo_fragment.html:7
 msgid "Slope"
 msgstr "Dénivelé"
 
-#: models.py:54
 msgid "Validity"
 msgstr "Validité"
 
-#: models.py:55
 msgid "Approved by manager"
 msgstr "Approuvé par le référent"
 
-#: models.py:57
 msgid "Official name"
 msgstr "Nom officiel"
 
-#: models.py:59
 msgid "Remarks"
 msgstr "Remarques"
 
-#: models.py:61 models.py:682
 msgid "Departure"
 msgstr "Départ"
 
-#: models.py:62
 msgid "Departure place"
 msgstr "Lieu de départ"
 
-#: models.py:63 models.py:683
 msgid "Arrival"
 msgstr "Arrivée"
 
-#: models.py:64
 msgid "Arrival place"
 msgstr "Lieu d'arrivée"
 
-#: models.py:68 models.py:639 models.py:643
 msgid "Comfort"
 msgstr "Confort"
 
-#: models.py:74
 msgid "Trail"
 msgstr "Sentier"
 
-#: models.py:77 models.py:612
 msgid "Datasource"
 msgstr "Source de données"
 
-#: models.py:80 models.py:622 models.py:626
 msgid "Stake"
 msgstr "Enjeu"
 
-#: models.py:83 models.py:658
 msgid "Usages"
 msgstr "Usages"
 
-#: models.py:86 models.py:672
 msgid "Networks"
 msgstr "Réseaux"
 
-#: models.py:95 models.py:267 models.py:562
+#, python-format
+msgid "path %d"
+msgstr "tronçon %d"
+
 msgid "Path"
 msgstr "Tronçon"
 
-#: models.py:96 templates/core/aggregations_list_fragment.html:3
-#: templates/core/core_mapinit_fragment.html:12
-#: templates/core/paths_list_fragment.html:3
 msgid "Paths"
 msgstr "Tronçons"
 
-#: models.py:230 models.py:236
-#: templates/core/aggregations_list_fragment.html:34
-#: templates/core/core_detail_fragment.html:27
-#: templates/core/path_detail.html:13 templates/core/path_detail.html.py:28
-#: templates/core/path_detail.html:38 templates/core/path_detail.html.py:43
-#: templates/core/path_detail.html:54 templates/core/path_detail.html.py:65
-#: templates/core/paths_list_fragment.html:10
 msgid "None"
 msgstr "Aucun(e)"
 
-#: models.py:240
-msgid "Deleted"
-msgstr "Supprimé"
-
-#: models.py:268
 msgid "Offset"
 msgstr "Décalage"
 
-#: models.py:269
 msgid "Kind"
 msgstr "Type de topologie"
 
-#: models.py:279 models.py:306 models.py:566
 msgid "Topology"
 msgstr "Topologie"
 
-#: models.py:280
 msgid "Topologies"
 msgstr "Topologies"
 
-#: models.py:567
 msgid "Start position"
 msgstr "Position de début"
 
-#: models.py:568
 msgid "End position"
 msgstr "Position de fin"
 
-#: models.py:569
 msgid "Order"
 msgstr "Ordre"
 
-#: models.py:575 models.py:599
 msgid "Path aggregation"
 msgstr "Aggrégation de tronçons"
 
-#: models.py:600
 msgid "Path aggregations"
 msgstr "Aggrégations de tronçons"
 
-#: models.py:608
 msgid "Source"
 msgstr "Source"
 
-#: models.py:613
 msgid "Datasources"
 msgstr "Source de données"
 
-#: models.py:627
 msgid "Stakes"
 msgstr "Enjeux"
 
-#: models.py:644
 msgid "Comforts"
 msgstr "Conforts"
 
-#: models.py:653 models.py:657
 msgid "Usage"
 msgstr "Usage"
 
-#: models.py:667 models.py:671
 msgid "Network"
 msgstr "Réseau"
 
-#: models.py:688 models.py:689 templates/core/core_detail_fragment.html:20
 msgid "Trails"
 msgstr "Sentiers"
 
-#: templates/core/altimetric_profile_fragment.html:4
 msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
-#: templates/core/altimetric_profile_fragment.html:5
 msgid "Altitude (m)"
 msgstr "Altitude (m)"
 
-#: templates/core/altimetric_profile_fragment.html:6
 msgid "Distance (m)"
 msgstr "Distance (m)"
 
-#: templates/core/core_detail_fragment.html:5
 msgid "Management"
 msgstr "Gestion"
 
-#: templates/core/core_detail_fragment.html:15
 msgid "No information"
 msgstr "Pas d'information"
 
-#: templates/core/elevationinfo_fragment.html:11
 msgid "Elevation"
 msgstr "Altitude"
 
-#: templates/core/path_detail.html:8
 msgid "Invalid"
 msgstr "Invalide"
 
-#: templates/core/path_list.html:8 templates/core/path_list.html.py:10
 msgid "Add a path"
 msgstr "Ajouter un tronçon"

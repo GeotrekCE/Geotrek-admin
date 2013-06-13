@@ -46,6 +46,10 @@ class WebLinkCategoryTO(TranslationOptions):
     fields = ('label', )
 
 
+class InformationDeskTO(TranslationOptions):
+    fields = ('name', 'description')
+
+
 # Register previously defined translation options
 trek_translation_to_register = [
     (trekking_models.Trek, TrekTO),
@@ -58,6 +62,7 @@ trek_translation_to_register = [
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),
     (trekking_models.WebLinkCategory, WebLinkCategoryTO),
+    (trekking_models.InformationDesk, InformationDeskTO),
 ]
 
 for model, model_to in trek_translation_to_register:
