@@ -70,7 +70,7 @@ BEGIN
     END IF;
     newline := array_append(newline, result);
 
-    RAISE NOTICE 'New geom %s', ST_AsText(ST_MakeLine(newline));
+    RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
     NEW.geom := ST_Force_3D(ST_MakeLine(newline));
     RETURN NEW;
 END;
@@ -209,6 +209,9 @@ BEGIN
                     END IF;
                 END IF;
             END LOOP;
+
+            -- Recursive triggers did all the work. Stop here.
+            RETURN NULL;
         END IF;
 
 
@@ -280,19 +283,19 @@ BEGIN
                             SELECT
                                 tid_clone,
                                 et.evenement,
-                                CASE WHEN pk_debut < pk_fin THEN
+                                CASE WHEN pk_debut <= pk_fin THEN
                                     (greatest(a, pk_debut) - a) / (b - a)
                                 ELSE
                                     (greatest(b, pk_fin) - a) / (b - a)
                                 END,
-                                CASE WHEN pk_debut < pk_fin THEN
+                                CASE WHEN pk_debut <= pk_fin THEN
                                     (least(b, pk_fin) - a) / (b - a)
                                 ELSE
                                     (least(a, pk_debut) - a) / (b - a)
                                 END
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
-                                  AND ((least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a) OR       -- Overlapping
+                                  AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
                                        (pk_debut = pk_fin AND pk_debut = a)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
                         IF t_count > 0 THEN
