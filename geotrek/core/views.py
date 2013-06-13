@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 
-from django.utils import simplejson
+import json
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -135,7 +135,7 @@ def get_graph_json(request):
                 Path.objects.all(),
                 value_modifier=path_modifier,
                 key_modifier=graph_lib.get_key_optimizer())
-    json_graph = simplejson.dumps(graph)
+    json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)

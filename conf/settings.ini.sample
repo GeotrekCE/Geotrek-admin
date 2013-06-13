@@ -8,11 +8,15 @@
 #  run "make deploy" to apply changes, or "make serve" in development)
 
 [settings]
-# Default structure for newly created users
-defaultstructure = PNE
+
+# IP/Domain (example: 88.99.17.89, .myserver.com)
+host = .myserver.com
 
 # URL prefix, leave empty if dedicated server. (example: /ecrins)
-rooturl = 
+rooturl =
+
+# Default structure for newly created users
+defaultstructure = PNE
 
 # Default language and list of available
 language = fr

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
-from django.utils import simplejson
+import json
 from django.core.urlresolvers import reverse
 
 from mapentity.tests import MapEntityLiveTest
@@ -185,17 +185,17 @@ class TrekCustomViewTests(TestCase):
 
         # Test default case
         response = self.client.get(url)
-        obj = simplejson.loads(response.content)
+        obj = json.loads(response.content)
         self.assertEqual(obj['name'], trek.name)
 
         # Test with another language
         response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        obj = simplejson.loads(response.content)
+        obj = json.loads(response.content)
         self.assertEqual(obj['name'], trek.name_it)
 
         # Test with yet another language
         response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr-FR')
-        obj = simplejson.loads(response.content)
+        obj = json.loads(response.content)
         self.assertEqual(obj['name'], trek.name_fr)
 
     def test_geojson_translation(self):
@@ -205,7 +205,7 @@ class TrekCustomViewTests(TestCase):
         url = reverse('trekking:trek_layer')
         # Test with another language
         response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        obj = simplejson.loads(response.content)
+        obj = json.loads(response.content)
         self.assertEqual(obj['features'][0]['properties']['name'], trek.name_it)
 
     def test_poi_geojson_translation(self):
@@ -226,7 +226,7 @@ class TrekCustomViewTests(TestCase):
         for lang, expected in [('fr-FR', poi.name_fr), ('it-IT', poi.name_it)]:
             url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
-            obj = simplejson.loads(response.content)
+            obj = json.loads(response.content)
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
 
@@ -314,8 +314,8 @@ class RelatedObjectsTest(TestCase):
 
 class TemplateTagsTest(TestCase):
     def test_duration(self):
-        self.assertEqual(u"15 min.", trekking_tags.duration(0.25))
-        self.assertEqual(u"30 min.", trekking_tags.duration(0.5))
+        self.assertEqual(u"15 min", trekking_tags.duration(0.25))
+        self.assertEqual(u"30 min", trekking_tags.duration(0.5))
         self.assertEqual(u"1H", trekking_tags.duration(1))
         self.assertEqual(u"1H45", trekking_tags.duration(1.75))
         self.assertEqual(u"1 day", trekking_tags.duration(13))

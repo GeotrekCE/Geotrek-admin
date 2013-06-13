@@ -318,7 +318,7 @@ msgid "%(hour)sH%(min)s"
 msgstr "%(hour)sH%(min)s"
 
 #, python-format
-msgid "%s min."
+msgid "%s min"
 msgstr "%s min"
 
 #~ msgid "Elevation"

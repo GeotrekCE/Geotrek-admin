@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.utils import simplejson
+import json
 
 from geotrek.authent.factories import UserFactory
 from geotrek.core.models import Path
@@ -29,17 +29,17 @@ class PathFilterTest(TestCase):
             response = self.client.get(reverse('core:path_json_list'), data=create_form_params(*length_range))
             self.assertEquals(response.status_code, 200)
             # We check the 'map_obj_pk' json attribute that should contain the paths' pk (used by map)
-            json = simplejson.loads(response.content)
+            jsondict = json.loads(response.content)
             # The JSON should only contain filtered paths
             self.assertListEqual(
-                    sorted(json['map_obj_pk']),
+                    sorted(jsondict['map_obj_pk']),
                     sorted(list(queryset.values_list('pk', flat=True))),
             )
 
         # Simulate ajax call to populate the list
         # The path returned as json should be all paths
         test_response_content(['', ''], Path.objects.all())
-        
+
         # Simulate ajax call to populate the list, but this time with a range filter
         length_range = [50, 100]
         test_response_content(length_range, Path.objects.filter(length__range=length_range))

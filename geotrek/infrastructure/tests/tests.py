@@ -2,7 +2,7 @@
 import datetime
 
 from django.test import TestCase
-from django.utils import simplejson
+import json
 
 from geotrek.common.tests import CommonTest
 
@@ -120,7 +120,7 @@ class InfraFilterTestMixin():
         response = self.client.get(model.get_jsonlist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = simplejson.loads(response.content)['map_obj_pk']
+        topo_pk = json.loads(response.content)['map_obj_pk']
 
         self.assertItemsEqual(topo_pk, [ good_topo.pk ])
 
