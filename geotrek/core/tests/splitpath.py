@@ -1032,4 +1032,5 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
 
         # But topology resulting geometry did not change
+        originalgeom = LineString((2.2071067811865470, 0, 0), *originalgeom[1:])
         self.assertEqual(topology.geom, originalgeom)

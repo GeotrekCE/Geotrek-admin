@@ -286,12 +286,12 @@ BEGIN
                                 CASE WHEN pk_debut <= pk_fin THEN
                                     (greatest(a, pk_debut) - a) / (b - a)
                                 ELSE
-                                    (greatest(b, pk_fin) - a) / (b - a)
+                                    (least(b, pk_debut) - a) / (b - a)
                                 END,
                                 CASE WHEN pk_debut <= pk_fin THEN
                                     (least(b, pk_fin) - a) / (b - a)
                                 ELSE
-                                    (least(a, pk_debut) - a) / (b - a)
+                                    (greatest(a, pk_fin) - a) / (b - a)
                                 END
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
