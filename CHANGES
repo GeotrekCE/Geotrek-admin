@@ -10,6 +10,7 @@ CHANGELOG
 * Fix extremities snapping (fixes #718)
 * Show information desk in trek detail page (fixes #719)
 * Fix topology adjustments after path split (fixes #720)
+* On edition show global line orientation instead of individual paths (fixes #679)
 * Upgraded to Django 1.5
 
 :notes:
