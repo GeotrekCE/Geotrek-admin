@@ -242,6 +242,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
                         if context != '':
                             logger.debug('Context %s...:' % context.strip()[:80])
                         current = context
+                    notice = notice.replace('NOTICE: ', '')
                     prefix = '' if context == '' else '        '
                     logger.debug('%s%s' % (prefix, notice.strip()))
 
@@ -588,7 +589,7 @@ class PathAggregation(models.Model):
     objects = PathAggregationManager()
 
     def __unicode__(self):
-        return u"%s (%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.start_position, self.end_position)
+        return u"%s (%s-%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.path.name, self.start_position, self.end_position)
 
     @property
     def start_meter(self):
