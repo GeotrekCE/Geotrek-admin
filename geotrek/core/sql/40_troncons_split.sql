@@ -70,7 +70,7 @@ BEGIN
     END IF;
     newline := array_append(newline, result);
 
-    RAISE NOTICE 'New geom %s', ST_AsText(ST_MakeLine(newline));
+    RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
     NEW.geom := ST_Force_3D(ST_MakeLine(newline));
     RETURN NEW;
 END;
@@ -148,7 +148,6 @@ BEGIN
             -- If both intersects, one is enough, since split trigger will be applied recursively.
             intersections_on_new := ARRAY[]::float[];
         END IF;
-    END LOOP;
 
     --------------------------------------------------------------------
     -- 1. Handle NEW intersecting with existing paths
@@ -210,6 +209,9 @@ BEGIN
                     END IF;
                 END IF;
             END LOOP;
+
+            -- Recursive triggers did all the work. Stop here.
+            RETURN NULL;
         END IF;
 
 
@@ -276,16 +278,24 @@ BEGIN
                                     segment)
                             RETURNING id INTO tid_clone;
                         
-                        -- Copy topologies matching start/end
+                        -- Copy topologies overlapping start/end
                         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                             SELECT
                                 tid_clone,
                                 et.evenement,
-                                (greatest(a, pk_debut) - a) / (b - a),
-                                (least(b, pk_fin) - a) / (b - a)
+                                CASE WHEN pk_debut <= pk_fin THEN
+                                    (greatest(a, pk_debut) - a) / (b - a)
+                                ELSE
+                                    (least(b, pk_debut) - a) / (b - a)
+                                END,
+                                CASE WHEN pk_debut <= pk_fin THEN
+                                    (least(b, pk_fin) - a) / (b - a)
+                                ELSE
+                                    (greatest(a, pk_fin) - a) / (b - a)
+                                END
                             FROM e_r_evenement_troncon et
                             WHERE et.troncon = troncon.id 
-                                  AND ((pk_debut < b AND pk_fin > a) OR       -- Overlapping
+                                  AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
                                        (pk_debut = pk_fin AND pk_debut = a)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
                         IF t_count > 0 THEN
@@ -334,23 +344,26 @@ BEGIN
             b := intersections_on_current[2];
             DELETE FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id
                                                  AND id = ANY(existing_et)
-                                                 AND (pk_debut > b OR pk_fin < a);
+                                                 AND (least(pk_debut, pk_fin) > b OR greatest(pk_debut, pk_fin) < a);
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
                 RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
             END IF;
 
             -- Update topologies overlapping
-            UPDATE e_r_evenement_troncon et SET pk_debut = pk_debut / (b - a),
-                                                pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
+            UPDATE e_r_evenement_troncon et SET
+                pk_debut = CASE WHEN pk_debut / (b - a) > 1 THEN 1 ELSE pk_debut / (b - a) END,
+                pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
                 WHERE et.troncon = troncon.id
-                AND pk_debut <= b AND pk_fin >= a; 
+                AND least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a; 
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
                 RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
             END IF;
         END IF;
 
+
+    END LOOP;
 
     IF array_length(intersections_on_new, 1) > 0 OR array_length(intersections_on_current, 1) > 0 THEN
         RAISE NOTICE 'Done %-% (%).', NEW.id, NEW.nom, ST_AsText(NEW.geom);

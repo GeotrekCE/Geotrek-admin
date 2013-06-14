@@ -133,6 +133,42 @@ class SplitPathTest(TestCase):
                                                        (3, -2, 0), (3, 0, 0)))
         self.assertEqual(cd_clones[1].geom, LineString((3, 0, 0), (3, 2, 0)))
 
+    def test_add_shortest_path(self):
+        """
+        A +----         -----+ C
+               \       /
+                \     /
+                 --+--
+                   B
+
+               D        E
+        A +---+---------+---+ C
+               \       /
+                \     /
+                 --+--
+                   B
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0),
+                                                           (6, -2, 0), (8, -2, 0)))
+        cb = PathFactory.create(name="CB", geom=LineString((14, 0, 0), (12, 0, 0),
+                                                           (10, -2, 0), (8, -2, 0)))
+        de = PathFactory.create(name="DE", geom=LineString((4, 0, 0), (12, 0, 0)))
+
+        # Paths were split, there are 5 now
+        self.assertEqual(len(Path.objects.all()), 5)
+
+        ab.reload()
+        cb.reload()
+        de.reload()
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        cb_2 = Path.objects.filter(name="CB").exclude(pk=cb.pk)[0]
+
+        self.assertEqual(de.geom, LineString((4, 0, 0), (12, 0, 0)))
+        self.assertEqual(ab.geom, LineString((0, 0, 0), (4, 0, 0)))
+        self.assertEqual(ab_2.geom, LineString((4, 0, 0), (6, -2, 0), (8, -2, 0)))
+        self.assertEqual(cb.geom, LineString((14, 0, 0), (12, 0, 0)))
+        self.assertEqual(cb_2.geom, LineString((12, 0, 0), (10, -2, 0), (8, -2, 0)))
+
     def test_split_almost(self):
         """
 
@@ -838,3 +874,163 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+
+
+class SplitPathGenericTopologyTest(TestCase):
+
+    def test_add_simple_path(self):
+        """
+        A +--==          ==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        Add path:
+
+               D        E
+        A +--==+--------+==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0),
+                                                           (6, -2, 0), (8, -2, 0)))
+        bc = PathFactory.create(name="BC", geom=LineString((8, -2, 0), (10, -2, 0),
+                                                           (12, 0, 0), (14, 0, 0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.25, end=1.0)
+        topology.add_path(bc, start=0.0, end=0.75)
+        self.assertEqual(len(topology.paths.all()), 2)
+        originalgeom = LineString((2.2071067811865475, 0, 0), (4, 0, 0), (6, -2, 0), (8, -2, 0), (10, -2, 0), (12, 0, 0), (12.2928932188134521, 0, 0))
+        self.assertEqual(topology.geom, originalgeom)
+
+        # Add a path
+        de = PathFactory.create(name="DE", geom=LineString((4, 0, 0), (12, 0, 0)))
+        self.assertEqual(len(Path.objects.all()), 5)
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        bc_2 = Path.objects.filter(name="BC").exclude(pk=bc.pk)[0]
+
+        # Topology aggregations were updated
+        topology.reload()
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(ab_2.aggregations.all()), 1)
+        self.assertEqual(len(bc.aggregations.all()), 1)
+        self.assertEqual(len(bc_2.aggregations.all()), 1)
+        self.assertEqual(len(de.aggregations.all()), 0)
+        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab2 = ab_2.aggregations.all()[0]
+        aggr_bc = bc.aggregations.all()[0]
+        aggr_bc2 = bc_2.aggregations.all()[0]
+        self.assertEqual((0.551776695296637, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
+        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
+        self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
+
+        # But topology resulting geometry did not change
+        self.assertEqual(topology.geom, originalgeom)
+
+    def test_add_path_converge(self):
+        """
+        A +--==          ==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        Add path:
+
+               D        E
+        A +--==+--------+==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0),
+                                                           (6, -2, 0), (8, -2, 0)))
+        cb = PathFactory.create(name="CB", geom=LineString((14, 0, 0), (12, 0, 0),
+                                                           (10, -2, 0), (8, -2, 0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.25, end=1.0)
+        topology.add_path(cb, start=1.0, end=0.25)
+        self.assertEqual(len(topology.paths.all()), 2)
+        originalgeom = LineString((2.2071067811865475, 0, 0), (4, 0, 0), (6, -2, 0), (8, -2, 0), (10, -2, 0), (12, 0, 0), (12.2928932188134521, 0, 0))
+        self.assertEqual(topology.geom, originalgeom)
+
+        # Add a path
+        de = PathFactory.create(name="DE", geom=LineString((4, 0, 0), (12, 0, 0)))
+        self.assertEqual(len(Path.objects.all()), 5)
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        cb_2 = Path.objects.filter(name="CB").exclude(pk=cb.pk)[0]
+
+        # Topology aggregations were updated
+        topology.reload()
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(ab_2.aggregations.all()), 1)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        self.assertEqual(len(cb_2.aggregations.all()), 1)
+        self.assertEqual(len(de.aggregations.all()), 0)
+        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab2 = ab_2.aggregations.all()[0]
+        aggr_cb = cb.aggregations.all()[0]
+        aggr_cb2 = cb_2.aggregations.all()[0]
+        self.assertEqual((0.551776695296637, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
+        self.assertEqual((1.0, 0.0), (aggr_cb2.start_position, aggr_cb2.end_position))
+        self.assertEqual((1.0, 0.853553390593274), (aggr_cb.start_position, aggr_cb.end_position))
+
+        # But topology resulting geometry did not change
+        self.assertEqual(topology.geom, originalgeom)
+
+    def test_add_path_diverge(self):
+        """
+        A +--==          ==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        Add path:
+
+               D        E
+        A +--==+--------+==----+ C
+               \\      //
+                \\    //
+                 ==+==
+                   B
+        """
+        ba = PathFactory.create(name="BA", geom=LineString((8, -2, 0), (6, -2, 0),
+                                                           (4, 0, 0), (0, 0, 0)))
+        bc = PathFactory.create(name="BC", geom=LineString((8, -2, 0), (10, -2, 0),
+                                                           (12, 0, 0), (14, 0, 0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ba, start=0.75, end=0.0)
+        topology.add_path(bc, start=0.0, end=0.75)
+        self.assertEqual(len(topology.paths.all()), 2)
+        originalgeom = LineString((2.2071067811865475, 0, 0), (4, 0, 0), (6, -2, 0), (8, -2, 0), (10, -2, 0), (12, 0, 0), (12.2928932188134521, 0, 0))
+        self.assertEqual(topology.geom, originalgeom)
+
+        # Add a path
+        de = PathFactory.create(name="DE", geom=LineString((4, 0, 0), (12, 0, 0)))
+        self.assertEqual(len(Path.objects.all()), 5)
+        ba_2 = Path.objects.filter(name="BA").exclude(pk=ba.pk)[0]
+        bc_2 = Path.objects.filter(name="BC").exclude(pk=bc.pk)[0]
+
+        # Topology aggregations were updated
+        topology.reload()
+        self.assertEqual(len(ba.aggregations.all()), 1)
+        self.assertEqual(len(ba_2.aggregations.all()), 1)
+        self.assertEqual(len(bc.aggregations.all()), 1)
+        self.assertEqual(len(bc_2.aggregations.all()), 1)
+        self.assertEqual(len(de.aggregations.all()), 0)
+        aggr_ba = ba.aggregations.all()[0]
+        aggr_ba2 = ba_2.aggregations.all()[0]
+        aggr_bc = bc.aggregations.all()[0]
+        aggr_bc2 = bc_2.aggregations.all()[0]
+        self.assertEqual((0.448223304703363, 0.0), (aggr_ba2.start_position, aggr_ba2.end_position))
+        self.assertEqual((1.0, 0.0), (aggr_ba.start_position, aggr_ba.end_position))
+        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
+        self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
+
+        # But topology resulting geometry did not change
+        originalgeom = LineString((2.2071067811865470, 0, 0), *originalgeom[1:])
+        self.assertEqual(topology.geom, originalgeom)
