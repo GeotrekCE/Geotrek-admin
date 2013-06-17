@@ -11,6 +11,7 @@ CHANGELOG
 * Show information desk in trek detail page (fixes #719)
 * Fix topology adjustments after path split (fixes #720)
 * On edition show global line orientation instead of individual paths (fixes #679)
+* Fix invalid topology if trek goes twice on same path (fixes #671)
 * Upgraded to Django 1.5
 
 :notes:
