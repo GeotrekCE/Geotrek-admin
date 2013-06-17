@@ -192,10 +192,9 @@ class TopologyHelper(object):
         -- Retrieve primary keys
         SELECT DISTINCT(t.id)
         FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
-        WHERE t.id NOT IN (%(topology_list)s)
-          AND a.troncon = pa.id AND a.evenement = t.id
-          AND (least(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end) OR
-               greatest(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end));
+        WHERE a.troncon = pa.id AND a.evenement = t.id
+          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end) AND
+              greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end);
         """ % {
             'topology_table': Topology._meta.db_table,
             'aggregations_table': PathAggregation._meta.db_table,
@@ -212,6 +211,7 @@ class TopologyHelper(object):
         # Filter by kind if relevant
         if klass.KIND != Topology.KIND:
             qs = qs.filter(kind=klass.KIND)
+
         return qs
 
 
