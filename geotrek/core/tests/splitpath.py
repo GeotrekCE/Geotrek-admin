@@ -581,8 +581,6 @@ class SplitPathLineTopologyTest(TestCase):
         cd = PathFactory.create(name="DC", geom=LineString((3, 0, 0), (3, 2, 0)))
         # Topology now covers 4 paths
         topology.reload()
-        for aggr in topology.aggregations.all():
-            print aggr
         self.assertEqual(len(topology.paths.all()), 4)
         # BE and CE have one topology from 0.0 to 1.0
         bc = Path.objects.filter(pk=be.pk)[0]

@@ -41,7 +41,6 @@ def run_initial_sql(sender, **kwargs):
                 sql = sql.replace('%', '%%')
             cursor.execute(sql)
         except Exception as e:
-            print sql
             logger.error("Failed to install custom SQL file '%s': %s\n" %
                          (sql_file, e))
             traceback.print_exc()

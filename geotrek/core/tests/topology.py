@@ -96,9 +96,6 @@ class TopologyTest(TestCase):
         self.assertEqual(len(topology2.paths.all()), 0)
         self.assertTrue(topology2.ispoint())
         topology2.mutate(topology)
-
-        for a in topology2.aggregations.all():
-            print a
         self.assertEqual(len(topology2.paths.all()), 3)
 
     def test_point_geom_3d(self):

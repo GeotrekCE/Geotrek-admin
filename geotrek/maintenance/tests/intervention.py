@@ -160,7 +160,6 @@ class InterventionTest(TestCase):
         interv = InfrastructurePointInterventionFactory.create()
         interv.length = 3.14
         interv.save()
-        print interv.length
         self.assertEqual(interv.length, 3.14)
 
     def test_area_auto(self):
@@ -177,7 +176,6 @@ class InterventionTest(TestCase):
 
         interv = InfrastructurePointInterventionFactory.create(length=50, width=10.0)
         interv.reload()
-        print interv.length
         self.assertEqual(interv.area, 500)
 
         interv = InfrastructurePointInterventionFactory.create(width=0.5, length=0.5)
