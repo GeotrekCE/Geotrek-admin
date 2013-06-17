@@ -17,6 +17,8 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.models import TimeStampedModel, NoDeleteMixin
 from geotrek.common.utils import elevation_profile, classproperty, sqlfunction
 
+from .helpers import TopologyHelper
+
 
 logger = logging.getLogger(__name__)
 
@@ -304,14 +306,6 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     def KIND(cls):
         return cls._meta.object_name.upper()
 
-    @classmethod
-    def overlapping(cls, topologyqs):
-        """ Return a list of Topology objects if specified edges overlap them.
-        TODO: So far, the algorithm is quite simple, and not precise. Indeed
-        it returns edges that "share" the same paths, and not exactly overlapping.
-        """
-        return cls.objects.existing().filter(aggregations__path__in=topologyqs.values_list('aggregations__path', flat=True))
-
     def __unicode__(self):
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
@@ -319,6 +313,14 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         if not self.pk and self.geom and self.geom.geom_type == 'Point':
             return True
         return all([a.start_position == a.end_position for a in self.aggregations.all()])
+
+    def geom_as_point(self):
+        geom = self.geom
+        assert geom, 'Topology point is None'
+        if geom.geom_type != 'Point':
+            logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
+            geom = Point(geom.coords[0], srid=settings.SRID)
+        return geom
 
     def add_path(self, path, start=0.0, end=1.0, order=0, reload=True):
         """
@@ -334,6 +336,12 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         if reload:
             self.reload()
         return aggr
+
+    @classmethod
+    def overlapping(cls, topologyqs):
+        """ Return a list of Topology objects if specified edges overlap them.
+        """
+        return TopologyHelper.overlapping(topologyqs)
 
     def mutate(self, other, delete=True):
         """
@@ -407,166 +415,12 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                 for notice in connection.connection.notices[before:]:
                     logger.debug(notice)
 
+    def serialize(self):
+        return TopologyHelper.serialize(self)
+
     @classmethod
     def deserialize(cls, serialized):
-        """
-        Topologies can be points or lines. Serialized topologies come from Javascript
-        module ``topology_helper.js``.
-
-        Example of linear point topology (snapped with path 1245):
-
-            {"lat":5.0, "lng":10.2, "snap":1245}
-
-        Example of linear serialized topology :
-
-        [
-            {"offset":0,"positions":{"0":[0,0.3],"1":[0.2,1]},"paths":[1264,1208]},
-            {"offset":0,"positions":{"0":[0.2,1],"5":[0,0.2]},"paths":[1208,1263,678,1265,1266,686]}
-        ]
-
-        * Each sub-topology represents a way between markers.
-        * Start point is first position of sub-topology.
-        * End point is last position of sub-topology.
-        * All last positions represents intermediary markers.
-
-        Global strategy is :
-        * If has lat/lng return point topology
-        * Otherwise, create path aggregations from serialized data.
-        """
-        from .factories import TopologyFactory
-        objdict = serialized
-        if isinstance(serialized, basestring):
-            try:
-                objdict = json.loads(serialized)
-            except ValueError as e:
-                raise ValueError("Invalid serialization: %s" % e)
-
-        if not isinstance(objdict, (list,)):
-            lat = objdict.get('lat')
-            lng = objdict.get('lng')
-            kind = objdict.get('kind')
-            # Point topology ?
-            if lat and lng:
-                return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
-            else:
-                objdict = [objdict]
-
-        # Path aggregation, remove all existing
-        if len(objdict) == 0:
-            raise ValueError("Invalid serialized topology : empty list found")
-        kind = objdict[0].get('kind')
-        offset = objdict[0].get('offset', 0.0)
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
-        PathAggregation.objects.filter(topo_object=topology).delete()
-        try:
-            counter = 0
-            for j, subtopology in enumerate(objdict):
-                last_topo = j == len(objdict) - 1
-                positions = subtopology.get('positions', {})
-                paths = subtopology['paths']
-                # Create path aggregations
-                for i, path in enumerate(paths):
-                    last_path = i == len(paths) - 1
-                    # Javascript hash keys are parsed as a string
-                    idx = str(i)
-                    start_position, end_position = positions.get(idx, (0.0, 1.0))
-                    path = Path.objects.get(pk=path)
-                    topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
-                    if not last_topo and last_path:
-                        # Intermediary marker.
-                        # make sure pos will be [X, X]
-                        # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
-                        # [0.0, 0.0] --> 0.0  : marker at beginning of path
-                        # [1.0, 1.0] --> 1.0  : marker at end of path
-                        pos = -1
-                        if start_position == end_position:
-                            pos = start_position
-                        if start_position == 0.0:
-                            pos = end_position
-                        elif start_position == 1.0:
-                            pos = end_position
-                        elif end_position == 0.0:
-                            pos = start_position
-                        elif end_position == 1.0:
-                            pos = start_position
-                        elif len(paths) == 1:
-                            pos = end_position
-                        assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
-                        topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
-                    counter += 1
-        except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
-            raise ValueError("Invalid serialized topology : %s" % e)
-        topology.save()
-        return topology
-
-    @classmethod
-    def _topologypoint(cls, lng, lat, kind=None, snap=None):
-        """
-        Receives a point (lng, lat) with API_SRID, and returns
-        a topology objects with a computed path aggregation.
-        """
-        from .factories import TopologyFactory
-        # Find closest path
-        point = Point(lng, lat, srid=settings.API_SRID)
-        point.transform(settings.SRID)
-        if snap is None:
-            closest = Path.closest(point)
-            position, offset = closest.interpolate(point)
-        else:
-            closest = Path.objects.get(pk=snap)
-            position, offset = closest.interpolate(point)
-            offset = 0
-        # We can now instantiante a Topology object
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
-        aggrobj = PathAggregation(topo_object=topology,
-                                  start_position=position,
-                                  end_position=position,
-                                  path=closest)
-        aggrobj.save()
-        point = Point(point.x, point.y, 0, srid=settings.SRID)
-        topology.geom = point
-        topology.save()
-        return topology
-
-    def geom_as_point(self):
-        geom = self.geom
-        assert geom, 'Topology point is None'
-        if geom.geom_type != 'Point':
-            logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
-            geom = Point(geom.coords[0], srid=settings.SRID)
-        return geom
-
-    def serialize(self):
-        # Point topology
-        if self.ispoint():
-            geom = self.geom_as_point()
-            point = geom.transform(settings.API_SRID, clone=True)
-            objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
-        else:
-            # Line topology
-            # Fetch properly ordered aggregations
-            aggregations = self.aggregations.select_related('path').all()
-            objdict = []
-            current = {}
-            ipath = 0
-            for i, aggr in enumerate(aggregations):
-                first = i == 0
-                last = i == len(aggregations) - 1
-                intermediary = aggr.start_position == aggr.end_position
-
-                current.setdefault('kind', self.kind)
-                current.setdefault('offset', self.offset)
-                if not intermediary:
-                    current.setdefault('paths', []).append(aggr.path.pk)
-                    if not aggr.is_full or first or last:
-                        current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
-                ipath = ipath + 1
-
-                if intermediary or last:
-                    objdict.append(current)
-                    current = {}
-                    ipath = 0
-        return json.dumps(objdict)
+        return TopologyHelper.deserialize(serialized)
 
 
 class PathAggregationManager(models.GeoManager):
