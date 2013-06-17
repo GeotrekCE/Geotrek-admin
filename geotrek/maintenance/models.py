@@ -220,7 +220,8 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
 
     @classmethod
     def topology_interventions(cls, topology):
-        return cls.objects.existing().filter(topology__aggregations__path__in=topology.paths.all()).distinct('pk')
+        topos = Topology.overlapping(topology).values_list('pk', flat=True)
+        return cls.objects.existing().filter(topology__in=topos).distinct('pk')
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
 Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))

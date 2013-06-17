@@ -167,10 +167,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return TrekRelationship.objects.filter(trek_a=self)
 
     @property
-    def pois(self):
-        return POI.overlapping(Trek.objects.filter(pk=self))
-
-    @property
     def poi_types(self):
         pks = set(self.pois.values_list('type', flat=True))
         return POIType.objects.filter(pk__in=pks)
@@ -367,10 +363,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_treks(cls, topology):
-        return cls.objects.existing().filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology)
 
-Path.add_property('treks', lambda self: Trek.path_treks(self))
-Topology.add_property('treks', lambda self: Trek.topology_treks(self))
+Path.add_property('treks', Trek.path_treks)
+Topology.add_property('treks', Trek.topology_treks)
 Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 
@@ -631,28 +627,16 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
         return {'label': self.type.label,
                 'pictogram': self.type.serializable_pictogram}
 
-    @property
-    def treks(self):
-        s = []
-        for a in self.aggregations.all():
-            s += [Trek.objects.get(pk=t.pk)
-                  for t in a.path.topology_set.existing().filter(
-                      kind=Trek.KIND,
-                      aggregations__start_position__lte=a.end_position,
-                      aggregations__end_position__gte=a.start_position
-                  )]
-        return list(set(s))
-
     @classmethod
     def path_pois(cls, path):
         return cls.objects.filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_pois(cls, topology):
-        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology)
 
-Path.add_property('pois', lambda self: POI.path_pois(self))
-Topology.add_property('pois', lambda self: Trek.topology_pois(self))
+Path.add_property('pois', POI.path_pois)
+Topology.add_property('pois', POI.topology_pois)
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [])
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
 

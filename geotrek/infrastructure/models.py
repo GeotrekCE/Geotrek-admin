@@ -121,7 +121,7 @@ class Infrastructure(BaseInfrastructure):
 
     @classmethod
     def topology_infrastructures(cls, topology):
-        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology)
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self))
 Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self))
@@ -155,7 +155,7 @@ class Signage(BaseInfrastructure):
 
     @classmethod
     def topology_signages(cls, topology):
-        return cls.objects.filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology)
 
 Path.add_property('signages', lambda self: Signage.path_signages(self))
 Topology.add_property('signages', lambda self: Signage.topology_signages(self))

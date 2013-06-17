@@ -172,16 +172,44 @@ class TopologyHelper(object):
 
     @classmethod
     def overlapping(cls, klass, queryset):
-        from .models import Topology
-        if not isinstance(queryset, QuerySet):
-            queryset = queryset.__class__.objects.filter(pk=queryset.pk)
+        from .models import Path, Topology, PathAggregation
 
-        # Shared paths
-        paths_pks = queryset.values_list('aggregations__path', flat=True)
-        qs = klass.objects.existing().filter(aggregations__path__in=paths_pks)\
-                                     .distinct('pk')
+        topology_pks = []
+        if isinstance(queryset, QuerySet):
+            topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
+        else:
+            topology_pks = [str(queryset.pk)]
 
-        # Filter by kind
+        sql = """
+        WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
+        -- Concerned aggregations
+             aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
+                              WHERE a.evenement = t.id),
+        -- Concerned paths along with (start, end)
+             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id
+                            FROM %(paths_table)s p, aggregations a
+                            WHERE a.troncon = p.id)
+        -- Retrieve primary keys
+        SELECT DISTINCT(t.id)
+        FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
+        WHERE t.id NOT IN (%(topology_list)s)
+          AND a.troncon = pa.id AND a.evenement = t.id
+          AND (least(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end) OR
+               greatest(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end));
+        """ % {
+            'topology_table': Topology._meta.db_table,
+            'aggregations_table': PathAggregation._meta.db_table,
+            'paths_table': Path._meta.db_table,
+            'topology_list': ','.join(topology_pks),
+        }
+
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        pks = [row[0] for row in result]
+        qs = klass.objects.existing().filter(pk__in=pks)
+
+        # Filter by kind if relevant
         if klass.KIND != Topology.KIND:
             qs = qs.filter(kind=klass.KIND)
         return qs
