@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db.models.query import QuerySet
 
 
 logger = logging.getLogger(__name__)
@@ -166,10 +167,17 @@ class TopologyHelper(object):
         return json.dumps(objdict)
 
     @classmethod
-    def overlapping(cls, queryset):
-        """
-        TODO: So far, the algorithm is quite simple, and not precise. Indeed
-        it returns edges that "share" the same paths, and not exactly overlapping.
-        """
+    def overlapping(cls, klass, queryset):
         from .models import Topology
-        return Topology.objects.existing().filter(aggregations__path__in=queryset.values_list('aggregations__path', flat=True))
+        if not isinstance(queryset, QuerySet):
+            queryset = queryset.__class__.objects.filter(pk=queryset.pk)
+
+        # Shared paths
+        paths_pks = queryset.values_list('aggregations__path', flat=True)
+        qs = klass.objects.existing().filter(aggregations__path__in=paths_pks)\
+                                     .distinct('pk')
+
+        # Filter by kind
+        if klass.KIND != Topology.KIND:
+            qs = qs.filter(kind=klass.KIND)
+        return qs

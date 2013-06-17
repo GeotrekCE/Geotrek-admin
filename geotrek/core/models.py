@@ -338,10 +338,10 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         return aggr
 
     @classmethod
-    def overlapping(cls, topologyqs):
-        """ Return a list of Topology objects if specified edges overlap them.
+    def overlapping(cls, topologies):
+        """ Return a Topology queryset overlapping specified topologies.
         """
-        return TopologyHelper.overlapping(topologyqs)
+        return TopologyHelper.overlapping(cls, topologies)
 
     def mutate(self, other, delete=True):
         """

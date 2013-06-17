@@ -68,7 +68,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
     @classmethod
     def topology_physicals(cls, topology):
-        return cls.objects.select_related('physical_type').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('physical_type')
 
 Path.add_property('physical_edges', PhysicalEdge.path_physicals)
 Topology.add_property('physical_edges', PhysicalEdge.topology_physicals)
@@ -132,7 +132,7 @@ class LandEdge(MapEntityMixin, Topology):
 
     @classmethod
     def topology_lands(cls, topology):
-        return cls.objects.select_related('land_type').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('land_type')
 
 Path.add_property('land_edges', LandEdge.path_lands)
 Topology.add_property('land_edges', LandEdge.topology_lands)
@@ -182,7 +182,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     @classmethod
     def topology_competences(cls, topology):
-        return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(Topology.objects.get(pk=topology.pk)).select_related('organization')
 
 Path.add_property('competence_edges', CompetenceEdge.path_competences)
 Topology.add_property('competence_edges', CompetenceEdge.topology_competences)
@@ -232,7 +232,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def topology_works(cls, topology):
-        return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('organization')
 
 Path.add_property('work_edges', WorkManagementEdge.path_works)
 Topology.add_property('work_edges', WorkManagementEdge.topology_works)
@@ -282,7 +282,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def topology_signages(cls, topology):
-        return cls.objects.select_related('organization').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('organization')
 
 Path.add_property('signage_edges', SignageManagementEdge.path_signages)
 Topology.add_property('signage_edges', SignageManagementEdge.topology_signages)
@@ -354,9 +354,8 @@ class RestrictedAreaEdge(Topology):
 
     @classmethod
     def topology_area_edges(cls, topology):
-        return cls.objects.select_related('restricted_area')\
-                          .select_related('restricted_area__area_type')\
-                          .filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('restricted_area')\
+                                        .select_related('restricted_area__area_type')
 
 Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges)
 Path.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
@@ -409,7 +408,7 @@ class CityEdge(Topology):
 
     @classmethod
     def topology_city_edges(cls, topology):
-        return cls.objects.select_related('city').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('city')
 
 Path.add_property('city_edges', CityEdge.path_city_edges)
 Path.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
@@ -460,7 +459,7 @@ class DistrictEdge(Topology):
 
     @classmethod
     def topology_district_edges(cls, topology):
-        return cls.objects.select_related('district').filter(aggregations__path__in=topology.paths.all()).distinct('pk')
+        return cls.overlapping(topology).select_related('district')
 
 Path.add_property('district_edges', DistrictEdge.path_district_edges)
 Path.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
