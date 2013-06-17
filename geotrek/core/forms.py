@@ -4,6 +4,7 @@ import floppyforms as forms
 
 from geotrek.common.forms import CommonForm
 from .models import Path
+from .helpers import PathHelper
 from .fields import TopologyField, SnappedLineStringField
 
 
@@ -81,7 +82,7 @@ class PathForm(CommonForm):
             raise forms.ValidationError(_("Invalid snapped geometry."))
         if not data.simple:
             raise forms.ValidationError(_("Geometry is not simple."))
-        if not Path.disjoint(data, self.cleaned_data.get('pk', '-1')):
+        if not PathHelper.disjoint(data, self.cleaned_data.get('pk', '-1')):
             raise forms.ValidationError(_("Geometry overlaps another."))
         return data
 

@@ -1,9 +1,13 @@
 import json
 import logging
+from operator import itemgetter
 
 from django.conf import settings
+from django.db import connection
 from django.contrib.gis.geos import Point
 from django.db.models.query import QuerySet
+
+from geotrek.common.utils import sqlfunction
 
 
 logger = logging.getLogger(__name__)
@@ -181,3 +185,52 @@ class TopologyHelper(object):
         if klass.KIND != Topology.KIND:
             qs = qs.filter(kind=klass.KIND)
         return qs
+
+
+class PathHelper(object):
+    @classmethod
+    def snap(cls, path, point):
+        if not path.pk:
+            raise ValueError("Cannot compute snap on unsaved path")
+        if point.srid != path.geom.srid:
+            point.transform(path.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+                   FROM %(table)s
+                   WHERE id = '%(pk)s')
+        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
+        """ % {'ewkt': point.ewkt, 'table': path._meta.db_table, 'pk': path.pk}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return Point(*result[0], srid=path.geom.srid)
+
+    @classmethod
+    def interpolate(cls, path, point):
+        if not path.pk:
+            raise ValueError("Cannot compute interpolation on unsaved path")
+        if point.srid != path.geom.srid:
+            point.transform(path.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        SELECT position, distance
+        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
+             AS (position FLOAT, distance FLOAT)
+        """ % {'pk': path.pk,
+               'x': point.x,
+               'y': point.y,
+               'srid': path.geom.srid}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result[0]
+
+    @classmethod
+    def disjoint(cls, geom, pk):
+        """
+        Returns True if this path does not overlap another.
+        TODO: this could be a constraint at DB-level. But this would mean that
+        path never ever overlap, even during trigger computation, like path splitting...
+        """
+        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
+        return disjoint[0]

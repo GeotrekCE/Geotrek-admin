@@ -6,7 +6,6 @@ from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.db import connection
-import json
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
@@ -15,9 +14,9 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.models import TimeStampedModel, NoDeleteMixin
-from geotrek.common.utils import elevation_profile, classproperty, sqlfunction
+from geotrek.common.utils import elevation_profile, classproperty
 
-from .helpers import TopologyHelper
+from .helpers import PathHelper, TopologyHelper
 
 
 logger = logging.getLogger(__name__)
@@ -104,27 +103,8 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
             point = point.transform(settings.SRID, clone=True)
         return cls.objects.all().distance(point).order_by('distance')[0]
 
-    @classmethod
-    def disjoint(cls, geom, pk):
-        """
-        Returns True if this path does not overlap another.
-        TODO: this could be a constraint at DB-level. But this would mean that
-        path never ever overlap, even during trigger computation, like path splitting...
-        """
-        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
-        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
-        return disjoint[0]
-
-    @classmethod
-    def connected(self, p1, p2):
-        if not isinstance(p1, Path):
-            p1 = Path.objects.get(pk=p1)
-        if not isinstance(p2, Path):
-            p2 = Path.objects.get(pk=p2)
-        return p1.geom.coords[-1] == p2.geom.coords[0] or p2.geom.coords[0] == p1.geom.coords[-1]
-
     def is_overlap(self):
-        return not Path.disjoint(self.geom, self.pk)
+        return not PathHelper.disjoint(self.geom, self.pk)
 
     def reverse(self):
         """
@@ -144,41 +124,13 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        if not self.pk:
-            raise ValueError("Cannot compute interpolation on unsaved path")
-        if point.srid != self.geom.srid:
-            point.transform(self.geom.srid)
-        cursor = connection.cursor()
-        sql = """
-        SELECT position, distance
-        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
-             AS (position FLOAT, distance FLOAT)
-        """ % {'pk': self.pk,
-               'x': point.x,
-               'y': point.y,
-               'srid': self.geom.srid}
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result[0]
+        return PathHelper.interpolate(self, point)
 
     def snap(self, point):
         """
         Returns the point snapped (i.e closest) to the path line geometry.
         """
-        if not self.pk:
-            raise ValueError("Cannot compute snap on unsaved path")
-        if point.srid != self.geom.srid:
-            point.transform(self.geom.srid)
-        cursor = connection.cursor()
-        sql = """
-        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
-                   FROM %(table)s
-                   WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
-        """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return Point(*result[0], srid=self.geom.srid)
+        return PathHelper.snap(self, point)
 
     def reload(self):
         # Update object's computed values (reload from database)
