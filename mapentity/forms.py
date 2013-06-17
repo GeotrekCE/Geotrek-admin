@@ -11,8 +11,6 @@ from modeltranslation.translator import translator, NotRegistered
 
 
 class MapEntityForm(forms.ModelForm):
-    formfield_callback = lambda f: MapEntityForm.make_tinymce_widget(f)
-
     modelfields = tuple()
     geomfields = tuple()
 
@@ -85,13 +83,12 @@ class MapEntityForm(forms.ModelForm):
             FormActions(*actions, css_class="form-actions"),
         )
 
-    @staticmethod
-    def make_tinymce_widget(f):
-        formfield = f.formfield()
-        if formfield and isinstance(formfield.widget, (forms.widgets.Textarea,
-                                                       django_forms.widgets.Textarea)):
-            formfield.widget = TinyMCE()
-        return formfield
+        # formfield_callback sucks and does not work with inherited fields
+        for formfield in self.fields.values():
+            if formfield and isinstance(formfield.widget, (forms.widgets.Textarea,
+                                                           django_forms.widgets.Textarea)):
+                formfield.widget = TinyMCE()
+
 
     """
 
