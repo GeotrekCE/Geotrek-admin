@@ -203,11 +203,11 @@ _EOF_
         sudo apt-get install -y ntp fail2ban
         sudo apt-get install -y nginx memcached
 
-        make deploy
-
         # Install system-wide binaries
         sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/
         sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/
+
+        make deploy
 
         # Protect files with sensitive information
         chmod -f 700 etc/settings.ini
