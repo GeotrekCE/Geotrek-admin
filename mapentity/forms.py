@@ -85,10 +85,9 @@ class MapEntityForm(forms.ModelForm):
 
         # formfield_callback sucks and does not work with inherited fields
         for formfield in self.fields.values():
-            if formfield and isinstance(formfield.widget, (forms.widgets.Textarea,
-                                                           django_forms.widgets.Textarea)):
+            if formfield and formfield.widget.__class__ in (forms.widgets.Textarea,
+                                                            django_forms.widgets.Textarea):
                 formfield.widget = TinyMCE()
-
 
     """
 
