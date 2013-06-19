@@ -863,3 +863,52 @@ msgstr "Aggiungere itinerario"
 
 msgid "Add Web link"
 msgstr "Aggiungere collegamento web"
+
+
+msgid ""
+"This project is co-financed by the European Union (FEDER, ALCOTRA). Europe is involved in Massif Alpin with the European regional development fund."
+msgstr ""
+"Questo progetto è stato finanziato dall’Unione Europea nell’ambito del FEDER Massif Alpin e del programma transfrontaliero ALCOTRA."
+
+msgid "Powered by http://geotrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
+
+msgid ""
+"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgstr ""
+"Questo itinerario si snoda nel cuore del Parco nazionale > Il Parco nazionale è un territorio naturale, aperto a tutti ma soggetto ad una specifica regolamentazione che è utile conoscere per organizzare il proprio soggiorno."
+
+msgid ""
+"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at"
+msgstr ""
+"Per conoscere lo stato di percorribilità dei sentieri ed avere una migliore conoscenza del territorio si consiglia di informarsi anticipatamente"
+
+msgid "Edition of"
+msgstr "Edizione del"
+
+msgid "Other treks"
+msgstr "Altri itinerari"
+
+msgid "Trek ascent"
+msgstr "Dislivello"
+
+msgid "Altimetric profile"
+msgstr "Profilo altimetrico"
+
+msgid "Not available"
+msgstr "Non disponibile"
+
+msgid "Min elevation"
+msgstr "Quota minima"
+
+msgid "Max elevation"
+msgstr "Quota maxima"
+
+msgid "Recommandations"
+msgstr "Raccomandazioni"
+
+msgid "Disabled infrastructures"
+msgstr "Infrastrutture per disabili"
+
+msgid "On the way..."
+msgstr "Sulla strada..."
