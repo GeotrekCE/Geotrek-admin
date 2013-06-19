@@ -1,18 +1,7 @@
-from django.conf.urls import patterns
+from mapentity import registry
 
-from .views import (
-    InfrastructureLayer, InfrastructureList, InfrastructureDetail, InfrastructureDocument, InfrastructureCreate,
-    InfrastructureUpdate, InfrastructureDelete, InfrastructureJsonList, InfrastructureFormatList,
-    SignageLayer, SignageList, SignageDetail, SignageDocument, SignageCreate,
-    SignageUpdate, SignageDelete, SignageJsonList, SignageFormatList,
-)
-
-from mapentity.urlizor import view_classes_to_url
+from . import models
 
 
-urlpatterns = patterns('', *view_classes_to_url(
-    InfrastructureLayer, InfrastructureList, InfrastructureDetail, InfrastructureDocument, InfrastructureCreate,
-    InfrastructureUpdate, InfrastructureDelete, InfrastructureJsonList, InfrastructureFormatList,
-    SignageLayer, SignageList, SignageDetail, SignageDocument, SignageCreate,
-    SignageUpdate, SignageDelete, SignageJsonList, SignageFormatList,
-))
+urlpatterns = registry.register(models.Infrastructure)
+urlpatterns += registry.register(models.Signage)

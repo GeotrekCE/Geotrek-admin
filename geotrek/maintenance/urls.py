@@ -1,18 +1,7 @@
-from django.conf.urls import patterns
+from mapentity import registry
 
-from .views import (
-    InterventionLayer, InterventionList, InterventionDetail, InterventionDocument, InterventionCreate,
-    InterventionUpdate, InterventionDelete, InterventionJsonList, InterventionFormatList,
-    ProjectLayer, ProjectList, ProjectDetail, ProjectDocument, ProjectCreate,
-    ProjectUpdate, ProjectDelete, ProjectJsonList, ProjectFormatList,
-)
-
-from mapentity.urlizor import view_classes_to_url
+from . import models
 
 
-urlpatterns = patterns('', *view_classes_to_url(
-    InterventionLayer, InterventionList, InterventionDetail, InterventionDocument, InterventionCreate,
-    InterventionUpdate, InterventionDelete, InterventionJsonList, InterventionFormatList,
-    ProjectLayer, ProjectList, ProjectDetail, ProjectDocument, ProjectCreate,
-    ProjectUpdate, ProjectDelete, ProjectJsonList, ProjectFormatList,
-))
+urlpatterns = registry.register(models.Intervention)
+urlpatterns += registry.register(models.Project)

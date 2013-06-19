@@ -1,14 +1,12 @@
 from django.conf.urls import patterns, url
 
+from mapentity import registry
+
+from .models import Path, Trail
 from .views import (
-    PathLayer, PathList, PathDetail, PathDocument, PathCreate,
-    PathUpdate, PathDelete, PathJsonList, PathFormatList,
     ElevationProfile,
     get_graph_json,
-    TrailDetail, TrailDocument,
 )
-
-from mapentity.urlizor import view_classes_to_url
 
 
 urlpatterns = patterns('',
@@ -16,8 +14,5 @@ urlpatterns = patterns('',
     url(r'^api/path/(?P<pk>\d+)/profile.json$', ElevationProfile.as_view(), name='path_profile'),
 )
 
-urlpatterns += patterns('', *view_classes_to_url(
-    PathList, PathCreate, PathDetail, PathDocument, PathUpdate,
-    PathDelete, PathLayer, PathJsonList, PathFormatList, 
-    TrailDetail, TrailDocument
-))
+urlpatterns += registry.register(Path)
+urlpatterns += registry.register(Trail, menu=False)
