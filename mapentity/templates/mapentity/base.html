@@ -58,13 +58,13 @@
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a href="{% url 'core:path_list' %}"><img src="{% static "images/path-16.png" %}"/> {% trans "Path" %}</a></li>
-                    <li><a href="{% url 'maintenance:intervention_list' %}"><img src="{% static "images/intervention-16.png" %}"/> {% trans "Intervention" %}</a></li>
-                    <li><a href="{% url 'maintenance:project_list' %}"><img src="{% static "images/project-16.png" %}"/> {% trans "Project" %}</a></li>
-                    <li><a href="{% url 'infrastructure:signage_list' %}"><img src="{% static "images/signage-16.png" %}"/> {% trans "Signage" %}</a></li>
-                    <li><a href="{% url 'infrastructure:infrastructure_list' %}"><img src="{% static "images/infrastructure-16.png" %}"/> {% trans "Infrastructure" %}</a></li>
-                    <li><a href="{% url 'trekking:trek_list' %}"><img src="{% static "images/trek-16.png" %}"/> {% trans "Trek" %}</a></li>
-                    <li><a href="{% url 'trekking:poi_list' %}"><img src="{% static "images/poi-16.png" %}"/> {% trans "POI" %}</a></li>
+                    {% for entity in registry.entities %}
+                      {% if entity.menu %}
+                        <li class="{% if entity.modelname == modelname %}active{% endif %}">
+                          <a href="{% url entity.url_list %}"><img src="{% static entity.icon_small %}"/> {{ entity.label }}</a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
                   </ul>
             </div>
           </li>
