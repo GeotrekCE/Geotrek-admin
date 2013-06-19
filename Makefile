@@ -21,7 +21,7 @@ bin/phantomjs:
 	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/
 
 bin/casperjs: bin/phantomjs
-	wget https://github.com/n1k0/casperjs/zipball/1.0.1 -O casperjs.zip
+	wget https://github.com/n1k0/casperjs/zipball/1.0.2 -O casperjs.zip
 	rm -rf $(root)/lib/*casperjs*/
 	unzip -o casperjs.zip -d $(root)/lib/ > /dev/null
 	rm casperjs.zip
