@@ -15,6 +15,7 @@ CHANGELOG
 * Overlapping is now more precise (fixes #710)
 * Reworked trek print layout
 * Fix topology building if paths are taken twice (fixes #722)
+* Fix tiling offset with horizontal bboxes
 * Upgraded to Django 1.5
 
 :notes:
