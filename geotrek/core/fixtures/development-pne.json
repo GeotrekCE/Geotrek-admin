@@ -49224,34 +49224,6 @@
         }
     },
     {
-        "pk": 1915,
-        "model": "core.path",
-        "fields": {
-            "slope": 0.0,
-            "usages": [],
-            "date_update": "2013-05-17T14:33:32.859Z",
-            "ascent": 0,
-            "networks": [],
-            "descent": 0,
-            "comfort": null,
-            "comments": null,
-            "date_insert": "2013-05-17T14:33:32.859Z",
-            "valid": true,
-            "geom": "LINESTRING (941093.7660853688139468 6446896.2210405981168151 0.0, 941093.7660853685811162 6446896.2210405981168151 0.0)",
-            "arrival": "",
-            "stake": null,
-            "trail": null,
-            "structure": 1,
-            "geom_cadastre": null,
-            "name": null,
-            "departure": "",
-            "length": 2.3283064365387e-10,
-            "max_elevation": 0,
-            "datasource": null,
-            "min_elevation": 0
-        }
-    },
-    {
         "pk": 1490,
         "model": "core.path",
         "fields": {
@@ -52886,34 +52858,6 @@
             "name": null,
             "departure": "",
             "length": NaN,
-            "max_elevation": 0,
-            "datasource": null,
-            "min_elevation": 0
-        }
-    },
-    {
-        "pk": 1951,
-        "model": "core.path",
-        "fields": {
-            "slope": 0.0,
-            "usages": [],
-            "date_update": "2013-05-17T14:33:33.869Z",
-            "ascent": 0,
-            "networks": [],
-            "descent": 0,
-            "comfort": null,
-            "comments": null,
-            "date_insert": "2013-05-17T14:33:33.869Z",
-            "valid": true,
-            "geom": "LINESTRING (940568.3848274877527729 6447287.3807343142107129 0.0, 940568.3848274878691882 6447287.3807343142107129 0.0)",
-            "arrival": "",
-            "stake": null,
-            "trail": null,
-            "structure": 1,
-            "geom_cadastre": null,
-            "name": null,
-            "departure": "",
-            "length": 1.16415321826935e-10,
             "max_elevation": 0,
             "datasource": null,
             "min_elevation": 0

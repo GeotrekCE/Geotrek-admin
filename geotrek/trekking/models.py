@@ -302,8 +302,16 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return unicode(self.name)
 
     @property
+    def length_kilometer(self):
+        return self.length / 1000.0
+
+    @property
     def networks_display(self):
         return ', '.join([unicode(n) for n in self.networks.all()])
+
+    @property
+    def districts_display(self):
+        return ', '.join([unicode(d) for d in self.districts])
 
     @property
     def themes_display(self):
