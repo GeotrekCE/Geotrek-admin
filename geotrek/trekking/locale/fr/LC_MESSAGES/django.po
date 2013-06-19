@@ -321,11 +321,50 @@ msgstr "%(hour)sH%(min)s"
 msgid "%s min"
 msgstr "%s min"
 
-#~ msgid "Elevation"
-#~ msgstr "Altitude"
+msgid ""
+"This project is co-financed by the European Union (FEDER, ALCOTRA). Europe is involved in Massif Alpin with the European regional development fund."
+msgstr ""
+"Ce projet est soutenu financièrement par l’Union Européenne dans le cadre du FEDER Massif Alpin et du programme transfrontalier ALCOTRA."
 
-#~ msgid "Public print with POIs"
-#~ msgstr "Impression grand public avec POIs"
+msgid "Powered by http://geotrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
 
-#~ msgid "Print+POI"
-#~ msgstr "Impr.+POI"
+msgid ""
+"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgstr ""
+"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour."
+
+msgid ""
+"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at"
+msgstr ""
+"Afin de vérifier que les sentiers soient praticables et pour en savoir plus sur la découverte du territoire, veuillez-vous renseigner préalablement"
+
+msgid "Edition of"
+msgstr "Édition du"
+
+msgid "Other treks"
+msgstr "Autres itinéraires"
+
+msgid "Trek ascent"
+msgstr "Dénivelée"
+
+msgid "Altimetric profile"
+msgstr "Profil altimetrique"
+
+msgid "Not available"
+msgstr "Indisponible"
+
+msgid "Min elevation"
+msgstr "Altitude min"
+
+msgid "Max elevation"
+msgstr "Altitude max"
+
+msgid "Recommandations"
+msgstr "Recommendations"
+
+msgid "Disabled infrastructures"
+msgstr "Aménagements handicapés"
+
+msgid "On the way..."
+msgstr "Sur le chemin..."

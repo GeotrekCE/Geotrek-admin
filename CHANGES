@@ -13,6 +13,7 @@ CHANGELOG
 * On edition show global line orientation instead of individual paths (fixes #679)
 * Fix invalid topology if trek goes twice on same path (fixes #671)
 * Overlapping is now more precise (fixes #710)
+* Reworked trek print layout
 * Upgraded to Django 1.5
 
 :notes:
