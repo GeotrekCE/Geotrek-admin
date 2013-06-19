@@ -14,6 +14,7 @@ CHANGELOG
 * Fix invalid topology if trek goes twice on same path (fixes #671)
 * Overlapping is now more precise (fixes #710)
 * Reworked trek print layout
+* Fix topology building if paths are taken twice (fixes #722)
 * Upgraded to Django 1.5
 
 :notes:

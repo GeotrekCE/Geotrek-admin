@@ -114,6 +114,20 @@ describe('Shortest path', function() {
 
 describe('Topology helper', function() {
 
+    /*
+            ^
+          3 |
+            |
+            ^<---------+
+            |          |
+          2 |          | 1
+            |          |
+            |          |
+            +----------+
+            |
+          4 |
+            v
+    */
     var layer = new L.ObjectsLayer({
         type: "FeatureCollection",
         features: [
@@ -125,7 +139,10 @@ describe('Topology helper', function() {
              properties: {pk: 2}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,10], [0,20]]},
-             properties: {pk: 3}}
+             properties: {pk: 3}},
+            {type: "Feature",
+             geometry: {type: "LineString", coordinates: [[0,0], [0,-10]]},
+             properties: {pk: 4}}
         ]
     }).addTo(map);
 
@@ -204,6 +221,26 @@ describe('Topology helper', function() {
                 "1": [0, 0.4999999999999995]
             },
             paths: [1, 2]
+        });
+        done();
+    });
+
+
+    it('It should work if middle paths have opposite ways', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([-5, 0]), L.latLng([15, 0]), [4, 2, 3]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.4999999999999981, 0],
+                "1": [0, 1],
+                "2": [0, 0.5000000000000009]
+            },
+            paths: [4, 2, 3]
         });
         done();
     });

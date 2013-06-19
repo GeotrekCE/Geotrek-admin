@@ -109,7 +109,7 @@ Geotrek.TopologyHelper = (function() {
             for (var i=1; i<polylines.length-1; i++) {
                 var previous = polylines[i-1],
                     polyline = polylines[i];
-                if (L.GeometryUtil.isAfter(polyline, previous)) {
+                if (L.GeometryUtil.startsAtExtremity(polyline, previous)) {
                     positions[i] = [0.0, 1.0];
                 }
                 else {
