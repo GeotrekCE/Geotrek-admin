@@ -17,6 +17,7 @@ CHANGELOG
 * Fix topology building if paths are taken twice (fixes #722)
 * Fix tiling offset with horizontal bboxes
 * Fix display of POI layer by default on list (fixes #696)
+* Fix translation of not validated paths (fixes #730)
 * Upgraded to Django 1.5
 
 :notes:

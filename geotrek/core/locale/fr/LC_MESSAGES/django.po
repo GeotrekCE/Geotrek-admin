@@ -190,8 +190,8 @@ msgstr "Pas d'information"
 msgid "Elevation"
 msgstr "Altitude"
 
-msgid "Invalid"
-msgstr "Invalide"
+msgid "Not validated"
+msgstr "Non validé"
 
 msgid "Add a path"
 msgstr "Ajouter un tronçon"
