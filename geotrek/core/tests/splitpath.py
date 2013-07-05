@@ -2,11 +2,22 @@
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
 
-from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
 from geotrek.core.models import Path, Topology, PathAggregation
 
 
 class SplitPathTest(TestCase):
+    def test_split_attributes(self):
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0, 0), (4, 0, 0)))
+        ab.networks.add(NetworkFactory.create())
+        ab.usages.add(UsageFactory.create())
+        cd = PathFactory.create(geom=LineString((2, 0, 0), (2, 2, 0)))
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        self.assertEqual(ab.datasource, ab_2.datasource)
+        self.assertEqual(ab.stake, ab_2.stake)
+        self.assertListEqual(list(ab.networks.all()), list(ab_2.networks.all()))
+        self.assertListEqual(list(ab.usages.all()), list(ab_2.usages.all()))
+
     def test_split_tee_1(self):
         """
                C

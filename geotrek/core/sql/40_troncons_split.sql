@@ -277,7 +277,17 @@ BEGIN
                                     troncon.confort,
                                     segment)
                             RETURNING id INTO tid_clone;
-                        
+
+                        -- Copy N-N relations
+                        INSERT INTO l_r_troncon_reseau (path_id, network_id)
+                            SELECT tid_clone, tr.network_id
+                            FROM l_r_troncon_reseau tr
+                            WHERE tr.path_id = troncon.id;
+                        INSERT INTO l_r_troncon_usage (path_id, usage_id)
+                            SELECT tid_clone, tr.usage_id
+                            FROM l_r_troncon_usage tr
+                            WHERE tr.path_id = troncon.id;
+
                         -- Copy topologies overlapping start/end
                         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                             SELECT
