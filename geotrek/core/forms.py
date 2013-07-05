@@ -28,6 +28,7 @@ class TopologyForm(CommonForm):
 
     def clean(self, *args, **kwargs):
         data = super(TopologyForm, self).clean()
+        # geom is computed at db-level and never edited
         if 'geom' in self.errors:
             del self.errors['geom']
         return data

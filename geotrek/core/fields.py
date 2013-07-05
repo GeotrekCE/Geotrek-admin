@@ -24,12 +24,15 @@ class TopologyField(forms.CharField):
     widget = PointLineTopologyWidget
 
     default_error_messages = {
+        'empty_topology': _(u'Topology is empty.'),
         'invalid_topology': _(u'Topology is not valid.'),
         'unknown_topology': _(u'Topology %s does not exist.'),
     }
 
     def clean(self, value):
         if value in validators.EMPTY_VALUES:
+            if self.required:
+                raise ValidationError(self.error_messages['empty_topology'])
             return None
         try:
             return Topology.objects.get(pk=int(value))

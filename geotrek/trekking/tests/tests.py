@@ -59,6 +59,15 @@ class POIViewsTest(CommonTest):
             'topology': '{"lat": 5.1, "lng": 6.6}'
         }
 
+    def test_empty_topology(self):
+        self.login()
+        data = self.get_good_data()
+        data['topology'] = ''
+        response = self.client.post(self.model.get_add_url(), data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+
 
 class TrekViewsTest(CommonTest):
     model = Trek

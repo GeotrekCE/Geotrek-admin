@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2013-07-05 16:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
+msgid "Topology is empty."
+msgstr "La topologie est vide."
+
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
-#, fuzzy, python-format
 msgid "Topology %s does not exist."
-msgstr "La topologie n'est pas valide."
+msgstr "La topologie %s n'existe pas."
 
 msgid "Linestring invalid snapping."
 msgstr "La line a un snapping invalide"
