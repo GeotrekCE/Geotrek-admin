@@ -6,7 +6,7 @@ CHANGELOG
 -----------------
 
 * Intervention length field (readonly if geometry is line)
-* Fix apparence bug if no rights to add treks (fixes #713)
+* Fix apparence bug if no rights to add treks and pois (fixes #713)
 * Fix extremities snapping (fixes #718)
 * Show information desk in trek detail page (fixes #719)
 * Fix topology adjustments after path split (fixes #720)
