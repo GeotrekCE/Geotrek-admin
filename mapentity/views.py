@@ -233,12 +233,20 @@ class MapEntityLayer(GeoJSONLayerView):
     Take a class attribute `model` with a `latest_updated` method used for caching.
     """
 
+    force2d = True
     srid = settings.API_SRID
 
     def __init__(self, *args, **kwargs):
         super(MapEntityLayer, self).__init__(*args, **kwargs)
         if self.model is None:
             self.model = self.queryset.model
+        # Backward compatibility with django-geojson 1.X
+        # for JS ObjectsLayer and rando-trekking application
+        # TODO: remove when migrated
+        properties = dict([(k, k) for k in self.properties])
+        if 'id' not in self.properties:
+            properties['id'] = 'pk'
+        self.properties = properties
 
     @classmethod
     def get_entity_kind(cls):
