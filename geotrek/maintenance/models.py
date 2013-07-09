@@ -190,8 +190,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
     def geom(self):
         if self._geom is None:
             if self.topology:
-                return self.topology.geom
-            return None
+                self._geom = self.topology.geom
         return self._geom
 
     @geom.setter
