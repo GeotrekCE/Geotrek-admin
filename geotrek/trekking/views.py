@@ -23,7 +23,7 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 
 
 class TrekLayer(MapEntityLayer):
-    fields = ['name', 'published']
+    properties = ['name', 'published']
     queryset = Trek.objects.existing()
 
 
@@ -99,7 +99,7 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    fields = ['name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
+    properties = ['name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
 
     def get_queryset(self):
         try:
@@ -194,7 +194,7 @@ class TrekDelete(MapEntityDelete):
 
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
-    fields = ['name']
+    properties = ['name']
 
 
 class POIList(MapEntityList):

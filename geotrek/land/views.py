@@ -34,12 +34,12 @@ class RestrictedAreaGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
 
 class DistrictGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
     model = District
-    fields = ['name']
+    properties = ['name']
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
     queryset = PhysicalEdge.objects.existing()
-    fields = ['color_index', 'name']
+    properties = ['color_index', 'name']
 
 
 class PhysicalEdgeList(MapEntityList):
@@ -97,7 +97,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
 
 class LandEdgeLayer(MapEntityLayer):
     queryset = LandEdge.objects.existing()
-    fields = ['color_index', 'name']
+    properties = ['color_index', 'name']
 
 
 class LandEdgeList(MapEntityList):
@@ -271,7 +271,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
 
 class SignageManagementEdgeLayer(MapEntityLayer):
     queryset = SignageManagementEdge.objects.existing()
-    fields = ['color_index', 'name']
+    properties = ['color_index', 'name']
 
 
 class SignageManagementEdgeList(MapEntityList):

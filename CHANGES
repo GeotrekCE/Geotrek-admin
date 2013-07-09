@@ -20,6 +20,8 @@ CHANGELOG
 * Fix translation of not validated paths (fixes #730)
 * Fix error if topology is required and empty (fixes #745)
 * Fix duplication of N-N relations on path split (fixes #738)
+* Fix project map in detail page (fixes #734)
+* Upgraded to django-geojson 2.0
 * Upgraded to Django 1.5
 
 :notes:

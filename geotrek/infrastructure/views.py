@@ -12,7 +12,7 @@ from .forms import InfrastructureForm, SignageForm
 
 class InfrastructureLayer(MapEntityLayer):
     queryset = Infrastructure.objects.existing()
-    fields = ['name']
+    properties = ['name']
 
 
 class InfrastructureList(MapEntityList):
@@ -73,7 +73,7 @@ class InfrastructureDelete(MapEntityDelete):
 
 class SignageLayer(MapEntityLayer):
     queryset = Signage.objects.existing()
-    fields = ['name']
+    properties = ['name']
 
 
 class SignageList(MapEntityList):
