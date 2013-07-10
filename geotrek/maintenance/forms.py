@@ -108,6 +108,7 @@ class InterventionForm(CommonForm):
             self.fields['infrastructure'].initial = infrastructure
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
+            self.fields['topology'].required = False
             self.fields['topology'].widget = TopologyReadonlyWidget()
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.infrastructure_display,
