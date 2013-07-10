@@ -22,6 +22,7 @@ CHANGELOG
 * Fix duplication of N-N relations on path split (fixes #738)
 * Fix project map in detail page (fixes #734)
 * Fix project listed deleted interventions (fixes #739)
+* Fix project listed infrastructures through interventions (fixes #740)
 * Upgraded to django-geojson 2.0
 * Upgraded to Django 1.5
 

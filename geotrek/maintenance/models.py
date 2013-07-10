@@ -341,14 +341,14 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     @property
     def paths(self):
         s = []
-        for i in self.interventions.all():
+        for i in self.interventions.existing():
             s += i.paths
         return Path.objects.filter(pk__in=[p.pk for p in set(s)])
 
     @property
     def trails(self):
         s = []
-        for i in self.interventions.all():
+        for i in self.interventions.existing():
             for p in i.paths.all():
                 if p.trail:
                     s.append(p.trail)
@@ -357,14 +357,14 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     @property
     def signages(self):
         s = []
-        for i in self.interventions.all():
+        for i in self.interventions.existing():
             s += i.signages
         return list(set(s))
 
     @property
     def infrastructures(self):
         s = []
-        for i in self.interventions.all():
+        for i in self.interventions.existing():
             s += i.infrastructures
         return list(set(s))
 

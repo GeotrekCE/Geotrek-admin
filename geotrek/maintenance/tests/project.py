@@ -42,3 +42,29 @@ class ProjectTest(TestCase):
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
+
+    def test_deleted_intervention(self):
+        i1 = InterventionFactory.create()
+        sign = SignageFactory.create()
+        i1.set_infrastructure(sign)
+
+        proj = ProjectFactory.create()
+        proj.interventions.add(i1)
+        self.assertEquals(proj.signages, [sign])
+
+        i1.delete()
+
+        self.assertEquals(proj.signages, [])
+
+    def test_deleted_infrastructure(self):
+        i1 = InterventionFactory.create()
+        infra = InfrastructureFactory.create()
+        i1.set_infrastructure(infra)
+
+        proj = ProjectFactory.create()
+        proj.interventions.add(i1)
+        self.assertEquals(proj.infrastructures, [infra])
+
+        infra.delete()
+
+        self.assertEquals(proj.infrastructures, [])
