@@ -129,7 +129,7 @@ MapEntity.showLineLabel = function (layer, options) {
     var __layerOnRemove = layer.onRemove;
     layer.onRemove = function () {
         layer._map.off('zoomend', hideOnZoomOut);
-        layer._hideLabel();
+        if (layer._hideLabel) layer._hideLabel();
         __layerOnRemove.call(layer);
     };
 
@@ -143,9 +143,9 @@ MapEntity.showLineLabel = function (layer, options) {
 
     function hideOnZoomOut() {
         if (layer._map.getZoom() < LABEL_MIN_ZOOM)
-            layer._hideLabel();
+            if (layer._hideLabel) layer._hideLabel();
         else
-            layer._showLabel();
+            if (layer._showLabel) layer._showLabel();
     }
 
     function midLatLng(line) {
