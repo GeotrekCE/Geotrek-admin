@@ -13,29 +13,12 @@
             </p>
             {% endif %}
             {% if modelname == "infrastructure" or modelname == "signage" %}
-                {% for i in object.interventions_set.existing %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ i.name_display|safe }}
-                        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
-                        ({{ i.date }})
-                    </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "maintenance/intervention_list_fragment.html" with interventions=object.interventions_set.existing %}
+            {% elif modelname == "project" %}
+                {% include "maintenance/intervention_list_fragment.html" with interventions=object.interventions.existing %}
             {% else %}
-                {% for i in object.interventions.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ i.name_display|safe }}
-                        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
-                        ({{ i.date }})
-                    </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "maintenance/intervention_list_fragment.html" with interventions=object.interventions.all %}
             {% endif %}
-            
         </td>
     </tr>
 

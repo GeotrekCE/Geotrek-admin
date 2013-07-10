@@ -1,0 +1,11 @@
+{% load i18n %}
+{% for i in interventions %}
+    {% if forloop.first %}<ul>{% endif %}
+    <li>{{ i.name_display|safe }}
+        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
+        ({{ i.date }})
+    </li>
+    {% if forloop.last %}</ul>{% endif %}
+{% empty %}
+    <span class="none">{% trans "None" %}</span>
+{% endfor %}

@@ -242,6 +242,22 @@ class ProjectViewsTest(CommonTest):
         bbox = '?bbox=POLYGON((-1.3630753338765911%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838497371070440))'
         self.assertEqual(len(jsonlist(bbox)), 3)
 
+    def test_deleted_interventions(self):
+        project = ProjectFactory.create()
+        intervention = InterventionFactory.create()
+        project.interventions.add(intervention)
+
+        response = self.client.get(project.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+        print response.content
+        self.assertContains(response, intervention.name)
+
+        intervention.delete()
+
+        response = self.client.get(project.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, intervention.name)
+
 
 class ExportTest(TestCase):
 

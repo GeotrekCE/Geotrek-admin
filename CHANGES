@@ -21,6 +21,7 @@ CHANGELOG
 * Fix error if topology is required and empty (fixes #745)
 * Fix duplication of N-N relations on path split (fixes #738)
 * Fix project map in detail page (fixes #734)
+* Fix project listed deleted interventions (fixes #739)
 * Upgraded to django-geojson 2.0
 * Upgraded to Django 1.5
 
