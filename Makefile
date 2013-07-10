@@ -5,7 +5,7 @@ baseurl=http://$(listen)
 root=$(shell pwd)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
-arch=$(shell uname -p)
+arch=$(shell uname -m)
 
 
 etc/settings.ini:
