@@ -24,6 +24,7 @@ CHANGELOG
 * Fix project listed deleted interventions (fixes #739)
 * Fix project listed infrastructures through interventions (fixes #740)
 * Fix saving intervention form on infrastructure
+* Fix serializing of properties after upgrade of django-geojson (fixes #755)
 * Upgraded to django-geojson 2.0
 * Upgraded to Django 1.5
 

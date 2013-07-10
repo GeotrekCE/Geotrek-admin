@@ -164,10 +164,21 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 class TrekCustomViewTests(TestCase):
 
     def test_pois_geojson(self):
-        trek = TrekFactory.create()
+        trek = TrekFactory.create(no_path=True)
+        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
+        poi = POIFactory(no_path=True)
+        trek.add_path(p1, start=0.5, end=1.0)
+        poi.add_path(p1, start=0.6, end=0.6)
+        AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
+        self.assertNotEqual(poi.thumbnail, None)
+        self.assertEqual(len(trek.pois), 1)
+
         url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        poislayer = json.loads(response.content)
+        poifeature = poislayer['features'][0]
+        self.assertTrue('serializable_thumbnail' in poifeature['properties'])
 
     def test_gpx(self):
         trek = TrekFactory.create()

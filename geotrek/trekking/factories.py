@@ -116,5 +116,5 @@ class POIFactory(TopologyFactory):
     FACTORY_FOR = models.POI
 
     name = factory.Sequence(lambda n: u"POI %s" % n)
-    description = factory.Sequence(lambda n: u"<p>escription %s</p> % n)")
+    description = factory.Sequence(lambda n: u"<p>description %s</p> % n)")
     type = factory.SubFactory(POITypeFactory)
