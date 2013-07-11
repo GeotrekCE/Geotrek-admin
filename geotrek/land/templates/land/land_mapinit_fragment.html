@@ -36,8 +36,12 @@
 
             onEachFeature: (function (layergroup) {
                 return function (data, layer) {
-                    var idx = parseInt(data.properties.color_index),
-                        colorspool = colorspools[layergroup.id],
+                    var idx = parseInt(data.properties.color_index);
+                    if (isNaN(idx)) {
+                        console.warn("No proper 'color_index' properties in GeoJSON properties.");
+                        idx = 0;
+                    }
+                    var colorspool = colorspools[layergroup.id],
                         color = colorspool[idx % colorspool.length];
                     layer.setStyle({color: color});
 

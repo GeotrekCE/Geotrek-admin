@@ -26,6 +26,7 @@ CHANGELOG
 * Fix saving intervention form on infrastructure
 * Repair serializing of properties after upgrade of django-geojson (fixes #755)
 * Added ``public_transport`` and ``advised_parking`` to trek JSON detail API (fixes #758)
+* Repair land layers colors after upgrade of django-geojson
 * Upgraded to django-geojson 2.0
 * Upgraded to Django 1.5
 

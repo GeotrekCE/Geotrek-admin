@@ -155,7 +155,7 @@ class LandEdgeDelete(MapEntityDelete):
 
 class CompetenceEdgeLayer(MapEntityLayer):
     queryset = CompetenceEdge.objects.existing()
-    fields = ['color_index', 'name']
+    properties = ['color_index', 'name']
 
 
 class CompetenceEdgeList(MapEntityList):
@@ -213,7 +213,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
 
 class WorkManagementEdgeLayer(MapEntityLayer):
     queryset = WorkManagementEdge.objects.existing()
-    fields = ['color_index', 'name']
+    properties = ['color_index', 'name']
 
 
 class WorkManagementEdgeList(MapEntityList):
