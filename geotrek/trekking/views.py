@@ -99,7 +99,7 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    properties = ['name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
+    properties = ['pk', 'name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
 
     def get_queryset(self):
         try:
