@@ -462,6 +462,10 @@ class Route(models.Model):
 
 class DifficultyLevel(models.Model):
 
+    """We use an IntegerField for id, since we want to edit it in Admin.
+    This column is used to order difficulty levels, especially in public website
+    where treks are filtered by difficulty ids.
+    """
     id = models.IntegerField(primary_key=True)
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
@@ -474,6 +478,16 @@ class DifficultyLevel(models.Model):
 
     def __unicode__(self):
         return self.difficulty
+
+    def save(self, *args, **kwargs):
+        """Manually auto-increment ids"""
+        if not self.id:
+            try:
+                last = self.__class__.objects.all().order_by('-id')[0]
+                self.id = last.id + 1
+            except IndexError:
+                self.id = 1
+        super(DifficultyLevel, self).save(*args, **kwargs)
 
 
 class WebLinkManager(models.Manager):

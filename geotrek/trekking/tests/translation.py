@@ -49,6 +49,7 @@ class TraductionTestCase(TestCase):
     @classmethod
     def get_dummy_data_trad(cls):
         return dict(
+            id=1,
             difficulty=u"difficulty_descr_default",
             difficulty_en=u"difficulty_descr_en",
             difficulty_fr=u"difficulty_descr_fr",
@@ -63,15 +64,15 @@ class TraductionTestCase(TestCase):
         success = login_from_cred(self.client, self.cred)
         self.assertTrue(success)
 
-        add_intervention_url = admin_add_url_from_model(DifficultyLevel)
+        add_difficulty_url = admin_add_url_from_model(DifficultyLevel)
 
-        response = self.client.get(add_intervention_url)
+        response = self.client.get(add_difficulty_url)
         self.assertEquals(response.status_code, 200)
 
         # Get data for DifficultyLevel creation and create it through admin view
         data = self.get_dummy_data_trad()
 
-        response = self.client.post(add_intervention_url, data, follow=True)
+        response = self.client.post(add_difficulty_url, data, follow=True)
         self.assertRedirects(response, admin_list_url_from_model(DifficultyLevel))
         self.assertEquals(response.status_code, 200)
 
