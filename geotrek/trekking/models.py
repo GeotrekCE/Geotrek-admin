@@ -462,6 +462,7 @@ class Route(models.Model):
 
 class DifficultyLevel(models.Model):
 
+    id = models.IntegerField(primary_key=True)
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
 

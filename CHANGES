@@ -6,7 +6,7 @@ CHANGELOG
 0.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
+* Edit difficulty id in Admin site, mainly used to order difficulty levels (fixes #771)
 
 
 0.19.1 (2013-07-15)

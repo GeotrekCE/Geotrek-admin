@@ -39,8 +39,9 @@ class RouteAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
 
 
 class DifficultyLevelAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
-    list_display = ('difficulty',)
+    list_display = ('id', 'difficulty',)
     search_fields = ('difficulty',)
+    fields = ('id', 'difficulty')
 
 
 class WebLinkAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
