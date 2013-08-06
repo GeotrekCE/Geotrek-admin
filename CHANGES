@@ -2,10 +2,17 @@
 CHANGELOG
 =========
 
+
 0.20 (unreleased)
 -----------------
 
 - Nothing changed yet.
+
+
+0.19.1 (2013-07-15)
+-------------------
+
+* Restore ``pk`` property in Trek GeoJSON layer
 
 
 0.19 (2013-07-12)
