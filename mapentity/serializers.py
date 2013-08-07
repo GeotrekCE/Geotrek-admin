@@ -224,11 +224,11 @@ class ZipShapeSerializer(Serializer):
                 if len(split_qs) == 0:
                     continue
                 split_geom_type = split_geom_field.geom_type
-                shp_filepath = shape_exporter.shape_write(split_qs, model, get_geom, split_geom_type, srid)
+                shp_filepath = shape_exporter.shape_write(split_qs, model, columns, get_geom, split_geom_type, srid)
 
                 shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
         else:
-            shp_filepath = shape_exporter.shape_write(queryset, model, get_geom, geom_type, srid)
+            shp_filepath = shape_exporter.shape_write(queryset, model, columns, get_geom, geom_type, srid)
 
             shp_creator.add_shape('shp_download', shp_filepath)
 

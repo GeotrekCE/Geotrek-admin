@@ -54,18 +54,13 @@ class ShapeCreator(object):
         return zip_shapes(self.shapes)
 
 
-def shape_write(iterable, model, get_geom, geom_type, srid, srid_out=None):
+def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=None):
     """
     Write tempfile with shape layer.
     """
     from .serializers import field_as_string
 
-    fields = model._meta.fields
-    non_geometry_fields = [f for f in fields if not isinstance(f, GeometryField)]
-    shapefile_columns = [str(f.name) for f in non_geometry_fields]
-
-    # refactor
-    tmp_file, layer, ds, native_srs, output_srs = create_shape_format_layer(shapefile_columns, geom_type, srid, srid_out)
+    tmp_file, layer, ds, native_srs, output_srs = create_shape_format_layer(columns, geom_type, srid, srid_out)
 
     feature_def = layer.GetLayerDefn()
 
@@ -82,7 +77,7 @@ def shape_write(iterable, model, get_geom, geom_type, srid, srid_out=None):
     for item in iterable:
         feat = ogr.Feature(feature_def)
 
-        for fieldname in shapefile_columns:
+        for fieldname in columns:
             # They are all String (see create_shape_format_layer)
             value = field_as_string(item, fieldname, ascii=True)
             feat.SetField(fieldname[:10], value[:255])
@@ -128,7 +123,7 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
 
     # Create other fields
     for fieldname in fieldnames:
-        field_defn = ogr.FieldDefn(fieldname[:10], ogr.OFTString)
+        field_defn = ogr.FieldDefn(str(fieldname[:10]), ogr.OFTString)
         field_defn.SetWidth(255)
         if layer.CreateField(field_defn) != 0:
             raise Exception('Faild to create field')
