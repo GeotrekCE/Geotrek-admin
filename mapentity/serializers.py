@@ -28,7 +28,7 @@ def plain_text(html):
 
 class DatatablesSerializer(Serializer):
     def serialize(self, queryset, **options):
-        model = queryset.model
+        model = options.pop('model', None) or queryset.model
         columns = options.pop('fields')
 
         attr_getters = {}
@@ -73,7 +73,7 @@ class CSVSerializer(Serializer):
             * <field_name>_display
             * <field_name>
         """
-        model = queryset.model
+        model = options.pop('model', None) or queryset.model
         columns = options.pop('fields')
         stream = options.pop('stream')
         ascii = options.get('ensure_ascii', True)
@@ -198,12 +198,14 @@ class ZipShapeSerializer(Serializer):
         stream.write(shp_creator.as_zip())
 
     def create_shape(self, shp_creator, queryset, columns):
-        """Split a shapes into one or more shapes (one for point and one for linestring)"""
-        fieldmap = shape_exporter.fieldmap_from_fields(queryset.model, columns)
+        """Split a shapes into one or more shapes (one for point and one for linestring)
+        """
+        model = options.pop('model', None) or queryset.model
+        fieldmap = shape_exporter.fieldmap_from_fields(model, columns)
         # Don't use this - projection does not work yet (looses z dimension)
         # srid_out = settings.API_SRID
 
-        geo_field = shape_exporter.geo_field_from_model(queryset.model, 'geom')
+        geo_field = shape_exporter.geo_field_from_model(model, 'geom')
         get_geom, geom_type, srid = shape_exporter.info_from_geo_field(geo_field)
 
         if geom_type.upper() in (GeometryField.geom_type, GeometryCollectionField.geom_type):

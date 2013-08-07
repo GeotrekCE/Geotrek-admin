@@ -408,14 +408,14 @@ class MapEntityFormat(MapEntityList):
         serializer = CSVSerializer()
         response = HttpResponse(mimetype='text/csv')
         serializer.serialize(queryset=self.get_queryset(), stream=response,
-                             fields=self.columns, ensure_ascii=True)
+                             model=self.model, fields=self.columns, ensure_ascii=True)
         return response
 
     def shape_view(self, request, context, **kwargs):
         serializer = ZipShapeSerializer()
         response = HttpResponse(mimetype='application/zip')
-        serializer.serialize(queryset=self.get_queryset(), stream=response,
-                             fields=self.columns)
+        serializer.serialize(queryset=self.get_queryset(), model=self.model,
+                             stream=response, fields=self.columns)
         response['Content-length'] = str(len(response.content))
         return response
 
