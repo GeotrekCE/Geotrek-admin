@@ -1,3 +1,5 @@
+import copy
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django import forms as django_forms
@@ -10,17 +12,74 @@ from tinymce.widgets import TinyMCE
 from modeltranslation.translator import translator, NotRegistered
 
 
-class MapEntityForm(forms.ModelForm):
-    modelfields = tuple()
-    geomfields = tuple()
+class TranslatedModelForm(forms.ModelForm):
+    """
+    Auto-expand translatable fields.
+    Expand means replace native (e.g. `name`) by translated (e.g. `name_fr`, `name_en`)
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(TranslatedModelForm, self).__init__(*args, **kwargs)
+        # Track translated fields
+        self._translated = {}
+        self.replace_orig_fields()
+        self.populate_fields()
+
+    def replace_orig_fields(self):
+        # Expand i18n fields
+        try:
+            # Obtain model translation options
+            mto = translator.get_options_for_model(self._meta.model)
+        except NotRegistered:
+            # No translation field on this model, nothing to do
+            return
+        # For each translated model field
+        for modelfield in mto.fields:
+            # Remove form native field (e.g. `name`)
+            native = self.fields.pop(modelfield)
+            # Add translated fields (e.g. `name_fr`, `name_en`...)
+            for l in settings.LANGUAGES:
+                lang = l[0]
+                name = '%s_%s' % (modelfield, lang)
+                # Add to form.fields{}
+                translated = copy.deepcopy(native)
+                translated.required = native.required and (lang == settings.LANGUAGE_CODE)
+                translated.label = u"%s [%s]" % (unicode(translated.label), lang)
+                self.fields[name] = translated
+                # Keep track of replacements
+                self._translated.setdefault(modelfield, []).append(name)
+
+    def save(self, *args, **kwargs):
+        """ Manually saves translated fields on instance.
+        """
+        # Save translated fields
+        for fields in self._translated.values():
+            for field in fields:
+                value = self.cleaned_data.get(field)
+                if value:
+                    setattr(self.instance, field, value)
+        return super(TranslatedModelForm, self).save(*args, **kwargs)
+
+    def populate_fields(self):
+        """ Manually loads translated fields from instance.
+        """
+        if self.instance:
+            for fields in self._translated.values():
+                for field in fields:
+                    self.fields[field].initial = getattr(self.instance, field)
+
+
+class MapEntityForm(TranslatedModelForm):
 
     pk = forms.Field(required=False, widget=forms.Field.hidden_widget)
     model = forms.Field(required=False, widget=forms.Field.hidden_widget)
 
     helper = FormHelper()
+    fieldslayout = None
+    geomfields = []
 
     class Meta:
-        pass
+        fields = ['pk', 'model']
 
     # TODO: this is obvisouly wrong MapEntity should not depend on core
     # TODO: Django inserts Media in <head> https://code.djangoproject.com/ticket/13978
@@ -48,25 +107,28 @@ class MapEntityForm(forms.ModelForm):
         self.fields['pk'].initial = self.instance.pk
         self.fields['model'].initial = self.instance._meta.module_name
 
-        self.__expand_translatable_fields()
-
-        # Get fields from subclasses
-        fields = ('pk', 'model', 'structure') + self.modelfields
+        # Check if fieldslayout is defined, otherwise use Meta.fields
+        fieldslayout = self.fieldslayout
+        if not fieldslayout:
+            # Remove geomfields from left part
+            fieldslayout = [fl for fl in self._meta.fields if fl not in self.geomfields]
+        # Replace native fields in Crispy layout by translated fields
+        fieldslayout = self.__replace_translatable_fields(fieldslayout)
 
         has_geomfield = len(self.geomfields) > 0
         leftpanel = Div(
-            *fields,
+            *fieldslayout,
             css_class="scrollable span" + ('4' if has_geomfield else '12'),
             css_id="modelfields"
         )
 
-        rightpanel = (),
+        rightpanel = tuple()
         if has_geomfield:
-            rightpanel = Div(
+            rightpanel = (Div(
                 *self.geomfields,
                 css_class="span8",
                 css_id="geomfield"
-            )
+            ),)
 
         # Main form layout
         self.helper.help_text_inline = True
@@ -75,7 +137,7 @@ class MapEntityForm(forms.ModelForm):
             Div(
                 Div(
                     leftpanel,
-                    rightpanel,
+                    *rightpanel,
                     css_class="row-fluid"
                 ),
                 css_class="container-fluid"
@@ -89,52 +151,27 @@ class MapEntityForm(forms.ModelForm):
                                                             django_forms.widgets.Textarea):
                 formfield.widget = TinyMCE()
 
-    """
-
-    Auto-expand translatable fields.
-
-    """
-
-    def __expand_translatable_fields(self):
-        # Expand i18n fields
-        try:
-            # Obtain model translation options
-            mto = translator.get_options_for_model(self._meta.model)
-        except NotRegistered:
-            # No translation field on this model, nothing to do
-            pass
-        else:
-            for f in mto.fields:
-                self.fields.pop(f)
-            # Switch to mutable sequence
-            self.modelfields = list(self.modelfields)
-            for f in mto.fields:
-                self.__replace_translatable_field(f, self.modelfields)
-            # Switch back to unmutable sequence
-            self.modelfields = tuple(self.modelfields)
-
-    def __replace_translatable_field(self, field, modelfields):
-        for i, modelfield in enumerate(modelfields):
-            if hasattr(modelfield, 'fields'):
-                # Switch to mutable sequence
-                modelfield.fields = list(modelfield.fields)
-                self.__replace_translatable_field(field, modelfield.fields)
-                # Switch back to unmutable sequence
-                modelfield.fields = tuple(modelfield.fields)
+    def __replace_translatable_fields(self, fieldslayout):
+        newlayout = []
+        for field in fieldslayout:
+            # Layout fields can be nested (e.g. Div('f1', 'f2', Div('f3')))
+            if hasattr(field, 'fields'):
+                field.fields = self.__replace_translatable_fields(field.fields)
+                newlayout.append(field)
             else:
-                if modelfield == field:
-                    # Replace i18n field by dynamic l10n fields
-                    i = modelfields.index(modelfield)
-                    modelfields[i:i + 1] = self.__tabbed_translatable_field(modelfield)
+                if field in self._translated:
+                    newlayout.append(self.__tabbed_layout_for_field(field))
+                else:
+                    newlayout.append(field)
+        return newlayout
 
-    def __tabbed_translatable_field(self, field):
+    def __tabbed_layout_for_field(self, field):
         fields = []
-        for l in settings.LANGUAGES:
-            active = "active" if l[0] == settings.LANGUAGE_CODE else ""
-            fields.append(Div(
-                '%s_%s' % (field, l[0]),
-                css_class="tab-pane " + active,
-                css_id="%s_%s" % (field, l[0])))
+        for replacement in self._translated[field]:
+            active = "active" if replacement.endswith('_%s' % settings.LANGUAGE_CODE) else ""
+            fields.append(Div(replacement,
+                              css_class="tab-pane " + active,
+                              css_id=replacement))
 
         layout = Div(
             HTML("""
@@ -150,4 +187,4 @@ class MapEntityForm(forms.ModelForm):
             ),
             css_class="tabbable"
         )
-        return [layout]
+        return layout
