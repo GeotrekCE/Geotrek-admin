@@ -50,27 +50,22 @@ class ShapeCreator(object):
     def add_shape(self, shp_name, shp_filepath):
         self.shapes.append((shp_name, shp_filepath))
 
-    def add_shape_from_qs(self, qs, srid_out=None, shp_name='shp_download'):
-        self.add_shape_from_model(qs, qs.model, srid_out, shp_name)
-
-    def add_shape_from_model(self, iterable, model, srid_out=None, shp_name='shp_download'):
-        fieldmap = fieldmap_from_model(model)
-        get_geom, geom_type, srid = info_from_geo_field(geo_field_from_model(model))
-
-        shp_filepath = shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out)
-        self.add_shape(shp_name, shp_filepath)
-
     def as_zip(self):
         return zip_shapes(self.shapes)
 
 
-def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
+def shape_write(iterable, model, get_geom, geom_type, srid, srid_out=None):
+    """
+    Write tempfile with shape layer.
+    """
+    from .serializers import field_as_string
 
-    # normalize ?!
-    fieldmap = dict((k[:10], v) for k, v in fieldmap.iteritems())
+    fields = model._meta.fields
+    non_geometry_fields = [f for f in fields if not isinstance(f, GeometryField)]
+    shapefile_columns = [str(f.name) for f in non_geometry_fields]
 
     # refactor
-    tmp_file, layer, ds, native_srs, output_srs = create_shape_format_layer(fieldmap.keys(), geom_type, srid, srid_out)
+    tmp_file, layer, ds, native_srs, output_srs = create_shape_format_layer(shapefile_columns, geom_type, srid, srid_out)
 
     feature_def = layer.GetLayerDefn()
 

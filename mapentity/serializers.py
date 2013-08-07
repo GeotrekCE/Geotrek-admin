@@ -202,18 +202,14 @@ class ZipShapeSerializer(Serializer):
     def serialize(self, queryset, **options):
         columns = options.pop('fields')
         stream = options.pop('stream')
+        model = options.pop('model', None) or queryset.model
         shp_creator = shape_exporter.ShapeCreator()
-        self.create_shape(shp_creator, queryset, columns)
+        self.create_shape(shp_creator, queryset, model, columns)
         stream.write(shp_creator.as_zip())
 
-    def create_shape(self, shp_creator, queryset, columns):
+    def create_shape(self, shp_creator, queryset,  model, columns):
         """Split a shapes into one or more shapes (one for point and one for linestring)
         """
-        model = options.pop('model', None) or queryset.model
-        fieldmap = shape_exporter.fieldmap_from_fields(model, columns)
-        # Don't use this - projection does not work yet (looses z dimension)
-        # srid_out = settings.API_SRID
-
         geo_field = shape_exporter.geo_field_from_model(model, 'geom')
         get_geom, geom_type, srid = shape_exporter.info_from_geo_field(geo_field)
 
@@ -228,11 +224,11 @@ class ZipShapeSerializer(Serializer):
                 if len(split_qs) == 0:
                     continue
                 split_geom_type = split_geom_field.geom_type
-                shp_filepath = shape_exporter.shape_write(split_qs, fieldmap, get_geom, split_geom_type, srid)
+                shp_filepath = shape_exporter.shape_write(split_qs, model, get_geom, split_geom_type, srid)
 
                 shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
         else:
-            shp_filepath = shape_exporter.shape_write(queryset, fieldmap, get_geom, geom_type, srid)
+            shp_filepath = shape_exporter.shape_write(queryset, model, get_geom, geom_type, srid)
 
             shp_creator.add_shape('shp_download', shp_filepath)
 
