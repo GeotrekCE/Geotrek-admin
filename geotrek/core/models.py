@@ -3,6 +3,7 @@ import re
 from math import isnan
 import logging
 from datetime import datetime
+import functools
 
 from django.contrib.gis.db import models
 from django.db import connection
@@ -438,6 +439,7 @@ class Datasource(StructureRelated):
         return self.source
 
 
+@functools.total_ordering
 class Stake(StructureRelated):
 
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50, db_column='enjeu')
@@ -449,7 +451,13 @@ class Stake(StructureRelated):
         ordering = ['stake']
 
     def __lt__(self, other):
+        if other is None:
+            return False
         return self.pk < other.pk
+
+    def __eq__(self, other):
+        return isinstance(other, Stake) \
+            and self.pk == other.pk
 
     def __unicode__(self):
         return self.stake
