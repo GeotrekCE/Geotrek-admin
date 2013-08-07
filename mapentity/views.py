@@ -114,6 +114,31 @@ class LastModifiedMixin(object):
         return _dispatch(*args, **kwargs)
 
 
+class ModelMetaMixin(object):
+    """
+    Add model meta information in context data
+    """
+
+    def get_entity_kind(self):
+        return None
+
+    def get_title(self):
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super(ModelMetaMixin, self).get_context_data(**kwargs)
+        context['view'] = self.get_entity_kind()
+        context['title'] = self.get_title()
+
+        model = self.model or self.queryset.model
+        if model:
+            context['model'] = model
+            context['appname'] = model._meta.app_label.lower()
+            context['modelname'] = model._meta.object_name.lower()
+            context['objectsname'] = model._meta.verbose_name_plural
+        return context
+
+
 class DocumentConvert(DetailView):
     """
     A proxy view to conversion server.
@@ -279,31 +304,6 @@ class MapEntityLayer(GeoJSONLayerView):
         return response
 
 
-class ModelMetaMixin(object):
-    """
-    Add model meta information in context data
-    """
-
-    def get_entity_kind(self):
-        return None
-
-    def get_title(self):
-        return None
-
-    def get_context_data(self, **kwargs):
-        context = super(ModelMetaMixin, self).get_context_data(**kwargs)
-        context['view'] = self.get_entity_kind()
-        context['title'] = self.get_title()
-
-        model = self.model or self.queryset.model
-        if model:
-            context['model'] = model
-            context['appname'] = model._meta.app_label.lower()
-            context['modelname'] = model._meta.object_name.lower()
-            context['objectsname'] = model._meta.verbose_name_plural
-        return context
-
-
 class MapEntityList(ModelMetaMixin, ListView):
     """
 
@@ -364,7 +364,7 @@ class MapEntityJsonList(JSONResponseMixin, MapEntityList):
         Override the most important part of JSONListView... (paginator)
         """
         serializer = DatatablesSerializer()
-        return serializer.serialize(self.get_queryset(), fields=self.columns)
+        return serializer.serialize(self.get_queryset(), fields=self.columns, model=self.model)
 
 
 class MapEntityFormat(MapEntityList):
@@ -422,7 +422,7 @@ class MapEntityFormat(MapEntityList):
     def gpx_view(self, request, context, **kwargs):
         serializer = GPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
-        serializer.serialize(self.get_queryset(), stream=response, geom_field='geom')
+        serializer.serialize(self.get_queryset(), model=self.model, stream=response, geom_field='geom')
         return response
 
 
