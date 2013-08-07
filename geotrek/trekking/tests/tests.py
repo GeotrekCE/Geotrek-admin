@@ -75,6 +75,8 @@ class POIViewsTest(CommonTest):
         # Create many instances
         for i in range(100):
             self.modelfactory.create()
+        for i in range(10):
+            DistrictFactory.create()
 
         # Enable query counting
         settings.DEBUG = True
@@ -87,8 +89,7 @@ class POIViewsTest(CommonTest):
             num_queries_new = len(connection.queries)
 
             nb_queries = num_queries_new - num_queries_old
-            # TODO: 5 queries by iteration. It's already too much.
-            self.assertTrue(0 < nb_queries < 5 * 100 + 10, '%s queries !' % nb_queries)
+            self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
 
         settings.DEBUG = False
 

@@ -36,10 +36,14 @@ class PicturesMixin(object):
         Since we allow screenshot to be overriden by attachments
         named 'mapimage', filter it from object pictures.
         """
-        if not hasattr(self, '_pictures'):
-            self._pictures = [a for a in self.attachments.all()
-                              if a.is_image and a.title != 'mapimage']
-        return self._pictures
+        if hasattr(self, '_pictures'):
+            return self._pictures
+        return [a for a in self.attachments.all() if a.is_image
+                and a.title != 'mapimage']
+
+    @pictures.setter
+    def pictures(self, values):
+        self._pictures = values
 
     @property
     def serializable_pictures(self):

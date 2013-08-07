@@ -10,7 +10,7 @@ CHANGELOG
 * Use explicit list of fields in forms, instead of excluding model fields (fixes #736).
   Issue #712 was closed too, since most suspected cause was field listings. Please re-open 
   if problem re-appears.
-
+* Fix timeout on POI Shapefile and CSV exports (fixes #672)
 
 0.19.1 (2013-07-15)
 -------------------
