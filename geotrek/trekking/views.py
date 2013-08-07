@@ -12,14 +12,36 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, JSONResponseMixin, DocumentConvert)
 from mapentity.serializers import plain_text, GPXSerializer
+from paperclip.models import Attachment
 
 from geotrek.authent.decorators import trekking_manager_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
+from geotrek.land.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
+
+
+class FlattenPicturesMixin(object):
+    def get_queryset(self):
+        """ Override queryset to avoid attachment lookup while serializing.
+        It will fetch attachments, and force ``pictures`` attribute of instances.
+        """
+        app_label = self.model._meta.app_label
+        model_name = self.model._meta.object_name.lower()
+        attachments = Attachment.objects.filter(content_type__app_label=app_label,
+                                                content_type__model=model_name)
+        pictures = {}
+        for attachment in attachments:
+            if attachment.is_image:
+                obj_id = attachment.object_id
+                pictures.setdefault(obj_id, []).append(attachment)
+
+        for obj in super(FlattenPicturesMixin, self).get_queryset():
+            obj._pictures = pictures.get(obj.id, [])
+            yield obj
 
 
 class TrekLayer(MapEntityLayer):
@@ -27,7 +49,7 @@ class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
 
 
-class TrekList(MapEntityList):
+class TrekList(FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
     filterform = TrekFilter
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
@@ -197,7 +219,7 @@ class POILayer(MapEntityLayer):
     properties = ['name']
 
 
-class POIList(MapEntityList):
+class POIList(FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilter
     columns = ['id', 'name', 'type', 'thumbnail']
@@ -209,6 +231,14 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 class POIFormatList(MapEntityFormat, POIList):
     columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas'])
+
+    def get_queryset(self):
+        qs = super(POIFormatList, self).get_queryset()
+        for poi in qs:
+            setattr(poi, 'districts_csv_display', District.objects.filter(geom__bbcontains=poi.geom))
+            setattr(poi, 'cities_csv_display', City.objects.filter(geom__bbcontains=poi.geom))
+            setattr(poi, 'areas_csv_display', RestrictedArea.objects.filter(geom__bbcontains=poi.geom))
+            yield poi
 
 
 class POIDetail(MapEntityDetail):

@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.test import TestCase
+
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
 import json
 from django.core.urlresolvers import reverse
+from django.db import connection
 
 from mapentity.tests import MapEntityLiveTest
 
@@ -67,6 +70,27 @@ class POIViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+
+    def test_listing_number_queries(self):
+        # Create many instances
+        for i in range(100):
+            self.modelfactory.create()
+
+        # Enable query counting
+        settings.DEBUG = True
+
+        for url in [self.model.get_jsonlist_url(),
+                    self.model.get_format_list_url()]:
+
+            num_queries_old = len(connection.queries)
+            self.client.get(url)
+            num_queries_new = len(connection.queries)
+
+            nb_queries = num_queries_new - num_queries_old
+            # TODO: 5 queries by iteration. It's already too much.
+            self.assertTrue(0 < nb_queries < 5 * 100 + 10, '%s queries !' % nb_queries)
+
+        settings.DEBUG = False
 
 
 class TrekViewsTest(CommonTest):

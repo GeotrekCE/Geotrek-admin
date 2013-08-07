@@ -33,8 +33,13 @@ class PicturesMixin(object):
     def pictures(self):
         """
         Find first image among attachments.
+        Since we allow screenshot to be overriden by attachments
+        named 'mapimage', filter it from object pictures.
         """
-        return [a for a in self.attachments.all() if a.is_image]
+        if not hasattr(self, '_pictures'):
+            self._pictures = [a for a in self.attachments.all()
+                              if a.is_image and a.title != 'mapimage']
+        return self._pictures
 
     @property
     def serializable_pictures(self):
@@ -190,13 +195,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             src = os.path.join(settings.MEDIA_ROOT, attached.name)
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
-
-    @property
-    def pictures(self):
-        """
-        Override pictures list. See Trek.prepare_map_image()
-        """
-        return [a for a in self.attachments.all() if a.is_image and a.title != 'mapimage']
 
     def get_attachment_print(self):
         """
