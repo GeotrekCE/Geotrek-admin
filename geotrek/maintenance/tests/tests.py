@@ -296,7 +296,7 @@ class ExportTest(TestCase):
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
-        pfl.create_shape(shp_creator, Project.objects.all(), ProjectFormatList.columns)
+        pfl.create_shape(shp_creator, Project.objects.all(), Project, ProjectFormatList.columns)
 
         self.assertEquals(len(shp_creator.shapes), 2)
 
