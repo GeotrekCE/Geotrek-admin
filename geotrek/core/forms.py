@@ -19,7 +19,6 @@ class TopologyForm(CommonForm):
     The geom field is fully ignored, since we edit a topology.
     """
     topology = TopologyField(label="")
-    geomfields = ('topology',)
 
     def __init__(self, *args, **kwargs):
         super(TopologyForm, self).__init__(*args, **kwargs)
@@ -39,8 +38,10 @@ class TopologyForm(CommonForm):
         instance.mutate(topology)
         return instance
 
-    class Meta:
-        exclude = ('offset', 'geom')
+    geomfields = ['topology']
+
+    class Meta(CommonForm.Meta):
+        fields = CommonForm.Meta.fields + ['topology']
 
     MEDIA_JS = ("core/dijkstra.js",
                 "core/leaflet-geomutils.js",
@@ -55,37 +56,28 @@ class PathForm(CommonForm):
                                       label=_("Reverse path"),
                                       help_text=_("The path will be reversed once saved"))
 
-    modelfields = ('name',
-                   'stake',
-                   'comfort',
-                   'trail',
-                   'departure',
-                   'arrival',
-                   'comments',
-                   'datasource',
-                   'networks',
-                   'usages',
-                   'valid',
-                   'reverse_geom')
-    geomfields = ('geom',)
+    geomfields = ['geom']
 
-    class Meta:
+    class Meta(CommonForm.Meta):
         model = Path
-        exclude = ('geom_cadastre',)
+        fields = CommonForm.Meta.fields + \
+            ['structure',
+             'name', 'stake', 'comfort', 'trail', 'departure', 'arrival', 'comments',
+             'datasource', 'networks', 'usages', 'valid', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
         self.fields['geom'].label = ''
 
     def clean_geom(self):
-        data = self.cleaned_data['geom']
-        if data is None:
+        geom = self.cleaned_data['geom']
+        if geom is None:
             raise forms.ValidationError(_("Invalid snapped geometry."))
-        if not data.simple:
+        if not geom.simple:
             raise forms.ValidationError(_("Geometry is not simple."))
-        if not PathHelper.disjoint(data, self.cleaned_data.get('pk', '-1')):
+        if not PathHelper.disjoint(geom, self.cleaned_data.get('pk') or -1):
             raise forms.ValidationError(_("Geometry overlaps another."))
-        return data
+        return geom
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)
