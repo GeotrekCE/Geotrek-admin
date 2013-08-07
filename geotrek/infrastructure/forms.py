@@ -6,9 +6,10 @@ from .models import Infrastructure, InfrastructureType, Signage
 
 
 class BaseInfrastructureForm(TopologyForm):
-    modelfields = ('name',
-                   'description',
-                   'type',)
+    class Meta(TopologyForm.Meta):
+        fields = TopologyForm.Meta.fields + \
+            ['structure',
+             'name', 'description', 'type']
 
 
 class InfrastructureForm(BaseInfrastructureForm):

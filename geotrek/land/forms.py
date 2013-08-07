@@ -2,7 +2,7 @@ from geotrek.core.widgets import LineTopologyWidget
 from geotrek.core.forms import TopologyForm
 
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge,
-                    SignageManagementEdge)
+                     SignageManagementEdge)
 
 
 class EdgeForm(TopologyForm):
@@ -12,23 +12,20 @@ class EdgeForm(TopologyForm):
 
 
 class PhysicalEdgeForm(EdgeForm):
-    modelfields = ('physical_type',)
-
     class Meta(EdgeForm.Meta):
         model = PhysicalEdge
+        fields = EdgeForm.Meta.fields + ['physical_type']
 
 
 class LandEdgeForm(EdgeForm):
-    modelfields = ('land_type',)
-
     class Meta(EdgeForm.Meta):
         model = LandEdge
+        fields = EdgeForm.Meta.fields + ['land_type']
 
 
 class OrganismForm(EdgeForm):
-    modelfields = ('organization',)
     class Meta(EdgeForm.Meta):
-        pass
+        fields = EdgeForm.Meta.fields + ['organization']
 
 
 class CompetenceEdgeForm(OrganismForm):

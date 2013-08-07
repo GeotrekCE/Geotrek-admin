@@ -33,7 +33,7 @@ TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through
 class TrekForm(TopologyForm):
     parking_location = forms.gis.GeometryField(widget=Point2DWidget, required=False)
 
-    modelfields = (
+    fieldslayout = [
         Div(
             HTML("""
             <ul class="nav nav-tabs">
@@ -76,7 +76,7 @@ class TrekForm(TopologyForm):
             ),
             css_class="tabbable"
         ),
-    )
+    ]
 
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
@@ -88,20 +88,21 @@ class TrekForm(TopologyForm):
 
     class Meta(TopologyForm.Meta):
         model = Trek
-        exclude = TopologyForm.Meta.exclude + ('related_treks',)
+        fields = TopologyForm.Meta.fields + \
+            ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
+             'route', 'ambiance', 'access', 'description_teaser', 'description',
+             'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
+             'themes', 'networks', 'usages', 'web_links', 'information_desk']
 
 
 class POIForm(TopologyForm):
-    modelfields = ('name',
-                   'description',
-                   'type')
-
     def __init__(self, *args, **kwargs):
         super(POIForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = PointTopologyWidget()
 
     class Meta(TopologyForm.Meta):
         model = POI
+        fields = TopologyForm.Meta.fields + ['name', 'description', 'type']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
@@ -111,6 +112,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
         self.helper.form_action = self.instance.get_add_url()
         # Main form layout
+        # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
         arg_list = ['name_{0}'.format(l[0]) for l in settings.LANGUAGES]
         arg_list += ['url', 'category', FormActions(
@@ -122,4 +124,5 @@ class WebLinkCreateFormPopup(forms.ModelForm):
 
     class Meta:
         model = WebLink
-        exclude = ('name',)
+        fields = ['name_{0}'.format(l[0]) for l in settings.LANGUAGES] + \
+                 ['url', 'category']
