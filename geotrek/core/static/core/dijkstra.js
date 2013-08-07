@@ -35,7 +35,7 @@ Geotrek.Dijkstra = (function() {
         });
 
         // return the ID of an unvisited node that has the less weight (less djk weight)
-        // FIXME: performance -> shoud not contain visited node, should be sorted by weight
+        // TODO: performance -> shoud not contain visited node, should be sorted by weight
         function djk_get_next_id () {
             var nodes_id = Object.keys(djk);
             var mini_weight = Number.MAX_VALUE;

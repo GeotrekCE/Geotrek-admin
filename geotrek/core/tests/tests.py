@@ -215,7 +215,7 @@ class PathTest(TestCase):
         # Create path with self-intersection
         p = PathFactory.build(geom=LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0)))
         self.assertRaises(IntegrityError, p.save)
-        # FIXME: Why a regular transaction.rollback does not work???
+        # TODO: Why a regular transaction.rollback does not work???
         connection.close() # Clear DB exception at psycopg level
 
         # Fix self-intersection

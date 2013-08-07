@@ -101,7 +101,7 @@ FormField.makeModule = function(module, module_settings) {
 
 
     // Returns the pk of the mapentity object if it exists
-    // FIXME: $('form') => fails if there are more than one form
+    // TODO: $('form') => fails if there are more than one form
     module.getObjectPk = function() {
         // On creation, this should be null
         return $('form input[name="pk"]').val() || null;
