@@ -51,7 +51,7 @@ class InterventionForm(CommonForm):
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
     length = forms.FloatField(required=False, label=_("Length"))
-    modelfields = (
+    fieldslayout = [
         Div(
             HTML("""
             <ul class="nav nav-tabs">
@@ -88,13 +88,17 @@ class InterventionForm(CommonForm):
             ),
             css_class="tabbable"
         ),
-    )
+    ]
 
-    geomfields = ('topology',)
+    geomfields = ['topology']
 
     class Meta(CommonForm.Meta):
         model = Intervention
-        exclude = ('deleted', 'geom', 'jobs')
+        fields = CommonForm.Meta.fields + \
+            ['structure',
+             'name', 'date', 'status', 'disorders', 'type', 'comments', 'in_maintenance', 'length', 'width',
+             'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
+             'topology']
 
     MEDIA_JS = TopologyForm.MEDIA_JS
 
@@ -145,20 +149,12 @@ class InterventionCreateForm(InterventionForm):
             initial['topology'] = infrastructure
         kwargs['initial'] = initial
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
-
-    class Meta(InterventionForm.Meta):
-        exclude = InterventionForm.Meta.exclude + (
-            'height',
-            'width',
-            'material_cost',
-            'heliport_cost',
-            'subcontract_cost',
-            'stake',
-            'project',)
+        # Stake is computed automatically at creation.
+        self.fields['stake'].required = False
 
 
 class ProjectForm(CommonForm):
-    modelfields = (
+    fieldslayout = [
         Div(
             Div(
                 Div('name',
@@ -179,11 +175,14 @@ class ProjectForm(CommonForm):
             ),
             css_class="container-fluid"
         ),
-    )
+    ]
 
-    class Meta:
+    class Meta(CommonForm.Meta):
         model = Project
-        exclude = ('deleted', 'founders')
+        fields = CommonForm.Meta.fields + \
+            ['structure',
+             'name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
+             'cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
