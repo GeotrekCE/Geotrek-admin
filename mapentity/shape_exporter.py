@@ -7,6 +7,7 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+from functools import partial
 
 from django.conf import settings
 from django.utils.encoding import smart_str
@@ -86,8 +87,10 @@ def shape_write(iterable, fieldmap, get_geom, geom_type, srid, srid_out=None):
     for item in iterable:
         feat = ogr.Feature(feature_def)
 
-        for fieldname, getter in fieldmap.iteritems():
-            feat.SetField(fieldname, getter(item))
+        for fieldname in shapefile_columns:
+            # They are all String (see create_shape_format_layer)
+            value = field_as_string(item, fieldname, ascii=True)
+            feat.SetField(fieldname[:10], value[:255])
 
         geom = get_geom(item)
         if geom:
@@ -130,29 +133,12 @@ def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
 
     # Create other fields
     for fieldname in fieldnames:
-        field_defn = ogr.FieldDefn(fieldname, ogr.OFTString)
+        field_defn = ogr.FieldDefn(fieldname[:10], ogr.OFTString)
         field_defn.SetWidth(255)
         if layer.CreateField(field_defn) != 0:
             raise Exception('Faild to create field')
 
     return tmp, layer, ds, native_srs, output_srs
-
-
-def fieldmap_from_fields(model, fieldnames):
-    from .serializers import plain_text
-    return dict(
-        (fname, lambda x, fname=fname: smart_str(plain_text(unicode(getattr(x, fname + '_csv_display',
-                                                                    getattr(x, fname + '_display', getattr(x, fname)))))))
-        for fname in fieldnames
-    )
-
-
-def fieldmap_from_model(model):
-    """Extract all non geometry fields from model"""
-    fields = model._meta.fields
-    non_geometry_field_names = [f.name for f in fields if not isinstance(f, GeometryField)]
-
-    return fieldmap_from_fields(model, non_geometry_field_names)
 
 
 def geo_field_from_model(model, default_geo_field_name=None):

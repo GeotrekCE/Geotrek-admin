@@ -2,6 +2,7 @@
 import csv
 import math
 from HTMLParser import HTMLParser
+from functools import partial
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -24,6 +25,30 @@ from . import shape_exporter
 def plain_text(html):
     h = HTMLParser()
     return h.unescape(strip_tags(html))
+
+
+def smart_plain_text(s, ascii=False):
+    if s is None:
+        return ''
+    try:
+        # Converts to unicode, remove HTML tags, convert HTML entities
+        us = plain_text(unicode(s))
+        if ascii:
+            return smart_str(us)
+        return us
+    except UnicodeDecodeError:
+        return smart_str(s)
+
+
+def field_as_string(obj, field, ascii=False):
+    value = getattr(obj, field + '_csv_display', None)
+    if value is None:
+        value = getattr(obj, field + '_display', None)
+        if value is None:
+            value = getattr(obj, field)
+    if hasattr(value, '__iter__'):
+        return ','.join([smart_plain_text(item, ascii) for item in value])
+    return smart_plain_text(value, ascii)
 
 
 class DatatablesSerializer(Serializer):
@@ -78,16 +103,6 @@ class CSVSerializer(Serializer):
         stream = options.pop('stream')
         ascii = options.get('ensure_ascii', True)
 
-        def proc_string(s):
-            try:
-                # Converts to unicode, remove HTML tags, convert HTML entities
-                us = plain_text(unicode(s))
-                if ascii:
-                    return smart_str(us)
-                return us
-            except UnicodeDecodeError:
-                return smart_str(s)
-
         headers = []
         for field in columns:
             c = getattr(model, '%s_verbose_name' % field, None)
@@ -105,17 +120,11 @@ class CSVSerializer(Serializer):
             except FieldDoesNotExist:
                 modelfield = None
             if isinstance(modelfield, ForeignKey):
-                attr_getters[field] = lambda obj, field: proc_string(getattr(obj, field) or '')
+                attr_getters[field] = lambda obj, field: smart_plain_text(getattr(obj, field), ascii)
             elif isinstance(modelfield, ManyToManyField):
-                attr_getters[field] = lambda obj, field: ','.join([proc_string(o) for o in getattr(obj, field).all()] or '')
+                attr_getters[field] = lambda obj, field: ','.join([smart_plain_text(o, ascii) for o in getattr(obj, field).all()] or '')
             else:
-                def simple(obj, field):
-                    value = getattr(obj, field + '_csv_display',
-                                    getattr(obj, field + '_display', getattr(obj, field)))
-                    if hasattr(value, '__iter__'):
-                        value = ','.join([proc_string(value) for value in value])
-                    return proc_string(value) if value is not None else ''
-                attr_getters[field] = simple
+                attr_getters[field] = partial(field_as_string, ascii=ascii)
 
         def get_lines():
             yield headers
