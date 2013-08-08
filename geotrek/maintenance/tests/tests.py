@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from collections import OrderedDict
 
 from django.conf import settings
@@ -291,18 +292,17 @@ class ExportTest(TestCase):
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
 
-        shp_creator = shape_exporter.ShapeCreator()
-
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
-        pfl.create_shape(shp_creator, Project.objects.all(), Project, ProjectFormatList.columns)
+        devnull = open(os.devnull, "wb")
+        pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
+                      fields=ProjectFormatList.columns)
+        self.assertEquals(len(pfl.layers), 2)
 
-        self.assertEquals(len(shp_creator.shapes), 2)
-
-        ds_point = gdal.DataSource(shp_creator.shapes[0][1])
+        ds_point = gdal.DataSource(pfl.layers.values()[0])
         layer_point = ds_point[0]
-        ds_line = gdal.DataSource(shp_creator.shapes[1][1])
+        ds_line = gdal.DataSource(pfl.layers.values()[1])
         layer_line = ds_line[0]
 
         self.assertEquals(layer_point.geom_type.name, 'MultiPoint')
