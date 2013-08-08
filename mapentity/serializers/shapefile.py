@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import zipfile
 import tempfile
@@ -7,12 +6,88 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+from collections import OrderedDict
 
 from django.conf import settings
-from django.contrib.gis.db.models.fields import GeometryField
+from django.core.serializers.base import Serializer
 from django.contrib.gis.gdal import check_err, OGRGeomType
+from django.contrib.gis.geos.collections import GeometryCollection
+from django.contrib.gis.geos import Point, LineString, MultiPoint, MultiLineString
+from django.contrib.gis.db.models.fields import (GeometryField, GeometryCollectionField,
+                                                 PointField, LineStringField,
+                                                 MultiPointField, MultiLineStringField)
 
 from osgeo import ogr, osr
+
+
+class ZipShapeSerializer(Serializer):
+    def __init__(self, *args, **kwargs):
+        super(ZipShapeSerializer, self).__init__(*args, **kwargs)
+        self.layers = OrderedDict()
+
+    def start_object(self, *args, **kwargs):
+        pass
+
+    def serialize(self, queryset, **options):
+        columns = options.pop('fields')
+        stream = options.pop('stream')
+        model = options.pop('model', None) or queryset.model
+        delete = options.pop('delete', True)
+        # Zip all shapefiles created temporarily
+        self._create_shape(queryset, model, columns)
+        layers = [(k, v) for k, v in self.layers.items()]
+        stream.write(zip_shapefiles(layers, delete=delete))
+
+    def _create_shape(self, queryset,  model, columns):
+        """Split a shapes into one or more shapes (one for point and one for linestring)
+        """
+        geo_field = geo_field_from_model(model, 'geom')
+        get_geom, geom_type, srid = info_from_geo_field(geo_field)
+
+        if geom_type.upper() in (GeometryField.geom_type, GeometryCollectionField.geom_type):
+
+            by_points, by_linestrings, multipoints, multilinestrings = self.split_bygeom(queryset, geom_getter=get_geom)
+
+            for split_qs, split_geom_field in ((by_points, PointField),
+                                               (by_linestrings, LineStringField),
+                                               (multipoints, MultiPointField),
+                                               (multilinestrings, MultiLineStringField)):
+                if len(split_qs) == 0:
+                    continue
+                split_geom_type = split_geom_field.geom_type
+                shp_filepath = shape_write(split_qs, model, columns, get_geom, split_geom_type, srid)
+                self.layers['shp_download_%s' % split_geom_type.lower()] = shp_filepath
+
+        else:
+            shp_filepath = shape_write(queryset, model, columns, get_geom, geom_type, srid)
+            self.layers['shp_download'] = shp_filepath
+
+    def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
+        """Split an iterable in two list (points, linestring)"""
+        points, linestrings, multipoints, multilinestrings = [], [], [], []
+
+        for x in iterable:
+            geom = geom_getter(x)
+            if geom is None:
+                pass
+            elif isinstance(geom, GeometryCollection):
+                # Duplicate object, shapefile do not support geometry collections !
+                subpoints, sublines, pp, ll = self.split_bygeom(geom, geom_getter=lambda geom: geom)
+                if subpoints:
+                    clone = x.__class__.objects.get(pk=x.pk)
+                    clone.geom = MultiPoint(subpoints, srid=geom.srid)
+                    multipoints.append(clone)
+                if sublines:
+                    clone = x.__class__.objects.get(pk=x.pk)
+                    clone.geom = MultiLineString(sublines, srid=geom.srid)
+                    multilinestrings.append(clone)
+            elif isinstance(geom, Point):
+                points.append(x)
+            elif isinstance(geom, LineString):
+                linestrings.append(x)
+            else:
+                raise ValueError("Only LineString and Point geom should be here. Got %s for pk %d" % (geom, x.pk))
+        return points, linestrings, multipoints, multilinestrings
 
 
 def zip_shapefiles(shapes, delete=True):
@@ -44,7 +119,7 @@ def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=No
     """
     Write tempfile with shape layer.
     """
-    from .serializers import field_as_string
+    from . import field_as_string
 
     tmp_file, layer, ds, native_srs, output_srs = create_shape_format_layer(columns, geom_type, srid, srid_out)
 
