@@ -3,6 +3,7 @@ import csv
 import math
 from HTMLParser import HTMLParser
 from functools import partial
+from collections import OrderedDict
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -196,6 +197,10 @@ class GPXSerializer(Serializer):
 
 
 class ZipShapeSerializer(Serializer):
+    def __init__(self, *args, **kwargs):
+        super(ZipShapeSerializer, self).__init__(*args, **kwargs)
+        self.layers = OrderedDict()
+
     def start_object(self, *args, **kwargs):
         pass
 
@@ -203,11 +208,13 @@ class ZipShapeSerializer(Serializer):
         columns = options.pop('fields')
         stream = options.pop('stream')
         model = options.pop('model', None) or queryset.model
-        shp_creator = shape_exporter.ShapeCreator()
-        self.create_shape(shp_creator, queryset, model, columns)
-        stream.write(shp_creator.as_zip())
+        delete = options.pop('delete', True)
+        # Zip all shapefiles created temporarily
+        self._create_shape(queryset, model, columns)
+        layers = [(k, v) for k, v in self.layers.items()]
+        stream.write(shape_exporter.zip_shapefiles(layers, delete=delete))
 
-    def create_shape(self, shp_creator, queryset,  model, columns):
+    def _create_shape(self, queryset,  model, columns):
         """Split a shapes into one or more shapes (one for point and one for linestring)
         """
         geo_field = shape_exporter.geo_field_from_model(model, 'geom')
@@ -225,12 +232,11 @@ class ZipShapeSerializer(Serializer):
                     continue
                 split_geom_type = split_geom_field.geom_type
                 shp_filepath = shape_exporter.shape_write(split_qs, model, columns, get_geom, split_geom_type, srid)
+                self.layers['shp_download_%s' % split_geom_type.lower()] = shp_filepath
 
-                shp_creator.add_shape('shp_download_%s' % split_geom_type.lower(), shp_filepath)
         else:
             shp_filepath = shape_exporter.shape_write(queryset, model, columns, get_geom, geom_type, srid)
-
-            shp_creator.add_shape('shp_download', shp_filepath)
+            self.layers['shp_download'] = shp_filepath
 
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         """Split an iterable in two list (points, linestring)"""

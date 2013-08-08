@@ -7,17 +7,15 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-from functools import partial
 
 from django.conf import settings
-from django.utils.encoding import smart_str
 from django.contrib.gis.db.models.fields import GeometryField
 from django.contrib.gis.gdal import check_err, OGRGeomType
 
 from osgeo import ogr, osr
 
 
-def zip_shapes(shapes, delete=True):
+def zip_shapefiles(shapes, delete=True):
     buffr = StringIO()
     zipf = zipfile.ZipFile(buffr, 'w', zipfile.ZIP_DEFLATED)
 
@@ -40,18 +38,6 @@ def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
         zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp', ''), item))
         if delete:
             os.remove(filename)
-
-
-class ShapeCreator(object):
-
-    def __init__(self):
-        self.shapes = []  # list of pair (shp name, shp path)
-
-    def add_shape(self, shp_name, shp_filepath):
-        self.shapes.append((shp_name, shp_filepath))
-
-    def as_zip(self):
-        return zip_shapes(self.shapes)
 
 
 def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=None):
