@@ -42,10 +42,11 @@ L.ObjectsLayer = L.GeoJSON.extend({
         // Highlight on mouse over
         if (this.options.highlight) {
             this.on('mouseover', function(e) {
-                this.highlight(e.layer.properties.pk);
+                this.highlight(this.getPk(e.layer));
             }, this);
             this.on('mouseout', function(e) {
-                this.highlight(e.layer.properties.pk, false);
+                if (e.layer.properties)
+                    this.highlight(this.getPk(e.layer), false);
             }, this);
         }
 
@@ -74,7 +75,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
     },
 
     _mapObjects: function (geojson, layer) {
-        var pk = geojson.properties.pk;
+        var pk = this.getPk(geojson);
         this._objects[pk] = this._current_objects[pk] = layer;
         layer.properties = geojson.properties;
         this.indexLayer(layer);
@@ -110,7 +111,14 @@ L.ObjectsLayer = L.GeoJSON.extend({
     },
 
     getPk: function(layer) {
-        return layer.properties && layer.properties.pk;
+        // pk (primary-key) in properties
+        if (layer.properties && layer.properties.pk)
+            return layer.properties.pk;
+        // id of geojson feature
+        if (layer.id !== undefined)
+            return layer.id;
+        // leaflet internal layer id
+        return L.stamp(layer);
     },
 
     // Show all layers matching the pks
