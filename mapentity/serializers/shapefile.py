@@ -33,12 +33,30 @@ class ZipShapeSerializer(Serializer):
         stream = options.pop('stream')
         model = options.pop('model', None) or queryset.model
         delete = options.pop('delete', True)
+        filename = options.pop('filename', 'shp_download')
         # Zip all shapefiles created temporarily
-        self._create_shape(queryset, model, columns)
-        layers = [(k, v) for k, v in self.layers.items()]
-        stream.write(zip_shapefiles(layers, delete=delete))
+        self._create_shape(queryset, model, columns, filename)
+        self.zip_shapefiles(stream, delete=delete)
 
-    def _create_shape(self, queryset,  model, columns):
+    def zip_shapefiles(self, stream, delete=True):
+        # Can't use stream, because HttpResponse is not seekable
+        buffr = StringIO()
+        zipf = zipfile.ZipFile(buffr, 'w', zipfile.ZIP_DEFLATED)
+
+        for filename, shp_filepath in self.layers.items():
+            shapefiles = shapefile_files(shp_filepath)
+            archivefiles = shapefile_files(filename)
+            for source, dest in zip(shapefiles, archivefiles):
+                zipf.write(source, arcname=dest)
+                if delete:
+                    os.remove(source)
+
+        zipf.close()
+        buffr.flush()  # zip.close() writes stuff.
+        stream.write(buffr.getvalue())
+        buffr.close()
+
+    def _create_shape(self, queryset,  model, columns, filename):
         """Split a shapes into one or more shapes (one for point and one for linestring)
         """
         geo_field = geo_field_from_model(model, 'geom')
@@ -56,11 +74,12 @@ class ZipShapeSerializer(Serializer):
                     continue
                 split_geom_type = split_geom_field.geom_type
                 shp_filepath = shape_write(split_qs, model, columns, get_geom, split_geom_type, srid)
-                self.layers['shp_download_%s' % split_geom_type.lower()] = shp_filepath
+                filename = '%s_%s' % (filename, split_geom_type.lower())
+                self.layers[filename] = shp_filepath
 
         else:
             shp_filepath = shape_write(queryset, model, columns, get_geom, geom_type, srid)
-            self.layers['shp_download'] = shp_filepath
+            self.layers[filename] = shp_filepath
 
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         """Split an iterable in two list (points, linestring)"""
@@ -90,29 +109,9 @@ class ZipShapeSerializer(Serializer):
         return points, linestrings, multipoints, multilinestrings
 
 
-def zip_shapefiles(shapes, delete=True):
-    buffr = StringIO()
-    zipf = zipfile.ZipFile(buffr, 'w', zipfile.ZIP_DEFLATED)
-
-    for shp_name, shp_path in shapes:
-        zip_shapefile_path(zipf, shp_path, shp_name, delete)
-
-    zipf.close()
-    buffr.flush()
-
-    zip_stream = buffr.getvalue()
-    buffr.close()
-
-    return zip_stream
-
-
-def zip_shapefile_path(zipf, shapefile_path, file_name, delete=True):
-    files = ['shp', 'shx', 'prj', 'dbf']
-    for item in files:
-        filename = '%s.%s' % (shapefile_path.replace('.shp', ''), item)
-        zipf.write(filename, arcname='%s.%s' % (file_name.replace('.shp', ''), item))
-        if delete:
-            os.remove(filename)
+def shapefile_files(shapefile_path):
+    basename = shapefile_path.replace('.shp', '')
+    return ['%s.%s' % (basename, item) for item in ['shp', 'shx', 'prj', 'dbf']]
 
 
 def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=None):
