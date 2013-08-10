@@ -9,13 +9,11 @@ from django.test import TestCase
 import json
 
 from geotrek.common.tests import CommonTest
-from mapentity import shape_exporter
-from mapentity.serializers import ZipShapeSerializer
+from mapentity.serializers import ZipShapeSerializer, shapefile_files
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
-from geotrek.core.models import Topology
 from geotrek.core.helpers import TopologyHelper
 from geotrek.common.factories import OrganismFactory
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
@@ -322,3 +320,8 @@ class ExportTest(TestCase):
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
+
+        # Clean-up temporary shapefiles
+        for layer_file in pfl.layers.values():
+            for subfile in shapefile_files(layer_file):
+                os.remove(subfile)
