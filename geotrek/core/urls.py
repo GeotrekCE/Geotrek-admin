@@ -11,7 +11,7 @@ from .views import (
 
 urlpatterns = patterns('',
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
-    url(r'^api/path/(?P<pk>\d+)/profile.json$', ElevationProfile.as_view(), name='path_profile'),
+    url(r'^api/path/(?P<pk>\d+)/profile.json$', ElevationProfile.as_view(model=Path), name='path_profile'),
 )
 
 urlpatterns += registry.register(Path)

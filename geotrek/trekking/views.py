@@ -109,14 +109,6 @@ class TrekKMLDetail(LastModifiedMixin, BaseDetailView):
         return response
 
 
-class TrekJsonProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
-    queryset = Trek.objects.existing()
-
-    def get_context_data(self, **kwargs):
-        t = self.get_object()
-        return {'profile': t.elevation_profile}
-
-
 class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
