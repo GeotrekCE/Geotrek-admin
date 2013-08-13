@@ -1,16 +1,6 @@
 * Check form non field error
 
 
-===
-1.5
-===
-
-* POST (printcontext, historydelete)
-* PostGIS indexes
-* WKT Z-dim
-
-
-
 ==============
 Known problems
 ==============
@@ -43,8 +33,7 @@ Soon...
 
 * Make application optional (ex: remove dependancies from core)
 
-* Make mapentity generic : no notion of Geotrek (move templates to common/, move attachments)
-* Split django-mapentity
+* Make mapentity generic : no notion of Geotrek (remove common/settings, split formfield)
 
 * Put bbox only once (4326 = human readable, usual form, cf. docs écrins)
 
@@ -53,22 +42,9 @@ Soon...
 * Django model translations : default language to avoid excluding form fields ? Auto-add all fields
   for all declared languages ?
 
-* Improve cobertura score ? http://geobi.makina-corpus.net/ecrins-sentiers-ci/job/ecrins-sentiers-tests/152/cobertura/?
-
 * Switch to django-bootstrapped instead of embedding it
 
-* List TODO in Hudson
-* Generate project docs with Sphinx
-
 * Use localstorage instead of Django sessions for navigation history and last search
-
-* Remove core dependancies to other apps (registry?)
-    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py
-    <alexis> https://github.com/mozilla-services/vaurien/blob/master/vaurien/protocols/__init__.py#L68
-    <alexis> la doc est bien d'ailleurs
-    <alexis> http://docs.python.org/2/library/abc.html
-    <alexis> par contre, je pensais qu'avoir la liste était plus classe que ça, il faut utiliser la liste des classes dérivées de la classe parente, c'est pas ouf …
-    <alexis> http://www.doughellmann.com/PyMOTW/abc/ ce machin est bien aussi
 
 * Use search_path ALTER USER toto SET search_path = toto, public;  ou db_table = 'schema\".\"tablename'
 
@@ -91,7 +67,6 @@ One day...
   SELECT {% field Path.name %} FROM {% table Path %}
 
 * Docstrings for each model
-* Test cache (locmem + files + expires)
 
 * Fields computed at DB-level should be read-only for Django. (Standard
   models.Model.save() method will insert/update all non-PK fields).
