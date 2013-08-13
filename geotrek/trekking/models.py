@@ -287,12 +287,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
 
     @property
-    def elevation_profile(self):
-        if not self.geom:
-            return []
-        return elevation_profile(self.geom)
-
-    @property
     def name_display(self):
         s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
         if self.published:
