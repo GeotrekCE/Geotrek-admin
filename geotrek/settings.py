@@ -322,7 +322,7 @@ API_SRID = 4326
 
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
-ALTIMETRIC_PROFILE_PRECISION = 20  # Sampling precision in meters
+ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
