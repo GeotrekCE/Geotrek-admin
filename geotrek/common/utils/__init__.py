@@ -60,35 +60,62 @@ def distance3D(a, b):
                      (b[2] - a[2]) ** 2)
 
 
-def elevation_profile(g, maxitems=None):
+def elevation_profile(geometry, precision=None):
+    """Extract elevation profile from a 3D geometry.
+
+    :precision:  geometry sampling in meters
     """
-    Extract elevation profile from a 3D geometry.
-    - maxitems : maximum number of points
-    """
-    if g.geom_type == 'MultiLineString':
+    precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
+
+    cursor = connection.cursor()
+    # First, check if table mnt exists
+    cursor.execute("SELECT * FROM pg_tables WHERE tablename='mnt';")
+    exists = len(cursor.fetchall()) == 1
+    if not exists:
+        return []
+
+    if geometry.geom_type == 'MultiLineString':
         profile = []
-        offset = 0.0
-        for subcoords in g.coords:
+        for subcoords in geometry.coords:
             subline = LineString(subcoords)
-            subprofile = elevation_profile(subline, maxitems=maxitems)
+            subprofile = elevation_profile(subline)
             profile.extend(subprofile)
-            offset += subprofile[-1][0]
         return profile
 
-    step = 1
-    if maxitems is not None:
-        nb = len(g.coords)
-        step = max(1, nb / maxitems)
-    # Initialize with null distance at start point
-    distance = 0.0
-    profile = [(distance, g.coords[0][2])]
-    # Add elevation and cumulative distance at each point
-    for i in range(1, len(g.coords), step):
-        a = g.coords[i - step]
-        b = g.coords[i]
-        distance += distance3D(a, b)
-        profile.append((distance, b[2],))
-    return profile
+    # Build elevation profile from linestring and DEM
+    # http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+    sql = """
+    WITH line AS
+        (SELECT '%(ewkt)s'::geometry AS geom),
+      middlesteps AS
+        (SELECT generate_series(%(precision)s, ST_Length(line.geom)::int - %(precision)s, %(precision)s) as i FROM line),
+      fractions AS
+        (SELECT i / ST_Length(line.geom) AS fraction FROM middlesteps, line),
+      sublines AS
+        -- Cut line at each step
+        (SELECT ST_Line_Substring(line.geom, 0.0, fraction) AS geom
+         FROM fractions, line),
+      points2d AS
+        (SELECT ST_StartPoint(geom) as subline, ST_StartPoint(geom) as geom FROM line
+         UNION
+         SELECT geom as subline, ST_EndPoint(geom) as geom FROM sublines
+         UNION
+         SELECT geom as subline, ST_EndPoint(geom) as geom FROM line),
+      cells AS
+        -- Get DEM elevation for each
+        (SELECT p.subline, p.geom AS geom, ST_Value(mnt.rast, 1, p.geom) AS val
+         FROM points2d p, mnt
+         WHERE ST_Intersects(mnt.rast, p.geom))
+    SELECT coalesce(ST_Length(cells.subline), 0) as abscissa,
+           ST_X(ST_Transform(cells.geom, %(api_srid)s)) as lng,
+           ST_Y(ST_Transform(cells.geom, %(api_srid)s)) as lat,
+           cells.val as h
+    FROM cells
+    ORDER BY abscissa
+    """ % {'ewkt': geometry.ewkt, 'precision': precision, 'api_srid': settings.API_SRID}
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
 
 
 def force3D(geom):

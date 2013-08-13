@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
-                             JSONResponseMixin, HttpJSONResponse)
+                             JSONResponseMixin, HttpJSONResponse, LastModifiedMixin)
 
 from geotrek.authent.decorators import path_manager_required, same_structure_required
 
@@ -30,6 +30,22 @@ def last_list(request):
     return redirect(last)
 
 home = last_list
+
+
+class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
+    """Extract elevation profile from a path and return it as JSON"""
+
+    def get_context_data(self, **kwargs):
+        """
+        Put elevation profile into response context.
+        """
+        obj = self.get_object()
+        data = {}
+        # Formatted as distance, elevation, [lng, lat]
+        for step in obj.get_elevation_profile():
+            formatted = step[0], step[3], step[1:3]
+            data.setdefault('profile', []).append(formatted)
+        return data
 
 
 class PathLayer(MapEntityLayer):
@@ -59,11 +75,6 @@ class PathDetail(MapEntityDetail):
                (hasattr(self.request.user, 'profile') and \
                 self.request.user.profile.is_path_manager and \
                 self.get_object().same_structure(self.request.user))
-
-    def get_context_data(self, **kwargs):
-        context = super(PathDetail, self).get_context_data(**kwargs)
-        context['profile'] = self.get_object().get_elevation_profile()
-        return context
 
 
 class PathDocument(MapEntityDocument):
@@ -96,19 +107,6 @@ class PathDelete(MapEntityDelete):
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
-
-
-class ElevationProfile(JSONResponseMixin, BaseDetailView):
-    """Extract elevation profile from a path and return it as JSON"""
-
-    model = Path
-
-    def get_context_data(self, **kwargs):
-        """
-        Put elevation profile into response context.
-        """
-        p = self.get_object()
-        return {'profile': p.get_elevation_profile()}
 
 
 @cache_last_modified(lambda x: Path.latest_updated())

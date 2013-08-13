@@ -37,6 +37,12 @@ class AltimetryMixin(models.Model):
     class Meta:
         abstract = True
 
+    def get_elevation_profile(self):
+        """
+        Extract elevation profile from geom.
+        """
+        return elevation_profile(self.geom)
+
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -200,12 +206,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
                     notice = notice.replace('NOTICE: ', '')
                     prefix = '' if context == '' else '        '
                     logger.debug('%s%s' % (prefix, notice.strip()))
-
-    def get_elevation_profile(self):
-        """
-        Extract elevation profile from path.
-        """
-        return elevation_profile(self.geom, maxitems=settings.PROFILE_MAXSIZE)
 
     @property
     def name_display(self):

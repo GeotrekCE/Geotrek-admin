@@ -11,6 +11,13 @@ CHANGELOG
   Issue #712 was closed too, since most suspected cause was field listings. Please re-open 
   if problem re-appears.
 * Fix timeout on POI Shapefile and CSV exports (fixes #672)
+* Altimetric profiles are now computed in PostGIS (fixes #778, #779)
+
+:notes:
+
+    Setting ``PROFILE_MAXSIZE`` was replaced by ``ALTIMETRIC_PROFILE_PRECISION`` which 
+    controls sampling precision in meters (default: 20 meters)
+
 
 0.19.1 (2013-07-15)
 -------------------
@@ -60,17 +67,6 @@ CHANGELOG
 
 * Add pretty trek duration in JSON
 * Add information desk field in Trek (fixes #624)
-* Map screenshot fix (ref #597)"
-* Default values for most Path DB columns (fixes #965)
-* Trek printable version looks for OpenDocument (*.odt) named "docprint" in attachments (fixes #686)
-* Show structure column and filter in admin (fixes #699)
-* Path snapping now uses 2D distance to prevent weird behaviour (fixes #697)
-* Fix display of path comfort in detail page (fixes #701)
-* Compile translations of apps under development (fixes #704)
-* Fix display of total manday in intervention detail
-* Fix field display in intervention creation (fixes #703)
-* Fix surface computation (fixes #708)
-* Fix shapefile serialization if path has no trail (fixes #706)
 
 
 0.17 (2013-05-17)

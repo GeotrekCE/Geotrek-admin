@@ -2,10 +2,11 @@ from django.conf.urls import patterns, url
 
 from mapentity import registry
 
+from geotrek.core.views import ElevationProfile
 from . import models
 from .views import (
     TrekDocumentPublic, TrekPrint,
-    TrekJsonDetail, TrekGPXDetail, TrekKMLDetail, TrekJsonProfile, TrekPOIGeoJSON,
+    TrekJsonDetail, TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
     WebLinkCreatePopup
 )
 
@@ -17,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^api/trek/trek-(?P<pk>\d+).json$', TrekJsonDetail.as_view(), name="trek_json_detail"),
     url(r'^api/trek/trek-(?P<pk>\d+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
     url(r'^api/trek/trek-(?P<pk>\d+).kml$', TrekKMLDetail.as_view(), name="trek_kml_detail"),
-    url(r'^api/trek/(?P<pk>\d+)/profile.json$', TrekJsonProfile.as_view(), name="trek_profile"),
+    url(r'^api/trek/(?P<pk>\d+)/profile.json$', ElevationProfile.as_view(model=models.Trek), name="trek_profile"),
     url(r'^api/trek/(?P<pk>\d+)/pois.geojson$', TrekPOIGeoJSON.as_view(), name="trek_poi_geojson"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
 )
