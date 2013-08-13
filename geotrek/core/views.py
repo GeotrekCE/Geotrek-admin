@@ -40,7 +40,12 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         Put elevation profile into response context.
         """
         obj = self.get_object()
-        return {'profile': obj.get_elevation_profile()}
+        data = {}
+        # Formatted as distance, elevation, [lng, lat]
+        for step in obj.get_elevation_profile():
+            formatted = step[0], step[3], step[1:3]
+            data.setdefault('profile', []).append(formatted)
+        return data
 
 
 class PathLayer(MapEntityLayer):
