@@ -4,12 +4,12 @@ import sys
 from django.contrib.messages import constants as messages
 
 from .. import __version__
+from . import PROJECT_ROOT_PATH
 
 gettext_noop = lambda s: s
 
-PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 TEST = 'test' in sys.argv
 VERSION = __version__
@@ -88,7 +88,7 @@ TEMP_DIR = '/tmp'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
 
 UPLOAD_DIR = 'upload'    # media root subdir
 
@@ -314,8 +314,9 @@ SCREAMSHOT_CONFIG = {
 
 
 TITLE = gettext_noop("Geotrek")
-DEFAULT_STRUCTURE_NAME = None
-SRID = None
+DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
+
+SRID = 2154
 SPATIAL_EXTENT = None
 
 # API projection (client-side), can differ from SRID (database)
@@ -340,7 +341,7 @@ LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf7
                     'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
 
-""" All layers styles. Overriden in buildout.
+""" All layers styles.
 """
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': 'blue'},
