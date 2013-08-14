@@ -16,7 +16,7 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.core.models import Path, Topology
-from geotrek.common.utils import elevation_profile, classproperty
+from geotrek.common.utils import classproperty
 from geotrek.maintenance.models import Intervention, Project
 
 from .templatetags import trekking_tags
