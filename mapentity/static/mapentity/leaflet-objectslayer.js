@@ -118,7 +118,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         if (layer.id !== undefined)
             return layer.id;
         // leaflet internal layer id
-        return L.stamp(layer);
+        return L.Util.stamp(layer);
     },
 
     // Show all layers matching the pks
