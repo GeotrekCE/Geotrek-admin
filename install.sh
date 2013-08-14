@@ -113,7 +113,7 @@ function ubuntu_precise {
 
     if ! $dev ; then
       # convertit dependencies
-      sudo apt-get install -y libreoffice unoconv
+      sudo apt-get install -y libreoffice unoconv inkscape
     fi
 
     # Default settings if not any
