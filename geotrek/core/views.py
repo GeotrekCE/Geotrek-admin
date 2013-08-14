@@ -34,8 +34,9 @@ home = last_list
 
 
 class HttpSVGResponse(HttpResponse):
+    content_type = 'image/svg+xml'
     def __init__(self, content='', **kwargs):
-        kwargs['content_type'] = 'image/svg+xml'
+        kwargs['content_type'] = self.content_type
         super(HttpSVGResponse, self).__init__(content, **kwargs)
 
 
