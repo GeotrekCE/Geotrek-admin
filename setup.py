@@ -26,6 +26,7 @@ setup(
         'Pillow == 1.7.8',
         'easy-thumbnails == 1.1',
         'simplekml == 1.2.1',
+        'pygal == 1.1.0',
         'mapentity',  # pinned by buildout
         'django-extended-choices',  # pinned by buildout
     ] + test_requirements,
