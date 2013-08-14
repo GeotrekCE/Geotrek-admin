@@ -316,8 +316,9 @@ SCREAMSHOT_CONFIG = {
 TITLE = gettext_noop("Geotrek")
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
-SRID = 2154
-SPATIAL_EXTENT = None
+SRID = 3857
+# Extent in native projection (Toulouse area)
+SPATIAL_EXTENT = (144968, 5415668, 175412, 5388753)
 
 # API projection (client-side), can differ from SRID (database)
 API_SRID = 4326
@@ -328,9 +329,13 @@ ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
-    'TILES_URL': [],
-    'TILES_EXTENT': None,
-    'SPATIAL_EXTENT': None
+    'TILES_URL': [
+        ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
+        ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
+    ],
+    'TILES_EXTENT': SPATIAL_EXTENT,
+    # Extent in API projection (Leaflet view default extent)
+    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5)
 }
 
 """ This *pool* of colors is used to colorized lands records.
@@ -385,4 +390,8 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-error',
 }
 
-CONVERSION_SERVER = None   # URL of PDF conversion server
+#
+#  Convertit server
+#...........................
+
+CONVERSION_SERVER = 'http://0.0.0.0:6543'
