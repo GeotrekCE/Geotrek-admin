@@ -2,10 +2,14 @@
 from urlparse import urljoin
 import itertools
 import logging
+import urllib
+from mimetypes import types_map
 
 from django.conf import settings
 from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr
+
+import requests
 
 
 logger = logging.getLogger(__name__)
@@ -84,3 +88,41 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
+
+
+def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf'):
+    mimetype = to_type
+    if '/' not in mimetype:
+        extension = '.' + mimetype if not mimetype.startswith('.') else mimetype
+        mimetype = types_map[extension]
+
+    fullurl = request.build_absolute_uri(sourceurl)
+    fromparam = "&from=%s" % urllib.quote(from_type) if from_type is not None else ''
+    url = "%s?url=%s%s&to=%s" % (settings.CONVERSION_SERVER,
+                               urllib.quote(fullurl),
+                               fromparam,
+                               urllib.quote(mimetype))
+    if not url.startswith('http'):
+        url = '%s://%s%s' % (request.is_secure() and 'https' or 'http',
+                             request.get_host(),
+                             url)
+    return url
+
+
+def convertit_download(request, source, destination, from_type=None, to_type='pdf'):
+    url = convertit_url(request, source, from_type, to_type)
+    try:
+        logger.info("Request to Convertit server: %s" % url)
+        source = requests.get(url)
+        assert source.status_code == 200, 'Conversion failed (status=%s)' % source.status_code
+    except (AssertionError, requests.exceptions.RequestException) as e:
+        logger.exception(e)
+        logger.error(source.content[:150])
+        raise
+    # Write locally
+    try:
+        fd = open(destination, 'wb') if isinstance(destination, basestring) else destination
+        fd.write(source.content)
+    except IOError as e:
+        logger.exception(e)
+        raise

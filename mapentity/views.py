@@ -39,7 +39,7 @@ from screamshot.utils import casperjs_capture
 from . import models as mapentity_models
 from .decorators import save_history
 from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer, ZipShapeSerializer
-from .templatetags.convert_tags import convert_url
+from .helpers import convertit_url
 
 
 logger = logging.getLogger(__name__)
@@ -149,11 +149,7 @@ class DocumentConvert(DetailView):
         raise NotImplementedError
 
     def render_to_response(self, context):
-        url = convert_url(self.request, self.source_url(), self.format)
-        if not url.startswith('http'):
-            url = '%s://%s%s' % (self.request.is_secure() and 'https' or 'http',
-                                 self.request.get_host(),
-                                 url)
+        url = convertit_url(self.request, self.source_url(), self.format)
         try:
             source = requests.get(url)
             response = HttpResponse(source.content, status=source.status_code)
