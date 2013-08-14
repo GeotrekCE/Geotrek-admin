@@ -71,32 +71,29 @@ class AltimetryMixin(models.Model):
         sql = """
         WITH line AS
             (SELECT '%(ewkt)s'::geometry AS geom),
-          middlesteps AS
-            (SELECT generate_series(%(precision)s, ST_Length(line.geom)::int - %(precision)s, %(precision)s) as i FROM line),
-          fractions AS
-            (SELECT i / ST_Length(line.geom) AS fraction FROM middlesteps, line),
-          sublines AS
-            -- Cut line at each step
-            (SELECT ST_Line_Substring(line.geom, 0.0, fraction) AS geom
-             FROM fractions, line),
+          linemesure AS
+            -- Add a mesure dimension to extract steps
+            (SELECT ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
+                    generate_series(%(precision)s, ST_Length(line.geom)::int, %(precision)s) as i
+             FROM line),
           points2d AS
-            (SELECT ST_StartPoint(geom) as subline, ST_StartPoint(geom) as geom FROM line
+            (SELECT 0 as distance, ST_StartPoint(geom) as geom FROM line
              UNION
-             SELECT geom as subline, ST_EndPoint(geom) as geom FROM sublines
+             SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
              UNION
-             SELECT geom as subline, ST_EndPoint(geom) as geom FROM line),
+             SELECT ST_Length(geom) as distance, ST_EndPoint(geom) as geom FROM line),
           cells AS
             -- Get DEM elevation for each
-            (SELECT p.subline, p.geom AS geom, ST_Value(mnt.rast, 1, p.geom) AS val
+            (SELECT distance, p.geom AS geom, ST_Value(mnt.rast, 1, p.geom) AS val
              FROM points2d p, mnt
              WHERE ST_Intersects(mnt.rast, p.geom))
-        SELECT coalesce(ST_Length(cells.subline), 0) as abscissa,
+        SELECT distance as abscissa,
                ST_X(ST_Transform(cells.geom, %(api_srid)s)) as lng,
                ST_Y(ST_Transform(cells.geom, %(api_srid)s)) as lat,
                cells.val as h
         FROM cells
         ORDER BY abscissa
-        """ % {'ewkt': geometry.ewkt, 'precision': precision, 'api_srid': settings.API_SRID}
+        """ % {'api_srid': settings.API_SRID, 'ewkt': geometry.ewkt, 'precision': precision}
         cursor.execute(sql)
         result = cursor.fetchall()
         return result
