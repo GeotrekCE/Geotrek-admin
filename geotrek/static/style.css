@@ -57,7 +57,9 @@ span.aggregation {
     min-height: 20px;
 }
 
-
+body.screamshot #altitudegraph {
+    display: none;
+}
 
 .intervention .form-row.inline.controls label {
     width: auto;
