@@ -33,6 +33,10 @@ envini = EnvIniReader(settingsfile)
 SECRET_KEY = envini.get('secret_key', SECRET_KEY)
 
 ROOT_URL = envini.get('rooturl', ROOT_URL)
+FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
+MEDIA_URL = '%s%s' % (ROOT_URL, MEDIA_URL)
+STATIC_URL = '%s%s' % (ROOT_URL, STATIC_URL)
+ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 MEDIA_ROOT = os.path.join(DEPLOY_ROOT, 'var', 'media')
 STATIC_ROOT = os.path.join(DEPLOY_ROOT, 'var', 'static')
 TEMP_DIR = os.path.join(DEPLOY_ROOT, 'var', 'tmp')
