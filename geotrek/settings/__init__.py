@@ -1,5 +1,6 @@
 
 import os
+import re
 import ConfigParser
 
 from django.core.exceptions import ImproperlyConfigured
@@ -35,3 +36,12 @@ class EnvIniReader(object):
         if default is not empty:
             return default
         raise ImproperlyConfigured('%s not found in section %s (%s)' % (name, section, self.path))
+
+    def getint(self, *args, **kwargs):
+        return int(self.get(*args, **kwargs))
+
+    def getstrings(self, *args, **kwargs):
+        return re.split(r'\s*,\s*', self.get(*args, **kwargs))
+
+    def getfloats(self, *args, **kwargs):
+        return [float(v) for v in self.getstrings(*args, **kwargs)]

@@ -60,7 +60,7 @@ class EnvIniTests(TestCase):
 
     def setUp(self):
         with open(self.ini_file, 'w') as f:
-            f.write("""[settings]\nkey = value\nkeyint = 3""")
+            f.write("""[settings]\nkey = value\nkeyint = 3\nlist = a, b,c\nfloats = 0.4 ,1.3""")
         self.envini = EnvIniReader(self.ini_file)
         os.environ['KEYINT'] = '4'
 
@@ -73,6 +73,11 @@ class EnvIniTests(TestCase):
         self.assertEqual(self.envini.get('unknown', 'void'), 'void')
         self.assertEqual(self.envini.get('unknown', None), None)
         self.assertRaises(ImproperlyConfigured, self.envini.get, 'unknown')
+
+    def test_helpers(self):
+        self.assertEqual(self.envini.getint('keyint'), 4)
+        self.assertEqual(self.envini.getstrings('list'), ['a', 'b', 'c'])
+        self.assertEqual(self.envini.getfloats('floats'), [0.4, 1.3])
 
     def tearDown(self):
         os.remove(self.ini_file)
