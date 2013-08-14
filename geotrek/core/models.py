@@ -4,6 +4,7 @@ from math import isnan
 import logging
 from datetime import datetime
 import functools
+from itertools import islice
 
 from django.contrib.gis.db import models
 from django.db import connection
@@ -11,6 +12,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
 
+import pygal
+from pygal.style import LightSolarizedStyle
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
@@ -42,6 +45,51 @@ class AltimetryMixin(models.Model):
         Extract elevation profile from geom.
         """
         return AltimetryMixin.elevation_profile(self.geom)
+
+    def get_elevation_profile_svg(self):
+        """
+        Plot the altimetric graph in SVG using PyGal.
+        Most of the job done here is dedicated to preparing
+        nice labels scales.
+        """
+        profile = self.get_elevation_profile()
+        distances = [v[0] for v in profile]
+        elevations = [v[3] for v in profile]
+        min_elevation = int(min(elevations))
+        floor_elevation = min_elevation - min_elevation % 10
+        max_elevation = int(max(elevations))
+        ceil_elevation = max_elevation + 10 - max_elevation % 10
+
+        def sampling(values, total):
+            return list(islice(values, 0, len(values), max(1, int(len(values)/total))))
+
+        x_labels = distances
+        y_labels = [min_elevation] + sampling(range(floor_elevation + 20, ceil_elevation - 10, 10), 3) + [max_elevation]
+
+        config = dict(show_legend=False,
+                      print_values=False,
+                      show_dots=False,
+                      x_labels_major_every=int(len(profile)/2),
+                      show_minor_x_labels=False,
+                      margin=0,
+                      width=800,
+                      height=400,
+                      title_font_size=25,
+                      label_font_size=20,
+                      major_label_font_size=25,
+                      js=[])
+
+        style = LightSolarizedStyle
+        style.background = 'white'
+        style.colors = ('#5393E8',)
+        line_chart = pygal.StackedLine(fill=True, style=style, **config)
+        line_chart.x_title = unicode(_("Distance (m)"))
+        line_chart.x_labels = [str(i) for i in x_labels]
+        line_chart.y_title = unicode(_("Altitude (m)"))
+        line_chart.y_labels = [str(i) for i in y_labels]
+        line_chart.range = [floor_elevation, max_elevation]
+        line_chart.add('', elevations)
+        return line_chart.render()
 
     @staticmethod
     def elevation_profile(geometry, precision=None):
