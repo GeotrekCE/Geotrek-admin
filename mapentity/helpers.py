@@ -1,10 +1,12 @@
-"""Helpers for sig methods"""
+import os
 from urlparse import urljoin
 import itertools
 import logging
 import urllib
 from mimetypes import types_map
+from datetime import datetime
 
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr
@@ -88,6 +90,20 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
+
+
+def is_file_newer(path, date_update, delete_empty=True):
+    if not os.path.exists(path):
+        return False
+
+    if os.path.getsize(path) == 0:
+        if delete_empty:
+            os.remove(path)
+        return False
+
+    modified = datetime.fromtimestamp(os.path.getmtime(path))
+    modified = modified.replace(tzinfo=timezone.utc)
+    return modified > date_update
 
 
 def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf'):

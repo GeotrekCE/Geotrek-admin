@@ -1,17 +1,15 @@
 import os
 import urllib2
-from datetime import datetime
 import requests
 import bs4
 import json
 
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
 
 from screamshot.utils import casperjs_capture, CaptureError
 
-from .helpers import smart_urljoin
+from .helpers import smart_urljoin, is_file_newer
 from paperclip.models import Attachment
 
 
@@ -109,15 +107,10 @@ class MapEntityMixin(object):
 
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
-        # If already exists and up-to-date, do nothing
-        if os.path.exists(path):
-            if os.path.getsize(path) > 0:
-                modified = datetime.fromtimestamp(os.path.getmtime(path))
-                modified = modified.replace(tzinfo=timezone.utc)
-                if modified > self.date_update:
-                    return
-            else:
-                os.remove(path)
+
+        # Do nothing if image is up-to-date
+        if is_file_newer(path, self.date_update):
+            return
 
         # Prepare aspect of the detail page
         # It relies on JS code in MapEntity.Context
