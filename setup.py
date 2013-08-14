@@ -18,7 +18,7 @@ setup(
         'Django >= 1.4',
         'GDAL == 1.9.1',
         'gpxpy == 0.7.1',
-        'appy == 0.8.3',
+        'appy == 0.8.5',
         'BeautifulSoup4 == 4.1.3',
         'requests == 1.1.0',
         'django-modeltranslation == 0.5.1',
