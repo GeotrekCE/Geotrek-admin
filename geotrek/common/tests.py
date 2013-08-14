@@ -1,8 +1,13 @@
+import os
+
+from django.conf import settings
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 
 from mapentity.tests import MapEntityTest
 
+from geotrek.settings import EnvIniReader
 from .factories import AttachmentFactory
 from .utils import almostequal, smart_urljoin, sampling
 
@@ -48,3 +53,26 @@ class UtilsTest(TestCase):
         self.assertEqual([0, 2, 4, 6, 8], sampling(range(10), 5))
         self.assertEqual([0, 3, 6, 9], sampling(range(10), 3))
         self.assertEqual(['a', 'd', 'g', 'j'], sampling('abcdefghijkl', 4))
+
+
+class EnvIniTests(TestCase):
+    ini_file = os.path.join(settings.TEMP_DIR, 'conf.ini')
+
+    def setUp(self):
+        with open(self.ini_file, 'w') as f:
+            f.write("""[settings]\nkey = value\nkeyint = 3""")
+        self.envini = EnvIniReader(self.ini_file)
+        os.environ['KEYINT'] = '4'
+
+    def test_existing_key(self):
+        self.assertEqual(self.envini.get('key'), 'value')
+        self.assertEqual(self.envini.get('keyint'), '4')
+        self.assertEqual(self.envini.get('keyint', env=False), '3')
+
+    def test_missing_key(self):
+        self.assertEqual(self.envini.get('unknown', 'void'), 'void')
+        self.assertEqual(self.envini.get('unknown', None), None)
+        self.assertRaises(ImproperlyConfigured, self.envini.get, 'unknown')
+
+    def tearDown(self):
+        os.remove(self.ini_file)
