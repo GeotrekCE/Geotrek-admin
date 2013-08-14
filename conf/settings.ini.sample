@@ -9,8 +9,8 @@
 
 [settings]
 
-# IP/Domain (example: 88.99.17.89, .myserver.com)
-host = .myserver.com
+# Comma separated IP (and domains) of this server
+host = 88.99.17.89, .myserver.com, .myserver.com.
 
 # URL prefix, leave empty if dedicated server.
 # Starts with / if subpath (example: /geotrek)
@@ -73,7 +73,7 @@ mailtls = False
 #..........................
 
 # Cache duration in seconds
-cachetimeout = 60 * 60
+cachetimeout = 28800
 
 
 #

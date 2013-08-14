@@ -24,6 +24,13 @@ CHANGELOG
 * Altimetric profiles are now inserted into path documents and trek public printouts (ref #626)
 * Fix deletion of associated interventions when editing infrastructures (fixes #783)
 
+* Reworked settings mechanism to follow Django best practices
+
+:notes:
+
+    Replace all computed values from ``etc/settings.ini``. For example, replace "60 * 60"
+    by 3600. (You can increase this value to several hours by the way)
+
 
 0.19.1 (2013-07-15)
 -------------------
