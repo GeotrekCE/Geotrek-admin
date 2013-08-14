@@ -15,7 +15,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.models import TimeStampedModel, NoDeleteMixin
-from geotrek.common.utils import elevation_profile, classproperty
+from geotrek.common.utils import classproperty
 
 from .helpers import PathHelper, TopologyHelper
 
@@ -41,8 +41,62 @@ class AltimetryMixin(models.Model):
         """
         Extract elevation profile from geom.
         """
-        return elevation_profile(self.geom)
+        return AltimetryMixin.elevation_profile(self.geom)
 
+    @staticmethod
+    def elevation_profile(geometry, precision=None):
+        """Extract elevation profile from a 3D geometry.
+
+        :precision:  geometry sampling in meters
+        """
+        precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
+
+        cursor = connection.cursor()
+        # First, check if table mnt exists
+        cursor.execute("SELECT * FROM pg_tables WHERE tablename='mnt';")
+        exists = len(cursor.fetchall()) == 1
+        if not exists:
+            return []
+
+        if geometry.geom_type == 'MultiLineString':
+            profile = []
+            for subcoords in geometry.coords:
+                subline = LineString(subcoords)
+                subprofile = AltimetryMixin.elevation_profile(subline)
+                profile.extend(subprofile)
+            return profile
+
+        # Build elevation profile from linestring and DEM
+        # http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+        sql = """
+        WITH line AS
+            (SELECT '%(ewkt)s'::geometry AS geom),
+          linemesure AS
+            -- Add a mesure dimension to extract steps
+            (SELECT ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
+                    generate_series(%(precision)s, ST_Length(line.geom)::int, %(precision)s) as i
+             FROM line),
+          points2d AS
+            (SELECT 0 as distance, ST_StartPoint(geom) as geom FROM line
+             UNION
+             SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
+             UNION
+             SELECT ST_Length(geom) as distance, ST_EndPoint(geom) as geom FROM line),
+          cells AS
+            -- Get DEM elevation for each
+            (SELECT distance, p.geom AS geom, ST_Value(mnt.rast, 1, p.geom) AS val
+             FROM points2d p, mnt
+             WHERE ST_Intersects(mnt.rast, p.geom))
+        SELECT distance as abscissa,
+               ST_X(ST_Transform(cells.geom, %(api_srid)s)) as lng,
+               ST_Y(ST_Transform(cells.geom, %(api_srid)s)) as lat,
+               cells.val as h
+        FROM cells
+        ORDER BY abscissa
+        """ % {'api_srid': settings.API_SRID, 'ewkt': geometry.ewkt, 'precision': precision}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
