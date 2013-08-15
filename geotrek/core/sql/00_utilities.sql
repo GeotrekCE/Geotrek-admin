@@ -58,6 +58,7 @@ $$ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS elevation_infos CASCADE;
 CREATE TYPE elevation_infos AS (
     geom3d geometry,
+    draped geometry,
     slope float,
     min_elevation integer,
     max_elevation integer,
@@ -128,7 +129,10 @@ DECLARE
     ele integer;
     last_ele integer;
     result elevation_infos;
+    ALTIMETRIC_PROFILE_PRECISION integer;
 BEGIN
+    ALTIMETRIC_PROFILE_PRECISION := 25;  -- same as default value for plotting
+
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
         SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
@@ -146,6 +150,7 @@ BEGIN
 
     -- First build 3D version of geometry (same resolution)
     num_points := ST_NPoints(geom);
+    points3d := ARRAY[]::geometry[];
     FOR i IN 1..num_points LOOP
         current := ST_PointN(geom, i);
         -- Store new 3D points
@@ -166,7 +171,9 @@ BEGIN
     result.positive_gain := 0;
     result.negative_gain := 0;
     last_ele := NULL;
-    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, 25) dl LOOP
+    points3d := ARRAY[]::geometry[];
+    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, ALTIMETRIC_PROFILE_PRECISION) dl LOOP
+        points3d := array_append(points3d, current);
         ele := ST_Z(current);
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
@@ -174,6 +181,7 @@ BEGIN
         result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
         last_ele := ele;
     END LOOP;
+    result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;

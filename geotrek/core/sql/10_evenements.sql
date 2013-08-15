@@ -100,7 +100,7 @@ BEGIN
 
         SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
         UPDATE e_t_evenement SET geom = elevation.geom3d,
-                                 longueur = ST_3DLength(elevation.geom3d),
+                                 longueur = ST_3DLength(elevation.draped),
                                  pente = elevation.slope,
                                  altitude_minimum = elevation.min_elevation,
                                  altitude_maximum = elevation.max_elevation,
