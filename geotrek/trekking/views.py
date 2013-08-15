@@ -158,6 +158,7 @@ class TrekDocumentPublic(TrekDocument):
 
     def render_to_response(self, context, **response_kwargs):
         trek = self.get_object()
+        # Use attachment that overrides document print, if any.
         try:
             overriden = trek.get_attachment_print()
             response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
@@ -165,7 +166,10 @@ class TrekDocumentPublic(TrekDocument):
                 response.write(f.read())
             return response
         except ObjectDoesNotExist:
-            return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
+            pass
+        # Prepare altimetric graph
+        trek.prepare_elevation_chart(self.request)
+        return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
 class TrekPrint(DocumentConvert):

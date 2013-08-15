@@ -2,6 +2,7 @@
 import math
 
 import json
+from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -30,6 +31,19 @@ def last_list(request):
     return redirect(last)
 
 home = last_list
+
+
+class HttpSVGResponse(HttpResponse):
+    content_type = 'image/svg+xml'
+    def __init__(self, content='', **kwargs):
+        kwargs['content_type'] = self.content_type
+        super(HttpSVGResponse, self).__init__(content, **kwargs)
+
+
+class ElevationChart(LastModifiedMixin, BaseDetailView):
+    def render_to_response(self, context, **response_kwargs):
+        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(),
+                               **response_kwargs)
 
 
 class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
@@ -79,6 +93,10 @@ class PathDetail(MapEntityDetail):
 
 class PathDocument(MapEntityDocument):
     model = Path
+
+    def get_context_data(self, *args, **kwargs):
+        self.get_object().prepare_elevation_chart(self.request)
+        return super(PathDocument, self).get_context_data(*args, **kwargs)
 
 
 class PathCreate(MapEntityCreate):
