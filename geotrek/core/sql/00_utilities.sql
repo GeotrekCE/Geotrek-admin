@@ -72,26 +72,28 @@ CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (distance float, geom geometry) AS $$
 DECLARE
     smart_step integer;
+    length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
-
+    length := ST_Length(linegeom);
     smart_step := step;
-    IF ST_Length(linegeom) < step THEN
-        smart_step := (ST_Length(linegeom) / 3)::integer;
+    IF length < step THEN
+        -- Keep at least a middle point
+        smart_step := (length / 2)::integer;
     END IF;
 
     RETURN QUERY
         WITH linemesure AS
              -- Add a mesure dimension to extract steps
-               (SELECT ST_AddMeasure(linegeom, 0, ST_Length(linegeom)) as linem,
-                       generate_series(smart_step, ST_Length(linegeom)::int, smart_step) as i),
+               (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
+                       generate_series(smart_step, length::int, smart_step) as i),
              points2d AS
                (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
                 UNION
                 SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
                 UNION
-                SELECT ST_Length(linegeom) as distance, ST_EndPoint(linegeom) as geom)
+                SELECT length as distance, ST_EndPoint(linegeom) as geom)
         SELECT p.distance, add_point_elevation(p.geom)
         FROM points2d p
         ORDER BY p.distance;
@@ -106,6 +108,10 @@ DECLARE
     geom3d geometry;
 BEGIN
     ele := coalesce(ST_Z(geom)::integer, 0);
+    IF ele > 0 THEN
+        RETURN geom;
+    END IF;
+
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF FOUND THEN
@@ -131,18 +137,25 @@ DECLARE
     result elevation_infos;
     ALTIMETRIC_PROFILE_PRECISION integer;
 BEGIN
+    -- Skip if no DEM (speed-up tests)
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND THEN
+        SELECT ST_Force_3DZ(geom), ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
     ALTIMETRIC_PROFILE_PRECISION := 25;  -- same as default value for plotting
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force_3DZ(geom), ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
     -- Specific case for points
     IF ST_GeometryType(geom) = 'ST_Point' THEN
         current := add_point_elevation(geom);
-        SELECT current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
+        SELECT current, current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
         RETURN result;
     END IF;
 
