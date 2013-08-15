@@ -171,8 +171,8 @@ BEGIN
     END LOOP;
     result.geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
 
-    result.min_elevation := ST_ZMin(result.geom3d);
-    result.max_elevation := ST_ZMax(result.geom3d);
+    result.min_elevation := ST_ZMin(result.geom3d)::integer;
+    result.max_elevation := ST_ZMax(result.geom3d)::integer;
 
     -- Compute slope
     result.slope := 0.0;
@@ -187,7 +187,7 @@ BEGIN
     points3d := ARRAY[]::geometry[];
     FOR current IN SELECT dl.geom FROM ft_drape_line(geom, ALTIMETRIC_PROFILE_PRECISION) dl LOOP
         points3d := array_append(points3d, current);
-        ele := ST_Z(current);
+        ele := ST_Z(current)::integer;
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
         -- Add negative only if ele - last_ele < 0
