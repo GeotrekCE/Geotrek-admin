@@ -20,7 +20,7 @@ CHANGELOG
 
 * Altimetric profiles were removed from object map images
 * Altimetric profiles are now plotted using SVG
-* Altimetric profiles are now inserted into trek public printouts (ref #626)
+* Altimetric profiles are now inserted into path documents and trek public printouts (ref #626)
 
 
 0.19.1 (2013-07-15)
