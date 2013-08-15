@@ -105,7 +105,7 @@ DECLARE
     ele integer;
     geom3d geometry;
 BEGIN
-    ele := coalesce(ST_Z(geom), 0);
+    ele := coalesce(ST_Z(geom)::integer, 0);
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF FOUND THEN
