@@ -106,6 +106,10 @@ DECLARE
     geom3d geometry;
 BEGIN
     ele := coalesce(ST_Z(geom)::integer, 0);
+    IF ele > 0 THEN
+        RETURN geom;
+    END IF;
+
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF FOUND THEN
@@ -131,6 +135,13 @@ DECLARE
     result elevation_infos;
     ALTIMETRIC_PROFILE_PRECISION integer;
 BEGIN
+    -- Skip if no DEM (speed-up tests)
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND THEN
+        SELECT ST_Force_3DZ(geom), ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
     ALTIMETRIC_PROFILE_PRECISION := 25;  -- same as default value for plotting
 
     -- Ensure parameter is a point or a line
