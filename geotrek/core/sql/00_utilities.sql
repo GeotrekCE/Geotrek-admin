@@ -58,6 +58,7 @@ $$ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS elevation_infos CASCADE;
 CREATE TYPE elevation_infos AS (
     geom3d geometry,
+    draped geometry,
     slope float,
     min_elevation integer,
     max_elevation integer,
@@ -67,23 +68,52 @@ CREATE TYPE elevation_infos AS (
 
 
 
+CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
+    RETURNS TABLE (distance float, geom geometry) AS $$
+DECLARE
+    smart_step integer;
+BEGIN
+    -- Use sampling steps for draping geometry on DEM
+    -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+
+    smart_step := step;
+    IF ST_Length(linegeom) < step THEN
+        smart_step := (ST_Length(linegeom) / 3)::integer;
+    END IF;
+
+    RETURN QUERY
+        WITH linemesure AS
+             -- Add a mesure dimension to extract steps
+               (SELECT ST_AddMeasure(linegeom, 0, ST_Length(linegeom)) as linem,
+                       generate_series(smart_step, ST_Length(linegeom)::int, smart_step) as i),
+             points2d AS
+               (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
+                UNION
+                SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
+                UNION
+                SELECT ST_Length(linegeom) as distance, ST_EndPoint(linegeom) as geom)
+        SELECT p.distance, add_point_elevation(p.geom)
+        FROM points2d p
+        ORDER BY p.distance;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
     ele integer;
     geom3d geometry;
 BEGIN
+    ele := coalesce(ST_Z(geom)::integer, 0);
     -- Ensure we have a DEM
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF NOT FOUND OR ST_GeometryType(geom) NOT IN ('ST_Point') THEN
-        geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), 0);
-        geom3d := ST_SetSRID(geom3d, ST_SRID(geom));
-        RETURN geom3d;
+    IF FOUND THEN
+        SELECT ST_Value(rast, 1, geom)::integer INTO ele
+        FROM mnt
+        WHERE ST_Intersects(rast, geom);
     END IF;
 
-    SELECT ST_Value(rast, 1, geom)::integer INTO ele FROM mnt WHERE ST_Intersects(rast, geom);
-    IF NOT FOUND THEN
-        ele := 0;
-    END IF;
     geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), ele);
     geom3d := ST_SetSRID(geom3d, ST_SRID(geom));
     RETURN geom3d;
@@ -94,18 +124,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
-    current_point geometry;
+    current geometry;
     points3d geometry[];
     ele integer;
     last_ele integer;
     result elevation_infos;
+    ALTIMETRIC_PROFILE_PRECISION integer;
 BEGIN
-    -- Ensure we have a DEM
-    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF NOT FOUND THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
-        RETURN result;
-    END IF;
+    ALTIMETRIC_PROFILE_PRECISION := 25;  -- same as default value for plotting
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
@@ -113,56 +139,53 @@ BEGIN
         RETURN result;
     END IF;
 
-    result.min_elevation := NULL;
-    result.max_elevation := NULL;
-    result.positive_gain := 0;
-    result.negative_gain := 0;
-
-    -- Compute slope:
-    IF ST_GeometryType(geom) = 'ST_LineString' AND ST_Length2D(geom) > 0 THEN
-        SELECT (ST_ZMax(geom) - ST_ZMin(geom))/ST_Length2D(geom) INTO result.slope;
-    ELSE
-        result.slope := 0.0;
+    -- Specific case for points
+    IF ST_GeometryType(geom) = 'ST_Point' THEN
+        current := add_point_elevation(geom);
+        SELECT current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
+        RETURN result;
     END IF;
 
-    -- Obtain point number
-    num_points := ST_NPoints(geom); -- /!\ NPoints() works with all types of geom
+    -- Now geom is LineString only.
 
-    -- Iterate over points (i.e. path vertices)
+    -- First build 3D version of geometry (same resolution)
+    num_points := ST_NPoints(geom);
+    points3d := ARRAY[]::geometry[];
     FOR i IN 1..num_points LOOP
-        -- Obtain current point
-        IF i = 1 AND ST_GeometryType(geom) = 'ST_Point' THEN
-            current_point := geom;
-        ELSE
-            current_point := ST_PointN(geom, i);
-        END IF;
-
-        -- Obtain elevation
-        SELECT ST_Value(rast, 1, current_point)::integer INTO ele FROM mnt WHERE ST_Intersects(rast, current_point);
-        IF NOT FOUND THEN
-            ele := 0;
-        END IF;
-
+        current := ST_PointN(geom, i);
         -- Store new 3D points
-        points3d := array_append(points3d, ST_MakePoint(ST_X(current_point), ST_Y(current_point), ele));
+        points3d := array_append(points3d, add_point_elevation(current));
+    END LOOP;
+    result.geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
 
-        -- Compute indicators
-        result.min_elevation := least(coalesce(result.min_elevation, ele), ele);
-        result.max_elevation := greatest(coalesce(result.max_elevation, ele), ele);
+    result.min_elevation := ST_ZMin(result.geom3d);
+    result.max_elevation := ST_ZMax(result.geom3d);
+
+    -- Compute slope
+    result.slope := 0.0;
+    IF ST_Length2D(result.geom3d) > 0 THEN
+        result.slope := (result.max_elevation - result.min_elevation) / ST_Length2D(geom);
+    END IF;
+
+    -- Compute gain and elevation using (higher resolution)
+    result.positive_gain := 0;
+    result.negative_gain := 0;
+    last_ele := NULL;
+    points3d := ARRAY[]::geometry[];
+    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, ALTIMETRIC_PROFILE_PRECISION) dl LOOP
+        points3d := array_append(points3d, current);
+        ele := ST_Z(current);
+        -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
+        -- Add negative only if ele - last_ele < 0
         result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
         last_ele := ele;
     END LOOP;
-
-    IF ST_GeometryType(geom) = 'ST_Point' THEN
-        result.geom3d := ST_SetSRID(points3d[0], ST_SRID(geom));
-    ELSE
-        result.geom3d := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
-    END IF;
-
+    result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -------------------------------------------------------------------------------
 -- A smart ST_Line_Substring that supports start > end

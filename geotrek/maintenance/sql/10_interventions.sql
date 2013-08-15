@@ -84,7 +84,7 @@ BEGIN
     FROM e_t_evenement WHERE id = NEW.topology_id INTO elevation;
 
     IF ST_GeometryType(elevation.geom3d) <> 'ST_Point' THEN
-        NEW.longueur := ST_3DLength(elevation.geom3d);
+        NEW.longueur := ST_3DLength(elevation.draped);
     END IF;
     NEW.pente := elevation.slope;
     NEW.altitude_minimum := elevation.min_elevation;

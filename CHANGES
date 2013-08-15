@@ -12,6 +12,7 @@ CHANGELOG
   if problem re-appears.
 * Fix timeout on POI Shapefile and CSV exports (fixes #672)
 * Altimetric profiles are now computed in PostGIS (fixes #778, #779)
+* Positive and negative ascents are now computed using more DEM resolution (fixes #776)
 
 :notes:
 

@@ -148,7 +148,7 @@ BEGIN
     SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
     -- Update path geometry
     NEW.geom := elevation.geom3d;
-    NEW.longueur := ST_3DLength(elevation.geom3d);
+    NEW.longueur := ST_3DLength(elevation.draped);
     NEW.pente := elevation.slope;
     NEW.altitude_minimum := elevation.min_elevation;
     NEW.altitude_maximum := elevation.max_elevation;
