@@ -93,9 +93,9 @@ class AltimetryMixin(models.Model):
         """Generic url. Will fail if there is no such url defined
         for the required model (see core.Path and trekking.Trek)
         """
-        app_name = self._meta.app_name
+        app_label = self._meta.app_label
         model_name = self._meta.module_name
-        return ('%s:%s_profile_svg' % (app_name, model_name), [str(self.pk)])
+        return ('%s:%s_profile_svg' % (app_label, model_name), [str(self.pk)])
 
     def get_elevation_chart_path(self):
         """Path to the PNG version of elevation chart.
