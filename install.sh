@@ -109,10 +109,11 @@ function ubuntu_precise {
     sudo apt-get install -y git gettext python-virtualenv build-essential python-dev unzip
     sudo apt-get install -y libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
     sudo apt-get install -y postgresql-client gdal-bin
+    sudo apt-get install -y libxml2-dev libxslt-dev  # pygal lxml
 
     if ! $dev ; then
       # convertit dependencies
-      sudo apt-get install -y libreoffice unoconv
+      sudo apt-get install -y libreoffice unoconv inkscape
     fi
 
     # Default settings if not any

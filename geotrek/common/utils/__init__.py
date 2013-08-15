@@ -1,6 +1,7 @@
 import math
 from urlparse import urljoin
 import logging
+from itertools import islice
 
 from django.db import connection
 from django.conf import settings
@@ -125,3 +126,15 @@ def smart_urljoin(base, path):
     if path[0] == '/':
         path = path[1:]
     return urljoin(base, path)
+
+
+def sampling(values, total):
+    """
+    Return N items from values.
+    >>> sampling(range(10), 5)
+    [0, 2, 4, 6, 8]
+    >>> sampling('abcdefghijkl', 4)
+    ['a', 'd', 'g', 'j']
+    """
+    step = max(1, int(len(values)/total))
+    return list(islice(values, 0, len(values), step))

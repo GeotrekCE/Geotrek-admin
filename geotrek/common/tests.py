@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from mapentity.tests import MapEntityTest
 
 from .factories import AttachmentFactory
-from .utils import almostequal, smart_urljoin
+from .utils import almostequal, smart_urljoin, sampling
 
 
 class CommonTest(MapEntityTest):
@@ -43,3 +43,8 @@ class UtilsTest(TestCase):
                          smart_urljoin('http://server.com/foo', 'bar/path-12.ext'))
         self.assertEqual('http://server.com/foo/bar/path-12.ext',
                          smart_urljoin('http://server.com/foo/', '/bar/path-12.ext'))
+
+    def test_sampling(self):
+        self.assertEqual([0, 2, 4, 6, 8], sampling(range(10), 5))
+        self.assertEqual([0, 3, 6, 9], sampling(range(10), 3))
+        self.assertEqual(['a', 'd', 'g', 'j'], sampling('abcdefghijkl', 4))
