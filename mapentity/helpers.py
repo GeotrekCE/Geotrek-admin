@@ -115,9 +115,9 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf')
     fullurl = request.build_absolute_uri(sourceurl)
     fromparam = "&from=%s" % urllib.quote(from_type) if from_type is not None else ''
     url = "%s?url=%s%s&to=%s" % (settings.CONVERSION_SERVER,
-                               urllib.quote(fullurl),
-                               fromparam,
-                               urllib.quote(mimetype))
+                                 urllib.quote(fullurl),
+                                 fromparam,
+                                 urllib.quote(mimetype))
     if not url.startswith('http'):
         url = '%s://%s%s' % (request.is_secure() and 'https' or 'http',
                              request.get_host(),
@@ -126,6 +126,11 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf')
 
 
 def convertit_download(request, source, destination, from_type=None, to_type='pdf'):
+    # Mock for tests
+    if getattr(settings, 'TEST', False):
+        open(destination, 'wb').write("Mock\n")
+        return
+
     url = convertit_url(request, source, from_type, to_type)
     try:
         logger.info("Request to Convertit server: %s" % url)
@@ -133,7 +138,8 @@ def convertit_download(request, source, destination, from_type=None, to_type='pd
         assert source.status_code == 200, 'Conversion failed (status=%s)' % source.status_code
     except (AssertionError, requests.exceptions.RequestException) as e:
         logger.exception(e)
-        logger.error(source.content[:150])
+        if hasattr(source, 'content'):
+            logger.error(source.content[:150])
         raise
     # Write locally
     try:
