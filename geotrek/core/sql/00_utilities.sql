@@ -148,14 +148,14 @@ BEGIN
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force_3DZ(geom), ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
     -- Specific case for points
     IF ST_GeometryType(geom) = 'ST_Point' THEN
         current := add_point_elevation(geom);
-        SELECT current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
+        SELECT current, current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
         RETURN result;
     END IF;
 

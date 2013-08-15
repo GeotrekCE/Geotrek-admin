@@ -80,7 +80,7 @@ CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
-    SELECT geom, pente, altitude_minimum, altitude_maximum, denivelee_positive, denivelee_negative
+    SELECT geom, geom, pente, altitude_minimum, altitude_maximum, denivelee_positive, denivelee_negative
     FROM e_t_evenement WHERE id = NEW.topology_id INTO elevation;
 
     IF ST_GeometryType(elevation.geom3d) <> 'ST_Point' THEN
