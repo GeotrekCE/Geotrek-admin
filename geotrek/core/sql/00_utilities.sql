@@ -72,26 +72,28 @@ CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (distance float, geom geometry) AS $$
 DECLARE
     smart_step integer;
+    length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
-
+    length := ST_Length(linegeom);
     smart_step := step;
-    IF ST_Length(linegeom) < step THEN
-        smart_step := (ST_Length(linegeom) / 3)::integer;
+    IF length < step THEN
+        -- Keep at least a middle point
+        smart_step := (length / 2)::integer;
     END IF;
 
     RETURN QUERY
         WITH linemesure AS
              -- Add a mesure dimension to extract steps
-               (SELECT ST_AddMeasure(linegeom, 0, ST_Length(linegeom)) as linem,
-                       generate_series(smart_step, ST_Length(linegeom)::int, smart_step) as i),
+               (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
+                       generate_series(smart_step, length::int, smart_step) as i),
              points2d AS
                (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
                 UNION
                 SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
                 UNION
-                SELECT ST_Length(linegeom) as distance, ST_EndPoint(linegeom) as geom)
+                SELECT length as distance, ST_EndPoint(linegeom) as geom)
         SELECT p.distance, add_point_elevation(p.geom)
         FROM points2d p
         ORDER BY p.distance;
