@@ -70,14 +70,21 @@ CREATE TYPE elevation_infos AS (
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (distance float, geom geometry) AS $$
 DECLARE
+    smart_step integer;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+
+    smart_step := step;
+    IF ST_Length(linegeom) < step THEN
+        smart_step := (ST_Length(linegeom) / 3)::integer;
+    END IF;
+
     RETURN QUERY
         WITH linemesure AS
              -- Add a mesure dimension to extract steps
                (SELECT ST_AddMeasure(linegeom, 0, ST_Length(linegeom)) as linem,
-                       generate_series(step, ST_Length(linegeom)::int, step) as i),
+                       generate_series(smart_step, ST_Length(linegeom)::int, smart_step) as i),
              points2d AS
                (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
                 UNION
