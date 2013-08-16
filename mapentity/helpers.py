@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr
 
+import bs4
 import requests
 from screamshot.utils import casperjs_capture, CaptureError
 
@@ -186,3 +187,42 @@ def capture_map_image(url, destination, size=None, aspect=1.0):
     elif os.path.getsize(destination) == 0:
         os.remove(destination)
         raise MapImageError("Image captured from %s into %s is empty" % (url, destination))
+
+
+def extract_attributes_html(url):
+    """
+    The tidy XHTML version of objects attributes.
+
+    Since we have to insert them in document exports, we extract the
+    ``details-panel`` of the detail page, using BeautifulSoup.
+    With this, we save a lot of efforts, since we do have to build specific Appy.pod
+    templates for each model.
+    """
+    if getattr(settings, 'TEST', False):
+        return '<p>Mock</p>'  # TODO: better run in LiveServerTestCase instead !
+
+    r = requests.get(url)
+    if r.status_code != 200:
+        raise ValueError('Could not reach %s' % url)
+
+    soup = bs4.BeautifulSoup(r.content)
+    details = soup.find(id="properties")
+    if details is None:
+        raise ValueError('Content is of detail page is invalid')
+
+    # Remove "Add" buttons
+    for p in details('p'):
+        if 'autohide' in p.get('class', ''):
+            p.extract()
+    # Remove Javascript
+    for s in details('script'):
+        s.extract()
+    # Remove images (Appy.pod fails with them)
+    for i in details('img'):
+        i.replaceWith(i.get('title', ''))
+    # Remove links (Appy.pod sometimes shows empty strings)
+    for a in details('a'):
+        a.replaceWith(a.text)
+    # Prettify (ODT compat.) and convert unicode to XML entities
+    cooked = details.prettify('ascii', formatter='html')
+    return cooked
