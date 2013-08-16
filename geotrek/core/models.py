@@ -38,6 +38,19 @@ class AltimetryMixin(models.Model):
     class Meta:
         abstract = True
 
+    def reload(self, fromdb=None):
+        """Reload fields computed at DB-level (triggers)
+        """
+        if fromdb is None:
+            fromdb = self.__class__.objects.get(pk=self.pk)
+        self.length = fromdb.length
+        self.ascent = fromdb.ascent
+        self.descent = fromdb.descent
+        self.min_elevation = fromdb.min_elevation
+        self.max_elevation = fromdb.max_elevation
+        self.slope = fromdb.slope
+        return self
+
     def get_elevation_profile(self):
         return AltimetryHelper.elevation_profile(self.geom)
 
@@ -172,18 +185,14 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         """
         return PathHelper.snap(self, point)
 
-    def reload(self):
+    def reload(self, fromdb=None):
         # Update object's computed values (reload from database)
-        tmp = self.__class__.objects.get(pk=self.pk)
-        self.date_insert = tmp.date_insert
-        self.date_update = tmp.date_update
-        self.length = tmp.length
-        self.slope = tmp.slope
-        self.ascent = tmp.ascent
-        self.descent = tmp.descent
-        self.min_elevation = tmp.min_elevation
-        self.max_elevation = tmp.max_elevation
-        self.geom = tmp.geom
+        if self.pk:
+            fromdb = self.__class__.objects.get(pk=self.pk)
+            self.geom = fromdb.geom
+            AltimetryMixin.reload(self, fromdb)
+            TimeStampedModel.reload(self, fromdb)
+        return self
 
     def delete(self, using=None):
         """
@@ -321,25 +330,20 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         self.save()
         return self
 
-    def reload(self):
+    def reload(self, fromdb=None):
         """
         Reload into instance all computed attributes in triggers.
         """
         if self.pk:
             # Update computed values
-            tmp = self.__class__.objects.get(pk=self.pk)
-            self.date_insert = tmp.date_insert
-            self.date_update = tmp.date_update
-            self.length = tmp.length
-            self.slope = tmp.slope
-            self.ascent = tmp.ascent
-            self.descent = tmp.descent
-            self.min_elevation = tmp.min_elevation
-            self.max_elevation = tmp.max_elevation
-            self.geom = tmp.geom
-            self.offset = tmp.offset  # /!\ offset may be set by a trigger OR in
-                                      # the django code, reload() will override
-                                      # any unsaved value
+            fromdb = self.__class__.objects.get(pk=self.pk)
+            self.geom = fromdb.geom
+            self.offset = fromdb.offset  # /!\ offset may be set by a trigger OR in
+                                         # the django code, reload() will override
+                                         # any unsaved value
+            AltimetryMixin.reload(self, fromdb)
+            TimeStampedModel.reload(self, fromdb)
+            NoDeleteMixin.reload(self, fromdb)
         return self
 
     @debug_pg_notices

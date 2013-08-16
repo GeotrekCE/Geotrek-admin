@@ -15,6 +15,15 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
+    def reload(self, fromdb=None):
+        """Reload fields computed at DB-level (triggers)
+        """
+        if fromdb is None:
+            fromdb = self.__class__.objects.get(pk=self.pk)
+        self.date_insert = fromdb.date_insert
+        self.date_update = fromdb.date_update
+        return self
+
 
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
@@ -28,6 +37,14 @@ class NoDeleteMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    def reload(self, fromdb=None):
+        """Reload fields computed at DB-level (triggers)
+        """
+        if fromdb is None:
+            fromdb = self.__class__.objects.get(pk=self.pk)
+        self.deleted = fromdb.deleted
+        return self
 
     @classmethod
     def get_manager_cls(cls, parent_mgr_cls=DefaultManager):

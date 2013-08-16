@@ -82,18 +82,14 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
                     stake = path.stake
         return stake
 
-    def reload(self):
-        tmp = self.__class__.objects.get(pk=self.pk)
-        self.deleted = tmp.deleted
-        self.date_insert = tmp.date_insert
-        self.date_update = tmp.date_update
-        self.area = tmp.area
-        self.length = tmp.length
-        self.min_elevation = tmp.min_elevation
-        self.max_elevation = tmp.max_elevation
-        self.slope = tmp.slope
-        self.ascent = tmp.ascent
-        self.descent = tmp.descent
+    def reload(self, fromdb=None):
+        if self.pk:
+            fromdb = self.__class__.objects.get(pk=self.pk)
+            self.area = fromdb.area
+            AltimetryMixin.reload(self, fromdb)
+            TimeStampedModel.reload(self, fromdb)
+            NoDeleteMixin.reload(self, fromdb)
+        return self
 
     def save(self, *args, **kwargs):
         if self.stake is None:
