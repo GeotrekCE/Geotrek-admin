@@ -33,7 +33,7 @@ CREATE TRIGGER e_t_evenement_date_update_tgr
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON e_t_evenement;
 
 CREATE OR REPLACE FUNCTION evenement_latest_updated_d() RETURNS trigger AS $$
 DECLARE
