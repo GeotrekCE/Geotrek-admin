@@ -84,6 +84,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
 
     def reload(self):
         tmp = self.__class__.objects.get(pk=self.pk)
+        self.deleted = tmp.deleted
         self.date_insert = tmp.date_insert
         self.date_update = tmp.date_update
         self.area = tmp.area

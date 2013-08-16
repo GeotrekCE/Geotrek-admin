@@ -112,6 +112,24 @@ class InterventionViewsTest(CommonTest):
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
+    def test_update_infrastruture(self):
+        self.login()
+        intervention = InfrastructureInterventionFactory.create()
+        infra = intervention.infrastructure
+        # Save infrastructure form
+        response = self.client.get(infra.get_update_url())
+        form = response.context['form']
+        data = form.initial
+        data['name'] = 'modified'
+        data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        response = self.client.post(infra.get_update_url(), data)
+        self.assertEqual(response.status_code, 302)
+        # Check that intervention was not deleted (bug #783)
+        intervention.reload()
+        self.assertFalse(intervention.deleted)
+        self.assertEqual(intervention.infrastructure.name, 'modified')
+
+
     def test_form_default_stake(self):
         self.login()
         good_data = self.get_good_data()

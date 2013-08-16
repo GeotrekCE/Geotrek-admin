@@ -22,6 +22,7 @@ CHANGELOG
 * Altimetric profiles were removed from object map images
 * Altimetric profiles are now plotted using SVG
 * Altimetric profiles are now inserted into path documents and trek public printouts (ref #626)
+* Fix deletion of associated interventions when editing infrastructures (fixes #783)
 
 
 0.19.1 (2013-07-15)
