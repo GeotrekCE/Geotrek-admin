@@ -36,14 +36,14 @@ ROOT_URL = envini.get('rooturl', ROOT_URL)
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 # Keep default values equal to buildout default values
-DEPLOY_ROOT = envini.get('deployroot', DEPLOY_ROOT)
-MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', MEDIA_URL))
-STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', STATIC_URL))
-MEDIA_ROOT =  envini.get('mediaroot', os.path.join(DEPLOY_ROOT, 'var', 'media'))
-STATIC_ROOT =  envini.get('staticroot', os.path.join(DEPLOY_ROOT, 'var', 'static'))
-CACHE_ROOT =  envini.get('cacheroot', os.path.join(DEPLOY_ROOT, 'var', 'cache'))
-TEMP_DIR =  envini.get('tmproot', os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
-UPLOAD_DIR = envini.get('uploaddir', UPLOAD_DIR)
+DEPLOY_ROOT = envini.get('deployroot', section="django", default=DEPLOY_ROOT)
+MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
+STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
+MEDIA_ROOT =  envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
+STATIC_ROOT =  envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
+CACHE_ROOT =  envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
+TEMP_DIR =  envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
+UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
 
 
 DATABASES['default']['NAME'] = envini.get('dbname')
