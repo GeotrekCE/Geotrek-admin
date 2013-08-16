@@ -127,6 +127,7 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 COMPRESSOR_ENABLED = False
+COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'public_key'
