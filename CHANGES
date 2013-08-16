@@ -25,6 +25,13 @@ CHANGELOG
 * Fix deletion of associated interventions when editing infrastructures (fixes #783)
 * Latest record is updated (*touch*) when a DELETE is performed on table (refreshs cache) (fixes #698)
 
+* Reworked settings mechanism to follow Django best practices
+
+:notes:
+
+    Replace all computed values from ``etc/settings.ini``. For example, replace "60 * 60"
+    by 3600. (You can increase this value to several hours by the way)
+
 
 0.19.1 (2013-07-15)
 -------------------

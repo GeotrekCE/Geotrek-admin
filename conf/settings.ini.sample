@@ -9,14 +9,11 @@
 
 [settings]
 
-# IP/Domain (example: 88.99.17.89, .myserver.com)
-host = .myserver.com
-
-# URL prefix, leave empty if dedicated server. (example: /ecrins)
-rooturl =
+# Comma separated IP (and domains) of this server
+host = 88.99.17.89, .myserver.com, .myserver.com.
 
 # Default structure for newly created users
-defaultstructure = PNE
+defaultstructure = PNX
 
 # Default language and list of available
 language = fr
@@ -48,10 +45,6 @@ wms_url = http://extranet.parcnational.fr/pnx/wms?
 ortho_layers = ortho
 # Layers for scan map
 scan_layers = scan100,scan25
-# Layers colors
-layercolor_paths = #DD00FF
-layercolor_land = #FF9700
-layercolor_others = #ffff00
 
 #
 #  Email settings
@@ -66,27 +59,3 @@ mailuser =
 mailpassword = 
 mailport = 25
 mailtls = False
-
-#
-#  Advanced settings
-#..........................
-
-# Cache duration in seconds
-cachetimeout = 60 * 60
-
-
-#
-#  External authent settings
-#...........................
-
-# Configure remote authentication (see README file for details)
-
-# Table or view to query
-authent_tablename = 
-# Connection
-authent_dbname = 
-authent_dbuser = 
-authent_dbpassword = 
-authent_dbhost = 
-authent_dbport = 5432
-authent_engine = postgresql_psycopg2
