@@ -122,7 +122,7 @@ class MapEntityMixin(object):
             xmin, ymin, xmax, ymax = geom.extent
             try:
                 aspect = (xmax - xmin) / (ymax - ymin)
-                return max(min(3, aspect), 0.3)
+                return max(min(2, aspect), 0.5)
             except ZeroDivisionError:
                 pass
         return 1.0
