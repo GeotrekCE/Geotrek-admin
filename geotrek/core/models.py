@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
 import os
 from math import isnan
 import logging
@@ -7,7 +6,6 @@ from datetime import datetime
 import functools
 
 from django.contrib.gis.db import models
-from django.db import connection
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString, Point
@@ -18,6 +16,7 @@ from mapentity.helpers import is_file_newer, convertit_download
 from geotrek.authent.models import StructureRelated
 from geotrek.common.models import TimeStampedModel, NoDeleteMixin
 from geotrek.common.utils import classproperty
+from geotrek.common.utils.postgresql import debug_pg_notices
 
 from .helpers import PathHelper, TopologyHelper, AltimetryHelper
 
@@ -200,46 +199,17 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         except Path.DoesNotExist:
             pass
 
+    @debug_pg_notices
     def save(self, *args, **kwargs):
-        before = len(connection.connection.notices) if connection.connection else 0
-        try:
-            # If the path was reversed, we have to invert related topologies
-            if self.is_reversed:
-                for aggr in self.aggregations.all():
-                    aggr.start_position = 1 - aggr.start_position
-                    aggr.end_position = 1 - aggr.end_position
-                    aggr.save()
-                self._is_reversed = False
-            super(Path, self).save(*args, **kwargs)
-            self.reload()
-        finally:
-            # Show triggers output
-            allnotices = []
-            current = ''
-            if connection.connection:
-                notices = []
-                for notice in connection.connection.notices[before:]:
-                    try:
-                        notice, context = notice.split('CONTEXT:', 1)
-                        context = re.sub("\s+", " ", context)
-                    except ValueError:
-                        context = ''
-                    notices.append((context, notice))
-                    if context != current:
-                        allnotices.append(notices)
-                        notices = []
-                        current = context
-                allnotices.append(notices)
-            current = ''
-            for notices in allnotices:
-                for context, notice in notices:
-                    if context != current:
-                        if context != '':
-                            logger.debug('Context %s...:' % context.strip()[:80])
-                        current = context
-                    notice = notice.replace('NOTICE: ', '')
-                    prefix = '' if context == '' else '        '
-                    logger.debug('%s%s' % (prefix, notice.strip()))
+        # If the path was reversed, we have to invert related topologies
+        if self.is_reversed:
+            for aggr in self.aggregations.all():
+                aggr.start_position = 1 - aggr.start_position
+                aggr.end_position = 1 - aggr.end_position
+                aggr.save()
+            self._is_reversed = False
+        super(Path, self).save(*args, **kwargs)
+        self.reload()
 
     @property
     def name_display(self):
@@ -372,6 +342,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                                       # any unsaved value
         return self
 
+    @debug_pg_notices
     def save(self, *args, **kwargs):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
@@ -389,18 +360,13 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                 raise Exception("Cannot save abstract topologies")
             self.kind = self.__class__.KIND
 
+        # Static value for Topology offset, if any
         shortmodelname = self._meta.object_name.lower().replace('edge', '')
         self.offset = settings.TOPOLOGY_STATIC_OFFSETS.get(shortmodelname, self.offset)
 
-        before = len(connection.connection.notices) if connection.connection else 0
-        try:
-            super(Topology, self).save(*args, **kwargs)
-            self.reload()
-        finally:
-            # Show triggers output
-            if connection.connection:
-                for notice in connection.connection.notices[before:]:
-                    logger.debug(notice)
+        # Save into db
+        super(Topology, self).save(*args, **kwargs)
+        self.reload()
 
     def serialize(self):
         return TopologyHelper.serialize(self)
