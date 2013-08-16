@@ -138,6 +138,28 @@ Expected columns in table/view are :
     for more details.
 
 
+Custom setting file
+-------------------
+
+Geotrek configuration is currently restricted to values present in ``etc/settings.ini``.
+
+However, it is still possible to write a custom Django setting file.
+
+* Create your a file in *geotrek/settings/custom.py* with the following content ::
+
+    from .default import *
+
+    # My custom value
+    HIDDEN_OPTION = 3.14
+
+* Change ``etc/settings.ini`` to specify the newly created setting ::
+
+    [geotrek]
+    settings = settings.custom
+
+* As for any change in settings, re-run ``make deploy``.
+
+
 ===========
 MAINTENANCE
 ===========

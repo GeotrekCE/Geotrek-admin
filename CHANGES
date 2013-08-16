@@ -28,6 +28,9 @@ CHANGELOG
 
 :notes:
 
+    Add mandatory ``[geotrek]`` section to ``etc/settings.ini``. See example at the
+    of ``conf/settings.ini.sample``.
+
     Replace all computed values from ``etc/settings.ini``. For example, replace "60 * 60"
     by 3600. (You can increase this value to several hours by the way)
 

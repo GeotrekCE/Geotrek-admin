@@ -88,7 +88,6 @@ load_data:
 
 deploy: install clean_harmless
 	bin/buildout -Nc buildout-prod.cfg buildout:user=$(user)
-	touch lib/parts/django/django_extrasettings/settings_production.py
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate

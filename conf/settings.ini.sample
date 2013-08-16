@@ -91,3 +91,10 @@ authent_dbpassword =
 authent_dbhost = 
 authent_dbport = 5432
 authent_engine = postgresql_psycopg2
+
+#
+#  Deployment settings
+#..........................
+[geotrek]
+# Settings file to use (dev/tests/prod/custom...), see documentation.
+settings = settings.prod
