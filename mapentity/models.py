@@ -109,13 +109,26 @@ class MapEntityMixin(object):
     def attachments(self):
         return Attachment.objects.attachments_for_object(self)
 
+    def get_geom_aspect_ratio(self):
+        geom = self.get_geom()
+        if geom:
+            xmin, ymin, xmax, ymax = geom.extent
+            try:
+                aspect = (xmax - xmin) / (ymax - ymin)
+                return max(min(3, aspect), 0.3)
+            except ZeroDivisionError:
+                pass
+        return 1.0
+
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
         # Do nothing if image is up-to-date
         if is_file_newer(path, self.date_update):
             return
+
+        # Compute image size, based on geometry aspect.
         url = smart_urljoin(rooturl, self.get_detail_url())
-        capture_map_image(url, path)
+        capture_map_image(url, path, aspect=self.get_geom_aspect_ratio())
         # TODO : remove capture image file on delete
 
     def get_map_image_path(self):

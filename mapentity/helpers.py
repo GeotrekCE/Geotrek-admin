@@ -154,16 +154,22 @@ def convertit_download(request, source, destination, from_type=None, to_type='pd
         raise
 
 
-def capture_map_image(url, destination, size=None):
+def capture_map_image(url, destination, size=None, aspect=1.0):
     """Prepare aspect of the detail page
 
     It relies on JS code in MapEntity.Context
     """
     from .models import MapImageError
 
+    # Control aspect of captured images
     if size is None:
         size = app_settings['MAP_CAPTURE_SIZE']
-    printcontext = dict(mapsize=size)
+    if aspect < 1.0:
+        mapsize = dict(width=size * aspect, height=size)
+    else:
+        mapsize = dict(width=size, height=size / aspect)
+    print mapsize
+    printcontext = dict(mapsize=mapsize)
     printcontext['print'] = True
     serialized = json.dumps(printcontext)
     try:
