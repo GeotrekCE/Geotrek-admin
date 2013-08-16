@@ -18,7 +18,8 @@ app_settings = dict({
     'LANGUAGES': settings.LANGUAGES,
     'LANGUAGE_CODE': settings.LANGUAGE_CODE,
     'TEMP_DIR': getattr(settings, 'TEMP_DIR', '/tmp'),
-    'MAP_CAPTURE_SIZE': dict(width=800, height=600),
+    'MAP_CAPTURE_SIZE': dict(width=800, height=800),
+    'GEOM_FIELD_NAME': 'geom',
 }, **getattr(settings, 'MAPENTITY_CONFIG', {}))
 
 

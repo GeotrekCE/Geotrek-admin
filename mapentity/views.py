@@ -419,7 +419,8 @@ class MapEntityFormat(MapEntityList):
     def gpx_view(self, request, context, **kwargs):
         serializer = GPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
-        serializer.serialize(self.get_queryset(), model=self.model, stream=response, geom_field='geom')
+        serializer.serialize(self.get_queryset(), model=self.model, stream=response,
+                             geom_field=app_settings['GEOM_FIELD_NAME'])
         return response
 
 

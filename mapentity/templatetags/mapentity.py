@@ -7,6 +7,8 @@ from django.contrib.gis.geos import GEOSGeometry, Point
 
 register = template.Library()
 
+from .. import app_settings
+
 
 class SmartIncludeNode(template.Node):
     def __init__(self, viewname):
@@ -44,7 +46,9 @@ def do_smart_include(parser, token):
 
 
 @register.filter
-def latlngbounds(obj, fieldname='geom'):
+def latlngbounds(obj, fieldname=None):
+    if fieldname is None:
+        fieldname = app_settings['GEOM_FIELD_NAME']
     if obj is None or isinstance(obj, basestring):
         return 'null'
     if not isinstance(obj, GEOSGeometry):

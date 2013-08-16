@@ -7,6 +7,7 @@ import requests
 import bs4
 from paperclip.models import Attachment
 
+from . import app_settings
 from .helpers import smart_urljoin, is_file_newer, capture_map_image
 
 
@@ -48,6 +49,11 @@ class MapEntityMixin(object):
             return cls.objects.latest("date_update").date_update
         except cls.DoesNotExist:
             return None
+
+    def get_geom(self):
+        """ Get main geometry field.
+        """
+        return getattr(self, app_settings['GEOM_FIELD_NAME'], None)
 
     # List all different kind of views
     @classmethod

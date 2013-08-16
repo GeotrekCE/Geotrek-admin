@@ -60,7 +60,7 @@ class ZipShapeSerializer(Serializer):
     def _create_shape(self, queryset,  model, columns, filename):
         """Split a shapes into one or more shapes (one for point and one for linestring)
         """
-        geo_field = geo_field_from_model(model, 'geom')
+        geo_field = geo_field_from_model(model, app_settings['GEOM_FIELD_NAME'])
         get_geom, geom_type, srid = info_from_geo_field(geo_field)
 
         if geom_type.upper() in (GeometryField.geom_type, GeometryCollectionField.geom_type):

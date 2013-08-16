@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_filters import FilterSet, Filter, ChoiceFilter
 import floppyforms as forms
 
+from . import app_settings
 from .widgets import HiddenGeometryWidget
 
 
@@ -78,7 +79,8 @@ class PythonPolygonFilter(PolygonFilter):
 
 
 class MapEntityFilterSet(FilterSet):
-    bbox = PolygonFilter(name='geom', lookup_type='intersects', widget=HiddenGeometryWidget)
+    bbox = PolygonFilter(name=app_settings['GEOM_FIELD_NAME'],
+                         lookup_type='intersects', widget=HiddenGeometryWidget)
 
     class Meta:
         fields = ['bbox']
