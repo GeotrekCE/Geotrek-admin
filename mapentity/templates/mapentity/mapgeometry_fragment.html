@@ -36,23 +36,26 @@ function detailmapInit(map, bounds) {
         mapBounds = objectBounds ? new L.LatLngBounds(objectBounds) : bounds;
     map.fitBounds(mapBounds);
 
-    {% if object.geom.geom_type == "LineString" %}
-    // Add origin and destination markers if geometry is a line
-        var originlonlat = [{{ object.geom.coords|first|join:"," }}],
-            destinationlonlat = [{{ object.geom.coords|last|join:"," }}];
 
-        L.marker(L.latLng(originlonlat[1], originlonlat[0]),
+    // Show start and end
+    objectLayer.eachLayer(function (layer) {
+        if (layer instanceof L.MultiPolyline)
+            return;
+
+        L.marker(layer.getLatLngs()[0],
                  {clickable: false,
-                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-source.png" %}'})}).addTo(map);
-        L.marker(L.latLng(destinationlonlat[1], destinationlonlat[0]),
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-source.png" %}'})
+                 }).addTo(map);
+        L.marker(layer.getLatLngs().slice(-1)[0],
                  {clickable: false,
-                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})}).addTo(map);
+                  icon: new L.Icon.Default({iconUrl: '{% static "mapentity/images/osrm_markers/marker-target.png" %}'})
+                 }).addTo(map);
 
         // Also add line orientation
-        objectLayer.setText('>     ', {repeat:true, 
-                                       offset: DETAIL_STYLE.weight,
-                                       attributes: {'fill': DETAIL_STYLE.arrowColor, 'font-size': DETAIL_STYLE.arrowSize}});
-    {% endif %}
+        layer.setText('>     ', {repeat:true, 
+                                 offset: DETAIL_STYLE.weight,
+                                 attributes: {'fill': DETAIL_STYLE.arrowColor, 'font-size': DETAIL_STYLE.arrowSize}});
+    });
 
     // Restore map context, only for screenshoting purposing
     var context = getURLParameter('context');
