@@ -516,6 +516,21 @@ span.filter-info {
 }
 
 
+/* Map capture */
+
+body.screamshot #maphead {
+    display: none;
+}
+
+body.screamshot .leaflet-control {
+    display: none;
+}
+
+body.screamshot .leaflet-control-scale {
+    display: block;
+}
+
+
 /***** Entity form ******/
 
 .form-panel {

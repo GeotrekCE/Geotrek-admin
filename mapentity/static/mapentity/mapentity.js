@@ -291,11 +291,7 @@ MapEntity.Context = new function() {
         }
 
         if (context.print) {
-            // Hide map head
-            $('#maphead').hide();
-            // Hide controls
-            $('.leaflet-control').hide();   // Hide all
-            $('.leaflet-control-scale').show(); // Show scale
+            // Disable tiles animations when screenshoting
             $(map._container).removeClass('leaflet-fade-anim');
         }
     };
