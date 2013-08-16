@@ -2,14 +2,23 @@ import re
 import inspect
 from collections import namedtuple, OrderedDict
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
 from django.views.generic.base import View
 from django.conf.urls import patterns
 
-from .urlizor import view_classes_to_url
+__all__ = ['app_settings', 'registry']
 
-__all__ = ['registry']
+
+app_settings = dict({
+    'TITLE': "",
+    'HISTORY_ITEMS_MAX': 5,
+    'CONVERSION_SERVER': '',
+    'LANGUAGES': settings.LANGUAGES,
+    'LANGUAGE_CODE': settings.LANGUAGE_CODE,
+    'TEMP_DIR': getattr(settings, 'TEMP_DIR', '/tmp'),
+}, **getattr(settings, 'MAPENTITY_CONFIG', {}))
 
 
 MapEntity = namedtuple('MapEntity', ['menu', 'label', 'icon', 'icon_small', 'modelname', 'url_list'])
@@ -23,6 +32,8 @@ class Registry(object):
     def register(self, model, name='', menu=True):
         """ Register model and returns URL patterns
         """
+        from .urlizor import view_classes_to_url
+
         # Ignore models from not installed apps
         if not model._meta.installed:
             return ()

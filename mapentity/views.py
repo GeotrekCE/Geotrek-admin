@@ -36,6 +36,7 @@ from djappypod.response import OdtTemplateResponse
 from screamshot.decorators import login_required_capturable
 from screamshot.utils import casperjs_capture
 
+from . import app_settings
 from . import models as mapentity_models
 from .decorators import save_history
 from .serializers import GPXSerializer, CSVSerializer, DatatablesSerializer, ZipShapeSerializer
@@ -481,7 +482,7 @@ class MapEntityDocument(DetailView):
         super(MapEntityDocument, self).__init__(*args, **kwargs)
         # Try to load template for each lang and object detail
         name_for = lambda app, modelname, lang: "%s/%s%s%s.odt" % (app, modelname, lang, self.template_name_suffix)
-        langs = ['_%s' % lang for lang, langname in settings.LANGUAGES]
+        langs = ['_%s' % lang for lang, langname in app_settings['LANGUAGES']]
         langs.append('')   # Will also try without lang
 
         def smart_get_template():

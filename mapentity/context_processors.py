@@ -1,12 +1,12 @@
 from django.conf import settings as settings_  # import the settings file
 
-from mapentity import registry
+from . import app_settings, registry
 
 
 def settings(request):
     return dict(
-        TITLE=getattr(settings_, 'TITLE'),
+        TITLE=app_settings['TITLE'],
         DEBUG=settings_.DEBUG,
-        VERSION=getattr(settings_, 'VERSION'),
+        VERSION=getattr(settings_, 'VERSION', 'unknown'),
         registry=registry,
     )

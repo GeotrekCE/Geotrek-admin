@@ -1,6 +1,5 @@
 import copy
 
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django import forms as django_forms
 
@@ -10,6 +9,9 @@ from crispy_forms.layout import Layout, Submit, Div, Button, HTML
 from crispy_forms.bootstrap import FormActions
 from tinymce.widgets import TinyMCE
 from modeltranslation.translator import translator, NotRegistered
+
+
+from . import app_settings
 
 
 class TranslatedModelForm(forms.ModelForm):
@@ -38,12 +40,12 @@ class TranslatedModelForm(forms.ModelForm):
             # Remove form native field (e.g. `name`)
             native = self.fields.pop(modelfield)
             # Add translated fields (e.g. `name_fr`, `name_en`...)
-            for l in settings.LANGUAGES:
+            for l in app_settings['LANGUAGES']:
                 lang = l[0]
                 name = '%s_%s' % (modelfield, lang)
                 # Add to form.fields{}
                 translated = copy.deepcopy(native)
-                translated.required = native.required and (lang == settings.LANGUAGE_CODE)
+                translated.required = native.required and (lang == app_settings['LANGUAGE_CODE'])
                 translated.label = u"%s [%s]" % (unicode(translated.label), lang)
                 self.fields[name] = translated
                 # Keep track of replacements
@@ -168,7 +170,7 @@ class MapEntityForm(TranslatedModelForm):
     def __tabbed_layout_for_field(self, field):
         fields = []
         for replacement in self._translated[field]:
-            active = "active" if replacement.endswith('_%s' % settings.LANGUAGE_CODE) else ""
+            active = "active" if replacement.endswith('_%s' % app_settings['LANGUAGE_CODE']) else ""
             fields.append(Div(replacement,
                               css_class="tab-pane " + active,
                               css_id=replacement))

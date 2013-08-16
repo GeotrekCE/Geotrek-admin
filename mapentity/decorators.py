@@ -2,7 +2,9 @@ from functools import wraps
 from collections import namedtuple
 
 from django.utils.decorators import available_attrs
-from django.conf import settings
+
+from . import app_settings
+
 
 HistoryItem = namedtuple('HistoryItem', ['title', 'path', 'modelname'])
 
@@ -29,7 +31,7 @@ def save_history():
             history.insert(0, HistoryItem(unicode(self.get_title()), 
                                           request.path,
                                           unicode(model._meta.object_name.lower())))
-            if len(history) > getattr(settings, 'HISTORY_ITEMS_MAX', 5):
+            if len(history) > app_settings['HISTORY_ITEMS_MAX']:
                 history.pop()
             request.session['history'] = history
             

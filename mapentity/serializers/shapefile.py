@@ -8,7 +8,6 @@ except ImportError:
     from StringIO import StringIO
 from collections import OrderedDict
 
-from django.conf import settings
 from django.core.serializers.base import Serializer
 from django.contrib.gis.gdal import check_err, OGRGeomType
 from django.contrib.gis.geos.collections import GeometryCollection
@@ -18,6 +17,8 @@ from django.contrib.gis.db.models.fields import (GeometryField, GeometryCollecti
                                                  MultiPointField, MultiLineStringField)
 
 from osgeo import ogr, osr
+
+from .. import app_settings
 
 
 class ZipShapeSerializer(Serializer):
@@ -156,7 +157,7 @@ def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=No
 
 def create_shape_format_layer(fieldnames, geom_type, srid, srid_out=None):
     # Create temp file
-    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode='w+b', dir=settings.TEMP_DIR)
+    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode='w+b', dir=app_settings['TEMP_DIR'])
     # we must close the file for GDAL to be able to open and write to it
     tmp.close()
     # create shape format

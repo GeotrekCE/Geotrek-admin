@@ -114,7 +114,7 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf')
 
     fullurl = request.build_absolute_uri(sourceurl)
     fromparam = "&from=%s" % urllib.quote(from_type) if from_type is not None else ''
-    url = "%s?url=%s%s&to=%s" % (settings.CONVERSION_SERVER,
+    url = "%s?url=%s%s&to=%s" % (app_settings['CONVERSION_SERVER'],
                                  urllib.quote(fullurl),
                                  fromparam,
                                  urllib.quote(mimetype))
