@@ -1,10 +1,12 @@
 import os
+import urllib2
 from urlparse import urljoin
 import itertools
 import logging
 import urllib
 from mimetypes import types_map
 from datetime import datetime
+import json
 
 from django.utils import timezone
 from django.conf import settings
@@ -12,7 +14,9 @@ from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr
 
 import requests
+from screamshot.utils import casperjs_capture, CaptureError
 
+from . import app_settings
 
 logger = logging.getLogger(__name__)
 
@@ -148,3 +152,31 @@ def convertit_download(request, source, destination, from_type=None, to_type='pd
     except IOError as e:
         logger.exception(e)
         raise
+
+
+def capture_map_image(url, destination, size=None):
+    """Prepare aspect of the detail page
+
+    It relies on JS code in MapEntity.Context
+    """
+    from .models import MapImageError
+
+    if size is None:
+        size = app_settings['MAP_CAPTURE_SIZE']
+    printcontext = dict(mapsize=size)
+    printcontext['print'] = True
+    serialized = json.dumps(printcontext)
+    try:
+        # Run head-less capture (takes time)
+        url += '?context=' + urllib2.quote(serialized)
+        with open(destination, 'wb') as f:
+            casperjs_capture(f, url, selector='.map-panel')  # see templates/entity_detail.html
+    except CaptureError as e:
+        raise MapImageError(e)
+
+    # If image is empty or missing, raise error
+    if not os.path.exists(destination):
+        raise MapImageError("No image captured from %s into %s" % (url, destination))
+    elif os.path.getsize(destination) == 0:
+        os.remove(destination)
+        raise MapImageError("Image captured from %s into %s is empty" % (url, destination))
