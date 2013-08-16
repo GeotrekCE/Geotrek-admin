@@ -1,13 +1,18 @@
 import json
 import logging
-from operator import itemgetter
 
 from django.conf import settings
 from django.db import connection
 from django.contrib.gis.geos import Point
 from django.db.models.query import QuerySet
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geos import LineString
 
-from geotrek.common.utils import sqlfunction
+from geotrek.common.utils import sqlfunction, sampling
+
+import pygal
+from pygal.style import LightSolarizedStyle
+
 
 
 logger = logging.getLogger(__name__)
@@ -262,3 +267,76 @@ class PathHelper(object):
         wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
         disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
         return disjoint[0]
+
+
+class AltimetryHelper(object):
+    @classmethod
+    def elevation_profile(cls, geometry, precision=None, offset=0):
+        """Extract elevation profile from a 3D geometry.
+
+        :precision:  geometry sampling in meters
+        """
+        precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
+
+        if geometry.geom_type == 'MultiLineString':
+            profile = []
+            for subcoords in geometry.coords:
+                subline = LineString(subcoords)
+                offset += subline.length
+                subprofile = AltimetryHelper.elevation_profile(subline, precision, offset)
+                profile.extend(subprofile)
+            return profile
+
+        sql = """
+        SELECT (%(offset)s + distance) as abscissa,
+               ST_X(ST_Transform(geom, %(api_srid)s)) as lng,
+               ST_Y(ST_Transform(geom, %(api_srid)s)) as lat,
+               ST_Z(geom) as h
+        FROM ft_drape_line('%(ewkt)s'::geometry, %(precision)s)
+        ORDER BY abscissa
+        """ % {'offset': offset, 'api_srid': settings.API_SRID, 'ewkt': geometry.ewkt, 'precision': precision}
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result
+
+    @classmethod
+    def profile_svg(cls, profile):
+        """
+        Plot the altimetric graph in SVG using PyGal.
+        Most of the job done here is dedicated to preparing
+        nice labels scales.
+        """
+        distances = [v[0] for v in profile]
+        elevations = [v[3] for v in profile]
+        min_elevation = int(min(elevations))
+        floor_elevation = min_elevation - min_elevation % 10
+        max_elevation = int(max(elevations))
+        ceil_elevation = max_elevation + 10 - max_elevation % 10
+
+        x_labels = distances
+        y_labels = [min_elevation] + sampling(range(floor_elevation + 20, ceil_elevation - 10, 10), 3) + [max_elevation]
+
+        config = dict(show_legend=False,
+                      print_values=False,
+                      show_dots=False,
+                      x_labels_major_every=int(len(profile)/2),
+                      show_minor_x_labels=False,
+                      width=800,
+                      height=400,
+                      title_font_size=25,
+                      label_font_size=20,
+                      major_label_font_size=25,
+                      js=[])
+
+        style = LightSolarizedStyle
+        style.background = 'white'
+        style.colors = ('#5393E8',)
+        line_chart = pygal.StackedLine(fill=True, style=style, **config)
+        line_chart.x_title = unicode(_("Distance (m)"))
+        line_chart.x_labels = [str(i) for i in x_labels]
+        line_chart.y_title = unicode(_("Altitude (m)"))
+        line_chart.y_labels = [str(i) for i in y_labels]
+        line_chart.range = [floor_elevation, max_elevation]
+        line_chart.add('', elevations)
+        return line_chart.render()
