@@ -33,6 +33,7 @@ CHANGELOG
     by 3600. (You can increase this value to several hours by the way)
 
 * Allow server host to capture pages (fixes #733)
+* Adjust map capture according to geometry aspect ratio (fixes #627)
 
 
 0.19.1 (2013-07-15)
