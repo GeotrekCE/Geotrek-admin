@@ -42,8 +42,8 @@ STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", defau
 MEDIA_ROOT =  envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
 STATIC_ROOT =  envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
 CACHE_ROOT =  envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
-TEMP_DIR =  envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
 UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
+MAPENTITY_CONFIG['TEMP_DIR'] =  envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
 
 
 DATABASES['default']['NAME'] = envini.get('dbname')
@@ -62,7 +62,8 @@ CACHES['fat']['TIMEOUT'] = envini.getint('cachetimeout', 3600 * 24)
 LANGUAGE_CODE = envini.get('language', LANGUAGE_CODE, env=False)
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 LANGUAGES = tuple([l for l in LANGUAGES_LIST if l[0] in envini.getstrings('languages')])
-
+MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
+MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
 
 #
 #  Geotrek settings
@@ -81,6 +82,7 @@ LEAFLET_CONFIG['TILES_URL'] = [
     (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL),
     (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL),
 ]
+LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = tuple(envini.getfloats('spatial_extent_wgs84'))
 

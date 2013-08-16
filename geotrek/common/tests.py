@@ -56,7 +56,7 @@ class UtilsTest(TestCase):
 
 
 class EnvIniTests(TestCase):
-    ini_file = os.path.join(settings.TEMP_DIR, 'conf.ini')
+    ini_file = os.path.join('conf.ini')
 
     def setUp(self):
         with open(self.ini_file, 'w') as f:

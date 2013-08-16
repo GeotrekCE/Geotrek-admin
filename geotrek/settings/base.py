@@ -84,8 +84,6 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-TEMP_DIR = '/tmp'
-
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
@@ -313,15 +311,24 @@ SCREAMSHOT_CONFIG = {
 }
 
 
-TITLE = gettext_noop("Geotrek")
-DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
-
+# Data projection
 SRID = 3857
+
+# API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
+API_SRID = 4326
+
 # Extent in native projection (Toulouse area)
 SPATIAL_EXTENT = (144968, 5415668, 175412, 5388753)
 
-# API projection (client-side), can differ from SRID (database)
-API_SRID = 4326
+
+MAPENTITY_CONFIG = {
+    'TITLE': gettext_noop("Geotrek"),
+    'TEMP_DIR': '/tmp',
+    'HISTORY_ITEMS_MAX': 7,
+    'CONVERSION_SERVER': 'http://0.0.0.0:6543',
+}
+
+DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
@@ -329,6 +336,7 @@ ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
+    'SRID': SRID,
     'TILES_URL': [
         ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
         ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
@@ -379,9 +387,6 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
 
-# Navigation history tabs
-HISTORY_ITEMS_MAX = 7
-
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
@@ -389,9 +394,3 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }
-
-#
-#  Convertit server
-#...........................
-
-CONVERSION_SERVER = 'http://0.0.0.0:6543'

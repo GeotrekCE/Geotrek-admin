@@ -40,13 +40,6 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 #
-#  Convertit server
-#...........................
-
-CONVERSION_SERVER = 'http://0.0.0.0:6543'
-
-
-#
 # Private MakinaCorpus IGN Lambert tiles
 #........................................
 
