@@ -152,9 +152,9 @@ However, it is still possible to write a custom Django setting file.
     # My custom value
     HIDDEN_OPTION = 3.14
 
-* Change ``etc/settings.ini`` to specify the newly created setting ::
+* Add this ``etc/settings.ini`` to specify the newly created setting ::
 
-    [geotrek]
+    [django]
     settings = settings.custom
 
 * As for any change in settings, re-run ``make deploy``.
