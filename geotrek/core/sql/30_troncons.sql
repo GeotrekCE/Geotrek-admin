@@ -188,3 +188,24 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER l_t_troncon_related_objects_d_tgr
 BEFORE DELETE ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();
+
+
+---------------------------------------------------------------------
+-- Make sure cache key (base on lastest updated) is refresh on DELETE
+---------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS l_t_troncon_latest_updated_d_tgr ON l_t_troncon;
+
+CREATE OR REPLACE FUNCTION troncon_latest_updated_d() RETURNS trigger AS $$
+DECLARE
+BEGIN
+    -- Touch latest path
+    UPDATE l_t_troncon SET date_update = NOW()
+    WHERE id IN (SELECT id FROM l_t_troncon ORDER BY date_update DESC LIMIT 1);
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER l_t_troncon_latest_updated_d_tgr
+AFTER DELETE ON l_t_troncon
+FOR EACH ROW EXECUTE PROCEDURE troncon_latest_updated_d();

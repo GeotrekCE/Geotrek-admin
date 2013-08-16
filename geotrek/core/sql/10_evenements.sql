@@ -29,6 +29,26 @@ CREATE TRIGGER e_t_evenement_date_update_tgr
     BEFORE INSERT OR UPDATE ON e_t_evenement
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
+---------------------------------------------------------------------
+-- Make sure cache key (base on lastest updated) is refresh on DELETE
+---------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON l_t_troncon;
+
+CREATE OR REPLACE FUNCTION evenement_latest_updated_d() RETURNS trigger AS $$
+DECLARE
+BEGIN
+    -- Touch latest path
+    UPDATE e_t_evenement SET date_update = NOW()
+    WHERE id IN (SELECT id FROM e_t_evenement ORDER BY date_update DESC LIMIT 1);
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER e_t_evenement_latest_updated_d_tgr
+AFTER DELETE ON e_t_evenement
+FOR EACH ROW EXECUTE PROCEDURE evenement_latest_updated_d();
+
 
 -------------------------------------------------------------------------------
 -- Update geometry of an "evenement"

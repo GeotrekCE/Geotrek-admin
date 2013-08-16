@@ -136,6 +136,14 @@ class PathTest(TestCase):
                             t2, p.date_update, t3
                        ))
 
+    def test_latestupdate_delete(self):
+        for i in range(10):
+            PathFactory.create()
+        t1 = dbnow()
+        self.assertTrue(t1 > Path.latest_updated())
+        (Path.objects.all()[0]).delete()
+        self.assertFalse(t1 > Path.latest_updated())
+
     def test_elevation(self):
         # Create a simple fake DEM
         conn = connections[DEFAULT_DB_ALIAS]

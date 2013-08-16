@@ -194,20 +194,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
             TimeStampedModel.reload(self, fromdb)
         return self
 
-    def delete(self, using=None):
-        """
-        Since Path is not a NoDeleteMixin, a deletion does not change latest_updated
-        and cache is not refreshed.
-        TODO : one day, Path should be a ``NoDeleteMixin``, remove all of this.
-        """
-        super(Path, self).delete(using=using)
-        try:
-            latest = Path.objects.latest("date_update")
-            latest.date_update = datetime.now()
-            latest.save()
-        except Path.DoesNotExist:
-            pass
-
     @debug_pg_notices
     def save(self, *args, **kwargs):
         # If the path was reversed, we have to invert related topologies

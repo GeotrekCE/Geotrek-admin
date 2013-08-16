@@ -23,6 +23,7 @@ CHANGELOG
 * Altimetric profiles are now plotted using SVG
 * Altimetric profiles are now inserted into path documents and trek public printouts (ref #626)
 * Fix deletion of associated interventions when editing infrastructures (fixes #783)
+* Latest record is updated (*touch*) when a DELETE is performed on table (refreshs cache) (fixes #698)
 
 
 0.19.1 (2013-07-15)
