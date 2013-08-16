@@ -4,7 +4,8 @@ from .default import *
 #  Django Production
 #..........................
 
-ALLOWED_HOSTS = envini.getstrings('host')
+ALLOWED_HOSTS = tuple(envini.getstrings('host'))
+SCREAMSHOT_CONFIG['CAPTURE_ALLOWED_IPS'] += ALLOWED_HOSTS
 
 USE_X_FORWARDED_HOST = True
 

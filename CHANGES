@@ -32,6 +32,8 @@ CHANGELOG
     Replace all computed values from ``etc/settings.ini``. For example, replace "60 * 60"
     by 3600. (You can increase this value to several hours by the way)
 
+* Allow server host to capture pages (fixes #733)
+
 
 0.19.1 (2013-07-15)
 -------------------
