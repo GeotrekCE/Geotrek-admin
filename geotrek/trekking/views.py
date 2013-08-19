@@ -25,6 +25,14 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 
 
 class FlattenPicturesMixin(object):
+    def get_template_names(self):
+        """ Due to bug in Django, providing get_queryset() method hides
+        template_names lookup.
+        https://code.djangoproject.com/ticket/17484
+        """
+        opts = self.model._meta
+        return ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
+
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
