@@ -172,6 +172,10 @@ class MapEntityTest(TestCase):
         self.login()
 
         obj = self.modelfactory()
+
+        response = self.client.get(obj.get_list_url())
+        self.assertEqual(response.status_code, 200)
+
         response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
         self.assertEqual(response.status_code, 404)
 
