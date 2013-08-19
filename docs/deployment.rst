@@ -196,3 +196,6 @@ PostgreSQL optimization
 
 * Increase ``work_mem`` according to your RAM (e.g. 30%)
 
+* `Log long queries <http://wiki.postgresql.org/wiki/Logging_Difficult_Queries>`_
+
+* Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ to monitoring 
