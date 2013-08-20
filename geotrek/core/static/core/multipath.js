@@ -302,13 +302,12 @@ L.Handler.MultiPath = L.Handler.extend({
 
         pop.toggleActivate();
 
-        // If this was clicked, the marker should be close enought, snap it.
+        // If this was clicked, the marker should be close enough, snap it.
         self.forceMarkerToLayer(marker, layer);
     },
 
     forceMarkerToLayer: function(marker, layer) {
-        var self = this;
-        var closest = L.GeomUtils.closestOnLine(self.map, marker.getLatLng(), layer);
+        var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
         marker.editing.updateClosest(marker, [layer, closest]);
     },
 
@@ -436,7 +435,7 @@ L.Handler.MultiPath = L.Handler.extend({
          *  
          * Each sub-topoogy is a way between markers. The first marker
          * of the first sub-topology is the beginning, the last of the last is the end.
-         * All others are intermediary points.
+         * All others are intermediary points (via markers)
          */
         var self = this;
 
@@ -455,8 +454,8 @@ L.Handler.MultiPath = L.Handler.extend({
             var start_layer = this.idToLayer(paths[0]);
             var end_layer = this.idToLayer(paths[paths.length - 1]);
 
-            var start_ll = L.GeomUtils.getLatLngFromPos(this.map, start_layer, [ first_pos ])[0];
-            var end_ll = L.GeomUtils.getLatLngFromPos(this.map, end_layer, [ last_pos ])[0];
+            var start_ll = L.GeometryUtil.interpolateOnLine(this.map, start_layer, first_pos).latLng;
+            var end_ll = L.GeometryUtil.interpolateOnLine(this.map, end_layer, last_pos).latLng;
 
             var state = {
                 start_ll: start_ll,
@@ -485,11 +484,11 @@ L.Handler.MultiPath = L.Handler.extend({
                         used_pos = pos[0];
                     console.log("Chose " + used_pos + " for " + pos);
                 }
-                var ll = L.GeomUtils.getLatLngFromPos(self.map, layer, [ used_pos ])[0];
-                if (!ll) {
+                var interpolated = L.GeometryUtil.interpolateOnLine(self.map, layer, used_pos);
+                if (!interpolated) {
                     throw ('Could not interpolate ' + used_pos + ' on layer ' + layer.properties.pk);
                 }
-                return ll;
+                return interpolated.latLng;
             };
 
             for (var i=0; i<topo.length; i++) {
@@ -738,7 +737,7 @@ Geotrek.PointOnPolyline = function (marker) {
     // if valid
     this.ll = null;
     this.polyline = null;
-    this.length = null;
+    this.path_length = null;
     this.percent_distance = null;
     this._activated = false;
 
@@ -753,10 +752,10 @@ Geotrek.PointOnPolyline = function (marker) {
             this.ll = e.location;
             this.polyline = e.object;
 
-            this.length = L.GeomUtils.length(this.polyline.getLatLngs());
-            var dd = L.GeomUtils.getPercentageDistanceFromPolyline(this.ll, this.polyline);
+            this.path_length = L.GeometryUtil.length(this.polyline);
+            var dd = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
             if (dd) {
-                this.percent_distance = dd.distance;
+                this.percent_distance = dd;
                 this.events.fire('valid');
             }
         },
@@ -809,8 +808,8 @@ Geotrek.PointOnPolyline.prototype.addToGraph = function(graph) {
 
     // To which nodes dist start_point/end_point corresponds ?
     // The edge.nodes_id are ordered, it corresponds to polylines: coords[0] and coords[coords.length - 1]
-    var dist_start_point = this.percent_distance * this.length
-      , dist_end_point = (1 - this.percent_distance) * this.length
+    var dist_start_point = this.percent_distance * this.path_length
+      , dist_end_point = (1 - this.percent_distance) * this.path_length
     ;
 
     var new_node_id = Geotrek.getNextId();
