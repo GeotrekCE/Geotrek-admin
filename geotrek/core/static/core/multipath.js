@@ -751,13 +751,9 @@ Geotrek.PointOnPolyline = function (marker) {
         'snap': function onSnap(e) {
             this.ll = e.location;
             this.polyline = e.object;
-
             this.path_length = L.GeometryUtil.length(this.polyline);
-            var dd = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
-            if (dd) {
-                this.percent_distance = dd;
-                this.events.fire('valid');
-            }
+            this.percent_distance = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
+            this.events.fire('valid');
         },
         'unsnap': function onUnsnap(e) {
             this.ll = null;
