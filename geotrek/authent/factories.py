@@ -61,21 +61,37 @@ UserFactory.set_creation_function(create_user_with_password)
 
 class SuperUserFactory(UserFactory):
     is_superuser = True
+    is_staff = True
 
 
 class PathManagerFactory(UserFactory):
+    is_staff = True
+
     @classmethod
     def _prepare(cls, create, **kwargs):
         pathmanager, exist = Group.objects.get_or_create(name=core_models.GROUP_PATH_MANAGER)
         kwargs.setdefault('groups', []).append(pathmanager)
         return super(PathManagerFactory, cls)._prepare(create, **kwargs)
 
+
 class TrekkingManagerFactory(UserFactory):
+    is_staff = True
+
     @classmethod
     def _prepare(cls, create, **kwargs):
         pathmanager, exist = Group.objects.get_or_create(name=core_models.GROUP_TREKKING_MANAGER)
         kwargs.setdefault('groups', []).append(pathmanager)
         return super(TrekkingManagerFactory, cls)._prepare(create, **kwargs)
+
+
+class EditorFactory(UserFactory):
+    is_staff = True
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        editor, exist = Group.objects.get_or_create(name=core_models.GROUP_EDITOR)
+        kwargs.setdefault('groups', []).append(editor)
+        return super(EditorFactory, cls)._prepare(create, **kwargs)
 
 
 ## geotrek.core models ##
