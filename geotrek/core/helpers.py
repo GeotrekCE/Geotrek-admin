@@ -317,6 +317,14 @@ class AltimetryHelper(object):
         x_labels = distances
         y_labels = [min_elevation] + sampling(range(floor_elevation + 20, ceil_elevation - 10, 10), 3) + [max_elevation]
 
+        # Prevent Y labels to overlap
+        if len(y_labels) > 2:
+            if y_labels[1] - y_labels[0] < 25:
+                y_labels.pop(1)
+        if len(y_labels) > 2:
+            if y_labels[-1] - y_labels[-2] < 25:
+                y_labels.pop(-2)
+
         config = dict(show_legend=False,
                       print_values=False,
                       show_dots=False,
