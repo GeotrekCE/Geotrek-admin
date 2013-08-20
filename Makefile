@@ -65,13 +65,13 @@ test: install clean_harmless
 	bin/django test --noinput authent core land maintenance trekking common infrastructure mapentity
 
 test_nav:
-	for navtest in `ls geotrek/tests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
+	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
 
 node_modules:
-	npm install geotrek/tests
+	npm install geotrek/jstests
 
 test_js: node_modules
-	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/tests/index.html
+	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/jstests/index.html
 
 tests: test test_js test_nav
 
