@@ -169,7 +169,6 @@ def capture_map_image(url, destination, size=None, aspect=1.0):
         mapsize = dict(width=size * aspect, height=size)
     else:
         mapsize = dict(width=size, height=size / aspect)
-    print mapsize
     printcontext = dict(mapsize=mapsize)
     printcontext['print'] = True
     serialized = json.dumps(printcontext)
