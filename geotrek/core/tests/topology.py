@@ -424,6 +424,8 @@ class TopologyCornerCases(TestCase):
                                                (7, 10, 0), (5, 10, 0), (5, 0, 0),
                                                (7.5, 0, 0)))
 
+
+class TopologyLoopTests(TestCase):
     def test_simple_loop(self):
         """
            ==========
@@ -521,11 +523,14 @@ class TopologyCornerCases(TestCase):
                                                (17, 5, 0), (20, 5, 0),  # extra point due middle aggregation
                                                (20, 0, 0), (16, 0, 0), (10, 0, 0), (3, 0, 0)))
 
-        # Deserializing should work too
-        topod = Topology.deserialize("""
-           [{"positions":{"0":[0.3,1],"1":[0, 0.4]},"paths":[%(pk1)s,%(pk2)s]},
-            {"positions":{"0":[0.4, 0.8]},"paths":[%(pk2)s]},
-            {"positions":{"0":[0.8,1],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s]}]""" % {'pk1': p1.pk, 'pk2': p2.pk})
+        # De/Serializing should work too
+        serialized = """
+           [{"kind": "TOPOLOGY","positions":{"0":[0.3,1],"1":[0, 0.4]},"paths":[%(pk1)s,%(pk2)s],"offset": 0.0},
+            {"kind": "TOPOLOGY","positions":{"0":[0.4, 0.8]},"paths":[%(pk2)s],"offset": 0.0},
+            {"kind": "TOPOLOGY","positions":{"0":[0.8,1],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s],"offset": 0.0}]""" % {'pk1': p1.pk, 'pk2': p2.pk}
+
+        self.assertEqual(json.loads(serialized), json.loads(topo.serialize()))
+        topod = Topology.deserialize(serialized)
         self.assertEqual(topo.geom, topod.geom)
         self.assertEqual(len(topod.aggregations.all()), 7)
 
