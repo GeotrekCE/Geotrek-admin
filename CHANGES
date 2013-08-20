@@ -35,6 +35,7 @@ CHANGELOG
 * Allow server host to capture pages (fixes #733)
 * Adjust map capture according to geometry aspect ratio (fixes #627)
 * Always show path layer in detail pages (fixes #781)
+* Fix restore of topology on loop paths (fixes #760)
 
 
 0.19.1 (2013-07-15)

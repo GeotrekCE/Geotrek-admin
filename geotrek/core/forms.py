@@ -44,7 +44,6 @@ class TopologyForm(CommonForm):
         fields = CommonForm.Meta.fields + ['topology']
 
     MEDIA_JS = ("core/dijkstra.js",
-                "core/leaflet-geomutils.js",
                 "core/multipath.js",
                 "core/topology_helper.js") + CommonForm.MEDIA_JS
 
