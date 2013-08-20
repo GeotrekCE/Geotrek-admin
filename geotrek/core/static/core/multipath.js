@@ -473,7 +473,7 @@ L.Handler.MultiPath = L.Handler.extend({
             var pos2latlng = function (pos, layer) {
                 var used_pos = pos;
                 if (pos instanceof Array) {
-                    used_pos = pos[0];
+                    used_pos = pos[1];  // Default is second position (think of last path of topology)
                     if (pos[0] == 0.0 && pos[1] != 1.0)
                         used_pos = pos[1];
                     if (pos[0] == 1.0 && pos[1] != 0.0)
