@@ -36,6 +36,7 @@ CHANGELOG
 * Adjust map capture according to geometry aspect ratio (fixes #627)
 * Always show path layer in detail pages (fixes #781)
 * Fix restore of topology on loop paths (fixes #760)
+* Fix topology construction when loop is formed by two convergent paths (fixes #768)
 
 
 0.19.1 (2013-07-15)

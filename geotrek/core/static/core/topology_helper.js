@@ -40,7 +40,7 @@ Geotrek.TopologyHelper = (function() {
                  *   +//      |   It is shorter to go through
                  *    \\      |   extremeties than the whole loop
                  *     \\=|---+
-  i              *        B
+                 *        B
                  */
                 if (pk_end - pk_start > 0.5) {
                     paths = [path_pk, path_pk];
@@ -69,17 +69,28 @@ Geotrek.TopologyHelper = (function() {
              * Add first portion of line
              */
             var start_lls = polyline_start.getLatLngs(),
-                start_on_loop = start_lls[0].equals(start_lls[start_lls.length-1]);
+                first_end = start_lls[start_lls.length-1],
+                start_on_loop = start_lls[0].equals(first_end);
 
             if (L.GeometryUtil.startsAtExtremity(polyline_start, polylines[1])) {
-                /*
-                 *       A
-                 *    /--|===+    B
-                 *  +/       \\+==|---
-                 *   \       /
-                 *    \-----+
-                 */
-                if (start_on_loop && pk_start > 0.5) {
+                var next_lls = polylines[1].getLatLngs(),
+                    next_end = next_lls[next_lls.length-1],
+                    share_end = first_end.equals(next_end);
+                if ((start_on_loop && pk_start > 0.5) || 
+                    (share_end && pk_start > 0.5 && pk_end > 0.5)) {
+                    /*
+                     *       A
+                     *    /--|===+    B
+                     *  +/       \\+==|---
+                     *   \       /
+                     *    \-----+
+                     *
+                     *        A               B
+                     *   +----|------><-------|----
+                     *
+                     *   +----|=====|><=======|----
+                     *
+                     */
                     positions[0] = [pk_start, 1.0];
                 }
                 else {
@@ -121,16 +132,26 @@ Geotrek.TopologyHelper = (function() {
              * Add last portion of line
              */
             var end_lls = polyline_end.getLatLngs(),
-                end_on_loop = end_lls[0].equals(end_lls[end_lls.length-1]);
+                last_end = end_lls[end_lls.length-1],
+                end_on_loop = end_lls[0].equals(last_end);
 
             if (L.GeometryUtil.startsAtExtremity(polyline_end, polylines[polylines.length - 2])) {
-                if (end_on_loop && pk_end > 0.5) {
+                var previous_lls = polylines[polylines.length - 2].getLatLngs(),
+                    previous_end = previous_lls[previous_lls.length-1],
+                    share_end = last_end.equals(previous_end);
+                if ((end_on_loop && pk_end > 0.5) || 
+                    (share_end && pk_start > 0.5 && pk_end > 0.5)) {
                     /*
                      *              B
                      *     A    //==|-+
                      *  ---|==+//     |
                      *         \      |
                      *          \-----+
+                     *
+                     *        A               B
+                     *   -----|------><-------|----+
+                     *
+                     *   -----|======>|+======>---->
                      */
                     positions[polylines.length - 1] = [1.0, pk_end];
                 }
