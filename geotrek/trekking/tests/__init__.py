@@ -4,3 +4,4 @@ from .tests import *
 from .filters import *
 from .translation import *
 from .trek_relationship import *
+from .test_admin import *
