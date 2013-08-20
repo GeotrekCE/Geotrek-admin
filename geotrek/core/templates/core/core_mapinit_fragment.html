@@ -2,14 +2,13 @@
 
 // Show the path layer only if model is not path, and if we are not 
 // in an editing widget (module_settings)
-if (window['{{ module  }}_settings'] === undefined && ('{{ view }}' == 'detail' || '{{ modelname }}' != 'path')) {
+if (window['{{ module  }}_settings'] === undefined &&
+    ('{{ view }}' == 'detail' || '{{ modelname }}' != 'path')) {
     var paths = new L.ObjectsLayer(null, {
         indexing: false,
         style: L.Util.extend(window.SETTINGS.map.styles.path, { clickable:false })
     });
-    if ('{{ modelname }}' == 'path') {
-        paths.addTo(map);
-    }
     paths.load('{% url 'core:path_layer' %}');
     map.layerscontrol.addOverlay(paths, '{% trans "Paths" %}');
+    paths.addTo(map);
 }
