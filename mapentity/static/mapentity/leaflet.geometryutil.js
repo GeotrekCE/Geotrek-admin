@@ -287,6 +287,15 @@ L.GeometryUtil = {
         };
     },
 
+    /**
+        Returns a float between 0 and 1 representing the location of the
+        closest point on polyline to the given latlng, as a fraction of total 2d line length.
+        (opposite of L.GeometryUtil.interpolateOnLine())
+        @param {L.Map} map
+        @param {L.PolyLine} polyline
+        @param {L.LatLng} latlng
+        @returns {Number}
+    */
     locateOnLine: function (map, polyline, latlng) {
         var latlngs = polyline.getLatLngs();
         if (latlng.equals(latlngs[0]))
@@ -296,17 +305,23 @@ L.GeometryUtil = {
 
         var point = L.GeometryUtil.closest(map, polyline, latlng, false),
             lengths = L.GeometryUtil.accumulatedLengths(latlngs),
-            portion = 0;
+            total_length = lengths[lengths.length-1],
+            portion = 0,
+            found = false;
         for (var i=0, n = latlngs.length-1; i < n; i++) {
             var l1 = latlngs[i],
                 l2 = latlngs[i+1];
             portion = lengths[i];
             if (L.GeometryUtil.belongsSegment(point, l1, l2)) {
                 portion += l1.distanceTo(point);
+                found = true;
                 break;
             }
         }
-        return portion / lengths[lengths.length-1];
+        if (!found) {
+            throw "Could not interpolate " + latlng.toString() + " within " + polyline.toString();
+        }
+        return portion / total_length;
     },
 
     /**
