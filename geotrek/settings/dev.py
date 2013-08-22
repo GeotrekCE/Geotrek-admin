@@ -40,12 +40,12 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 #
-# Private MakinaCorpus IGN Lambert tiles
-#........................................
+# Use Geotrek preprod tiles (uses default extent)
+#................................................
 
 LEAFLET_CONFIG['TILES_URL'] = [
-    ('Terrain', 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ign/{z}/{x}/{y}.png',),
-    ('Ortho', 'http://geobi.makina-corpus.net/ecrins-sentiers-tiles/ortho/{z}/{x}/{y}.jpg'),
+    ('Terrain', 'http://geobi.makina-corpus.net/geotrek/tiles/scan/{z}/{x}/{y}.png',),
+    ('Ortho', 'http://geobi.makina-corpus.net/teotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
 ]
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
