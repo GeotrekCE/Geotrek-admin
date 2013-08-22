@@ -102,6 +102,18 @@ def transform_wkt(wkt, srid_from=None, srid_to=None, dim=3):
         return None
 
 
+def sql_extent(sql):
+    """ Given a SQL query that returns a BOX(), returns
+    tuple (xmin, ymin, xmax, ymax)
+    """
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    row = result[0]
+    value = row[0].replace('BOX(', '').replace(')', '').replace(',', ' ')
+    return tuple([float(v) for v in value.split()])
+
+
 def sqlfunction(function, *args):
     """
     Executes the SQL function with the specified args, and returns the result.

@@ -1,0 +1,83 @@
+{% load leaflet_tags i18n %}
+<html>
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <style>
+        #map {
+            height: 100%;
+            width: 50%;
+        }
+        #infos {
+            position: absolute;
+            left: 50%;
+            top: 0px;
+        }
+        tr.paths {
+            color: #009F5F;
+        }
+        tr.tiles {
+            color: #005EFF;
+        }
+        tr.dem {
+            color: #CF00FF;
+        }
+        tr.viewport {
+            color: #FF6E00;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="infos">
+        <table>
+            <tr class="paths">
+                <td>{% trans "Paths" %}</td>
+                <td>BOX{{ path_extent_native }}</td>
+            </tr>
+            <tr class="tiles">
+                <td>{% trans "Tiles" %}</td>
+                <td>BOX{{ tiles_extent_native }}</td>
+            </tr>
+            <tr class="dem">
+                <td>{% trans "DEM" %}</td>
+                <td>{% if dem_extent %}BOX{{ dem_extent_native }}{% else %}{% trans "None" %}{% endif %}</td>
+            </tr>
+            <tr class="viewport">
+                <td>{% trans "Viewport (WGS84)" %}</td>
+                <td>BOX{{ viewport_native }}</td>
+            </tr>
+            <tr class="mouse">
+                <td>{% trans "Mouse" %}</td>
+                <td id="mouseposition"></td>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+        (function () {
+            var map = L.map('map');
+            map.fitBounds({{ viewport }});
+
+            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            L.rectangle({{ path_extent }}, {fillOpacity: 0, color: '#009F5F'}).addTo(map);
+            L.rectangle({{ tiles_extent }}, {fillOpacity: 0, color: '#005EFF'}).addTo(map);
+            L.rectangle({{ viewport }}, {fillOpacity: 0, color: '#FF6E00'}).addTo(map);
+            {% if dem_extent %}
+                L.rectangle({{ dem_extent }}, {fillOpacity: 0, color: '#CF00FF'}).addTo(map);
+            {% endif %}
+
+            map.on('mousemove', function (e) {
+                var source = new Proj4js.Proj('EPSG:{{ API_SRID }}'),
+                    dest = new Proj4js.Proj('EPSG:{{ SRID }}'),
+                    pos = Proj4js.transform(source,
+                                            dest,
+                                            {x: e.latlng.lng, y: e.latlng.lat}),
+                    td = document.getElementById('mouseposition');
+                td.innerHTML = 'POINT(' + pos.x + ', ' + pos.y + ')';
+            });
+
+        })();
+    </script>
+</body>
+</html>

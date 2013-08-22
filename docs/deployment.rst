@@ -108,6 +108,18 @@ After editing ``etc/settings.ini``, refresh the running instance with :
     make deploy
 
 
+
+Spatial extents
+---------------
+
+In order to check your configuration of spatial extents, a small tool
+is available at *http://server/tools/extent/*. 
+
+:notes:
+
+    Administrator privileges are required.
+
+
 External authent
 ----------------
 

@@ -15,7 +15,10 @@ Make sure you close every *pgADMIN* session on the database while upgrading.
 No paths in list, where table contains records
 ----------------------------------------------
 
-Check that the projection of your data is correct. Check that the extent of the map covers your data.
+Check that the projection of your data is correct.
+
+Check that the extent of the map covers your data, using the extents tool
+at *http://server/tools/extents/*.
 
 Check the value of the ``spatial_extent_wgs84``` setting.
 

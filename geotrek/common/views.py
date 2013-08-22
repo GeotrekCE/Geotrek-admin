@@ -5,9 +5,14 @@ from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+from django.db.utils import DatabaseError
 
+from mapentity.helpers import api_bbox
 from mapentity.views import HttpJSONResponse
 
+from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
 
@@ -61,3 +66,42 @@ def settings_json(request):
                                      default=settings.LANGUAGE_CODE)
 
     return HttpJSONResponse(json.dumps(dictsettings))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_check_extents(request):
+    """
+    This view allows administrators to visualize data and configured extents.
+
+    Since it's the first, we implemented this in a very rough way. If there is
+    to be more admin tools like this one. Move this to a separate Django app and
+    style HTML properly.
+    """
+    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM l_t_troncon;")
+    path_extent = api_bbox(path_extent_native)
+    try:
+        dem_extent_native = sql_extent("SELECT ST_Extent(rast::geometry) FROM mnt;")
+        dem_extent = api_bbox(dem_extent_native)
+    except DatabaseError:  # mnt table missing
+        dem_extent_native = None
+        dem_extent = None
+    tiles_extent_native = settings.SPATIAL_EXTENT
+    tiles_extent = api_bbox(tiles_extent_native)
+    viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
+    viewport = api_bbox(viewport_native, srid=settings.API_SRID)
+
+    leafletbounds = lambda bbox: [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+
+    context = dict(
+        path_extent=leafletbounds(path_extent),
+        path_extent_native=path_extent_native,
+        dem_extent=leafletbounds(dem_extent) if dem_extent else None,
+        dem_extent_native=dem_extent_native,
+        tiles_extent=leafletbounds(tiles_extent),
+        tiles_extent_native=tiles_extent_native,
+        viewport=leafletbounds(viewport),
+        viewport_native=viewport_native,
+        SRID=settings.SRID,
+        API_SRID=settings.API_SRID,
+    )
+    return render(request, 'common/check_extents.html', context)
