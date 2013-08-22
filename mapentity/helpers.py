@@ -56,17 +56,24 @@ def bbox_split_srid_2154(*args, **kwargs):
     return iter(lambda: map(round, gen.next()), None)
 
 
-def api_bbox(bbox, srid=None):
+def api_bbox(bbox, srid=None, buffer=0.0):
     """ Receives a tuple(xmin, ymin, xmax, ymax) and
     returns a tuple in API projection.
+
+    :srid: bbox projection (Default: settings.SRID)
+    :buffer: grow the bbox in ratio of width (Default: 0.0)
     """
     srid = srid or settings.SRID
+    wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
+    wkt = wkt_box.format(*bbox)
+    native = wkt_to_geom(wkt, srid_from=srid)
     if srid != settings.API_SRID:
-        wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
-        wkt = wkt_box.format(*bbox)
-        native = wkt_to_geom(wkt, srid_from=srid)
-        bbox = native.transform(settings.API_SRID, clone=True).extent
-    return tuple(bbox)
+        native.transform(settings.API_SRID)
+    if buffer > 0:
+        extent = native.extent
+        width = extent[2] - extent[0]
+        native = native.buffer(width * buffer)
+    return tuple(native.extent)
 
 
 def wkt_to_geom(wkt, srid_from=None, silent=False):
