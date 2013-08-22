@@ -37,7 +37,14 @@ CHANGELOG
 * Always show path layer in detail pages (fixes #781)
 * Fix restore of topology on loop paths (fixes #760)
 * Fix topology construction when loop is formed by two convergent paths (fixes #768)
-* Add small tool page at ``/tools/extents/`` to visualize configured extents (ref #732)
+* Added small tool page at ``/tools/extents/`` to visualize configured extents (ref #732)
+* Removed setting ``spatial_extent_wgs84``, now computed automatically from ``spatial_extent``,
+  with a padding of 10%.
+
+:notes:
+
+    Have a look at ``conf/settings.ini.sample`` to clean-up unnecessary values from your
+    settings file.
 
 
 0.19.1 (2013-07-15)

@@ -37,8 +37,6 @@ secret_key = change_this_key_with_a_value_of_your_choice
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
 spatial_extent = 700000, 6325197, 1060000, 6617738
-# (minx, miny, maxx, maxy) expressed in WGS84
-spatial_extent_wgs84 = 5.0, 43.8, 7.5, 45.8
 # WMS server url
 wms_url = http://extranet.parcnational.fr/pnx/wms?
 # Layers for aerial picture

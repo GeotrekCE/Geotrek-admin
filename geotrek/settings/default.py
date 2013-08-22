@@ -84,7 +84,6 @@ LEAFLET_CONFIG['TILES_URL'] = [
 ]
 LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
-LEAFLET_CONFIG['SPATIAL_EXTENT'] = tuple(envini.getfloats('spatial_extent_wgs84'))
 
 MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])
 MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])
