@@ -47,6 +47,7 @@ CHANGELOG
     settings file.
 
 * Fix paths offset for portrait spatial extent (fixes #732)
+* Rely on Tilecache default max resolution formulae (fixes #732)
 * Due to bug in Leaflet/Proj4Leaflet (https://github.com/kartena/Proj4Leaflet/issues/37)
   landscape spatial extents are not supported. Please adjust spatial_extent to be a portrait or square,
   or application will raise *ImproperlyConfiguredError*.
