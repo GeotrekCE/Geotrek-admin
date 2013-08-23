@@ -45,7 +45,7 @@ DEBUG_TOOLBAR_PANELS = (
 
 LEAFLET_CONFIG['TILES_URL'] = [
     ('Terrain', 'http://geobi.makina-corpus.net/geotrek/tiles/scan/{z}/{x}/{y}.png',),
-    ('Ortho', 'http://geobi.makina-corpus.net/teotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
+    ('Ortho', 'http://geobi.makina-corpus.net/geotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
 ]
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
