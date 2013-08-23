@@ -151,6 +151,15 @@ L.ObjectsLayer = L.GeoJSON.extend({
         self._current_objects = new_objects;
     },
 
+    getCurrentLayers: function () {
+        /*
+        Return layers currently on map.
+        This differs from this._objects, which contains all layers
+        loaded from initial GeoJSON data.
+        */
+        return this._current_objects;
+    },
+
     jumpTo: function (pk) {
         var layer = this.getLayer(pk);
         if (!layer) return;

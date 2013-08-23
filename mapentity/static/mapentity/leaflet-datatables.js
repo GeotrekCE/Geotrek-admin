@@ -121,22 +121,35 @@ L.MapListSync = L.Class.extend({
             return data.aaData;
         };
         var on_data_loaded = function (oSettings, callback_args) {
-            self._loading = false;
-            self.fire('reloaded', {
-                nbrecords: self.dt.fnSettings().fnRecordsTotal(),
-            });
-            if(refreshLayer) {
-                self.layer.updateFromPks(callback_args.map_obj_pk);
-            }
-            else {
+
+            var nbrecords = self.dt.fnSettings().fnRecordsTotal();
+            var nbonmap = Object.keys(self.layer.getCurrentLayers()).length;
+
+            // We update the layer objects, only if forced or
+            // if results has more objects than currently shown
+            // (i.e. it's a trick to refresh only on zoom out
+            //  cf. bug https://github.com/makinacorpus/Geotrek/issues/435)
+            if (refreshLayer || (nbrecords > nbonmap)) {
+                var updateLayerObjects = function () {
+                    self.layer.updateFromPks(callback_args.map_obj_pk);
+                };
+
                 if (self.layer.loading) {
                     // Layer is not loaded yet, delay object filtering
-                    self.layer.on('loaded', function (e) {
-                        self.layer.updateFromPks(callback_args.map_obj_pk);
-                    }, self);
+                    self.layer.on('loaded', updateLayerObjects);
+                }
+                else {
+                    // Do it immediately, but end up drawing.
+                    setTimeout(updateLayerObjects, 0);
                 }
             }
+
+            self.fire('reloaded', {
+                nbrecords: nbrecords,
+            });
+
             spinner.stop();
+            self._loading = false;  // loading done.
         };
         
         var url = this.options.url;
