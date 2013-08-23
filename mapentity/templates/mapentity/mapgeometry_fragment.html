@@ -41,6 +41,8 @@ function detailmapInit(map, bounds) {
     objectLayer.eachLayer(function (layer) {
         if (layer instanceof L.MultiPolyline)
             return;
+        if (typeof layer.getLatLngs != 'function')  // points
+            return;
 
         L.marker(layer.getLatLngs()[0],
                  {clickable: false,
