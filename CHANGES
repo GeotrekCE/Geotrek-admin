@@ -3,7 +3,7 @@ CHANGELOG
 =========
 
 
-0.20 (unreleased)
+0.20 (2013-08-23)
 -----------------
 
 * Edit difficulty id in Admin site, mainly used to order difficulty levels (fixes #771)
