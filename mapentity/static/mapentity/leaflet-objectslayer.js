@@ -143,7 +143,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             }
         });
 
-        // Remove all remaining layer
+        // Remove all remaining layers
         $.each(self._current_objects, function(pk, layer) {
             self.removeLayer(layer);
         });

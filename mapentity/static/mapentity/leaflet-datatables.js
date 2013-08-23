@@ -40,8 +40,8 @@ L.MapListSync = L.Class.extend({
         var self = this;
         $(this.dt.fnSettings().oInstance).on('filter', function (e) {
             var filterTxt = $(".dataTables_filter input[type='text']").val();
-            if ((self._searched && filterTxt == '') || 
-                (!self._searched && filterTxt != '')) {
+            if ((self._searched && filterTxt === '') || 
+                (!self._searched && filterTxt !== '')) {
                 self.layer.updateFromPks(self.dt.fnGetColumnData(0));
                 self._searched = true;
             }
@@ -77,7 +77,7 @@ L.MapListSync = L.Class.extend({
     _onObjectClick: function (e) {
         var self = this;
         var search_pk = e.layer.properties.pk;
-        JQDataTable.goToPage(this.dt, 
+        JQDataTable.goToPage(this.dt,
             function pk_equals(row) {
                 return row[0] === search_pk;
             }, function($row) {
