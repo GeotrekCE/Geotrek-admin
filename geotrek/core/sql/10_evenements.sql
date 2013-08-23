@@ -97,7 +97,6 @@ BEGIN
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
         END IF;
-        UPDATE e_t_evenement SET geom = add_point_elevation(egeom), longueur = 0 WHERE id = eid;
     ELSE
         -- Regular case: the topology describe a line
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
@@ -117,7 +116,9 @@ BEGIN
         IF t_offset != 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
         END IF;
+    END IF;
 
+    IF t_count > 0 THEN
         SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
         UPDATE e_t_evenement SET geom = elevation.geom3d,
                                  longueur = ST_3DLength(elevation.draped),

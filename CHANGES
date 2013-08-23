@@ -51,6 +51,13 @@ CHANGELOG
   landscape spatial extents are not supported. Please adjust spatial_extent to be a portrait or square,
   or application will raise *ImproperlyConfiguredError*.
 * Reload map objects on zoom out too (fixes #435)
+* Fix computation of *min_elevation* for point topologies (fixes #808)
+
+:notes:
+
+    In order to recompute all paths topologies altimetry information, you can perform
+    the following query: ``UPDATE e_t_evenement SET decallage = decallage;``.
+    Reading information from rasters is costly. Be prepared to wait for a while.
 
 
 0.19.1 (2013-07-15)

@@ -3,6 +3,7 @@
 from .triggers import *
 from .tests import *
 from .test_factories import *
+from .test_elevation import *
 from .path_filter import *
 from .topology import *
 from .splitpath import *
