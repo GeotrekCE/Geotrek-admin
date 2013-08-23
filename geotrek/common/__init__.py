@@ -30,4 +30,4 @@ post_migrate.connect(run_initial_sql, dispatch_uid="geotrek.core.sqlautoload")
     Computed client-side setting.
 """
 
-settings.LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(settings.SPATIAL_EXTENT, buffer=0.1)
+settings.LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(settings.SPATIAL_EXTENT, buffer=0.5)
