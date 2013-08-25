@@ -635,6 +635,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.4, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         ab3 = Path.objects.filter(name="AB").exclude(pk__in=[ab.pk, ab2.pk])[0]
+        if ab2.geom.length < ab3.geom.length:
+            ab2, ab3 = ab3, ab2
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_ab3 = ab3.aggregations.all()[0]
         self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
