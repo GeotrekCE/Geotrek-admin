@@ -15,8 +15,6 @@ def debug_pg_notices(f):
 
     @wraps(f)
     def wrapped(*args, **kwargs):
-
-
         before = len(connection.connection.notices) if connection.connection else 0
         try:
             r = f(*args, **kwargs)
