@@ -331,6 +331,7 @@ MAPENTITY_CONFIG = {
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://0.0.0.0:6543',
+    'ROOT_URL': ROOT_URL,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -359,8 +360,6 @@ LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf7
                     'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
 
-""" All layers styles.
-"""
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': 'blue'},
 
@@ -373,11 +372,6 @@ MAP_STYLES = {
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail':            {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
-    'draw':              {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
 }
 
 

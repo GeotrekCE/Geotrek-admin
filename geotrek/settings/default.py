@@ -66,6 +66,7 @@ LANGUAGES = tuple([l for l in LANGUAGES_LIST if l[0] in envini.getstrings('langu
 
 TITLE = envini.get('title', MAPENTITY_CONFIG['TITLE'])
 MAPENTITY_CONFIG['TITLE'] = TITLE
+MAPENTITY_CONFIG['ROOT_URL'] = ROOT_URL
 MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
 MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
 
@@ -98,5 +99,8 @@ MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path'][
 MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])
 MAP_STYLES['district']['color'] = envini.get('layercolor_land', MAP_STYLES['district']['color'])
 MAP_STYLES['restrictedarea']['color'] = envini.get('layercolor_land', MAP_STYLES['restrictedarea']['color'])
-MAP_STYLES['detail']['color'] = envini.get('layercolor_others', MAP_STYLES['detail']['color'])
-MAP_STYLES['others']['color'] = envini.get('layercolor_others', MAP_STYLES['others']['color'])
+
+_others_color = envini.get('layercolor_others')
+if _others_color:
+    MAP_STYLES.setdefault('detail', {})['color'] = _others_color
+    MAP_STYLES.setdefault('others', {})['color'] = _others_color

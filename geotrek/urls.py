@@ -15,17 +15,17 @@ urlpatterns = patterns('',
     url(r'^login/$',  'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^paperclip/', include('paperclip.urls')),
-
-    url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
+    url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
     url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
     url(r'', include('geotrek.land.urls', namespace='land', app_name='land')),
     url(r'', include('geotrek.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')),
     url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')),
     url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')),
 
-    url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
+    url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
+
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^paperclip/', include('paperclip.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
