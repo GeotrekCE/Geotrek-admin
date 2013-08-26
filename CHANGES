@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.1 (unreleased)
+0.20.1 (2013-08-26)
 -------------------
 
 * Add DB index for start and end columns
