@@ -6,6 +6,7 @@ CHANGELOG
 -------------------
 
 * Add DB index for start and end columns
+* Merge gunicorn logs with respective applications logs
 
 **BUG fixes**
 
