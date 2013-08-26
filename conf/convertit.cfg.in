@@ -28,6 +28,7 @@ convertit.converted_max_age = 60
 convertit.converted_name = {url_dirname}_{url_filename}{extension}
 convertit.converters =
     convertit.converters.unoconv
+    convertit.converters.inkscape
 
 [server:main]
 use = egg:gunicorn#main
