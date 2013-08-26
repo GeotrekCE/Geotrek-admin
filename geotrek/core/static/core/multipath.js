@@ -30,11 +30,12 @@ L.Control.TopologyPoint = L.Control.extend({
 });
 
 
-L.Handler.TopologyPoint = L.Marker.Draw.extend({
+L.Handler.TopologyPoint = L.Draw.Marker.extend({
     initialize: function (map, options) {
-        L.Marker.Draw.prototype.initialize.call(this, map, options);
-        map.on('draw:marker-created', function (e) {
-            this.fire('added', {marker:e.marker});
+        L.Draw.Marker.prototype.initialize.call(this, map, options);
+        map.on('draw:created', function (e) {
+            if (e.layerType === 'marker')
+                this.fire('added', {marker:e.marker});
         }, this);
     },
 });
@@ -306,7 +307,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
-        marker.editing.updateClosest(marker, [layer, closest]);
+        marker.editing._updateSnap(marker, layer, closest);
     },
 
     createStep: function(marker, idx) {
@@ -596,7 +597,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
-                marker.editing = new L.Handler.MarkerSnapping(map, marker);
+                marker.editing = new L.Handler.MarkerSnap(map, marker);
                 snapObserver.add(marker);
                 marker.activate_cbs.push(activate);
                 marker.deactivate_cbs.push(deactivate);
@@ -747,8 +748,8 @@ Geotrek.PointOnPolyline = function (marker) {
             if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
         },
         'snap': function onSnap(e) {
-            this.ll = e.location;
-            this.polyline = e.object;
+            this.ll = e.latlng;
+            this.polyline = e.layer;
             this.path_length = L.GeometryUtil.length(this.polyline);
             this.percent_distance = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
             this.events.fire('valid');

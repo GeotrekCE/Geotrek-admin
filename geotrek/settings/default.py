@@ -88,7 +88,7 @@ SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 if (SPATIAL_EXTENT[2] - SPATIAL_EXTENT[0] > SPATIAL_EXTENT[3] - SPATIAL_EXTENT[1]):
     raise ImproperlyConfigured('Landscape spatial_extent not supported (%s).' % (SPATIAL_EXTENT,))
 
-LEAFLET_CONFIG['TILES_URL'] = [
+LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL),
     (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL),
 ]

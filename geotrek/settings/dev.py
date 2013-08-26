@@ -42,7 +42,7 @@ DEBUG_TOOLBAR_PANELS = (
 # Use Geotrek preprod tiles (uses default extent)
 #................................................
 
-LEAFLET_CONFIG['TILES_URL'] = [
+LEAFLET_CONFIG['TILES'] = [
     ('Terrain', 'http://geobi.makina-corpus.net/geotrek/tiles/scan/{z}/{x}/{y}.png',),
     ('Ortho', 'http://geobi.makina-corpus.net/geotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
 ]

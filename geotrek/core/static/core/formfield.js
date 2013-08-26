@@ -1,57 +1,67 @@
+
+
+L.SnapObserver = L.Class.extend({
+    initialize: function (map, guidesLayer) {
+        this._map = map;
+        this._guidesLayer = guidesLayer;
+        this._editionLayers = [];
+    },
+    guidesLayer: function () {
+        return this._guidesLayer;
+    },
+    add: function (editionLayer) {
+        if (editionLayer.eachLayer) {
+            editionLayer.eachLayer(function (l) {
+                this.add(l);
+            }, this);
+        }
+        else {
+            this._editionLayers.push(editionLayer);
+            editionLayer.editing.addGuideLayer(this._guidesLayer);
+        }
+    },
+    remove: function (editionLayer) {
+        //TODO
+    },
+});
+
 if (! FormField); var FormField = {};
 
 FormField.makeModule = function(module, module_settings) {
     module.enableDrawing = function(map, drawncallback, startovercallback) {
         var drawControl = new L.Control.Draw({
             position: 'topright',
-            polygon: module_settings.enableDrawing.is_polygon,
-            rectangle: false,
-            circle: false,
-            marker: module_settings.enableDrawing.is_marker,
-            polyline: module_settings.enableDrawing.is_polyline && {
-                shapeOptions: window.SETTINGS.map.styles.draw
+            draw: {
+                polygon: module_settings.enableDrawing.is_polygon,
+                rectangle: false,
+                circle: false,
+                marker: module_settings.enableDrawing.is_marker,
+                polyline: module_settings.enableDrawing.is_polyline && {
+                    shapeOptions: window.SETTINGS.map.styles.draw
+                }
             }
         });
         map.addControl(drawControl);
         map.drawControl = drawControl;
 
         // Delete current on first clic (start drawing)
-        map.on('click', function (e) {
+        map.on('draw:drawstart', function (e) {
             // Delete current on clic if drawing
-            for (var handlertype in map.drawControl.handlers) {
-                if (map.drawControl.handlers[handlertype].enabled()) {
-                    startovercallback();
-                    return;
-                }
-            }
+            startovercallback();
+
+            var h = e.layerType;
+            $('.leaflet-control-draw-draw' + h).parent().addClass('enabled');
         });
 
-        // Show control as enabled on activation
-        for (var h in map.drawControl.handlers) {
-            map.drawControl.handlers[h].on('activated', function () {
-                $('.leaflet-control-draw-' + h).parent().addClass('enabled');
-            });
-        }
-
-        // Listen to all events of creation, Leaflet.Draw naming inconsistency
-        var draw_types = {
-            'polyline': 'poly',
-            'point': 'marker',
-            'polygon': 'polygon',
-        };
-        for (var geomtype in draw_types) {
-            var draw_type = draw_types[geomtype];
-            map.on('draw:' + draw_type + '-created', L.Util.bind(function (e) {
-                console.log('Drawn ' + this.type);
-                var drawn = e[this.type];  // Leaflet.Draw naming inconsistency
-                
-                // Show control as disabled after creation
-                for (var h in map.drawControl.handlers) {
-                    $('.leaflet-control-draw-' + h).parent().removeClass('enabled');
-                }
-                drawncallback(drawn);
-            }, {type: draw_type}));
-        }
+        map.on('draw:created', function (e) {
+            var type = e.layerType,
+                layer = e.layer;
+            // Show control as disabled after creation
+            for (var h in map.drawControl.handlers) {
+                $('.leaflet-control-draw-' + h).parent().removeClass('enabled');
+            }
+            drawncallback(layer);
+        });
     };
 
 
@@ -280,7 +290,7 @@ FormField.makeModule = function(module, module_settings) {
             snapObserver = null;
 
         if (path_snapping) {
-            L.Handler.MarkerSnapping.prototype.SNAP_DISTANCE = window.SETTINGS.map.snap_distance;
+            L.Handler.MarkerSnap.prototype.SNAP_DISTANCE = window.SETTINGS.map.snap_distance;
             snapObserver = module.enablePathSnapping(map, modelname, objectsLayer);
         }
 
@@ -292,13 +302,13 @@ FormField.makeModule = function(module, module_settings) {
         function _edit_handler(map, layer) {
             var edit_handler=null;
             if (path_snapping) {
-                edit_handler = L.Handler.SnappedEdit;
+                edit_handler = L.Handler.PolylineSnap;
                 if (layer instanceof L.Marker) {
-                    edit_handler =  L.Handler.MarkerSnapping;
+                    edit_handler = L.Handler.MarkerSnapping;
                 }
             }
             else {
-                edit_handler = L.Handler.PolyEdit;
+                edit_handler = L.Edit.Poly;
                 if (layer instanceof L.Marker) {
                     layer.dragging = new L.Handler.MarkerDrag(layer);
                     layer.dragging.enable();

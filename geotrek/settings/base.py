@@ -344,13 +344,14 @@ ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'SRID': SRID,
-    'TILES_URL': [
+    'TILES': [
         ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
         ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
-    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5)
+    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
+    'NO_GLOBALS': False,
 }
 
 """ This *pool* of colors is used to colorized lands records.
