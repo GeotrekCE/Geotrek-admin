@@ -8,6 +8,7 @@ CHANGELOG
 **BUG fixes**
 
 * Fix deployment error with application's TITLE
+* Fix trek export layout: fit map image and altimetric profile in one page.
 
 
 0.20 (2013-08-23)
