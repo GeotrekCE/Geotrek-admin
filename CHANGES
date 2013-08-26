@@ -10,6 +10,7 @@ CHANGELOG
 **BUG fixes**
 
 * Fix deployment error with application's TITLE
+* Fix deployment errors with mandatory external authent values
 * Fix trek export layout: fit map image and altimetric profile in one page.
 
 

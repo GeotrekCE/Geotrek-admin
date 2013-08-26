@@ -49,7 +49,7 @@ if AUTHENT_TABLENAME:
 DATABASES[AUTHENT_DATABASE] = {}
 DATABASES[AUTHENT_DATABASE]['ENGINE'] = 'django.db.backends.%s' % envini.get('authent_engine', 'postgresql_psycopg2')
 DATABASES[AUTHENT_DATABASE]['NAME'] = AUTHENT_DATABASE
-DATABASES[AUTHENT_DATABASE]['USER'] = envini.get('authent_dbuser')
-DATABASES[AUTHENT_DATABASE]['PASSWORD'] = envini.get('authent_dbpassword')
-DATABASES[AUTHENT_DATABASE]['HOST'] = envini.get('authent_dbhost')
+DATABASES[AUTHENT_DATABASE]['USER'] = envini.get('authent_dbuser', None)
+DATABASES[AUTHENT_DATABASE]['PASSWORD'] = envini.get('authent_dbpassword', None)
+DATABASES[AUTHENT_DATABASE]['HOST'] = envini.get('authent_dbhost', None)
 DATABASES[AUTHENT_DATABASE]['PORT'] = envini.get('authent_dbport', 5432)
