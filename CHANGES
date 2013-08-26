@@ -5,7 +5,21 @@ CHANGELOG
 0.21 (unreleased)
 -----------------
 
-* Nothing changed yet.
+* Fix convert urls behind reverse proxy with prefix
+
+0.20.1 (2013-08-26)
+-------------------
+
+* Add DB index for start and end columns
+* Merge gunicorn logs with respective applications logs
+* Lower logging level in production (WARNING -> INFO)
+
+**BUG fixes**
+
+* Fix deployment error with application's TITLE
+* Fix deployment errors with mandatory external authent values
+* Fix trek export layout: fit map image and altimetric profile in one page.
+
 
 0.20 (2013-08-23)
 -----------------

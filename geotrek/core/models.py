@@ -378,8 +378,8 @@ class PathAggregation(models.Model):
                              on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_(u"Topology"))
-    start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"))
-    end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"))
+    start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"), db_index=True)
+    end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"), db_index=True)
     order = models.IntegerField(db_column='ordre', default=0, blank=True, null=True, verbose_name=_(u"Order"))
 
     # Override default manager
