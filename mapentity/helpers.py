@@ -137,6 +137,15 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf',
         extension = '.' + mimetype if not mimetype.startswith('.') else mimetype
         mimetype = types_map[extension]
 
+    #
+    # If reverse proxy with prefix :  /prefix --> http://geotrek.geobi.loc/
+    #
+    #    sourceurl: /prefix/path/to/document.odt  (reverse() adds FORCE_SCRIPT_NAME)
+    #    request.get_host():  geotrek.geobi.loc
+    #    fullurl must be: http://geotrek.geobi.loc/path/to/document.odt
+    #    and http://geotrek.geobi.loc/prefix/path/to/document.odt
+    #
+    sourceurl = sourceurl.replace(settings.ROOT_URL, '')
     fullurl = request.build_absolute_uri(sourceurl)
     fromparam = "&from=%s" % urllib.quote(from_type) if from_type is not None else ''
     url = "%s?url=%s%s&to=%s" % (app_settings['CONVERSION_SERVER'],
