@@ -277,12 +277,12 @@ LOGGING = {
         },
         'geotrek': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'WARNING',
+            'level': 'INFO',
             'propagate': False,
         },
         '': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'WARNING',
+            'level': 'INFO',
             'propagate': False,
         },
     }
