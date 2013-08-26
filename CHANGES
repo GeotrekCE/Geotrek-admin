@@ -5,6 +5,8 @@ CHANGELOG
 0.20.1 (unreleased)
 -------------------
 
+* Add DB index for start and end columns
+
 **BUG fixes**
 
 * Fix deployment error with application's TITLE
