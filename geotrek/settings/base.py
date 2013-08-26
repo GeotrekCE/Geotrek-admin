@@ -280,6 +280,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'mapentity': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         '': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',

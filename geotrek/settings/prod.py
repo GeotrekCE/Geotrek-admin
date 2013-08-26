@@ -20,6 +20,14 @@ INSTALLED_APPS += (
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.MemcachedCache'
 CACHES['default']['LOCATION'] = '127.0.0.1:11211'
 
+
+LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
+                                  'formatter': 'simple',
+                                  'filename': os.path.join(DEPLOY_ROOT, 'var', 'log', 'geotrek.log')}
+LOGGING['loggers']['geotrek']['handlers'].append('logfile')
+LOGGING['loggers']['mapentity']['handlers'].append('logfile')
+
+
 #
 #  Email settings
 #..........................
