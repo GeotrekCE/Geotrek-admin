@@ -68,7 +68,7 @@ server {
         rewrite  ^${parts['settings'].rooturl}/(.*)$$  /$$1  permanent;
         {% end %}
 
-        location ~ ${parts['settings'].rooturl}/api {
+        location ~ /api {
             proxy_pass http://api_server;
             proxy_read_timeout ${parts['gunicorn-api-conf'].timeout}s;
         }
