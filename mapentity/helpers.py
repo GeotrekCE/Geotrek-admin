@@ -131,7 +131,7 @@ def is_file_newer(path, date_update, delete_empty=True):
     return modified > date_update
 
 
-def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf'):
+def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf', add_host=True):
     mimetype = to_type
     if '/' not in mimetype:
         extension = '.' + mimetype if not mimetype.startswith('.') else mimetype
@@ -143,7 +143,7 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf')
                                  urllib.quote(fullurl),
                                  fromparam,
                                  urllib.quote(mimetype))
-    if not url.startswith('http'):
+    if add_host and not url.startswith('http'):
         url = '%s://%s%s' % (request.is_secure() and 'https' or 'http',
                              request.get_host(),
                              url)

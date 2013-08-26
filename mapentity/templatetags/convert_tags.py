@@ -8,4 +8,4 @@ register = template.Library()
 
 @register.simple_tag
 def convert_url(request, sourceurl, format='application/pdf'):
-    return convertit_url(request, sourceurl, to_type=format)
+    return convertit_url(request, sourceurl, to_type=format, add_host=False)
