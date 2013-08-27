@@ -2,10 +2,15 @@
 {% load i18n %}
 <div id="altitudegraph">
     <a class="toggle" title="{% trans "Toggle altimetric profile" %}">&nbsp;</a><h4>{% trans "Altitude profile" %}</h4>
-    <img src="{% url profile_url object.pk %}"/>
 </div>
 <script type="text/javascript">
-    $('#altitudegraph a.toggle').click(function (e) {
-        $('#altitudegraph').toggleClass('colapsed');
+    $(document).ready(function () {
+        $('#altitudegraph a.toggle').click(function (e) {
+            $('#altitudegraph').toggleClass('colapsed');
+        });
+    });
+
+    $(window).on('detailmap:ready', function () {
+        $('#altitudegraph').append('<img src="{% url profile_url object.pk %}">');
     });
 </script>

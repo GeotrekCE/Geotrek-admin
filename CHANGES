@@ -8,6 +8,7 @@ CHANGELOG
 * Fix convert urls behind reverse proxy with prefix
 * Fix Trek public print conversion
 * Fix display of trek length in public document (one decimal only)
+* Fix altimetric graph delaying map display in detail pages
 
 0.20.1 (2013-08-26)
 -------------------
