@@ -100,7 +100,7 @@ MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['
 MAP_STYLES['district']['color'] = envini.get('layercolor_land', MAP_STYLES['district']['color'])
 MAP_STYLES['restrictedarea']['color'] = envini.get('layercolor_land', MAP_STYLES['restrictedarea']['color'])
 
-_others_color = envini.get('layercolor_others')
+_others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
