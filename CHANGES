@@ -9,6 +9,15 @@ CHANGELOG
 * Add auto-generated docs at /admin/doc/
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 
+
+0.20.2 (2013-08-27)
+-------------------
+
+* Fix convert urls behind reverse proxy with prefix
+* Fix Trek public print conversion
+* Fix display of trek length in public document (one decimal only)
+* Fix altimetric graph delaying map display in detail pages
+
 0.20.1 (2013-08-26)
 -------------------
 
