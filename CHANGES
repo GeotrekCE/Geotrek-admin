@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.2 (unreleased)
+0.20.2 (2013-08-27)
 -------------------
 
 * Fix convert urls behind reverse proxy with prefix
