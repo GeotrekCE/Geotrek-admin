@@ -147,7 +147,7 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf',
     #
     sourceurl = sourceurl.replace(settings.ROOT_URL, '')
     fullurl = request.build_absolute_uri(sourceurl)
-    fromparam = "&from=%s" % urllib.quote(from_type) if from_type is not None else ''
+    fromparam = ("&from=%s" % urllib.quote(from_type)) if from_type is not None else ''
     url = "%s?url=%s%s&to=%s" % (app_settings['CONVERSION_SERVER'],
                                  urllib.quote(fullurl),
                                  fromparam,
@@ -159,7 +159,7 @@ def convertit_url(request, sourceurl, from_type=None, to_type='application/pdf',
     return url
 
 
-def convertit_download(request, source, destination, from_type=None, to_type='pdf'):
+def convertit_download(request, source, destination, from_type=None, to_type='application/pdf'):
     # Mock for tests
     if getattr(settings, 'TEST', False):
         open(destination, 'wb').write("Mock\n")

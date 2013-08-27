@@ -150,9 +150,11 @@ class DocumentConvert(DetailView):
         raise NotImplementedError
 
     def render_to_response(self, context):
-        url = convertit_url(self.request, self.source_url(), self.format)
+        url = convertit_url(self.request, self.source_url(), to_type=self.format)
         try:
             source = requests.get(url)
+            if source.status_code != 200:
+                logger.error("Failed to convert %s (status: %s)" % (url, source.status_code))
             response = HttpResponse(source.content, status=source.status_code)
         except requests.exceptions.RequestException as e:
             logger.exception(e)
