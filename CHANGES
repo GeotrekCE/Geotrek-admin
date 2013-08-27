@@ -6,6 +6,7 @@ CHANGELOG
 -----------------
 
 * Fix convert urls behind reverse proxy with prefix
+* Add auto-generated docs at /admin/doc/
 
 0.20.1 (2013-08-26)
 -------------------

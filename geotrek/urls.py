@@ -24,6 +24,7 @@ urlpatterns = patterns('',
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
 
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^paperclip/', include('paperclip.urls')),
 )
