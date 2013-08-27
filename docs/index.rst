@@ -9,6 +9,8 @@ Contents:
    installation
    deployment
    troubleshooting
+   design
+   development
 
 
 Indices and tables

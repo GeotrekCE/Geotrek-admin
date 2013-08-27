@@ -26,3 +26,15 @@ For PDF conversion server, run an instance of Convertit in a separate terminal o
 ::
 
     bin/pserve lib/src/convertit/development.ini
+
+
+
+Release
+-------
+
+* Update *VERSION* file, *docs/conf.py*
+* Pin (fixed revision) of eggs under development in *buildout.cfg*
+* Use semantic versioning
+* Use zest.releaser
+* Add git tag vx.x.x
+* Add release on Github

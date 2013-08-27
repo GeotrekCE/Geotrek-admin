@@ -20,8 +20,6 @@ Check that the projection of your data is correct.
 Check that the extent of the map covers your data, using the extents tool
 at *http://server/tools/extents/*.
 
-Check the value of the ``spatial_extent_wgs84``` setting.
-
 
 No background tiles
 -------------------
