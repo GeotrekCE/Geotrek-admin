@@ -299,7 +299,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def length_kilometer(self):
-        return self.length / 1000.0
+        return "%.1f" % (self.length / 1000.0)
 
     @property
     def networks_display(self):
