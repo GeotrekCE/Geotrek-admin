@@ -6,6 +6,7 @@ CHANGELOG
 -------------------
 
 * Fix convert urls behind reverse proxy with prefix
+* Fix Trek public print conversion
 
 0.20.1 (2013-08-26)
 -------------------
