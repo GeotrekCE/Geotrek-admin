@@ -200,20 +200,18 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
-        if (window.DEBUG) {
-            console.log('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
-                                                           latlng:state.start_ll.toString()},
-                                                    end:  {pk:state.end_layer.properties.pk,
-                                                           latlng:state.end_ll.toString()}})+')');
-        }
+        
+        console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
+                                                         latlng:state.start_ll.toString()},
+                                                  end:  {pk:state.end_layer.properties.pk,
+                                                         latlng:state.end_ll.toString()}})+')');
+
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
-            if (window.DEBUG) {
-                console.log('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
-                                                                 latlng: via_marker.marker.getLatLng().toString()}) + ')');
-            }
+            console.debug('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
+                                                               latlng: via_marker.marker.getLatLng().toString()}) + ')');
             self.addViaStep(via_marker.marker, idx + 1);
             self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
         });

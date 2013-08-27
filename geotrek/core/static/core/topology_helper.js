@@ -22,10 +22,8 @@ Geotrek.TopologyHelper = (function() {
         var pk_start = L.GeometryUtil.locateOnLine(polyline_start._map, polyline_start, ll_start),
             pk_end = L.GeometryUtil.locateOnLine(polyline_end._map, polyline_end, ll_end);
 
-        if (window.DEBUG) {
-            console.log('Start on layer ' + polyline_start.properties.pk + ' ' + pk_start + ' ' + ll_start.toString());
-            console.log('End on layer ' + polyline_end.properties.pk + ' ' + pk_end + ' ' + ll_end.toString());
-        }
+        console.debug('Start on layer ' + polyline_start.properties.pk + ' ' + pk_start + ' ' + ll_start.toString());
+        console.debug('End on layer ' + polyline_end.properties.pk + ' ' + pk_end + ' ' + ll_end.toString());
 
         if (single_path) {
             var path_pk = paths[0],
@@ -248,7 +246,8 @@ Geotrek.TopologyHelper = (function() {
           , data = []
           , layer = L.featureGroup();
 
-        if (window.DEBUG) { console.log('----'); console.log('Topology has ' + computed_paths.length + ' sub-topologies.'); }
+        console.debug('----');
+        console.debug('Topology has ' + computed_paths.length + ' sub-topologies.');
 
         for (var i = 0; i < computed_paths.length; i++ ) {
             var cpath = computed_paths[i],
@@ -263,7 +262,7 @@ Geotrek.TopologyHelper = (function() {
             if (topo === null) break;
 
             data.push(topo);
-            if (window.DEBUG) console.log('subtopo[' + i + '] : ' + JSON.stringify(topo));
+            console.debug('subtopo[' + i + '] : ' + JSON.stringify(topo));
 
             // Geometry for each sub-topology
             var group_layer = buildGeometryFromTopology(topo, idToLayer);
@@ -272,7 +271,7 @@ Geotrek.TopologyHelper = (function() {
             group_layer.step_idx = i;
             layer.addLayer(group_layer);
         }
-        if (window.DEBUG) console.log('----');
+        if (window.SETTINGS.debug) console.log('----');
 
         return {
             layer: layer,
