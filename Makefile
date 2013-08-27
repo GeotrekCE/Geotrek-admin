@@ -78,7 +78,7 @@ tests: test test_js test_nav
 serve: install clean_harmless all_compilemessages
 	bin/buildout -Nvc buildout-dev.cfg
 	bin/django syncdb --noinput --migrate
-	bin/django runcserver $(listen)
+	bin/django runserver_plus $(listen)
 
 load_data:
 	# /!\ will delete existing data

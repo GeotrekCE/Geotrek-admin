@@ -13,7 +13,6 @@ TEMPLATE_DEBUG = True
 
 INSTALLED_APPS += (
     'debug_toolbar',
-    'concurrent_server',
     'django_extensions',
 )
 MIDDLEWARE_CLASSES += (
