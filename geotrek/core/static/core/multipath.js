@@ -633,9 +633,6 @@ L.Handler.MultiPath = L.Handler.extend({
             dest: function(latlng, layer) {
                 return this.generic(latlng, layer, 'marker-target');
             },
-            via: function(latlng, layer, snappable) {
-                return this.generic(latlng, layer, 'marker-via', snappable);
-            },
             drag: function(latlng, layer, snappable) {
                 var marker = new L.ActivableMarker(latlng, {
                     'draggable': true,
