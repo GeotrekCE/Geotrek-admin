@@ -8,6 +8,7 @@ CHANGELOG
 * Fix convert urls behind reverse proxy with prefix
 * Add auto-generated docs at /admin/doc/
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
+* Upgrade Leaflet 0.6.4
 
 
 0.20.2 (2013-08-27)
