@@ -13,7 +13,7 @@ L.Control.TopologyPoint = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-draw-marker', this._container);
         link.href = '#';
         link.title = 'Point';
@@ -742,7 +742,7 @@ Geotrek.PointOnPolyline = function (marker) {
     this.markerEvents = {
         'move': function onMove (e) {
             var marker = e.target;
-            if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
+            if (marker.snap) marker.fire('snap', {layer: marker.snap, latlng: marker.getLatLng()});
         },
         'snap': function onSnap(e) {
             this.ll = e.latlng;
