@@ -65,7 +65,7 @@ L.Control.Multipath = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
+        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out multipath-control', this._container);
         link.href = '#';
         link.title = 'Multipath';
@@ -636,10 +636,9 @@ L.Handler.MultiPath = L.Handler.extend({
             drag: function(latlng, layer, snappable) {
                 var marker = new L.ActivableMarker(latlng, {
                     'draggable': true,
-                    'icon': new L.Icon({
-                        iconUrl: self.options.iconDragUrl,
-                        iconSize: new L.Point(18, 18)
-                    })
+                    'icon': L.divIcon({className: 'marker-drag',
+                                       iconSize: new L.Point(18, 18),
+                                       iconAnchor: new L.Point(9, 9)})
                 });
 
                 map.addLayer(marker);
@@ -661,7 +660,9 @@ L.Handler.MultiPath = L.Handler.extend({
         this.fire('computed_topology', {topology:topology.serialized});
 
         // ## ONCE ##
-        this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+        if (this.drawOnMouseMove) {
+            this.map.off('mousemove', this.drawOnMouseMove);
+        }
 
         var dragTimer = new Date();
         this.drawOnMouseMove = function(a) {

@@ -5,6 +5,19 @@
  */
 
 
+
+.marker-snapped { background-image: url('core/images/marker-snap.png') }
+.marker-source.marker-snapped { background-image: url('core/images/marker-source-snap.png') }
+.marker-target.marker-snapped { background-image: url('core/images/marker-target-snap.png') }
+
+.marker-drag { background-image: url('core/images/marker-drag.png') }
+.marker-drag.marker-snapped { background-image: url('core/images/marker-drag-snap.png') }
+
+.multipath-control {
+    background-image: url(core/images/multipath-control.png);
+}
+
+
 /* Force tiles opacity and no transition on every tile layer */
 .leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
 .leaflet-tile-pane .leaflet-fade-anim .leaflet-tile {

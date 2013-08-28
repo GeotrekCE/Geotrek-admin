@@ -21,7 +21,6 @@
         'topologypoint': {{ is_point|yesno:"true,false" }},
         'layerStoreElemSelector': '#{{ attrs.id }}',
         'iconUrl': '{% static "mapentity/images/marker-trans.png" %}',
-        'iconDragUrl': '{% static "mapentity/images/osrm_markers/marker-drag.png" %}',
         'shadowUrl': '{% static "leaflet/images/marker-shadow.png" %}',
 
         'json': '{{ topologyjson|safe }}',  // If creation, will be empty.
