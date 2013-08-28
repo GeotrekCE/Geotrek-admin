@@ -83,11 +83,6 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
-# Due to bug in Leaflet/Proj4Leaflet ()
-# landscape extents are not supported.
-if (SPATIAL_EXTENT[2] - SPATIAL_EXTENT[0] > SPATIAL_EXTENT[3] - SPATIAL_EXTENT[1]):
-    raise ImproperlyConfigured('Landscape spatial_extent not supported (%s).' % (SPATIAL_EXTENT,))
-
 LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL),
     (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL),
