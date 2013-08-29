@@ -10,6 +10,12 @@ CHANGELOG
 * Fix display of trek length in public document (one decimal only)
 * Fix altimetric graph delaying map display in detail pages
 
+:notes:
+
+    # Empty maps captures cache
+    rm -rf var/media/maps/trek-*
+
+
 0.20.1 (2013-08-26)
 -------------------
 
