@@ -9,7 +9,7 @@ CHANGELOG
 * Add auto-generated docs at /admin/doc/
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Upgrade Leaflet 0.6.4
-
+* In list view, click on map brings to detail page, mouse over highlights in list.
 
 0.20.2 (2013-08-27)
 -------------------
