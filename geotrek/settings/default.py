@@ -71,6 +71,15 @@ MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
 MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
 
 #
+#  Deployment settings
+#..........................
+
+MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
+                                                        envini.get('host', section='convertit', default='0.0.0.0'),
+                                                        envini.get('port', section='convertit', default='6543'))
+
+
+#
 #  Geotrek settings
 #..........................
 

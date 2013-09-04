@@ -10,10 +10,6 @@ upstream tile_server {
     server ${parts['gunicorn-tilecache-conf'].bind} fail_timeout=0;
 }
 
-upstream conversion_server {
-    server ${parts['gunicorn-convertit-conf'].bind} fail_timeout=0;
-}
-
 server {
     listen ${options.port} default;
     server_name _;
@@ -45,7 +41,7 @@ server {
     }
 
     location /convert {
-        proxy_pass  http://conversion_server/;
+        proxy_pass  ${parts['convertit'].protocol}://${parts['convertit'].host}:${parts['convertit'].port}/;
     }
 
     location / {
