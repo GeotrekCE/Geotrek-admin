@@ -11,6 +11,13 @@ CHANGELOG
 * Upgrade Leaflet 0.6.4
 * In list view, click on map brings to detail page, mouse over highlights in list.
 
+0.20.3 (unreleased)
+-------------------
+
+* Fix typo in french translation of Properties (fixes #815)
+* Fix missing description from infrastructure/signage detail page (fixes #816)
+* Fix Cities / Districts / Restricted Areas in project detail page (fixes #817)
+
 0.20.2 (2013-08-27)
 -------------------
 
@@ -18,6 +25,12 @@ CHANGELOG
 * Fix Trek public print conversion
 * Fix display of trek length in public document (one decimal only)
 * Fix altimetric graph delaying map display in detail pages
+
+:notes:
+
+    # Empty maps captures cache
+    rm -rf var/media/maps/trek-*
+
 
 0.20.1 (2013-08-26)
 -------------------

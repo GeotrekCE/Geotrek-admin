@@ -67,7 +67,7 @@ However, it is still possible to write a custom Django setting file.
 
 * Create your a file in *geotrek/settings/custom.py* with the following content ::
 
-    from .default import *
+    from .prod import *
 
     # My custom value
     HIDDEN_OPTION = 3.14
