@@ -49,6 +49,12 @@ class InfrastructureViewsTest(CommonTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def test_description_in_detail_page(self):
+        infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
+        self.login()
+        response = self.client.get(infra.get_detail_url())
+        self.assertContains(response, "<b>Beautiful !</b>")
+
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
