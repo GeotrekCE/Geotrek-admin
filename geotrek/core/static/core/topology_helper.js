@@ -271,7 +271,7 @@ Geotrek.TopologyHelper = (function() {
             group_layer.step_idx = i;
             layer.addLayer(group_layer);
         }
-        if (window.SETTINGS.debug) console.log('----');
+        console.debug('----');
 
         return {
             layer: layer,
