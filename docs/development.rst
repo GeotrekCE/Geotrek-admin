@@ -22,6 +22,13 @@ Run unit tests :
     make tests
 
 
+For Capture server, run an instance of screamshotter in a separate terminal :
+
+::
+
+    bin/django runserver --settings=screamshotter.settings 8001
+
+
 For PDF conversion server, run an instance of Convertit in a separate terminal on ``http://localhost:6543``
 
 ::

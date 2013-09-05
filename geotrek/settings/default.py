@@ -70,6 +70,7 @@ MAPENTITY_CONFIG['ROOT_URL'] = ROOT_URL
 MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
 MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
 
+
 #
 #  Deployment settings
 #..........................
@@ -77,6 +78,10 @@ MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
 MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
                                                         envini.get('host', section='convertit', default='0.0.0.0'),
                                                         envini.get('port', section='convertit', default='6543'))
+
+MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
+                                                     envini.get('host', section='screamshotter', default='0.0.0.0'),
+                                                     envini.get('port', section='screamshotter', default='8001'))
 
 
 #
