@@ -5,6 +5,7 @@ CHANGELOG
 0.20.3 (unreleased)
 -------------------
 
+* Fix typo in french translation of Properties (fixes #815)
 * Fix missing description from infrastructure/signage detail page (fixes #816)
 
 0.20.2 (2013-08-27)
