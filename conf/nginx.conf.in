@@ -40,10 +40,6 @@ server {
         proxy_pass  http://tile_server/1.0.0;
     }
 
-    location /convert {
-        proxy_pass  ${parts['convertit'].protocol}://${parts['convertit'].host}:${parts['convertit'].port}/;
-    }
-
     location / {
         proxy_set_header X-Forwarded-Host $$host;
         proxy_set_header X-Forwarded-Server $$host;
