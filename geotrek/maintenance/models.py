@@ -425,10 +425,20 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
         return cls.objects.filter(interventions__in=topology.interventions).distinct()
 
     def edges_by_attr(self, interventionattr):
+        """ Return related topology objects of project, by aggregating the same attribute
+        on its interventions.
+        (See geotrek.land.models)
+        """
         pks = []
+        modelclass = Topology
         for i in self.interventions.all():
-            pks += getattr(i, interventionattr).values_list('pk', flat=True)
-        return Topology.objects.filter(pk__in=pks)
+            attr_value = getattr(i, interventionattr)
+            if isinstance(attr_value, list):
+                pks += [o.pk for o in attr_value]
+            else:
+                modelclass = attr_value.model
+                pks += attr_value.values_list('pk', flat=True)
+        return modelclass.objects.filter(pk__in=pks)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))
 Topology.add_property('projects', lambda self: Project.topology_projects(self))
