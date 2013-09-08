@@ -2,10 +2,8 @@
 #  Geotrek Settings
 #..........................
 # 
-#  Press "Esc" and then ":wq" to save and exit.
-#
 # (Note: If you edit this file out of install process, 
-#  run "make deploy" to apply changes, or "make serve" in development)
+#  run "make deploy" to apply changes)
 
 [settings]
 

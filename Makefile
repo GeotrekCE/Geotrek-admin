@@ -4,7 +4,6 @@ listen=localhost:8000
 baseurl=http://$(listen)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
-arch=$(shell uname -m)
 
 ROOT_DIR=$(shell pwd)
 BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
@@ -22,21 +21,7 @@ BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 etc/settings.ini:
 	mkdir -p etc/
 	cp conf/settings.ini.sample etc/settings.ini
-
-bin/phantomjs:
-	mkdir -p lib/
-	wget http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
-	rm -rf $(ROOT_DIR)/lib/*phantomjs*/
-	tar -jxvf phantomjs.tar.bz2 -C $(ROOT_DIR)/lib/
-	rm phantomjs.tar.bz2
-	ln -sf $(ROOT_DIR)/lib/*phantomjs*/bin/phantomjs $(ROOT_DIR)/bin/
-
-bin/casperjs: bin/phantomjs
-	wget https://github.com/n1k0/casperjs/zipball/1.0.2 -O casperjs.zip
-	rm -rf $(ROOT_DIR)/lib/*casperjs*/
-	unzip -o casperjs.zip -d $(ROOT_DIR)/lib/ > /dev/null
-	rm casperjs.zip
-	ln -sf $(ROOT_DIR)/lib/*casperjs*/bin/casperjs $(ROOT_DIR)/bin/
+	chmod -f 600 $settingsfile
 
 bin/python:
 	virtualenv .
