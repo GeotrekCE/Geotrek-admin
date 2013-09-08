@@ -57,14 +57,14 @@ def load_sql_files(app_label):
     We remove RAISE NOTICE instructions from SQL outside unit testing
     since they lead to interpolation errors of '%' character in python.
     """
-    app_dir = os.path.normpath(os.path.join(os.path.dirname(
-                               models.get_app(app_label).__file__), 'sql'))
-    if not os.path.exists(app_dir):
+    app_dir = os.path.dirname(models.get_app(app_label).__file__)
+    sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
+    if not os.path.exists(sql_dir):
         return
 
     r = re.compile(r'^.*\.sql$')
-    sql_files = [os.path.join(app_dir, f)
-                 for f in os.listdir(app_dir)
+    sql_files = [os.path.join(sql_dir, f)
+                 for f in os.listdir(sql_dir)
                  if r.match(f) is not None]
     sql_files.sort()
     cursor = connection.cursor()
