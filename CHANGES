@@ -7,7 +7,7 @@ CHANGELOG
 
 **BREAKING changes**
 
-* Uploaded files are now restricted to authenticated users (ref #729)
+* Uploaded files are now restricted to authenticated users (fixes #729)
 
 :notes:
 
@@ -18,6 +18,8 @@ CHANGELOG
 * Upgrade Leaflet 0.6.4
 * In list view, click on map brings to detail page, mouse over highlights in list.
 * Add auto-generated docs at /admin/doc/
+* An internal user (with login permission) is used to authenticate the Conversion
+  and Capture services.
 
 **BUG fixes**
 

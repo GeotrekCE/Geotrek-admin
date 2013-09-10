@@ -14,16 +14,6 @@ Architecture
 * **Screamshotter**, a Web API to perform Web pages screenshots (*map image exports*).
 
 
-Current design
-~~~~~~~~~~~~~~
-
-* **TODO** *django-screamshot* is used locally instead of remote Web API (`issue 793 <https://github.com/makinacorpus/Geotrek/issues/793>`_)
-* **TODO** *convertit* is accessible on ``/convert``, but should be proxied (`issue 800 <https://github.com/makinacorpus/Geotrek/issues/800>`_)
-* **TODO** Uploaded documents are publicly accessible on ``/media`` (`issue 729 <https://github.com/makinacorpus/Geotrek/issues/729>`_)
-
-.. image :: images/architecture.jpg
-    :width: 25%
-
 Main components
 ---------------
 

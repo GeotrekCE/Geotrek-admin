@@ -147,6 +147,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'mapentity.middleware.AutoLoginMiddleware'
 )
 
 ROOT_URLCONF = 'geotrek.urls'
@@ -309,12 +311,6 @@ THUMBNAIL_ALIASES = {
 PAPERCLIP_CONFIG = {
     'FILETYPE_MODEL': 'common.FileType',
     'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
-}
-
-
-SCREAMSHOT_CONFIG = {
-    'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
-    'CLI_ARGS': ['--disk-cache=true', '--max-disk-cache-size=30000'],
 }
 
 

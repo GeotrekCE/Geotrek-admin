@@ -5,7 +5,6 @@ from .default import *
 #..........................
 
 ALLOWED_HOSTS = tuple(envini.getstrings('host'))
-SCREAMSHOT_CONFIG['CAPTURE_ALLOWED_IPS'] += ALLOWED_HOSTS
 
 USE_X_FORWARDED_HOST = True
 
