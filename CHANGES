@@ -8,6 +8,7 @@ CHANGELOG
 * Fix typo in french translation of Properties (fixes #815)
 * Fix missing description from infrastructure/signage detail page (fixes #816)
 * Fix Cities / Districts / Restricted Areas in project detail page (fixes #817)
+* Fix only deleted topology can have geom = NULL (fixes #818)
 
 0.20.2 (2013-08-27)
 -------------------
