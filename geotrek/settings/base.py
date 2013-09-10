@@ -297,6 +297,8 @@ LOGGING = {
     }
 }
 
+SOUTH_TESTS_MIGRATE = True
+
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},
