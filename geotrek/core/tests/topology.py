@@ -51,7 +51,10 @@ class TopologyTest(TestCase):
         self.assertEqual(e.kind, LandEdge.KIND)
         self.assertEqual(1, len(Topology.objects.filter(kind='LANDEDGE')))
 
-    def test_delete(self):
+
+class TopologyDeletionTest(TestCase):
+
+    def test_deleted_is_hidden_but_still_exists(self):
         topology = TopologyFactory.create(offset=1)
         path = topology.paths.get()
         self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
@@ -67,6 +70,9 @@ class TopologyTest(TestCase):
         # Make sure object can be hidden from managers
         self.assertNotIn(topology, Topology.objects.existing())
         self.assertEqual(len(path.topology_set.existing()), 0)
+
+
+class TopologyMutateTest(TestCase):
 
     def test_mutate(self):
         topology1 = TopologyFactory.create(no_path=True)
@@ -105,6 +111,9 @@ class TopologyTest(TestCase):
         self.assertTrue(topology2.ispoint())
         topology2.mutate(topology)
         self.assertEqual(len(topology2.paths.all()), 3)
+
+
+class TopologyPointTest(TestCase):
 
     def test_point_geom_3d(self):
         """
@@ -208,6 +217,9 @@ class TopologyTest(TestCase):
         pa.save()
 
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
+
+
+class TopologyLineTest(TestCase):
 
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0, 0, 0), (2, 2, 2)))
