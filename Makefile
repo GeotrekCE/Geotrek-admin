@@ -16,6 +16,9 @@ BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
 
+.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod tests test test_nav test_js serve deploy load_data deploy_demo
+
+
 etc/settings.ini:
 	mkdir -p etc/
 	cp conf/settings.ini.sample etc/settings.ini
@@ -55,7 +58,7 @@ clean: clean_harmless
 	rm -f .installed.cfg
 	rm -f install.log
 
-.PHONY: all_makemessages all_compilemessages
+
 
 all_makemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
@@ -64,12 +67,21 @@ all_compilemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
-release:
-	git archive --format=zip --prefix="geotrek-$(version)/" $(version) > ../geotrek-src-$(version).zip
 
-test: install clean_harmless
+env_test: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
-	bin/develop update -f
+
+env_dev: install clean_harmless all_compilemessages
+	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
+	bin/django syncdb --noinput --migrate
+
+env_prod: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
+
+
+
+
+test:
 	bin/django test --noinput authent core land maintenance trekking common infrastructure mapentity
 
 test_nav:
@@ -83,25 +95,24 @@ test_js: node_modules
 
 tests: test test_js test_nav
 
-serve: install clean_harmless all_compilemessages
-	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
-	bin/django syncdb --noinput --migrate
+serve: env_dev
 	bin/django runserver_plus $(listen)
 
-load_data:
-	# /!\ will delete existing data
-	bin/django loaddata minimal
-	bin/django loaddata basic
-	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(ROOT_DIR)/var/media/upload/ ; popd > /dev/null; done
-
-deploy: install clean_harmless
-	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
+deploy: env_prod
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django update_translation_fields
 	bin/supervisorctl restart all
+
+
+
+load_data:
+	# /!\ will delete existing data
+	bin/django loaddata minimal
+	bin/django loaddata basic
+	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(ROOT_DIR)/var/media/upload/ ; popd > /dev/null; done
 
 deploy_demo: deploy load_data
 	bin/django loaddata development-pne
