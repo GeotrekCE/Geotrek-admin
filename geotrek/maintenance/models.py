@@ -89,12 +89,22 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModel.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
+            if self.topology:
+                self.topology.reload()
         return self
 
     def save(self, *args, **kwargs):
         if self.stake is None:
             self.stake = self.default_stake()
+
         super(Intervention, self).save(*args, **kwargs)
+
+        # Set kind of Intervention topology
+        if self.topology and not self.on_infrastructure:
+            topology_kind = self._meta.object_name.upper()
+            self.topology.kind = topology_kind
+            self.topology.save(update_fields=['kind'])
+
         self.reload()
 
     @property

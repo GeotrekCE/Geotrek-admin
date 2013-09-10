@@ -25,6 +25,7 @@ CHANGELOG
 
 * Fix convert urls behind reverse proxy with prefix
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
+* Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 
 
 0.20.3 (unreleased)

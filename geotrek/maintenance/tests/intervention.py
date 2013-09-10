@@ -10,6 +10,12 @@ from geotrek.core.factories import PathFactory, TopologyFactory, TrailFactory, S
 
 
 class InterventionTest(TestCase):
+    def test_topology_has_intervention_kind(self):
+        topo = TopologyFactory.create()
+        self.assertEqual('TOPOLOGY', topo.kind)
+        i = InterventionFactory.create(topology=topo)
+        self.assertEqual('INTERVENTION', i.topology.kind)
+
     def test_infrastructure(self):
         i = InterventionFactory.create()
         self.assertFalse(i.on_infrastructure)
