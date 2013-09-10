@@ -94,6 +94,7 @@ UPLOAD_DIR = 'upload'    # media root subdir
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
+MEDIA_URL_SECURE = '/media_secure/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

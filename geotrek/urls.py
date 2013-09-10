@@ -23,19 +23,9 @@ urlpatterns = patterns('',
     url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
-
+    url(r'^paperclip/', include('paperclip.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^paperclip/', include('paperclip.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
-
-
-# Serve uploaded files from django directly. Assumes settings.MEDIA_URL is set to '/media/'
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-            }),
-    )

@@ -5,11 +5,25 @@ CHANGELOG
 0.21 (unreleased)
 -----------------
 
-* Fix convert urls behind reverse proxy with prefix
-* Add auto-generated docs at /admin/doc/
-* Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
+**BREAKING changes**
+
+* Uploaded files are now restricted to authenticated users (ref #729)
+
+:notes:
+
+    *Geotrek-rando* 1.23 or higher is required to synchronize content.
+
+**NEW features**
+
 * Upgrade Leaflet 0.6.4
 * In list view, click on map brings to detail page, mouse over highlights in list.
+* Add auto-generated docs at /admin/doc/
+
+**BUG fixes**
+
+* Fix convert urls behind reverse proxy with prefix
+* Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
+
 
 0.20.3 (unreleased)
 -------------------

@@ -24,7 +24,9 @@ server {
         expires ${options.expiretime};
         alias ${parts['django'].staticroot};
     }
-    location ${parts['django'].mediaurl} {
+
+    location ${parts['django'].mediaurl_secure} {
+        internal;
         expires ${options.expiretime};
         alias ${parts['django'].mediaroot};
     }
