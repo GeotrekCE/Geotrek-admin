@@ -26,7 +26,7 @@ CHANGELOG
 * Fix convert urls behind reverse proxy with prefix
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
-
+* Fix only deleted topology can have geom = NULL (fixes #818)
 
 0.20.3 (unreleased)
 -------------------

@@ -2,13 +2,12 @@
 import os
 from math import isnan
 import logging
-from datetime import datetime
 import functools
 
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import fromstr, LineString, Point
 
 from mapentity.models import MapEntityMixin
 from mapentity.helpers import is_file_newer, convertit_download
@@ -284,6 +283,11 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                                              start_position=start,
                                              end_position=end,
                                              order=order)
+
+        if self.deleted:
+            self.deleted = False
+            self.save(update_fields=['deleted'])
+
         # Since a trigger modifies geom, we reload the object
         if reload:
             self.reload()
@@ -304,6 +308,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         self.geom = other.geom
         self.save()
         PathAggregation.objects.filter(topo_object=self).delete()
+        # The previous operation has put deleted = True (in triggers)
+        self.deleted = False
         aggrs = other.aggregations.all()
         # A point has only one aggregation, except if it is on an intersection.
         # In this case, the trigger will create them, so ignore them here.
@@ -338,12 +344,18 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         # but they can be changed at DB level. Since Django write all fields
         # to DB anyway, it is important to update it before writting
         if self.pk:
-            tmp = self.__class__.objects.get(pk=self.pk)
-            self.length = tmp.length
+            existing = self.__class__.objects.get(pk=self.pk)
+            self.length = existing.length
             # In the case of points, the geom can be set by Django. Don't override.
-            if (self.ispoint() and self.geom is None) or \
-               (not self.ispoint() and tmp.geom is not None):
-                self.geom = tmp.geom
+            point_geom_not_set = self.ispoint() and self.geom is None
+            geom_already_in_db = not self.ispoint() and existing.geom is not None
+            if (point_geom_not_set or geom_already_in_db):
+                self.geom = existing.geom
+        else:
+            if not self.deleted and self.geom is None:
+                # We cannot have NULL geometry. So we use an empty one,
+                # it will be computed or overwritten by triggers.
+                self.geom = fromstr('POINT (0 0 0)')
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
