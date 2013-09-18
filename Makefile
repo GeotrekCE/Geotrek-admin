@@ -15,7 +15,7 @@ BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
 
-.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod tests test test_nav test_js serve deploy load_data deploy_demo
+.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod env_standalone tests test test_nav test_js serve deploy load_data deploy_demo
 
 
 etc/settings.ini:
@@ -63,6 +63,8 @@ env_dev: install clean_harmless all_compilemessages
 env_prod: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
 
+env_standalone: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-prod-standalone.cfg $(BUILDOUT_ARGS)
 
 
 
@@ -83,7 +85,7 @@ tests: test test_js test_nav
 serve: env_dev
 	bin/django runserver_plus $(listen)
 
-deploy: env_prod
+deploy:
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate

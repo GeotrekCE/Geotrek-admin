@@ -3,7 +3,7 @@
 #..........................
 # 
 # (Note: If you edit this file out of install process, 
-#  run "make deploy" to apply changes)
+#  re-run "./install.sh" to apply changes)
 
 [settings]
 

@@ -8,6 +8,7 @@ CHANGELOG
 **BREAKING changes**
 
 * Uploaded files are now restricted to authenticated users (fixes #729)
+* From now, in order to refresh install after settings change, use ``make env_standalone deploy``.
 
 :notes:
 

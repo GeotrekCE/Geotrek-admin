@@ -10,11 +10,11 @@ After editing ``etc/settings.ini``, refresh the running instance with :
 
 ::
 
-    make deploy
+    ./install.sh
 
 
-There a few cases where running ``install.sh`` would be necessary. If you
-change the ``rooturl`` or other parameters that affect *nginx* site configuration.
+There a few cases where running ``make env_standalone deploy`` would be enough
+(if ``rooturl`` setting was not changed for example.)
 
 
 Spatial extents
@@ -77,7 +77,7 @@ However, it is still possible to write a custom Django setting file.
     [django]
     settings = settings.custom
 
-* As for any change in settings, re-run ``make deploy``.
+* As for any change in settings, re-run ``make env_standalone deploy`` or ``./install.sh``.
 
 
 ============

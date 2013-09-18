@@ -232,7 +232,7 @@ function geotrek_setup {
 
     if ! $dev ; then
 
-        make deploy
+        make env_standalone deploy
 
         # If buildout was successful, deploy really !
         if [ -f etc/nginx.conf ]; then
