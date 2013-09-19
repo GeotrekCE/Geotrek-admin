@@ -13,9 +13,6 @@ CHANGELOG
 
     *Geotrek-rando* 1.23 or higher is required to synchronize content.
 
-* From now on, the ``make deploy`` command won't run on a fresh install, without a previous ``make env_standalone``.
-
-
 **NEW features**
 
 * Upgrade Leaflet 0.6.4
