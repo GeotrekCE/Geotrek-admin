@@ -7,10 +7,7 @@ before_install:
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || mkdir -p $HOME/.buildout/downloads"
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
-  - ./install.sh --dev
-  - sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/
-  - sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/
-  - make env_test
+  - ./install.sh --tests
 script:
   - make test
   - make test_js

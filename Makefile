@@ -4,7 +4,6 @@ listen=localhost:8000
 baseurl=http://$(listen)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
-arch=$(shell uname -m)
 
 ROOT_DIR=$(shell pwd)
 BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
@@ -16,27 +15,13 @@ BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
 
-.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod tests test test_nav test_js serve deploy load_data deploy_demo
+.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod env_standalone tests test test_nav test_js serve deploy load_data deploy_demo
 
 
 etc/settings.ini:
 	mkdir -p etc/
 	cp conf/settings.ini.sample etc/settings.ini
-
-bin/phantomjs:
-	mkdir -p lib/
-	wget http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
-	rm -rf $(ROOT_DIR)/lib/*phantomjs*/
-	tar -jxvf phantomjs.tar.bz2 -C $(ROOT_DIR)/lib/
-	rm phantomjs.tar.bz2
-	ln -sf $(ROOT_DIR)/lib/*phantomjs*/bin/phantomjs $(ROOT_DIR)/bin/
-
-bin/casperjs: bin/phantomjs
-	wget https://github.com/n1k0/casperjs/zipball/1.0.2 -O casperjs.zip
-	rm -rf $(ROOT_DIR)/lib/*casperjs*/
-	unzip -o casperjs.zip -d $(ROOT_DIR)/lib/ > /dev/null
-	rm casperjs.zip
-	ln -sf $(ROOT_DIR)/lib/*casperjs*/bin/casperjs $(ROOT_DIR)/bin/
+	chmod -f 600 $settingsfile
 
 bin/python:
 	virtualenv .
@@ -45,7 +30,7 @@ bin/python:
 	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
 	rm $(BUILDOUT_BOOTSTRAP)
 
-install: etc/settings.ini bin/python bin/casperjs
+install: etc/settings.ini bin/python
 
 clean_harmless:
 	find geotrek/ -name "*.pyc" -exec rm -f {} \;
@@ -78,6 +63,8 @@ env_dev: install clean_harmless all_compilemessages
 env_prod: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
 
+env_standalone: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-prod-standalone.cfg $(BUILDOUT_ARGS)
 
 
 
@@ -98,7 +85,7 @@ tests: test test_js test_nav
 serve: env_dev
 	bin/django runserver_plus $(listen)
 
-deploy: env_prod
+deploy:
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
