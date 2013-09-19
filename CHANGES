@@ -8,11 +8,13 @@ CHANGELOG
 **BREAKING changes**
 
 * Uploaded files are now restricted to authenticated users (fixes #729)
-* From now, in order to refresh install after settings change, use ``make env_standalone deploy``.
 
 :notes:
 
     *Geotrek-rando* 1.23 or higher is required to synchronize content.
+
+* From now on, the ``make deploy`` command won't run on a fresh install, without a previous ``make env_standalone``.
+
 
 **NEW features**
 
