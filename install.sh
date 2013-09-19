@@ -269,10 +269,15 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    freshinstall=true
+    if [ -f $settingsfile ]; then
+        freshinstall=false
+    fi
+
     # Python bootstrap
     make install
 
-    if $prod || $standalone ; then
+    if $freshinstall && ($prod || $standalone) ; then
       # Prompt user to edit/review settings
       editor $settingsfile
     fi
