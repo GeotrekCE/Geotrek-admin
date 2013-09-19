@@ -20,6 +20,8 @@ CHANGELOG
 * Add auto-generated docs at /admin/doc/
 * An internal user (with login permission) is used to authenticate the Conversion
   and Capture services.
+* Installation script is modular (standalone, geotrek only, ...)
+* Settings edition prompt only happens at first install
 
 **BUG fixes**
 

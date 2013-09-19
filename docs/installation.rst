@@ -17,7 +17,8 @@ A first estimation on system resources is :
 Installation
 ------------
 
-Once the OS is installed (basic installation, with OpenSSH server), copy and extract the source archive.
+Once the OS is installed (basic installation, with OpenSSH server), copy the ``install.sh`` file
+or extract the source archive.
 
 Go into the extracted directory, just follow the installation process :
 
@@ -25,11 +26,18 @@ Go into the extracted directory, just follow the installation process :
 
     ./install.sh
 
-You will mainly be prompt for editing the base configuration file (``settings.ini``),
-using *Vim* (Finish with 'Esc' then ':wq' to save and quit).
+You will be prompt for editing the base configuration file (``settings.ini``),
+using the default editor. (With *Vim*, finish with 'Esc' then ':wq' to save and quit).
 
-To make sure the application runs well after a reboot, try now : reboot. And
-access the ``http://yourserver/``.
+:notes:
+
+    If you leave *localhost* for the database host (``dbhost`` value), a 
+    Postgresql with PostGis will be installed locally.
+    In order to use a remote server (*recommended*), set the appropriate value.
+    The connection must be operational (it will be tested during install).
+
+To make sure the application runs well after a reboot, try now : ``sudo reboot``.
+And access the application ``http://yourserver/``.
 
 See information below for configuration and loading initial demonstration data.
 
