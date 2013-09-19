@@ -2,39 +2,35 @@ SHELL = /bin/bash
 
 listen=localhost:8000
 baseurl=http://$(listen)
-root=$(shell pwd)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
-arch=$(shell uname -m)
+
+ROOT_DIR=$(shell pwd)
+BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
+BUILDOUT_VERSION = 1.7.0
+BUILDOUT_BOOTSTRAP_URL = https://raw.github.com/buildout/buildout/$(BUILDOUT_VERSION)/bootstrap/bootstrap.py
+BUILDOUT_BOOTSTRAP = bootstrap.py
+BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --version=$(BUILDOUT_VERSION) --distribute buildout:directory=$(ROOT_DIR)
+BUILDOUT = bin/buildout
+BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
+
+
+.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod env_standalone tests test test_nav test_js serve deploy load_data deploy_demo
 
 
 etc/settings.ini:
 	mkdir -p etc/
 	cp conf/settings.ini.sample etc/settings.ini
-
-bin/phantomjs:
-	mkdir -p lib/
-	wget http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-$(arch).tar.bz2 -O phantomjs.tar.bz2
-	rm -rf $(root)/lib/*phantomjs*/
-	tar -jxvf phantomjs.tar.bz2 -C $(root)/lib/
-	rm phantomjs.tar.bz2
-	ln -sf $(root)/lib/*phantomjs*/bin/phantomjs $(root)/bin/
-
-bin/casperjs: bin/phantomjs
-	wget https://github.com/n1k0/casperjs/zipball/1.0.2 -O casperjs.zip
-	rm -rf $(root)/lib/*casperjs*/
-	unzip -o casperjs.zip -d $(root)/lib/ > /dev/null
-	rm casperjs.zip
-	ln -sf $(root)/lib/*casperjs*/bin/casperjs $(root)/bin/
+	chmod -f 600 $settingsfile
 
 bin/python:
 	virtualenv .
 	mkdir -p lib/eggs
-	wget http://python-distribute.org/bootstrap.py
-	bin/python bootstrap.py --version=1.6.3
-	rm bootstrap.py
+	wget -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
+	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
+	rm $(BUILDOUT_BOOTSTRAP)
 
-install: etc/settings.ini bin/python bin/casperjs
+install: etc/settings.ini bin/python
 
 clean_harmless:
 	find geotrek/ -name "*.pyc" -exec rm -f {} \;
@@ -47,21 +43,32 @@ clean: clean_harmless
 	rm -f .installed.cfg
 	rm -f install.log
 
-.PHONY: all_makemessages all_compilemessages
+
 
 all_makemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
 
 all_compilemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
-	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(root)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
-release:
-	git archive --format=zip --prefix="geotrek-$(version)/" $(version) > ../geotrek-src-$(version).zip
 
-test: install clean_harmless
-	bin/buildout -Nvc buildout-tests.cfg
-	bin/develop update -f
+env_test: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
+
+env_dev: install clean_harmless all_compilemessages
+	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
+	bin/django syncdb --noinput --migrate
+
+env_prod: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
+
+env_standalone: install clean_harmless
+	$(BUILDOUT) -c conf/buildout-prod-standalone.cfg $(BUILDOUT_ARGS)
+
+
+
+test:
 	bin/django test --noinput authent core land maintenance trekking common infrastructure mapentity
 
 test_nav:
@@ -75,25 +82,24 @@ test_js: node_modules
 
 tests: test test_js test_nav
 
-serve: install clean_harmless all_compilemessages
-	bin/buildout -Nvc buildout-dev.cfg
-	bin/django syncdb --noinput --migrate
-	bin/django runcserver $(listen)
+serve: env_dev
+	bin/django runserver_plus $(listen)
 
-load_data:
-	# /!\ will delete existing data
-	bin/django loaddata minimal
-	bin/django loaddata basic
-	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(root)/var/media/upload/ ; popd > /dev/null; done
-
-deploy: install clean_harmless
-	bin/buildout -Nc buildout-prod.cfg buildout:user=$(user)
+deploy:
 	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django update_translation_fields
 	bin/supervisorctl restart all
+
+
+
+load_data:
+	# /!\ will delete existing data
+	bin/django loaddata minimal
+	bin/django loaddata basic
+	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(ROOT_DIR)/var/media/upload/ ; popd > /dev/null; done
 
 deploy_demo: deploy load_data
 	bin/django loaddata development-pne

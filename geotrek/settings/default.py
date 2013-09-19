@@ -38,7 +38,8 @@ FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 # Keep default values equal to buildout default values
 DEPLOY_ROOT = envini.get('deployroot', section="django", default=DEPLOY_ROOT)
-MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
+MEDIA_URL = envini.get('mediaurl', section="django", default=MEDIA_URL)
+MEDIA_URL_SECURE = envini.get('mediaurl_secure', section="django", default=MEDIA_URL_SECURE)
 STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
 MEDIA_ROOT =  envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
 STATIC_ROOT =  envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
@@ -66,8 +67,23 @@ LANGUAGES = tuple([l for l in LANGUAGES_LIST if l[0] in envini.getstrings('langu
 
 TITLE = envini.get('title', MAPENTITY_CONFIG['TITLE'])
 MAPENTITY_CONFIG['TITLE'] = TITLE
+MAPENTITY_CONFIG['ROOT_URL'] = ROOT_URL
 MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
 MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
+
+
+#
+#  Deployment settings
+#..........................
+
+MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
+                                                        envini.get('host', section='convertit', default='0.0.0.0'),
+                                                        envini.get('port', section='convertit', default='6543'))
+
+MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
+                                                     envini.get('host', section='screamshotter', default='0.0.0.0'),
+                                                     envini.get('port', section='screamshotter', default='8001'))
+
 
 #
 #  Geotrek settings
@@ -82,12 +98,7 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
-# Due to bug in Leaflet/Proj4Leaflet ()
-# landscape extents are not supported.
-if (SPATIAL_EXTENT[2] - SPATIAL_EXTENT[0] > SPATIAL_EXTENT[3] - SPATIAL_EXTENT[1]):
-    raise ImproperlyConfigured('Landscape spatial_extent not supported (%s).' % (SPATIAL_EXTENT,))
-
-LEAFLET_CONFIG['TILES_URL'] = [
+LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL),
     (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL),
 ]
@@ -98,5 +109,8 @@ MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path'][
 MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])
 MAP_STYLES['district']['color'] = envini.get('layercolor_land', MAP_STYLES['district']['color'])
 MAP_STYLES['restrictedarea']['color'] = envini.get('layercolor_land', MAP_STYLES['restrictedarea']['color'])
-MAP_STYLES['detail']['color'] = envini.get('layercolor_others', MAP_STYLES['detail']['color'])
-MAP_STYLES['others']['color'] = envini.get('layercolor_others', MAP_STYLES['others']['color'])
+
+_others_color = envini.get('layercolor_others', None)
+if _others_color:
+    MAP_STYLES.setdefault('detail', {})['color'] = _others_color
+    MAP_STYLES.setdefault('others', {})['color'] = _others_color

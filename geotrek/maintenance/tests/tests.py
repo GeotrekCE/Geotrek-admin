@@ -264,6 +264,7 @@ class ProjectViewsTest(CommonTest):
         intervention = InterventionFactory.create()
         project.interventions.add(intervention)
 
+        self.login()
         response = self.client.get(project.get_detail_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, intervention.name)

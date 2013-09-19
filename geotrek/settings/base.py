@@ -94,6 +94,7 @@ UPLOAD_DIR = 'upload'    # media root subdir
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
+MEDIA_URL_SECURE = '/media_secure/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -146,6 +147,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'mapentity.middleware.AutoLoginMiddleware'
 )
 
 ROOT_URLCONF = 'geotrek.urls'
@@ -184,6 +187,7 @@ PROJECT_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.gis',
 
     'south',
@@ -293,6 +297,8 @@ LOGGING = {
     }
 }
 
+SOUTH_TESTS_MIGRATE = True
+
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},
@@ -307,12 +313,6 @@ THUMBNAIL_ALIASES = {
 PAPERCLIP_CONFIG = {
     'FILETYPE_MODEL': 'common.FileType',
     'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
-}
-
-
-SCREAMSHOT_CONFIG = {
-    'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
-    'CLI_ARGS': ['--disk-cache=true', '--max-disk-cache-size=30000'],
 }
 
 
@@ -331,6 +331,7 @@ MAPENTITY_CONFIG = {
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://0.0.0.0:6543',
+    'ROOT_URL': ROOT_URL,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -342,13 +343,14 @@ ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'SRID': SRID,
-    'TILES_URL': [
+    'TILES': [
         ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
         ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
-    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5)
+    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
+    'NO_GLOBALS': False,
 }
 
 """ This *pool* of colors is used to colorized lands records.
@@ -359,8 +361,6 @@ LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf7
                     'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
 
-""" All layers styles.
-"""
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': 'blue'},
 
@@ -373,11 +373,6 @@ MAP_STYLES = {
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail':            {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
-    'draw':              {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
 }
 
 

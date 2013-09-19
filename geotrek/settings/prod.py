@@ -5,11 +5,8 @@ from .default import *
 #..........................
 
 ALLOWED_HOSTS = tuple(envini.getstrings('host'))
-SCREAMSHOT_CONFIG['CAPTURE_ALLOWED_IPS'] += ALLOWED_HOSTS
 
 USE_X_FORWARDED_HOST = True
-
-MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s/convert' % ROOT_URL
 
 COMPRESSOR_ENABLED = True
 
@@ -20,13 +17,11 @@ INSTALLED_APPS += (
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.MemcachedCache'
 CACHES['default']['LOCATION'] = '127.0.0.1:11211'
 
-
 LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
                                   'formatter': 'simple',
                                   'filename': os.path.join(DEPLOY_ROOT, 'var', 'log', 'geotrek.log')}
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
-
 
 #
 #  Email settings

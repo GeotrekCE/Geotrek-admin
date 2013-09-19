@@ -7,13 +7,14 @@ from .default import *
 DEBUG = True
 TEMPLATE_DEBUG = True
 
+SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
+
 #
 #  Developper Toolbar
 #..........................
 
 INSTALLED_APPS += (
     'debug_toolbar',
-    'concurrent_server',
     'django_extensions',
 )
 MIDDLEWARE_CLASSES += (
@@ -43,7 +44,7 @@ DEBUG_TOOLBAR_PANELS = (
 # Use Geotrek preprod tiles (uses default extent)
 #................................................
 
-LEAFLET_CONFIG['TILES_URL'] = [
+LEAFLET_CONFIG['TILES'] = [
     ('Terrain', 'http://geobi.makina-corpus.net/geotrek/tiles/scan/{z}/{x}/{y}.png',),
     ('Ortho', 'http://geobi.makina-corpus.net/geotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
 ]
