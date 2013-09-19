@@ -30,7 +30,7 @@ bin/python:
 	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
 	rm $(BUILDOUT_BOOTSTRAP)
 
-install: etc/settings.ini bin/python bin/casperjs
+install: etc/settings.ini bin/python
 
 clean_harmless:
 	find geotrek/ -name "*.pyc" -exec rm -f {} \;
