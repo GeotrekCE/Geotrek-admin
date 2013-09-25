@@ -2,7 +2,6 @@ from django.forms.widgets import Select
 from django.utils.translation import ugettext_lazy as _
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
-from mapentity.widgets import HiddenGeometryWidget
 
 from geotrek.core.models import Topology
 from geotrek.land.filters import EdgeStructureRelatedFilterSet
@@ -20,7 +19,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 
 class InterventionFilter(EdgeStructureRelatedFilterSet):
-    bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects', widget=HiddenGeometryWidget)
+    bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects')
     year = YearFilter(name='date', widget=Select, label=_(u"Year"))
 
     class Meta(EdgeStructureRelatedFilterSet.Meta):
@@ -31,7 +30,7 @@ class InterventionFilter(EdgeStructureRelatedFilterSet):
 
 
 class ProjectFilter(EdgeStructureRelatedFilterSet):
-    bbox = PythonPolygonFilter(name='geom', widget=HiddenGeometryWidget)
+    bbox = PythonPolygonFilter(name='geom')
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'), widget=Select,
                                 label=_(u"Year of activity"))
 
