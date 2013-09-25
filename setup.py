@@ -28,8 +28,8 @@ setup(
         'easy-thumbnails == 1.1',
         'simplekml == 1.2.1',
         'pygal == 1.1.0',
+        'django-extended-choices == 0.3.0',
         'mapentity',  # pinned by buildout
-        'django-extended-choices',  # pinned by buildout
     ] + test_requirements,
     tests_requires=test_requirements,
     license='BSD, see LICENSE file.',
