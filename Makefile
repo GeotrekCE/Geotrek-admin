@@ -82,7 +82,7 @@ test_js: node_modules
 
 tests: test test_js test_nav
 
-serve: env_dev
+serve:
 	bin/django runserver_plus $(listen)
 
 deploy:
