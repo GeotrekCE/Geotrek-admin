@@ -96,10 +96,11 @@ class AltimetryMixin(models.Model):
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
 class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
-                                  dim=3)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
-                                           spatial_index=False, dim=3)
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom_3d = models.LineStringField(dim=3, srid=settings.SRID, spatial_index=False,
+                                     editable=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
+                                           editable=False)
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
                                 help_text=_(u"Approved by manager"))
     name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"),
@@ -236,7 +237,9 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
-                                blank=True, spatial_index=False, dim=3)
+                                default=None, spatial_index=False)
+    geom_3d = models.GeometryField(dim=3, editable=False, srid=settings.SRID, null=True,
+                                   default=None, spatial_index=False)
 
     class Meta:
         db_table = 'e_t_evenement'
