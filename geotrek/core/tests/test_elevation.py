@@ -5,7 +5,7 @@ from django.contrib.gis.geos import LineString
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
-    
+
 
 class ElevationTest(TestCase):
 
@@ -23,7 +23,7 @@ class ElevationTest(TestCase):
 
     def test_elevation_path(self):
         # Create a geometry and check elevation-based indicators
-        p = Path(geom=LineString((1.5,1.5,0), (2.5,1.5,0), (1.5,2.5,0)))
+        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
         self.assertEqual(p.ascent, 0)
         self.assertEqual(p.descent, 0)
         self.assertEqual(p.min_elevation, 0)
@@ -43,20 +43,20 @@ class ElevationTest(TestCase):
         self.assertEqual(profile[-1][3], 3)
 
     def test_elevation_topology_line(self):
-        p = Path(geom=LineString((1.5,1.5,0), (2.5,1.5,0), (1.5,2.5,0)))
+        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
         p.save()
 
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p, start=0.2, end=0.7)
         topo.save()
 
-        self.assertEqual(topo.ascent, 0)
+        self.assertEqual(topo.ascent, 1)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 4)
         self.assertEqual(topo.max_elevation, 5)
 
     def test_elevation_topology_point(self):
-        p = Path(geom=LineString((1.5,1.5,0), (2.5,1.5,0), (1.5,2.5,0)))
+        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
         p.save()
 
         topo = TopologyFactory.create(no_path=True)

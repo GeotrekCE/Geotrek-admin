@@ -186,55 +186,55 @@ class PathTest(TestCase):
         connection = connections[DEFAULT_DB_ALIAS]
 
         # Create path with self-intersection
-        p = PathFactory.build(geom=LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0)))
+        p = PathFactory.build(geom=LineString((0,0),(2,0),(1,1),(1,-1)))
         self.assertRaises(IntegrityError, p.save)
         # TODO: Why a regular transaction.rollback does not work???
         connection.close() # Clear DB exception at psycopg level
 
         # Fix self-intersection
-        p.geom = LineString((0,0,0),(2,0,0),(1,1,0))
+        p.geom = LineString((0,0),(2,0),(1,1))
         p.save()
 
         # Update with self-intersection
-        p.geom = LineString((0,0,0),(2,0,0),(1,1,0),(1,-1,0))
+        p.geom = LineString((0,0),(2,0),(1,1),(1,-1))
         self.assertRaises(IntegrityError, p.save)
         connection.close() # Clear DB exception at psycopg level
 
     def test_overlap_geometry(self):
-        PathFactory.create(geom=LineString((0,0,0),(60,0,0)))
-        p = PathFactory.create(geom=LineString((40,0,0),(50,0,0)))
+        PathFactory.create(geom=LineString((0,0),(60,0)))
+        p = PathFactory.create(geom=LineString((40,0),(50,0)))
         self.assertTrue(p.is_overlap())
         # Overlaping twice
-        p = PathFactory.create(geom=LineString((20,1,0),(20,0,0),(25,0,0),(25,1,0),
-                                              (30,1,0),(30,0,0),(35,0,0),(35,1,0)))
+        p = PathFactory.create(geom=LineString((20,1),(20,0),(25,0),(25,1),
+                                              (30,1),(30,0),(35,0),(35,1)))
         self.assertTrue(p.is_overlap())
 
         # But crossing is ok
-        p = PathFactory.create(geom=LineString((6,1,0),(6,3,0)))
+        p = PathFactory.create(geom=LineString((6,1),(6,3)))
         self.assertFalse(p.is_overlap())
         # Touching is ok too
-        p = PathFactory.create(geom=LineString((5,1,0),(5,0,0)))
+        p = PathFactory.create(geom=LineString((5,1),(5,0)))
         self.assertFalse(p.is_overlap())
         # Touching twice is ok too
-        p = PathFactory.create(geom=LineString((2.5,0,0),(3,1,0),(3.5,0,0)))
+        p = PathFactory.create(geom=LineString((2.5,0),(3,1),(3.5,0)))
         self.assertFalse(p.is_overlap())
 
         """
         I gave up with the idea of checking "almost overlaping" (and touching)...
         """
         # Almost overlaping fails also
-        #PathFactory.create(geom=LineString((0,0,0),(60,0,0)))
+        #PathFactory.create(geom=LineString((0,0),(60,0)))
         #p = PathFactory.build(geom=LineString((20,0.5,0),(30,0.5,0)))
         #self.assertRaises(IntegrityError, p.save)
         #connection.close()
         # Almost touching is also ok
-        #PathFactory.create(geom=LineString((4,1,0),(4,0.5,0)))
+        #PathFactory.create(geom=LineString((4,1),(4,0.5,0)))
         # Almost touching twice is also ok
-        #PathFactory.create(geom=LineString((0.5,1,0),(1,1,0),(1.5,1,0)))
+        #PathFactory.create(geom=LineString((0.5,1),(1,1),(1.5,1)))
 
     def test_snapping(self):
         # Sinosoid line
-        coords = [(x, math.sin(x), 0) for x in range(10)]
+        coords = [(x, math.sin(x)) for x in range(10)]
         PathFactory.create(geom=LineString(*coords))
         """
                +
@@ -245,27 +245,17 @@ class PathTest(TestCase):
                  \--/
         """
         # Snap end
-        path_snapped = PathFactory.create(geom=LineString((10, 10, 0), (5, -1, 0)))  # math.sin(5) == -0.96..
+        path_snapped = PathFactory.create(geom=LineString((10, 10), (5, -1)))  # math.sin(5) == -0.96..
         self.assertEqual(len(Path.objects.all()), 3)
-        self.assertEqual(path_snapped.geom.coords, ((10, 10, 0), coords[5]))
+        self.assertEqual(path_snapped.geom.coords, ((10, 10), coords[5]))
 
         # Snap start
-        path_snapped = PathFactory.create(geom=LineString((3, 0, 0), (5, -5, 0)))  # math.sin(3) == 0.14..
-        self.assertEqual(path_snapped.geom.coords, (coords[3], (5, -5, 0)))
+        path_snapped = PathFactory.create(geom=LineString((3, 0), (5, -5)))  # math.sin(3) == 0.14..
+        self.assertEqual(path_snapped.geom.coords, (coords[3], (5, -5)))
 
         # Snap both
-        path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (3.0, 0, 0)))
-        self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (3.0, math.sin(3), 0)))
-
-    def test_snapping_3d(self):
-        PathFactory.create(geom=LineString(((0, 0, 0), (5, 0, 1000), (6, 0, 0))))
-        path_snapped = PathFactory.create(geom=LineString((0, 0, 0), (5.2, 0, 0)))
-        self.assertEqual(path_snapped.geom.coords, ((0, 0, 0), (5, 0, 1000)))
-
-    def test_snapping_3d_extremities(self):
-        PathFactory.create(geom=LineString(((0, 0, 0), (10, 0, 1000))))
-        path_snapped = PathFactory.create(geom=LineString((8, 0, 0), (-50, -50, 0)))
-        self.assertEqual(path_snapped.geom.coords, ((8, 0, 0), (-50, -50, 0)))
+        path_snapped = PathFactory.create(geom=LineString((0, 0), (3.0, 0)))
+        self.assertEqual(path_snapped.geom.coords, ((0, 0), (3.0, math.sin(3))))
 
 
 class TrailTest(TestCase):

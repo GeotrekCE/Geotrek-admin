@@ -90,9 +90,9 @@ class TopologyTest(TestCase):
         # are not duplicated (c.f. SQL triggers)
 
         # Create a 3 paths intersection
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (1, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((1, 0, 0), (2, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((1, 0, 0), (1, 1, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(geom=LineString((1, 0), (2, 0)))
+        p3 = PathFactory.create(geom=LineString((1, 0), (1, 1)))
         # Create a topology point at this intersection
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(p2, start=0.0, end=0.0)
@@ -113,8 +113,8 @@ class TopologyTest(TestCase):
          / X \
         +     +
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 1000), (4, 4, 2000)))
-        p2 = PathFactory.create(geom=LineString((4, 4, 2000), (8, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        p2 = PathFactory.create(geom=LineString((4, 4), (8, 0)))
 
         poi = Point(3, 1, srid=settings.SRID)
         position, distance = Path.interpolate(p1, poi)
@@ -130,7 +130,6 @@ class TopologyTest(TestCase):
         # Resulting geometry
         self.assertTrue(almostequal(3, poitopo.geom.x))
         self.assertTrue(almostequal(1, poitopo.geom.y))
-        self.assertTrue(almostequal(0, poitopo.geom.z))
 
     def test_point_geom_not_moving(self):
         """
@@ -142,11 +141,11 @@ class TopologyTest(TestCase):
         |                  |
         +                  +
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0),
-                                                (0, 5, 0),
-                                                (5, 10, 0),
-                                                (0, 15, 0),
-                                                (0, 20, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0),
+                                                (0, 5),
+                                                (5, 10),
+                                                (0, 15),
+                                                (0, 20)))
         poi = Point(10, 10, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
@@ -156,19 +155,19 @@ class TopologyTest(TestCase):
         self.assertTrue(almostequal(10, poitopo.geom.x))
         self.assertTrue(almostequal(10, poitopo.geom.y))
         # Change path, it should still be in the same position
-        p1.geom = LineString((0, 0, 0),
-                             (0, 5, 0),
-                             (-5, 10, 0),
-                             (0, 15, 0),
-                             (0, 20, 0))
+        p1.geom = LineString((0, 0),
+                             (0, 5),
+                             (-5, 10),
+                             (0, 15),
+                             (0, 20))
         p1.save()
         poitopo.reload()
         self.assertTrue(almostequal(10, poitopo.geom.x))
         self.assertTrue(almostequal(10, poitopo.geom.y))
 
     def test_point_geom_moving(self):
-        p1 = PathFactory.create(geom=LineString((0, 0, 0),
-                                                (0, 5, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0),
+                                                (0, 5)))
         poi = Point(0, 2.5, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
@@ -176,17 +175,17 @@ class TopologyTest(TestCase):
         self.assertTrue(almostequal(0, poitopo.offset))
         self.assertTrue(almostequal(0, poitopo.geom.x))
         self.assertTrue(almostequal(2.5, poitopo.geom.y))
-        p1.geom = LineString((10, 0, 0),
-                             (10, 5, 0))
+        p1.geom = LineString((10, 0),
+                             (10, 5))
         p1.save()
         poitopo.reload()
         self.assertTrue(almostequal(10, poitopo.geom.x))
         self.assertTrue(almostequal(2.5, poitopo.geom.y))
 
     def test_junction_point(self):
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (2, 2, 2)))
-        p2 = PathFactory.create(geom=LineString((0, 0, 0), (2, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((0, 2, 2), (0, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
+        p2 = PathFactory.create(geom=LineString((0, 0), (2, 0)))
+        p3 = PathFactory.create(geom=LineString((0, 2), (0, 0)))
 
         # Create a junction point topology
         t = TopologyFactory.create(no_path=True)
@@ -210,16 +209,16 @@ class TopologyTest(TestCase):
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
 
     def test_topology_geom(self):
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (2, 2, 2)))
-        p2 = PathFactory.create(geom=LineString((2, 2, 2), (2, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((2, 0, 0), (4, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
+        p2 = PathFactory.create(geom=LineString((2, 2), (2, 0)))
+        p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
 
         # Type Point
         t = TopologyFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=t, path=p1,
                                       start_position=0.5, end_position=0.5)
         t = Topology.objects.get(pk=t.pk)
-        self.assertEqual(t.geom, Point((1, 1, 1)))
+        self.assertEqual(t.geom, Point((1, 1)))
 
         # 50% of path p1, 100% of path p2
         t = TopologyFactory.create(no_path=True)
@@ -227,19 +226,19 @@ class TopologyTest(TestCase):
                                       start_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p2)
         t = Topology.objects.get(pk=t.pk)
-        self.assertEqual(t.geom, LineString((1, 1, 1), (2, 2, 2), (2, 0, 0)))
+        self.assertEqual(t.geom, LineString((1, 1), (2, 2), (2, 0)))
 
         # 100% of path p2 and p3, with offset of 1
         t = TopologyFactory.create(no_path=True, offset=1)
         PathAggregationFactory.create(topo_object=t, path=p2)
         PathAggregationFactory.create(topo_object=t, path=p3)
         t.save()
-        self.assertEqual(t.geom, LineString((3, 2, 2), (3, 1, 0), (4, 1, 0)))
+        self.assertEqual(t.geom, LineString((3, 2), (3, 1), (4, 1)))
 
         # Change offset, geometry is computed again
         t.offset = 0.5
         t.save()
-        self.assertEqual(t.geom, LineString((2.5, 2, 2), (2.5, 0.5, 0), (4, 0.5, 0)))
+        self.assertEqual(t.geom, LineString((2.5, 2), (2.5, 0.5), (4, 0.5)))
 
     def test_topology_geom_with_intermediate_markers(self):
         # Intermediate (forced passage) markers for topologies
@@ -247,10 +246,10 @@ class TopologyTest(TestCase):
         #       +--p2---+
         #   +---+-------+---+
         #     p1   p3     p4
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (2, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((2, 0, 0), (2, 1, 0), (4, 1, 0), (4, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((2, 0, 0), (4, 0, 0)))
-        p4 = PathFactory.create(geom=LineString((4, 0, 0), (6, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (2, 0)))
+        p2 = PathFactory.create(geom=LineString((2, 0), (2, 1), (4, 1), (4, 0)))
+        p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
+        p4 = PathFactory.create(geom=LineString((4, 0), (6, 0)))
         """
         From p1 to p4, with point in the middle of p3
         """
@@ -261,7 +260,7 @@ class TopologyTest(TestCase):
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)
         t.save()
-        self.assertEqual(t.geom, LineString((0, 0, 0), (2, 0, 0), (4, 0, 0), (6, 0, 0)))
+        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (4, 0), (6, 0)))
         """
         From p1 to p4, through p2
         """
@@ -273,7 +272,7 @@ class TopologyTest(TestCase):
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)
         t.save()
-        self.assertEqual(t.geom, LineString((0, 0, 0), (2, 0, 0), (2, 1, 0), (4, 1, 0), (4, 0, 0), (6, 0, 0)))
+        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (2, 1), (4, 1), (4, 0), (6, 0)))
 
         """
         From p1 to p4, though p2, but **with start/end at 0.0**
@@ -289,7 +288,7 @@ class TopologyTest(TestCase):
 
     def test_troncon_geom_update(self):
         # Create a path
-        p = PathFactory.create(geom=LineString((0, 0, 0), (4, 0, 0)))
+        p = PathFactory.create(geom=LineString((0, 0), (4, 0)))
 
         # Create a linear topology
         t1 = TopologyFactory.create(offset=1, no_path=True)
@@ -303,18 +302,18 @@ class TopologyTest(TestCase):
 
         # Ensure linear topology is correct before path modification
         self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 1, 0), (2, 1, 0)))
+        self.assertEqual(t1.geom.coords, ((0, 1), (2, 1)))
         self.assertEqual(t1_agg.start_position, 0.0)
         self.assertEqual(t1_agg.end_position, 0.5)
 
         # Ensure point topology is correct before path modification
         self.assertEqual(t2.offset, -1)
-        self.assertEqual(t2.geom.coords, (2, -1, 0))
+        self.assertEqual(t2.geom.coords, (2, -1))
         self.assertEqual(t2_agg.start_position, 0.5)
         self.assertEqual(t2_agg.end_position, 0.5)
 
         # Modify path geometry and refresh computed data
-        p.geom = LineString((0, 2, 0), (8, 2, 0))
+        p.geom = LineString((0, 2), (8, 2))
         p.save()
         t1.reload()
         t1_agg = t1.aggregations.get()
@@ -323,13 +322,13 @@ class TopologyTest(TestCase):
 
         # Ensure linear topology is correct after path modification
         self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 3, 0), (4, 3, 0)))
+        self.assertEqual(t1.geom.coords, ((0, 3), (4, 3)))
         self.assertEqual(t1_agg.start_position, 0.0)
         self.assertEqual(t1_agg.end_position, 0.5)
 
         # Ensure point topology is correct before path modification
         self.assertEqual(t2.offset, -3)
-        self.assertEqual(t2.geom.coords, (2, -1, 0))
+        self.assertEqual(t2.geom.coords, (2, -1))
         self.assertEqual(t2_agg.start_position, 0.25)
         self.assertEqual(t2_agg.end_position, 0.25)
 
@@ -341,13 +340,13 @@ class TopologyCornerCases(TestCase):
         B +-------+-------+ D
 
         """
-        ab = PathFactory.create(geom=LineString((5, 0, 0), (0, 0, 0)))
-        cd = PathFactory.create(geom=LineString((5, 0, 0), (10, 0, 0)))
+        ab = PathFactory.create(geom=LineString((5, 0), (0, 0)))
+        cd = PathFactory.create(geom=LineString((5, 0), (10, 0)))
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(ab, start=0.2, end=0)
         topo.add_path(cd, start=0, end=0.2)
         topo.save()
-        expected = LineString((4, 0, 0), (5, 0, 0), (6, 0, 0))
+        expected = LineString((4, 0), (5, 0), (6, 0))
         self.assertEqual(topo.geom, expected)
         # Now let's have some fun, reverse BA :)
         ab.reverse()
@@ -361,15 +360,15 @@ class TopologyCornerCases(TestCase):
         B +-------+--------+-------+ D
 
         """
-        ab = PathFactory.create(geom=LineString((5, 0, 0), (0, 0, 0)))
-        ac = PathFactory.create(geom=LineString((5, 0, 0), (10, 0, 0)))
-        cd = PathFactory.create(geom=LineString((10, 0, 0), (15, 0, 0)))
+        ab = PathFactory.create(geom=LineString((5, 0), (0, 0)))
+        ac = PathFactory.create(geom=LineString((5, 0), (10, 0)))
+        cd = PathFactory.create(geom=LineString((10, 0), (15, 0)))
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(ab, start=0.2, end=0)
         topo.add_path(ac)
         topo.add_path(cd, start=0, end=0.2)
         topo.save()
-        expected = LineString((4, 0, 0), (5, 0, 0), (10, 0, 0), (11, 0, 0))
+        expected = LineString((4, 0), (5, 0), (10, 0), (11, 0))
         self.assertEqual(topo.geom, expected)
         # Reverse AC ! OMG this is hell !
         ac.reverse()
@@ -384,8 +383,8 @@ class TopologyCornerCases(TestCase):
                  |
         B +------+------+ C
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((5, 0, 0), (5, 10, 0), (10, 10, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((5, 0), (5, 10), (10, 10)))
         p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
         # Now create a topology B-A-C
         topo = TopologyFactory.create(no_path=True)
@@ -395,16 +394,16 @@ class TopologyCornerCases(TestCase):
         topo.add_path(p2, start=0.8, end=0)
         topo.add_path(p3, start=0, end=0.5)
         topo.save()
-        self.assertEqual(topo.geom, LineString((2.5, 0, 0), (5, 0, 0), (5, 10, 0),
-                                               (7, 10, 0), (5, 10, 0), (5, 0, 0),
-                                               (7.5, 0, 0)))
+        self.assertEqual(topo.geom, LineString((2.5, 0), (5, 0), (5, 10),
+                                               (7, 10), (5, 10), (5, 0),
+                                               (7.5, 0)))
 
     def test_return_path_serialized(self):
         """
         Same as test_return_path() but from deserialization.
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((5, 0, 0), (5, 10, 0), (10, 10, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((5, 0), (5, 10), (10, 10)))
         p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
         topo = Topology.deserialize("""
            [{"offset":0,
@@ -420,9 +419,9 @@ class TopologyCornerCases(TestCase):
            ]
         """ % {'p1': p1.pk, 'p2': p2.pk, 'p3': p3.pk})
         topo.save()
-        self.assertEqual(topo.geom, LineString((2.5, 0, 0), (5, 0, 0), (5, 10, 0),
-                                               (7, 10, 0), (5, 10, 0), (5, 0, 0),
-                                               (7.5, 0, 0)))
+        self.assertEqual(topo.geom, LineString((2.5, 0), (5, 0), (5, 10),
+                                               (7, 10), (5, 10), (5, 0),
+                                               (7.5, 0)))
 
 
 class TopologyLoopTests(TestCase):
@@ -432,22 +431,22 @@ class TopologyLoopTests(TestCase):
           ||        ||
         A +==------==+ B
         """
-        p1 = PathFactory.create(geom=LineString((10, 0, 0), (0, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((0, 0, 0), (0, 5, 0), (10, 5, 0), (10, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((10, 0), (0, 0)))
+        p2 = PathFactory.create(geom=LineString((0, 0), (0, 5), (10, 5), (10, 0)))
         # Full loop
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1)
         topo.add_path(p2)
         topo.save()
-        self.assertEqual(topo.geom, LineString((10, 0, 0), (0, 0, 0), (0, 5, 0), (10, 5, 0), (10, 0, 0)))
+        self.assertEqual(topo.geom, LineString((10, 0), (0, 0), (0, 5), (10, 5), (10, 0)))
         # Subpart, like in diagram
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.8, end=1)
         topo.add_path(p2)
         topo.add_path(p1, start=0, end=0.2)
         topo.save()
-        self.assertEqual(topo.geom, LineString((2, 0, 0), (0, 0, 0), (0, 5, 0),
-                                               (10, 5, 0), (10, 0, 0), (8, 0, 0)))
+        self.assertEqual(topo.geom, LineString((2, 0), (0, 0), (0, 5),
+                                               (10, 5), (10, 0), (8, 0)))
 
     def test_trek_loop(self):
         """
@@ -455,18 +454,18 @@ class TopologyLoopTests(TestCase):
                            ||       ||
         +-------===========+=========+----------+
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((10, 0, 0), (30, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((10, 0, 0), (10, 5, 0),
-                                                (20, 5, 0), (20, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0), (30, 0)))
+        p3 = PathFactory.create(geom=LineString((10, 0), (10, 5),
+                                                (20, 5), (20, 0)))
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.3, end=1)
         topo.add_path(p3)
         topo.add_path(p2, start=1, end=0)
         topo.add_path(p1, start=1, end=0.3)
         topo.save()
-        self.assertEqual(topo.geom, LineString((3, 0, 0), (10, 0, 0), (10, 5, 0), (20, 5, 0), (20, 0, 0),
-                                               (10, 0, 0), (3, 0, 0)))
+        self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5), (20, 5), (20, 0),
+                                               (10, 0), (3, 0)))
 
     def test_spoon_loop(self):
         """
@@ -474,10 +473,10 @@ class TopologyLoopTests(TestCase):
                            ||       ||
         +-------===<===>===+=====>===
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((10, 0, 0), (10, 5, 0),
-                                                (20, 5, 0), (20, 0, 0),
-                                                (10, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0), (10, 5),
+                                                (20, 5), (20, 0),
+                                                (10, 0)))
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.3, end=1)
         topo.add_path(p2, start=1, end=0.4)
@@ -487,9 +486,9 @@ class TopologyLoopTests(TestCase):
         topo.add_path(p2, start=0.2, end=0)
         topo.add_path(p1, start=1, end=0.3)
         topo.save()
-        self.assertEqual(topo.geom, LineString((3, 0, 0), (10, 0, 0), (20, 0, 0), (20, 5, 0),
-                                               (17, 5, 0), (11, 5, 0),  # extra point due middle aggregation
-                                               (10, 5, 0), (10, 0, 0), (3, 0, 0)))
+        self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (20, 0), (20, 5),
+                                               (17, 5), (11, 5),  # extra point due middle aggregation
+                                               (10, 5), (10, 0), (3, 0)))
 
         # Deserializing should work too
         topod = Topology.deserialize("""
@@ -506,10 +505,10 @@ class TopologyLoopTests(TestCase):
                            ||       ||
         +-------===<===>===+=====<===
         """
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (10, 0, 0)))
-        p2 = PathFactory.create(geom=LineString((10, 0, 0), (10, 5, 0),
-                                                (20, 5, 0), (20, 0, 0),
-                                                (10, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0), (10, 5),
+                                                (20, 5), (20, 0),
+                                                (10, 0)))
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p1, start=0.3, end=1)
         topo.add_path(p2, start=0, end=0.4)
@@ -519,9 +518,9 @@ class TopologyLoopTests(TestCase):
         topo.add_path(p2, start=0.8, end=1.0)
         topo.add_path(p1, start=1, end=0.3)
         topo.save()
-        self.assertEqual(topo.geom, LineString((3, 0, 0), (10, 0, 0), (10, 5, 0),
-                                               (17, 5, 0), (20, 5, 0),  # extra point due middle aggregation
-                                               (20, 0, 0), (16, 0, 0), (10, 0, 0), (3, 0, 0)))
+        self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5),
+                                               (17, 5), (20, 5),  # extra point due middle aggregation
+                                               (20, 0), (16, 0), (10, 0), (3, 0)))
 
         # De/Serializing should work too
         serialized = """
@@ -599,9 +598,9 @@ class TopologySerialization(TestCase):
 
     def test_deserialize_multiple_lines(self):
         # Multiple paths
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (2, 2, 2)))
-        p2 = PathFactory.create(geom=LineString((2, 2, 2), (2, 0, 0)))
-        p3 = PathFactory.create(geom=LineString((2, 0, 0), (4, 0, 0)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
+        p2 = PathFactory.create(geom=LineString((2, 2), (2, 0)))
+        p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
         pks = [p.pk for p in [p1, p2, p3]]
         topology = Topology.deserialize('{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}' % (pks))
         for i in range(3):
@@ -623,7 +622,7 @@ class TopologySerialization(TestCase):
         p.transform(settings.API_SRID)
         closest = Path.closest(p)
         # Check closest path
-        self.assertEqual(closest.geom.coords, ((1.0, 1.0, 0.0), (2.0, 2.0, 0.0)))
+        self.assertEqual(closest.geom.coords, ((1.0, 1.0), (2.0, 2.0)))
         # The point has same x as first point of path, and y to 0 :
         topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
         self.assertAlmostEqual(topology.offset, -0.7071, 3)
@@ -633,7 +632,7 @@ class TopologySerialization(TestCase):
         self.assertTrue(almostequal(pagg.end_position, 0.5))
 
     def test_deserialize_serialize(self):
-        path = PathFactory.create(geom=LineString((1, 1, 1), (2, 2, 2), (2, 0, 0)))
+        path = PathFactory.create(geom=LineString((1, 1), (2, 2), (2, 0)))
         before = TopologyFactory.create(offset=1, no_path=True)
         before.add_path(path, start=0.5, end=0.5)
         # Reload from DB
