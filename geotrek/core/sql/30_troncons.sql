@@ -59,11 +59,11 @@ BEGIN
     -- Note: I gave up with the idea of checking almost overlap/touch.
 
     -- tolerance := 1.0;
-    -- Crossing and extremity touching is OK. 
+    -- Crossing and extremity touching is OK.
     -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
-    FROM l_t_troncon 
-    WHERE pid != id 
+    FROM l_t_troncon
+    WHERE pid != id
       AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
       -- not extremity touching
       -- AND ST_Touches(geom, line) = false
