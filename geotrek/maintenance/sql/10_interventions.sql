@@ -57,7 +57,7 @@ DROP TRIGGER IF EXISTS m_t_evenement_interventions_iu_tgr ON e_t_evenement;
 
 CREATE OR REPLACE FUNCTION update_altimetry_evenement_intervention() RETURNS trigger AS $$
 BEGIN
-    UPDATE m_t_intervention SET 
+    UPDATE m_t_intervention SET
         longueur = CASE WHEN ST_GeometryType(NEW.geom) <> 'ST_Point' THEN NEW.longueur ELSE longueur END,
         pente = NEW.pente,
         altitude_minimum = NEW.altitude_minimum, altitude_maximum = NEW.altitude_maximum,
@@ -68,7 +68,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER m_t_evenement_interventions_iu_tgr
-AFTER UPDATE OF longueur, pente, 
+AFTER UPDATE OF longueur, pente,
     altitude_minimum, altitude_maximum,
     denivelee_positive, denivelee_negative ON e_t_evenement
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_evenement_intervention();
@@ -80,10 +80,10 @@ CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
-    SELECT geom, geom, pente, altitude_minimum, altitude_maximum, denivelee_positive, denivelee_negative
+    SELECT geom_3d, pente, altitude_minimum, altitude_maximum, denivelee_positive, denivelee_negative
     FROM e_t_evenement WHERE id = NEW.topology_id INTO elevation;
 
-    IF ST_GeometryType(elevation.geom3d) <> 'ST_Point' THEN
+    IF ST_GeometryType(elevation.draped) <> 'ST_Point' THEN
         NEW.longueur := ST_3DLength(elevation.draped);
     END IF;
     NEW.pente := elevation.slope;

@@ -31,6 +31,8 @@ DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
 DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
 CREATE INDEX l_t_troncon_geom_cadastre_idx ON l_t_troncon USING gist(geom_cadastre);
 
+DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;
+CREATE INDEX l_t_troncon_geom_3d_idx ON l_t_troncon USING gist(geom_3d);
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
@@ -147,7 +149,7 @@ BEGIN
 
     SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
     -- Update path geometry
-    NEW.geom := elevation.geom3d;
+    NEW.geom_3d := elevation.draped;
     NEW.longueur := ST_3DLength(elevation.draped);
     NEW.pente := elevation.slope;
     NEW.altitude_minimum := elevation.min_elevation;

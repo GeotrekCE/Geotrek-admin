@@ -137,7 +137,7 @@ class TopologyHelper(object):
                                   end_position=position,
                                   path=closest)
         aggrobj.save()
-        point = Point(point.x, point.y, 0, srid=settings.SRID)
+        point = Point(point.x, point.y, srid=settings.SRID)
         topology.geom = point
         topology.save()
         return topology
@@ -232,7 +232,7 @@ class PathHelper(object):
         WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
                    FROM %(table)s
                    WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
+        SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
         """ % {'ewkt': point.ewkt, 'table': path._meta.db_table, 'pk': path.pk}
         cursor.execute(sql)
         result = cursor.fetchall()

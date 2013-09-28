@@ -71,7 +71,7 @@ BEGIN
     newline := array_append(newline, result);
 
     RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
-    NEW.geom := ST_Force_3D(ST_MakeLine(newline));
+    NEW.geom := ST_MakeLine(newline);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

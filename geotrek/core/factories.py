@@ -52,8 +52,8 @@ class ComfortFactory(factory.Factory):
 class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
-    geom = LineString(Point(1, 1, 0), Point(2, 2, 0), srid=settings.SRID)
-    geom_cadastre = LineString(Point(5, 5, 0), Point(6, 6, 0), srid=settings.SRID)
+    geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
+    geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: u"name %s" % n)
     departure = factory.Sequence(lambda n: u"departure %s" % n)
@@ -91,7 +91,7 @@ def getRandomLineStringInBounds(*args, **kwargs):
     p1_x, p2_x = get_in_bound_x(), get_in_bound_x()
     p1_y = p2_y = get_in_bound_y() # make a straight line to be easily identified
 
-    return LineString([Point(p1_x, p1_y, 0), Point(p2_x, p2_y, 0)], srid=srid)
+    return LineString([Point(p1_x, p1_y), Point(p2_x, p2_y)], srid=srid)
 
 
 def getExistingLineStringInBounds(*args, **kwargs):

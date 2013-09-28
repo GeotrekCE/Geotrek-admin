@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from math import isnan
 import logging
-from datetime import datetime
 import functools
 
 from django.contrib.gis.db import models
@@ -165,11 +163,8 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         Reverse the geometry.
         We keep track of this, since we will have to work on topologies at save()
         """
-        # path.geom.reverse() won't work for 3D coords
         reversed_coord = self.geom.coords[-1::-1]
-        # TODO: Why do we have to filter nan variable ?! Why are they here in the first place ?
-        valid_coords = [(x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord]
-        self.geom = LineString(valid_coords)
+        self.geom = LineString(reversed_coord)
         self.is_reversed = True
         return self
 
