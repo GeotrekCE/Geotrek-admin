@@ -159,10 +159,10 @@ class CouchesSIGTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_troncons_link(self):
-        p1 = PathFactory.create(geom=LineString((0,0,0), (1,1,1)))
-        p2 = PathFactory.create(geom=LineString((1,1,1), (3,3,3)))
-        p3 = PathFactory.create(geom=LineString((3,3,3), (4,4,4)))
-        p4 = PathFactory.create(geom=LineString((4,1,1), (6,2,2), (4,3,3)))
+        p1 = PathFactory.create(geom=LineString((0,0), (1,1)))
+        p2 = PathFactory.create(geom=LineString((1,1), (3,3)))
+        p3 = PathFactory.create(geom=LineString((3,3), (4,4)))
+        p4 = PathFactory.create(geom=LineString((4,1), (6,2), (4,3)))
 
         # Paths should not be linked to anything at this stage
         self.assertEquals(p1.aggregations.count(), 0)
@@ -214,7 +214,7 @@ class CouchesSIGTest(TestCase):
         c.save()
 
         # Fake paths in these areas
-        p = PathFactory(geom=LineString((0.5,0.5,0), (0.5,1.5,0), (1.5,1.5,0), (1.5,0.5,0)))
+        p = PathFactory(geom=LineString((0.5,0.5), (0.5,1.5), (1.5,1.5), (1.5,0.5)))
         p.save()
 
         # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
@@ -246,7 +246,7 @@ class CouchesSIGTest(TestCase):
         self.assertAlmostEqual(pa2.end_position, 2.5/3)
 
         # Ensure everything is in order after update
-        p.geom = LineString((0.5,0.5,0), (1.5,0.5,0))
+        p.geom = LineString((0.5,0.5), (1.5,0.5))
         p.save()
         self.assertEquals(p.aggregations.count(), 2)
         self.assertEquals(p.topology_set.count(), 2)

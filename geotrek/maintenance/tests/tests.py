@@ -286,13 +286,13 @@ class ExportTest(TestCase):
 
         # Create topology line
         topo_line = TopologyFactory.create(no_path=True)
-        line = PathFactory.create(geom=LineString(Point(10, 10, 0), Point(11, 10, 0)))
+        line = PathFactory.create(geom=LineString(Point(10, 10), Point(11, 10)))
         PathAggregationFactory.create(topo_object=topo_line, path=line)
 
         # Create a topology point
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
-        closest_path = PathFactory(geom=LineString(Point(0, 0, 0), Point(1, 0, 0), srid=settings.SRID))
+        closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
         topo_point = TopologyHelper._topologypoint(lng, lat, None).reload()
 
         self.assertEquals(topo_point.paths.get(), closest_path)

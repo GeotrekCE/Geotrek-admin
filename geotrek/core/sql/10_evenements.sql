@@ -120,7 +120,8 @@ BEGIN
 
     IF t_count > 0 THEN
         SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
-        UPDATE e_t_evenement SET geom = elevation.geom3d,
+        UPDATE e_t_evenement SET geom = ST_Force_2D(egeom),
+                                 geom_3d = elevation.draped,
                                  longueur = ST_3DLength(elevation.draped),
                                  pente = elevation.slope,
                                  altitude_minimum = elevation.min_elevation,

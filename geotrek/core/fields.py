@@ -8,11 +8,11 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, LineString
 
 import floppyforms as forms
+from mapentity.helpers import wkt_to_geom
 
 from .models import Topology, Path
 from .widgets import PointLineTopologyWidget, SnappedLineStringWidget
 
-from geotrek.common.utils import wkt_to_geom
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class SnappedLineStringField(forms.gis.LineStringField):
     """
     It's a LineString field, with additional information about snapped vertices.
     """
-    dim = 3
+    dim = 2
     widget = SnappedLineStringWidget
 
     default_error_messages = {
@@ -81,8 +81,6 @@ class SnappedLineStringField(forms.gis.LineStringField):
             paths = dict(paths)
             coords = list(geom.coords)
             for i, vertex in enumerate(coords):
-                if len(vertex) == 2:
-                    vertex = (vertex[0], vertex[1], 0.0)
                 path = paths.get(i)
                 if path:
                     snap = path.snap(Point(*vertex, srid=geom.srid))
