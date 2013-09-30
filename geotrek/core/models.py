@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    geom_3d = models.LineStringField(dim=3, srid=settings.SRID, spatial_index=False,
-                                     editable=False, null=True, default=None)
+    geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
+                                   editable=False, null=True, default=None)
     length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
@@ -98,7 +98,6 @@ class AltimetryMixin(models.Model):
 
 class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),

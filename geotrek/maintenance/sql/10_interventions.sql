@@ -86,6 +86,7 @@ BEGIN
     IF ST_GeometryType(elevation.draped) <> 'ST_Point' THEN
         NEW.longueur := ST_3DLength(elevation.draped);
     END IF;
+    NEW.geom_3d := elevation.draped;
     NEW.pente := elevation.slope;
     NEW.altitude_minimum := elevation.min_elevation;
     NEW.altitude_maximum := elevation.max_elevation;

@@ -10,15 +10,40 @@ from django.contrib.gis.geos import GEOSGeometry
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        db.start_transaction()
+        # geom becomes geom_3d
         db.rename_column('l_t_troncon', 'geom', 'geom_3d')
+        db.execute("ALTER TABLE l_t_troncon ALTER COLUMN geom_3d SET DEFAULT NULL;")
+        # Create 2D topology
         db.add_column('l_t_troncon', 'geom',
                       self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, default=GEOSGeometry('LINESTRING EMPTY'), spatial_index=False),
                       keep_default=False)
+        # geom becomes geom_3d
+        db.rename_column('e_t_evenement', 'geom', 'geom_3d')
+        db.execute("ALTER TABLE e_t_evenement ALTER COLUMN geom_3d SET DEFAULT NULL;")
+        # Create 2D topology
+        db.add_column('e_t_evenement', 'geom',
+                      self.gf('django.contrib.gis.db.models.fields.GeometryField')(srid=settings.SRID, null=True, default=None, spatial_index=False))
+        # Switch cadastre to 2D
+        db.alter_column('l_t_troncon', 'geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, null=True, spatial_index=False))
+        db.commit_transaction()
+
+        #
+        # Data migration
+        #
+        db.start_transaction()
         db.execute("UPDATE l_t_troncon SET geom = ST_force_2D(geom_3d);")
+        db.execute("UPDATE e_t_evenement SET geom = ST_force_2D(geom_3d);")
+        db.commit_transaction()
+
 
     def backwards(self, orm):
         db.delete_column('l_t_troncon', 'geom')
         db.rename_column('l_t_troncon', 'geom_3d', 'geom')
+        db.delete_column('e_t_evenement', 'geom')
+        db.rename_column('e_t_evenement', 'geom_3d', 'geom')
+
+        db.alter_column('l_t_troncon', 'geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, dim=3, null=True, spatial_index=False))
 
     models = {
         u'authent.structure': {
@@ -56,8 +81,8 @@ class Migration(SchemaMigration):
             'departure': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'depart'", 'blank': 'True'}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
-            'geom_3d': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.LineStringField', [], {'default': 'None', 'null': 'True', 'dim': '3', 'spatial_index': 'False', 'srid': '%s' % settings.SRID}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
@@ -93,7 +118,8 @@ class Migration(SchemaMigration):
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False', 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.LineStringField', [], {'default': 'None', 'null': 'True', 'dim': '3', 'spatial_index': 'False', 'srid': '%s' % settings.SRID}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
