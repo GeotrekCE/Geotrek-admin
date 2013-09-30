@@ -134,7 +134,6 @@ DECLARE
     ele integer;
     last_ele integer;
     result elevation_infos;
-    ALTIMETRIC_PROFILE_PRECISION integer;
 BEGIN
     -- Skip if no DEM (speed-up tests)
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
@@ -142,8 +141,6 @@ BEGIN
         SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
-
-    ALTIMETRIC_PROFILE_PRECISION := 25;  -- same as default value for plotting
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
@@ -165,7 +162,7 @@ BEGIN
     result.negative_gain := 0;
     last_ele := NULL;
     points3d := ARRAY[]::geometry[];
-    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, ALTIMETRIC_PROFILE_PRECISION) dl LOOP
+    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) dl LOOP
         points3d := array_append(points3d, current);
         ele := ST_Z(current)::integer;
         -- Add positive only if ele - last_ele > 0
