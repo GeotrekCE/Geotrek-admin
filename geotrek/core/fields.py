@@ -8,11 +8,11 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, LineString
 
 import floppyforms as forms
+from mapentity.helpers import wkt_to_geom
 
 from .models import Topology, Path
 from .widgets import PointLineTopologyWidget, SnappedLineStringWidget
 
-from geotrek.common.utils import wkt_to_geom
 
 logger = logging.getLogger(__name__)
 
