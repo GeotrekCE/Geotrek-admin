@@ -261,10 +261,8 @@ class TrekCustomViewTests(TestCase):
         poi.name_fr = "Chapelle"
         poi.name_it = "Capela"
         poi.save()
-        PathAggregationFactory.create(topo_object=trek, path=p1,
-                                      start_position=0.5)
-        PathAggregationFactory.create(topo_object=poi, path=p1,
-                                      start_position=0.6, end_position=0.6)
+        trek.add_path(p1, start=0.5)
+        poi.add_path(p1, start=0.6, end=0.6)
         # Check that it applies to GeoJSON also :
         self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]

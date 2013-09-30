@@ -1,6 +1,7 @@
+import json
+
 from django.test import TestCase
 from django.conf import settings
-import json
 from django.contrib.gis.geos import Point, LineString
 
 from geotrek.common.utils import dbnow, almostequal
@@ -10,6 +11,13 @@ from geotrek.core.models import Path, Topology, PathAggregation
 
 
 class TopologyTest(TestCase):
+
+    def test_geom_null_is_safe(self):
+        t = TopologyFactory.create()
+        t.geom = None
+        t.save()
+        self.assertNotEqual(t.geom, None)
+
     def test_dates(self):
         t1 = dbnow()
         e = TopologyFactory.build(no_path=True)
@@ -67,6 +75,17 @@ class TopologyTest(TestCase):
         # Make sure object can be hidden from managers
         self.assertNotIn(topology, Topology.objects.existing())
         self.assertEqual(len(path.topology_set.existing()), 0)
+
+    def test_deleted_when_all_path_are_deleted(self):
+        topology = TopologyFactory.create()
+        self.assertFalse(topology.deleted)
+
+        paths = path = topology.paths.all()
+        for path in paths:
+            path.delete()
+
+        topology.reload()
+        self.assertTrue(topology.deleted)
 
     def test_mutate(self):
         topology1 = TopologyFactory.create(no_path=True)
@@ -635,16 +654,14 @@ class TopologySerialization(TestCase):
         path = PathFactory.create(geom=LineString((1, 1), (2, 2), (2, 0)))
         before = TopologyFactory.create(offset=1, no_path=True)
         before.add_path(path, start=0.5, end=0.5)
-        # Reload from DB
-        before = Topology.objects.get(pk=before.pk)
 
         # Deserialize its serialized version !
         after = Topology.deserialize(before.serialize())
-        # Reload from DB
-        after = Topology.objects.get(pk=after.pk)
 
         self.assertEqual(len(before.paths.all()), len(after.paths.all()))
-        self.assertTrue(almostequal(before.aggregations.all()[0].start_position,
-                                    after.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(before.aggregations.all()[0].end_position,
-                                    after.aggregations.all()[0].end_position))
+        start_before = before.aggregations.all()[0].start_position
+        end_before = before.aggregations.all()[0].end_position
+        start_after = after.aggregations.all()[0].start_position
+        end_after = after.aggregations.all()[0].end_position
+        self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
+        self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
