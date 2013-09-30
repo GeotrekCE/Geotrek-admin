@@ -5,7 +5,7 @@ from django.contrib.gis.geos import LineString
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
-    
+
 
 class ElevationTest(TestCase):
 
@@ -20,7 +20,7 @@ class ElevationTest(TestCase):
             for y in range(1, 4):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x, y, x+y])
         conn.commit_unless_managed()
-        self.path = Path(geom=LineString((1.5,1.5,0), (2.5,1.5,0), (1.5,2.5,0)))
+        self.path = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
         self.path.save()
 
     def tearDown(self):
@@ -49,7 +49,7 @@ class ElevationTest(TestCase):
         topo.add_path(self.path, start=0.2, end=0.7)
         topo.save()
 
-        self.assertEqual(topo.ascent, 0)
+        self.assertEqual(topo.ascent, 1)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 4)
         self.assertEqual(topo.max_elevation, 5)

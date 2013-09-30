@@ -95,7 +95,7 @@ BEGIN
         -- which could be otherwise diffcult to handle.
         SELECT geom, decallage INTO egeom, t_offset FROM e_t_evenement e WHERE e.id = eid;
 
-        IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0 AND ST_Z(egeom) = 0) THEN
+        IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
             SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
                 INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
@@ -124,7 +124,8 @@ BEGIN
 
     IF t_count > 0 THEN
         SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
-        UPDATE e_t_evenement SET geom = elevation.geom3d,
+        UPDATE e_t_evenement SET geom = ST_Force_2D(egeom),
+                                 geom_3d = elevation.draped,
                                  longueur = ST_3DLength(elevation.draped),
                                  pente = elevation.slope,
                                  altitude_minimum = elevation.min_elevation,

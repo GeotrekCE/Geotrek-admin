@@ -31,6 +31,8 @@ DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
 DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
 CREATE INDEX l_t_troncon_geom_cadastre_idx ON l_t_troncon USING gist(geom_cadastre);
 
+DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;
+CREATE INDEX l_t_troncon_geom_3d_idx ON l_t_troncon USING gist(geom_3d);
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
@@ -59,11 +61,11 @@ BEGIN
     -- Note: I gave up with the idea of checking almost overlap/touch.
 
     -- tolerance := 1.0;
-    -- Crossing and extremity touching is OK. 
+    -- Crossing and extremity touching is OK.
     -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
-    FROM l_t_troncon 
-    WHERE pid != id 
+    FROM l_t_troncon
+    WHERE pid != id
       AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
       -- not extremity touching
       -- AND ST_Touches(geom, line) = false
@@ -147,7 +149,7 @@ BEGIN
 
     SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
     -- Update path geometry
-    NEW.geom := elevation.geom3d;
+    NEW.geom_3d := elevation.draped;
     NEW.longueur := ST_3DLength(elevation.draped);
     NEW.pente := elevation.slope;
     NEW.altitude_minimum := elevation.min_elevation;

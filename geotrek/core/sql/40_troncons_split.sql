@@ -47,7 +47,7 @@ BEGIN
 
     result := NULL;
     SELECT ST_ClosestPoint(geom, lineend), geom INTO result, other
-      
+
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
         AND id != NEW.id
@@ -71,7 +71,7 @@ BEGIN
     newline := array_append(newline, result);
 
     RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
-    NEW.geom := ST_Force_3D(ST_MakeLine(newline));
+    NEW.geom := ST_MakeLine(newline);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -101,7 +101,7 @@ DECLARE
     b float8;
     segment geometry;
     newgeom geometry;
-    
+
     intersections_on_new float8[];
     intersections_on_current float8[];
 BEGIN
@@ -113,8 +113,8 @@ BEGIN
     -- Iterate paths intersecting, excluding those touching by extremities
     FOR troncon IN SELECT *
                    FROM l_t_troncon t
-                   WHERE id != NEW.id 
-                         AND ST_Intersects(geom, NEW.geom) 
+                   WHERE id != NEW.id
+                         AND ST_Intersects(geom, NEW.geom)
                          AND NOT ST_Relate(geom, NEW.geom, 'FF*F*****')
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
@@ -127,11 +127,11 @@ BEGIN
             intersections_on_new := array_append(intersections_on_new, fraction);
         END LOOP;
         intersections_on_new := array_append(intersections_on_new, 1::float);
-        
+
         -- Sort intersection points and remove duplicates (0 and 1 can appear twice)
         SELECT array_agg(sub.fraction) INTO intersections_on_new
             FROM (SELECT DISTINCT unnest(intersections_on_new) AS fraction ORDER BY fraction) AS sub;
-        
+
         -- Locate intersecting point(s) on current path (array of  : {0, 0.32, 0.89, 1})
         intersections_on_current := ARRAY[0::float];
         FOR fraction IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
@@ -139,7 +139,7 @@ BEGIN
             intersections_on_current := array_append(intersections_on_current, fraction);
         END LOOP;
         intersections_on_current := array_append(intersections_on_current, 1::float);
-        
+
         -- Sort intersection points and remove duplicates (0 and 1 can appear twice)
         SELECT array_agg(sub.fraction) INTO intersections_on_current
             FROM (SELECT DISTINCT unnest(intersections_on_current) AS fraction ORDER BY fraction) AS sub;
@@ -156,7 +156,7 @@ BEGIN
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_new, 1) > 2 THEN
             RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.nom, troncon.id, troncon.nom, intersections_on_new;
-            
+
             FOR i IN 1..(array_length(intersections_on_new, 1) - 1)
             LOOP
                 a := intersections_on_new[i];
@@ -181,9 +181,9 @@ BEGIN
                     SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure, 
+                        INSERT INTO l_t_troncon (structure,
                                               valide,
-                                              nom, 
+                                              nom,
                                               remarques,
                                               sentier,
                                               source,
@@ -192,7 +192,7 @@ BEGIN
                                               depart,
                                               arrivee,
                                               confort,
-                                              geom) 
+                                              geom)
                             VALUES (NEW.structure,
                                     NEW.valide,
                                     NEW.nom,
@@ -252,9 +252,9 @@ BEGIN
                     SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure, 
+                        INSERT INTO l_t_troncon (structure,
                                               valide,
-                                              nom, 
+                                              nom,
                                               remarques,
                                               sentier,
                                               source,
@@ -263,7 +263,7 @@ BEGIN
                                               depart,
                                               arrivee,
                                               confort,
-                                              geom) 
+                                              geom)
                             VALUES (troncon.structure,
                                     troncon.valide,
                                     troncon.nom,
@@ -304,7 +304,7 @@ BEGIN
                                     (greatest(a, pk_fin) - a) / (b - a)
                                 END
                             FROM e_r_evenement_troncon et
-                            WHERE et.troncon = troncon.id 
+                            WHERE et.troncon = troncon.id
                                   AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
                                        (pk_debut = pk_fin AND pk_debut = a)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
@@ -318,8 +318,8 @@ BEGIN
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT tid_clone, evenement, pk_debut, pk_fin
                                 FROM e_r_evenement_troncon et
-                                WHERE et.troncon = troncon.id AND 
-                                      pk_debut = pk_fin AND 
+                                WHERE et.troncon = troncon.id AND
+                                      pk_debut = pk_fin AND
                                       pk_debut = 1;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
@@ -332,7 +332,7 @@ BEGIN
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT NEW.id, et.evenement, fraction, fraction
                                 FROM e_r_evenement_troncon et
-                                WHERE et.troncon = troncon.id 
+                                WHERE et.troncon = troncon.id
                                   AND pk_debut = pk_fin AND pk_debut = a;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
@@ -346,7 +346,7 @@ BEGIN
             -- Update point topologies at intersection
             -- Trigger e_r_evenement_troncon_junction_point_iu_tgr
             UPDATE e_r_evenement_troncon et SET pk_debut = pk_debut
-             WHERE et.troncon = NEW.id 
+             WHERE et.troncon = NEW.id
                AND pk_debut = pk_fin;
 
             -- Now handle first path topologies
@@ -365,7 +365,7 @@ BEGIN
                 pk_debut = CASE WHEN pk_debut / (b - a) > 1 THEN 1 ELSE pk_debut / (b - a) END,
                 pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
                 WHERE et.troncon = troncon.id
-                AND least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a; 
+                AND least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a;
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
                 RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;

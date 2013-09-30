@@ -79,6 +79,13 @@ def load_sql_files(app_label):
                 sql = re.sub(r"\n.*RAISE NOTICE.*\n", "\n", sql)
                 # TODO: this is the ugliest driver hack ever
                 sql = sql.replace('%', '%%')
+
+            # Replace curly braces with settings values
+            pattern = re.compile(r'{{\s*(.*)\s*}}')
+            for m in pattern.finditer(sql):
+                value = getattr(settings, m.group(1))
+                sql = sql.replace(m.group(0), unicode(value))
+
             cursor.execute(sql)
         except Exception as e:
             logger.error("Failed to install custom SQL file '%s': %s\n" %

@@ -1,5 +1,3 @@
-import math
-from urlparse import urljoin
 import logging
 from itertools import islice
 
@@ -76,14 +74,6 @@ def sqlfunction(function, *args):
 
 def almostequal(v1, v2, precision=2):
     return abs(v1 - v2) < 10 ** -precision
-
-
-def smart_urljoin(base, path):
-    if base[-1] != '/':
-        base += '/'
-    if path[0] == '/':
-        path = path[1:]
-    return urljoin(base, path)
 
 
 def sampling(values, total):

@@ -137,7 +137,7 @@ class TopologyHelper(object):
                                   end_position=position,
                                   path=closest)
         aggrobj.save()
-        point = Point(point.x, point.y, 0, srid=settings.SRID)
+        point = Point(point.x, point.y, srid=settings.SRID)
         topology.geom = point
         topology.save()
         return topology
@@ -232,7 +232,7 @@ class PathHelper(object):
         WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
                    FROM %(table)s
                    WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom), coalesce(ST_Z(p.geom), 0.0) FROM p
+        SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
         """ % {'ewkt': point.ewkt, 'table': path._meta.db_table, 'pk': path.pk}
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -271,34 +271,39 @@ class PathHelper(object):
 
 class AltimetryHelper(object):
     @classmethod
-    def elevation_profile(cls, geometry, precision=None, offset=0):
+    def elevation_profile(cls, geometry3d, precision=None, offset=0):
         """Extract elevation profile from a 3D geometry.
 
         :precision:  geometry sampling in meters
         """
         precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
 
-        if geometry.geom_type == 'MultiLineString':
+        if geometry3d.geom_type == 'MultiLineString':
             profile = []
-            for subcoords in geometry.coords:
+            for subcoords in geometry3d.coords:
                 subline = LineString(subcoords)
                 offset += subline.length
                 subprofile = AltimetryHelper.elevation_profile(subline, precision, offset)
                 profile.extend(subprofile)
             return profile
 
+
+        # Add measure to 2D version of geometry3d
+        # Get distance from origin for each vertex
         sql = """
-        SELECT (%(offset)s + distance) as abscissa,
-               ST_X(ST_Transform(geom, %(api_srid)s)) as lng,
-               ST_Y(ST_Transform(geom, %(api_srid)s)) as lat,
-               ST_Z(geom) as h
-        FROM ft_drape_line('%(ewkt)s'::geometry, %(precision)s)
-        ORDER BY abscissa
-        """ % {'offset': offset, 'api_srid': settings.API_SRID, 'ewkt': geometry.ewkt, 'precision': precision}
+        WITH line2d AS (SELECT ST_force_2D('%(ewkt)s'::geometry) AS geom),
+             line_measure AS (SELECT ST_Addmeasure(geom, 0, ST_length(geom)) AS geom FROM line2d),
+             points2dm AS (SELECT (ST_DumpPoints(geom)).geom AS point FROM line_measure)
+        SELECT (%(offset)s + ST_M(point)) FROM points2dm;
+        """ % {'offset': offset, 'ewkt': geometry3d.ewkt}
         cursor = connection.cursor()
         cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
+        pointsm = cursor.fetchall()
+        # Join (offset+distance, x, y, z) together
+        geom3dapi = geometry3d.transform(settings.API_SRID, clone=True)
+        assert len(pointsm) == len(geom3dapi.coords), 'Cannot map distance to xyz'
+        dxyz = [pointsm[i] + geom3dapi.coords[i] for i in range(len(geom3dapi.coords))]
+        return dxyz
 
     @classmethod
     def profile_svg(cls, profile):
