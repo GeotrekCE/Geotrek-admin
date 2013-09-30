@@ -24,6 +24,8 @@ logger = logging.getLogger(__name__)
 
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
+    geom_3d = models.LineStringField(dim=3, srid=settings.SRID, spatial_index=False,
+                                     editable=False, null=True, default=None)
     length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
@@ -41,6 +43,7 @@ class AltimetryMixin(models.Model):
         """
         if fromdb is None:
             fromdb = self.__class__.objects.get(pk=self.pk)
+        self.geom_3d = fromdb.geom_3d
         self.length = fromdb.length
         self.ascent = fromdb.ascent
         self.descent = fromdb.descent
@@ -95,8 +98,7 @@ class AltimetryMixin(models.Model):
 
 class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-    geom_3d = models.LineStringField(dim=3, srid=settings.SRID, spatial_index=False,
-                                     editable=False)
+
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
@@ -233,8 +235,6 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
-    geom_3d = models.GeometryField(dim=3, editable=False, srid=settings.SRID, null=True,
-                                   default=None, spatial_index=False)
 
     class Meta:
         db_table = 'e_t_evenement'
