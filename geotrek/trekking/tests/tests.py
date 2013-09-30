@@ -27,7 +27,7 @@ from ..templatetags import trekking_tags
 class TrekTest(TestCase):
     def test_is_publishable(self):
         t = TrekFactory.create()
-        t.geom = LineString((0, 0, 0), (1, 1, 1))
+        t.geom = LineString((0, 0), (1, 1))
         self.assertTrue(t.has_geom_valid())
 
         t.description_teaser = ''
@@ -190,7 +190,7 @@ class TrekCustomViewTests(TestCase):
 
     def test_pois_geojson(self):
         trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         poi = POIFactory(no_path=True)
         trek.add_path(p1, start=0.5, end=1.0)
         poi.add_path(p1, start=0.6, end=0.6)
@@ -256,7 +256,7 @@ class TrekCustomViewTests(TestCase):
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
         trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         poi = POIFactory.create(no_path=True)
         poi.name_fr = "Chapelle"
         poi.name_it = "Capela"
@@ -293,8 +293,8 @@ class TrekCustomViewTests(TestCase):
 class RelatedObjectsTest(TestCase):
     def test_helpers(self):
         trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
-        p2 = PathFactory.create(geom=LineString((4, 4, 2), (8, 8, 4)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
         poi = POIFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       start_position=0.5)
@@ -321,7 +321,7 @@ class RelatedObjectsTest(TestCase):
         self.assertItemsEqual(trek.districts, [d1, d2])
 
     def test_deleted_pois(self):
-        p1 = PathFactory.create(geom=LineString((0, 0, 0), (4, 4, 2)))
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(no_path=True)
         trek.add_path(p1)
         poi = POIFactory.create(no_path=True)

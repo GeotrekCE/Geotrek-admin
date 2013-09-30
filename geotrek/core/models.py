@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from math import isnan
 import logging
-from datetime import datetime
 import functools
 
 from django.contrib.gis.db import models
@@ -26,6 +24,8 @@ logger = logging.getLogger(__name__)
 
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
+    geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
+                                   editable=False, null=True, default=None)
     length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
     ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
@@ -43,6 +43,7 @@ class AltimetryMixin(models.Model):
         """
         if fromdb is None:
             fromdb = self.__class__.objects.get(pk=self.pk)
+        self.geom_3d = fromdb.geom_3d
         self.length = fromdb.length
         self.ascent = fromdb.ascent
         self.descent = fromdb.descent
@@ -52,7 +53,7 @@ class AltimetryMixin(models.Model):
         return self
 
     def get_elevation_profile(self):
-        return AltimetryHelper.elevation_profile(self.geom)
+        return AltimetryHelper.elevation_profile(self.geom_3d)
 
     def get_elevation_profile_svg(self):
         return AltimetryHelper.profile_svg(self.get_elevation_profile())
@@ -96,10 +97,9 @@ class AltimetryMixin(models.Model):
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
 class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False,
-                                  dim=3)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID,
-                                           spatial_index=False, dim=3)
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
+                                           editable=False)
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
                                 help_text=_(u"Approved by manager"))
     name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"),
@@ -164,11 +164,8 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         Reverse the geometry.
         We keep track of this, since we will have to work on topologies at save()
         """
-        # path.geom.reverse() won't work for 3D coords
         reversed_coord = self.geom.coords[-1::-1]
-        # TODO: Why do we have to filter nan variable ?! Why are they here in the first place ?
-        valid_coords = [(x, y, 0.0 if isnan(z) else z) for x, y, z in reversed_coord]
-        self.geom = LineString(valid_coords)
+        self.geom = LineString(reversed_coord)
         self.is_reversed = True
         return self
 
@@ -236,7 +233,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
-                                blank=True, spatial_index=False, dim=3)
+                                default=None, spatial_index=False)
 
     class Meta:
         db_table = 'e_t_evenement'

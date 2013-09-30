@@ -1,6 +1,5 @@
 import os
 
-from django.conf import settings
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -9,7 +8,7 @@ from mapentity.tests import MapEntityTest
 
 from geotrek.settings import EnvIniReader
 from .factories import AttachmentFactory
-from .utils import almostequal, smart_urljoin, sampling
+from .utils import almostequal, sampling
 
 
 class CommonTest(MapEntityTest):
@@ -36,18 +35,6 @@ class UtilsTest(TestCase):
         self.assertFalse(almostequal(1, 2, precision=0))
         self.assertFalse(almostequal(-1, 1))
         self.assertFalse(almostequal(1, -1))
-
-    def test_smart_urljoin(self):
-        self.assertEqual('http://server.com/foo/path-12.ext',
-                         smart_urljoin('http://server.com', '/foo/path-12.ext'))
-        self.assertEqual('http://server.com/foo/path-12.ext',
-                         smart_urljoin('http://server.com/foo', 'path-12.ext'))
-        self.assertEqual('http://server.com/foo/bar/path-12.ext',
-                         smart_urljoin('http://server.com/foo', '/bar/path-12.ext'))
-        self.assertEqual('http://server.com/foo/bar/path-12.ext',
-                         smart_urljoin('http://server.com/foo', 'bar/path-12.ext'))
-        self.assertEqual('http://server.com/foo/bar/path-12.ext',
-                         smart_urljoin('http://server.com/foo/', '/bar/path-12.ext'))
 
     def test_sampling(self):
         self.assertEqual([0, 2, 4, 6, 8], sampling(range(10), 5))

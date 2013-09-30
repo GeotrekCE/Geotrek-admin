@@ -9,15 +9,15 @@ from geotrek.core.models import Path
 class SimpleGraph(TestCase):
 
     def test_python_graph_from_path(self):
-        p_1_1 = (1., 1., 0.)
-        p_2_2 = (2., 2., 0.)
-        p_3_3 = (3., 3., 0.)
-        p_4_4 = (4., 4., 0.)
-        p_5_5 = (5., 5., 0.)
+        p_1_1 = (1., 1.)
+        p_2_2 = (2., 2.)
+        p_3_3 = (3., 3.)
+        p_4_4 = (4., 4.)
+        p_5_5 = (5., 5.)
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""
-            return ((0., x + 1., 0.) for x in xrange(10, 100))
+            return ((0., x + 1.) for x in xrange(10, 100))
 
         r_point = gen_random_point().next
 
