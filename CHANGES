@@ -5,10 +5,16 @@ CHANGELOG
 0.20.3 (unreleased)
 -------------------
 
+**BUG fixes**
+
 * Fix typo in french translation of Properties (fixes #815)
 * Fix missing description from infrastructure/signage detail page (fixes #816)
 * Fix Cities / Districts / Restricted Areas in project detail page (fixes #817)
 * Fix only deleted topology can have geom = NULL (fixes #818)
+* Fix geometries not editable in QGis by switching path and topologies
+  geometries to 2D (fixes #688)
+* Fix altimetric sampling precision setting not taken in account in SQL (ref #776)
+
 
 0.20.2 (2013-08-27)
 -------------------
@@ -43,7 +49,7 @@ CHANGELOG
 
 * Edit difficulty id in Admin site, mainly used to order difficulty levels (fixes #771)
 * Use explicit list of fields in forms, instead of excluding model fields (fixes #736).
-  Issue #712 was closed too, since most suspected cause was field listings. Please re-open 
+  Issue #712 was closed too, since most suspected cause was field listings. Please re-open
   if problem re-appears.
 * Fix timeout on POI Shapefile and CSV exports (fixes #672)
 * Altimetric profiles are now computed in PostGIS (fixes #778, #779)
@@ -51,7 +57,7 @@ CHANGELOG
 
 :notes:
 
-    Setting ``PROFILE_MAXSIZE`` was replaced by ``ALTIMETRIC_PROFILE_PRECISION`` which 
+    Setting ``PROFILE_MAXSIZE`` was replaced by ``ALTIMETRIC_PROFILE_PRECISION`` which
     controls sampling precision in meters (default: 20 meters)
 
 * Altimetric profiles were removed from object map images
