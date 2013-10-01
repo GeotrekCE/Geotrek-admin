@@ -100,8 +100,6 @@ class InterventionForm(CommonForm):
              'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
-    MEDIA_JS = TopologyForm.MEDIA_JS
-
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
         # If we create or edit an intervention on infrastructure, set

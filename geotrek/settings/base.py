@@ -357,6 +357,11 @@ LEAFLET_CONFIG = {
     # Extent in API projection (Leaflet view default extent)
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
+    'PLUGINS': {
+        'topofields': {'js': ['core/dijkstra.js',
+                              'core/multipath.js',
+                              'core/topology_helper.js']}
+    }
 }
 
 """ This *pool* of colors is used to colorized lands records.
