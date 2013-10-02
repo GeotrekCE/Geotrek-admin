@@ -244,6 +244,9 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
 
+    """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
+    srid = settings.API_SRID
+
     class Meta:
         db_table = 'e_t_evenement'
         verbose_name = _(u"Topology")

@@ -12,13 +12,19 @@ class TopologyForm(CommonForm):
     """
     This form is a bit specific :
 
-        We use a field (topology) in order to edit the whole instance.
+        We use an extra field (topology) in order to edit the whole model instance.
+        The whole instance, because we use concrete inheritance for topology models.
         Thus, at init, we load the instance into field, and at save, we
         save the field into the instance.
 
     The geom field is fully ignored, since we edit a topology.
     """
     topology = TopologyField(label="")
+
+    geomfields = ['topology']
+
+    class Meta(CommonForm.Meta):
+        fields = CommonForm.Meta.fields + ['topology']
 
     def __init__(self, *args, **kwargs):
         super(TopologyForm, self).__init__(*args, **kwargs)
@@ -37,11 +43,6 @@ class TopologyForm(CommonForm):
         instance = super(TopologyForm, self).save(*args, **kwargs)
         instance.mutate(topology)
         return instance
-
-    geomfields = ['topology']
-
-    class Meta(CommonForm.Meta):
-        fields = CommonForm.Meta.fields + ['topology']
 
 
 class PathForm(CommonForm):

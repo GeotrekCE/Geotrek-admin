@@ -373,6 +373,7 @@ LEAFLET_CONFIG = {
     'NO_GLOBALS': False,
     'PLUGINS': {
         'topofields': {'js': ['core/geotrek.forms.snap.js',
+                              'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',
                               'core/multipath.js',
                               'core/topology_helper.js']}

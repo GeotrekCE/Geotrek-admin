@@ -18,7 +18,6 @@ import json
 from django.template import loader
 from django.utils import six
 
-import floppyforms as forms
 from mapentity.widgets import MapWidget
 
 from .models import Topology
@@ -39,49 +38,39 @@ class SnappedLineStringWidget(MapWidget):
         return super(SnappedLineStringWidget, self).deserialize(value)
 
 
-class BaseTopologyWidget(forms.Textarea):
+class BaseTopologyWidget(MapWidget):
     """ A widget allowing to create topologies on a map.
     """
-    template_name = 'core/fieldtopology_fragment.html'
-    display_json = settings.DEBUG
-    is_multipath = False
-    is_point = False
+    template_name = 'core/topology_widget_fragment.html'
+    geometry_field_class = 'MapEntity.GeometryField.TopologyField'
+    is_line_topology = False
+    is_point_topology = False
 
-    def value_from_datadict(self, data, files, name):
-        return data.get(name)
+    def serialize(self, value):
+        return value.serialize() if value else ''
 
-    def get_context(self, name, value, *args, **kwargs):
-        topologyjson = ''
-        if value:
-            if isinstance(value, basestring):
-                topologyjson = value
-            else:
-                if isinstance(value, int):
-                    value = Topology.objects.get(pk=value)
-                topologyjson = value.serialize()
-        context = super(BaseTopologyWidget, self).get_context(name, topologyjson, *args, **kwargs)
-        context['module'] = 'map_%s' % name.replace('-', '_')
-        context['callback'] = context['module'] + 'Init'
-        context['display_wkt'] = self.display_json   # called wkt because inherit field geometry
-        context['is_multipath'] = self.is_multipath
-        context['is_point'] = self.is_point
-        context['update'] = bool(value)
-        context['topology'] = value
-        context['topologyjson'] = topologyjson
-        context['path_snapping'] = True
-        return context
+    def deserialize(self, value):
+        if isinstance(value, int):
+            return Topology.objects.get(pk=value)
+        return Topology.deserialize(value)
+
+    def render(self, name, value, attrs=None):
+        attrs = attrs or {}
+        attrs.update(is_line_topology=self.is_line_topology,
+                     is_point_topology=self.is_point_topology)
+        return super(BaseTopologyWidget, self).render(name, value, attrs)
 
 
 class LineTopologyWidget(BaseTopologyWidget):
     """ A widget allowing to select a list of paths.
     """
-    is_multipath = True
+    is_line_topology = True
 
 
 class PointTopologyWidget(BaseTopologyWidget):
     """ A widget allowing to point a position with a marker.
     """
-    is_point = True
+    is_point_topology = True
 
 
 class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
@@ -91,12 +80,14 @@ class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
 
 
 class TopologyReadonlyWidget(BaseTopologyWidget):
-    template_name = 'core/fieldtopologyreadonly_fragment.html'
+    template_name = "mapentity/mapgeometry_fragment.html"
 
-    def get_context(self, *args, **kwargs):
-        context = super(TopologyReadonlyWidget, self).get_context(*args, **kwargs)
-        topology = context['topology']
-        if topology and not isinstance(topology, basestring):
-            context['object'] = topology.geom
-        context['mapname'] = context['module']
-        return context
+    def render(self, name, value, attrs=None):
+        """
+        Completely bypass widget rendering, and just render a geometry.
+        """
+        topology = value
+        if isinstance(topology, six.string_types):
+            topology = self.deserialize(topology)
+        context = {'object': topology.geom, 'mapname': name}
+        return loader.render_to_string(self.template_name, context)

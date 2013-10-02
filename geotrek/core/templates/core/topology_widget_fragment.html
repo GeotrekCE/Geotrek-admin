@@ -1,0 +1,8 @@
+{% extends "leaflet/widget.html" %}
+
+
+{% block vars %}
+    {{ block.super }}
+    {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
+    {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
+{% endblock vars %}

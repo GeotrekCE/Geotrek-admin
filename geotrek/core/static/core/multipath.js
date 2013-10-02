@@ -67,8 +67,12 @@ L.Control.ExclusiveActivation = L.Class.extend({
 L.Control.TopologyPoint = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 
+    statics: {
+        TITLE: 'Point',
+    },
+
     options: {
-        position: 'topright',
+        position: 'topleft',
     },
 
     initialize: function (map, options) {
@@ -82,7 +86,7 @@ L.Control.TopologyPoint = L.Control.extend({
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
-        link.title = 'Point';
+        link.title = L.Control.TopologyPoint.TITLE;
         var self = this;
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
@@ -104,6 +108,10 @@ L.Handler.TopologyPoint = L.Draw.Marker.extend({
                 this.fire('added', {marker:e.layer});
         }, this);
     },
+
+    restoreTopology: function (topo) {
+        throw "TODO";
+    },
 });
 
 
@@ -111,14 +119,18 @@ L.Handler.TopologyPoint = L.Draw.Marker.extend({
 L.Control.Multipath = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 
-    options: {
-        position: 'topright',
+    statics: {
+        TITLE: 'Route',
     },
 
-    initialize: function (map, graph_layer, snapObserver, options) {
+    options: {
+        position: 'topleft',
+    },
+
+    initialize: function (map, graph_layer, guidesLayer, options) {
         L.Control.prototype.initialize.call(this, options);
         this.handler = new L.Handler.MultiPath(
-            map, graph_layer, snapObserver, this.options.handler
+            map, graph_layer, guidesLayer, this.options.handler
         );
     },
 
@@ -134,7 +146,7 @@ L.Control.Multipath = L.Control.extend({
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out linetopology-control', this._container);
         link.href = '#';
-        link.title = 'Multipath';
+        link.title = L.Control.Multipath.TITLE;
 
         var self = this;
         L.DomEvent
@@ -163,7 +175,7 @@ L.ActivableMarker = L.Marker.extend({
         this.activate_cbs = [];
         this.deactivate_cbs = [];
     },
-    
+
     activated: function() {
         return this._activated;
     },
@@ -176,7 +188,7 @@ L.ActivableMarker = L.Marker.extend({
             this._activated = true;
         }
     },
-    
+
     deactivate: function() {
         if (this._activated) {
             for (var i = 0; i < this.deactivate_cbs.length; i++) {
@@ -191,11 +203,11 @@ L.ActivableMarker = L.Marker.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, snapObserver, options) {
+    initialize: function (map, graph_layer, guidesLayer, options) {
         this.map = map;
         this._container = map._container;
         this.graph_layer = graph_layer;
-        this.snapObserver = snapObserver;
+        this.guidesLayer = guidesLayer;
         this.options = options;
 
         this.graph = null;
@@ -213,11 +225,11 @@ L.Handler.MultiPath = L.Handler.extend({
         this.idToLayer = function(id) {
             return graph_layer.getLayer(id);
         };
-        
-        
+
+
         /*
          * Draggable via steps
-         * 
+         *
          * The following piece of code was also taken from formfield.js
          * It place is here, but needs refactoring to become elegant.
          */
@@ -267,7 +279,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
-        
+
         console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
                                                          latlng:state.start_ll.toString()},
                                                   end:  {pk:state.end_layer.properties.pk,
@@ -511,7 +523,7 @@ L.Handler.MultiPath = L.Handler.extend({
          * Topo is a list of sub-topologies.
          *
          *  X--+--+---O-------+----O--+---+--X
-         *  
+         *
          * Each sub-topoogy is a way between markers. The first marker
          * of the first sub-topology is the beginning, the last of the last is the end.
          * All others are intermediary points (via markers)
@@ -651,10 +663,10 @@ L.Handler.MultiPath = L.Handler.extend({
 
     getMarkers: function() {
         var self = this;
-        
-        var map = this.map, 
-            snapObserver = this.snapObserver;
-        
+
+        var map = this.map,
+            guidesLayer = this.guidesLayer;
+
         // snapObserver and map are required to setup snappable markers
         // returns marker with an on('snap' possibility ?
         var dragging = false;
@@ -678,7 +690,7 @@ L.Handler.MultiPath = L.Handler.extend({
             isDragging: isDragging,
             makeSnappable: function(marker) {
                 marker.editing = new L.Handler.MarkerSnap(map, marker);
-                snapObserver.add(marker);
+                marker.editing.addGuideLayer(guidesLayer);
                 marker.activate_cbs.push(activate);
                 marker.deactivate_cbs.push(deactivate);
 
@@ -686,21 +698,14 @@ L.Handler.MultiPath = L.Handler.extend({
             },
             generic: function (latlng, layer, classname, snappable) {
                 snappable = snappable === undefined ? true : snappable;
-                
+
                 var marker = new L.ActivableMarker(latlng, {
-                    'draggable': true, 
-                    'icon': new L.Icon({
-                        iconUrl: self.options.iconUrl,
-                        shadowUrl: self.options.shadowUrl,
-                        iconSize: new L.Point(25, 41),
-                        iconAnchor: new L.Point(13, 41),
-                        popupAnchor: new L.Point(1, -34),
-                        shadowSize: new L.Point(41, 41)
-                    })
+                    'draggable': true,
+                    'icon': L.divIcon({className: classname,
+                                       iconSize: [25, 41],
+                                       iconAnchor: [12, 41]})
                 });
                 map.addLayer(marker);
-
-                $(marker._icon).addClass(classname);
 
                 if (snappable)
                     this.makeSnappable(marker);
@@ -717,8 +722,8 @@ L.Handler.MultiPath = L.Handler.extend({
                 var marker = new L.ActivableMarker(latlng, {
                     'draggable': true,
                     'icon': L.divIcon({className: 'marker-drag',
-                                       iconSize: new L.Point(18, 18),
-                                       iconAnchor: new L.Point(9, 9)})
+                                       iconSize: [18, 18],
+                                       iconAnchor: [9, 9]})
                 });
 
                 map.addLayer(marker);
@@ -735,7 +740,7 @@ L.Handler.MultiPath = L.Handler.extend({
     onComputedPaths: function(data) {
         var self = this;
         var topology = Geotrek.TopologyHelper.buildTopologyFromComputedPath(this.idToLayer, data);
-        
+
         this.showPathGeom(topology.layer);
         this.fire('computed_topology', {topology:topology.serialized});
 
