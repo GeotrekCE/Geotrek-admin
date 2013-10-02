@@ -64,7 +64,7 @@ L.Control.ExclusiveActivation = L.Class.extend({
 });
 
 
-L.Control.TopologyPoint = L.Control.extend({
+L.Control.PointTopology = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 
     statics: {
@@ -75,9 +75,9 @@ L.Control.TopologyPoint = L.Control.extend({
         position: 'topleft',
     },
 
-    initialize: function (map, options) {
+    initialize: function (map, guidesLayer, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.handler = new L.Handler.TopologyPoint(map);
+        this.handler = new L.Handler.PointTopology(map, guidesLayer, options);
         // Deactivate control once point is added
         this.handler.on('added', this.toggle, this);
     },
@@ -86,7 +86,7 @@ L.Control.TopologyPoint = L.Control.extend({
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
-        link.title = L.Control.TopologyPoint.TITLE;
+        link.title = L.Control.PointTopology.TITLE;
         var self = this;
         L.DomEvent
                 .addListener(link, 'click', L.DomEvent.stopPropagation)
@@ -100,23 +100,50 @@ L.Control.TopologyPoint = L.Control.extend({
 });
 
 
-L.Handler.TopologyPoint = L.Draw.Marker.extend({
-    initialize: function (map, options) {
+L.Handler.PointTopology = L.Draw.Marker.extend({
+    initialize: function (map, guidesLayer, options) {
         L.Draw.Marker.prototype.initialize.call(this, map, options);
-        map.on('draw:created', function (e) {
-            if (e.layerType === 'marker')
-                this.fire('added', {marker:e.layer});
-        }, this);
+        this._marker = null;
+        this._guidesLayer = guidesLayer;
+
+        map.on('draw:created', this._onDrawn, this);
     },
 
     restoreTopology: function (topo) {
-        throw "TODO";
+        this._marker = L.marker([topo.lat, topo.lng]);
+        this._initMarker(this._marker);
+        if (topo.snap) {
+            this._marker.fire('move');  // snap to closest
+        }
     },
+
+    _onDrawn: function (e) {
+        if (e.layerType === 'marker') {
+            if (this._marker !== null) {
+                this._map.removeLayer(this._marker);
+            }
+
+            this.fire('added');
+            this._marker = e.layer;
+            this._initMarker(this._marker);
+        }
+    },
+
+    _initMarker: function (marker) {
+        marker.addTo(this._map);
+        L.DomUtil.addClass(marker._icon, 'marker-point');
+        marker.editing = new L.Handler.MarkerSnap(this._map, marker);
+        marker.editing.addGuideLayer(this._guidesLayer);
+        marker.editing.enable();
+        marker.on('move snap', function (e) {
+            this.fire('computed_topology', {topology: marker});
+        }, this);
+    }
 });
 
 
 
-L.Control.Multipath = L.Control.extend({
+L.Control.LineTopology = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 
     statics: {
@@ -146,7 +173,7 @@ L.Control.Multipath = L.Control.extend({
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out linetopology-control', this._container);
         link.href = '#';
-        link.title = L.Control.Multipath.TITLE;
+        link.title = L.Control.LineTopology.TITLE;
 
         var self = this;
         L.DomEvent

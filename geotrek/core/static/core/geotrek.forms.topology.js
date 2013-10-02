@@ -1,7 +1,11 @@
 L.FieldStore.TopologyStore = L.FieldStore.extend({
 
     _deserialize: function (value) {
-        return value ? JSON.parse(value) : null;
+        if (value === undefined || value === '')
+            return null;
+        if (typeof value == 'string')
+            return JSON.parse(value);
+        return value;
     },
 
     _serialize: function (layer) {
@@ -34,7 +38,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         this._objectsLayer = null;
         this._pathsLayer = null;
         this._pointControl = null;
-        this._multipathControl = null;
+        this._lineControl = null;
     },
 
     addTo: function (map) {
@@ -48,23 +52,18 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         var exclusive = new L.Control.ExclusiveActivation();
 
         if (this.options.is_point_topology) {
-            this._pointControl = new L.Control.TopologyPoint(map,
-                                                             this._pathsLayer,
-                                                             this);
-            map.addControl(this._pointControl);
-            exclusive.add(this._pointControl);
-            this._pointControl.handler.on('added', function (e) {
-                this.save(e.marker);
-            }, this);
+            addTopologyControl.call(this, '_pointControl', L.Control.PointTopology);
+        }
+        if (this.options.is_line_topology) {
+            addTopologyControl.call(this, '_lineControl', L.Control.LineTopology);
         }
 
-        if (this.options.is_line_topology) {
-            this._multipathControl = new L.Control.Multipath(map,
-                                                             this._pathsLayer,
-                                                             this);
-            map.addControl(this._multipathControl);
-            exclusive.add(this._multipathControl);
-            this._multipathControl.handler.on('computed_topology', function (e) {
+        function addTopologyControl(name, controlClass) {
+            var control = this[name] = new controlClass(map, this._pathsLayer, this);
+            map.addControl(control);
+            exclusive.add(control);
+            control.activable(false);
+            control.handler.on('computed_topology', function (e) {
                 this.store.save(e.topology);
             }, this);
         }
@@ -81,7 +80,12 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         // Make sure paths stay above other layers
         this._pathsLayer.bringToFront();
 
-        if (this._multipathControl === null) {
+        if (this._pointControl)
+            this._pointControl.activable(true);
+        if (this._lineControl)
+            this._lineControl.activable(true);
+
+        if (this._lineControl === null) {
             // No need to load graph for point topologies
             this.load();
             return;
@@ -103,7 +107,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
     _onGraphLoaded: function (graph) {
         // Load graph
-        this._multipathControl.setGraph(graph);
+        this._lineControl.setGraph(graph);
         this.load();
         // Stop spinning !
         this._pathsLayer.fire('data:loaded');
@@ -113,8 +117,8 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         var topo = this.store.load();
         if (topo) {
             console.debug("Deserialize topology: " + topo);
-            if (this._multipathControl && !topo.lat && !topo.lng) {
-                this._multipathControl.handler.restoreTopology(topo);
+            if (this._lineControl && !topo.lat && !topo.lng) {
+                this._lineControl.handler.restoreTopology(topo);
             }
             if (this._pointControl && topo.lat && topo.lng) {
                 this._pointControl.handler.restoreTopology(topo);
