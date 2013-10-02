@@ -34,10 +34,51 @@ L.FieldStore.LineSnapStore = L.FieldStore.extend({
 });
 
 
+MapEntity.GeometryField.GeometryFieldPathMixin = {
+    /*
+     * Load the path layer in addition to another layer should be reusable.
+     * (At least for the fix to propagate events)
+     */
+    buildPathsLayer: function (objectsLayer) {
+        var pathsLayer = new L.ObjectsLayer(null, {
+            style: L.Util.extend(window.SETTINGS.map.styles.path, {clickable: true})
+        });
+        this._map.addLayer(pathsLayer);
+        // Start ajax loading at last
+        pathsLayer.load(this.modelLayerUrl('path'), true);
+
+        // Propagate mouseover events, from the Path layer (on top)
+        // to the objects layer (below).
+        // This fixes bug #680
+        (function (){
+            // Reference to the object layer hovered before the path is hovered
+            var overlapped = null;
+            objectsLayer.on('mouseover', function (e) {
+                overlapped = e.layer;
+            });
+            // On path hover, propagate events to overlapped layer
+            pathsLayer.on('mouseover mouseout', function (e) {
+                if (overlapped !== null) {
+                    e.layer = overlapped;
+                    e.target = overlapped;
+                    overlapped.fire(e.type, e);
+                }
+                if (e.type == 'mouseout') {
+                    overlapped = null;
+                }
+            });
+        })();
+        return pathsLayer;
+    },
+};
+
+
 MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
     options: {
         field_store_class: L.FieldStore.LineSnapStore
     },
+
+    includes: MapEntity.GeometryField.GeometryFieldPathMixin,
 
     initialize: function (options) {
         MapEntity.GeometryField.prototype.initialize.call(this, options);
@@ -59,7 +100,7 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
         if (this.getModelName() != 'path') {
             // If current model is not path, we should add the path layer
             // as a guide layer.
-            this._pathsLayer = this._buildPathsLayer();
+            this._pathsLayer = this.buildPathsLayer(this._objectsLayer);
             this._guidesLayers.push(this._pathsLayer);
         }
 
@@ -73,37 +114,6 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
 
     guidesLayers: function () {
         return this._guidesLayers;
-    },
-
-    _buildPathsLayer: function (objectsLayer) {
-        var pathsLayer = new L.ObjectsLayer(null, {
-            style: L.Util.extend(window.SETTINGS.map.styles.path, {clickable: true})
-        });
-        this._map.addLayer(pathsLayer);
-        // Start ajax loading at last
-        pathsLayer.load(this.modelLayerUrl('path'), true);
-
-        // Propagate mouseover events, from the Path layer (on top)
-        // to the objects layer (below).
-        // This fixes bug #680
-        (function (){
-            // Reference to the object layer hovered before the path is hovered
-            var overlapped = null;
-            this._objectsLayer.on('mouseover', function (e) {
-                overlapped = e.layer;
-            });
-            // On path hover, propagate events to overlapped layer
-            pathsLayer.on('mouseover mouseout', function (e) {
-                if (overlapped !== null) {
-                    e.layer = overlapped;
-                    e.target = overlapped;
-                    overlapped.fire(e.type, e);
-                }
-                if (e.type == 'mouseout') {
-                    overlapped = null;
-                }
-            });
-        })();
     },
 
     _initSnap: function (layer) {
