@@ -86,7 +86,7 @@ BEGIN
     smart_step := step;
     IF length < step THEN
         -- Keep at least a middle point
-        smart_step := (length / 2)::integer;
+        smart_step := greatest((length / 2)::integer, 1);
     END IF;
 
     RETURN QUERY
