@@ -448,7 +448,7 @@ class Stake(StructureRelated):
         db_table = 'l_b_enjeu'
         verbose_name = _(u"Stake")
         verbose_name_plural = _(u"Stakes")
-        ordering = ['stake']
+        ordering = ['id']
 
     def __lt__(self, other):
         if other is None:
