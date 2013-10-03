@@ -7,6 +7,7 @@ CHANGELOG
 
 * Fix stake by id (level) (fixes #835)
 * Rename stake to maintenance stake (fixes #834)
+* Add validity to path filter (fixes #836)
 
 0.20.3 (2013-09-30)
 -------------------
