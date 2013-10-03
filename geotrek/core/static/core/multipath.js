@@ -75,7 +75,7 @@ L.Control.PointTopology = L.Control.extend({
         position: 'topleft',
     },
 
-    initialize: function (map, guidesLayer, options) {
+    initialize: function (map, guidesLayer, field, options) {
         L.Control.prototype.initialize.call(this, options);
         this.handler = new L.Handler.PointTopology(map, guidesLayer, options);
         // Deactivate control once point is added
@@ -154,11 +154,9 @@ L.Control.LineTopology = L.Control.extend({
         position: 'topleft',
     },
 
-    initialize: function (map, graph_layer, guidesLayer, options) {
+    initialize: function (map, guidesLayer, field, options) {
         L.Control.prototype.initialize.call(this, options);
-        this.handler = new L.Handler.MultiPath(
-            map, graph_layer, guidesLayer, this.options.handler
-        );
+        this.handler = new L.Handler.MultiPath(map, guidesLayer, options);
     },
 
     setGraph: function (graph) {
@@ -230,11 +228,10 @@ L.ActivableMarker = L.Marker.extend({
 L.Handler.MultiPath = L.Handler.extend({
     includes: L.Mixin.Events,
 
-    initialize: function (map, graph_layer, guidesLayer, options) {
+    initialize: function (map, guidesLayer, options) {
         this.map = map;
         this._container = map._container;
-        this.graph_layer = graph_layer;
-        this.guidesLayer = guidesLayer;
+        this._guidesLayer = guidesLayer;
         this.options = options;
 
         this.graph = null;
@@ -245,12 +242,8 @@ L.Handler.MultiPath = L.Handler.extend({
         // Init a fresh state
         this.reset();
 
-        this.layerToId = function layerToId(layer) {
-            return graph_layer.getPk(layer);
-        };
-
         this.idToLayer = function(id) {
-            return graph_layer.getLayer(id);
+            return guidesLayer.getLayer(id);
         };
 
 
@@ -356,7 +349,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     addHooks: function () {
         this._container.style.cursor = 'w-resize';
-        this.graph_layer.on('click', this._onClick, this);
+        this._guidesLayer.on('click', this._onClick, this);
 
         this.stepsToggleActivate(true);
 
@@ -365,7 +358,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     removeHooks: function() {
         this._container.style.cursor = '';
-        this.graph_layer.off('click', this._onClick, this);
+        this.guidesLayer.off('click', this._onClick, this);
 
         this.stepsToggleActivate(false);
 
@@ -692,7 +685,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var self = this;
 
         var map = this.map,
-            guidesLayer = this.guidesLayer;
+            guidesLayer = this._guidesLayer;
 
         // snapObserver and map are required to setup snappable markers
         // returns marker with an on('snap' possibility ?
@@ -717,47 +710,34 @@ L.Handler.MultiPath = L.Handler.extend({
             isDragging: isDragging,
             makeSnappable: function(marker) {
                 marker.editing = new L.Handler.MarkerSnap(map, marker);
+
                 marker.editing.addGuideLayer(guidesLayer);
+                marker.editing.enable();
+
                 marker.activate_cbs.push(activate);
                 marker.deactivate_cbs.push(deactivate);
-
                 marker.activate();
             },
-            generic: function (latlng, layer, classname, snappable) {
-                snappable = snappable === undefined ? true : snappable;
-
-                var marker = new L.ActivableMarker(latlng, {
-                    'draggable': true,
-                    'icon': L.divIcon({className: classname,
-                                       iconSize: [25, 41],
-                                       iconAnchor: [12, 41]})
-                });
+            _generic: function (latlng, layer, classname, snappable) {
+                var marker = new L.ActivableMarker(latlng, {draggable: true});
                 map.addLayer(marker);
+                marker.classname = classname;
+                L.DomUtil.addClass(marker._icon, classname);
 
                 if (snappable)
                     this.makeSnappable(marker);
 
+                marker.dragging.enable();
                 return marker;
             },
             source: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-source');
+                return this._generic(latlng, layer, 'marker-source', true);
             },
             dest: function(latlng, layer) {
-                return this.generic(latlng, layer, 'marker-target');
+                return this._generic(latlng, layer, 'marker-target', true);
             },
             drag: function(latlng, layer, snappable) {
-                var marker = new L.ActivableMarker(latlng, {
-                    'draggable': true,
-                    'icon': L.divIcon({className: 'marker-drag',
-                                       iconSize: [18, 18],
-                                       iconAnchor: [9, 9]})
-                });
-
-                map.addLayer(marker);
-                if (snappable)
-                    this.makeSnappable(marker);
-
-                return marker;
+                return this._generic(latlng, layer, 'marker-drag', snappable);
             }
         };
 
@@ -821,6 +801,8 @@ L.Handler.MultiPath = L.Handler.extend({
             if (closest_point) {
                 self.draggable_marker.setLatLng(self.map.layerPointToLatLng(closest_point));
                 self.draggable_marker.addTo(self.map);
+                L.DomUtil.addClass(self.draggable_marker._icon, self.draggable_marker.classname);
+                self.draggable_marker._removeShadow();
                 self.draggable_marker.group_layer = matching_group_layer;
             } else {
                 self.draggable_marker && self.map.removeLayer(self.draggable_marker);
@@ -906,7 +888,6 @@ Geotrek.PointOnPolyline.prototype.addToGraph = function(graph) {
 
     var self = this;
 
-    // var edge_id = this.layerToId(layer);
     var edge = graph.edges[this.polyline.properties.pk]
       , first_node_id = edge.nodes_id[0]
       , last_node_id = edge.nodes_id[1];
