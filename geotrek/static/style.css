@@ -4,18 +4,64 @@
  * (paths, aggregations, altimetric profile, etc.)
  */
 
+ /* Enabled controls */
+
+a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
+    background-color: #ffa;
+}
+
+.leaflet-control.disabled a {
+    cursor: default;
+    background-color: #E6E6E6;
+    color: #bbb;
+}
 
 
-.marker-snapped { background-image: url('core/images/marker-snap.png') }
-.marker-source.marker-snapped { background-image: url('core/images/marker-source-snap.png') }
-.marker-target.marker-snapped { background-image: url('core/images/marker-target-snap.png') }
+/* Line editing */
+
+.leaflet-editing-icon.marker-snapped {
+    background-image: none;
+    background-color: yellow;
+}
+
+/* Point topology */
+
+.leaflet-marker-add {
+    background-image: url('core/images/marker-add.png');
+}
+
+.marker-snapped {
+    background-image: url('core/images/marker-snap.png');
+}
+
+
+.marker-source {
+    background-image: url('mapentity/images/marker-source.png');
+}
+
+.marker-target {
+    background-image: url('mapentity/images/marker-target.png');
+}
+
+.marker-source.marker-snapped {
+    background-image: url('core/images/marker-source-snap.png');
+}
+.marker-target.marker-snapped {
+    background-image: url('core/images/marker-target-snap.png');
+}
 
 .marker-drag { background-image: url('core/images/marker-drag.png') }
 .marker-drag.marker-snapped { background-image: url('core/images/marker-drag-snap.png') }
 
-.multipath-control {
-    background-image: url(core/images/multipath-control.png);
+.linetopology-control {
+    background-image: url(core/images/linetopology-control.png);
 }
+
+.pointtopology-control {
+    background-image: url(core/images/pointtopology-control.png);
+}
+
+
 
 
 /* Force tiles opacity and no transition on every tile layer */

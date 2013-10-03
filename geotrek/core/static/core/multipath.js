@@ -14,7 +14,7 @@ L.Control.TopologyPoint = L.Control.extend({
 
     onAdd: function (map) {
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
-        var link = L.DomUtil.create('a', 'leaflet-control-draw-marker', this._container);
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
         link.title = 'Point';
         var self = this;
@@ -66,7 +66,7 @@ L.Control.Multipath = L.Control.extend({
 
     onAdd: function (map) {
         this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
-        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out multipath-control', this._container);
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out linetopology-control', this._container);
         link.href = '#';
         link.title = 'Multipath';
 
