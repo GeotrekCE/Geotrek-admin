@@ -68,7 +68,7 @@ CREATE TYPE elevation_infos AS (
 
 
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
-    RETURNS TABLE (distance float, geom geometry) AS $$
+    RETURNS TABLE (geom geometry) AS $$
 DECLARE
     smart_step integer;
     length float;
@@ -100,7 +100,7 @@ BEGIN
                 SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
                 UNION
                 SELECT length as distance, ST_EndPoint(linegeom) as geom)
-        SELECT p.distance, add_point_elevation(p.geom)
+        SELECT add_point_elevation(p.geom)
         FROM points2d p
         ORDER BY p.distance;
 END;
