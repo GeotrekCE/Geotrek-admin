@@ -75,6 +75,13 @@ DECLARE
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+
+    IF ST_ZMin(linegeom) > 0 THEN
+        -- Already 3D, do not need to drape.
+        -- (Use-case is when assembling paths geometries to build topologies)
+        RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
+    END IF;
+
     length := ST_Length(linegeom);
     smart_step := step;
     IF length < step THEN
