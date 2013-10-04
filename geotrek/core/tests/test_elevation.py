@@ -50,7 +50,7 @@ class ElevationTest(TestCase):
         topo.save()
 
         self.assertEqual(topo.ascent, 1)
-        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.descent, -1)
         self.assertEqual(topo.min_elevation, 4)
         self.assertEqual(topo.max_elevation, 5)
 

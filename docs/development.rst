@@ -12,14 +12,21 @@ Start local instance :
 
 ::
 
-    make serve
+    make env_dev serve
 
 
 Run unit tests :
 
 ::
 
-    make tests
+    make env_test tests
+
+
+Run unit tests (verbose mode, and without migrations) :
+
+::
+
+    make env_dev tests
 
 
 For Capture server, run an instance of screamshotter in a separate terminal :

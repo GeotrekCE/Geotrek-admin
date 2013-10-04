@@ -48,7 +48,7 @@ copyright = u'2013, Makina Corpus'
 # built documents.
 #
 # The short X.Y version.
-version = '0.21dev'
+version = '0.21'
 # The full version, including alpha/beta/rc tags.
 release = '0.21dev'
 

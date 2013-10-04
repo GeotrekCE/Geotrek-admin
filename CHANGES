@@ -29,7 +29,16 @@ CHANGELOG
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 
-0.20.3 (unreleased)
+
+0.20.4 (unreleased)
+-------------------
+
+* Fix stake by id (level) (fixes #835)
+* Rename stake to maintenance stake (fixes #834)
+* Add validity to path filter (fixes #836)
+* Do not redrape topology geometries, use path 3D geometry (fixes #832)
+
+0.20.3 (2013-09-30)
 -------------------
 
 **BUG fixes**
