@@ -505,7 +505,7 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(MapEntityMixin, StructureRelated):
+class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')

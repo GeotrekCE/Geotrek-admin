@@ -266,3 +266,14 @@ class TrailTest(TestCase):
         p = PathFactory.create()
         t.paths.add(p)
         self.assertFalse(t.geom is None)
+
+
+class TrailViewsTest(TestCase):
+
+    def test_document_export(self):
+        trail = TrailFactory()
+        # Mock screenshot
+        with open(trail.get_map_image_path(), 'wb') as f:
+            f.write('This is fake PNG file')
+        response = self.client.get(trail.get_document_url())
+        self.assertEqual(response.status_code, 200)
