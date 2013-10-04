@@ -68,13 +68,20 @@ CREATE TYPE elevation_infos AS (
 
 
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
-    RETURNS TABLE (distance float, geom geometry) AS $$
+    RETURNS TABLE (geom geometry) AS $$
 DECLARE
     smart_step integer;
     length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+
+    IF ST_ZMin(linegeom) > 0 THEN
+        -- Already 3D, do not need to drape.
+        -- (Use-case is when assembling paths geometries to build topologies)
+        RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
+    END IF;
+
     length := ST_Length(linegeom);
     smart_step := step;
     IF length < step THEN
@@ -93,7 +100,7 @@ BEGIN
                 SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
                 UNION
                 SELECT length as distance, ST_EndPoint(linegeom) as geom)
-        SELECT p.distance, add_point_elevation(p.geom)
+        SELECT add_point_elevation(p.geom)
         FROM points2d p
         ORDER BY p.distance;
 END;

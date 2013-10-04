@@ -106,7 +106,7 @@ BEGIN
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point. --> No problem in mountain path management.
-        FOR t_offset, t_geom IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom, et.pk_debut, et.pk_fin)
+        FOR t_offset, t_geom IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom_3d, et.pk_debut, et.pk_fin)
                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
@@ -125,7 +125,7 @@ BEGIN
     IF t_count > 0 THEN
         SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
         UPDATE e_t_evenement SET geom = ST_Force_2D(egeom),
-                                 geom_3d = elevation.draped,
+                                 geom_3d = ST_Force_3DZ(elevation.draped),
                                  longueur = ST_3DLength(elevation.draped),
                                  pente = elevation.slope,
                                  altitude_minimum = elevation.min_elevation,

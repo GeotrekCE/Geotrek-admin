@@ -17,5 +17,5 @@ class PathFilter(EdgeStructureRelatedFilterSet):
     class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Path
         fields = EdgeStructureRelatedFilterSet.Meta.fields + [
-                    'length', 'networks', 'trail',
+                    'valid', 'length', 'networks', 'trail',
                 ]

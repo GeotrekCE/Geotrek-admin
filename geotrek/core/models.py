@@ -127,7 +127,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
                                    verbose_name=_("Datasource"), db_column='source')
     stake = models.ForeignKey('Stake',
                               null=True, blank=True, related_name='paths',
-                              verbose_name=_("Stake"), db_column='enjeu')
+                              verbose_name=_("Maintenance stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
                                     blank=True, null=True, related_name="paths",
                                     verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
@@ -446,9 +446,9 @@ class Stake(StructureRelated):
 
     class Meta:
         db_table = 'l_b_enjeu'
-        verbose_name = _(u"Stake")
-        verbose_name_plural = _(u"Stakes")
-        ordering = ['stake']
+        verbose_name = _(u"Maintenance stake")
+        verbose_name_plural = _(u"Maintenance stakes")
+        ordering = ['id']
 
     def __lt__(self, other):
         if other is None:
