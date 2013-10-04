@@ -7,7 +7,7 @@ from geotrek.common.tests import CommonTest
 
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.models import Topology
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory, PathAggregationFactory, TrailFactory
 from geotrek.common.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
                                  WorkManagementEdge, SignageManagementEdge, City)
@@ -25,10 +25,29 @@ class EdgeHelperTest(TestCase):
         if not self.factory:
             return   # ignore abstract test
         p = PathFactory.create()
-        self.assertEquals(len(p.land_edges), 0)
+        self.assertEquals(len(getattr(p, self.helper_name)), 0)
         l = self.factory.create(no_path=True)
         PathAggregationFactory.create(topo_object=l, path=p)
         self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()],
+                         [l.pk])
+
+    def test_trail_helpers(self):
+        if not self.factory:
+            return   # ignore abstract test
+        t = TrailFactory.create()
+        t2 = TrailFactory.create()
+
+        self.assertEquals(len(getattr(t, self.helper_name)), 0)
+        self.assertEquals(len(getattr(t2, self.helper_name)), 0)
+
+        p = PathFactory.create(trail=t)
+        l = self.factory.create(no_path=True)
+        l.add_path(p)
+
+        self.assertEquals(len(getattr(t, self.helper_name)), 1)
+        self.assertEquals(len(getattr(t2, self.helper_name)), 0)
+
+        self.assertEqual([o.pk for o in getattr(t, self.helper_name).all()],
                          [l.pk])
 
 
