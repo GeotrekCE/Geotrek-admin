@@ -51,8 +51,6 @@ all_makemessages: install
 
 all_compilemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
-	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
-
 
 env_test: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
