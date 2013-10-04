@@ -34,7 +34,7 @@ install: etc/settings.ini bin/python
 
 clean_harmless:
 	find geotrek/ -name "*.pyc" -exec rm -f {} \;
-	find lib/src/ -name "*.pyc" -exec rm -f {} \;
+	-find lib/src/ -name "*.pyc" -exec rm -f {} \;
 	rm -f install
 
 clean: clean_harmless
