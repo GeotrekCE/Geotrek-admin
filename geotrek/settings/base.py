@@ -3,7 +3,7 @@ import sys
 
 from django.contrib.messages import constants as messages
 
-from .. import __version__
+from geotrek import __version__
 from . import PROJECT_ROOT_PATH
 
 gettext_noop = lambda s: s
