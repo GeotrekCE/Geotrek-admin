@@ -331,6 +331,7 @@ MAPENTITY_CONFIG = {
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://0.0.0.0:6543',
+    'CAPTURE_SERVER': 'http://0.0.0.0:8001',
     'ROOT_URL': ROOT_URL,
 }
 
