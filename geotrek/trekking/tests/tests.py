@@ -102,9 +102,9 @@ class TrekViewsTest(CommonTest):
     def get_good_data(self):
         path = PathFactory.create()
         return {
-            'name_fr': 'Hoho',
-            'name_it': '',
-            'name_en': '',
+            'name_fr': 'Huhu',
+            'name_it': 'Hoho',
+            'name_en': 'Hehe',
             'departure_fr': '',
             'departure_it': '',
             'departure_en': '',

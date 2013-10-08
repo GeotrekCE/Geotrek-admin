@@ -6,7 +6,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.utils.translation import gettext as _
 
 from geotrek.authent.models import UserProfile
 from geotrek.authent.factories import UserFactory
@@ -36,7 +35,7 @@ class UserProfileTest(TestCase):
         self.assertTrue(success)
         response = self.client.get(reverse('core:path_list'))
         self.assertEqual(200, response.status_code)
-        self.assertTrue(str(_("Logout")) in response.content)
+        self.assertContains(response, u"Déconnexion")
 
         # Change user lang
         self.assertNotEqual(settings.LANGUAGE_CODE, u"en")
@@ -46,7 +45,7 @@ class UserProfileTest(TestCase):
         self.assertEqual(self.user.profile.language, u"en")
         # No effect if no logout
         response = self.client.get(reverse('core:path_list'))
-        self.assertTrue(str(_("Logout")) in response.content)
+        self.assertContains(response, u"Déconnexion")
 
         self.client.logout()
 
@@ -60,9 +59,9 @@ class UserProfileTest(TestCase):
         success = self.client.login(username=self.user.username, password=u"Bar")
         self.assertTrue(success)
         response = self.client.get(reverse('core:path_list'))
-        self.assertFalse(_("Admin") in response.content)
+        self.assertNotContains(response, '<a href="/admin/">Admin</a>')
 
         self.user.is_staff = True
         self.user.save()
         response = self.client.get(reverse('core:path_list'))
-        self.assertTrue(_("Admin") in response.content)
+        self.assertContains(response, '<a href="/admin/">Admin</a>')
