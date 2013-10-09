@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.4 (unreleased)
+0.20.4 (2013-10-09)
 -------------------
 
 * Fix sort stake by id (level) (fixes #835)
