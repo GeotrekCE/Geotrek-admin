@@ -66,7 +66,7 @@ CREATE TYPE elevation_infos AS (
 );
 
 
-
+DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (geom geometry) AS $$
 DECLARE
