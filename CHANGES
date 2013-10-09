@@ -5,12 +5,13 @@ CHANGELOG
 0.20.4 (unreleased)
 -------------------
 
-* Fix stake by id (level) (fixes #835)
+* Fix sort stake by id (level) (fixes #835)
 * Rename stake to maintenance stake (fixes #834)
 * Add validity to path filter (fixes #836)
 * Do not redrape topology geometries, use path 3D geometry (fixes #832)
 * Fix document export of Trail objects (fixes #839)
 * Fix trail helpers for land layers (fixes #838, ref #842)
+* Fix install on fresh folder, missing folder ``lib/src`` (fixes #844)
 
 
 0.20.3 (2013-09-30)
