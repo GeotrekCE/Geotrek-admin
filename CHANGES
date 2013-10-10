@@ -7,6 +7,8 @@ CHANGELOG
 
 * Remove 3D from JS WKT serializer
 * Safety check if path is less than 1m
+* Remove mentions of 2154 projection in schema migrations
+
 
 0.20.5 (2013-10-09)
 -------------------
