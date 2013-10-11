@@ -242,6 +242,19 @@ _EOF_
     fi
 }
 
+
+function backup_existing_database {
+    read -p "Backup existing database ? [yN] " -n 1 -r
+    echo  # new line
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        dbname=$(ini_value $settingsfile dbname)
+        echo_step "Backup existing database $name..."
+        sudo -n -u postgres -s -- pg_dump --format=custom $dbname > `date +%Y%m%d%H%M`-$dbname.backup
+    fi
+}
+
+
 #------------------------------------------------------------------------------
 #
 #  Install scenario
@@ -301,6 +314,10 @@ function geotrek_setup {
     fi
 
     check_postgres_connection
+
+    if ! $freshinstall ; then
+        backup_existing_database
+    fi
 
     if $prod || $standalone ; then
 
