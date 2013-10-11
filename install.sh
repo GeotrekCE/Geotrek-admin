@@ -21,6 +21,7 @@ tests=false
 prod=false
 standalone=true
 settingsfile=etc/settings.ini
+branch=master
 
 usage () {
     cat <<- _EOF_
@@ -262,7 +263,6 @@ function geotrek_setup {
 
     if [ ! -f Makefile ]; then
        echo_step "Downloading Geotrek latest stable version..."
-       branch=split_install_script
        wget --quiet https://github.com/makinacorpus/Geotrek/archive/$branch.zip
        unzip $branch.zip -d /tmp > /dev/null
        rm -f /tmp/Geotrek-$branch/install.sh
