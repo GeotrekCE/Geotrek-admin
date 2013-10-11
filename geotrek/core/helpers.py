@@ -302,7 +302,7 @@ class AltimetryHelper(object):
         # Join (offset+distance, x, y, z) together
         geom3dapi = geometry3d.transform(settings.API_SRID, clone=True)
         assert len(pointsm) == len(geom3dapi.coords), 'Cannot map distance to xyz'
-        dxyz = [pointsm[i] + geom3dapi.coords[i] for i in range(len(geom3dapi.coords))]
+        dxyz = [pointsm[i] + v for i, v in enumerate(geom3dapi.coords)]
         return dxyz
 
     @classmethod
