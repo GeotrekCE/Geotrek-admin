@@ -145,6 +145,7 @@ function geotrek_system_dependencies {
     fi
 }
 
+
 function convertit_system_dependencies {
     if $standalone ; then
         echo_step "Conversion server dependencies..."
@@ -184,11 +185,11 @@ function screamshotter_system_dependencies {
 function install_postgres_local {
     echo_step "Installing postgresql server locally..."
     sudo apt-get install -y -qq postgresql postgis postgresql-server-dev-9.1
-    
+
     dbname=$(ini_value $settingsfile dbname)
     dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
-    
+
     # Activate PostGIS in database
     if ! database_exists ${dbname}
     then
@@ -196,15 +197,15 @@ function install_postgres_local {
         sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8' TEMPLATE template0;"
         sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
     fi
-    
+
     # Create user if missing
     if user_does_not_exists ${dbuser}
     then
         echo_step "Create user ${dbuser}  and configure database access rights..."
         sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
         sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
-        sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
-        
+        sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
+
         # Open local and host connection for this user as md5
         sudo sed -i "/DISABLE/a \
 # Automatically added by Geotrek installation :\
@@ -231,7 +232,7 @@ _EOF_
             sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
             sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
             sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
-            
+
             # Listen to all network interfaces (useful for VM etc.)
             listen="'*'"
             sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf

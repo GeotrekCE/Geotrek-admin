@@ -21,7 +21,7 @@ Spatial extents
 ---------------
 
 In order to check your configuration of spatial extents, a small tool
-is available at *http://server/tools/extent/*. 
+is available at *http://server/tools/extent/*.
 
 :notes:
 
@@ -35,7 +35,7 @@ You can authenticate user against a remote database table or view.
 
 To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
 
-Expected columns in table/view are : 
+Expected columns in table/view are :
 
 * username : string (*unique*)
 * first_name : string
@@ -53,7 +53,7 @@ Expected columns in table/view are :
 
     In order to disable remote login, just remove *authent_dbname* value in settings
     file, and update instance (see paragraph above).
-    
+
     Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
 
@@ -155,7 +155,7 @@ If you do not load data, you'll have to at least create a super user :
 
     bin/django createsuperuser --username=admin --email=admin@corp.com
 
-or change its password : 
+or change its password :
 
 ::
 
@@ -206,4 +206,4 @@ PostgreSQL optimization
 
 * `Log long queries <http://wiki.postgresql.org/wiki/Logging_Difficult_Queries>`_
 
-* Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ to monitoring 
+* Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for monitoring
