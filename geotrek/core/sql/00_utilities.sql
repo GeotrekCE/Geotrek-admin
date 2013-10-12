@@ -66,7 +66,7 @@ CREATE TYPE elevation_infos AS (
 );
 
 
-
+DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (geom geometry) AS $$
 DECLARE
@@ -86,7 +86,7 @@ BEGIN
     smart_step := step;
     IF length < step THEN
         -- Keep at least a middle point
-        smart_step := (length / 2)::integer;
+        smart_step := greatest((length / 2)::integer, 1);
     END IF;
 
     RETURN QUERY

@@ -31,10 +31,24 @@ CHANGELOG
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 
 
-0.20.4 (unreleased)
+0.20.6 (unreleased)
 -------------------
 
-* Fix stake by id (level) (fixes #835)
+* Remove 3D from JS WKT serializer
+* Safety check if path is less than 1m
+* Remove mentions of 2154 projection in schema migrations
+* Fix performance issues in altimetric JSON (fixes #845)
+
+
+0.20.5 (2013-10-09)
+-------------------
+
+* Fix migration of draping utility function
+
+0.20.4 (2013-10-09)
+-------------------
+
+* Fix sort stake by id (level) (fixes #835)
 * Rename stake to maintenance stake (fixes #834)
 * Add validity to path filter (fixes #836)
 * Do not redrape topology geometries, use path 3D geometry (fixes #832)

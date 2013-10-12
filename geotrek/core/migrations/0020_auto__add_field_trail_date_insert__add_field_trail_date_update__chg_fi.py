@@ -3,27 +3,42 @@ import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
-
 from django.conf import settings
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding index on 'PathAggregation', fields ['start_position']
-        db.create_index('e_r_evenement_troncon', ['pk_debut'])
+        # Adding field 'Trail.date_insert'
+        db.add_column('l_t_sentier', 'date_insert',
+                      self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, default=datetime.datetime(2013, 10, 4, 0, 0), db_column='date_insert', blank=True),
+                      keep_default=False)
 
-        # Adding index on 'PathAggregation', fields ['end_position']
-        db.create_index('e_r_evenement_troncon', ['pk_fin'])
+        # Adding field 'Trail.date_update'
+        db.add_column('l_t_sentier', 'date_update',
+                      self.gf('django.db.models.fields.DateTimeField')(auto_now=True, default=datetime.datetime(2013, 10, 4, 0, 0), db_column='date_update', blank=True),
+                      keep_default=False)
 
+
+        # Changing field 'Topology.geom_3d'
+        db.alter_column('e_t_evenement', 'geom_3d', self.gf('django.contrib.gis.db.models.fields.GeometryField')(dim=3, spatial_index=False, null=True, srid=2154))
+
+        # Changing field 'Path.geom_3d'
+        db.alter_column('l_t_troncon', 'geom_3d', self.gf('django.contrib.gis.db.models.fields.GeometryField')(dim=3, spatial_index=False, null=True, srid=2154))
 
     def backwards(self, orm):
-        # Removing index on 'PathAggregation', fields ['end_position']
-        db.delete_index('e_r_evenement_troncon', ['pk_fin'])
+        # Deleting field 'Trail.date_insert'
+        db.delete_column('l_t_sentier', 'date_insert')
 
-        # Removing index on 'PathAggregation', fields ['start_position']
-        db.delete_index('e_r_evenement_troncon', ['pk_debut'])
+        # Deleting field 'Trail.date_update'
+        db.delete_column('l_t_sentier', 'date_update')
 
+
+        # Changing field 'Topology.geom_3d'
+        db.alter_column('e_t_evenement', 'geom_3d', self.gf('django.contrib.gis.db.models.fields.LineStringField')(dim=3, srid=2154, null=True, spatial_index=False))
+
+        # Changing field 'Path.geom_3d'
+        db.alter_column('l_t_troncon', 'geom_3d', self.gf('django.contrib.gis.db.models.fields.LineStringField')(dim=3, srid=2154, null=True, spatial_index=False))
 
     models = {
         u'authent.structure': {
@@ -60,8 +75,9 @@ class Migration(SchemaMigration):
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'departure': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'depart'", 'blank': 'True'}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '%s' % settings.SRID}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
             'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
@@ -85,7 +101,7 @@ class Migration(SchemaMigration):
             'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': u"orm['core.Topology']"})
         },
         u'core.stake': {
-            'Meta': {'ordering': "['stake']", 'object_name': 'Stake', 'db_table': "'l_b_enjeu'"},
+            'Meta': {'ordering': "['id']", 'object_name': 'Stake', 'db_table': "'l_b_enjeu'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'stake': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'enjeu'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
@@ -97,7 +113,8 @@ class Migration(SchemaMigration):
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False', 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '%s' % settings.SRID}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
@@ -111,6 +128,8 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['name']", 'object_name': 'Trail', 'db_table': "'l_t_sentier'"},
             'arrival': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'arrivee'"}),
             'comments': ('django.db.models.fields.TextField', [], {'default': "''", 'db_column': "'commentaire'", 'blank': 'True'}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'departure': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'depart'"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'nom'"}),
