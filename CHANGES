@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.6 (unreleased)
+0.20.6 (2013-10-14)
 -------------------
 
 * Remove 3D from JS WKT serializer
