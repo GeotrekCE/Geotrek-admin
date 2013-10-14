@@ -10,6 +10,7 @@ CHANGELOG
 * Remove mentions of 2154 projection in schema migrations
 * Fix performance issues in altimetric JSON (fixes #845)
 * Fix filter forms missing from Trek and POI lists (fixes #847)
+* Fix empty Nginx log files (fixes #846)
 
 
 0.20.5 (2013-10-09)

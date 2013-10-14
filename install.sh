@@ -69,7 +69,7 @@ migrate_settings () {
     userfile=$1
     samplefile=$2
     cp $userfile $userfile.$(date +%y%m%d%H%M)
-    
+
      grep -e '^[a-zA-Z]' $samplefile | while read line; do
          inikey=$(echo $line | sed -n 's/\([^ ]*.*\) *=.*/\1/p')
          if [ $(grep $inikey $userfile | wc -l) -eq 0 ] ;
@@ -134,25 +134,25 @@ function ubuntu_precise {
     dbhost=$(ini_value $settingsfile dbhost)
     dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
-    
+
     if [ "${dbhost}" == "localhost" ] ; then
         echo "Installing postgresql server locally..."
         sudo apt-get install -y postgresql postgis postgresql-server-dev-9.1
-        
+
         # Activate PostGIS in database
         if ! database_exists ${dbname}
         then
             sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8';"
             sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
         fi
-        
+
         # Create user if missing
         if user_does_not_exists ${dbuser}
         then
             sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
             sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
-            sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};" 
-            
+            sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
+
             # Open local and host connection for this user as md5
             sudo sed -i "/DISABLE/a \
 # Automatically added by Geotrek installation :\
@@ -166,7 +166,7 @@ _EOF_
             sudo /etc/init.d/postgresql restart
         fi
     fi
-    
+
     # Check that database connection is correct
     dbport=$(ini_value $settingsfile dbport)
     export PGPASSWORD=$dbpassword
@@ -192,7 +192,7 @@ _EOF_
                 sudo -n -u postgres -s -- psql -d template_postgis -c "VACUUM FREEZE"
                 sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis'"
                 sudo -n -u postgres -s -- psql -c "UPDATE pg_database SET datallowconn = FALSE WHERE datname = 'template_postgis'"
-                
+
                 # Listen to all network interfaces (useful for VM etc.)
                 listen="'*'"
                 sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
@@ -213,14 +213,19 @@ _EOF_
         # Protect files with sensitive information
         chmod -f 700 etc/settings.ini
         chmod -f 700 parts/django/django_extrasettings/settings.py
-        
+
         # If buildout was successful, deploy really !
         if [ -f etc/nginx.conf ]; then
             sudo rm /etc/nginx/sites-enabled/default
             sudo cp etc/nginx.conf /etc/nginx/sites-available/geotrek
             sudo ln -sf /etc/nginx/sites-available/geotrek /etc/nginx/sites-enabled/geotrek
+
+            # Nginx does not create log files !
+            touch var/log/nginx-access.log
+            touch var/log/nginx-error.log
+
             sudo /etc/init.d/nginx restart
-            
+
             sudo cp etc/init/supervisor.conf /etc/init/supervisor.conf
             sudo stop supervisor
             sudo start supervisor
