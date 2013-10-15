@@ -7,6 +7,7 @@ CHANGELOG
 
 * Public trek export : POIs list in two columns (fixes #855)
 * Public trek export : POIs details without column break (fixes #857)
+* Public trek export : Show pictures attributions (fixes #859)
 
 
 0.20.6 (2013-10-14)

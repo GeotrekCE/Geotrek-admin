@@ -368,3 +368,7 @@ msgstr "Aménagements handicapés"
 
 msgid "On the way..."
 msgstr "Sur le chemin..."
+
+msgid "Attribution"
+msgstr "Crédits photo"
+
