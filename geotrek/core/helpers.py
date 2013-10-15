@@ -312,7 +312,7 @@ class AltimetryHelper(object):
         Most of the job done here is dedicated to preparing
         nice labels scales.
         """
-        distances = [v[0] for v in profile]
+        distances = [int(v[0]) for v in profile]
         elevations = [v[3] for v in profile]
         min_elevation = int(min(elevations))
         floor_elevation = min_elevation - min_elevation % 10
@@ -333,7 +333,7 @@ class AltimetryHelper(object):
         config = dict(show_legend=False,
                       print_values=False,
                       show_dots=False,
-                      x_labels_major_every=int(len(profile)/2),
+                      x_labels_major_count=3,
                       show_minor_x_labels=False,
                       width=800,
                       height=400,
