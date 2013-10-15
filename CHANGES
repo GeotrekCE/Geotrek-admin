@@ -5,7 +5,9 @@ CHANGELOG
 0.20.7 (unreleased)
 -------------------
 
+* Public trek export : POIs list in two columns (fixes #855)
 * Public trek export : POIs details without column break (fixes #857)
+
 
 0.20.6 (2013-10-14)
 -------------------
