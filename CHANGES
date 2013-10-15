@@ -6,6 +6,7 @@ CHANGELOG
 -------------------
 
 * Altimetric profile : Show max distance and round values (fixes #853)
+* Altimetric profile : Add settings for colors (fixes #854)
 * Public trek export : POIs list in two columns (fixes #855)
 * Public trek export : POIs details without column break (fixes #857)
 * Public trek export : Show pictures attributions (fixes #859)

@@ -313,7 +313,7 @@ class AltimetryHelper(object):
         nice labels scales.
         """
         distances = [int(v[0]) for v in profile]
-        elevations = [v[3] for v in profile]
+        elevations = [int(v[3]) for v in profile]
         min_elevation = int(min(elevations))
         floor_elevation = min_elevation - min_elevation % 10
         max_elevation = int(max(elevations))
@@ -335,16 +335,17 @@ class AltimetryHelper(object):
                       show_dots=False,
                       x_labels_major_count=3,
                       show_minor_x_labels=False,
-                      width=800,
-                      height=400,
-                      title_font_size=25,
-                      label_font_size=20,
-                      major_label_font_size=25,
+                      margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
+                      width=settings.ALTIMETRIC_PROFILE_WIDTH,
+                      height=settings.ALTIMETRIC_PROFILE_HEIGHT,
+                      title_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
+                      label_font_size=0.8 * settings.ALTIMETRIC_PROFILE_FONTSIZE,
+                      major_label_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
                       js=[])
 
         style = LightSolarizedStyle
-        style.background = 'white'
-        style.colors = ('#5393E8',)
+        style.background = settings.ALTIMETRIC_PROFILE_BACKGROUND
+        style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
         line_chart = pygal.StackedLine(fill=True, style=style, **config)
         line_chart.x_title = unicode(_("Distance (m)"))
         line_chart.x_labels = [str(i) for i in x_labels]
