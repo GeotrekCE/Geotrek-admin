@@ -70,39 +70,37 @@ DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS TABLE (geom geometry) AS $$
 DECLARE
-    smart_step integer;
     length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
 
+    length := ST_Length(linegeom);
+
     IF ST_ZMin(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
         RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
-    END IF;
 
-    length := ST_Length(linegeom);
-    smart_step := step;
-    IF length < step THEN
-        -- Keep at least a middle point
-        smart_step := greatest((length / 2)::integer, 1);
-    END IF;
+    ELSIF length < step THEN
+        RETURN QUERY SELECT add_point_elevation((ST_DumpPoints(linegeom)).geom);
 
-    RETURN QUERY
-        WITH linemesure AS
-             -- Add a mesure dimension to extract steps
-               (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
-                       generate_series(smart_step, length::int, smart_step) as i),
-             points2d AS
-               (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
-                UNION
-                SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
-                UNION
-                SELECT length as distance, ST_EndPoint(linegeom) as geom)
-        SELECT add_point_elevation(p.geom)
-        FROM points2d p
-        ORDER BY p.distance;
+    ELSE
+        RETURN QUERY
+            WITH linemesure AS
+                 -- Add a mesure dimension to extract steps
+                   (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
+                           generate_series(step, length::int, step) as i),
+                 points2d AS
+                   (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
+                    UNION
+                    SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
+                    UNION
+                    SELECT length as distance, ST_EndPoint(linegeom) as geom)
+            SELECT add_point_elevation(p.geom)
+            FROM points2d p
+            ORDER BY p.distance;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 

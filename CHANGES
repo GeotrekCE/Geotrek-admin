@@ -5,6 +5,7 @@ CHANGELOG
 0.20.7 (unreleased)
 -------------------
 
+* Fix topology geometry 3D being draped twice (fixes #863)
 * Altimetric profile : Show max distance and round values (fixes #853)
 * Altimetric profile : Add settings for colors (fixes #854)
 * Public trek export : POIs list in two columns (fixes #855)
