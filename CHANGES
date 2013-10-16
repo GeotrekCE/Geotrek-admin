@@ -11,6 +11,7 @@ CHANGELOG
 * Public trek export : POIs list in two columns (fixes #855)
 * Public trek export : POIs details without column break (fixes #857)
 * Public trek export : Show pictures attributions (fixes #859)
+* Public trek export : Use 10pt fonts in every text blocks (fixes #848)
 
 :notes:
 
