@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.7 (unreleased)
+0.20.7 (2013-10-16)
 -------------------
 
 * Fix topology geometry 3D being draped twice (fixes #863)
