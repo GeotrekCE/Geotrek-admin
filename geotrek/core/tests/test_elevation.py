@@ -21,46 +21,38 @@ class ElevationTest(TestCase):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x, y, x+y])
         conn.commit_unless_managed()
 
-    def test_elevation_path(self):
-        # Create a geometry and check elevation-based indicators
-        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
-        self.assertEqual(p.ascent, 0)
-        self.assertEqual(p.descent, 0)
-        self.assertEqual(p.min_elevation, 0)
-        self.assertEqual(p.max_elevation, 0)
-        p.save()
-        self.assertEqual(p.ascent, 1)
-        self.assertEqual(p.descent, -2)
-        self.assertEqual(p.min_elevation, 3)
-        self.assertEqual(p.max_elevation, 5)
+        self.path = Path.objects.create(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
 
-        # Check elevation profile
-        profile = p.get_elevation_profile()
-        self.assertEqual(len(profile), 4)  # minimum possible (since p.length < sampling resolution)
+    def test_elevation_path(self):
+        self.assertEqual(self.path.ascent, 1)
+        self.assertEqual(self.path.descent, -2)
+        self.assertEqual(self.path.min_elevation, 3)
+        self.assertEqual(self.path.max_elevation, 5)
+        self.assertEqual(len(self.path.geom_3d.coords), 3)
+
+    def test_elevation_profile(self):
+        profile = self.path.get_elevation_profile()
+        self.assertEqual(len(profile), 3)
         self.assertEqual(profile[0][0], 0.0)
-        self.assertEqual(profile[0][3], 4)
-        self.assertTrue(2.4 < profile[-1][0] < 2.5)  # p.geom.length
-        self.assertEqual(profile[-1][3], 3)
+        self.assertTrue(2.41421 < profile[-1][0] < 2.41422)
+        self.assertTrue(profile[0][2], 4)
+        self.assertTrue(profile[1][2], 5)
+        self.assertTrue(profile[2][2], 3)
 
     def test_elevation_topology_line(self):
-        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
-        p.save()
-
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p, start=0.2, end=0.7)
+        topo.add_path(self.path, start=0.2, end=0.7)
         topo.save()
 
         self.assertEqual(topo.ascent, 1)
         self.assertEqual(topo.descent, -1)
         self.assertEqual(topo.min_elevation, 4)
         self.assertEqual(topo.max_elevation, 5)
+        self.assertEqual(len(topo.geom_3d.coords), 3)
 
     def test_elevation_topology_point(self):
-        p = Path(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
-        p.save()
-
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p, start=0.5, end=0.5)
+        topo.add_path(self.path, start=0.5, end=0.5)
         topo.save()
 
         self.assertEqual(topo.ascent, 0)
