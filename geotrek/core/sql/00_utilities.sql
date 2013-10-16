@@ -68,7 +68,7 @@ CREATE TYPE elevation_infos AS (
 
 DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
-    RETURNS TABLE (geom geometry) AS $$
+    RETURNS SETOF geometry AS $$
 DECLARE
     length float;
 BEGIN
@@ -167,7 +167,8 @@ BEGIN
     result.negative_gain := 0;
     last_ele := NULL;
     points3d := ARRAY[]::geometry[];
-    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) dl LOOP
+
+    FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         points3d := array_append(points3d, current);
         ele := ST_Z(current)::integer;
         -- Add positive only if ele - last_ele > 0
