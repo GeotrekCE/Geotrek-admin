@@ -8,6 +8,7 @@ CHANGELOG
 * Public trek export : Fix various layout regressions (ref #848)
 * Public trek export : Show POI theme pictogram (fixes #858)
 * Public trek export : full width for information desk frame (fixes #856)
+* Public trek export : add footer with trek title and page numbers (fixes #861)
 
 0.20.7 (2013-10-16)
 -------------------
