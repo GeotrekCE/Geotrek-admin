@@ -6,6 +6,7 @@ CHANGELOG
 -------------------
 
 * Public trek export : Fix various layout regressions (ref #848)
+* Public trek export : Show POI theme pictogram (fixes #858)
 
 0.20.7 (2013-10-16)
 -------------------
