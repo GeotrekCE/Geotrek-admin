@@ -303,10 +303,12 @@ BEGIN
                                 ELSE
                                     (greatest(a, pk_fin) - a) / (b - a)
                                 END
-                            FROM e_r_evenement_troncon et
-                            WHERE et.troncon = troncon.id
+                            FROM e_r_evenement_troncon et,
+                                 e_t_evenement e
+                            WHERE et.evenement = e.id
+                                  AND et.troncon = troncon.id
                                   AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
-                                       (pk_debut = pk_fin AND pk_debut = a)); -- Point
+                                       (pk_debut = pk_fin AND pk_debut = a AND decallage = 0)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
                         IF t_count > 0 THEN
                             RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), a, b, tid_clone, troncon.nom, ST_AsText(segment);
@@ -317,10 +319,13 @@ BEGIN
                             fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT tid_clone, evenement, pk_debut, pk_fin
-                                FROM e_r_evenement_troncon et
-                                WHERE et.troncon = troncon.id AND
+                                FROM e_r_evenement_troncon et,
+                                     e_t_evenement e
+                                WHERE et.evenement = e.id AND
+                                      et.troncon = troncon.id AND
                                       pk_debut = pk_fin AND
-                                      pk_debut = 1;
+                                      pk_debut = 1 AND
+                                      decallage = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
                                 RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(t_geom), tid_clone, troncon.nom, ST_AsText(segment), fraction;
@@ -331,9 +336,12 @@ BEGIN
                             fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT NEW.id, et.evenement, fraction, fraction
-                                FROM e_r_evenement_troncon et
-                                WHERE et.troncon = troncon.id
-                                  AND pk_debut = pk_fin AND pk_debut = a;
+                                FROM e_r_evenement_troncon et,
+                                     e_t_evenement e
+                                WHERE et.evenement = e.id
+                                  AND et.troncon = troncon.id
+                                  AND pk_debut = pk_fin AND pk_debut = a
+                                  AND decallage = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
                                 RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
@@ -342,6 +350,36 @@ BEGIN
                     END IF;
                 END IF;
             END LOOP;
+
+
+            -- For each existing point topology with offset, re-attach it
+            -- to the closest path, among those splitted.
+            WITH existing_rec AS (SELECT et.id, e.decallage, e.geom
+                                    FROM e_r_evenement_troncon et,
+                                         e_t_evenement e
+                                   WHERE et.evenement = e.id
+                                     AND et.pk_debut = et.pk_debut
+                                     AND e.decallage > 0
+                                     AND et.troncon = troncon.id
+                                     AND et.id = ANY(existing_et)),
+                 closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
+                                    FROM l_t_troncon t, existing_rec er
+                                   WHERE t.id != troncon.id
+                                     AND ST_Distance(er.geom, t.geom) < er.decallage
+                                ORDER BY ST_Distance(er.geom, t.geom)
+                                   LIMIT 1)
+                UPDATE e_r_evenement_troncon SET troncon = closest_id
+                  FROM closest_path
+                 WHERE id = et_id;
+            GET DIAGNOSTICS t_count = ROW_COUNT;
+            IF t_count > 0 THEN
+                -- Update geom of affected paths to trigger update_evenement_geom_when_troncon_changes()
+                UPDATE l_t_troncon t SET geom = geom
+                  FROM e_r_evenement_troncon et
+                 WHERE t.id = et.troncon
+                   AND et.pk_debut = et.pk_debut
+                   AND et.id = ANY(existing_et);
+            END IF;
 
             -- Update point topologies at intersection
             -- Trigger e_r_evenement_troncon_junction_point_iu_tgr

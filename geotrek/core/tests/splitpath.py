@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
+from django.conf import settings
+
+from geotrek.common.utils import almostequal
 
 from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
 from geotrek.core.models import Path, Topology, PathAggregation
@@ -861,6 +864,77 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(cb.aggregations.all()), 1)
         aggr_cb = cb.aggregations.all()[0]
         self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
+
+    def test_split_tee_6(self):
+        """
+            X
+                C
+        A +-----+-----+ B
+                |
+                +    AB exists. Add CD.
+                D    Point with offset is now linked to AC.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (8, 0)))
+
+        poi = Point(1, 3, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        aggr = topology.aggregations.all()[0]
+        position = topology.geom.coords
+
+        self.assertTrue(almostequal(3, topology.offset))
+        self.assertTrue(almostequal(0.125, aggr.start_position))
+        self.assertTrue(almostequal(0.125, aggr.end_position))
+
+        # Add CD
+        PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        aggr_ab = ab.aggregations.all()[0]
+
+        topology.reload()
+        self.assertTrue(almostequal(3, topology.offset))
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 1)
+        self.assertEqual(len(cb.aggregations.all()), 0)
+        self.assertEqual(position, topology.geom.coords)
+        self.assertTrue(almostequal(0.5, aggr_ab.start_position))
+        self.assertTrue(almostequal(0.5, aggr_ab.end_position))
+
+    def test_split_tee_7(self):
+        """
+                    X
+                C
+        A +-----+-----+ B
+                |
+                +    AB exists. Add CD.
+                D    Point with offset is now linked to CB.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (8, 0)))
+
+        poi = Point(7, 3, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        aggr = topology.aggregations.all()[0]
+        position = topology.geom.coords
+
+        self.assertTrue(almostequal(3, topology.offset))
+        self.assertTrue(almostequal(0.875, aggr.start_position))
+        self.assertTrue(almostequal(0.875, aggr.end_position))
+
+        # Add CD
+        PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+
+
+        topology.reload()
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(ab.aggregations.all()), 0)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        self.assertTrue(almostequal(3, topology.offset), topology.offset)
+        self.assertEqual(position, topology.geom.coords)
+        aggr_cb = cb.aggregations.all()[0]
+        self.assertTrue(almostequal(0.75, aggr_cb.start_position))
+        self.assertTrue(almostequal(0.75, aggr_cb.end_position))
 
     def test_split_on_update(self):
         """                               + D
