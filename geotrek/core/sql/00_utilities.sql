@@ -38,7 +38,9 @@ BEGIN
     shortest_line := ST_ShortestLine(line, point);
     crossing_dir := ST_LineCrossingDirection(line, shortest_line);
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
-    side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir < 0 THEN 1 WHEN crossing_dir > 0 THEN -1 ELSE 0 END;
+    side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir <= 0
+                                                   THEN 1
+                                                   ELSE -1 END;
 
     -- Round if close to 0
     IF ABS(side_offset) < 0.1 THEN
