@@ -9,6 +9,7 @@ CHANGELOG
 * Public trek export : Show POI theme pictogram (fixes #858)
 * Public trek export : full width for information desk frame (fixes #856)
 * Public trek export : add footer with trek title and page numbers (fixes #861)
+* Public trek export : add floating picture in POI detail (fixes #860)
 * Fix point offset lost on path update (fixes #867)
 * Fix reconnect point topologies with offset to closest path (fixes #868)
 
