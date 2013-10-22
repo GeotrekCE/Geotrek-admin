@@ -136,13 +136,25 @@
 
 <p><a href="http://geotrek.readthedocs.org">Installation and configuration instructions</a></p>
 
-<p>Tutoriaux ( <em>en</em> ):</p>
+<p>Tutoriaux :</p>
 
 <ul>
-<li><a href="http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html">Drappage de lignes sur un MNT</a></li>
-<li><a href="http://blog.mathieu-leplatre.info/cheap-debugging-of-postgresql-triggers-in-django.html">Debug PostgreSQL triggers with Django</a></li>
-<li><a href="http://blog.mathieu-leplatre.info/leaflet-tiles-in-lambert-93-projection-2154.html">Leaflet et tuiles en Lambert-93</a></li>
-</ul><h3>
+<li><a href="http://makina-corpus.com/blog/metier/draper-des-lignes-sur-un-mnt-avec-postgis">Drappage de lignes sur un MNT</a></li>
+<li><a href="http://makina-corpus.com/blog/metier/utiliser-les-topologies-postgis-pour-nettoyer-un-filaire-de-voirie">Utiliser les topologies PostGIS pour nettoyer un filaire de voirie</a></li>
+<li>
+<a href="http://blog.mathieu-leplatre.info/cheap-debugging-of-postgresql-triggers-in-django.html">Debug PostgreSQL triggers with Django</a> ( <em>en</em> )</li>
+<li>
+<a href="http://blog.mathieu-leplatre.info/leaflet-tiles-in-lambert-93-projection-2154.html">Leaflet et tuiles en Lambert-93</a> ( <em>en</em> )</li>
+</ul><p>L'édition des objets s'effectue en 2D, et leur géométrie est <a href="http://makina-corpus.com/blog/metier/draper-des-lignes-sur-un-mnt-avec-postgis">drappée
+automatiquement</a> en 3D sur un Modèle Numérique de Terrain stocké en base au format raster.</p>
+
+<p>Le socle de l'application repose sur un réseau topologique de tronçons, qui permet d'assurer le découpage des arrêtes aux intersections, ainsi que le "magnétisme" (snapping) des noeuds du réseau.</p>
+
+<p>Toutes les géométries des objets sont décrites à partir du réseau, en utilisant la segmentation dynamique. Un ensemble de déclencheurs calcule les géométries résultantes à la création et lors de modifications sur sur ce réseau de tronçons. Cela permet de garantir une cohérence géométrique et topologique entre les tronçons et les objets, mais aussi d'associer tous les objets entre eux en vérifiant leur superposition sur le réseau.</p>
+
+<p>Une <a href="https://github.com/makinacorpus/Geotrek/blob/master/geotrek/core/tests/splitpath.py">série de tests automatiques</a> est exécutée à chaque modification du code source, garantissant la robustesse et les non-régressions.</p>
+
+<h3>
 <a name="composants-libres" class="anchor" href="#composants-libres"><span class="octicon octicon-link"></span></a>Composants libres</h3>
 
 <p>L'application Geotrek a été conçue et modélisée par le Parc national des Ecrins qui s'est associée au Parc national du Mercantour et au parc italien Alpi-Marittime pour lancer un appel d'offre fin 2010. C'est la société Makina Corpus qui a été retenue pour développer le projet. Rapidement le choix a été fait de développer une application la plus générique et la plus portable possible. Son usage devenait alors potentiellement intéressant pour un grand nombre d'autres structures et les partenaires ont décidé de libérer l'ensemble du projet sous licence open source sur la forge github.</p>
