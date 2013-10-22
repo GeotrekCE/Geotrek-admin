@@ -150,7 +150,7 @@ automatiquement</a> en 3D sur un Modèle Numérique de Terrain stocké en base a
 
 <p>Le socle de l'application repose sur un réseau topologique de tronçons, qui permet d'assurer le découpage des arrêtes aux intersections, ainsi que le "magnétisme" (snapping) des noeuds du réseau.</p>
 
-<p>Toutes les géométries des objets sont décrites à partir du réseau, en utilisant la segmentation dynamique. Un ensemble de déclencheurs calcule les géométries résultantes à la création et lors de modifications sur sur ce réseau de tronçons. Cela permet de garantir une cohérence géométrique et topologique entre les tronçons et les objets, mais aussi d'associer tous les objets entre eux en vérifiant leur superposition sur le réseau.</p>
+<p>Toutes les géométries des objets sont décrites à partir du réseau, en utilisant la segmentation dynamique. Un ensemble de déclencheurs calcule les géométries résultantes à la création et lors de modifications sur ce réseau de tronçons. Cela permet de garantir une cohérence géométrique et topologique entre les tronçons et tous les objets, mais aussi d'associer ces derniers entre eux en vérifiant leur superposition sur le réseau.</p>
 
 <p>Une <a href="https://github.com/makinacorpus/Geotrek/blob/master/geotrek/core/tests/splitpath.py">série de tests automatiques</a> est exécutée à chaque modification du code source, garantissant la robustesse et les non-régressions.</p>
 
