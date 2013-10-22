@@ -23,6 +23,7 @@ CHANGELOG
 * Installation script is modular (standalone, geotrek only, ...)
 * Settings edition prompt only happens at first install
 * Propose to backup DB before Geotrek upgrade (fixes #804)
+* Add spanish translation
 
 **BUG fixes**
 

@@ -1,8 +1,8 @@
 #
 #  Geotrek Settings
 #..........................
-# 
-# (Note: If you edit this file out of install process, 
+#
+# (Note: If you edit this file out of install process,
 #  re-run "./install.sh" to apply changes)
 
 [settings]
@@ -15,7 +15,7 @@ defaultstructure = PNX
 
 # Default language and list of available
 language = fr
-languages = en,fr,it
+languages = en,fr,it,es
 
 # Database
 dbname = geotrekdb
@@ -49,9 +49,9 @@ scan_layers = scan100,scan25
 # Recipient
 mailadmin = admin@yourdomain.tld
 # Server config
-mailfrom = 
+mailfrom =
 mailhost =
 mailuser =
-mailpassword = 
+mailpassword =
 mailport = 25
 mailtls = False
