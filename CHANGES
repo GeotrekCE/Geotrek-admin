@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.8 (unreleased)
+0.20.8 (2013-10-22)
 -------------------
 
 * Public trek export : Fix various layout regressions (ref #848)
