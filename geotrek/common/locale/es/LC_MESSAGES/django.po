@@ -782,11 +782,11 @@ msgid "Surface"
 msgstr "Superficie"
 
 msgid "H:"
-msgstr ""
+msgstr "Al:"
 
 
 msgid "W:"
-msgstr ""
+msgstr "An:"
 
 
 msgid "Add manday"
@@ -935,7 +935,7 @@ msgid "Circuit step"
 msgstr "Etapa de circuito"
 
 msgid "Trek relationship"
-msgstr "Redes de excursión"
+msgstr "Relacíon del itinerario"
 
 msgid "Trek relationships"
 msgstr "Vínculos entre los itinerarios"
