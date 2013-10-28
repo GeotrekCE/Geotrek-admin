@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.test import TestCase
 
 from .. import factories
@@ -25,7 +24,7 @@ class AdminSiteTest(TestCase):
     def test_user_cant_access(self):
         self.login(self.user)
         response = self.client.get('/admin/')
-        self.assertContains(response, u"Connexion | Site d'administration de Django")
+        self.assertContains(response, 'Log in | Django site admin')
 
     def test_admin_can_see_everything(self):
         self.login(self.admin)

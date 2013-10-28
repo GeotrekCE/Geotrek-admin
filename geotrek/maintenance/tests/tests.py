@@ -185,7 +185,7 @@ class ProjectViewsTest(CommonTest):
                 ('funding_set-TOTAL_FORMS', '0'),
                 ('funding_set-INITIAL_FORMS', '1'),
                 ('funding_set-MAX_NUM_FORMS', '0'),
-            ]), u'Ce champ est obligatoire.'
+            ]), u'This field is required.'
 
     def get_good_data(self):
         return {
