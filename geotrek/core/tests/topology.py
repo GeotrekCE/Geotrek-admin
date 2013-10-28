@@ -193,6 +193,53 @@ class TopologyPointTest(TestCase):
         self.assertTrue(almostequal(10, poitopo.geom.x))
         self.assertTrue(almostequal(10, poitopo.geom.y))
 
+    def test_point_offset_kept(self):
+        """
+        Shorten path, offset kept.
+
+          X                        X
+        +-----------+            +------+
+
+        """
+        p1 = PathFactory.create(geom=LineString((0, 0), (20, 0)))
+        poi = Point(5, 10, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        self.assertTrue(almostequal(0.25, poitopo.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(10, poitopo.offset))
+
+        p1.geom = LineString((0, 0), (10, 0))
+        p1.save()
+        poitopo.reload()
+
+        self.assertTrue(almostequal(10, poitopo.offset))
+        # Not moved:
+        self.assertTrue(almostequal(5, poitopo.geom.x))
+        self.assertTrue(almostequal(10, poitopo.geom.y))
+
+    def test_point_offset_updated(self):
+        """
+        Shorten path, offset updated.
+
+               X                              X
+        +-----------+            +------+
+
+        """
+        p1 = PathFactory.create(geom=LineString((0, 0), (20, 0)))
+        poi = Point(10, 10, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
+        self.assertTrue(almostequal(10, poitopo.offset))
+
+        p1.geom = LineString((0, 0), (0, 5))
+        p1.save()
+        poitopo.reload()
+        self.assertTrue(almostequal(11.180339887, poitopo.offset))
+        # Not moved:
+        self.assertTrue(almostequal(10, poitopo.geom.x))
+        self.assertTrue(almostequal(10, poitopo.geom.y))
+
     def test_point_geom_moving(self):
         p1 = PathFactory.create(geom=LineString((0, 0),
                                                 (0, 5)))

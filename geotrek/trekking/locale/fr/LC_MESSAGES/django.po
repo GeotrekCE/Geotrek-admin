@@ -322,9 +322,9 @@ msgid "%s min"
 msgstr "%s min"
 
 msgid ""
-"This project is co-financed by the European Union (FEDER, ALCOTRA). Europe is involved in Massif Alpin with the European regional development fund."
+"This project is co-financed by the European Union through FEDER Massif Alpin."
 msgstr ""
-"Ce projet est soutenu financièrement par l’Union Européenne dans le cadre du FEDER Massif Alpin et du programme transfrontalier ALCOTRA."
+"Ce projet est cofinancé par l'Union Européenne dans le cadre du FEDER Massif alpin."
 
 msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"
@@ -368,3 +368,7 @@ msgstr "Aménagements handicapés"
 
 msgid "On the way..."
 msgstr "Sur le chemin..."
+
+msgid "Attribution"
+msgstr "Crédits photo"
+

@@ -32,13 +32,44 @@ CHANGELOG
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 
 
-0.20.6 (unreleased)
+0.20.8 (2013-10-22)
+-------------------
+
+* Public trek export : Fix various layout regressions (ref #848)
+* Public trek export : Show POI theme pictogram (fixes #858)
+* Public trek export : full width for information desk frame (fixes #856)
+* Public trek export : add footer with trek title and page numbers (fixes #861)
+* Public trek export : add floating picture in POI detail (fixes #860)
+* Public trek export : fix POI thumbnails missing (fixes #869)
+* Fix point offset lost on path update (fixes #867)
+* Fix reconnect point topologies with offset to closest path (fixes #868)
+
+0.20.7 (2013-10-16)
+-------------------
+
+* Fix topology geometry 3D being draped twice (fixes #863)
+* Altimetric profile : Show max distance and round values (fixes #853)
+* Altimetric profile : Add settings for colors (fixes #854)
+* Public trek export : POIs list in two columns (fixes #855)
+* Public trek export : POIs details without column break (fixes #857)
+* Public trek export : Show pictures attributions (fixes #859)
+* Public trek export : Use 10pt fonts in every text blocks (fixes #848)
+
+:notes:
+
+    # Empty profiles cache
+    rm -rf var/media/profiles/*
+
+
+0.20.6 (2013-10-14)
 -------------------
 
 * Remove 3D from JS WKT serializer
 * Safety check if path is less than 1m
 * Remove mentions of 2154 projection in schema migrations
 * Fix performance issues in altimetric JSON (fixes #845)
+* Fix filter forms missing from Trek and POI lists (fixes #847)
+* Fix empty Nginx log files (fixes #846)
 
 
 0.20.5 (2013-10-09)
@@ -53,6 +84,10 @@ CHANGELOG
 * Rename stake to maintenance stake (fixes #834)
 * Add validity to path filter (fixes #836)
 * Do not redrape topology geometries, use path 3D geometry (fixes #832)
+* Fix document export of Trail objects (fixes #839)
+* Fix trail helpers for land layers (fixes #838, ref #842)
+* Fix install on fresh folder, missing folder ``lib/src`` (fixes #844)
+
 
 0.20.3 (2013-09-30)
 -------------------

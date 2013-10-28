@@ -329,6 +329,11 @@ function geotrek_setup {
             sudo rm /etc/nginx/sites-enabled/default
             sudo cp etc/nginx.conf /etc/nginx/sites-available/geotrek
             sudo ln -sf /etc/nginx/sites-available/geotrek /etc/nginx/sites-enabled/geotrek
+
+            # Nginx does not create log files !
+            touch var/log/nginx-access.log
+            touch var/log/nginx-error.log
+
             sudo /etc/init.d/nginx restart
 
             if [ -f /etc/init/supervisor.conf ]; then

@@ -38,7 +38,9 @@ BEGIN
     shortest_line := ST_ShortestLine(line, point);
     crossing_dir := ST_LineCrossingDirection(line, shortest_line);
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
-    side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir < 0 THEN 1 WHEN crossing_dir > 0 THEN -1 ELSE 0 END;
+    side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir <= 0
+                                                   THEN 1
+                                                   ELSE -1 END;
 
     -- Round if close to 0
     IF ABS(side_offset) < 0.1 THEN
@@ -68,41 +70,39 @@ CREATE TYPE elevation_infos AS (
 
 DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
-    RETURNS TABLE (geom geometry) AS $$
+    RETURNS SETOF geometry AS $$
 DECLARE
-    smart_step integer;
     length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
 
+    length := ST_Length(linegeom);
+
     IF ST_ZMin(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
         RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
-    END IF;
 
-    length := ST_Length(linegeom);
-    smart_step := step;
-    IF length < step THEN
-        -- Keep at least a middle point
-        smart_step := greatest((length / 2)::integer, 1);
-    END IF;
+    ELSIF length < step THEN
+        RETURN QUERY SELECT add_point_elevation((ST_DumpPoints(linegeom)).geom);
 
-    RETURN QUERY
-        WITH linemesure AS
-             -- Add a mesure dimension to extract steps
-               (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
-                       generate_series(smart_step, length::int, smart_step) as i),
-             points2d AS
-               (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
-                UNION
-                SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
-                UNION
-                SELECT length as distance, ST_EndPoint(linegeom) as geom)
-        SELECT add_point_elevation(p.geom)
-        FROM points2d p
-        ORDER BY p.distance;
+    ELSE
+        RETURN QUERY
+            WITH linemesure AS
+                 -- Add a mesure dimension to extract steps
+                   (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
+                           generate_series(step, length::int, step) as i),
+                 points2d AS
+                   (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
+                    UNION
+                    SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
+                    UNION
+                    SELECT length as distance, ST_EndPoint(linegeom) as geom)
+            SELECT add_point_elevation(p.geom)
+            FROM points2d p
+            ORDER BY p.distance;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -169,7 +169,8 @@ BEGIN
     result.negative_gain := 0;
     last_ele := NULL;
     points3d := ARRAY[]::geometry[];
-    FOR current IN SELECT dl.geom FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) dl LOOP
+
+    FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         points3d := array_append(points3d, current);
         ele := ST_Z(current)::integer;
         -- Add positive only if ele - last_ele > 0

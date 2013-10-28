@@ -304,7 +304,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         """
         self.offset = other.offset
         self.geom = other.geom
-        self.save()
+        self.save(update_fields=['offset', 'geom'])
         PathAggregation.objects.filter(topo_object=self).delete()
         # The previous operation has put deleted = True (in triggers)
         self.deleted = False
@@ -317,7 +317,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
             self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
         if delete:
             other.delete(force=True)  # Really delete it from database
-        self.save()
+        self.save(update_fields=['deleted'])
         return self
 
     def reload(self, fromdb=None):
