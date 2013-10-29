@@ -58,6 +58,8 @@ MODELTRANSLATION_TRANSLATION_REGISTRY = 'geotrek.translation'
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('fr', gettext_noop('French')),
+    ('it', gettext_noop('Italian')),
+    ('es', gettext_noop('Spanish')),
 )
 
 LOCALE_PATHS = (
