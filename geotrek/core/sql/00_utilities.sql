@@ -289,9 +289,8 @@ BEGIN
     IF NOT t_found OR t_failed THEN
         result := ST_Union(lines);
         RAISE NOTICE 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
-    ELSE
-        result := ST_SetSRID(result, ST_SRID(lines[1]));
     END IF;
+    result := ST_SetSRID(result, ST_SRID(lines[1]));
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;

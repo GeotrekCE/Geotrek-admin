@@ -281,7 +281,7 @@ class AltimetryHelper(object):
         if geometry3d.geom_type == 'MultiLineString':
             profile = []
             for subcoords in geometry3d.coords:
-                subline = LineString(subcoords)
+                subline = LineString(subcoords, srid=geometry3d.srid)
                 offset += subline.length
                 subprofile = AltimetryHelper.elevation_profile(subline, precision, offset)
                 profile.extend(subprofile)

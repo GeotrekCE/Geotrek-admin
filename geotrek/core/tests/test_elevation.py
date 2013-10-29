@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.test import TestCase
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import MultiLineString, LineString
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
+from geotrek.core.helpers import AltimetryHelper
 
 
 class ElevationTest(TestCase):
@@ -59,3 +60,13 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 5)
         self.assertEqual(topo.max_elevation, 5)
+
+
+class ElevationProfileTest(TestCase):
+    def test_elevation_profile_wrong_geom(self):
+        geom = MultiLineString(LineString((1.5, 2.5, 8), (2.5, 2.5, 10)),
+                               LineString((2.5, 2.5, 6), (2.5, 0, 7)),
+                               srid=settings.SRID)
+
+        profile = AltimetryHelper.elevation_profile(geom)
+        self.assertEqual(len(profile), 4)
