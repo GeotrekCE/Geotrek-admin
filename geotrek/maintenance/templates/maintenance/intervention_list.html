@@ -7,6 +7,6 @@
     {% if user.profile.is_editor %}
         <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add intervention" %}</a>
     {% else %}
-        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add intervention" %}</a>
+        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add intervention" %}</span>
     {% endif %}
 {% endblock mainactions %}
