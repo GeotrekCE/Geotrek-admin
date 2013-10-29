@@ -9,7 +9,7 @@ before_install:
 install:
   - ./install.sh --tests
 script:
-  - make test
+  - make env_test test
   - make test_js
   # Re-run for coverage
   - rm -rf ./var/media/maps/*
