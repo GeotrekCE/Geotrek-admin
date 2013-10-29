@@ -4,11 +4,6 @@ from django.contrib.auth.models import Group
 
 from . import models as core_models
 
-# /opt/ecrins/sentiers/geobi-ecrins-sentiers/eggs/Django-1.4-py2.7.egg/django/contrib/auth/decorators.py:1
-# def user_passes_test(test_func, login_url=None, redirect_field_name=REDIRECT_FIELD_NAME):
-# def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
-# def permission_required(perm, login_url=None, raise_exception=False):
-
 
 class UserFactory(factory.Factory):
     FACTORY_FOR = auth_models.User
