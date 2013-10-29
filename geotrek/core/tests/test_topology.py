@@ -695,6 +695,11 @@ class TopologySerialization(TestCase):
         self.assertTrue(almostequal(field['lng'],  -1.363))
         self.assertEqual(field['kind'],  "TOPOLOGY")
 
+    def test_deserialize_foreignkey(self):
+        topology = TopologyFactory.create(offset=1, no_path=True)
+        deserialized = Topology.deserialize(topology.pk)
+        self.assertEqual(topology,  deserialized)
+
     def test_deserialize_line(self):
         path = PathFactory.create()
         topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
