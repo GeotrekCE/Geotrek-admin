@@ -45,8 +45,16 @@ class TopologyHelper(object):
         * If has lat/lng return point topology
         * Otherwise, create path aggregations from serialized data.
         """
-        from .models import Path, PathAggregation
+        from .models import Path, Topology, PathAggregation
         from .factories import TopologyFactory
+
+        try:
+            return Topology.objects.get(pk=int(serialized))
+        except Topology.DoesNotExist:
+            raise
+        except ValueError:
+            pass  # value is not integer, thus should be deserialized
+
         objdict = serialized
         if isinstance(serialized, basestring):
             try:

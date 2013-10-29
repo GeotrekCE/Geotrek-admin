@@ -52,7 +52,10 @@ class BaseTopologyWidget(MapWidget):
     def deserialize(self, value):
         if isinstance(value, int):
             return Topology.objects.get(pk=value)
-        return Topology.deserialize(value)
+        try:
+            return Topology.deserialize(value)
+        except ValueError:
+            return None
 
     def render(self, name, value, attrs=None):
         attrs = attrs or {}
@@ -87,7 +90,7 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
         Completely bypass widget rendering, and just render a geometry.
         """
         topology = value
-        if isinstance(topology, six.string_types):
+        if isinstance(topology, (six.string_types, int)):
             topology = self.deserialize(topology)
         context = {'object': topology.geom, 'mapname': name}
         return loader.render_to_string(self.template_name, context)
