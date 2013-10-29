@@ -80,7 +80,8 @@ class ViewsTest(CommonTest):
         success = self.client.login(username=user.username, password='booh')
         self.assertTrue(success)
         path = PathFactory()
-        self.client.get(path.get_detail_url())
+        response = self.client.get(path.get_detail_url())
+        self.assertEqual(response.status_code, 200)
         response = self.client.post(path.get_delete_url())
         self.assertEqual(response.status_code, 302)
 

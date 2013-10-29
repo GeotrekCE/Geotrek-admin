@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+from collections import OrderedDict
 
 from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -119,6 +119,14 @@ class TrekViewsTest(CommonTest):
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
 
+    def get_bad_data(self):
+        return OrderedDict([
+                ('name_en', ''),
+                ('trek_relationship_a-TOTAL_FORMS', '0'),
+                ('trek_relationship_a-INITIAL_FORMS', '1'),
+                ('trek_relationship_a-MAX_NUM_FORMS', '0'),
+            ]), u'This field is required.'
+
     def get_good_data(self):
         path = PathFactory.create()
         return {
@@ -186,6 +194,7 @@ class TrekViewsTest(CommonTest):
 
         bad_data, form_error = self.get_bad_data()
         bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
+
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
         self.assertEqual(response.status_code, 200)
@@ -253,59 +262,6 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
-    def test_json_translation(self):
-        trek = TrekFactory.build()
-        trek.name_fr = 'Voie lactee'
-        trek.name_en = 'Milky way'
-        trek.name_it = 'Via Lattea'
-        trek.save()
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
-
-        # Test default case
-        response = self.client.get(url)
-        obj = json.loads(response.content)
-        self.assertEqual(obj['name'], trek.name)
-
-        # Test with another language
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        obj = json.loads(response.content)
-        self.assertEqual(obj['name'], trek.name_it)
-
-        # Test with yet another language
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr-FR')
-        obj = json.loads(response.content)
-        self.assertEqual(obj['name'], trek.name_fr)
-
-    def test_geojson_translation(self):
-        trek = TrekFactory.create(name='Voie lactee')
-        trek.name_it = 'Via Lattea'
-        trek.save()
-        url = reverse('trekking:trek_layer')
-        # Test with another language
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        obj = json.loads(response.content)
-        self.assertEqual(obj['features'][0]['properties']['name'], trek.name_it)
-
-    def test_poi_geojson_translation(self):
-        # Create a Trek with a POI
-        trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory.create(no_path=True)
-        poi.name_fr = "Chapelle"
-        poi.name_it = "Capela"
-        poi.save()
-        trek.add_path(p1, start=0.5)
-        poi.add_path(p1, start=0.6, end=0.6)
-        # Check that it applies to GeoJSON also :
-        self.assertEqual(len(trek.pois), 1)
-        poi = trek.pois[0]
-        for lang, expected in [('fr-FR', poi.name_fr), ('it-IT', poi.name_it)]:
-            url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
-            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
-            obj = json.loads(response.content)
-            jsonpoi = obj.get('features', [])[0]
-            self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
-
     def test_overriden_document(self):
         trek = TrekFactory.create()
         # Will have to mock screenshot, though.
@@ -319,6 +275,72 @@ class TrekCustomViewTests(TestCase):
         response = self.client.get(trek.get_document_public_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
+
+
+class TrekViewTranslationTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.build()
+        self.trek.name_fr = 'Voie lactee'
+        self.trek.name_en = 'Milky way'
+        self.trek.name_it = 'Via Lattea'
+        self.trek.save()
+
+    def tearDown(self):
+        self.client.logout()
+
+    def login(self):
+        user = TrekkingManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+    def test_json_translation(self):
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+
+        for lang, expected in [('fr-FR', self.trek.name_fr),
+                               ('it-IT', self.trek.name_it)]:
+            self.login()
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            self.assertEqual(response.status_code, 200)
+            obj = json.loads(response.content)
+            self.assertEqual(obj['name'], expected)
+            self.client.logout()  # Django 1.6 keeps language in session
+
+    def test_geojson_translation(self):
+        url = reverse('trekking:trek_layer')
+
+        for lang, expected in [('fr-FR', self.trek.name_fr),
+                               ('it-IT', self.trek.name_it)]:
+            self.login()
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            self.assertEqual(response.status_code, 200)
+            obj = json.loads(response.content)
+            self.assertEqual(obj['features'][0]['properties']['name'], expected)
+            self.client.logout()  # Django 1.6 keeps language in session
+
+    def test_poi_geojson_translation(self):
+        # Create a Trek with a POI
+        trek = TrekFactory.create(no_path=True)
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        poi = POIFactory.create(no_path=True)
+        poi.name_fr = "Chapelle"
+        poi.name_en = "Chapel"
+        poi.name_it = "Capela"
+        poi.save()
+        trek.add_path(p1, start=0.5)
+        poi.add_path(p1, start=0.6, end=0.6)
+        # Check that it applies to GeoJSON also :
+        self.assertEqual(len(trek.pois), 1)
+        poi = trek.pois[0]
+        for lang, expected in [('fr-FR', poi.name_fr),
+                               ('it-IT', poi.name_it)]:
+            url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
+            self.login()
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            self.assertEqual(response.status_code, 200)
+            obj = json.loads(response.content)
+            jsonpoi = obj.get('features', [])[0]
+            self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
+            self.client.logout() # Django 1.6 keeps language in session
 
 
 class RelatedObjectsTest(TestCase):

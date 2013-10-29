@@ -31,6 +31,14 @@ class InterventionViewsTest(CommonTest):
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
 
+    def get_bad_data(self):
+        return OrderedDict([
+                ('name', ''),
+                ('manday_set-TOTAL_FORMS', '0'),
+                ('manday_set-INITIAL_FORMS', '1'),
+                ('manday_set-MAX_NUM_FORMS', '0'),
+            ]), u'This field is required.'
+
     def get_good_data(self):
         InterventionStatusFactory.create()  # in case not any in db
         path = PathFactory.create()
@@ -177,7 +185,6 @@ class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectFactory
     userfactory = PathManagerFactory
-
 
     def get_bad_data(self):
         return OrderedDict([

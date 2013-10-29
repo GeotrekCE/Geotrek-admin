@@ -16,7 +16,7 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
 
-    in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"),
+    in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"), default=False,
                                          db_column='maintenance', help_text=_(u"Recurrent"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))

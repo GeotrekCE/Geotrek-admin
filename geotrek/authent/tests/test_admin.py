@@ -11,11 +11,11 @@ class AdminSiteTest(TestCase):
         self.user = factories.UserFactory.create(password='booh')
 
     def tearDown(self):
+        self.client.logout()
         self.admin.delete()
         self.pathmanager.delete()
         self.trekmanager.delete()
         self.user.delete()
-        self.client.logout()
 
     def login(self, user):
         success = self.client.login(username=user.username, password='booh')

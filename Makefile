@@ -68,7 +68,7 @@ env_standalone: install clean_harmless
 
 
 test:
-	bin/django test --noinput authent core land maintenance trekking common infrastructure
+	bin/django test --noinput geotrek
 
 test_nav:
 	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
