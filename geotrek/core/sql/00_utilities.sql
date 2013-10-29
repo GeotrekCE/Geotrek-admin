@@ -240,7 +240,6 @@ DECLARE
     i int;
     t_proceed boolean;
     t_found boolean;
-    t_failed boolean;
 BEGIN
     result := ST_GeomFromText('LINESTRING EMPTY');
     nblines := array_length(lines, 1);
@@ -285,8 +284,7 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    t_failed := ST_Length(result) < ST_Length(ST_Union(lines));
-    IF NOT t_found OR t_failed THEN
+    IF NOT t_found THEN
         result := ST_Union(lines);
         RAISE NOTICE 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
     END IF;

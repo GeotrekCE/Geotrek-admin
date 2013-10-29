@@ -613,6 +613,25 @@ class TopologyLoopTests(TestCase):
         self.assertEqual(topo.geom, topod.geom)
         self.assertEqual(len(topod.aggregations.all()), 7)
 
+    def test_trek_all_reverse(self):
+        """
+
+        +----<===+=======+====|----->
+
+        """
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0), (20, 0)))
+        p3 = PathFactory.create(geom=LineString((20, 0), (30, 0)))
+
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p3, start=0.2, end=0)
+        topo.add_path(p2, start=1, end=0)
+        topo.add_path(p1, start=1, end=0.9)
+        topo.save()
+        print topo.geom.coords
+        self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5), (20, 5), (20, 0),
+                                               (10, 0), (3, 0)))
+
 
 class TopologySerialization(TestCase):
 
