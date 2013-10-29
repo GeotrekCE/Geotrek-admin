@@ -1,4 +1,5 @@
 import json
+import math
 
 from django.test import TestCase
 from django.conf import settings
@@ -305,6 +306,19 @@ class TopologyTest(TestCase):
         t.offset = 0.5
         t.save()
         self.assertEqual(t.geom, LineString((2.5, 2), (2.5, 0.5), (4, 0.5)))
+
+    def test_topology_geom_should_not_be_sampled(self):
+        coords = [(x, math.sin(x)) for x in range(100)]
+        sampled_3d = [(x, math.sin(x), math.cos(x)) for x in range(0, 100, 5)]
+        p1 = PathFactory.create(geom=LineString(*coords))
+        p1.geom_3d = LineString(*sampled_3d)
+        p1.save(update_fields=['geom_3d'])
+
+        t = TopologyFactory.create(no_path=True)
+        t.add_path(p1, start=0.0, end=1.0)
+        t.save()
+
+        self.assertEqual(len(t.geom.coords), 100)
 
     def test_topology_geom_with_intermediate_markers(self):
         # Intermediate (forced passage) markers for topologies

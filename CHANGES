@@ -7,6 +7,7 @@ CHANGELOG
 
 * Fix altimetric profile if topology geometry is wrong (fixes #875)
 * Fix apparence of creation button in intervention list (fixes #877)
+* Fix topology geometries that were sampled like paths 3D geometry (fixes #878)
 
 0.20.8 (2013-10-22)
 -------------------
