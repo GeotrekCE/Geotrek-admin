@@ -9,6 +9,7 @@ CHANGELOG
 * Fix apparence of creation button in intervention list (fixes #877)
 * Fix topology geometries that were sampled like paths 3D geometry (fixes #878)
 * Fix topology lines geometries join in some situations (ref #722)
+* Fix topology not well displayed if start/end on intersection (fixes #874)
 
 0.20.8 (2013-10-22)
 -------------------
