@@ -115,18 +115,19 @@ describe('Shortest path', function() {
 describe('Topology helper', function() {
 
     /*
-            ^
-          3 |
-            |
-            ^<---------+
-            |          |
-          2 |          | 1
-            |          |
-            |          |
-            +----------+
-            |
-          4 |
-            v
+           20.0     ^
+                  3 |
+                    |
+           10.0     ^<---------+
+                    |          |
+                  2 |          | 1
+                    |          |
+                    |          |
+            0.0     +----------+
+                    |
+                  4 |     5
+          -10.0     v<---------+
+                              10.0
     */
     var layer = new L.ObjectsLayer({
         type: "FeatureCollection",
@@ -142,7 +143,10 @@ describe('Topology helper', function() {
              properties: {pk: 3}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,0], [0,-10]]},
-             properties: {pk: 4}}
+             properties: {pk: 4}},
+            {type: "Feature",
+             geometry: {type: "LineString", coordinates: [[10,-10], [0,-10]]},
+             properties: {pk: 5}}
         ]
     }).addTo(map);
 
@@ -279,6 +283,26 @@ describe('Topology helper', function() {
                 "2": [0, 0.5000000000000009]
             },
             paths: [4, 2, 3]
+        });
+        done();
+    });
+
+
+
+    it('It should not cover start completely even if paths have opposite ways', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([-1.0, 0.0]), L.latLng([-10, 7.5]), [4, 5]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.10000000000000141, 1],
+                "1": [1, 0.2500089985334514],
+            },
+            paths: [4, 5]
         });
         done();
     });
