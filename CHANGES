@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.20.9 (unreleased)
+0.20.9 (2013-10-30)
 -------------------
 
 * Fix altimetric profile if topology geometry is wrong (fixes #875)
