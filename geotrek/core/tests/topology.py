@@ -628,9 +628,7 @@ class TopologyLoopTests(TestCase):
         topo.add_path(p2, start=1, end=0)
         topo.add_path(p1, start=1, end=0.9)
         topo.save()
-        print topo.geom.coords
-        self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5), (20, 5), (20, 0),
-                                               (10, 0), (3, 0)))
+        self.assertEqual(topo.geom, LineString((22.0, 0.0), (20.0, 0.0), (10.0, 0.0), (9.0, 0.0)))
 
 
 class TopologySerialization(TestCase):
