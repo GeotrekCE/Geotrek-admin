@@ -2,11 +2,6 @@
 omit =
     */tests*
     */migrations*
-    lib/eggs/*
-    lib/develop-eggs/*
-    lib/parts/*
-    lib/src/django-geojson
-    lib/src/django-extended-choices
-    lib/src/django-leaflet
+    lib/*
 
 ignore_errors = true
