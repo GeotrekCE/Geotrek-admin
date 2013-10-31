@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import math
-
 import json
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -143,14 +141,7 @@ def get_graph_json(request):
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
-    def path_modifier(path):
-        l = 0.0 if math.isnan(path.length) else path.length
-        return { "id": path.pk, "length": l}
-
-    graph = graph_lib.graph_edges_nodes_of_qs(
-                Path.objects.all(),
-                value_modifier=path_modifier,
-                key_modifier=graph_lib.get_key_optimizer())
+    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.all())
     json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))

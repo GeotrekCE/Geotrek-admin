@@ -1,7 +1,19 @@
+import math
 from collections import defaultdict
 
 
-def graph_edges_nodes_of_qs(qs, key_modifier=lambda x: x, value_modifier=lambda x: x):
+def path_modifier(path):
+    l = 0.0 if math.isnan(path.length) else path.length
+    return {"id": path.pk, "length": l}
+
+
+def get_key_optimizer():
+    next_id = iter(xrange(1, 1000000)).next
+    mapping = defaultdict(next_id)
+    return lambda x: mapping[x]
+
+
+def graph_edges_nodes_of_qs(qs):
     """
     return a graph on the form:
     nodes {
@@ -20,6 +32,9 @@ def graph_edges_nodes_of_qs(qs, key_modifier=lambda x: x, value_modifier=lambda 
     coord_point are tuple of float
     """
 
+    key_modifier = get_key_optimizer()
+    value_modifier = path_modifier
+
     edges = defaultdict(dict)
     nodes = defaultdict(dict)
 
@@ -28,7 +43,6 @@ def graph_edges_nodes_of_qs(qs, key_modifier=lambda x: x, value_modifier=lambda 
         start_point, end_point = coords[0], coords[-1]
         k_start_point, k_end_point = key_modifier(start_point), key_modifier(end_point)
 
-        # must return a dict with a id
         v_path = value_modifier(path)
         v_path['nodes_id'] = [k_start_point, k_end_point]
         edge_id = v_path['id']
