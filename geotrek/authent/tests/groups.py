@@ -7,13 +7,15 @@ from django.contrib.auth.models import Group
 
 from geotrek.authent import models as auth_models
 from geotrek.authent.factories import UserFactory, PathManagerFactory
-from geotrek.authent.fixtures.development import populate_groups
+from geotrek.authent.models import GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
 from geotrek.core.factories import PathFactory
 
 
 class GroupTest(TestCase):
     def setUp(self):
-        populate_groups() # TODO not best :/
+        groups = (GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR)
+        for group in groups:
+            Group.objects.get_or_create(name=group)
 
     def test_path_manager_restricted(self):
         p = PathFactory()
@@ -43,7 +45,7 @@ class GroupTest(TestCase):
         self.assertFalse(user.profile.is_editor)
         self.assertFalse(user.profile.is_path_manager)
         self.assertFalse(user.profile.is_trekking_manager)
-        
+
         user = UserFactory(groups=groups)
         self.assertTrue(user.profile.is_editor)
         self.assertTrue(user.profile.is_path_manager)

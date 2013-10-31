@@ -3,16 +3,19 @@
     Unit tests
 """
 from django.test import TestCase
+from django.contrib.auth.models import Group
 
 from geotrek.authent.models import Structure
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import PathFactory
-from geotrek.authent.fixtures.development import populate_groups
+from geotrek.authent.models import GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
 
 
 class StructureTest(TestCase):
     def setUp(self):
-        populate_groups() # TODO not best :/
+        groups = (GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR)
+        for group in groups:
+            Group.objects.get_or_create(name=group)
 
     def test_basic(self):
         s = Structure(name=u"Mércäntour")

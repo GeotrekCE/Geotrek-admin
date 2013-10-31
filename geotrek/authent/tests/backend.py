@@ -6,8 +6,6 @@ from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
 
-from geotrek.authent.fixtures.development import populate_groups
-
 from ..models import Structure, GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
 from ..backend import DatabaseBackend
 
@@ -41,7 +39,10 @@ def password2md5(password):
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
 class AuthentDatabaseTest(TestCase):
     def setUp(self):
-        populate_groups()  # TODO not best :/
+        groups = (GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR)
+        for group in groups:
+            Group.objects.get_or_create(name=group)
+
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
 
