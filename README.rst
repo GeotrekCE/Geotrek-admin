@@ -2,7 +2,7 @@
 
 .. image:: http://geotrek.fr/images/logo-128.png
 
-:master: |master-status|
+:master: |master-status| |master-coverage|
 :develop: |develop-status|
 
 .. |master-status| image::
@@ -10,20 +10,24 @@
     :alt: Build Status
     :target: https://travis-ci.org/makinacorpus/Geotrek
 
+.. |master-coverage| image::
+    https://coveralls.io/repos/makinacorpus/Geotrek/badge.png
+    :alt: Coverage
+    :target: https://coveralls.io/r/makinacorpus/Geotrek
+
 .. |develop-status| image::
     https://api.travis-ci.org/makinacorpus/Geotrek.png?branch=develop
     :alt: Build Status
     :target: https://travis-ci.org/makinacorpus/Geotrek
 
 
-.. image:: https://coveralls.io/repos/makinacorpus/Geotrek/badge.png
-    :target: https://coveralls.io/r/makinacorpus/Geotrek
-
 In brief
 --------
 
 * Manage paths, treks and POIs
-* Track maintenance, equipments and infrastructures
+* Track maintenance of equipments and infrastructures
+* Control objets by district, protected areas, physical and legal status of paths
+* Compute 3D attributes using DEM draping
 * Publish a public website (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
 
 .. image:: http://geotrek.fr/images/intervention-opt.gif
