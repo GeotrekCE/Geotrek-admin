@@ -1,12 +1,34 @@
 **Geotrek**, *paths* management for *National Parks* and *Tourism organizations*.
 
-.. image:: http://depot.makina-corpus.org/public/geotrek/logo-128.png
+.. image:: http://geotrek.fr/images/logo-128.png
 
-.. image:: https://travis-ci.org/makinacorpus/Geotrek.png
+:master: |master-status|
+:develop: |develop-status|
+
+.. |master-status| image::
+    https://api.travis-ci.org/makinacorpus/Geotrek.png?branch=master
+    :alt: Build Status
     :target: https://travis-ci.org/makinacorpus/Geotrek
+
+.. |develop-status| image::
+    https://api.travis-ci.org/makinacorpus/Geotrek.png?branch=develop
+    :alt: Build Status
+    :target: https://travis-ci.org/makinacorpus/Geotrek
+
 
 .. image:: https://coveralls.io/repos/makinacorpus/Geotrek/badge.png
     :target: https://coveralls.io/r/makinacorpus/Geotrek
+
+In brief
+--------
+
+* Manage paths, treks and POIs
+* Track maintenance, equipments and infrastructures
+* Publish a public website (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
+
+.. image:: http://geotrek.fr/images/intervention-opt.gif
+
+More information on product website http://geotrek.fr
 
 Documentation
 -------------
