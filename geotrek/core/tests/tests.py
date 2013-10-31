@@ -270,6 +270,11 @@ class TrailTest(TestCase):
 
 class TrailViewsTest(TestCase):
 
+    def test_detail_page(self):
+        trail = TrailFactory()
+        response = self.client.get(trail.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+
     def test_document_export(self):
         trail = TrailFactory()
         # Mock screenshot
