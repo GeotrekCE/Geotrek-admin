@@ -146,8 +146,7 @@ class TopologyHelper(object):
     def serialize(cls, topology):
         # Point topology
         if topology.ispoint():
-            geom = topology.geom_as_point()
-            point = geom.transform(settings.API_SRID, clone=True)
+            point = topology.geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
         else:
             # Line topology

@@ -154,6 +154,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
 
+    def __unicode__(self):
+        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+
     @property
     def slug(self):
         return slugify(self.name)
@@ -161,10 +164,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @models.permalink
     def get_document_public_url(self):
         return ('trekking:trek_document_public', [str(self.pk)])
-
-    @models.permalink
-    def get_document_public_poi_url(self):
-        return ('trekking:trek_document_public_poi', [str(self.pk)])
 
     @property
     def related(self):
@@ -357,9 +356,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def duration_pretty(self):
         return trekking_tags.duration(self.duration)
-
-    def __unicode__(self):
-        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
     @classmethod
     def path_treks(cls, path):
