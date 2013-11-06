@@ -743,3 +743,41 @@ class TopologySerialization(TestCase):
         end_after = after.aggregations.all()[0].end_position
         self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
         self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
+
+
+class TopologyOverlappingTest(TestCase):
+
+    def setUp(self):
+        self.path1 = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        self.path2 = PathFactory.create(geom=LineString((0, 20), (0, 10)))
+        self.path3 = PathFactory.create(geom=LineString((0, 20), (0, 30)))
+        self.path4 = PathFactory.create(geom=LineString((0, 30), (0, 40)))
+
+        self.topo1 = TopologyFactory.create(no_path=True)
+        self.topo1.add_path(self.path1, start=0.5, end=1)
+        self.topo1.add_path(self.path2, start=1, end=0)
+        self.topo1.add_path(self.path3)
+        self.topo1.add_path(self.path4, start=0, end=0.5)
+
+        self.topo2 = TopologyFactory.create(no_path=True)
+        self.topo2.add_path(self.path2)
+
+        self.point1 = TopologyFactory.create(no_path=True)
+        self.point1.add_path(self.path2, start=0.4, end=0.4)
+
+        self.point2 = TopologyFactory.create(no_path=True)
+        self.point2.add_path(self.path2, start=0.8, end=0.8)
+
+        self.point3 = TopologyFactory.create(no_path=True)
+        self.point3.add_path(self.path2, start=0.6, end=0.6)
+
+    def test_overlapping_return_sharing_path(self):
+        overlaps = Topology.overlapping(self.topo1)
+        self.assertTrue(self.topo1 in overlaps)
+        self.assertTrue(self.topo2 in overlaps)
+
+    def test_overlapping_sorts_by_order_of_progression(self):
+        overlaps = Topology.overlapping(self.topo2)
+        self.assertEqual(list(overlaps), [self.topo2,
+                                          self.point1, self.point3, self.point2, self.topo1])
+

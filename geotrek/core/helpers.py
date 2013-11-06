@@ -178,8 +178,9 @@ class TopologyHelper(object):
     def overlapping(cls, klass, queryset):
         from .models import Path, Topology, PathAggregation
 
-        topology_pks = []
-        if isinstance(queryset, QuerySet):
+        single_input = isinstance(queryset, QuerySet)
+
+        if single_input:
             topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
         else:
             topology_pks = [str(queryset.pk)]
@@ -190,15 +191,17 @@ class TopologyHelper(object):
              aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
                               WHERE a.evenement = t.id),
         -- Concerned paths along with (start, end)
-             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id
+             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id, a.ordre AS order
                             FROM %(paths_table)s p, aggregations a
-                            WHERE a.troncon = p.id)
+                            WHERE a.troncon = p.id
+                            ORDER BY a.ordre)
         -- Retrieve primary keys
-        SELECT DISTINCT(t.id)
+        SELECT t.id
         FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
         WHERE a.troncon = pa.id AND a.evenement = t.id
           AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end) AND
-              greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end);
+              greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end)
+        ORDER BY (pa.order + a.pk_debut);
         """ % {
             'topology_table': Topology._meta.db_table,
             'aggregations_table': PathAggregation._meta.db_table,
@@ -210,7 +213,37 @@ class TopologyHelper(object):
         cursor.execute(sql)
         result = cursor.fetchall()
         pks = [row[0] for row in result]
-        qs = klass.objects.existing().filter(pk__in=pks)
+        unique = []
+        [unique.append(i) for i in pks if not i in unique]
+
+        return cls._list_to_queryset(klass, unique)
+
+    @classmethod
+    def _list_to_queryset(cls, klass, idlist):
+        """
+        This method consists only in giving a QuerySet of the specified
+        ``klass`` filtered for the specified primary keys ``idlist``.
+        With **one** constraint : keep the order of the list.
+        """
+        from .models import Topology
+
+        if klass is Topology:
+            # No join required.
+            sql = """
+            WITH overlapped AS (
+                SELECT id, row_number() OVER() AS i
+                FROM unnest(ARRAY[%(ids)s]) AS id)
+            SELECT t.*
+            FROM overlapped, %(topology_table)s t
+            WHERE t.id = overlapped.id
+            ORDER BY overlapped.i;
+            """ % {
+                'ids': ','.join([str(u) for u in idlist]),
+                'topology_table': Topology._meta.db_table
+            }
+            return klass.objects.raw(sql)
+
+        qs = klass.objects.existing().filter(pk__in=idlist)
 
         # Filter by kind if relevant
         if klass.KIND != Topology.KIND:
