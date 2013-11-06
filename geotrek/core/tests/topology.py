@@ -744,7 +744,6 @@ class TopologySerialization(TestCase):
         self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
         self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
 
-
 class TopologyOverlappingTest(TestCase):
 
     def setUp(self):
@@ -771,6 +770,11 @@ class TopologyOverlappingTest(TestCase):
         self.point3 = TopologyFactory.create(no_path=True)
         self.point3.add_path(self.path2, start=0.6, end=0.6)
 
+    def test_overlapping_returned_can_be_filtered(self):
+        overlaps = Topology.overlapping(self.topo1)
+        overlaps = overlaps.exclude(pk=self.topo1.pk)
+        self.assertEqual(len(overlaps), 4)
+
     def test_overlapping_return_sharing_path(self):
         overlaps = Topology.overlapping(self.topo1)
         self.assertTrue(self.topo1 in overlaps)
@@ -781,3 +785,7 @@ class TopologyOverlappingTest(TestCase):
         self.assertEqual(list(overlaps), [self.topo2,
                                           self.point1, self.point3, self.point2, self.topo1])
 
+    def test_overlapping_sorts_when_path_is_reversed(self):
+        overlaps = Topology.overlapping(self.topo1)
+        self.assertEqual(list(overlaps), [self.topo1,
+                                          self.point2, self.point3, self.point1, self.topo2])

@@ -178,6 +178,7 @@ class TopologyHelper(object):
     def overlapping(cls, klass, queryset):
         from .models import Path, Topology, PathAggregation
 
+        is_generic = klass.KIND == Topology.KIND
         single_input = isinstance(queryset, QuerySet)
 
         if single_input:
@@ -199,57 +200,32 @@ class TopologyHelper(object):
         SELECT t.id
         FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
         WHERE a.troncon = pa.id AND a.evenement = t.id
-          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end) AND
-              greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end)
-        ORDER BY (pa.order + a.pk_debut);
+          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end)
+          AND greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end)
+          AND %(extra_condition)s
+        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.pk_debut) ELSE a.pk_debut END);
         """ % {
             'topology_table': Topology._meta.db_table,
             'aggregations_table': PathAggregation._meta.db_table,
             'paths_table': Path._meta.db_table,
             'topology_list': ','.join(topology_pks),
+            'extra_condition': 'true' if is_generic else "kind = '%s'" % klass.KIND
         }
 
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
-        pks = [row[0] for row in result]
+        pk_list = [row[0] for row in result]
         unique = []
-        [unique.append(i) for i in pks if not i in unique]
+        [unique.append(i) for i in pk_list if not i in unique]
 
-        return cls._list_to_queryset(klass, unique)
-
-    @classmethod
-    def _list_to_queryset(cls, klass, idlist):
-        """
-        This method consists only in giving a QuerySet of the specified
-        ``klass`` filtered for the specified primary keys ``idlist``.
-        With **one** constraint : keep the order of the list.
-        """
-        from .models import Topology
-
-        if klass is Topology:
-            # No join required.
-            sql = """
-            WITH overlapped AS (
-                SELECT id, row_number() OVER() AS i
-                FROM unnest(ARRAY[%(ids)s]) AS id)
-            SELECT t.*
-            FROM overlapped, %(topology_table)s t
-            WHERE t.id = overlapped.id
-            ORDER BY overlapped.i;
-            """ % {
-                'ids': ','.join([str(u) for u in idlist]),
-                'topology_table': Topology._meta.db_table
-            }
-            return klass.objects.raw(sql)
-
-        qs = klass.objects.existing().filter(pk__in=idlist)
-
-        # Filter by kind if relevant
-        if klass.KIND != Topology.KIND:
-            qs = qs.filter(kind=klass.KIND)
-
-        return qs
+        # Return a QuerySet and preserve pk list order
+        # http://stackoverflow.com/a/1310188/141895
+        ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
+                                             for i, id_ in enumerate(pk_list)])
+        queryset = klass.objects.existing().filter(pk__in=unique).extra(
+            select={'ordering': ordering}, order_by=('ordering',))
+        return queryset
 
 
 class PathHelper(object):

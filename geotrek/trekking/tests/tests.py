@@ -348,6 +348,29 @@ class RelatedObjectsTest(TestCase):
         poi.delete()
         self.assertItemsEqual(trek.pois, [])
 
+    def test_pois_should_be_ordered_by_progression(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
+        self.trek = TrekFactory.create(no_path=True)
+        self.trek.add_path(p1)
+        self.trek.add_path(p2, order=1)
+
+        self.trek_reverse = TrekFactory.create(no_path=True)
+        self.trek_reverse.add_path(p2, start=0.8, end=0, order=0)
+        self.trek_reverse.add_path(p1, start=1, end=0.2, order=1)
+
+        self.poi1 = POIFactory.create(no_path=True)
+        self.poi1.add_path(p1, start=0.8, end=0.8)
+        self.poi2 = POIFactory.create(no_path=True)
+        self.poi2.add_path(p1, start=0.3, end=0.3)
+        self.poi3 = POIFactory.create(no_path=True)
+        self.poi3.add_path(p2, start=0.5, end=0.5)
+
+        pois = self.trek.pois
+        self.assertEqual([self.poi2, self.poi1, self.poi3], list(pois))
+        pois = self.trek_reverse.pois
+        self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
+
     def test_picture(self):
         trek = TrekFactory.create()
         AttachmentFactory.create(obj=trek)
