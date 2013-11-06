@@ -5,7 +5,7 @@ CHANGELOG
 0.21 (unreleased)
 -----------------
 
-* Nothing changed yet.
+* Fix KML coordinates not being in 3D.
 
 0.20.9 (2013-10-30)
 -------------------

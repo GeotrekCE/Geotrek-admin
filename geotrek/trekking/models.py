@@ -321,16 +321,15 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         as place marks """
         kml = simplekml.Kml()
         # Main itinerary
-        geom = self.geom.transform(4326, clone=True)  # KML uses WGS84
+        geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.description),
-                                 coords=geom.coords)
+                                 coords=geom3d.coords)
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         # Place marks
         for poi in self.pois:
-            place = poi.geom_as_point()
-            place.transform(settings.API_SRID)
+            place = poi.geom_3d.transform(settings.API_SRID, clone=True)
             kml.newpoint(name=poi.name,
                          description=plain_text(poi.description),
                          coords=[place.coords])

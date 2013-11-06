@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
+
+from bs4 import BeautifulSoup
+
 from django.conf import settings
 from django.test import TestCase
 
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
-import json
 from django.core.urlresolvers import reverse
 from django.db import connection
 
@@ -17,7 +20,7 @@ from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.land.factories import DistrictFactory
 from geotrek.trekking.models import POI, Trek
-from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
+from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
                                         ThemeFactory, InformationDeskFactory)
 
@@ -42,6 +45,15 @@ class TrekTest(TestCase):
         t.geom = MultiLineString([LineString((0, 0), (1, 1)), LineString((2, 2), (3, 3))])
         self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
+
+    def test_kml_coordinates_should_be_3d(self):
+        trek = TrekWithPOIsFactory.create()
+        kml = trek.kml()
+        parsed = BeautifulSoup(kml)
+        for placemark in parsed.findAll('placemark'):
+            coordinates = placemark.find('coordinates')
+            tuples = [s.split(',') for s in coordinates.string.split(' ')]
+            self.assertTrue(all([len(i) == 3 for i in tuples]))
 
 
 class POIViewsTest(CommonTest):
@@ -189,14 +201,11 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 class TrekCustomViewTests(TestCase):
 
     def test_pois_geojson(self):
-        trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory(no_path=True)
-        trek.add_path(p1, start=0.5, end=1.0)
-        poi.add_path(p1, start=0.6, end=0.6)
+        trek = TrekWithPOIsFactory.create()
+        self.assertEqual(len(trek.pois), 2)
+        poi = trek.pois[0]
         AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 1)
 
         url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
         response = self.client.get(url)
@@ -206,8 +215,7 @@ class TrekCustomViewTests(TestCase):
         self.assertTrue('serializable_thumbnail' in poifeature['properties'])
 
     def test_gpx(self):
-        trek = TrekFactory.create()
-        trek = TrekFactory.create()
+        trek = TrekWithPOIsFactory.create()
         url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -215,10 +223,11 @@ class TrekCustomViewTests(TestCase):
         self.assertTrue(response.content.count('<rtept') >= 2)
 
     def test_kml(self):
-        trek = TrekFactory.create()
+        trek = TrekWithPOIsFactory.create()
         url = reverse('trekking:trek_kml_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
     def test_json_translation(self):
         trek = TrekFactory.build()
