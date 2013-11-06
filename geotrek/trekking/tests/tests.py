@@ -216,11 +216,22 @@ class TrekCustomViewTests(TestCase):
 
     def test_gpx(self):
         trek = TrekWithPOIsFactory.create()
+        trek.description_en = 'Nice trek'
+        trek.description_it = 'Bonnito iti'
+        trek.description_fr = 'Jolie rando'
+        trek.save()
+
         url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.count('<rte>'), 1)
-        self.assertTrue(response.content.count('<rtept') >= 2)
+        self.assertEqual(response['Content-Type'], 'application/gpx+xml')
+
+        parsed = BeautifulSoup(response.content)
+        self.assertEqual(len(parsed.findAll('rte')), 1)
+        self.assertEqual(len(parsed.findAll('rtept')), 2)
+        route = parsed.findAll('rte')[0]
+        description = route.find('desc').string
+        self.assertTrue(description.startswith(trek.description_it))
 
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()

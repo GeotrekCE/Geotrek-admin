@@ -6,6 +6,7 @@ CHANGELOG
 -----------------
 
 * Fix KML coordinates not being in 3D.
+* GPX now has trek description (fixes #775)
 
 0.20.9 (2013-10-30)
 -------------------
