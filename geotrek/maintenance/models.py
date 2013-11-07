@@ -437,7 +437,9 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
                 pks += [o.pk for o in attr_value]
             else:
                 modelclass = attr_value.model
-                pks += attr_value.values_list('pk', flat=True)
+                topologies = attr_value.values('ordering', 'id')
+                for topology in topologies:
+                    pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))

@@ -775,6 +775,10 @@ class TopologyOverlappingTest(TestCase):
         overlaps = overlaps.exclude(pk=self.topo1.pk)
         self.assertEqual(len(overlaps), 4)
 
+        overlaps = Topology.overlapping(self.topo1)
+        overlaps = overlaps.filter(pk__in=[self.point1.pk, self.point2.pk])
+        self.assertEqual(len(overlaps), 2)
+
     def test_overlapping_return_sharing_path(self):
         overlaps = Topology.overlapping(self.topo1)
         self.assertTrue(self.topo1 in overlaps)

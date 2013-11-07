@@ -176,8 +176,11 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def poi_types(self):
-        pks = set(self.pois.values_list('type', flat=True))
-        return POIType.objects.filter(pk__in=pks)
+        # Can't use values_list and must add 'ordering' because of bug:
+        # https://code.djangoproject.com/ticket/14930
+        values = self.pois.values('ordering', 'type')
+        pks = [value['type'] for value in values]
+        return POIType.objects.filter(pk__in=set(pks))
 
     def prepare_map_image(self, rooturl):
         """

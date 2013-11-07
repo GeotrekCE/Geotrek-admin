@@ -55,6 +55,14 @@ class TrekTest(TestCase):
             tuples = [s.split(',') for s in coordinates.string.split(' ')]
             self.assertTrue(all([len(i) == 3 for i in tuples]))
 
+    def test_pois_types(self):
+        trek = TrekWithPOIsFactory.create()
+        type0 = trek.pois[0].type
+        type1 = trek.pois[1].type
+        self.assertEqual(2, len(trek.poi_types))
+        self.assertIn(type0, trek.poi_types)
+        self.assertIn(type1, trek.poi_types)
+
 
 class POIViewsTest(CommonTest):
     model = POI
