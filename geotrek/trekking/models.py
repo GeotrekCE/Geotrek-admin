@@ -319,6 +319,11 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def usages_display(self):
         return ', '.join([unicode(n) for n in self.usages.all()])
 
+    @property
+    def city_departure(self):
+        cities = self.cities
+        return unicode(cities[0]) if len(cities) > 0 else ''
+
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
         as place marks """

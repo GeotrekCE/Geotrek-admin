@@ -18,7 +18,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory, PathAggregationFactory
-from geotrek.land.factories import DistrictFactory
+from geotrek.land.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
@@ -378,6 +378,19 @@ class RelatedObjectsTest(TestCase):
         self.assertEqual([self.poi2, self.poi1, self.poi3], list(pois))
         pois = self.trek_reverse.pois
         self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
+
+    def test_city_departure(self):
+        trek = TrekFactory.create(no_path=True)
+        p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
+        trek.add_path(p1)
+        self.assertEqual(trek.city_departure, '')
+
+        city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),
+                                                              (-1, 3), (-1, -1)))))
+        city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
+                                                              (3, 9), (3, 3)))))
+        self.assertEqual(trek.cities, [city1, city2])
+        self.assertEqual(trek.city_departure, unicode(city1))
 
     def test_picture(self):
         trek = TrekFactory.create()
