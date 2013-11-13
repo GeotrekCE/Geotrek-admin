@@ -9,6 +9,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
+from geotrek.common.utils import uniquify
 from geotrek.maintenance.models import Intervention, Project
 
 
@@ -389,15 +390,15 @@ class RestrictedAreaEdge(Topology):
                                         .select_related('restricted_area__area_type')
 
 Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges)
-Path.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
+Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 Trail.add_property('area_edges', RestrictedAreaEdge.trail_area_edges)
-Trail.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
+Trail.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges)
-Topology.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
+Topology.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [])
 Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [])
 Project.add_property('area_edges', lambda self: self.edges_by_attr('area_edges'))
-Project.add_property('areas', lambda self: list(set(map(attrgetter('restricted_area'), self.area_edges))))
+Project.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 
 
 class City(models.Model):
@@ -448,15 +449,15 @@ class CityEdge(Topology):
         return cls.overlapping(topology).select_related('city')
 
 Path.add_property('city_edges', CityEdge.path_city_edges)
-Path.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
+Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 Trail.add_property('city_edges', CityEdge.trail_city_edges)
-Trail.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
+Trail.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 Topology.add_property('city_edges', CityEdge.topology_city_edges)
-Topology.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
+Topology.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [])
 Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [])
 Project.add_property('city_edges', lambda self: self.edges_by_attr('city_edges'))
-Project.add_property('cities', lambda self: list(set(map(attrgetter('city'), self.city_edges))))
+Project.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 
 
 class District(models.Model):
@@ -505,12 +506,12 @@ class DistrictEdge(Topology):
         return cls.overlapping(topology).select_related('district')
 
 Path.add_property('district_edges', DistrictEdge.path_district_edges)
-Path.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
+Path.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
 Trail.add_property('district_edges', DistrictEdge.trail_district_edges)
-Trail.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
+Trail.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
 Topology.add_property('district_edges', DistrictEdge.topology_district_edges)
-Topology.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
+Topology.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
 Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [])
 Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [])
 Project.add_property('district_edges', lambda self: self.edges_by_attr('district_edges'))
-Project.add_property('districts', lambda self: list(set(map(attrgetter('district'), self.district_edges))))
+Project.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))

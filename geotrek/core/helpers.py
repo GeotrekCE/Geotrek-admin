@@ -8,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString
 
-from geotrek.common.utils import sqlfunction, sampling
+from geotrek.common.utils import sqlfunction, sampling, uniquify
 
 import pygal
 from pygal.style import LightSolarizedStyle
@@ -215,15 +215,13 @@ class TopologyHelper(object):
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
-        pk_list = [row[0] for row in result]
-        unique = []
-        [unique.append(i) for i in pk_list if not i in unique]
+        pk_list = uniquify([row[0] for row in result])
 
         # Return a QuerySet and preserve pk list order
         # http://stackoverflow.com/a/1310188/141895
         ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
                                              for i, id_ in enumerate(pk_list)])
-        queryset = klass.objects.existing().filter(pk__in=unique).extra(
+        queryset = klass.objects.existing().filter(pk__in=pk_list).extra(
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
 
