@@ -172,6 +172,29 @@ However, it is still possible to write a custom Django setting file.
 * As for any change in settings, re-run ``make deploy``.
 
 
+WYSIWYG editor configuration
+----------------------------
+
+Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
+
+Its configuration can be customized using advanced settings (see above paragraph).
+
+For example, in order to control which buttons are to be shown, and which tags
+are to be kept when cleaning-up, add this bloc :
+
+::
+
+    TINYMCE_DEFAULT_CONFIG = {
+        'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
+        'valid_elements': "img,p,a,em/i,strong/b",
+    }
+
+This will apply to all text fields.
+
+For more information on configuration entries available, please refer to the
+official documentation of *TinyMCE version 3*.
+
+
 ===========
 MAINTENANCE
 ===========

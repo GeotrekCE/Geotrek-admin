@@ -11,6 +11,7 @@ CHANGELOG
 * Improved TinyMCE configuration, for resize and cleanup (fixes #351, #711)
 * Changed trek duration interval for notion of days (fixes #880)
 * Show city departure in trek public export (fixes #881)
+* Document customization of TinyMCE config (fixes #882)
 
 0.20.9 (2013-10-30)
 -------------------
