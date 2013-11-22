@@ -34,7 +34,7 @@
         </tr>
         <tr>
             <th>{{ project|verbose:"constraint" }}</th>
-            <td>{% if project.constraints %}{{ project.constraint|safe }}
+            <td>{% if project.constraint %}{{ project.constraint|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
