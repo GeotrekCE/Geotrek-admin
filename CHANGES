@@ -9,6 +9,7 @@ CHANGELOG
 
 * Increase height of multiple select (fixes #891)
 * Add project field in intervention filter (fixes #896)
+* Many minor improvements for infrastructures in adminsite (fixes #886)
 
 **BUG fixes**
 
