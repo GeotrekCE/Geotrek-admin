@@ -491,8 +491,8 @@ class Contractor(StructureRelated):
 class Funding(models.Model):
 
     amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"), db_column='montant')
-    project = models.ForeignKey(Project, db_column='chantier')
-    organism = models.ForeignKey(Organism, db_column='organisme')
+    project = models.ForeignKey(Project, verbose_name=_(u"Project"), db_column='chantier')
+    organism = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
 
     class Meta:
         db_table = 'm_r_chantier_financement'
