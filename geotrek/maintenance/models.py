@@ -409,8 +409,7 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
         return _("Period")
 
     def __unicode__(self):
-        deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
-        return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
+        return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
 
     @classmethod
     def path_projects(cls, path):
