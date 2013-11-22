@@ -5,6 +5,8 @@ CHANGELOG
 0.21 (unreleased)
 -----------------
 
+**BUG fixes**
+
 * Fix KML coordinates not being in 3D.
 * GPX now has trek description (fixes #775)
 * Order overlapping topologies by order of progression (fixes #777)
@@ -12,6 +14,7 @@ CHANGELOG
 * Changed trek duration interval for notion of days (fixes #880)
 * Show city departure in trek public export (fixes #881)
 * Document customization of TinyMCE config (fixes #882)
+* Fix 404 error on path delete (fixes #900)
 
 0.20.9 (2013-10-30)
 -------------------

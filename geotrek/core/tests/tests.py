@@ -75,6 +75,15 @@ class ViewsTest(CommonTest):
         self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 
+    def test_manager_can_delete(self):
+        user = PathManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+        path = PathFactory()
+        self.client.get(path.get_detail_url())
+        response = self.client.post(path.get_delete_url())
+        self.assertEqual(response.status_code, 302)
+
 
 class StakeTest(TestCase):
     def test_comparison(self):
