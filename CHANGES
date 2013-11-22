@@ -5,6 +5,10 @@ CHANGELOG
 0.21 (unreleased)
 -----------------
 
+**Improvements**
+
+* Increase height of multiple select (fixes #891)
+
 **BUG fixes**
 
 * Fix KML coordinates not being in 3D.
