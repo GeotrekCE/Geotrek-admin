@@ -25,6 +25,7 @@ CHANGELOG
 * Fix project constraints not being displayed in details (fixes #893)
 * Fix organism translation in project form (fixes #892)
 * Fix apparence of forms on small screen (fixes #744, #902)
+* Fix modify button being hidden to editors (fixes #901)
 
 
 0.20.9 (2013-10-30)
