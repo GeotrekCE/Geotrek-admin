@@ -174,7 +174,7 @@ class TopoFilterWorkManagementEdge(TopoFilter):
 
 class EdgeFilterSet(MapEntityFilterSet):
     city = TopoFilterCity(label=_('City'), required=False)
-    district = TopoFilterDistrict(label=('District'), required=False)
+    district = TopoFilterDistrict(label=_('District'), required=False)
 
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)
@@ -189,7 +189,7 @@ class EdgeFilterSet(MapEntityFilterSet):
 
 class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
     city = TopoFilterCity(label=_('City'), required=False)
-    district = TopoFilterDistrict(label=('District'), required=False)
+    district = TopoFilterDistrict(label=_('District'), required=False)
 
     physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
     land_type = TopoFilterLandType(label=_('Land type'), required=False)

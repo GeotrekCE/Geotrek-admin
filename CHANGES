@@ -27,6 +27,7 @@ CHANGELOG
 * Fix apparence of forms on small screen (fixes #744, #902)
 * Fix modify button being hidden to editors (fixes #901)
 * Fix overlap between map controls and label (fixes #883)
+* Fix translation of district in list filters (fixes #890)
 
 
 0.20.9 (2013-10-30)
