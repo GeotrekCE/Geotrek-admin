@@ -117,7 +117,7 @@ BEGIN
     -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_commune WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, ST_Line_Locate_Point($1, COALESCE(ST_EndPoint(geom), geom)) as pk_b FROM (SELECT insee AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_commune WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
@@ -125,7 +125,7 @@ BEGIN
     END LOOP;
 
     -- Secteur
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_secteur WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1,COALESCE(ST_StartPoint(geom), geom)) as pk_a, ST_Line_Locate_Point($1, COALESCE(ST_EndPoint(geom), geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_secteur WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
@@ -133,7 +133,7 @@ BEGIN
     END LOOP;
 
     -- Zonage
-    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, ST_StartPoint(geom)) as pk_a, ST_Line_Locate_Point($1, ST_EndPoint(geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_Line_Locate_Point($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, ST_Line_Locate_Point($1, COALESCE(ST_EndPoint(geom), geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM l_zonage_reglementaire WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));

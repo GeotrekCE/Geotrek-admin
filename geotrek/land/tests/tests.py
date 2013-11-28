@@ -169,13 +169,27 @@ class SignageManagementEdgeViewsTest(CommonTest):
         }
 
 
-class CouchesSIGTest(TestCase):
+class LandLayersViewsTest(TestCase):
 
     def test_views_status(self):
         for layer in ['city', 'restrictedarea', 'district']:
             url = reverse('land:%s_layer' % layer)
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
+
+
+class PathUpdateTest(TestCase):
+
+    def test_path_touching_land_layer(self):
+        p1 = PathFactory.create(geom=LineString((3,3), (4,4), srid=settings.SRID))
+        City.objects.create(code='005177', name='Trifouillis-les-oies',
+                            geom=MultiPolygon(Polygon(((0,0), (2,0), (2,2), (0,2), (0,0)),
+                                                      srid=settings.SRID)))
+        p1.geom = LineString((2,2), (4,4), srid=settings.SRID)
+        p1.save()
+
+
+class LandLayersUpdateTest(TestCase):
 
     def test_troncons_link(self):
         p1 = PathFactory.create(geom=LineString((0,0), (1,1)))
