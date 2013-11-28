@@ -289,7 +289,7 @@ BEGIN
                             WHERE tr.path_id = troncon.id;
 
                         -- Copy topologies overlapping start/end
-                        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
+                        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
                             SELECT
                                 tid_clone,
                                 et.evenement,
@@ -302,7 +302,8 @@ BEGIN
                                     (least(b, pk_fin) - a) / (b - a)
                                 ELSE
                                     (greatest(a, pk_fin) - a) / (b - a)
-                                END
+                                END,
+                                et.ordre
                             FROM e_r_evenement_troncon et,
                                  e_t_evenement e
                             WHERE et.evenement = e.id
@@ -334,8 +335,8 @@ BEGIN
                         -- Special case : point topology exactly where NEW path intersects
                         IF a > 0 THEN
                             fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
-                            INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
-                                SELECT NEW.id, et.evenement, fraction, fraction
+                            INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
+                                SELECT NEW.id, et.evenement, fraction, fraction, ordre
                                 FROM e_r_evenement_troncon et,
                                      e_t_evenement e
                                 WHERE et.evenement = e.id

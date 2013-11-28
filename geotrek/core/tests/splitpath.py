@@ -755,6 +755,31 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_cd2 = cd2.aggregations.all()[0]
         self.assertEqual((0.25, 0.625), (aggr_cd2.start_position, aggr_cd2.end_position))
 
+    def test_split_on_return_topology(self):
+        """
+            A       B       C       D
+            +-------+-------+-------+
+                >=================+
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        bc = PathFactory.create(name="BC", geom=LineString((4, 0), (8, 0)))
+        cd = PathFactory.create(name="CD", geom=LineString((8, 0), (12, 0)))
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(ab, start=0.5, end=1, order=1)
+        topology.add_path(bc, start=0, end=1, order=2)
+        topology.add_path(cd, start=0.0, end=0.5, order=3)
+        topology.add_path(cd, start=0.5, end=0.5, order=4)
+        topology.add_path(cd, start=0.5, end=0.0, order=5)
+        topology.add_path(bc, start=1, end=0, order=6)
+        topology.add_path(ab, start=1, end=0.5, order=7)
+        self.assertEqual(len(topology.aggregations.all()), 7)
+
+        # topology.geom : LINESTRING (2.0 0.0, 4.0 0.0, 8.0 0.0, 10.0 0.0, 8.0 0.0, 4.0 0.0, 2.0 0.0)
+        split = PathFactory.create(name="EF", geom=LineString((9, -1), (9, 1)))
+        topology.reload()
+        self.assertEqual(len(topology.aggregations.all()), 9)
+        self.assertEqual(topology.geom.geom_type, 'LineString')
+
 
 class SplitPathPointTopologyTest(TestCase):
 
