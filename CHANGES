@@ -29,6 +29,7 @@ CHANGELOG
 * Fix overlap between map controls and label (fixes #883)
 * Fix translation of district in list filters (fixes #890)
 * Fix integrity error on land intersection on path update (fixes #897)
+* Fix form layout problems (fixes #712, #879)
 
 
 0.20.9 (2013-10-30)
