@@ -389,7 +389,7 @@ MAP_STYLES = {
 LAYER_PRECISION_LAND = 4   # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
-TREK_DAY_DURATION = (4, 10)  # Interval in hours
+TREK_DAY_DURATION = 10  # Max duration to be done in one day
 
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
