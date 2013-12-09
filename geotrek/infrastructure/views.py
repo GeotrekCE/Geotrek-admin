@@ -96,7 +96,8 @@ class SignageDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_editor)
+            self.request.user.profile.is_editor and
+            self.get_object().same_structure(self.request.user))
 
 
 class SignageDocument(MapEntityDocument):
@@ -117,6 +118,7 @@ class SignageUpdate(MapEntityUpdate):
     form_class = SignageForm
 
     @method_decorator(editor_required('infrastructure:signage_detail'))
+    @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageUpdate, self).dispatch(*args, **kwargs)
 
@@ -125,5 +127,6 @@ class SignageDelete(MapEntityDelete):
     model = Signage
 
     @method_decorator(editor_required('infrastructure:signage_detail'))
+    @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageDelete, self).dispatch(*args, **kwargs)

@@ -256,8 +256,8 @@ BEGIN
                 result := t_line;
                 t_found := true;
                 current := array_append(current, i);
-            ELSE
-                IF t_proceed AND ft_IsAfter(t_line, result) THEN
+            ELSIF t_proceed THEN
+                IF ft_IsAfter(t_line, result) THEN
                     result := ST_MakeLine(result, t_line);
                     t_found := true;
                     current := array_append(current, i);
@@ -269,7 +269,7 @@ BEGIN
 
                 IF NOT t_found THEN
                     t_line := ST_Reverse(t_line);
-                    IF t_proceed AND ft_IsAfter(t_line, result) THEN
+                    IF ft_IsAfter(t_line, result) THEN
                         result := ST_MakeLine(result, t_line);
                         t_found := true;
                         current := array_append(current, i);
