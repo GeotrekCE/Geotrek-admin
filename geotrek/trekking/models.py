@@ -290,7 +290,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.name,
+                                                              self.name)
         if self.published:
             s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
@@ -638,7 +641,10 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        return u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                                 self.get_detail_url(),
+                                                                 self.name,
+                                                                 self.name)
 
     @property
     def name_csv_display(self):

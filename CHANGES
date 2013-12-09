@@ -10,6 +10,7 @@ CHANGELOG
 
 * Signage forms are now restricted by structure (fixes #917)
 * Fix geometries computation when path split occurs on return topology (fixes #899)
+* Add title on links in list views (fixes #913)
 
 0.21 (2013-11-28)
 -----------------

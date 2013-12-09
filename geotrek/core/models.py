@@ -205,7 +205,10 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)
+        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                  self.get_detail_url(),
+                                                                  self,
+                                                                  self)
 
     @property
     def name_csv_display(self):
@@ -214,7 +217,10 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     @property
     def trail_display(self):
         if self.trail:
-            return u'<a data-pk="%s" href="%s" >%s</a>' % (self.trail.pk, self.trail.get_detail_url(), self.trail)
+            return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.trail.pk,
+                                                                      self.trail.get_detail_url(),
+                                                                      self.trail,
+                                                                      self.trail)
         return _("None")
 
     @property
@@ -525,4 +531,7 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self)
+        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                  self.get_detail_url(),
+                                                                  self,
+                                                                  self)

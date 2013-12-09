@@ -72,7 +72,9 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def name_display(self):
-        return '<a href="%s">%s</a>' % (self.get_detail_url(), self)
+        return '<a href="%s" title="%s" >%s</a>' % (self.get_detail_url(),
+                                                    self,
+                                                    self)
 
     @property
     def name_csv_display(self):
