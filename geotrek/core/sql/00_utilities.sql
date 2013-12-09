@@ -248,7 +248,8 @@ BEGIN
     WHILE t_found AND array_length(current, 1) < nblines + 1
     LOOP
         t_found := false;
-        FOR i IN 1 .. nblines
+        i := 1;
+        WHILE i < nblines + 1
         LOOP
             t_proceed := NOT current @> ARRAY[i];
             t_line := lines[i];
@@ -261,10 +262,12 @@ BEGIN
                     result := ST_MakeLine(result, t_line);
                     t_found := true;
                     current := array_append(current, i);
-                ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
+                    i := 0;  -- restart iteration
+                ELSEIF ft_IsBefore(t_line, result) THEN
                     result := ST_MakeLine(t_line, result);
                     t_found := true;
                     current := array_append(current, i);
+                    i := 0;  -- restart iteration
                 END IF;
 
                 IF NOT t_found THEN
@@ -273,14 +276,15 @@ BEGIN
                         result := ST_MakeLine(result, t_line);
                         t_found := true;
                         current := array_append(current, i);
-                    ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
+                    ELSEIF ft_IsBefore(t_line, result) THEN
                         result := ST_MakeLine(t_line, result);
                         t_found := true;
                         current := array_append(current, i);
                     END IF;
                 END IF;
-
             END IF;
+
+            i := i + 1;
         END LOOP;
     END LOOP;
 
