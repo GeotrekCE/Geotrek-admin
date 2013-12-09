@@ -208,6 +208,11 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 
 class TrekCustomViewTests(TestCase):
 
+    def setUp(self):
+        user = TrekkingManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create()
         self.assertEqual(len(trek.pois), 2)

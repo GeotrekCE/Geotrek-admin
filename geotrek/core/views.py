@@ -39,6 +39,11 @@ class HttpSVGResponse(HttpResponse):
 
 
 class ElevationChart(LastModifiedMixin, BaseDetailView):
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ElevationChart, self).dispatch(*args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
         return HttpSVGResponse(self.get_object().get_elevation_profile_svg(),
                                **response_kwargs)
@@ -46,6 +51,10 @@ class ElevationChart(LastModifiedMixin, BaseDetailView):
 
 class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ElevationProfile, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
@@ -125,6 +134,7 @@ class PathDelete(MapEntityDelete):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
 
+@login_required
 @cache_last_modified(lambda x: Path.latest_updated())
 def get_graph_json(request):
     cache = get_cache('fat')
