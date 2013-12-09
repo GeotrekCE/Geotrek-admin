@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 
 from mapentity.helpers import api_bbox
@@ -70,6 +70,7 @@ class JSSettings(BaseJSSettings):
         return dictsettings
 
 
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 def admin_check_extents(request):
     """

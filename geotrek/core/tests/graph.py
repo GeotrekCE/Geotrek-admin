@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
+from django.contrib.auth.models import User
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
@@ -7,6 +8,11 @@ from geotrek.core.models import Path
 
 
 class SimpleGraph(TestCase):
+
+    def setUp(self):
+        user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        success = self.client.login(username=user.username, password='dooh')
+        self.assertTrue(success)
 
     def test_python_graph_from_path(self):
         p_1_1 = (1., 1.)

@@ -3,6 +3,7 @@ import os
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.models import User
 
 from mapentity.tests import MapEntityTest
 
@@ -22,6 +23,12 @@ class CommonTest(MapEntityTest):
 
 
 class ViewsTest(TestCase):
+
+    def setUp(self):
+        user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        success = self.client.login(username=user.username, password='dooh')
+        self.assertTrue(success)
+
     def test_settings_json(self):
         url = reverse('common:settings_json')
         response = self.client.get(url)
