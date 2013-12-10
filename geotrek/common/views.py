@@ -4,9 +4,10 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
+from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 
 from mapentity.helpers import api_bbox
@@ -53,6 +54,10 @@ class JSSettings(BaseJSSettings):
     """ Override mapentity base settings in order to provide
     Geotrek necessary stuff.
     """
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(JSSettings, self).dispatch(*args, **kwargs)
+
     def get_context_data(self):
         dictsettings = super(JSSettings, self).get_context_data()
         # Add geotrek map styles
@@ -70,6 +75,7 @@ class JSSettings(BaseJSSettings):
         return dictsettings
 
 
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 def admin_check_extents(request):
     """
