@@ -174,9 +174,9 @@ BEGIN
 
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         -- Smooth the elevation profile
-        ele := (ST_Z(current)::integer+coalesce(last_ele,ST_Z(current)::integer))/2;
+        ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
         -- Create the 3d points
-        points3d := array_append(points3d, ST_MakePoint(ST_X(current),ST_Y(current),ele));
+        points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
         -- Add negative only if ele - last_ele < 0
