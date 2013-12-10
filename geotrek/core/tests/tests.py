@@ -280,6 +280,9 @@ class TrailTest(TestCase):
 class TrailViewsTest(TestCase):
 
     def test_detail_page(self):
+        user = PathManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
         trail = TrailFactory()
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)

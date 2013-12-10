@@ -1,7 +1,9 @@
 import json
 
 from django.test import TestCase
+from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
+from django.core.urlresolvers import reverse
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
@@ -36,11 +38,11 @@ class SimpleGraph(TestCase):
 
         graph = {
             'nodes': {
-                1: {2: 1},
-                2: {1: 1, 3: 2},
-                3: {2: 2},
-                4: {5: 3},
-                5: {4: 3}
+                1: {2: e_1_2.pk},
+                2: {1: e_1_2.pk, 3: e_2_3.pk},
+                3: {2: e_2_3.pk},
+                4: {5: e_4_5.pk},
+                5: {4: e_4_5.pk}
             },
             'edges': {
                 e_1_2.pk: {'nodes_id': [1, 2], 'length': e_1_2.length, 'id': e_1_2.pk},
