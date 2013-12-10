@@ -103,8 +103,9 @@ BEGIN
                 INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
-            egeom_3d := egeom;
         END IF;
+
+        egeom_3d := egeom;
     ELSE
         -- Regular case: the topology describe a line
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two

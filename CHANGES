@@ -12,6 +12,7 @@ CHANGELOG
 * Fix geometries computation when path split occurs on return topology (fixes #899)
 * Add title on links in list views (fixes #913)
 * Prevent horizontal scroll on forms, caused by textareas (fixes #914)
+* Fix empty 3d geometry of point topologies with offset (fixes #918)
 
 0.21 (2013-11-28)
 -----------------
