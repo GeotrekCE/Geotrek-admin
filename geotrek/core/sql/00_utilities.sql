@@ -140,6 +140,7 @@ DECLARE
     points3d geometry[];
     ele integer;
     last_ele integer;
+    last_last_ele integer;
     result elevation_infos;
 BEGIN
     -- Skip if no DEM (speed-up tests)
@@ -168,16 +169,20 @@ BEGIN
     result.positive_gain := 0;
     result.negative_gain := 0;
     last_ele := NULL;
+    last_last_ele := NULL;
     points3d := ARRAY[]::geometry[];
 
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
-        points3d := array_append(points3d, current);
-        ele := ST_Z(current)::integer;
+        -- Smooth the elevation profile
+        ele := (ST_Z(current)::integer+coalesce(last_ele,ST_Z(current)::integer))/2;
+        -- Create the 3d points
+        points3d := array_append(points3d, ST_MakePoint(ST_X(current),ST_Y(current),ele));
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
         -- Add negative only if ele - last_ele < 0
         result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
         last_ele := ele;
+        last_last_ele := last_ele;
     END LOOP;
     result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
 

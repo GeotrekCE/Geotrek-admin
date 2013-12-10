@@ -1,3 +1,5 @@
+import math
+
 from django.conf import settings
 from django.test import TestCase
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -12,54 +14,59 @@ class ElevationTest(TestCase):
 
     def setUp(self):
         # Create a simple fake DEM
+        surface = lambda x, y: x + y + 3 * math.sin(y)
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(3, 3, 0, 3, 1, -1, 0, 0, %s))', [settings.SRID])
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
-        for x in range(1, 4):
-            for y in range(1, 4):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x, y, x+y])
+        demvalues = [[0,0,3,5],[2,2,10,15],[5,15,20,25],[20,25,30,35],[30,35,40,45]]
+        for y in range(0, 5):
+            for x in range(0, 4):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x+1, y+1, demvalues[y][x]])
         conn.commit_unless_managed()
 
-        self.path = Path.objects.create(geom=LineString((1.5,1.5), (2.5,1.5), (1.5,2.5)))
+        self.path = Path.objects.create(geom=LineString((78,117), (3,17)))
 
     def test_elevation_path(self):
-        self.assertEqual(self.path.ascent, 1)
-        self.assertEqual(self.path.descent, -2)
-        self.assertEqual(self.path.min_elevation, 3)
-        self.assertEqual(self.path.max_elevation, 5)
-        self.assertEqual(len(self.path.geom_3d.coords), 3)
+        self.assertEqual(self.path.ascent, 20)
+        self.assertEqual(self.path.descent, -3)
+        self.assertEqual(self.path.min_elevation, 4)
+        self.assertEqual(self.path.max_elevation, 22)
+        self.assertEqual(len(self.path.geom_3d.coords), 6)
 
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
-        self.assertEqual(len(profile), 3)
+        self.assertEqual(len(profile), 6)
         self.assertEqual(profile[0][0], 0.0)
-        self.assertTrue(2.41421 < profile[-1][0] < 2.41422)
-        self.assertTrue(profile[0][2], 4)
-        self.assertTrue(profile[1][2], 5)
-        self.assertTrue(profile[2][2], 3)
+        self.assertEqual(profile[-1][0], 125.0)
+        self.assertEqual(profile[0][3], 5.0)
+        self.assertEqual(profile[1][3], 7.0)
+        self.assertEqual(profile[2][3], 4.0)
+        self.assertEqual(profile[3][3], 9.0)
+        self.assertEqual(profile[4][3], 14.0)
+        self.assertEqual(profile[5][3], 22.0)
 
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(self.path, start=0.2, end=0.7)
+        topo.add_path(self.path, start=0.2, end=0.8)
         topo.save()
 
-        self.assertEqual(topo.ascent, 1)
-        self.assertEqual(topo.descent, -1)
-        self.assertEqual(topo.min_elevation, 4)
-        self.assertEqual(topo.max_elevation, 5)
-        self.assertEqual(len(topo.geom_3d.coords), 3)
+        self.assertEqual(topo.ascent, 5)
+        self.assertEqual(topo.descent, -2)
+        self.assertEqual(topo.min_elevation, 5)
+        self.assertEqual(topo.max_elevation, 10)
+        self.assertEqual(len(topo.geom_3d.coords), 4)
 
     def test_elevation_topology_point(self):
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(self.path, start=0.5, end=0.5)
+        topo.add_path(self.path, start=0.6, end=0.6)
         topo.save()
 
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
-        self.assertEqual(topo.min_elevation, 5)
-        self.assertEqual(topo.max_elevation, 5)
+        self.assertEqual(topo.min_elevation, 15)
+        self.assertEqual(topo.max_elevation, 15)
 
 
 class ElevationProfileTest(TestCase):
