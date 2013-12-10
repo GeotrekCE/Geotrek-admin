@@ -8,7 +8,7 @@ from mapentity.tests import MapEntityTest
 
 from geotrek.settings import EnvIniReader
 from .factories import AttachmentFactory
-from .utils import almostequal, sampling
+from .utils import almostequal, sampling, sql_extent, uniquify
 
 
 class CommonTest(MapEntityTest):
@@ -40,6 +40,13 @@ class UtilsTest(TestCase):
         self.assertEqual([0, 2, 4, 6, 8], sampling(range(10), 5))
         self.assertEqual([0, 3, 6, 9], sampling(range(10), 3))
         self.assertEqual(['a', 'd', 'g', 'j'], sampling('abcdefghijkl', 4))
+
+    def test_sqlextent(self):
+        ext = sql_extent("SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
+        self.assertEqual((0.0, 0.0, 10.0, 10.0), ext)
+
+    def test_uniquify(self):
+        self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
 
 
 class EnvIniTests(TestCase):

@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.21 (unreleased)
+0.22 (unreleased)
 -----------------
 
 **BREAKING changes**
@@ -31,6 +31,44 @@ CHANGELOG
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 
+
+0.21 (2013-11-28)
+-----------------
+
+**Improvements**
+
+* Increase height of multiple select (fixes #891)
+* Add project field in intervention filter (fixes #896)
+* Many minor improvements for infrastructures in adminsite (fixes #886)
+* Add category in intervention filter (fixes #887)
+
+**BUG fixes**
+
+* Fix KML coordinates not being in 3D.
+* GPX now has trek description (fixes #775)
+* Order overlapping topologies by order of progression (fixes #777)
+* Improved TinyMCE configuration, for resize and cleanup (fixes #351, #711)
+* Changed trek duration interval for notion of days (fixes #880)
+* Show city departure in trek public export (fixes #881)
+* Document customization of TinyMCE config (fixes #882)
+* Fix 404 error on path delete (fixes #900)
+* Fix project constraints not being displayed in details (fixes #893)
+* Fix organism translation in project form (fixes #892)
+* Fix apparence of forms on small screen (fixes #744, #902)
+* Fix modify button being hidden to editors (fixes #901)
+* Fix overlap between map controls and label (fixes #883)
+* Fix translation of district in list filters (fixes #890)
+* Fix integrity error on land intersection on path update (fixes #897)
+* Fix form layout problems (fixes #712, #879)
+
+0.20.9 (2013-10-30)
+-------------------
+
+* Fix altimetric profile if topology geometry is wrong (fixes #875)
+* Fix apparence of creation button in intervention list (fixes #877)
+* Fix topology geometries that were sampled like paths 3D geometry (fixes #878)
+* Fix topology lines geometries join in some situations (ref #722)
+* Fix topology not well displayed if start/end on intersection (fixes #874)
 
 0.20.8 (2013-10-22)
 -------------------

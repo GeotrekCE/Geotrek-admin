@@ -190,7 +190,7 @@ class TrekPrint(DocumentConvert):
     queryset = Trek.objects.existing()
 
     def source_url(self):
-        return reverse('trekking:trek_document_public', args=(self.get_object().pk,))
+        return self.get_object().get_document_public_url()
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):

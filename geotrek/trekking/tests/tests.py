@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import json
+
+from bs4 import BeautifulSoup
+
 from django.conf import settings
 from django.test import TestCase
 
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
-import json
 from django.core.urlresolvers import reverse
 from django.db import connection
 
@@ -15,9 +18,9 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory, PathAggregationFactory
-from geotrek.land.factories import DistrictFactory
+from geotrek.land.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
-from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
+from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
                                         ThemeFactory, InformationDeskFactory)
 
@@ -42,6 +45,23 @@ class TrekTest(TestCase):
         t.geom = MultiLineString([LineString((0, 0), (1, 1)), LineString((2, 2), (3, 3))])
         self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
+
+    def test_kml_coordinates_should_be_3d(self):
+        trek = TrekWithPOIsFactory.create()
+        kml = trek.kml()
+        parsed = BeautifulSoup(kml)
+        for placemark in parsed.findAll('placemark'):
+            coordinates = placemark.find('coordinates')
+            tuples = [s.split(',') for s in coordinates.string.split(' ')]
+            self.assertTrue(all([len(i) == 3 for i in tuples]))
+
+    def test_pois_types(self):
+        trek = TrekWithPOIsFactory.create()
+        type0 = trek.pois[0].type
+        type1 = trek.pois[1].type
+        self.assertEqual(2, len(trek.poi_types))
+        self.assertIn(type0, trek.poi_types)
+        self.assertIn(type1, trek.poi_types)
 
 
 class POIViewsTest(CommonTest):
@@ -189,14 +209,11 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 class TrekCustomViewTests(TestCase):
 
     def test_pois_geojson(self):
-        trek = TrekFactory.create(no_path=True)
-        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory(no_path=True)
-        trek.add_path(p1, start=0.5, end=1.0)
-        poi.add_path(p1, start=0.6, end=0.6)
+        trek = TrekWithPOIsFactory.create()
+        self.assertEqual(len(trek.pois), 2)
+        poi = trek.pois[0]
         AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 1)
 
         url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
         response = self.client.get(url)
@@ -206,19 +223,30 @@ class TrekCustomViewTests(TestCase):
         self.assertTrue('serializable_thumbnail' in poifeature['properties'])
 
     def test_gpx(self):
-        trek = TrekFactory.create()
-        trek = TrekFactory.create()
+        trek = TrekWithPOIsFactory.create()
+        trek.description_en = 'Nice trek'
+        trek.description_it = 'Bonnito iti'
+        trek.description_fr = 'Jolie rando'
+        trek.save()
+
         url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.count('<rte>'), 1)
-        self.assertTrue(response.content.count('<rtept') >= 2)
+        self.assertEqual(response['Content-Type'], 'application/gpx+xml')
+
+        parsed = BeautifulSoup(response.content)
+        self.assertEqual(len(parsed.findAll('rte')), 1)
+        self.assertEqual(len(parsed.findAll('rtept')), 2)
+        route = parsed.findAll('rte')[0]
+        description = route.find('desc').string
+        self.assertTrue(description.startswith(trek.description_it))
 
     def test_kml(self):
-        trek = TrekFactory.create()
+        trek = TrekWithPOIsFactory.create()
         url = reverse('trekking:trek_kml_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
     def test_json_translation(self):
         trek = TrekFactory.build()
@@ -328,6 +356,42 @@ class RelatedObjectsTest(TestCase):
         poi.delete()
         self.assertItemsEqual(trek.pois, [])
 
+    def test_pois_should_be_ordered_by_progression(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
+        self.trek = TrekFactory.create(no_path=True)
+        self.trek.add_path(p1)
+        self.trek.add_path(p2, order=1)
+
+        self.trek_reverse = TrekFactory.create(no_path=True)
+        self.trek_reverse.add_path(p2, start=0.8, end=0, order=0)
+        self.trek_reverse.add_path(p1, start=1, end=0.2, order=1)
+
+        self.poi1 = POIFactory.create(no_path=True)
+        self.poi1.add_path(p1, start=0.8, end=0.8)
+        self.poi2 = POIFactory.create(no_path=True)
+        self.poi2.add_path(p1, start=0.3, end=0.3)
+        self.poi3 = POIFactory.create(no_path=True)
+        self.poi3.add_path(p2, start=0.5, end=0.5)
+
+        pois = self.trek.pois
+        self.assertEqual([self.poi2, self.poi1, self.poi3], list(pois))
+        pois = self.trek_reverse.pois
+        self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
+
+    def test_city_departure(self):
+        trek = TrekFactory.create(no_path=True)
+        p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
+        trek.add_path(p1)
+        self.assertEqual(trek.city_departure, '')
+
+        city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),
+                                                              (-1, 3), (-1, -1)))))
+        city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
+                                                              (3, 9), (3, 3)))))
+        self.assertEqual(trek.cities, [city1, city2])
+        self.assertEqual(trek.city_departure, unicode(city1))
+
     def test_picture(self):
         trek = TrekFactory.create()
         AttachmentFactory.create(obj=trek)
@@ -347,7 +411,11 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"30 min", trekking_tags.duration(0.5))
         self.assertEqual(u"1H", trekking_tags.duration(1))
         self.assertEqual(u"1H45", trekking_tags.duration(1.75))
-        self.assertEqual(u"1 day", trekking_tags.duration(13))
+        self.assertEqual(u"3H30", trekking_tags.duration(3.5))
+        self.assertEqual(u"4H", trekking_tags.duration(4))
+        self.assertEqual(u"6H", trekking_tags.duration(6))
+        self.assertEqual(u"10H", trekking_tags.duration(10))
+        self.assertEqual(u"2 days", trekking_tags.duration(11))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24*8))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24*9))

@@ -22,7 +22,7 @@ msgid "Intervention year"
 msgstr "Année d'intervention"
 
 msgid "Building"
-msgstr ""
+msgstr "Ouvrage"
 
 msgid "Facility"
 msgstr "Équipement"

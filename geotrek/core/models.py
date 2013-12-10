@@ -263,14 +263,6 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
             return True
         return all([a.start_position == a.end_position for a in self.aggregations.all()])
 
-    def geom_as_point(self):
-        geom = self.geom
-        assert geom, 'Topology point is None'
-        if geom.geom_type != 'Point':
-            logger.warning("Topology has wrong geometry type : %s instead of Point" % geom.geom_type)
-            geom = Point(geom.coords[0], srid=settings.SRID)
-        return geom
-
     def add_path(self, path, start=0.0, end=1.0, order=0, reload=True):
         """
         Shortcut function to add paths into this topology.

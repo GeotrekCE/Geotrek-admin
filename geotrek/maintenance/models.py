@@ -419,8 +419,7 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
         return _("Period")
 
     def __unicode__(self):
-        deleted_text = u"[" + _(u"Deleted") + u"]" if self.deleted else ""
-        return u"%s (%s-%s) %s" % (self.name, self.begin_year, self.end_year, deleted_text)
+        return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
 
     @classmethod
     def path_projects(cls, path):
@@ -447,7 +446,9 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
                 pks += [o.pk for o in attr_value]
             else:
                 modelclass = attr_value.model
-                pks += attr_value.values_list('pk', flat=True)
+                topologies = attr_value.values('ordering', 'id')
+                for topology in topologies:
+                    pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))
@@ -500,8 +501,8 @@ class Contractor(StructureRelated):
 class Funding(models.Model):
 
     amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"), db_column='montant')
-    project = models.ForeignKey(Project, db_column='chantier')
-    organism = models.ForeignKey(Organism, db_column='organisme')
+    project = models.ForeignKey(Project, verbose_name=_(u"Project"), db_column='chantier')
+    organism = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
 
     class Meta:
         db_table = 'm_r_chantier_financement'

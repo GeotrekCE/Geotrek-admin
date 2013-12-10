@@ -44,7 +44,7 @@ class InterventionDetail(MapEntityDetail):
         intervention = self.get_object()
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager and
+            self.request.user.profile.is_editor and
             intervention.same_structure(self.request.user) and
             intervention.topology is not None
         )
@@ -143,7 +143,7 @@ class ProjectDetail(MapEntityDetail):
     def can_edit(self):
         return self.request.user.is_superuser or (
             hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager and
+            self.request.user.profile.is_editor and
             self.get_object().same_structure(self.request.user)
         )
 

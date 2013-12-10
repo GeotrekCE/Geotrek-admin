@@ -401,11 +401,25 @@ L.Handler.MultiPath = L.Handler.extend({
         if (! computed_paths)
             return [];
 
-        return $.map(computed_paths, function(cpath) {
-            return [ $.map(cpath.path, function(path_component) {
+        var edges = $.map(computed_paths, function(cpath) {
+
+            var dups = $.map(cpath.path, function(path_component) {
                 return path_component.real_edge || path_component.edge;
-            }) ];
+            });
+
+            // Remove adjacent duplicates
+            var dedup = [];
+            for (var i=0; i<dups.length; i++) {
+                var e = dups[i];
+                if (i === 0)
+                    dedup.push(e);
+                else if (dups[i-1].id != e.id)
+                    dedup.push(e);
+            }
+            return [dedup];
         });
+
+        return edges;
     },
 
     _onComputedPaths: function(new_computed_paths) {

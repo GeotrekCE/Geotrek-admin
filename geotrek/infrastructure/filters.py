@@ -17,7 +17,7 @@ class InfrastructureFilter(EdgeStructureRelatedFilterSet):
 
     class Meta(EdgeStructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = EdgeStructureRelatedFilterSet.Meta.fields + ['type']
+        fields = EdgeStructureRelatedFilterSet.Meta.fields + ['type__type', 'type']
 
 
 class SignageFilter(EdgeStructureRelatedFilterSet):

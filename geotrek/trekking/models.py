@@ -154,6 +154,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
 
+    def __unicode__(self):
+        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+
     @property
     def slug(self):
         return slugify(self.name)
@@ -161,10 +164,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @models.permalink
     def get_document_public_url(self):
         return ('trekking:trek_document_public', [str(self.pk)])
-
-    @models.permalink
-    def get_document_public_poi_url(self):
-        return ('trekking:trek_document_public_poi', [str(self.pk)])
 
     @property
     def related(self):
@@ -177,8 +176,11 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def poi_types(self):
-        pks = set(self.pois.values_list('type', flat=True))
-        return POIType.objects.filter(pk__in=pks)
+        # Can't use values_list and must add 'ordering' because of bug:
+        # https://code.djangoproject.com/ticket/14930
+        values = self.pois.values('ordering', 'type')
+        pks = [value['type'] for value in values]
+        return POIType.objects.filter(pk__in=set(pks))
 
     def prepare_map_image(self, rooturl):
         """
@@ -317,21 +319,25 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def usages_display(self):
         return ', '.join([unicode(n) for n in self.usages.all()])
 
+    @property
+    def city_departure(self):
+        cities = self.cities
+        return unicode(cities[0]) if len(cities) > 0 else ''
+
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
         as place marks """
         kml = simplekml.Kml()
         # Main itinerary
-        geom = self.geom.transform(4326, clone=True)  # KML uses WGS84
+        geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.description),
-                                 coords=geom.coords)
+                                 coords=geom3d.coords)
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         # Place marks
         for poi in self.pois:
-            place = poi.geom_as_point()
-            place.transform(settings.API_SRID)
+            place = poi.geom_3d.transform(settings.API_SRID, clone=True)
             kml.newpoint(name=poi.name,
                          description=plain_text(poi.description),
                          coords=[place.coords])
@@ -357,9 +363,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def duration_pretty(self):
         return trekking_tags.duration(self.duration)
-
-    def __unicode__(self):
-        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
 
     @classmethod
     def path_treks(cls, path):

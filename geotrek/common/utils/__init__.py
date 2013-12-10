@@ -86,3 +86,12 @@ def sampling(values, total):
     """
     step = max(1, int(len(values)/total))
     return list(islice(values, 0, len(values), step))
+
+
+def uniquify(values):
+    """
+    Return unique values, order preserved
+    """
+    unique = []
+    [unique.append(i) for i in values if not i in unique]
+    return unique

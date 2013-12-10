@@ -1,5 +1,8 @@
+import json
+
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
+from django.core.urlresolvers import reverse
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
@@ -44,3 +47,19 @@ class SimpleGraph(TestCase):
 
         computed_graph = graph_edges_nodes_of_qs(Path.objects.all())
         self.assertDictEqual(computed_graph, graph)
+
+    def test_json_graph_empty(self):
+        url = reverse('core:path_json_graph')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        graph = json.loads(response.content)
+        self.assertDictEqual({'edges': {}, 'nodes': {}}, graph)
+
+    def test_json_graph_simple(self):
+        path = PathFactory(geom=LineString((0, 0), (1, 1)))
+        url = reverse('core:path_json_graph')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        graph = json.loads(response.content)
+        self.assertDictEqual({'edges': {str(path.pk): {'id': path.pk, 'length': 1.4142135623731, 'nodes_id': [1, 2]}},
+                              'nodes': {'1': {'2': path.pk}, '2': {'1': path.pk}}}, graph)

@@ -94,6 +94,20 @@ class TrekFactory(TopologyFactory):
     information_desk = factory.SubFactory(InformationDeskFactory)
 
 
+class TrekWithPOIsFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithPOIsFactory, cls)._prepare(create, **kwargs)
+        path = trek.paths.all()[0]
+        poi1 = POIFactory.create(no_path=True)
+        poi1.add_path(path, start=0.5, end=0.5)
+        poi2 = POIFactory.create(no_path=True)
+        poi2.add_path(path, start=0.4, end=0.4)
+        if create:
+            trek.save()
+        return trek
+
+
 class TrekRelationshipFactory(factory.Factory):
     FACTORY_FOR = models.TrekRelationship
 

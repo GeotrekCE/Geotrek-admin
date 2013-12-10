@@ -1,4 +1,5 @@
 import json
+import math
 
 from django.test import TestCase
 from django.conf import settings
@@ -318,6 +319,19 @@ class TopologyLineTest(TestCase):
         t.save()
         self.assertEqual(t.geom, LineString((2.5, 2), (2.5, 0.5), (4, 0.5)))
 
+    def test_topology_geom_should_not_be_sampled(self):
+        coords = [(x, math.sin(x)) for x in range(100)]
+        sampled_3d = [(x, math.sin(x), math.cos(x)) for x in range(0, 100, 5)]
+        p1 = PathFactory.create(geom=LineString(*coords))
+        p1.geom_3d = LineString(*sampled_3d)
+        p1.save(update_fields=['geom_3d'])
+
+        t = TopologyFactory.create(no_path=True)
+        t.add_path(p1, start=0.0, end=1.0)
+        t.save()
+
+        self.assertEqual(len(t.geom.coords), 100)
+
     def test_topology_geom_with_intermediate_markers(self):
         # Intermediate (forced passage) markers for topologies
         # Use a bifurcation, make sure computed geometry is correct
@@ -611,6 +625,23 @@ class TopologyLoopTests(TestCase):
         self.assertEqual(topo.geom, topod.geom)
         self.assertEqual(len(topod.aggregations.all()), 7)
 
+    def test_trek_all_reverse(self):
+        """
+
+        +----<===+=======+====|----->
+
+        """
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0)))
+        p2 = PathFactory.create(geom=LineString((10, 0), (20, 0)))
+        p3 = PathFactory.create(geom=LineString((20, 0), (30, 0)))
+
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(p3, start=0.2, end=0)
+        topo.add_path(p2, start=1, end=0)
+        topo.add_path(p1, start=1, end=0.9)
+        topo.save()
+        self.assertEqual(topo.geom, LineString((22.0, 0.0), (20.0, 0.0), (10.0, 0.0), (9.0, 0.0)))
+
 
 class TopologySerialization(TestCase):
 
@@ -724,3 +755,53 @@ class TopologySerialization(TestCase):
         end_after = after.aggregations.all()[0].end_position
         self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
         self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
+
+class TopologyOverlappingTest(TestCase):
+
+    def setUp(self):
+        self.path1 = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        self.path2 = PathFactory.create(geom=LineString((0, 20), (0, 10)))
+        self.path3 = PathFactory.create(geom=LineString((0, 20), (0, 30)))
+        self.path4 = PathFactory.create(geom=LineString((0, 30), (0, 40)))
+
+        self.topo1 = TopologyFactory.create(no_path=True)
+        self.topo1.add_path(self.path1, start=0.5, end=1)
+        self.topo1.add_path(self.path2, start=1, end=0)
+        self.topo1.add_path(self.path3)
+        self.topo1.add_path(self.path4, start=0, end=0.5)
+
+        self.topo2 = TopologyFactory.create(no_path=True)
+        self.topo2.add_path(self.path2)
+
+        self.point1 = TopologyFactory.create(no_path=True)
+        self.point1.add_path(self.path2, start=0.4, end=0.4)
+
+        self.point2 = TopologyFactory.create(no_path=True)
+        self.point2.add_path(self.path2, start=0.8, end=0.8)
+
+        self.point3 = TopologyFactory.create(no_path=True)
+        self.point3.add_path(self.path2, start=0.6, end=0.6)
+
+    def test_overlapping_returned_can_be_filtered(self):
+        overlaps = Topology.overlapping(self.topo1)
+        overlaps = overlaps.exclude(pk=self.topo1.pk)
+        self.assertEqual(len(overlaps), 4)
+
+        overlaps = Topology.overlapping(self.topo1)
+        overlaps = overlaps.filter(pk__in=[self.point1.pk, self.point2.pk])
+        self.assertEqual(len(overlaps), 2)
+
+    def test_overlapping_return_sharing_path(self):
+        overlaps = Topology.overlapping(self.topo1)
+        self.assertTrue(self.topo1 in overlaps)
+        self.assertTrue(self.topo2 in overlaps)
+
+    def test_overlapping_sorts_by_order_of_progression(self):
+        overlaps = Topology.overlapping(self.topo2)
+        self.assertEqual(list(overlaps), [self.topo2,
+                                          self.point1, self.point3, self.point2, self.topo1])
+
+    def test_overlapping_sorts_when_path_is_reversed(self):
+        overlaps = Topology.overlapping(self.topo1)
+        self.assertEqual(list(overlaps), [self.topo1,
+                                          self.point2, self.point3, self.point1, self.topo2])

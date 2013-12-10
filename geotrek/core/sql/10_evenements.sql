@@ -61,6 +61,7 @@ FOR EACH ROW EXECUTE PROCEDURE evenement_latest_updated_d();
 CREATE OR REPLACE FUNCTION update_geometry_of_evenement(eid integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
+    egeom_3d geometry;
     lines_only boolean;
     points_only boolean;
     elevation elevation_infos;
@@ -70,7 +71,9 @@ DECLARE
     t_start float;
     t_end float;
     t_geom geometry;
+    t_geom_3d geometry;
     tomerge geometry[];
+    tomerge_3d geometry[];
 BEGIN
     -- See what kind of topology we have
     SELECT bool_and(et.pk_debut != et.pk_fin), bool_and(et.pk_debut = et.pk_fin), count(*)
@@ -100,30 +103,35 @@ BEGIN
                 INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+            egeom_3d := egeom;
         END IF;
     ELSE
         -- Regular case: the topology describe a line
         -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
         -- points in the line have the same X/Y but a different Z, these
         -- functions will see only on point. --> No problem in mountain path management.
-        FOR t_offset, t_geom IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom_3d, et.pk_debut, et.pk_fin)
+        FOR t_offset, t_geom, t_geom_3d IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom, et.pk_debut, et.pk_fin),
+                                                               ST_Smart_Line_Substring(t.geom_3d, et.pk_debut, et.pk_fin)
                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id
                  AND et.pk_debut != et.pk_fin
                ORDER BY et.ordre, et.id  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
             tomerge := array_append(tomerge, t_geom);
+            tomerge_3d := array_append(tomerge_3d, t_geom_3d);
         END LOOP;
 
         egeom := ft_Smart_MakeLine(tomerge);
+        egeom_3d := ft_Smart_MakeLine(tomerge_3d);
         -- Add some offset if necessary.
         IF t_offset != 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
+            egeom_3d := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom_3d, 0, 1), 0, 1, t_offset), 1);
         END IF;
     END IF;
 
     IF t_count > 0 THEN
-        SELECT * FROM ft_elevation_infos(egeom) INTO elevation;
+        SELECT * FROM ft_elevation_infos(egeom_3d) INTO elevation;
         UPDATE e_t_evenement SET geom = ST_Force_2D(egeom),
                                  geom_3d = ST_Force_3DZ(elevation.draped),
                                  longueur = ST_3DLength(elevation.draped),

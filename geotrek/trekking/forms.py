@@ -14,10 +14,10 @@ from .models import Trek, POI, WebLink
 
 
 class TrekRelationshipForm(forms.ModelForm):
-    helper = FormHelper()
 
     def __init__(self, *args, **kwargs):
         super(TrekRelationshipForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id',
                                     'trek_a',
@@ -106,10 +106,10 @@ class POIForm(TopologyForm):
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
-    helper = FormHelper()
 
     def __init__(self, *args, **kwargs):
         super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
         self.helper.form_action = self.instance.get_add_url()
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)

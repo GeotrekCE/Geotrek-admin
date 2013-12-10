@@ -8,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString
 
-from geotrek.common.utils import sqlfunction, sampling
+from geotrek.common.utils import sqlfunction, sampling, uniquify
 
 import pygal
 from pygal.style import LightSolarizedStyle
@@ -146,8 +146,7 @@ class TopologyHelper(object):
     def serialize(cls, topology):
         # Point topology
         if topology.ispoint():
-            geom = topology.geom_as_point()
-            point = geom.transform(settings.API_SRID, clone=True)
+            point = topology.geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
         else:
             # Line topology
@@ -179,8 +178,10 @@ class TopologyHelper(object):
     def overlapping(cls, klass, queryset):
         from .models import Path, Topology, PathAggregation
 
-        topology_pks = []
-        if isinstance(queryset, QuerySet):
+        is_generic = klass.KIND == Topology.KIND
+        single_input = isinstance(queryset, QuerySet)
+
+        if single_input:
             topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
         else:
             topology_pks = [str(queryset.pk)]
@@ -191,33 +192,38 @@ class TopologyHelper(object):
              aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
                               WHERE a.evenement = t.id),
         -- Concerned paths along with (start, end)
-             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id
+             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id, a.ordre AS order
                             FROM %(paths_table)s p, aggregations a
-                            WHERE a.troncon = p.id)
+                            WHERE a.troncon = p.id
+                            ORDER BY a.ordre)
         -- Retrieve primary keys
-        SELECT DISTINCT(t.id)
+        SELECT t.id
         FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
         WHERE a.troncon = pa.id AND a.evenement = t.id
-          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end) AND
-              greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end);
+          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end)
+          AND greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end)
+          AND %(extra_condition)s
+        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.pk_debut) ELSE a.pk_debut END);
         """ % {
             'topology_table': Topology._meta.db_table,
             'aggregations_table': PathAggregation._meta.db_table,
             'paths_table': Path._meta.db_table,
             'topology_list': ','.join(topology_pks),
+            'extra_condition': 'true' if is_generic else "kind = '%s'" % klass.KIND
         }
 
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
-        pks = [row[0] for row in result]
-        qs = klass.objects.existing().filter(pk__in=pks)
+        pk_list = uniquify([row[0] for row in result])
 
-        # Filter by kind if relevant
-        if klass.KIND != Topology.KIND:
-            qs = qs.filter(kind=klass.KIND)
-
-        return qs
+        # Return a QuerySet and preserve pk list order
+        # http://stackoverflow.com/a/1310188/141895
+        ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
+                                             for i, id_ in enumerate(pk_list)])
+        queryset = klass.objects.existing().filter(pk__in=pk_list).extra(
+            select={'ordering': ordering}, order_by=('ordering',))
+        return queryset
 
 
 class PathHelper(object):
@@ -281,7 +287,7 @@ class AltimetryHelper(object):
         if geometry3d.geom_type == 'MultiLineString':
             profile = []
             for subcoords in geometry3d.coords:
-                subline = LineString(subcoords)
+                subline = LineString(subcoords, srid=geometry3d.srid)
                 offset += subline.length
                 subprofile = AltimetryHelper.elevation_profile(subline, precision, offset)
                 profile.extend(subprofile)

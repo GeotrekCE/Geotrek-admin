@@ -4,7 +4,7 @@ Geotrek.TopologyHelper = (function() {
 
     /**
      * This static function takes a list of Dijkstra results, and returns
-     * a serialized topology, as expected by form widget, as well as a 
+     * a serialized topology, as expected by form widget, as well as a
      * multiline geometry for highlight the result.
      */
     function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
@@ -52,10 +52,10 @@ Geotrek.TopologyHelper = (function() {
                 }
             }
             else {
-                /*        A     B 
+                /*        A     B
                  *   +----|=====|---->
                  *
-                 *        B     A 
+                 *        B     A
                  *   +----|=====|---->
                  */
                 paths = $.unique(paths);
@@ -74,7 +74,7 @@ Geotrek.TopologyHelper = (function() {
                 var next_lls = polylines[1].getLatLngs(),
                     next_end = next_lls[next_lls.length-1],
                     share_end = first_end.equals(next_end);
-                if ((start_on_loop && pk_start > 0.5) || 
+                if ((start_on_loop && pk_start > 0.5) ||
                     (share_end && pk_start > 0.5 && pk_end > 0.5)) {
                     /*
                      *       A
@@ -112,7 +112,7 @@ Geotrek.TopologyHelper = (function() {
                 positions[0] = [pk_start, 1.0];
             }
 
-            /* 
+            /*
              * Add all intermediary lines
              */
             for (var i=1; i<polylines.length-1; i++) {
@@ -137,7 +137,7 @@ Geotrek.TopologyHelper = (function() {
                 var previous_lls = polylines[polylines.length - 2].getLatLngs(),
                     previous_end = previous_lls[previous_lls.length-1],
                     share_end = last_end.equals(previous_end);
-                if ((end_on_loop && pk_end > 0.5) || 
+                if ((end_on_loop && pk_end > 0.5) ||
                     (share_end && pk_start > 0.5 && pk_end > 0.5)) {
                     /*
                      *              B

@@ -1,6 +1,6 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
 from django.forms import FloatField
+from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
@@ -16,10 +16,10 @@ from .models import Intervention, Project
 
 
 class ManDayForm(forms.ModelForm):
-    helper = FormHelper()
 
     def __init__(self, *args, **kwargs):
         super(ManDayForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'nb_days', 'job')
         self.fields['nb_days'].widget.attrs['placeholder'] = _('Days')
@@ -32,10 +32,10 @@ ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, f
 
 
 class FundingForm(forms.ModelForm):
-    helper = FormHelper()
 
     def __init__(self, *args, **kwargs):
         super(FundingForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'amount', 'organism')
         self.fields['organism'].widget.attrs['class'] = 'input-xlarge'
@@ -50,7 +50,7 @@ class InterventionForm(CommonForm):
     infrastructure = forms.ModelChoiceField(required=False,
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
-    length = forms.FloatField(required=False, label=_("Length"))
+    length = FloatField(required=False, label=_("Length"))
     fieldslayout = [
         Div(
             HTML("""
