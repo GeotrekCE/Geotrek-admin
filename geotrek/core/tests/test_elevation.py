@@ -59,7 +59,7 @@ class ElevationTest(TestCase):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(self.path, start=0.6, end=0.6)
         topo.save()
-        self.assertEqual(topo.geom_3d.coords[2], 5.0)
+        self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 15)
@@ -69,11 +69,11 @@ class ElevationTest(TestCase):
         topo = TopologyFactory.create(no_path=True,offset=1)
         topo.add_path(self.path, start=0.5, end=0.5)
         topo.save()
-        self.assertEqual(topo.geom_3d.coords[2], 5.0)
+        self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
-        self.assertEqual(topo.min_elevation, 5)
-        self.assertEqual(topo.max_elevation, 5)
+        self.assertEqual(topo.min_elevation, 15)
+        self.assertEqual(topo.max_elevation, 15)
 
 class ElevationProfileTest(TestCase):
     def test_elevation_profile_wrong_geom(self):
