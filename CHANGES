@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+0.21.2 (unreleased)
+-------------------
+
+**BUG fixes**
+
+* Warn on tiling landscape/portrait spatial extent only if map with local projection
+
 
 0.21.1 (2013-12-11)
 -------------------
