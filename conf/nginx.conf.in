@@ -16,8 +16,6 @@ server {
     access_log ${options.accesslog};
     error_log ${options.errorlog};
 
-    keepalive_timeout 5;
-
     client_max_body_size 10M;
 
     location ${parts['django'].staticurl} {

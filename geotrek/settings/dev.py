@@ -45,9 +45,10 @@ DEBUG_TOOLBAR_PANELS = (
 #................................................
 
 LEAFLET_CONFIG['TILES'] = [
-    ('Terrain', 'http://geobi.makina-corpus.net/geotrek/tiles/scan/{z}/{x}/{y}.png',),
-    ('Ortho', 'http://geobi.makina-corpus.net/geotrek/tiles/ortho/{z}/{x}/{y}.jpg'),
+    (gettext_noop('Scan'), 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'),
+    (gettext_noop('Ortho'), 'http://{s}.tiles.mapbox.com/v3/openstreetmap.map-4wvf9l0l/{z}/{x}/{y}.jpg'),
 ]
+LEAFLET_CONFIG['SRID'] = 3857
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'

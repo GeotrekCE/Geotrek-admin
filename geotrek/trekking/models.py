@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 import simplekml
 from PIL import Image
@@ -63,14 +64,22 @@ class PicturesMixin(object):
     def picture_print(self):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            return thumbnailer.get_thumbnail(aliases.get('print'))
+            try:
+                return thumbnailer.get_thumbnail(aliases.get('print'))
+            except InvalidImageFormatError:
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                pass
         return None
 
     @property
     def thumbnail(self):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            return thumbnailer.get_thumbnail(aliases.get('small-square'))
+            try:
+                return thumbnailer.get_thumbnail(aliases.get('small-square'))
+            except InvalidImageFormatError:
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                pass
         return None
 
     @classproperty
@@ -290,7 +299,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        s = u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.name,
+                                                              self.name)
         if self.published:
             s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
@@ -638,7 +650,10 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.name)
+        return u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                                 self.get_detail_url(),
+                                                                 self.name,
+                                                                 self.name)
 
     @property
     def name_csv_display(self):

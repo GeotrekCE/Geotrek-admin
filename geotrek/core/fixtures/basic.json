@@ -7,6 +7,34 @@
         }
     },
     {
+        "pk": 2,
+        "model": "core.datasource",
+        "fields": {
+            "source": "Bing"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.datasource",
+        "fields": {
+            "source": "Cadastre"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "core.datasource",
+        "fields": {
+            "source": "GPS"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "core.datasource",
+        "fields": {
+            "source": "OSM"
+        }
+    },
+    {
         "pk": 1,
         "model": "core.stake",
         "fields": {
@@ -116,6 +144,20 @@
         "model": "core.usage",
         "fields": {
             "usage": "Sentier d'interpr\u00e9tation"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "core.usage",
+        "fields": {
+            "usage": "V\u00e9lo"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "core.usage",
+        "fields": {
+            "usage": "Camion"
         }
     },
     {

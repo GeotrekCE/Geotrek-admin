@@ -12,7 +12,6 @@ create config files of nginx, etc.
 """
 import os
 
-from django.core.exceptions import ImproperlyConfigured
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from . import EnvIniReader

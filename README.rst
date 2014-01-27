@@ -44,7 +44,7 @@ License
 -------
 
     * OpenSource - BSD
-    * Copyright (c) Parc National des Écrins - Parc National du Mercantour - Parco delle Alpi Marittime - Makina Corpus
+    * Copyright (c) 2012-2014 - Parc National des Écrins - Parc National du Mercantour - Parco delle Alpi Marittime - Makina Corpus
 
 
 .. image:: http://depot.makina-corpus.org/public/geotrek/logo-pne.png

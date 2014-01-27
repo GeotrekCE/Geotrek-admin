@@ -140,6 +140,7 @@ DECLARE
     points3d geometry[];
     ele integer;
     last_ele integer;
+    last_last_ele integer;
     result elevation_infos;
 BEGIN
     -- Skip if no DEM (speed-up tests)
@@ -168,16 +169,20 @@ BEGIN
     result.positive_gain := 0;
     result.negative_gain := 0;
     last_ele := NULL;
+    last_last_ele := NULL;
     points3d := ARRAY[]::geometry[];
 
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
-        points3d := array_append(points3d, current);
-        ele := ST_Z(current)::integer;
+        -- Smooth the elevation profile
+        ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
+        -- Create the 3d points
+        points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
         -- Add negative only if ele - last_ele < 0
         result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
         last_ele := ele;
+        last_last_ele := last_ele;
     END LOOP;
     result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
 
@@ -248,7 +253,8 @@ BEGIN
     WHILE t_found AND array_length(current, 1) < nblines + 1
     LOOP
         t_found := false;
-        FOR i IN 1 .. nblines
+        i := 1;
+        WHILE i < nblines + 1
         LOOP
             t_proceed := NOT current @> ARRAY[i];
             t_line := lines[i];
@@ -256,31 +262,34 @@ BEGIN
                 result := t_line;
                 t_found := true;
                 current := array_append(current, i);
-            ELSE
-                IF t_proceed AND ft_IsAfter(t_line, result) THEN
+            ELSIF t_proceed THEN
+                IF ft_IsAfter(t_line, result) THEN
                     result := ST_MakeLine(result, t_line);
                     t_found := true;
                     current := array_append(current, i);
-                ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
+                    i := 0;  -- restart iteration
+                ELSEIF ft_IsBefore(t_line, result) THEN
                     result := ST_MakeLine(t_line, result);
                     t_found := true;
                     current := array_append(current, i);
+                    i := 0;  -- restart iteration
                 END IF;
 
                 IF NOT t_found THEN
                     t_line := ST_Reverse(t_line);
-                    IF t_proceed AND ft_IsAfter(t_line, result) THEN
+                    IF ft_IsAfter(t_line, result) THEN
                         result := ST_MakeLine(result, t_line);
                         t_found := true;
                         current := array_append(current, i);
-                    ELSEIF t_proceed AND ft_IsBefore(t_line, result) THEN
+                    ELSEIF ft_IsBefore(t_line, result) THEN
                         result := ST_MakeLine(t_line, result);
                         t_found := true;
                         current := array_append(current, i);
                     END IF;
                 END IF;
-
             END IF;
+
+            i := i + 1;
         END LOOP;
     END LOOP;
 

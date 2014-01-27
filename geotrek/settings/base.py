@@ -341,7 +341,7 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 ALTIMETRIC_PROFILE_BACKGROUND = 'white'
-ALTIMETRIC_PROFILE_COLOR = '#5393E8'
+ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
 ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
@@ -368,7 +368,7 @@ LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf7
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
 
 MAP_STYLES = {
-    'path':           {'weight': 2, 'opacity': 1.0, 'color': 'blue'},
+    'path':           {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
 
     'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
     'district':       {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},

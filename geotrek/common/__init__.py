@@ -42,5 +42,4 @@ else:
 """
     Computed client-side setting.
 """
-
 settings.LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(settings.SPATIAL_EXTENT, buffer=0.5)

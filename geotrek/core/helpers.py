@@ -178,6 +178,7 @@ class TopologyHelper(object):
     def overlapping(cls, klass, queryset):
         from .models import Path, Topology, PathAggregation
 
+        all_objects = klass.objects.existing()
         is_generic = klass.KIND == Topology.KIND
         single_input = isinstance(queryset, QuerySet)
 
@@ -185,6 +186,9 @@ class TopologyHelper(object):
             topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
         else:
             topology_pks = [str(queryset.pk)]
+
+        if len(topology_pks) == 0:
+            return all_objects.filter(pk__in=[])
 
         sql = """
         WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
@@ -221,7 +225,7 @@ class TopologyHelper(object):
         # http://stackoverflow.com/a/1310188/141895
         ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
                                              for i, id_ in enumerate(pk_list)])
-        queryset = klass.objects.existing().filter(pk__in=pk_list).extra(
+        queryset = all_objects.filter(pk__in=pk_list).extra(
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
 
