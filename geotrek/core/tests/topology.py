@@ -793,3 +793,8 @@ class TopologyOverlappingTest(TestCase):
         overlaps = Topology.overlapping(self.topo1)
         self.assertEqual(list(overlaps), [self.topo1,
                                           self.point2, self.point3, self.point1, self.topo2])
+
+    def test_overlapping_does_not_fail_if_no_records(self):
+        from geotrek.trekking.models import Trek
+        overlaps = Topology.overlapping(Trek.objects.all())
+        self.assertEqual(list(overlaps), [])
