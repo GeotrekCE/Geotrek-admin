@@ -24,6 +24,7 @@ CHANGELOG
 * Settings edition prompt only happens at first install
 * Propose to backup DB before Geotrek upgrade (fixes #804)
 * Add spanish translation
+* Add photographie into default attachments filetype
 
 **BUG fixes**
 
