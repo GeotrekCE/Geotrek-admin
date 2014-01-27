@@ -1,33 +1,40 @@
 {% load i18n %}
 
 <!-- begin land/bbox.html -->
+{% if bbox_cities %}
 <select id="bbox_cities" class="input-medium chzn-select">
     <option value="" selected>{% trans "City" %}</li>
     {% for bbox in bbox_cities %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
 </select>
+{% endif %}
 
+{% if bbox_districts %}
 <select id="bbox_districts" class="input-medium chzn-select">
     <option value="" selected>{% trans "District" %}</li>
     {% for bbox in bbox_districts %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
 </select>
+{% endif %}
 
+{% if bbox_areas %}
 <select id="bbox_areas" class="input-medium chzn-select">
     <option value="" selected>{% trans "Restricted Area" %}</li>
     {% for bbox in bbox_areas %}
         <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</li>
     {% endfor %}
 </select>
+{% endif %}
 
+{% if bbox_cities or bbox_districts or bbox_areas %}
 <script type="text/javascript">
     $(document).ready(function() {
         $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {
             var mainmap = window.maps[0],
                 bboxval = $(this).val();
-            
+
             // Clear other filters, but keep this one of course
             var self = this;
             $('#bbox_cities, #bbox_districts, #bbox_areas').each(function() {
@@ -36,7 +43,7 @@
                     $(this).removeClass('filter-set');
                 }
             });
-            
+
             // Fit selected bbox, or whole map
             if (bboxval) {
                 var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy
@@ -52,4 +59,5 @@
         });
     });
 </script>
+{% endif %}
 <!-- end land/bbox.html -->

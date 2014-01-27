@@ -25,12 +25,18 @@ CHANGELOG
 * Propose to backup DB before Geotrek upgrade (fixes #804)
 * Add spanish translation
 * Add photographie into default attachments filetype
+* Map location combobox are not shown if empty or disabled.
 
 **BUG fixes**
 
 * Fix convert urls behind reverse proxy with prefix
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
+
+:notes:
+
+  List of restricted areas is not shown on map by default anymore. Restore
+  previous behaviour with advanced setting `LAND_BBOX_AREAS_ENABLED` as True.
 
 
 0.21.2 (unreleased)

@@ -26,8 +26,11 @@ def get_bbox_areas():
 
 @register.inclusion_tag('land/bbox.html')
 def combobox_bbox_land():
-    return { 
-        'bbox_cities': get_bbox_cities(), 
-        'bbox_districts': get_bbox_districts(), 
-        'bbox_areas': get_bbox_areas() 
+    cities = get_bbox_cities() if settings.LAND_BBOX_CITIES_ENABLED else []
+    districts = get_bbox_districts() if settings.LAND_BBOX_DISTRICTS_ENABLED else []
+    areas = get_bbox_areas() if settings.LAND_BBOX_AREAS_ENABLED else []
+    return {
+        'bbox_cities': cities,
+        'bbox_districts': districts,
+        'bbox_areas': areas
     }
