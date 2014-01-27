@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 import simplekml
 from PIL import Image
@@ -63,14 +64,22 @@ class PicturesMixin(object):
     def picture_print(self):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            return thumbnailer.get_thumbnail(aliases.get('print'))
+            try:
+                return thumbnailer.get_thumbnail(aliases.get('print'))
+            except InvalidImageFormatError:
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                pass
         return None
 
     @property
     def thumbnail(self):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            return thumbnailer.get_thumbnail(aliases.get('small-square'))
+            try:
+                return thumbnailer.get_thumbnail(aliases.get('small-square'))
+            except InvalidImageFormatError:
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                pass
         return None
 
     @classproperty

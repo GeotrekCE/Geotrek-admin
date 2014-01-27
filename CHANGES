@@ -8,6 +8,8 @@ CHANGELOG
 **BUG fixes**
 
 * Warn on tiling landscape/portrait spatial extent only if map with local projection
+* Safety check on thumbnailing if images are missing from disk (*useful for troubleshooting,
+  when importing existing dumps*).
 
 
 0.21.1 (2013-12-11)
