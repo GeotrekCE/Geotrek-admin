@@ -7,7 +7,7 @@ version=$(shell git describe --tags --abbrev=0)
 
 ROOT_DIR=$(shell pwd)
 BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
-BUILDOUT_VERSION = 1.7.0
+BUILDOUT_VERSION = 1.7.1
 BUILDOUT_BOOTSTRAP_URL = https://raw.github.com/buildout/buildout/$(BUILDOUT_VERSION)/bootstrap/bootstrap.py
 BUILDOUT_BOOTSTRAP = bootstrap.py
 BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --version=$(BUILDOUT_VERSION) --distribute buildout:directory=$(ROOT_DIR)
