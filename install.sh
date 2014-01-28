@@ -306,6 +306,11 @@ function geotrek_setup {
     elif $standalone ; then
         make env_standalone
     fi
+    success=$?
+    if [ $success -ne 0 ]; then
+        echo_error "Could not setup python environment !"
+        exit 3
+    fi
 
     # If database is local, install it !
     dbhost=$(ini_value $settingsfile dbhost)
