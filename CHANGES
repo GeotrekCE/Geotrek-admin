@@ -26,6 +26,8 @@ CHANGELOG
 * Add spanish translation
 * Add photographie into default attachments filetype
 * Map location combobox are not shown if empty or disabled.
+* Scan and ortho attributions can now be set using `scan_attributions` and
+  `ortho_attributions` in *settings.ini*.
 
 **BUG fixes**
 

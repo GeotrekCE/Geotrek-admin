@@ -39,8 +39,10 @@ spatial_extent = 924861,6375196,985649,6448688
 wms_url = http://extranet.parcnational.fr/pnx/wms?
 # Layers for aerial picture
 ortho_layers = ortho
+ortho_attributions = IGN BDOrtho
 # Layers for scan map
 scan_layers = scan100,scan25
+scan_attributions = IGN Scan
 
 #
 #  Email settings
