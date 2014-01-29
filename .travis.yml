@@ -7,6 +7,7 @@ before_install:
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || mkdir -p $HOME/.buildout/downloads"
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
+  - deactivate
   - ./install.sh --tests
 script:
   - make env_test test
