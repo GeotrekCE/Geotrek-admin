@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from geotrek.land.tests.filters import LandFiltersTest
+from geotrek.land.tests.test_filters import LandFiltersTest
 
 from geotrek.core.filters import PathFilter
 

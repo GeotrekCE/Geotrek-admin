@@ -46,6 +46,9 @@ class AuthentDatabaseTest(TestCase):
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
 
+    def tearDown(self):
+        query_db("DROP TABLE %s" % settings.AUTHENT_TABLENAME)
+
     @override_settings(AUTHENT_TABLENAME=None)
     def test_confmissing(self):
         self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))

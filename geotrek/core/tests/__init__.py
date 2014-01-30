@@ -1,13 +1,13 @@
 # pylint: disable=W0401
 
-from .triggers import *
-from .tests import *
+from .test_triggers import *
+from .test_views import *
 from .test_factories import *
 from .test_elevation import *
-from .path_filter import *
-from .topology import *
-from .splitpath import *
-from .filters import *
-from .graph import *
-from .fields import *
+from .test_path_filter import *
+from .test_topology import *
+from .test_path_split import *
+from .test_filters import *
+from .test_graph import *
+from .test_fields import *
 from .test_attachment import *
