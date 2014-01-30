@@ -26,7 +26,7 @@ etc/settings.ini:
 bin/python:
 	virtualenv .
 	mkdir -p lib/eggs
-	wget -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
+	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
 	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
 	rm $(BUILDOUT_BOOTSTRAP)
 
