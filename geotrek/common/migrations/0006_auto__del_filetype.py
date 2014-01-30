@@ -2,7 +2,7 @@
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+from django.db import models, connection
 from django.db.utils import DatabaseError
 
 
@@ -15,6 +15,7 @@ class Migration(SchemaMigration):
             db.delete_column('fl_b_fichier', 'type_en')
         except DatabaseError:
             # In case they were never created pass.
+            connection.close()
             pass
 
     def backwards(self, orm):

@@ -53,7 +53,6 @@ LANGUAGE_CODE = 'fr'
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
-MODELTRANSLATION_TRANSLATION_REGISTRY = 'geotrek.translation'
 
 LANGUAGES = (
     ('en', gettext_noop('English')),

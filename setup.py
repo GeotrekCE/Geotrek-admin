@@ -20,7 +20,7 @@ setup(
     long_description=open(os.path.join(here, 'README.rst')).read() + '\n\n' +
                      open(os.path.join(here, 'CHANGES')).read(),
     install_requires=[
-        'South == 0.7.6',
+        'South == 0.8.4',
         'psycopg2 == 2.4.1',
         'docutils == 0.11',
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs

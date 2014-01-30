@@ -13,10 +13,10 @@ SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
 #  Developper Toolbar
 #..........................
 
-INSTALLED_APPS += (
+INSTALLED_APPS = (
     'debug_toolbar',
     'django_extensions',
-)
+) + INSTALLED_APPS
 
 #
 # Use Geotrek preprod tiles (uses default extent)
