@@ -324,6 +324,11 @@ function geotrek_setup {
         backup_existing_database
     fi
 
+    if $tests ; then
+        # Since Django 1.6, running tests checks for database :(
+        bin/django syncdb --noinput
+    fi
+
     if $prod || $standalone ; then
 
         echo_step "Generate services configuration files..."
