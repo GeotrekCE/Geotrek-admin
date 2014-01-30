@@ -113,7 +113,6 @@ class Command(BaseCommand):
             cur = connection.cursor()
             sql = 'DROP TABLE mnt'
             cur.execute(sql)
-            transaction.commit_unless_managed()
             cur.close()
         elif dem_exists and not replace:
             raise CommandError('DEM file exists, use --replace to overwrite')
@@ -168,7 +167,6 @@ class Command(BaseCommand):
         output.file.seek(0)
         for sql_line in output.file:
             cur.execute(sql_line)
-        transaction.commit_unless_managed()
         cur.close()
         output.close()
         self.stdout.write('DEM successfully loaded.\n')

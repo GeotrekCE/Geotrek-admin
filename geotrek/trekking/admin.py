@@ -71,7 +71,7 @@ class DifficultyLevelAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
             obj.save()
             return
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             # Migrate Treks
             migrated = []
             for t in Trek.objects.filter(difficulty=form.oldid):

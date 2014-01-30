@@ -26,7 +26,6 @@ class Migration(SchemaMigration):
                       self.gf('django.contrib.gis.db.models.fields.GeometryField')(srid=settings.SRID, null=True, default=None, spatial_index=False))
         # Switch cadastre to 2D
         db.alter_column('l_t_troncon', 'geom_cadastre', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, null=True, spatial_index=False))
-        db.commit_transaction()
 
         #
         # Data migration
@@ -34,7 +33,6 @@ class Migration(SchemaMigration):
         db.start_transaction()
         db.execute("UPDATE l_t_troncon SET geom = ST_force_2D(geom_3d);")
         db.execute("UPDATE e_t_evenement SET geom = ST_force_2D(geom_3d);")
-        db.commit_transaction()
 
 
     def backwards(self, orm):
