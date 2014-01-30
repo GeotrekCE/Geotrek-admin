@@ -325,8 +325,9 @@ function geotrek_setup {
     fi
 
     if $tests ; then
-        # Since Django 1.6, running tests checks for database :(
+        # Django tests require the original database :(
         bin/django syncdb --noinput
+        bin/django sync_translation_fields --noinput
     fi
 
     if $prod || $standalone ; then
