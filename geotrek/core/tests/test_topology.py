@@ -602,13 +602,13 @@ class TopologyLoopTests(TestCase):
                                                 (20, 5), (20, 0),
                                                 (10, 0)))
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1, start=0.3, end=1)
-        topo.add_path(p2, start=0, end=0.4)
-        topo.add_path(p2, start=0.4, end=0.4)
-        topo.add_path(p2, start=0.4, end=0.8)
-        topo.add_path(p2, start=0.8, end=0.8)
-        topo.add_path(p2, start=0.8, end=1.0)
-        topo.add_path(p1, start=1, end=0.3)
+        topo.add_path(p1, start=0.3, end=1, order=1)
+        topo.add_path(p2, start=0, end=0.4, order=2)
+        topo.add_path(p2, start=0.4, end=0.4, order=3)
+        topo.add_path(p2, start=0.4, end=0.8, order=4)
+        topo.add_path(p2, start=0.8, end=0.8, order=5)
+        topo.add_path(p2, start=0.8, end=1.0, order=6)
+        topo.add_path(p1, start=1, end=0.3, order=7)
         topo.save()
         self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5),
                                                (17, 5), (20, 5),  # extra point due middle aggregation

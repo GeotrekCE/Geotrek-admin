@@ -60,6 +60,7 @@ def load_sql_files(app_label):
     app_dir = os.path.dirname(models.get_app(app_label).__file__)
     sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
     if not os.path.exists(sql_dir):
+        logger.debug("No SQL folder for %s" % app_label)
         return
 
     r = re.compile(r'^.*\.sql$')
@@ -67,6 +68,10 @@ def load_sql_files(app_label):
                  for f in os.listdir(sql_dir)
                  if r.match(f) is not None]
     sql_files.sort()
+
+    if len(sql_files) == 0:
+        logger.warning("Empty folder %s" % sql_dir)
+
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
@@ -88,8 +93,8 @@ def load_sql_files(app_label):
 
             cursor.execute(sql)
         except Exception as e:
-            logger.error("Failed to install custom SQL file '%s': %s\n" %
-                         (sql_file, e))
+            logger.critical("Failed to install custom SQL file '%s': %s\n" %
+                            (sql_file, e))
             traceback.print_exc()
             transaction.rollback_unless_managed()
             raise

@@ -24,7 +24,7 @@ _CREATE_TABLE_STATEMENT = """
 
 
 def query_db(sqlquery):
-    cursor = connections[settings.AUTHENT_DATABASE].cursor()
+    cursor = connections[settings.AUTHENT_DATABASE or 'default'].cursor()
     cursor.execute(sqlquery)
     return cursor
 
@@ -47,7 +47,7 @@ class AuthentDatabaseTest(TestCase):
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
 
     def tearDown(self):
-        query_db("DROP TABLE %s" % settings.AUTHENT_TABLENAME)
+        query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
 
     @override_settings(AUTHENT_TABLENAME=None)
     def test_confmissing(self):

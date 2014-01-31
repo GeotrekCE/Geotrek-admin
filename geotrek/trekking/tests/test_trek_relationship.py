@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.db import IntegrityError
 
 from ..factories import TrekFactory, TrekRelationshipFactory
-from geotrek.core.factories import PathFactory
 
 
 class TrekRelationshipsTestCase(TestCase):
@@ -12,8 +11,8 @@ class TrekRelationshipsTestCase(TestCase):
         trek2 = TrekFactory()
         trek3 = TrekFactory()
 
-        rs_12 = TrekRelationshipFactory(trek_a=trek1, trek_b=trek2)
-        rs_23 = TrekRelationshipFactory(trek_a=trek2, trek_b=trek3)
+        TrekRelationshipFactory(trek_a=trek1, trek_b=trek2)
+        TrekRelationshipFactory(trek_a=trek2, trek_b=trek3)
 
         self.assertItemsEqual(trek1.related.all(), [trek2])
         self.assertItemsEqual(trek2.related.all(), [trek1, trek3])

@@ -63,6 +63,36 @@ class TrekTest(TestCase):
         self.assertIn(type0, trek.poi_types)
         self.assertIn(type1, trek.poi_types)
 
+    def test_delete_cascade(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        t = TrekFactory.create(no_path=True)
+        t.add_path(p1)
+        t.add_path(p2)
+
+        # Everything should be all right before delete
+        self.assertTrue(t.published)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 2)
+
+        # When a path is deleted
+        p1.delete()
+        t = Trek.objects.get(pk=t.pk)
+        self.assertFalse(t.published)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
+
+        # Reset published status
+        t.published = True
+        t.save()
+
+        # When all paths are deleted
+        p2.delete()
+        t = Trek.objects.get(pk=t.pk)
+        self.assertFalse(t.published)
+        self.assertTrue(t.deleted)
+        self.assertEqual(t.aggregations.count(), 0)
+
 
 class POIViewsTest(CommonTest):
     model = POI

@@ -159,39 +159,6 @@ class PathTest(TestCase):
         p.save()
         self.assertNotEqual(p.length, 0)
 
-    def test_delete_cascade(self):
-        from geotrek.trekking.models import Trek
-        from geotrek.trekking.factories import TrekFactory
-
-        p1 = PathFactory.create()
-        p2 = PathFactory.create()
-        t = TrekFactory.create(no_path=True)
-        t.add_path(p1)
-        t.add_path(p2)
-
-        # Everything should be all right before delete
-        self.assertTrue(t.published)
-        self.assertFalse(t.deleted)
-        self.assertEqual(t.aggregations.count(), 2)
-
-        # When a path is deleted
-        p1.delete()
-        t = Trek.objects.get(pk=t.pk)
-        self.assertFalse(t.published)
-        self.assertFalse(t.deleted)
-        self.assertEqual(t.aggregations.count(), 1)
-
-        # Reset published status
-        t.published = True
-        t.save()
-
-        # When all paths are deleted
-        p2.delete()
-        t = Trek.objects.get(pk=t.pk)
-        self.assertFalse(t.published)
-        self.assertTrue(t.deleted)
-        self.assertEqual(t.aggregations.count(), 0)
-
     def test_valid_geometry(self):
         connection = connections[DEFAULT_DB_ALIAS]
 

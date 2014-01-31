@@ -25,7 +25,7 @@ setup(
         'docutils == 0.11',
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'Pillow == 1.7.8',
-        'easy-thumbnails == 1.1',
+        'easy-thumbnails == 1.4',
         'simplekml == 1.2.1',
         'pygal == 1.1.0',
         'django-extended-choices == 0.3.0',
