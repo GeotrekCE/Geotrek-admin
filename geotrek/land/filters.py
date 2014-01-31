@@ -80,7 +80,7 @@ def filter(qs, edges):
     elif issubclass(qs.model, maintenance.models.Project):
         # Find all interventions overlapping those edges
         interventions = filter(maintenance.models.Intervention.objects.existing()
-                                                              .select_related(depth=1)
+                                                              .select_related('project')
                                                               .filter(project__in=qs),
                                edges)
         # Return only the projects concerned by the interventions
@@ -155,21 +155,21 @@ class TopoFilterCompetenceEdge(TopoFilter):
     model = Organism
 
     def value_to_edges(self, value):
-        return value.competenceedge_set.select_related(depth=1).all()
+        return value.competenceedge_set.select_related('organization').all()
 
 
 class TopoFilterSignageManagementEdge(TopoFilter):
     model = Organism
 
     def value_to_edges(self, value):
-        return value.signagemanagementedge_set.select_related(depth=1).all()
+        return value.signagemanagementedge_set.select_related('organization').all()
 
 
 class TopoFilterWorkManagementEdge(TopoFilter):
     model = Organism
 
     def value_to_edges(self, value):
-        return value.workmanagementedge_set.select_related(depth=1).all()
+        return value.workmanagementedge_set.select_related('organization').all()
 
 
 class EdgeFilterSet(MapEntityFilterSet):

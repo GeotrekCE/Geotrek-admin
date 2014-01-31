@@ -147,7 +147,7 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
         except Trek.DoesNotExist:
             raise Http404
         # All POIs of this trek
-        return trek.pois.select_related(depth=1)
+        return trek.pois.select_related('type')
 
 
 class TrekDetail(MapEntityDetail):
