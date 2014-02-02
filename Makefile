@@ -15,7 +15,7 @@ BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
 
-.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod env_standalone tests test test_nav test_js serve deploy load_data deploy_demo
+.PHONY: all_makemessages all_compilemessages install clean_harmless clean env_dev env_test env_prod env_standalone tests test test_nav test_js serve deploy load_data load_demo
 
 
 etc/settings.ini:
@@ -71,7 +71,7 @@ test:
 	bin/django test --noinput authent core land maintenance trekking common infrastructure
 
 test_nav:
-	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs --baseurl=$(baseurl) --save=var/reports/nav-`basename $$navtest`.xml $$navtest; done
+	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs test --baseurl=$(baseurl) $$navtest; done
 
 node_modules:
 	npm install geotrek/jstests
@@ -100,5 +100,5 @@ load_data:
 	bin/django loaddata basic
 	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(ROOT_DIR)/var/media/upload/ ; popd > /dev/null; done
 
-deploy_demo: deploy load_data
+load_demo: load_data
 	bin/django loaddata development-pne

@@ -1,11 +1,13 @@
-var casper = require('casper').create();
+casper.test.begin('Login from home page', function(test) {
 
-var baseurl = casper.cli.options['baseurl'];
+    var baseurl = casper.cli.options['baseurl'];
 
-casper.start(baseurl, function() {
-    this.test.assert(this.getCurrentUrl().indexOf(baseurl + "/login/?next=/") == 0, 'url is the one expected');
-});
+    casper.start(baseurl + '/', function () {
+        test.assertUrlMatch('/login/?next=/', 'Redirects to login page.');
+        test.assertExists('form', 'Form present.');
+    });
 
-casper.run(function() {
-    this.test.renderResults(true, 0, this.cli.get('save') || false);
+    casper.run(function done() {
+        test.done();
+    });
 });

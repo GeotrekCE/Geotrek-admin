@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Make sure only root can run our script
 if [ "$(id -u)" == "0" ]; then
    echo "This script must NOT be run as root" 1>&2
    exit 2
@@ -20,6 +19,7 @@ dev=false
 tests=false
 prod=false
 standalone=true
+interactive=true
 settingsfile=etc/settings.ini
 branch=master
 
@@ -29,6 +29,7 @@ Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
     -p, --prod        deploy a production instance
+    --noinput         do not prompt user
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
@@ -47,6 +48,8 @@ while [[ -n $1 ]]; do
                             standalone=false
                             ;;
         -s | --standalone ) ;;
+        --noinput )         interactive=false
+                            ;;
         -h | --help )       usage
                             exit
                             ;;
@@ -161,18 +164,20 @@ function screamshotter_system_dependencies {
         echo_step "Capture server dependencies..."
         arch=`uname -m`
         libpath=`pwd`/lib
+        binpath=`pwd`/bin
         mkdir -p $libpath
-        wget --quiet http://phantomjs.googlecode.com/files/phantomjs-1.8.1-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
+        mkdir -p $binpath
+        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         rm -rf $libpath/*phantomjs*/
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
-        ln -sf $libpath/*phantomjs*/bin/phantomjs `pwd`/bin/
+        ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath
 
-        wget --quiet https://github.com/n1k0/casperjs/zipball/1.0.2 -O casperjs.zip
+        wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
-        ln -sf $libpath/*casperjs*/bin/casperjs `pwd`/bin/
+        ln -sf $libpath/*casperjs*/bin/casperjs $binpath
 
         if ! $dev ; then
             # Install system-wide binaries
@@ -244,8 +249,12 @@ _EOF_
 
 
 function backup_existing_database {
-    read -p "Backup existing database ? [yN] " -n 1 -r
-    echo  # new line
+    if $interactive ; then
+        read -p "Backup existing database ? [yN] " -n 1 -r
+        echo  # new line
+    else
+        REPLY=N;
+    fi
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)
@@ -291,7 +300,7 @@ function geotrek_setup {
     # Python bootstrap
     make install
 
-    if $freshinstall && ($prod || $standalone) ; then
+    if $freshinstall && $interactive && ($prod || $standalone) ; then
       # Prompt user to edit/review settings
       editor $settingsfile
     fi

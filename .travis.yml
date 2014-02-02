@@ -1,6 +1,10 @@
 language: python
 python:
   - "2.7"
+env:
+  - ACTION=test
+  - ACTION=deploy
+
 before_install:
   # Download bundle of python eggs, and use it as download cache
   - "wget http://depot.makina-corpus.org/public/geotrek/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
@@ -8,18 +12,20 @@ before_install:
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
 install:
   - deactivate
-  - ./install.sh --tests
+  - if [[ $ACTION == test ]]; then ./install.sh --tests; fi
+  - if [[ $ACTION == deploy ]]; then ./install.sh --noinput; fi
+  - if [[ $ACTION == deploy ]]; then make load_demo; fi
 script:
-  - make env_test test
-  - make test_js
+  - if [[ $ACTION == deploy ]]; then make test_nav baseurl=http://localhost; fi
+  - if [[ $ACTION == test ]]; then make env_test test; fi
+  - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage
-  - rm -rf ./var/media/maps/*
-  - ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure
+  - if [[ $ACTION == test ]]; then rm -rf ./var/media/maps/*; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure; fi
 after_success:
   # Report coverage results to coveralls.io
-  - ./bin/coverage report -m
-  - pip install coveralls
-  - coveralls
+  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
+  - if [[ $ACTION == test ]]; then pip install coveralls; fi
+  - if [[ $ACTION == test ]]; then coveralls; fi
 notifications:
-  email: false
   irc: "irc.freenode.org#geotrek"
