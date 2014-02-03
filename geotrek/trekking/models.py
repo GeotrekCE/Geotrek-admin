@@ -393,9 +393,9 @@ Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 class TrekRelationshipManager(models.Manager):
     use_for_related_fields = True
 
-    def get_query_set(self):
+    def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekRelationshipManager, self).get_query_set().select_related('trek_a', 'trek_b')
+        qs = super(TrekRelationshipManager, self).get_queryset().select_related('trek_a', 'trek_b')
         # Exclude deleted treks
         return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
 
@@ -502,8 +502,8 @@ class DifficultyLevel(models.Model):
 
 
 class WebLinkManager(models.Manager):
-    def get_query_set(self):
-        return super(WebLinkManager, self).get_query_set().select_related('category')
+    def get_queryset(self):
+        return super(WebLinkManager, self).get_queryset().select_related('category')
 
 
 class WebLink(models.Model):
@@ -619,8 +619,8 @@ class InformationDesk(models.Model):
 
 
 class POIManager(models.GeoManager):
-    def get_query_set(self):
-        return super(POIManager, self).get_query_set().select_related('type')
+    def get_queryset(self):
+        return super(POIManager, self).get_queryset().select_related('type')
 
 
 class POI(PicturesMixin, MapEntityMixin, Topology):

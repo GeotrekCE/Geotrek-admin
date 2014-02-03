@@ -67,5 +67,5 @@ class SimpleGraph(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         graph = json.loads(response.content)
-        self.assertDictEqual({'edges': {str(path.pk): {'id': path.pk, 'length': 1.4142135623731, 'nodes_id': [1, 2]}},
-                              'nodes': {'1': {'2': path.pk}, '2': {'1': path.pk}}}, graph)
+        self.assertDictEqual({'edges': {str(path.pk): {u'id': path.pk, u'length': 1.4142135623731, u'nodes_id': [1, 2]}},
+                              'nodes': {u'1': {u'2': path.pk}, u'2': {u'1': path.pk}}}, graph)

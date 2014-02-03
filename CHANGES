@@ -41,7 +41,9 @@ Installation script
 
 **Internal changes**
 
+* Upgrade to Django 1.6 (fixes #938)
 * Upgrade to Leaflet 0.7
+* Upgrade a great number to python and JavaScript libraries
 * An internal user (with login permission) is used to authenticate the Conversion
   and Capture services.
 * Installation script is modular (standalone, geotrek only, ...)

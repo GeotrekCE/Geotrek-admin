@@ -90,13 +90,9 @@ def load_sql_files(app_label):
             for m in pattern.finditer(sql):
                 value = getattr(settings, m.group(1))
                 sql = sql.replace(m.group(0), unicode(value))
-
             cursor.execute(sql)
         except Exception as e:
             logger.critical("Failed to install custom SQL file '%s': %s\n" %
                             (sql_file, e))
             traceback.print_exc()
-            transaction.rollback_unless_managed()
             raise
-        else:
-            transaction.commit_unless_managed()

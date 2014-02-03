@@ -10,4 +10,5 @@ from .test_path_split import *
 from .test_filters import *
 from .test_graph import *
 from .test_fields import *
+from .test_models import *
 from .test_attachment import *

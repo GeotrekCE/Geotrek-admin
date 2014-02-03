@@ -21,7 +21,7 @@ script:
   - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage
   - if [[ $ACTION == test ]]; then rm -rf ./var/media/maps/*; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test authent core land maintenance trekking common infrastructure; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
