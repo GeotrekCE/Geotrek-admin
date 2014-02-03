@@ -133,12 +133,16 @@ function check_postgres_connection {
 }
 
 
-function geotrek_system_dependencies {
+function minimum_system_dependencies {
     sudo apt-get install -y -qq unzip wget python-software-properties
     sudo apt-add-repository -y ppa:git-core/ppa
     sudo apt-add-repository -y ppa:ubuntugis/ppa
     sudo apt-get update -qq
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
+}
+
+
+function geotrek_system_dependencies {
     sudo apt-get install -y -qq libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
     sudo apt-get install -y -qq postgresql-client gdal-bin
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
@@ -273,15 +277,8 @@ function backup_existing_database {
 function geotrek_setup {
     set -x
 
-    echo_step "Configure Unicode and French locales..."
-    sudo apt-get update > /dev/null
-    sudo apt-get install -y -qq language-pack-en-base language-pack-fr-base
-    sudo locale-gen fr_FR.UTF-8
-
-    echo_step "Install system dependencies..."
-    geotrek_system_dependencies
-    convertit_system_dependencies
-    screamshotter_system_dependencies
+    echo_step "Install system minimum components..."
+    minimum_system_dependencies
 
     if [ ! -f Makefile ]; then
        echo_step "Downloading Geotrek latest stable version..."
@@ -304,6 +301,16 @@ function geotrek_setup {
       # Prompt user to edit/review settings
       editor $settingsfile
     fi
+
+    echo_step "Configure Unicode and French locales..."
+    sudo apt-get update > /dev/null
+    sudo apt-get install -y -qq language-pack-en-base language-pack-fr-base
+    sudo locale-gen fr_FR.UTF-8
+
+    echo_step "Install Geotrek system dependencies..."
+    geotrek_system_dependencies
+    convertit_system_dependencies
+    screamshotter_system_dependencies
 
     echo_step "Install Geotrek python dependencies..."
     if $dev ; then
