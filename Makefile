@@ -52,17 +52,17 @@ all_makemessages: install
 all_compilemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
-env_test: install clean_harmless
+env_test: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
 
 env_dev: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
 	bin/django syncdb --noinput --migrate
 
-env_prod: install clean_harmless
+env_prod: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
 
-env_standalone: install clean_harmless
+env_standalone: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-prod-standalone.cfg $(BUILDOUT_ARGS)
 
 
@@ -85,7 +85,6 @@ serve:
 	bin/django runserver_plus $(listen)
 
 deploy:
-	make all_compilemessages
 	bin/develop update -f
 	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --clear --noinput --verbosity=0

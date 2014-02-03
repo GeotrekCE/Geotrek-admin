@@ -343,8 +343,6 @@ function geotrek_setup {
     if $tests ; then
         # Django tests require the original database :(
         bin/django syncdb --noinput
-        # Translations are required for some language switching tests
-        make all_compilemessages
     fi
 
     if $prod || $standalone ; then
