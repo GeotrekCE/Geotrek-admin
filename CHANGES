@@ -15,18 +15,17 @@ CHANGELOG
 
 **NEW features**
 
-* Upgrade Leaflet 0.6.4
 * In list view, click on map brings to detail page, mouse over highlights in list.
-* Add auto-generated docs at /admin/doc/
-* An internal user (with login permission) is used to authenticate the Conversion
-  and Capture services.
-* Installation script is modular (standalone, geotrek only, ...)
-* Settings edition prompt only happens at first install
-* Propose to backup DB before Geotrek upgrade (fixes #804)
 * Add spanish translation
 * Add photographie into default attachments filetype
-* Map location combobox are not shown if empty or disabled.
+* Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
+* Add auto-generated docs at /admin/doc/
+
+Installation script
+
 * Scan and ortho attributions can now be set using `scan_attributions` and
+* Propose to backup DB before Geotrek upgrade (fixes #804)
+* Settings edition prompt only happens at first install
   `ortho_attributions` in *settings.ini*.
 
 **BUG fixes**
@@ -39,6 +38,13 @@ CHANGELOG
 
   List of restricted areas is not shown on map by default anymore. Restore
   previous behaviour with advanced setting `LAND_BBOX_AREAS_ENABLED` as True.
+
+**Internal changes**
+
+* Upgrade to Leaflet 0.7
+* An internal user (with login permission) is used to authenticate the Conversion
+  and Capture services.
+* Installation script is modular (standalone, geotrek only, ...)
 
 
 0.21.2 (unreleased)
