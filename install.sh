@@ -342,7 +342,7 @@ function geotrek_setup {
     fi
 
     if $tests ; then
-        # Django tests require the original database :(
+        # XXX: Why Django tests require the main database :( ?
         bin/django syncdb --noinput
     fi
 

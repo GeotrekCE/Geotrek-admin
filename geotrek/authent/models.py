@@ -53,12 +53,12 @@ class StructureRelatedQuerySet(models.query.QuerySet):
 
 class StructureRelatedManager(models.Manager):
     """ A simple manager to manage structure related objects"""
-    def get_query_set(self):
+    def get_queryset(self):
         return StructureRelatedQuerySet(self.model, using=self._db)
 
     def for_user(self, user):
         """ Filter by user's structure """
-        return self.get_query_set().for_user(user)
+        return self.get_queryset().for_user(user)
 
 
 class StructureRelated(models.Model):

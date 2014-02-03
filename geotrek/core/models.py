@@ -376,7 +376,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
 
 class PathAggregationManager(models.GeoManager):
     def get_queryset(self):
-        self.get_query_set().order_by('order')
+        return super(PathAggregationManager, self).get_queryset().order_by('order')
 
 
 class PathAggregation(models.Model):
