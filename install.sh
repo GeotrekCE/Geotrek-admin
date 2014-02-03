@@ -171,22 +171,23 @@ function screamshotter_system_dependencies {
         binpath=`pwd`/bin
         mkdir -p $libpath
         mkdir -p $binpath
+
         wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         rm -rf $libpath/*phantomjs*/
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
-        ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath
+        ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
 
         wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
-        ln -sf $libpath/*casperjs*/bin/casperjs $binpath
+        ln -sf $libpath/*casperjs*/bin/casperjs $binpath/casperjs
 
         if ! $dev ; then
             # Install system-wide binaries
-            sudo ln -sf `pwd`/bin/phantomjs /usr/local/bin/
-            sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/
+            sudo ln -sf $binpath/phantomjs /usr/local/bin/phantomjs
+            sudo ln -sf $binpath/casperjs /usr/local/bin/casperjs
         fi
     fi
 }
