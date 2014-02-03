@@ -6,9 +6,11 @@ upstream api_server {
     server ${parts['gunicorn-api-conf'].bind} fail_timeout=0;
 }
 
+{% if 'tilecache-conf' in parts %}
 upstream tile_server {
     server ${parts['gunicorn-tilecache-conf'].bind} fail_timeout=0;
 }
+{% end %}
 
 server {
     listen ${options.port} default;
@@ -29,6 +31,7 @@ server {
         alias ${parts['django'].mediaroot};
     }
 
+    {% if 'tilecache-conf' in parts %}
     location /tiles {
         {% if options.cache in ['True', 'true'] %}
             proxy_cache             ${options.cachename};
@@ -39,11 +42,12 @@ server {
 
         proxy_pass  http://tile_server/1.0.0;
     }
+    {% end %}
 
     location / {
         proxy_set_header X-Forwarded-Host $$host;
         proxy_set_header X-Forwarded-Server $$host;
-        proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for; 
+        proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
 
         proxy_set_header Host $$http_host;
         proxy_redirect off;
