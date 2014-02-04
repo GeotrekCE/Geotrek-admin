@@ -296,12 +296,12 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    existing=$(existing_version)
     freshinstall=true
-    version=$(existing_version)
-    if [ ! -z $version ] ; then
-        echo_step "Geotrek $version was detected."
+    if [ ! -z $existing ] ; then
+        echo_step "Geotrek $existing was detected."
         freshinstall=false
-        if [ $version \< "0.21" ]; then
+        if [ $existing \< "0.21" ]; then
             echo_error "Geotrek 0.21+ is required."
             exit 7
         fi
@@ -351,6 +351,11 @@ function geotrek_setup {
 
     if ! $freshinstall ; then
         backup_existing_database
+
+        # In v0.22 we erased Django migrations
+        for app in authent common core infrastructure land maintenance trekking ; do
+            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
+        done;
     fi
 
     if $tests ; then
