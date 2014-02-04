@@ -115,6 +115,12 @@ function echo_error () {
 }
 
 
+function existing_version {
+    existing=`cat /etc/nginx/sites-available/* | grep gunicorn-geotrek.sock | sed "s/^.*unix://" | sed "s/var\\/run.*$//"`
+    version=`cat $existing/VERSION`
+    echo $version
+}
+
 
 function check_postgres_connection {
     echo_step "Check postgres connexion settings..."
@@ -291,8 +297,14 @@ function geotrek_setup {
     fi
 
     freshinstall=true
-    if [ -f $settingsfile ]; then
+    version=$(existing_version)
+    if [ ! -z $version ] ; then
+        echo_step "Geotrek $version was detected."
         freshinstall=false
+        if [ $version \< "0.21" ]; then
+            echo_error "Geotrek 0.21+ is required."
+            exit 7
+        fi
     fi
 
     # Python bootstrap

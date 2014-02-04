@@ -7,6 +7,7 @@ CHANGELOG
 
 **BREAKING changes**
 
+* For upgrades, Geotrek 0.21 is required.
 * Uploaded files are now restricted to authenticated users (fixes #729)
 
 :notes:
