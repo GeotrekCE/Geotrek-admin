@@ -191,9 +191,17 @@ PROJECT_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
+)
 
+
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+if 'schemamigration' not in sys.argv:
+    PROJECT_APPS += ('modeltranslation',)
+
+
+PROJECT_APPS += (
     'south',
-    'modeltranslation',
     'leaflet',
     'floppyforms',
     'crispy_forms',
@@ -205,6 +213,7 @@ PROJECT_APPS = (
     'mapentity',
     'paperclip',
 )
+
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.authent',
