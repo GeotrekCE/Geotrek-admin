@@ -50,6 +50,8 @@ Installation script
 * An internal user (with login permission) is used to authenticate the Conversion
   and Capture services.
 * Installation script is modular (standalone, geotrek only, ...)
+* Database migrations were resetted, no postgres `FATAL ERROR` message will
+  be emitted on fresh install anymore (fixes #937). See *Troubleshooting* in documentation.
 
 
 0.21.2 (2014-02-04)
