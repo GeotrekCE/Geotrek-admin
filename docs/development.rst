@@ -47,6 +47,11 @@ Start local instance :
 
     make env_dev serve
 
+.. note::
+
+    Running ``env_dev`` is recommended after a pull of new source code,
+    but is not mandatory : ``make serve`` is enough most of the time.
+
 
 Run unit tests :
 
