@@ -71,6 +71,47 @@ done
 #
 #------------------------------------------------------------------------------
 
+function echo_step () {
+    set +x
+    exec 2>&4
+    echo -e "\e[92m\e[1m$1\e[0m" >&2
+    exec 2>&1
+    set -x
+}
+
+
+function echo_error () {
+    set +x
+    exec 2>&4
+    echo -e "\e[91m\e[1m$1\e[0m" >&2
+    exec 2>&1
+    set -x
+}
+
+
+function exit_error () {
+    echo_error $2
+    echo "(More details in install.log)" >&2
+    exit $1
+}
+
+
+function echo_header () {
+    set +x
+    exec 2>&4
+    cat docs/logo.ans >&2
+    exec 2>&1
+    set -x
+    version=$(cat VERSION)
+    echo_step      "... install v$version" >&2
+    if [ ! -z $1 ] ; then
+        echo_error "... upgrade v$upgrade" >&2
+    fi
+    echo_step      "(details in install.log)" >&2
+    echo_step >&2
+}
+
+
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
@@ -102,31 +143,6 @@ function user_does_not_exists () {
 
 function ini_value () {
     echo $(sed -n "s/^\s*$2 *= *\([^ ]*.*\)/\1/p" < $1)
-}
-
-
-function echo_step () {
-    set +x
-    exec 2>&4
-    echo -e "\e[92m\e[1m$1\e[0m" >&2
-    exec 2>&1
-    set -x
-}
-
-
-function echo_error () {
-    set +x
-    exec 2>&4
-    echo -e "\e[91m\e[1m$1\e[0m" >&2
-    exec 2>&1
-    set -x
-}
-
-
-function exit_error () {
-    echo_error $2
-    echo "(More details in install.log)" >&2
-    exit $1
 }
 
 
@@ -292,6 +308,8 @@ function backup_existing_database {
 
 function geotrek_setup {
     set -x
+
+    echo_header
 
     echo_step "Install system minimum components..."
     minimum_system_dependencies
