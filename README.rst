@@ -46,15 +46,15 @@ License
     * Copyright (c) 2012-2014 - Parc National des Écrins - Parc National du Mercantour - Parco delle Alpi Marittime - Makina Corpus
 
 
-.. image:: http://depot.makina-corpus.org/public/geotrek/logo-pne.png
+.. image:: http://geotrek.fr/images/logo-pne.png
     :target: http://www.ecrins-parcnational.fr
 
 
-.. image:: http://depot.makina-corpus.org/public/geotrek/logo-pnm.png
+.. image:: http://geotrek.fr/images/logo-pnm.png
     :target: http://www.mercantour.eu
 
 
-.. image:: http://depot.makina-corpus.org/public/geotrek/logo-pnam.png
+.. image:: http://geotrek.fr/images/logo-pnam.png
     :target: http://www.parcoalpimarittime.it
 
 
