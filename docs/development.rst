@@ -1,12 +1,45 @@
+.. _development-section:
+
 ===========
 DEVELOPMENT
 ===========
 
-For code contributors only : in order to run a development instance :
+This documentation is dedicated to code contributors, in order to run a development instance.
+
+Developers are advice to run their *Geotrek* instance in an isolated environment,
+however it is not an absolute prerequisite. More details below.
+
+
+Isolated environment
+--------------------
+
+If you use virtual machines or containers (*Vagrant*, *LXC*, ...), this
+will install all the necessary components for development :
 
 ::
 
     ./install.sh --dev
+
+
+Directly on your host
+---------------------
+
+The most minimal components required to run an instance are :
+
+* PostGIS 2 server
+* GDAL, GEOS, libproj
+* libxml2, libxslt
+* Usual Python dev stuff
+
+See `the list of minimal packages on Debian/Ubuntu <https://github.com/makinacorpus/Geotrek/blob/211cd/install.sh#L136-L148>`_.
+
+If you already have all these components installed your OS (probably
+because you're already a python/GIS developer), then just jump to the
+next section !
+
+
+Run
+---
 
 Start local instance :
 
@@ -22,7 +55,7 @@ Run unit tests :
     make env_test tests
 
 
-Run unit tests (verbose mode, and without migrations) :
+Run unit tests in verbose mode, and without migrations :
 
 ::
 
