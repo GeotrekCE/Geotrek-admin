@@ -258,6 +258,7 @@ class TrekCustomViewTests(TestCase):
         poi = trek.pois[0]
         AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
+        self.assertEqual(len(trek.pois), 2)
 
         url = reverse('trekking:trek_poi_geojson', kwargs={'pk': trek.pk})
         response = self.client.get(url)
