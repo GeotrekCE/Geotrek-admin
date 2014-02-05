@@ -20,6 +20,7 @@ CHANGELOG
 * Add photographie into default attachments filetype
 * Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
 * Add auto-generated docs at /admin/doc/
+* Nicer installation script output
 
 Installation script
 
@@ -47,6 +48,7 @@ Installation script
 * An internal user (with login permission) is used to authenticate the Conversion
   and Capture services.
 * Installation script is modular (standalone, geotrek only, ...)
+* Developement server now listens on all interfaces by default
 
 
 0.21.2 (2014-02-04)
