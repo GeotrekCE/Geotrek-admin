@@ -2,6 +2,9 @@
 INSTALLATION
 ============
 
+These instructions will install *Geotrek* on a dedicated server for production.
+For a developer instance, please follow  :ref:`the dedicated procedure <development-section>`.
+
 Requirements
 ------------
 
@@ -31,7 +34,7 @@ using the default editor. (With *Vim*, finish with 'Esc' then ':wq' to save and 
 
 :notes:
 
-    If you leave *localhost* for the database host (``dbhost`` value), a 
+    If you leave *localhost* for the database host (``dbhost`` value), a
     Postgresql with PostGis will be installed locally.
     In order to use a remote server (*recommended*), set the appropriate value.
     The connection must be operational (it will be tested during install).

@@ -33,9 +33,11 @@ bin/python:
 install: etc/settings.ini bin/python
 
 clean_harmless:
+	find . -name "*.orig" -exec rm -f {} \;
 	find geotrek/ -name "*.pyc" -exec rm -f {} \;
 	-find lib/src/ -name "*.pyc" -exec rm -f {} \;
 	rm -f install
+	rm -f .coverage
 
 clean: clean_harmless
 	rm -rf bin/ lib/ local/ include/ *.egg-info/
@@ -45,12 +47,6 @@ clean: clean_harmless
 	rm -f install.log
 
 
-
-all_makemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
-
-all_compilemessages: install
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
 env_test: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
@@ -90,6 +86,12 @@ deploy:
 	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django update_translation_fields
 	bin/supervisorctl restart all
+
+all_makemessages: install
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
+
+all_compilemessages: install
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
 
 
