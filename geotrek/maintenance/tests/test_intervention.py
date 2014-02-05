@@ -4,7 +4,9 @@ from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from geotrek.maintenance.models import Intervention
 from geotrek.maintenance.factories import (InterventionFactory,
-                                           InfrastructureInterventionFactory, InfrastructurePointInterventionFactory,
+                                           InfrastructureInterventionFactory,
+                                           InfrastructurePointInterventionFactory,
+                                           SignageInterventionFactory,
                                            ProjectFactory, ManDayFactory)
 from geotrek.core.factories import PathFactory, TopologyFactory, TrailFactory, StakeFactory
 
@@ -32,14 +34,14 @@ class InterventionTest(TestCase):
         self.assertTrue(i.stake is None)
         i.save()
         self.assertTrue(i.stake is None)
-        
+
         lowstake = StakeFactory.create()
         highstake = StakeFactory.create()
         if lowstake > highstake:
             tmp = lowstake
             lowstake = highstake
             highstake = tmp
-        
+
         # Add paths to topology
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(PathFactory.create(stake=lowstake))
@@ -91,10 +93,10 @@ class InterventionTest(TestCase):
     def test_trail_helpers(self):
         t = TrailFactory.create()
         self.assertEqual(0, len(t.interventions))
-        
+
         p = PathFactory.create()
         t.paths.add(p)
-        
+
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(p)
         i = InterventionFactory(topology=topo)
@@ -191,3 +193,21 @@ class InterventionTest(TestCase):
         interv = InfrastructurePointInterventionFactory.create(width=0.5)
         interv.reload()
         self.assertEqual(interv.area, 0.0)
+
+    def test_infrastructure_display_is_path_by_default(self):
+        on_path = InterventionFactory.create()
+        self.assertTrue('Path' in on_path.infrastructure_display)
+        self.assertTrue('path-16.png' in on_path.infrastructure_display)
+
+    def test_infrastructure_display_shows_infrastructure_name(self):
+        interv = InfrastructureInterventionFactory.create()
+        self.assertTrue('Infrastructure' in interv.infrastructure_display)
+        self.assertTrue('infrastructure-16.png' in interv.infrastructure_display)
+        name = interv.infrastructure.name
+        self.assertTrue(name in interv.infrastructure_display)
+
+        interv = SignageInterventionFactory.create()
+        self.assertTrue('Signage' in interv.infrastructure_display)
+        self.assertTrue('signage-16.png' in interv.infrastructure_display)
+        name = interv.infrastructure.name
+        self.assertTrue(name in interv.infrastructure_display)
