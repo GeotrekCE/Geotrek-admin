@@ -35,7 +35,7 @@ L.Handler.TopologyPoint = L.Draw.Marker.extend({
         L.Draw.Marker.prototype.initialize.call(this, map, options);
         map.on('draw:created', function (e) {
             if (e.layerType === 'marker')
-                this.fire('added', {marker:e.marker});
+                this.fire('added', {marker:e.layer});
         }, this);
     },
 });

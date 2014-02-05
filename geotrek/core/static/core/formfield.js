@@ -304,7 +304,7 @@ FormField.makeModule = function(module, module_settings) {
             if (path_snapping) {
                 edit_handler = L.Handler.PolylineSnap;
                 if (layer instanceof L.Marker) {
-                    edit_handler = L.Handler.MarkerSnapping;
+                    edit_handler = L.Handler.MarkerSnap;
                 }
             }
             else {

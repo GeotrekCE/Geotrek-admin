@@ -26,11 +26,11 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
 
 /* Point topology */
 
-.leaflet-marker-add {
+img.leaflet-marker-add {
     background-image: url('core/images/marker-add.png');
 }
 
-.marker-snapped {
+img.marker-snapped {
     background-image: url('core/images/marker-snap.png');
 }
 
