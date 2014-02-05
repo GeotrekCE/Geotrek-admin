@@ -129,11 +129,16 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
 
     @property
     def infrastructure_display(self):
+        icon = 'path'
+        title = _('Path')
         if self.on_infrastructure:
-            return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                                  self.topology.kind.lower(),
-                                                                  unicode(_(self.topology.kind)))
-        return ''
+            icon = self.topology.kind.lower()
+            title = u'%s: %s' % (_(self.topology.kind.capitalize()),
+                                 self.infrastructure)
+
+        return u'<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+                                                               icon,
+                                                               title)
 
     @property
     def infrastructure_csv_display(self):
