@@ -313,6 +313,18 @@ function geotrek_setup {
     convertit_system_dependencies
     screamshotter_system_dependencies
 
+    # If database is local, install it !
+    dbhost=$(ini_value $settingsfile dbhost)
+    if [ "${dbhost}" == "localhost" ] ; then
+        install_postgres_local
+    fi
+
+    check_postgres_connection
+
+    if ! $freshinstall ; then
+        backup_existing_database
+    fi
+
     echo_step "Install Geotrek python dependencies..."
     if $dev ; then
         make env_dev
@@ -327,18 +339,6 @@ function geotrek_setup {
     if [ $success -ne 0 ]; then
         echo_error "Could not setup python environment !"
         exit 3
-    fi
-
-    # If database is local, install it !
-    dbhost=$(ini_value $settingsfile dbhost)
-    if [ "${dbhost}" == "localhost" ] ; then
-        install_postgres_local
-    fi
-
-    check_postgres_connection
-
-    if ! $freshinstall ; then
-        backup_existing_database
     fi
 
     if $tests ; then
