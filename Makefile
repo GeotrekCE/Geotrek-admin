@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 
-listen=localhost:8000
+listen=0.0.0.0:8000
 baseurl=http://$(listen)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
