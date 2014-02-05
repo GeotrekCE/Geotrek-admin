@@ -9,8 +9,12 @@ fi
 cd "$(dirname "$0")"
 
 # Redirect whole output to log file
-exec > >(tee install.log)
-exec 2>&1
+rm -f install.log
+touch install.log
+chmod 600 install.log
+
+exec 3>&1 4>&2
+exec 1> install.log 2>&1
 
 
 #------------------------------------------------------------------------------
@@ -103,17 +107,27 @@ function ini_value () {
 
 function echo_step () {
     set +x
-    echo -e "\e[92m\e[1m$1\e[0m"
+    exec 2>&4
+    echo -e "\e[92m\e[1m$1\e[0m" >&2
+    exec 2>&1
     set -x
 }
 
 
 function echo_error () {
     set +x
-    echo -e "\e[91m\e[1m$1\e[0m"
+    exec 2>&4
+    echo -e "\e[91m\e[1m$1\e[0m" >&2
+    exec 2>&1
     set -x
 }
 
+
+function exit_error () {
+    echo_error $2
+    echo "(More details in install.log)" >&2
+    exit $1
+}
 
 
 function check_postgres_connection {
@@ -127,8 +141,7 @@ function check_postgres_connection {
     if [ ! $result -eq 0 ]
     then
         echo_error "Failed to connect to database with settings provided in '$settingsfile'."
-        echo "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
-        exit 4
+        exit_error 4 "Check your postgres configuration (``pg_hba.conf``) : it should allow md5 identification for user '${dbuser}' on database '${dbname}'"
     fi
 }
 
@@ -255,8 +268,10 @@ _EOF_
 
 function backup_existing_database {
     if $interactive ; then
+        exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
         echo  # new line
+        exec 2>&1
     else
         REPLY=N;
     fi
@@ -299,8 +314,10 @@ function geotrek_setup {
     make install
 
     if $freshinstall && $interactive && ($prod || $standalone) ; then
-      # Prompt user to edit/review settings
-      editor $settingsfile
+        # Prompt user to edit/review settings
+        exec 1>&3
+        editor $settingsfile
+        exec 1> install.log 2>&1
     fi
 
     echo_step "Configure Unicode and French locales..."
@@ -337,8 +354,7 @@ function geotrek_setup {
     fi
     success=$?
     if [ $success -ne 0 ]; then
-        echo_error "Could not setup python environment !"
-        exit 3
+        exit_error 3 "Could not setup python environment !"
     fi
 
     if $tests ; then
@@ -374,15 +390,12 @@ function geotrek_setup {
             sudo stop geotrek
             sudo start geotrek
         else
-            echo_error "Geotrek package could not be installed."
-            exit 6
+            exit_error 6 "Geotrek package could not be installed."
         fi
     fi
 
     set +x
 
-    sudo chmod 600 install.log
-    echo "Output is available in 'install.log'"
     echo_step "Done."
 }
 
@@ -392,6 +405,5 @@ precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 if [ $precise -eq 1 ] ; then
     geotrek_setup
 else
-    echo "Unsupported operating system. Aborted."
-    exit 5
+    exit_error 5 "Unsupported operating system. Aborted."
 fi
