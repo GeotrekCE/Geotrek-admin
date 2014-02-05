@@ -16,6 +16,7 @@ CHANGELOG
 **NEW features**
 
 * In list view, click on map brings to detail page, mouse over highlights in list.
+* Show path icon if intervention is not on infrastructure (fixes #909)
 * Add spanish translation
 * Add photographie into default attachments filetype
 * Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
