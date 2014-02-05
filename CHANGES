@@ -21,6 +21,8 @@ CHANGELOG
 * Add photographie into default attachments filetype
 * Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
 * Add auto-generated docs at /admin/doc/
+* Application available languages (*english*, *french*, *italian*, *spanish*) are now
+  distinct from translated content languages (`languages` value in :file:`settings.ini`)
 
 Installation script
 
