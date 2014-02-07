@@ -360,7 +360,8 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'topofields': {'js': ['core/dijkstra.js',
                               'core/multipath.js',
-                              'core/topology_helper.js']}
+                              'core/topology_helper.js',
+                              'core/formfield.js']}
     }
 }
 

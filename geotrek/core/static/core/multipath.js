@@ -1,3 +1,69 @@
+L.Mixin.ActivableControl = {
+    activable: function (state) {
+        /**
+         * Allow to prevent user to activate the control.
+         * (it is like setEnable(state), but ``enable`` word is used
+         *  for handler already)
+         */
+        this._activable = state;
+        if (this._container) {
+            if (state)
+                L.DomUtil.removeClass(this._container, 'disabled');
+            else
+                L.DomUtil.addClass(this._container, 'disabled');
+        }
+    },
+
+    toggle: function() {
+        this._activable = !!this._activable;  // from undefined to false :)
+
+        if (!this._activable)
+            return;  // do nothing if not activable
+
+        if (this.handler.enabled()) {
+            this.handler.disable.call(this.handler);
+            this.handler.fire('disabled');
+            L.DomUtil.removeClass(this._container, 'enabled');
+        }
+        else {
+            this.handler.enable.call(this.handler);
+            this.handler.fire('enabled');
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
+    },
+};
+
+
+L.Control.ExclusiveActivation = L.Class.extend({
+    initialize: function () {
+        this._controls = [];
+    },
+
+    add: function (control) {
+        this._controls.push(control);
+        var self = this;
+        control.activable(true);
+        control.handler.on('enabled', function (e) {
+            // When this control is enabled, activate this one,
+            // and disable the others !
+            $.each(self._controls, function (i, c) {
+                if (c != control) {
+                    c.activable(false);
+                }
+            });
+        }, this);
+
+        control.handler.on('disabled', function (e) {
+            // When this control is disabled, re-enable the others !
+            // Careful, this will not take care of previous state :)
+            $.each(self._controls, function (i, c) {
+                c.activable(true);
+            });
+        }, this);
+    },
+});
+
+
 L.Control.TopologyPoint = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 

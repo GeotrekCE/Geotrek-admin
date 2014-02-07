@@ -254,11 +254,11 @@ FormField.makeModule = function(module, module_settings) {
                 drawncallback(L.marker(new L.LatLng(point.lat, point.lng)));
             }
         }
-        
+
         return control;
     };
-    
-    module.init = function(map, bounds, fitToBounds) {
+
+    module.init = function(map, options, fitToBounds) {
         fitToBounds = fitToBounds === undefined ? true : fitToBounds;
 
         map.removeControl(map.attributionControl);
@@ -267,7 +267,7 @@ FormField.makeModule = function(module, module_settings) {
 
         /*** <Map bounds and reset> ***/
 
-        var initialBounds = bounds,
+        var initialBounds = options.djoptions.extent,
             objectBounds = module_settings.init.objectBounds,
             currentBounds = objectBounds || initialBounds;
 
