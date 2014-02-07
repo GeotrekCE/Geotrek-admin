@@ -105,23 +105,26 @@ Conventions
 -----------
 
 * Use flake8
-* Commits messages are explicit and mention issue number (``(ref #12)``)
-* Huge refactors or features are developed in a branch and merged with as Github pull-request.
 * KISS & DRY as much as possible
 * Elegant and generic is good, simple is better
+* Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
+* Features are developed in a branch and merged from Github pull-requests.
 
 
 Definition of done
 ------------------
 
 * ``CHANGES`` is up-to-date
+* A unit-test covers the bugfix or the new feature
+* A frontend test (:path:jstests/nav-*.js) covers the navigation bug fix or feature
+* A JS *Mocha* test (:path:jstests/tests.*.js) covers the JavaScript bug fix or feature
 * Unit-tests coverage is above or at least equal with previous commits
 * Settings have default value in ``settings/base.py`` or ``conf/settings-default.ini``
 * Installation instructions are up-to-date
 
 Check TODO in the source tree ::
 
-    find caminae | xargs egrep -n -i '(TODO|temporary|FIXME)'
+    find geotrek | xargs egrep -n -i '(TODO|XXX|temporary|FIXME)'
 
 
 Release
@@ -131,12 +134,8 @@ Release
 * Pin (fixed revision) of eggs under development in *buildout.cfg*
 * Use semantic versioning
 * Use zest.releaser
-* Add git tag vx.x.x
+* Add git tag vX.Y.Z
 * Add release on Github (copy-paste ``CHANGES`` paragraph)
-
-Bug-fix releases :
-
-* Create branch with main version (e.g. ``0.20``)
 
 
 Model modification
