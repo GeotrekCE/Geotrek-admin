@@ -22,6 +22,7 @@ CHANGELOG
 * Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
 * Add auto-generated docs at /admin/doc/
 * Nicer installation script output
+* Several database views have been created (fixes #934)
 
 Installation script
 
