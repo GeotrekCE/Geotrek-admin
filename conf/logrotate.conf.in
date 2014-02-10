@@ -5,4 +5,8 @@ compress
 delaycompress
 
 ${parts['buildout'].directory}/var/log/*.log {
+    postrotate
+        [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+    endscript
 }
+
