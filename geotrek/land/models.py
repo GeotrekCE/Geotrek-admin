@@ -331,6 +331,9 @@ class RestrictedAreaType(models.Model):
         db_table = 'f_b_zonage'
         verbose_name = _(u"Restricted area type")
 
+    def __unicode__(self):
+        return self.name
+
 
 class RestrictedAreaManager(models.GeoManager):
     def get_queryset(self):

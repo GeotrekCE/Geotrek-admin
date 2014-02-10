@@ -37,6 +37,7 @@ Installation script
 * Fix convert urls behind reverse proxy with prefix
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
+* Fix restricted areas types display in admin (fixes #943)
 
 :notes:
 
