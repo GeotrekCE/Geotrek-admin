@@ -11,7 +11,7 @@
     :target: https://travis-ci.org/makinacorpus/Geotrek
 
 .. |master-coverage| image::
-    https://coveralls.io/repos/makinacorpus/Geotrek/badge.png
+    https://coveralls.io/repos/makinacorpus/Geotrek/badge.png?branch=master
     :alt: Coverage
     :target: https://coveralls.io/r/makinacorpus/Geotrek
 
