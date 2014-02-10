@@ -5,3 +5,11 @@ CREATE VIEW m_v_intervention AS (
 	WHERE i.topology_id = e.id
 	AND i.supprime = FALSE
 );
+
+DROP VIEW IF EXISTS m_v_chantier;
+CREATE VIEW m_v_chantier AS (
+	SELECT ST_UNION(t.geom) AS geom_chantier, s.*
+	FROM m_v_intervention AS t, m_t_chantier AS s
+	WHERE t.chantier = s.id
+	GROUP BY t.chantier, s.id
+);
