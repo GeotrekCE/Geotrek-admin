@@ -38,6 +38,7 @@ Installation script
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
 * Fix restricted areas types display in admin (fixes #943)
+* Fix list ordering of trek relationships and web links (fixes #929)
 
 :notes:
 

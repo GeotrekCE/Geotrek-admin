@@ -162,6 +162,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
+        ordering = ['name']
 
     def __unicode__(self):
         return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
@@ -520,6 +521,7 @@ class WebLink(models.Model):
         db_table = 'o_t_web'
         verbose_name = _(u"Web link")
         verbose_name_plural = _(u"Web links")
+        ordering = ['name']
 
     def __unicode__(self):
         category = "%s - " % self.category.label if self.category else ""
