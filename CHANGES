@@ -7,6 +7,7 @@ CHANGELOG
 
 **BREAKING changes**
 
+* For upgrades, Geotrek 0.21 is required.
 * Uploaded files are now restricted to authenticated users (fixes #729)
 
 :notes:
@@ -25,6 +26,8 @@ CHANGELOG
 * Several database views have been created (fixes #934)
 * Remove dots from path icon (fixes #939)
 * Intervention, infrastructure and project filters list of years is now dynamic (fixes #948)
+* Application available languages (*english*, *french*, *italian*, *spanish*) are now
+  distinct from translated content languages (`languages` value in :file:`settings.ini`)
 
 Installation script
 
@@ -56,6 +59,8 @@ Installation script
   and Capture services.
 * Installation script is modular (standalone, geotrek only, ...)
 * Developement server now listens on all interfaces by default
+* Database migrations were resetted, no postgres `FATAL ERROR` message will
+  be emitted on fresh install anymore (fixes #937). See *Troubleshooting* in documentation.
 
 
 0.21.2 (2014-02-04)

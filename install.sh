@@ -112,6 +112,13 @@ function echo_header () {
 }
 
 
+function existing_version {
+    existing=`cat /etc/nginx/sites-available/* | grep gunicorn-geotrek.sock | sed "s/^.*unix://" | sed "s/var\\/run.*$//"`
+    version=`cat $existing/VERSION`
+    echo $version
+}
+
+
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
     # as appropriate.
@@ -323,9 +330,15 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    existing=$(existing_version)
     freshinstall=true
-    if [ -f $settingsfile ]; then
+    if [ ! -z $existing ] ; then
+        echo_step "Geotrek $existing was detected."
         freshinstall=false
+        if [ $existing \< "0.21" ]; then
+            echo_error "Geotrek 0.21+ is required."
+            exit 7
+        fi
     fi
 
     # Python bootstrap
@@ -358,6 +371,11 @@ function geotrek_setup {
 
     if ! $freshinstall ; then
         backup_existing_database
+
+        # In v0.22 we erased Django migrations
+        for app in authent common core infrastructure land maintenance trekking ; do
+            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
+        done;
     fi
 
     echo_step "Install Geotrek python dependencies..."
