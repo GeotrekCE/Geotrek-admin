@@ -675,8 +675,13 @@ class SplitPathLineTopologyTest(TestCase):
         ab3 = Path.objects.filter(name="AB").exclude(pk__in=[ab.pk, ab2.pk])[0]
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_ab3 = ab3.aggregations.all()[0]
-        self.assertEqual((1.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((0.6, 0.0), (aggr_ab3.start_position, aggr_ab3.end_position))
+        if aggr_ab2.start_position == 1.0:
+            self.assertEqual((1.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
+            self.assertEqual((0.6, 0.0), (aggr_ab3.start_position, aggr_ab3.end_position))
+        else:
+            # Depended on postgresql fetch order, `ab2` was actually `ab3`
+            self.assertEqual((1.0, 0.0), (aggr_ab3.start_position, aggr_ab3.end_position))
+            self.assertEqual((0.6, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
         topology.reload()
         self.assertEqual(topology.geom, LineString((3.6000000000000001, 0), (3, 0),
                                                    (1.0, 0.0), (0.4, 0.0)))
