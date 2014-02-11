@@ -196,18 +196,18 @@ class InterventionTest(TestCase):
 
     def test_infrastructure_display_is_path_by_default(self):
         on_path = InterventionFactory.create()
-        self.assertTrue('Path' in on_path.infrastructure_display)
-        self.assertTrue('path-16.png' in on_path.infrastructure_display)
+        self.assertIn('Path', on_path.infrastructure_display)
+        self.assertIn('path-16.png', on_path.infrastructure_display)
 
     def test_infrastructure_display_shows_infrastructure_name(self):
         interv = InfrastructureInterventionFactory.create()
-        self.assertTrue('Infrastructure' in interv.infrastructure_display)
-        self.assertTrue('infrastructure-16.png' in interv.infrastructure_display)
+        self.assertIn('Infrastructure', interv.infrastructure_display)
+        self.assertIn('infrastructure-16.png', interv.infrastructure_display)
         name = interv.infrastructure.name
-        self.assertTrue(name in interv.infrastructure_display)
+        self.assertIn(name, interv.infrastructure_display)
 
         interv = SignageInterventionFactory.create()
-        self.assertTrue('Signage' in interv.infrastructure_display)
-        self.assertTrue('signage-16.png' in interv.infrastructure_display)
+        self.assertIn('Signage', interv.infrastructure_display)
+        self.assertIn('signage-16.png', interv.infrastructure_display)
         name = interv.infrastructure.name
-        self.assertTrue(name in interv.infrastructure_display)
+        self.assertIn(name, interv.infrastructure_display)
