@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS m_v_intervention;
+DROP VIEW IF EXISTS m_v_intervention CASCADE;
 CREATE VIEW m_v_intervention AS (
 	SELECT e.geom, i.*
 	FROM m_t_intervention AS i, e_t_evenement AS e
