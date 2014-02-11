@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 
 from django.test import TestCase
 
@@ -8,8 +9,11 @@ from geotrek.land.factories import (
 )
 from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
-from geotrek.maintenance.filters import ProjectFilter, InterventionFilter
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
+from geotrek.maintenance.filters import (ProjectFilter, InterventionFilter,
+                                         InterventionYearSelect, ProjectYearSelect)
+from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
+                                           InfrastructureInterventionFactory)
+
 
 class InterventionFilteringByLandTest(TestCase):
 
@@ -209,3 +213,47 @@ class ProjectFilteringByLandTest(TestCase):
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
+
+
+class InterventionYearsFilterTest(TestCase):
+    def setUp(self):
+        InfrastructureInterventionFactory.create(date=datetime(2012, 11, 10))
+        InfrastructureInterventionFactory.create(date=datetime(1932, 11, 10))
+        self.filter = InterventionFilter()
+        self.widget = self.filter.filters['year'].field.widget
+
+    def test_year_choices_come_from_interventions(self):
+        output = self.widget.render(name='year', value=None)
+        self.assertEqual(type(self.widget), InterventionYearSelect)
+        self.assertEqual(output.count('<option'), 3)
+        self.assertIn('>2012<', output)
+        self.assertIn('>1932<', output)
+
+    def test_new_interventions_appear_dynamically(self):
+        InfrastructureInterventionFactory.create(date=datetime(2024, 11, 10))
+        output = self.widget.render(name='year', value=None)
+        self.assertEqual(output.count('<option'), 4)
+        self.assertIn('>2024<', output)
+
+
+class ProjectYearsFilterTest(TestCase):
+    def setUp(self):
+        ProjectFactory.create(begin_year=1500, end_year=2000)
+        ProjectFactory.create(begin_year=1700, end_year=1800)
+        self.filter = ProjectFilter()
+        self.widget = self.filter.filters['in_year'].field.widget
+
+    def test_year_choices_come_from_project(self):
+        output = self.widget.render(name='project', value=None)
+        self.assertEqual(type(self.widget), ProjectYearSelect)
+        self.assertEqual(output.count('<option'), 5)
+        self.assertIn('>1500<', output)
+        self.assertIn('>1700<', output)
+        self.assertIn('>1800<', output)
+        self.assertIn('>2000<', output)
+
+    def test_new_interventions_appear_dynamically(self):
+        ProjectFactory.create(begin_year=1500, end_year=2100)
+        output = self.widget.render(name='year', value=None)
+        self.assertEqual(output.count('<option'), 6)
+        self.assertIn('>2100<', output)

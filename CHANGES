@@ -24,6 +24,7 @@ CHANGELOG
 * Nicer installation script output
 * Several database views have been created (fixes #934)
 * Remove dots from path icon (fixes #939)
+* Intervention, infrastructure and project filters list of years is now dynamic (fixes #948)
 
 Installation script
 
