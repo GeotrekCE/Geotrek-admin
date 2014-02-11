@@ -36,6 +36,7 @@ module.exports = (function() {
 
     return {
         saveCookies: saveCookies,
-        loadCookies: loadCookies
+        loadCookies: loadCookies,
+        setUp: setUp
     };
 })();
