@@ -23,6 +23,7 @@ CHANGELOG
 * Add auto-generated docs at /admin/doc/
 * Nicer installation script output
 * Several database views have been created (fixes #934)
+* Remove dots from path icon (fixes #939)
 
 Installation script
 
@@ -36,6 +37,9 @@ Installation script
 * Fix convert urls behind reverse proxy with prefix
 * Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
 * Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
+* Fix restricted areas types display in admin (fixes #943)
+* Fix list ordering of trek relationships and web links (fixes #929)
+* Fix nginx log files being already empty after logrotate (fixes #932)
 
 :notes:
 
