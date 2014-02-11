@@ -379,7 +379,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def path_treks(cls, path):
-        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+        treks = cls.objects.existing().filter(aggregations__path=path)
+        # The following part prevents conflict with default trek ordering
+        # ProgrammingError: SELECT DISTINCT ON expressions must match initial ORDER BY expressions
+        return treks.order_by('topo_object').distinct('topo_object')
 
     @classmethod
     def topology_treks(cls, topology):
