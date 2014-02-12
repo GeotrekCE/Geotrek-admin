@@ -21,13 +21,19 @@ CHANGELOG
 * Add spanish translation
 * Add photographie into default attachments filetype
 * Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
-* Add auto-generated docs at /admin/doc/
-* Nicer installation script output
 * Several database views have been created (fixes #934)
 * Remove dots from path icon (fixes #939)
 * Intervention, infrastructure and project filters list of years is now dynamic (fixes #948)
 * Application available languages (*english*, *french*, *italian*, *spanish*) are now
   distinct from translated content languages (`languages` value in :file:`settings.ini`)
+
+Minor changes
+
+* Improved apparence of map controls
+* Improved apparence of path intermediary points
+* Improved apparence of form validation buttons
+* Add auto-generated docs at /admin/doc/
+* Nicer installation script output
 
 Installation script
 
