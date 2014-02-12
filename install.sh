@@ -80,6 +80,15 @@ function echo_step () {
 }
 
 
+function echo_warn () {
+    set +x
+    exec 2>&4
+    echo -e "\e[93m\e[1m$1\e[0m" >&2
+    exec 2>&1
+    set -x
+}
+
+
 function echo_error () {
     set +x
     exec 2>&4
@@ -105,7 +114,7 @@ function echo_header () {
     version=$(cat VERSION)
     echo_step      "... install v$version" >&2
     if [ ! -z $1 ] ; then
-        echo_error "... upgrade v$upgrade" >&2
+        echo_warn "... upgrade v$upgrade" >&2
     fi
     echo_step      "(details in install.log)" >&2
     echo_step >&2
@@ -316,7 +325,18 @@ function backup_existing_database {
 function geotrek_setup {
     set -x
 
-    echo_header
+    existing=$(existing_version)
+    freshinstall=true
+    if [ ! -z $existing ] ; then
+        freshinstall=false
+        if [ $existing \< "0.21" ]; then
+            echo_warn "Geotrek $existing was detected."
+            echo_error "Geotrek 0.21+ is required."
+            exit 7
+        fi
+    fi
+
+    echo_header $existing
 
     echo_step "Install system minimum components..."
     minimum_system_dependencies
@@ -328,17 +348,6 @@ function geotrek_setup {
        rm -f /tmp/Geotrek-$branch/install.sh
        shopt -s dotglob nullglob
        mv /tmp/Geotrek-$branch/* .
-    fi
-
-    existing=$(existing_version)
-    freshinstall=true
-    if [ ! -z $existing ] ; then
-        echo_step "Geotrek $existing was detected."
-        freshinstall=false
-        if [ $existing \< "0.21" ]; then
-            echo_error "Geotrek 0.21+ is required."
-            exit 7
-        fi
     fi
 
     # Python bootstrap
