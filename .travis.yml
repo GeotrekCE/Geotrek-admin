@@ -25,7 +25,7 @@ script:
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test ]]; then pip install coveralls; fi
+  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
   - if [[ $ACTION == test ]]; then coveralls; fi
 notifications:
   irc: "irc.freenode.org#geotrek"
