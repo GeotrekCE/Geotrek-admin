@@ -5,6 +5,17 @@ CHANGELOG
 0.22 (unreleased)
 -----------------
 
+**Before upgrade**
+
+* Backup your database.
+* If you upgrade in the same application folder, first delete the `geotrek`
+  sub-folder.
+* Use `install.sh` to upgrade (`make deploy` won't be enough)
+* After upgrade, make sure the following query returns only ~23 results:
+
+    SELECT COUNT(*) FROM south_migrationhistory;
+
+
 **BREAKING changes**
 
 * For upgrades, Geotrek 0.21 is required.

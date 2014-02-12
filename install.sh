@@ -99,9 +99,11 @@ function echo_error () {
 
 
 function exit_error () {
-    echo_error $2
+    code=$1
+    shift
+    echo_error "$@"
     echo "(More details in install.log)" >&2
-    exit $1
+    exit $code
 }
 
 
@@ -114,7 +116,7 @@ function echo_header () {
     version=$(cat VERSION)
     echo_step      "... install v$version" >&2
     if [ ! -z $1 ] ; then
-        echo_warn "... upgrade v$upgrade" >&2
+        echo_warn "... upgrade v$1" >&2
     fi
     echo_step      "(details in install.log)" >&2
     echo_step >&2
@@ -385,6 +387,9 @@ function geotrek_setup {
         for app in authent common core infrastructure land maintenance trekking ; do
             bin/django migrate geotrek.$app --delete-ghost-migrations --fake
         done;
+
+        # Python should be fresh
+        make clean
     fi
 
     echo_step "Install Geotrek python dependencies..."
