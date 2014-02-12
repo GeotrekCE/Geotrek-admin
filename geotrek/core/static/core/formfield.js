@@ -267,7 +267,7 @@ FormField.makeModule = function(module, module_settings) {
 
         /*** <Map bounds and reset> ***/
 
-        var initialBounds = options.djoptions.extent,
+        var initialBounds = (options instanceof L.LatLngBounds) ? options : options.djoptions.extent,
             objectBounds = module_settings.init.objectBounds,
             currentBounds = objectBounds || initialBounds;
 
