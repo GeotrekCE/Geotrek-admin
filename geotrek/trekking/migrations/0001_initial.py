@@ -1,396 +1,415 @@
 # -*- coding: utf-8 -*-
-import datetime
+from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
-from django.conf import settings
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Trek'
-        db.create_table('itineraire', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('name_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('name_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('name_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('departure', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('departure_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('departure_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('departure_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('arrival', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('arrival_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('arrival_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('arrival_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('validated', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('length', self.gf('django.db.models.fields.FloatField')()),
-            ('ascent', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('descent', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('min_elevation', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('max_elevation', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('description_teaser', self.gf('django.db.models.fields.TextField')()),
-            ('description_teaser_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description_teaser_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description_teaser_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('description_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('description_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('ambiance', self.gf('django.db.models.fields.TextField')()),
-            ('ambiance_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('ambiance_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('ambiance_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('handicapped_infrastructure', self.gf('django.db.models.fields.TextField')()),
-            ('handicapped_infrastructure_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('handicapped_infrastructure_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('handicapped_infrastructure_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('duration', self.gf('django.db.models.fields.IntegerField')()),
-            ('is_park_centered', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_transborder', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('advised_parking', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('parking_location', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=settings.SRID, spatial_index=False)),
-            ('public_transport', self.gf('django.db.models.fields.TextField')()),
-            ('advice', self.gf('django.db.models.fields.TextField')()),
-            ('advice_en', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('advice_fr', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('advice_it', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.LineStringField')(srid=settings.SRID, dim=3, spatial_index=False)),
-            ('insert_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('update_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('deleted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('route', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, to=orm['trekking.Route'])),
-            ('difficulty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, to=orm['trekking.DifficultyLevel'])),
-            ('destination', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, to=orm['trekking.Destination'])),
+        db.create_table('o_t_itineraire', (
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
+            ('departure', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='depart', blank=True)),
+            ('arrival', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='arrivee', blank=True)),
+            ('published', self.gf('django.db.models.fields.BooleanField')(db_column='public')),
+            ('description_teaser', self.gf('django.db.models.fields.TextField')(db_column='chapeau', blank=True)),
+            ('description', self.gf('django.db.models.fields.TextField')(db_column='description', blank=True)),
+            ('ambiance', self.gf('django.db.models.fields.TextField')(db_column='ambiance', blank=True)),
+            ('access', self.gf('django.db.models.fields.TextField')(db_column='acces', blank=True)),
+            ('disabled_infrastructure', self.gf('django.db.models.fields.TextField')(db_column='handicap', blank=True)),
+            ('duration', self.gf('django.db.models.fields.FloatField')(default=0, null=True, db_column='duree', blank=True)),
+            ('is_park_centered', self.gf('django.db.models.fields.BooleanField')(db_column='coeur')),
+            ('advised_parking', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='parking', blank=True)),
+            ('parking_location', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154, null=True, spatial_index=False, db_column='geom_parking', blank=True)),
+            ('public_transport', self.gf('django.db.models.fields.TextField')(db_column='transport', blank=True)),
+            ('advice', self.gf('django.db.models.fields.TextField')(db_column='recommandation', blank=True)),
+            ('route', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, db_column='parcours', to=orm['trekking.Route'])),
+            ('difficulty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, db_column='difficulte', to=orm['trekking.DifficultyLevel'])),
+            ('information_desk', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='treks', null=True, db_column='renseignement', to=orm['trekking.InformationDesk'])),
         ))
-        db.send_create_signal('trekking', ['Trek'])
+        db.send_create_signal(u'trekking', ['Trek'])
+
+        # Adding M2M table for field themes on 'Trek'
+        m2m_table_name = 'o_r_itineraire_theme'
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('trek', models.ForeignKey(orm[u'trekking.trek'], null=False)),
+            ('theme', models.ForeignKey(orm[u'trekking.theme'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['trek_id', 'theme_id'])
 
         # Adding M2M table for field networks on 'Trek'
-        db.create_table('itineraire_networks', (
+        m2m_table_name = 'o_r_itineraire_reseau'
+        db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('trek', models.ForeignKey(orm['trekking.trek'], null=False)),
-            ('treknetwork', models.ForeignKey(orm['trekking.treknetwork'], null=False))
+            ('trek', models.ForeignKey(orm[u'trekking.trek'], null=False)),
+            ('treknetwork', models.ForeignKey(orm[u'trekking.treknetwork'], null=False))
         ))
-        db.create_unique('itineraire_networks', ['trek_id', 'treknetwork_id'])
-
-        # Adding M2M table for field paths on 'Trek'
-        db.create_table('itineraire_paths', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('trek', models.ForeignKey(orm['trekking.trek'], null=False)),
-            ('path', models.ForeignKey(orm['core.path'], null=False))
-        ))
-        db.create_unique('itineraire_paths', ['trek_id', 'path_id'])
+        db.create_unique(m2m_table_name, ['trek_id', 'treknetwork_id'])
 
         # Adding M2M table for field usages on 'Trek'
-        db.create_table('itineraire_usages', (
+        m2m_table_name = 'o_r_itineraire_usage'
+        db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('trek', models.ForeignKey(orm['trekking.trek'], null=False)),
-            ('usage', models.ForeignKey(orm['trekking.usage'], null=False))
+            ('trek', models.ForeignKey(orm[u'trekking.trek'], null=False)),
+            ('usage', models.ForeignKey(orm[u'trekking.usage'], null=False))
         ))
-        db.create_unique('itineraire_usages', ['trek_id', 'usage_id'])
+        db.create_unique(m2m_table_name, ['trek_id', 'usage_id'])
 
         # Adding M2M table for field web_links on 'Trek'
-        db.create_table('itineraire_web_links', (
+        m2m_table_name = 'o_r_itineraire_web'
+        db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('trek', models.ForeignKey(orm['trekking.trek'], null=False)),
-            ('weblink', models.ForeignKey(orm['trekking.weblink'], null=False))
+            ('trek', models.ForeignKey(orm[u'trekking.trek'], null=False)),
+            ('weblink', models.ForeignKey(orm[u'trekking.weblink'], null=False))
         ))
-        db.create_unique('itineraire_web_links', ['trek_id', 'weblink_id'])
-
-        # Adding model 'TrekNetwork'
-        db.create_table('reseau', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('network', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('network_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('network_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('network_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-        ))
-        db.send_create_signal('trekking', ['TrekNetwork'])
-
-        # Adding model 'Usage'
-        db.create_table('usages', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('usage', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('usage_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('usage_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('usage_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-        ))
-        db.send_create_signal('trekking', ['Usage'])
-
-        # Adding model 'Route'
-        db.create_table('parcours', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('route', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('route_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('route_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('route_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-        ))
-        db.send_create_signal('trekking', ['Route'])
-
-        # Adding model 'DifficultyLevel'
-        db.create_table('classement_difficulte', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('difficulty', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('difficulty_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('difficulty_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('difficulty_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-        ))
-        db.send_create_signal('trekking', ['DifficultyLevel'])
-
-        # Adding model 'Destination'
-        db.create_table('destination', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('destination', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('destination_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('destination_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('destination_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('pictogram', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-        ))
-        db.send_create_signal('trekking', ['Destination'])
-
-        # Adding model 'WebLink'
-        db.create_table('liens_web', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('name_en', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('name_fr', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('name_it', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, blank=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=128)),
-            ('thumbnail', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-        ))
-        db.send_create_signal('trekking', ['WebLink'])
+        db.create_unique(m2m_table_name, ['trek_id', 'weblink_id'])
 
         # Adding model 'TrekRelationship'
-        db.create_table('liens_itineraire', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('has_common_departure', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_common_edge', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_circuit_step', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('trek_a', self.gf('django.db.models.fields.related.ForeignKey')(related_name='trek_relationship_a', to=orm['trekking.Trek'])),
-            ('trek_b', self.gf('django.db.models.fields.related.ForeignKey')(related_name='trek_relationship_b', to=orm['trekking.Trek'])),
+        db.create_table('o_r_itineraire_itineraire', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('has_common_departure', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='depart_commun')),
+            ('has_common_edge', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='troncons_communs')),
+            ('is_circuit_step', self.gf('django.db.models.fields.BooleanField')(default=False, db_column='etape_circuit')),
+            ('trek_a', self.gf('django.db.models.fields.related.ForeignKey')(related_name='trek_relationship_a', db_column='itineraire_a', to=orm['trekking.Trek'])),
+            ('trek_b', self.gf('django.db.models.fields.related.ForeignKey')(related_name='trek_relationship_b', db_column='itineraire_b', to=orm['trekking.Trek'])),
         ))
-        db.send_create_signal('trekking', ['TrekRelationship'])
+        db.send_create_signal(u'trekking', ['TrekRelationship'])
 
         # Adding unique constraint on 'TrekRelationship', fields ['trek_a', 'trek_b']
-        db.create_unique('liens_itineraire', ['trek_a_id', 'trek_b_id'])
+        db.create_unique('o_r_itineraire_itineraire', ['itineraire_a', 'itineraire_b'])
+
+        # Adding model 'TrekNetwork'
+        db.create_table('o_b_reseau', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('network', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='reseau')),
+        ))
+        db.send_create_signal(u'trekking', ['TrekNetwork'])
+
+        # Adding model 'Usage'
+        db.create_table('o_b_usage', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('usage', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='usage')),
+            ('pictogram', self.gf('django.db.models.fields.files.FileField')(max_length=512, db_column='picto')),
+        ))
+        db.send_create_signal(u'trekking', ['Usage'])
+
+        # Adding model 'Route'
+        db.create_table('o_b_parcours', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('route', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='parcours')),
+        ))
+        db.send_create_signal(u'trekking', ['Route'])
+
+        # Adding model 'DifficultyLevel'
+        db.create_table('o_b_difficulte', (
+            ('id', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
+            ('difficulty', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='difficulte')),
+        ))
+        db.send_create_signal(u'trekking', ['DifficultyLevel'])
+
+        # Adding model 'WebLink'
+        db.create_table('o_t_web', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
+            ('url', self.gf('django.db.models.fields.URLField')(max_length=128, db_column='url')),
+            ('category', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='links', null=True, db_column='categorie', to=orm['trekking.WebLinkCategory'])),
+        ))
+        db.send_create_signal(u'trekking', ['WebLink'])
+
+        # Adding model 'WebLinkCategory'
+        db.create_table('o_b_web_category', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
+            ('pictogram', self.gf('django.db.models.fields.files.FileField')(max_length=512, db_column='picto')),
+        ))
+        db.send_create_signal(u'trekking', ['WebLinkCategory'])
+
+        # Adding model 'Theme'
+        db.create_table('o_b_theme', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='theme')),
+            ('pictogram', self.gf('django.db.models.fields.files.FileField')(max_length=512, db_column='picto')),
+        ))
+        db.send_create_signal(u'trekking', ['Theme'])
+
+        # Adding model 'InformationDesk'
+        db.create_table('o_b_renseignement', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=256, db_column='nom')),
+            ('description', self.gf('django.db.models.fields.TextField')(db_column='description', blank=True)),
+        ))
+        db.send_create_signal(u'trekking', ['InformationDesk'])
+
+        # Adding model 'POI'
+        db.create_table('o_t_poi', (
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
+            ('description', self.gf('django.db.models.fields.TextField')(db_column='description')),
+            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='pois', db_column='type', to=orm['trekking.POIType'])),
+        ))
+        db.send_create_signal(u'trekking', ['POI'])
+
+        # Adding model 'POIType'
+        db.create_table('o_b_poi', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
+            ('pictogram', self.gf('django.db.models.fields.files.FileField')(max_length=512, db_column='picto')),
+        ))
+        db.send_create_signal(u'trekking', ['POIType'])
 
 
     def backwards(self, orm):
         # Removing unique constraint on 'TrekRelationship', fields ['trek_a', 'trek_b']
-        db.delete_unique('liens_itineraire', ['trek_a_id', 'trek_b_id'])
+        db.delete_unique('o_r_itineraire_itineraire', ['itineraire_a', 'itineraire_b'])
 
         # Deleting model 'Trek'
-        db.delete_table('itineraire')
+        db.delete_table('o_t_itineraire')
+
+        # Removing M2M table for field themes on 'Trek'
+        db.delete_table('o_r_itineraire_theme')
 
         # Removing M2M table for field networks on 'Trek'
-        db.delete_table('itineraire_networks')
-
-        # Removing M2M table for field paths on 'Trek'
-        db.delete_table('itineraire_paths')
+        db.delete_table('o_r_itineraire_reseau')
 
         # Removing M2M table for field usages on 'Trek'
-        db.delete_table('itineraire_usages')
+        db.delete_table('o_r_itineraire_usage')
 
         # Removing M2M table for field web_links on 'Trek'
-        db.delete_table('itineraire_web_links')
-
-        # Deleting model 'TrekNetwork'
-        db.delete_table('reseau')
-
-        # Deleting model 'Usage'
-        db.delete_table('usages')
-
-        # Deleting model 'Route'
-        db.delete_table('parcours')
-
-        # Deleting model 'DifficultyLevel'
-        db.delete_table('classement_difficulte')
-
-        # Deleting model 'Destination'
-        db.delete_table('destination')
-
-        # Deleting model 'WebLink'
-        db.delete_table('liens_web')
+        db.delete_table('o_r_itineraire_web')
 
         # Deleting model 'TrekRelationship'
-        db.delete_table('liens_itineraire')
+        db.delete_table('o_r_itineraire_itineraire')
+
+        # Deleting model 'TrekNetwork'
+        db.delete_table('o_b_reseau')
+
+        # Deleting model 'Usage'
+        db.delete_table('o_b_usage')
+
+        # Deleting model 'Route'
+        db.delete_table('o_b_parcours')
+
+        # Deleting model 'DifficultyLevel'
+        db.delete_table('o_b_difficulte')
+
+        # Deleting model 'WebLink'
+        db.delete_table('o_t_web')
+
+        # Deleting model 'WebLinkCategory'
+        db.delete_table('o_b_web_category')
+
+        # Deleting model 'Theme'
+        db.delete_table('o_b_theme')
+
+        # Deleting model 'InformationDesk'
+        db.delete_table('o_b_renseignement')
+
+        # Deleting model 'POI'
+        db.delete_table('o_t_poi')
+
+        # Deleting model 'POIType'
+        db.delete_table('o_b_poi')
 
 
     models = {
-        'authent.structure': {
-            'Meta': {'object_name': 'Structure'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+        u'authent.structure': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Structure'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
-        'core.datasource': {
-            'Meta': {'object_name': 'Datasource', 'db_table': "'source_donnees'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        u'core.comfort': {
+            'Meta': {'ordering': "['comfort']", 'object_name': 'Comfort', 'db_table': "'l_b_confort'"},
+            'comfort': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'confort'"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
         },
-        'core.network': {
-            'Meta': {'object_name': 'Network', 'db_table': "'reseau_troncon'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'network': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        u'core.datasource': {
+            'Meta': {'ordering': "['source']", 'object_name': 'Datasource', 'db_table': "'l_b_source'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'source': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
         },
-        'core.path': {
+        u'core.network': {
+            'Meta': {'ordering': "['network']", 'object_name': 'Network', 'db_table': "'l_b_reseau'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'network': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'reseau'"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
+        },
+        u'core.path': {
             'Meta': {'object_name': 'Path', 'db_table': "'l_t_troncon'"},
-            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_positive'"}),
-            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'"}),
-            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Datasource']"}),
-            'date_insert': ('django.db.models.fields.DateTimeField', [], {}),
-            'date_update': ('django.db.models.fields.DateTimeField', [], {}),
-            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'denivelee_negative'"}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'null': 'True', 'spatial_index': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'length': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'longueur'"}),
-            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_maximum'"}),
-            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_column': "'altitude_minimum'"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom_troncon'"}),
-            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Network']"}),
-            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Stake']"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['authent.Structure']"}),
-            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'to': "orm['core.Trail']"}),
-            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['core.Usage']"}),
-            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'troncon_valide'"})
+            'arrival': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'arrivee'", 'blank': 'True'}),
+            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_positive'", 'blank': 'True'}),
+            'comfort': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'confort'", 'to': u"orm['core.Comfort']"}),
+            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'", 'blank': 'True'}),
+            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'source'", 'to': u"orm['core.Datasource']"}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
+            'departure': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'depart'", 'blank': 'True'}),
+            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '2154'}),
+            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
+            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
+            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_minimum'", 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom'", 'blank': 'True'}),
+            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'to': u"orm['core.Network']", 'db_table': "'l_r_troncon_reseau'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'slope': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'pente'", 'blank': 'True'}),
+            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'enjeu'", 'to': u"orm['core.Stake']"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
+            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'sentier'", 'to': u"orm['core.Trail']"}),
+            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'to': u"orm['core.Usage']", 'db_table': "'l_r_troncon_usage'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'valide'"})
         },
-        'core.stake': {
-            'Meta': {'object_name': 'Stake', 'db_table': "'enjeu'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        u'core.pathaggregation': {
+            'Meta': {'ordering': "['id']", 'object_name': 'PathAggregation', 'db_table': "'e_r_evenement_troncon'"},
+            'end_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_fin'", 'db_index': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'ordre'", 'blank': 'True'}),
+            'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'on_delete': 'models.DO_NOTHING', 'db_column': "'troncon'", 'to': u"orm['core.Path']"}),
+            'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'", 'db_index': 'True'}),
+            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': u"orm['core.Topology']"})
         },
-        'core.trail': {
-            'Meta': {'object_name': 'Trail', 'db_table': "'sentier'"},
-            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'comments': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'departure': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '15'})
+        u'core.stake': {
+            'Meta': {'ordering': "['id']", 'object_name': 'Stake', 'db_table': "'l_b_enjeu'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'enjeu'"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
         },
-        'core.usage': {
-            'Meta': {'object_name': 'Usage', 'db_table': "'usage'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'usage': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        u'core.topology': {
+            'Meta': {'object_name': 'Topology', 'db_table': "'e_t_evenement'"},
+            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_positive'", 'blank': 'True'}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
+            'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
+            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '2154'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'kind': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
+            'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
+            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
+            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_minimum'", 'blank': 'True'}),
+            'offset': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'db_column': "'decallage'"}),
+            'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Path']", 'through': u"orm['core.PathAggregation']", 'db_column': "'troncons'", 'symmetrical': 'False'}),
+            'slope': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'pente'", 'blank': 'True'})
         },
-        'trekking.destination': {
-            'Meta': {'object_name': 'Destination', 'db_table': "'destination'"},
-            'destination': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'destination_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'destination_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'destination_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
+        u'core.trail': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Trail', 'db_table': "'l_t_sentier'"},
+            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'arrivee'"}),
+            'comments': ('django.db.models.fields.TextField', [], {'default': "''", 'db_column': "'commentaire'", 'blank': 'True'}),
+            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
+            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
+            'departure': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'depart'"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'nom'"}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
         },
-        'trekking.difficultylevel': {
-            'Meta': {'object_name': 'DifficultyLevel', 'db_table': "'classement_difficulte'"},
-            'difficulty': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'difficulty_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'difficulty_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'difficulty_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        u'core.usage': {
+            'Meta': {'ordering': "['usage']", 'object_name': 'Usage', 'db_table': "'l_b_usage'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
+            'usage': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'usage'"})
         },
-        'trekking.route': {
-            'Meta': {'object_name': 'Route', 'db_table': "'parcours'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'route': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'route_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'route_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'route_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
+        u'trekking.difficultylevel': {
+            'Meta': {'ordering': "['id']", 'object_name': 'DifficultyLevel', 'db_table': "'o_b_difficulte'"},
+            'difficulty': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'difficulte'"}),
+            'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'})
         },
-        'trekking.trek': {
-            'Meta': {'object_name': 'Trek', 'db_table': "'itineraire'"},
-            'advice': ('django.db.models.fields.TextField', [], {}),
-            'advice_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'advice_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'advice_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'advised_parking': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'ambiance': ('django.db.models.fields.TextField', [], {}),
-            'ambiance_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'ambiance_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'ambiance_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'arrival_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'arrival_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'arrival_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'departure': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'departure_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'departure_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'departure_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'description_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'description_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'description_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'description_teaser': ('django.db.models.fields.TextField', [], {}),
-            'description_teaser_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'description_teaser_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'description_teaser_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'destination': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Destination']"}),
-            'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.DifficultyLevel']"}),
-            'duration': ('django.db.models.fields.IntegerField', [], {}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'dim': '3', 'spatial_index': 'False'}),
-            'handicapped_infrastructure': ('django.db.models.fields.TextField', [], {}),
-            'handicapped_infrastructure_en': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'handicapped_infrastructure_fr': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'handicapped_infrastructure_it': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'insert_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'is_park_centered': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_transborder': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'length': ('django.db.models.fields.FloatField', [], {}),
-            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.TrekNetwork']"}),
-            'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
-            'paths': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['core.Path']"}),
-            'public_transport': ('django.db.models.fields.TextField', [], {}),
-            'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'to': "orm['trekking.Route']"}),
-            'update_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.Usage']"}),
-            'validated': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'web_links': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'symmetrical': 'False', 'to': "orm['trekking.WebLink']"})
+        u'trekking.informationdesk': {
+            'Meta': {'ordering': "['name']", 'object_name': 'InformationDesk', 'db_table': "'o_b_renseignement'"},
+            'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '256', 'db_column': "'nom'"})
         },
-        'trekking.treknetwork': {
-            'Meta': {'object_name': 'TrekNetwork', 'db_table': "'reseau'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'network': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'network_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'network_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'network_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
+        u'trekking.poi': {
+            'Meta': {'object_name': 'POI', 'db_table': "'o_t_poi'", '_ormbases': [u'core.Topology']},
+            'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pois'", 'db_column': "'type'", 'to': u"orm['trekking.POIType']"})
         },
-        'trekking.trekrelationship': {
-            'Meta': {'unique_together': "(('trek_a', 'trek_b'),)", 'object_name': 'TrekRelationship', 'db_table': "'liens_itineraire'"},
-            'has_common_departure': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'has_common_edge': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_circuit_step': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'trek_a': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'trek_relationship_a'", 'to': "orm['trekking.Trek']"}),
-            'trek_b': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'trek_relationship_b'", 'to': "orm['trekking.Trek']"})
+        u'trekking.poitype': {
+            'Meta': {'ordering': "['label']", 'object_name': 'POIType', 'db_table': "'o_b_poi'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
+            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'db_column': "'picto'"})
         },
-        'trekking.usage': {
-            'Meta': {'object_name': 'Usage', 'db_table': "'usages'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'usage': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'usage_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'usage_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'usage_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'})
+        u'trekking.route': {
+            'Meta': {'ordering': "['route']", 'object_name': 'Route', 'db_table': "'o_b_parcours'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'route': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'parcours'"})
         },
-        'trekking.weblink': {
-            'Meta': {'object_name': 'WebLink', 'db_table': "'liens_web'"},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'name_en': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'name_fr': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'name_it': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'blank': 'True'}),
-            'thumbnail': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '128'})
+        u'trekking.theme': {
+            'Meta': {'ordering': "['label']", 'object_name': 'Theme', 'db_table': "'o_b_theme'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'theme'"}),
+            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'db_column': "'picto'"})
+        },
+        u'trekking.trek': {
+            'Meta': {'object_name': 'Trek', 'db_table': "'o_t_itineraire'", '_ormbases': [u'core.Topology']},
+            'access': ('django.db.models.fields.TextField', [], {'db_column': "'acces'", 'blank': 'True'}),
+            'advice': ('django.db.models.fields.TextField', [], {'db_column': "'recommandation'", 'blank': 'True'}),
+            'advised_parking': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'parking'", 'blank': 'True'}),
+            'ambiance': ('django.db.models.fields.TextField', [], {'db_column': "'ambiance'", 'blank': 'True'}),
+            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'arrivee'", 'blank': 'True'}),
+            'departure': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'depart'", 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
+            'description_teaser': ('django.db.models.fields.TextField', [], {'db_column': "'chapeau'", 'blank': 'True'}),
+            'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'difficulte'", 'to': u"orm['trekking.DifficultyLevel']"}),
+            'disabled_infrastructure': ('django.db.models.fields.TextField', [], {'db_column': "'handicap'", 'blank': 'True'}),
+            'duration': ('django.db.models.fields.FloatField', [], {'default': '0', 'null': 'True', 'db_column': "'duree'", 'blank': 'True'}),
+            'information_desk': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'renseignement'", 'to': u"orm['trekking.InformationDesk']"}),
+            'is_park_centered': ('django.db.models.fields.BooleanField', [], {'db_column': "'coeur'"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
+            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.TrekNetwork']", 'db_table': "'o_r_itineraire_reseau'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom_parking'", 'blank': 'True'}),
+            'public_transport': ('django.db.models.fields.TextField', [], {'db_column': "'transport'", 'blank': 'True'}),
+            'published': ('django.db.models.fields.BooleanField', [], {'db_column': "'public'"}),
+            'related_treks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'related_treks+'", 'symmetrical': 'False', 'through': u"orm['trekking.TrekRelationship']", 'to': u"orm['trekking.Trek']"}),
+            'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'parcours'", 'to': u"orm['trekking.Route']"}),
+            'themes': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.Theme']", 'db_table': "'o_r_itineraire_theme'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
+            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.Usage']", 'db_table': "'o_r_itineraire_usage'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
+            'web_links': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.WebLink']", 'db_table': "'o_r_itineraire_web'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'})
+        },
+        u'trekking.treknetwork': {
+            'Meta': {'ordering': "['network']", 'object_name': 'TrekNetwork', 'db_table': "'o_b_reseau'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'network': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'reseau'"})
+        },
+        u'trekking.trekrelationship': {
+            'Meta': {'unique_together': "(('trek_a', 'trek_b'),)", 'object_name': 'TrekRelationship', 'db_table': "'o_r_itineraire_itineraire'"},
+            'has_common_departure': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'depart_commun'"}),
+            'has_common_edge': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'troncons_communs'"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_circuit_step': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'etape_circuit'"}),
+            'trek_a': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'trek_relationship_a'", 'db_column': "'itineraire_a'", 'to': u"orm['trekking.Trek']"}),
+            'trek_b': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'trek_relationship_b'", 'db_column': "'itineraire_b'", 'to': u"orm['trekking.Trek']"})
+        },
+        u'trekking.usage': {
+            'Meta': {'ordering': "['usage']", 'object_name': 'Usage', 'db_table': "'o_b_usage'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'db_column': "'picto'"}),
+            'usage': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'usage'"})
+        },
+        u'trekking.weblink': {
+            'Meta': {'object_name': 'WebLink', 'db_table': "'o_t_web'"},
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'links'", 'null': 'True', 'db_column': "'categorie'", 'to': u"orm['trekking.WebLinkCategory']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
+            'url': ('django.db.models.fields.URLField', [], {'max_length': '128', 'db_column': "'url'"})
+        },
+        u'trekking.weblinkcategory': {
+            'Meta': {'ordering': "['label']", 'object_name': 'WebLinkCategory', 'db_table': "'o_b_web_category'"},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
+            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'db_column': "'picto'"})
         }
     }
 

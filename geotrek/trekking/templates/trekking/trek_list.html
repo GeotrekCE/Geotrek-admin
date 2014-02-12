@@ -5,8 +5,8 @@
 
 {% block mainactions %}
     {% if user.profile.is_trekking_manager %}
-        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add trek" %}</a>
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {% trans "Add trek" %}</a>
     {% else %}
-        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add trek" %}</span>
+        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add trek" %}</span>
     {% endif %}
 {% endblock mainactions %}

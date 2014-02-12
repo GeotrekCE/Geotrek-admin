@@ -2,6 +2,15 @@
 TROUBLESHOOTING
 ===============
 
+Installation outputs a lot of database FATAL ERROR
+--------------------------------------------------
+
+Data schema migrations code do not inspect the database before executing commands.
+When appropriate, errors are skipped in python code, but PostgreSQL error output still
+remains.
+
+http://south.aeracode.org/ticket/1247 
+
 Installation script hangs on syncdb --migrate
 ---------------------------------------------
 
@@ -19,8 +28,6 @@ Check that the projection of your data is correct.
 
 Check that the extent of the map covers your data, using the extents tool
 at *http://server/tools/extents/*.
-
-Check the value of the ``spatial_extent_wgs84``` setting.
 
 
 No background tiles

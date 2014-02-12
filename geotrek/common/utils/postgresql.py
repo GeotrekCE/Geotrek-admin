@@ -15,8 +15,6 @@ def debug_pg_notices(f):
 
     @wraps(f)
     def wrapped(*args, **kwargs):
-
-
         before = len(connection.connection.notices) if connection.connection else 0
         try:
             r = f(*args, **kwargs)
@@ -59,16 +57,21 @@ def load_sql_files(app_label):
     We remove RAISE NOTICE instructions from SQL outside unit testing
     since they lead to interpolation errors of '%' character in python.
     """
-    app_dir = os.path.normpath(os.path.join(os.path.dirname(
-                               models.get_app(app_label).__file__), 'sql'))
-    if not os.path.exists(app_dir):
+    app_dir = os.path.dirname(models.get_app(app_label).__file__)
+    sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
+    if not os.path.exists(sql_dir):
+        logger.debug("No SQL folder for %s" % app_label)
         return
 
     r = re.compile(r'^.*\.sql$')
-    sql_files = [os.path.join(app_dir, f)
-                 for f in os.listdir(app_dir)
+    sql_files = [os.path.join(sql_dir, f)
+                 for f in os.listdir(sql_dir)
                  if r.match(f) is not None]
     sql_files.sort()
+
+    if len(sql_files) == 0:
+        logger.warning("Empty folder %s" % sql_dir)
+
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
@@ -87,13 +90,9 @@ def load_sql_files(app_label):
             for m in pattern.finditer(sql):
                 value = getattr(settings, m.group(1))
                 sql = sql.replace(m.group(0), unicode(value))
-
             cursor.execute(sql)
         except Exception as e:
-            logger.error("Failed to install custom SQL file '%s': %s\n" %
-                         (sql_file, e))
+            logger.critical("Failed to install custom SQL file '%s': %s\n" %
+                            (sql_file, e))
             traceback.print_exc()
-            transaction.rollback_unless_managed()
             raise
-        else:
-            transaction.commit_unless_managed()

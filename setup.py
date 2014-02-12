@@ -20,15 +20,16 @@ setup(
     long_description=open(os.path.join(here, 'README.rst')).read() + '\n\n' +
                      open(os.path.join(here, 'CHANGES')).read(),
     install_requires=[
-        'South == 0.7.6',
+        'South == 0.8.4',
         'psycopg2 == 2.4.1',
+        'docutils == 0.11',
         'GDAL == 1.9.1',  # installed by buildout, see include-dirs
         'Pillow == 1.7.8',
-        'easy-thumbnails == 1.1',
+        'easy-thumbnails == 1.4',
         'simplekml == 1.2.1',
         'pygal == 1.1.0',
+        'django-extended-choices == 0.3.0',
         'mapentity',  # pinned by buildout
-        'django-extended-choices',  # pinned by buildout
     ] + test_requirements,
     tests_requires=test_requirements,
     license='BSD, see LICENSE file.',

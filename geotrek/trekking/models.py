@@ -162,9 +162,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
+        ordering = ['name']
 
     def __unicode__(self):
-        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+        return self.name
 
     @property
     def slug(self):
@@ -378,7 +379,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def path_treks(cls, path):
-        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+        treks = cls.objects.existing().filter(aggregations__path=path)
+        # The following part prevents conflict with default trek ordering
+        # ProgrammingError: SELECT DISTINCT ON expressions must match initial ORDER BY expressions
+        return treks.order_by('topo_object').distinct('topo_object')
 
     @classmethod
     def topology_treks(cls, topology):
@@ -393,9 +397,9 @@ Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
 class TrekRelationshipManager(models.Manager):
     use_for_related_fields = True
 
-    def get_query_set(self):
+    def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekRelationshipManager, self).get_query_set().select_related('trek_a', 'trek_b')
+        qs = super(TrekRelationshipManager, self).get_queryset().select_related('trek_a', 'trek_b')
         # Exclude deleted treks
         return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
 
@@ -502,8 +506,8 @@ class DifficultyLevel(models.Model):
 
 
 class WebLinkManager(models.Manager):
-    def get_query_set(self):
-        return super(WebLinkManager, self).get_query_set().select_related('category')
+    def get_queryset(self):
+        return super(WebLinkManager, self).get_queryset().select_related('category')
 
 
 class WebLink(models.Model):
@@ -520,6 +524,7 @@ class WebLink(models.Model):
         db_table = 'o_t_web'
         verbose_name = _(u"Web link")
         verbose_name_plural = _(u"Web links")
+        ordering = ['name']
 
     def __unicode__(self):
         category = "%s - " % self.category.label if self.category else ""
@@ -619,8 +624,8 @@ class InformationDesk(models.Model):
 
 
 class POIManager(models.GeoManager):
-    def get_query_set(self):
-        return super(POIManager, self).get_query_set().select_related('type')
+    def get_queryset(self):
+        return super(POIManager, self).get_queryset().select_related('type')
 
 
 class POI(PicturesMixin, MapEntityMixin, Topology):

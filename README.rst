@@ -37,7 +37,8 @@ More information on product website http://geotrek.fr
 Documentation
 -------------
 
-`Installation and configuration instructions <http://geotrek.readthedocs.org>`_
+* More info at http://geotrek.fr (*french*)
+* `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
 
 License
 -------

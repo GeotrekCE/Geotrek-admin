@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import math
-
 import json
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -41,6 +39,11 @@ class HttpSVGResponse(HttpResponse):
 
 
 class ElevationChart(LastModifiedMixin, BaseDetailView):
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ElevationChart, self).dispatch(*args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
         return HttpSVGResponse(self.get_object().get_elevation_profile_svg(),
                                **response_kwargs)
@@ -48,6 +51,10 @@ class ElevationChart(LastModifiedMixin, BaseDetailView):
 
 class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ElevationProfile, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
@@ -127,6 +134,7 @@ class PathDelete(MapEntityDelete):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
 
+@login_required
 @cache_last_modified(lambda x: Path.latest_updated())
 def get_graph_json(request):
     cache = get_cache('fat')
@@ -143,14 +151,7 @@ def get_graph_json(request):
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
-    def path_modifier(path):
-        l = 0.0 if math.isnan(path.length) else path.length
-        return { "id": path.pk, "length": l}
-
-    graph = graph_lib.graph_edges_nodes_of_qs(
-                Path.objects.all(),
-                value_modifier=path_modifier,
-                key_modifier=graph_lib.get_key_optimizer())
+    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.all())
     json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))

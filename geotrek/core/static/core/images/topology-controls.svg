@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="99.643219"
+   height="50.291924"
+   viewBox="0 0 99.643218 50.291924"
+   enable-background="new 0 0 540 60"
+   xml:space="preserve"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="topology-controls.svg"><metadata
+   id="metadata3264"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3262" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="958"
+   inkscape:window-height="1059"
+   id="namedview3260"
+   showgrid="true"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0"
+   inkscape:zoom="5.0387905"
+   inkscape:cx="23.977506"
+   inkscape:cy="12.462335"
+   inkscape:window-x="0"
+   inkscape:window-y="19"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1"><inkscape:grid
+     type="xygrid"
+     id="grid3304"
+     empspacing="5"
+     visible="true"
+     enabled="true"
+     snapvisiblegridlinesonly="true"
+     originx="-16.397516px"
+     originy="-9px" /></sodipodi:namedview>
+<g
+   id="g3216"
+   transform="translate(-2.3975159,1.291925)"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/linetopology-control.png"
+   inkscape:export-xdpi="24.431643"
+   inkscape:export-ydpi="24.431643">
+	<path
+   d="m 18,36 v 6 h 6 v -6 h -6 z m 4,4 h -2 v -2 h 2 v 2 z"
+   id="path3218"
+   inkscape:connector-curvature="0"
+   style="fill:#464646" />
+	<path
+   d="m 36,18 v 6 h 6 v -6 h -6 z m 4,4 h -2 v -2 h 2 v 2 z"
+   id="path3220"
+   inkscape:connector-curvature="0"
+   style="fill:#464646" />
+	<polygon
+   points="36.857,20.857 39.142,23.142 23.142,39.145 20.857,36.854 "
+   id="polygon3222"
+   style="fill:#464646" />
+</g>
+
+
+
+<path
+   d="m 82.602484,16.291925 c -4.971,0 -9,4.029 -9,9 0,4.971 3.61178,7.931563 9,14 5.489455,-6.366127 8.999995,-9.029 8.999995,-14 0,-4.971 -4.029,-9 -8.999995,-9 z m 0,11 c -1.41421,0 -3,-1.585786 -3,-3 0,-1.414214 1.58579,-3 3,-3 1.414205,0 2.999995,1.585786 2.999995,3 0,1.414214 -1.58579,3 -2.999995,3 z"
+   id="path3230"
+   inkscape:connector-curvature="0"
+   style="fill:#464646"
+   sodipodi:nodetypes="sscssaaaaa"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/pointtopology-control.png"
+   inkscape:export-xdpi="31.224279"
+   inkscape:export-ydpi="31.224279" />
+
+
+
+
+<g
+   transform="matrix(-0.70710678,-0.70710678,0.70710678,-0.70710678,82.672654,83.299413)"
+   id="g3216-8"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/pointtopology-control.png"
+   inkscape:export-xdpi="31.224279"
+   inkscape:export-ydpi="31.224279"><path
+     style="fill:#464646"
+     inkscape:connector-curvature="0"
+     d="m 18,36 v 6 h 6 v -6 h -6 z m 4,4 h -2 v -2 h 2 v 2 z"
+     id="path3218-4" /><path
+     style="fill:#464646"
+     inkscape:connector-curvature="0"
+     d="m 36,18 v 6 h 6 v -6 h -6 z m 4,4 h -2 v -2 h 2 v 2 z"
+     id="path3220-0" /><polygon
+     style="fill:#464646"
+     points="36.857,20.857 39.142,23.142 23.142,39.145 20.857,36.854 "
+     id="polygon3222-7" /></g><path
+   d="m 7.6024831,6.863354 c -4.199105,0 -7.60248370424804,3.403379 -7.60248370424804,7.602484 0,4.199106 3.05094470424804,6.699954 7.60248370424804,11.826087 4.6370509,-5.377598 7.6024839,-7.626981 7.6024839,-11.826087 0,-4.199105 -3.403378,-7.602484 -7.6024839,-7.602484 z m 0,9.291925 c -1.194612,0 -2.534162,-1.339545 -2.534162,-2.534162 0,-1.194614 1.33955,-2.53416 2.534162,-2.53416 1.194612,0 2.5341619,1.339545 2.5341619,2.53416 0,1.194617 -1.3395499,2.534162 -2.5341619,2.534162 z"
+   id="path3230-5-2"
+   inkscape:connector-curvature="0"
+   style="fill:#464646"
+   sodipodi:nodetypes="sscssaaaaa"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/linetopology-control.png"
+   inkscape:export-xdpi="24.431643"
+   inkscape:export-ydpi="24.431643" /><g
+   id="g3216-3"
+   transform="matrix(-1,0,0,1,46.602484,8.291925)"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/linetopology-control.png"
+   inkscape:export-xdpi="24.431643"
+   inkscape:export-ydpi="24.431643"><path
+     style="fill:#464646"
+     inkscape:connector-curvature="0"
+     d="m 36,18 v 6 h 6 v -6 h -6 z m 4,4 h -2 v -2 h 2 v 2 z"
+     id="path3220-09" /><polygon
+     style="fill:#464646"
+     points="20.857,36.854 36.857,20.857 39.142,23.142 23.142,39.145 "
+     id="polygon3222-0"
+     transform="translate(0.14300088,0.1429988)" /></g><path
+   d="m 36.602483,0 c -4.199105,0 -7.602484,3.403379 -7.602484,7.602484 0,4.199106 3.050945,6.699954 7.602484,11.826087 4.63705,-5.377598 7.602483,-7.626981 7.602483,-11.826087 C 44.204966,3.403379 40.801588,0 36.602483,0 z m 0,9.291925 c -1.194612,0 -2.534162,-1.339545 -2.534162,-2.534162 0,-1.194614 1.33955,-2.53416 2.534162,-2.53416 1.194612,0 2.534161,1.339546 2.534161,2.53416 0,1.194617 -1.339549,2.534162 -2.534161,2.534162 z"
+   id="path3230-5-2-2"
+   inkscape:connector-curvature="0"
+   style="fill:#464646"
+   sodipodi:nodetypes="sscssaaaaa"
+   inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/geotrek/core/static/core/images/linetopology-control.png"
+   inkscape:export-xdpi="24.431643"
+   inkscape:export-ydpi="24.431643" /></svg>

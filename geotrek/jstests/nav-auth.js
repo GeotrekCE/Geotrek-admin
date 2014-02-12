@@ -1,11 +1,28 @@
-var casper = require('casper').create();
+var utils = require('./_nav-utils.js');
 
-var baseurl = casper.cli.options['baseurl'];
+casper.test.begin('Login from home page', function(test) {
 
-casper.start(baseurl, function() {
-    this.test.assert(this.getCurrentUrl().indexOf(baseurl + "/login/?next=/") == 0, 'url is the one expected');
-});
+    var baseurl = casper.cli.options['baseurl'];
 
-casper.run(function() {
-    this.test.renderResults(true, 0, this.cli.get('save') || false);
+    casper.start(baseurl + '/', function () {
+        test.assertUrlMatch('/login/?next=/', 'Redirects to login page.');
+        test.assertExists('form', 'Form present.');
+    });
+
+    casper.then(function () {
+        casper.fill('form', {
+            'username':    'admin',
+            'password':    'admin',
+        }, true);
+        casper.click("button[type='submit']");
+    });
+
+    casper.then(function () {
+        test.assertUrlMatch('/', 'Logged-in and redirected.');
+        utils.saveCookies();
+    });
+
+    casper.run(function done() {
+        test.done();
+    });
 });

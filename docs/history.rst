@@ -2733,12 +2733,12 @@ Bouton sur toute la hauteur.
 Fait.
 
 #63 - OFFRE RANDO - Paramétrer les couleurs du portail
-----------------------------------------
+------------------------------------------------------
 
 Fait.
 
 #62 - OFFRE RANDO - Paramétrer logo et titre
-------------------------------
+--------------------------------------------
 
 Fait.
 
@@ -3609,7 +3609,7 @@ Fixé.
 
 
 Rétablir traductions Italien
----------------------------
+----------------------------
 
 Fait.
 

@@ -331,10 +331,13 @@ class RestrictedAreaType(models.Model):
         db_table = 'f_b_zonage'
         verbose_name = _(u"Restricted area type")
 
+    def __unicode__(self):
+        return self.name
+
 
 class RestrictedAreaManager(models.GeoManager):
-    def get_query_set(self):
-        return super(RestrictedAreaManager, self).get_query_set().select_related('area_type')
+    def get_queryset(self):
+        return super(RestrictedAreaManager, self).get_queryset().select_related('area_type')
 
 
 class RestrictedArea(models.Model):

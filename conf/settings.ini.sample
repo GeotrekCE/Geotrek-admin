@@ -1,23 +1,21 @@
 #
 #  Geotrek Settings
 #..........................
-# 
-#  Press "Esc" and then ":wq" to save and exit.
 #
-# (Note: If you edit this file out of install process, 
-#  run "make deploy" to apply changes, or "make serve" in development)
+# (Note: If you edit this file out of install process,
+#  re-run "./install.sh" to apply changes)
 
 [settings]
 
 # Comma separated IP (and domains) of this server
-host = 88.99.17.89, .myserver.com, .myserver.com.
+host = 11.22.33.44, localhost, .myserver.com, .myserver.com.
 
 # Default structure for newly created users
 defaultstructure = PNX
 
 # Default language and list of available
 language = fr
-languages = en,fr,it
+languages = en,fr,it,es
 
 # Database
 dbname = geotrekdb
@@ -41,8 +39,10 @@ spatial_extent = 924861,6375196,985649,6448688
 wms_url = http://extranet.parcnational.fr/pnx/wms?
 # Layers for aerial picture
 ortho_layers = ortho
+ortho_attributions = IGN BDOrtho
 # Layers for scan map
 scan_layers = scan100,scan25
+scan_attributions = IGN Scan
 
 #
 #  Email settings
@@ -51,9 +51,9 @@ scan_layers = scan100,scan25
 # Recipient
 mailadmin = admin@yourdomain.tld
 # Server config
-mailfrom = 
+mailfrom =
 mailhost =
 mailuser =
-mailpassword = 
+mailpassword =
 mailport = 25
 mailtls = False

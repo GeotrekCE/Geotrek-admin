@@ -4,6 +4,65 @@
  * (paths, aggregations, altimetric profile, etc.)
  */
 
+ /* Enabled controls */
+
+a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
+    background-color: #ffa;
+}
+
+.leaflet-control.disabled a {
+    cursor: default;
+    background-color: #E6E6E6;
+    color: #bbb;
+}
+
+
+/* Line editing */
+
+.leaflet-editing-icon.marker-snapped {
+    background-image: none;
+    background-color: yellow;
+}
+
+/* Point topology */
+
+img.leaflet-marker-add {
+    background-image: url('core/images/marker-add.png');
+}
+
+img.marker-snapped {
+    background-image: url('core/images/marker-snap.png');
+}
+
+
+.marker-source {
+    background-image: url('mapentity/images/marker-source.png');
+}
+
+.marker-target {
+    background-image: url('mapentity/images/marker-target.png');
+}
+
+.marker-source.marker-snapped {
+    background-image: url('core/images/marker-source-snap.png');
+}
+.marker-target.marker-snapped {
+    background-image: url('core/images/marker-target-snap.png');
+}
+
+.marker-drag { background-image: url('core/images/marker-drag.png') }
+.marker-drag.marker-snapped { background-image: url('core/images/marker-drag-snap.png') }
+
+.linetopology-control {
+    background-image: url(core/images/linetopology-control.png);
+}
+
+.pointtopology-control {
+    background-image: url(core/images/pointtopology-control.png);
+}
+
+
+
 
 /* Force tiles opacity and no transition on every tile layer */
 .leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
@@ -115,24 +174,3 @@ body.screamshot #altitudegraph {
   border-radius: 4px;
   box-shadow: 0px 0px 7px 2px rgba(255, 255, 0, 1.0);
 }
-
-
-/* Icons for each entity */
-.form-panel.path,           .details-panel.path           { background: url(images/path-96.png) no-repeat; }
-.form-panel.trail,          .details-panel.trail          { background: url(images/trail-96.png) no-repeat; }
-.form-panel.intervention,   .details-panel.intervention   { background: url(images/intervention-96.png) no-repeat; }
-.form-panel.project,        .details-panel.project        { background: url(images/project-96.png) no-repeat; }
-.form-panel.signage,        .details-panel.signage        { background: url(images/signage-96.png) no-repeat; }
-.form-panel.infrastructure, .details-panel.infrastructure { background: url(images/infrastructure-96.png) no-repeat; }
-.form-panel.trek,           .details-panel.trek           { background: url(images/trek-96.png) no-repeat; }
-.form-panel.poi,            .details-panel.poi            { background: url(images/poi-96.png) no-repeat; }
-
- /* Icons for tabs */
-li.history.trail > a, li.history.trail button:first-child                   {background-image: url(images/trail-16.png);}
-li.history.path > a, li.history.path button:first-child                     {background-image: url(images/path-16.png);}
-li.history.intervention > a, li.history.intervention button:first-child     {background-image: url(images/intervention-16.png);}
-li.history.project > a, li.history.project button:first-child               {background-image: url(images/project-16.png);}
-li.history.signage > a, li.history.signage button:first-child               {background-image: url(images/signage-16.png);}
-li.history.infrastructure > a, li.history.infrastructure button:first-child {background-image: url(images/infrastructure-16.png);}
-li.history.trek > a, li.history.trek button:first-child                     {background-image: url(images/trek-16.png);}
-li.history.poi > a, li.history.poi button:first-child                       {background-image: url(images/poi-16.png);}

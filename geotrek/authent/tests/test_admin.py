@@ -11,11 +11,11 @@ class AdminSiteTest(TestCase):
         self.user = factories.UserFactory.create(password='booh')
 
     def tearDown(self):
+        self.client.logout()
         self.admin.delete()
         self.pathmanager.delete()
         self.trekmanager.delete()
         self.user.delete()
-        self.client.logout()
 
     def login(self, user):
         success = self.client.login(username=user.username, password='booh')
@@ -24,7 +24,7 @@ class AdminSiteTest(TestCase):
     def test_user_cant_access(self):
         self.login(self.user)
         response = self.client.get('/admin/')
-        self.assertContains(response, 'Connexion | Geotrek administration')
+        self.assertContains(response, 'Log in | Django site admin')
 
     def test_admin_can_see_everything(self):
         self.login(self.admin)

@@ -43,10 +43,6 @@ class TopologyForm(CommonForm):
     class Meta(CommonForm.Meta):
         fields = CommonForm.Meta.fields + ['topology']
 
-    MEDIA_JS = ("core/dijkstra.js",
-                "core/multipath.js",
-                "core/topology_helper.js") + CommonForm.MEDIA_JS
-
 
 class PathForm(CommonForm):
     geom = SnappedLineStringField()

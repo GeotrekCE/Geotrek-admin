@@ -15,8 +15,8 @@ class DifficultyLevelTest(TestCase):
         self.trek = TrekFactory.create(difficulty=self.difficulty)
 
     def tearDown(self):
-        self.user.delete()
         self.client.logout()
+        self.user.delete()
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')

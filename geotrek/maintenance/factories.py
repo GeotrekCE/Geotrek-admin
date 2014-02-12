@@ -2,7 +2,7 @@ import factory
 
 from geotrek.core.factories import PathFactory, StakeFactory
 from geotrek.common.factories import OrganismFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from . import models
 
 
@@ -72,6 +72,17 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
         intervention = super(InfrastructurePointInterventionFactory, cls)._prepare(create, **kwargs)
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(PathFactory.create(), start=0.5, end=0.5)
+        intervention.set_infrastructure(infra)
+        if create:
+            intervention.save()
+        return intervention
+
+
+class SignageInterventionFactory(InterventionFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        intervention = super(SignageInterventionFactory, cls)._prepare(create, **kwargs)
+        infra = SignageFactory.create()
         intervention.set_infrastructure(infra)
         if create:
             intervention.save()

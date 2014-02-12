@@ -28,7 +28,7 @@ msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
 
 msgid "Linestring invalid snapping."
-msgstr "La line a un snapping invalide"
+msgstr "La ligne a un snapping invalide"
 
 msgid "length"
 msgstr "Longueur"

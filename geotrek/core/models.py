@@ -84,8 +84,8 @@ class AltimetryMixin(models.Model):
         if is_file_newer(path, self.date_update):
             return
         # Download converted chart as png using convertit
-        convertit_download(request,
-                           self.get_elevation_chart_url(),
+        source = request.build_absolute_uri(self.get_elevation_chart_url())
+        convertit_download(source,
                            path,
                            from_type=HttpSVGResponse.content_type,
                            to_type='image/png')
@@ -376,7 +376,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
 
 class PathAggregationManager(models.GeoManager):
     def get_queryset(self):
-        self.get_query_set().order_by('order')
+        return super(PathAggregationManager, self).get_queryset().order_by('order')
 
 
 class PathAggregation(models.Model):

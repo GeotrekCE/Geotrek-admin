@@ -26,14 +26,14 @@ class InfrastructureTypeQuerySet(models.query.QuerySet):
 
 
 class InfrastructureTypeManager(models.Manager):
-    def get_query_set(self):
+    def get_queryset(self):
         return InfrastructureTypeQuerySet(self.model, using=self._db)
 
     def for_signages(self):
-        return self.get_query_set().for_signages()
+        return self.get_queryset().for_signages()
 
     def for_infrastructures(self):
-        return self.get_query_set().for_infrastructures()
+        return self.get_queryset().for_infrastructures()
 
 
 class InfrastructureType(StructureRelated):
@@ -97,14 +97,14 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
 class InfrastructureGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
-    def get_query_set(self):
-        return super(InfrastructureGISManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+    def get_queryset(self):
+        return super(InfrastructureGISManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class InfrastructureStructureManager(StructureRelatedManager):
     """ Overide default structure related manager, and filter by type. """
-    def get_query_set(self):
-        return super(InfrastructureStructureManager, self).get_query_set().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+    def get_queryset(self):
+        return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class Infrastructure(BaseInfrastructure):
@@ -131,14 +131,14 @@ Topology.add_property('infrastructures', lambda self: Infrastructure.topology_in
 
 class SignageGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
-    def get_query_set(self):
-        return super(SignageGISManager, self).get_query_set().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+    def get_queryset(self):
+        return super(SignageGISManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class SignageStructureManager(StructureRelatedManager):
     """ Overide default structure related manager, and filter by type. """
-    def get_query_set(self):
-        return super(SignageStructureManager, self).get_query_set().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+    def get_queryset(self):
+        return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
 class Signage(BaseInfrastructure):

@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
+from django.contrib.auth.decorators import login_required
 
 from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
@@ -77,6 +78,10 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'parking_location', 'thumbnail', 'pictures',
                'cities', 'districts', 'relationships', 'map_image_url']
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekJsonDetail, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         ctx = {}
         for fname in self.columns:
@@ -99,6 +104,10 @@ class TrekFormatList(MapEntityFormat, TrekList):
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
     queryset = Trek.objects.existing()
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekGPXDetail, self).dispatch(*args, **kwargs)
+
     def render_to_response(self, context):
         gpx_serializer = GPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
@@ -109,6 +118,10 @@ class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
 
 class TrekKMLDetail(LastModifiedMixin, BaseDetailView):
     queryset = Trek.objects.existing()
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekKMLDetail, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context):
         trek = self.get_object()
@@ -123,6 +136,10 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     pk_url_kwarg = 'pk'
     properties = ['pk', 'name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekPOIGeoJSON, self).dispatch(*args, **kwargs)
+
     def get_queryset(self):
         try:
             trek_pk = self.kwargs.get(self.pk_url_kwarg)
@@ -130,7 +147,7 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
         except Trek.DoesNotExist:
             raise Http404
         # All POIs of this trek
-        return trek.pois.select_related(depth=1)
+        return trek.pois.select_related('type')
 
 
 class TrekDetail(MapEntityDetail):
@@ -191,6 +208,10 @@ class TrekPrint(DocumentConvert):
 
     def source_url(self):
         return self.get_object().get_document_public_url()
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekPrint, self).dispatch(*args, **kwargs)
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
@@ -314,6 +335,10 @@ class POIDelete(MapEntityDelete):
 class WebLinkCreatePopup(CreateView):
     model = WebLink
     form_class = WebLinkCreateFormPopup
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(WebLinkCreatePopup, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save()

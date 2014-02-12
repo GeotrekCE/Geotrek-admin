@@ -2,6 +2,85 @@
 CHANGELOG
 =========
 
+0.22 (unreleased)
+-----------------
+
+**Before upgrade**
+
+* Backup your database.
+* If you upgrade in the same application folder, first delete the `geotrek`
+  sub-folder.
+* Use `install.sh` to upgrade (`make deploy` won't be enough)
+* After upgrade, make sure the following query returns only ~23 results:
+
+    SELECT COUNT(*) FROM south_migrationhistory;
+
+
+**BREAKING changes**
+
+* For upgrades, Geotrek 0.21 is required.
+* Uploaded files are now restricted to authenticated users (fixes #729)
+
+:notes:
+
+    *Geotrek-rando* 1.23 or higher is required to synchronize content.
+
+**NEW features**
+
+* In list view, click on map brings to detail page, mouse over highlights in list.
+* Show path icon if intervention is not on infrastructure (fixes #909)
+* Add spanish translation
+* Add photographie into default attachments filetype
+* Map location combobox (Cities, Districts, Areas) are not shown if empty or disabled.
+* Several database views have been created (fixes #934)
+* Remove dots from path icon (fixes #939)
+* Intervention, infrastructure and project filters list of years is now dynamic (fixes #948)
+* Application available languages (*english*, *french*, *italian*, *spanish*) are now
+  distinct from translated content languages (`languages` value in :file:`settings.ini`)
+
+Minor changes
+
+* Improved apparence of map controls
+* Improved apparence of path intermediary points
+* Improved apparence of form validation buttons
+* Add auto-generated docs at /admin/doc/
+* Nicer installation script output
+
+Installation script
+
+* Scan and ortho attributions can now be set using `scan_attributions` and
+* Propose to backup DB before Geotrek upgrade (fixes #804)
+* Settings edition prompt only happens at first install
+  `ortho_attributions` in *settings.ini*.
+
+**BUG fixes**
+
+* Fix convert urls behind reverse proxy with prefix
+* Fix deployment problem if ``layercolor_others`` not overidden in settings.ini
+* Fix topology kinds to be 'INTERVENTION' for intervention without signage/infrastructure
+* Fix restricted areas types display in admin (fixes #943)
+* Fix list ordering of trek relationships and web links (fixes #929)
+* Fix nginx log files being already empty after logrotate (fixes #932)
+* Fix project add button when no permission
+
+:notes:
+
+  List of restricted areas is not shown on map by default anymore. Restore
+  previous behaviour with advanced setting `LAND_BBOX_AREAS_ENABLED` as True.
+
+**Internal changes**
+
+* Upgrade to Django 1.6 (fixes #938)
+* Upgrade to Leaflet 0.7
+* Upgrade a great number to python and JavaScript libraries
+* An internal user (with login permission) is used to authenticate the Conversion
+  and Capture services.
+* Installation script is modular (standalone, geotrek only, ...)
+* Developement server now listens on all interfaces by default
+* Database migrations were resetted, no postgres `FATAL ERROR` message will
+  be emitted on fresh install anymore (fixes #937). See *Troubleshooting* in documentation.
+
+
 0.21.2 (2014-02-04)
 -------------------
 

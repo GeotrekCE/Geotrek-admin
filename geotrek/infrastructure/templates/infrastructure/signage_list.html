@@ -5,8 +5,8 @@
 
 {% block mainactions %}
     {% if user.profile.is_editor %}
-        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus"></i> {% trans "Add signage" %}</a>
+        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {% trans "Add signage" %}</a>
     {% else %}
-        <span class="btn disabled" href="#"><i class="icon-plus"></i> {% trans "Add signage" %}</span>
+        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add signage" %}</span>
     {% endif %}
 {% endblock mainactions %}

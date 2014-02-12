@@ -3,7 +3,7 @@ import sys
 
 from django.contrib.messages import constants as messages
 
-from .. import __version__
+from geotrek import __version__
 from . import PROJECT_ROOT_PATH
 
 gettext_noop = lambda s: s
@@ -53,11 +53,12 @@ LANGUAGE_CODE = 'fr'
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
-MODELTRANSLATION_TRANSLATION_REGISTRY = 'geotrek.translation'
 
 LANGUAGES = (
     ('en', gettext_noop('English')),
     ('fr', gettext_noop('French')),
+    ('it', gettext_noop('Italian')),
+    ('es', gettext_noop('Spanish')),
 )
 
 LOCALE_PATHS = (
@@ -94,6 +95,7 @@ UPLOAD_DIR = 'upload'    # media root subdir
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
+MEDIA_URL_SECURE = '/media_secure/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -140,12 +142,15 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'geotrek.authent.middleware.LocaleForcedMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'mapentity.middleware.AutoLoginMiddleware'
 )
 
 ROOT_URLCONF = 'geotrek.urls'
@@ -184,10 +189,19 @@ PROJECT_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.gis',
+)
 
+
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+if 'schemamigration' not in sys.argv:
+    PROJECT_APPS += ('modeltranslation',)
+
+
+PROJECT_APPS += (
     'south',
-    'modeltranslation',
     'leaflet',
     'floppyforms',
     'crispy_forms',
@@ -199,6 +213,7 @@ PROJECT_APPS = (
     'mapentity',
     'paperclip',
 )
+
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.authent',
@@ -310,12 +325,6 @@ PAPERCLIP_CONFIG = {
 }
 
 
-SCREAMSHOT_CONFIG = {
-    'CAPTURE_ALLOWED_IPS': ('127.0.0.1',),
-    'CLI_ARGS': ['--disk-cache=true', '--max-disk-cache-size=30000'],
-}
-
-
 # Data projection
 SRID = 3857
 
@@ -331,6 +340,8 @@ MAPENTITY_CONFIG = {
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://0.0.0.0:6543',
+    'CAPTURE_SERVER': 'http://0.0.0.0:8001',
+    'ROOT_URL': ROOT_URL,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -347,13 +358,20 @@ ALTIMETRIC_PROFILE_FONTSIZE = 25
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'SRID': SRID,
-    'TILES_URL': [
+    'TILES': [
         ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
         ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
-    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5)
+    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
+    'NO_GLOBALS': False,
+    'PLUGINS': {
+        'topofields': {'js': ['core/dijkstra.js',
+                              'core/multipath.js',
+                              'core/topology_helper.js',
+                              'core/formfield.js']}
+    }
 }
 
 """ This *pool* of colors is used to colorized lands records.
@@ -364,8 +382,6 @@ LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf7
                     'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                     'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
 
-""" All layers styles.
-"""
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
 
@@ -378,16 +394,15 @@ MAP_STYLES = {
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail':            {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others':            {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer':         {'color': 'red', 'opacity': 1.0, 'fillOpacity': 1.0, 'weight': 2, 'radius': 8},
-    'draw':              {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
 }
 
 
 LAYER_PRECISION_LAND = 4   # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
+
+LAND_BBOX_CITIES_ENABLED = True
+LAND_BBOX_DISTRICTS_ENABLED = True
+LAND_BBOX_AREAS_ENABLED = False
 
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
 

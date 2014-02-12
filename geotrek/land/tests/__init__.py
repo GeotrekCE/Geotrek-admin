@@ -1,4 +1,4 @@
 # pylint: disable=W0401
 
-from .tests import *
-from .filters import *
+from .test_views import *
+from .test_filters import *

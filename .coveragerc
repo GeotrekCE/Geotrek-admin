@@ -2,8 +2,6 @@
 omit =
     */tests*
     */migrations*
-    lib/eggs/*
-    lib/develop-eggs/*
-    lib/parts/*
+    lib/*
 
 ignore_errors = true

@@ -73,7 +73,7 @@ msgid "Profile for %s"
 msgstr "Profil de l'utilisateur %s"
 
 msgid "Logout"
-msgstr ""
+msgstr "Déconnexion"
 
 msgid "Admin"
 msgstr ""

@@ -1,16 +1,14 @@
-import json
-from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
+from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 
 from mapentity.helpers import api_bbox
-from mapentity.views import HttpJSONResponse
+from mapentity.views import JSSettings as BaseJSSettings
 
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
@@ -49,25 +47,34 @@ class FormsetMixin(object):
 #..............................
 
 
-def settings_json(request):
-    dictsettings = {}
-    dictsettings['map'] = dict(
-        extent=settings.LEAFLET_CONFIG.get('SPATIAL_EXTENT'),
-        snap_distance=settings.SNAP_DISTANCE,
-        styles=settings.MAP_STYLES,
-        colorspool=settings.LAND_COLORS_POOL,
-    )
-    dictsettings['server'] = settings.ROOT_URL if settings.ROOT_URL.endswith('/') else settings.ROOT_URL + '/'
-    dictsettings['version'] = __version__
-    dictsettings['date_format'] = settings.DATE_INPUT_FORMATS[0].replace('%Y', 'yyyy').replace('%m', 'mm').replace('%d', 'dd')
+class JSSettings(BaseJSSettings):
+    """ Override mapentity base settings in order to provide
+    Geotrek necessary stuff.
+    """
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(JSSettings, self).dispatch(*args, **kwargs)
 
-    # Languages
-    dictsettings['languages'] = dict(available=dict(settings.LANGUAGES),
-                                     default=settings.LANGUAGE_CODE)
+    def get_context_data(self):
+        dictsettings = super(JSSettings, self).get_context_data()
+        # Add geotrek map styles
+        base_styles = dictsettings['map']['styles']
+        for name, override in settings.MAP_STYLES.items():
+            merged = base_styles.get(name, {})
+            merged.update(override)
+            base_styles[name] = merged
+        # Add extra stuff (edition, labelling)
+        dictsettings['map'].update(
+            snap_distance=settings.SNAP_DISTANCE,
+            colorspool=settings.LAND_COLORS_POOL,
+        )
+        dictsettings['version'] = __version__
+        dictsettings.setdefault('urls', {})
+        dictsettings['urls']['path_graph'] = reverse('core:path_json_graph')
+        return dictsettings
 
-    return HttpJSONResponse(json.dumps(dictsettings))
 
-
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 def admin_check_extents(request):
     """

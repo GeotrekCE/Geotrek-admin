@@ -55,7 +55,7 @@ class NoDeleteMixin(models.Model):
 
             # Filter out deleted objects
             def existing(self):
-                return self.get_query_set().filter(deleted=False)
+                return self.get_queryset().filter(deleted=False)
 
         return NoDeleteManager
 

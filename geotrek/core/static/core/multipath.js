@@ -1,3 +1,69 @@
+L.Mixin.ActivableControl = {
+    activable: function (state) {
+        /**
+         * Allow to prevent user to activate the control.
+         * (it is like setEnable(state), but ``enable`` word is used
+         *  for handler already)
+         */
+        this._activable = state;
+        if (this._container) {
+            if (state)
+                L.DomUtil.removeClass(this._container, 'disabled');
+            else
+                L.DomUtil.addClass(this._container, 'disabled');
+        }
+    },
+
+    toggle: function() {
+        this._activable = !!this._activable;  // from undefined to false :)
+
+        if (!this._activable)
+            return;  // do nothing if not activable
+
+        if (this.handler.enabled()) {
+            this.handler.disable.call(this.handler);
+            this.handler.fire('disabled');
+            L.DomUtil.removeClass(this._container, 'enabled');
+        }
+        else {
+            this.handler.enable.call(this.handler);
+            this.handler.fire('enabled');
+            L.DomUtil.addClass(this._container, 'enabled');
+        }
+    },
+};
+
+
+L.Control.ExclusiveActivation = L.Class.extend({
+    initialize: function () {
+        this._controls = [];
+    },
+
+    add: function (control) {
+        this._controls.push(control);
+        var self = this;
+        control.activable(true);
+        control.handler.on('enabled', function (e) {
+            // When this control is enabled, activate this one,
+            // and disable the others !
+            $.each(self._controls, function (i, c) {
+                if (c != control) {
+                    c.activable(false);
+                }
+            });
+        }, this);
+
+        control.handler.on('disabled', function (e) {
+            // When this control is disabled, re-enable the others !
+            // Careful, this will not take care of previous state :)
+            $.each(self._controls, function (i, c) {
+                c.activable(true);
+            });
+        }, this);
+    },
+});
+
+
 L.Control.TopologyPoint = L.Control.extend({
     includes: L.Mixin.ActivableControl,
 
@@ -13,8 +79,8 @@ L.Control.TopologyPoint = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
-        var link = L.DomUtil.create('a', 'leaflet-control-draw-marker', this._container);
+        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
         link.title = 'Point';
         var self = this;
@@ -30,11 +96,12 @@ L.Control.TopologyPoint = L.Control.extend({
 });
 
 
-L.Handler.TopologyPoint = L.Marker.Draw.extend({
+L.Handler.TopologyPoint = L.Draw.Marker.extend({
     initialize: function (map, options) {
-        L.Marker.Draw.prototype.initialize.call(this, map, options);
-        map.on('draw:marker-created', function (e) {
-            this.fire('added', {marker:e.marker});
+        L.Draw.Marker.prototype.initialize.call(this, map, options);
+        map.on('draw:created', function (e) {
+            if (e.layerType === 'marker')
+                this.fire('added', {marker:e.layer});
         }, this);
     },
 });
@@ -64,8 +131,8 @@ L.Control.Multipath = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-zoom');
-        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out multipath-control', this._container);
+        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
+        var link = L.DomUtil.create('a', 'leaflet-control-zoom-out linetopology-control', this._container);
         link.href = '#';
         link.title = 'Multipath';
 
@@ -200,20 +267,18 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
-        if (window.DEBUG) {
-            console.log('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
-                                                           latlng:state.start_ll.toString()},
-                                                    end:  {pk:state.end_layer.properties.pk,
-                                                           latlng:state.end_ll.toString()}})+')');
-        }
+        
+        console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
+                                                         latlng:state.start_ll.toString()},
+                                                  end:  {pk:state.end_layer.properties.pk,
+                                                         latlng:state.end_ll.toString()}})+')');
+
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
-            if (window.DEBUG) {
-                console.log('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
-                                                                 latlng: via_marker.marker.getLatLng().toString()}) + ')');
-            }
+            console.debug('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
+                                                               latlng: via_marker.marker.getLatLng().toString()}) + ')');
             self.addViaStep(via_marker.marker, idx + 1);
             self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
         });
@@ -308,7 +373,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
-        marker.editing.updateClosest(marker, [layer, closest]);
+        marker.editing._updateSnap(marker, layer, closest);
     },
 
     createStep: function(marker, idx) {
@@ -612,7 +677,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
-                marker.editing = new L.Handler.MarkerSnapping(map, marker);
+                marker.editing = new L.Handler.MarkerSnap(map, marker);
                 snapObserver.add(marker);
                 marker.activate_cbs.push(activate);
                 marker.deactivate_cbs.push(deactivate);
@@ -648,16 +713,12 @@ L.Handler.MultiPath = L.Handler.extend({
             dest: function(latlng, layer) {
                 return this.generic(latlng, layer, 'marker-target');
             },
-            via: function(latlng, layer, snappable) {
-                return this.generic(latlng, layer, 'marker-via', snappable);
-            },
             drag: function(latlng, layer, snappable) {
                 var marker = new L.ActivableMarker(latlng, {
                     'draggable': true,
-                    'icon': new L.Icon({
-                        iconUrl: self.options.iconDragUrl,
-                        iconSize: new L.Point(18, 18)
-                    })
+                    'icon': L.divIcon({className: 'marker-drag',
+                                       iconSize: new L.Point(18, 18),
+                                       iconAnchor: new L.Point(9, 9)})
                 });
 
                 map.addLayer(marker);
@@ -679,7 +740,9 @@ L.Handler.MultiPath = L.Handler.extend({
         this.fire('computed_topology', {topology:topology.serialized});
 
         // ## ONCE ##
-        this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
+        if (this.drawOnMouseMove) {
+            this.map.off('mousemove', this.drawOnMouseMove);
+        }
 
         var dragTimer = new Date();
         this.drawOnMouseMove = function(a) {
@@ -760,11 +823,11 @@ Geotrek.PointOnPolyline = function (marker) {
     this.markerEvents = {
         'move': function onMove (e) {
             var marker = e.target;
-            if (marker.snap) marker.fire('snap', {object: marker.snap, location: marker.getLatLng()});
+            if (marker.snap) marker.fire('snap', {layer: marker.snap, latlng: marker.getLatLng()});
         },
         'snap': function onSnap(e) {
-            this.ll = e.location;
-            this.polyline = e.object;
+            this.ll = e.latlng;
+            this.polyline = e.layer;
             this.path_length = L.GeometryUtil.length(this.polyline);
             this.percent_distance = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
             this.events.fire('valid');

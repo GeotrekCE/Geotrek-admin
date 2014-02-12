@@ -75,5 +75,12 @@
         "fields": {
             "type": "PV de r\u00e9ception"
         }
+    },
+    {
+        "pk": 11,
+        "model": "common.filetype",
+        "fields": {
+            "type": "Photographie"
+        }
     }
 ]

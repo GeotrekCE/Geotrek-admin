@@ -10,6 +10,8 @@ from django.contrib.gis.geos import Point, LineString
 import floppyforms as forms
 from mapentity.helpers import wkt_to_geom
 
+from mapentity.helpers import wkt_to_geom
+
 from .models import Topology, Path
 from .widgets import PointLineTopologyWidget, SnappedLineStringWidget
 

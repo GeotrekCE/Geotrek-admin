@@ -4,6 +4,7 @@ from itertools import islice
 from django.db import connection
 from django.utils.timezone import utc
 
+
 logger = logging.getLogger(__name__)
 
 
