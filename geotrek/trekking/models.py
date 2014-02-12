@@ -165,7 +165,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         ordering = ['name']
 
     def __unicode__(self):
-        return u"%s (%s - %s)" % (self.name, self.departure, self.arrival)
+        return self.name
 
     @property
     def slug(self):
