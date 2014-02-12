@@ -53,8 +53,8 @@ env_test: install clean_harmless all_compilemessages
 
 env_dev: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
-	bin/django sync_translation_fields --noinput
 	bin/django syncdb --noinput --migrate
+	bin/django sync_translation_fields --noinput
 
 env_prod: install clean_harmless all_compilemessages
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
