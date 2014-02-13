@@ -20,12 +20,12 @@ server {
 
     client_max_body_size 10M;
 
-    location ${parts['django'].staticurl} {
+    location ${parts['django'].staticurl[:-1]} {
         expires ${options.expiretime};
         alias ${parts['django'].staticroot};
     }
 
-    location ${parts['django'].mediaurl_secure} {
+    location ${parts['django'].mediaurl_secure[:-1]} {
         internal;
         expires ${options.expiretime};
         alias ${parts['django'].mediaroot};

@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+0.22.2 (unreleased)
+-------------------
+
+* Fix secured media URLs when using a non empty `rooturl` setting
+
 0.22.1 (2014-02-13)
 -------------------
 
