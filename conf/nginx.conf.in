@@ -52,6 +52,8 @@ server {
         proxy_set_header Host $$http_host;
         proxy_redirect off;
 
+        keepalive_timeout 0;
+
         {% if options.cache in ['True', 'true'] %}
             proxy_cache             ${options.cachename};
             proxy_cache_key         $$scheme$$host$$uri$$is_args$$args;
