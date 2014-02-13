@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import translation
 
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
@@ -195,6 +196,7 @@ class InterventionTest(TestCase):
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):
+        translation.activate('en')
         on_path = InterventionFactory.create()
         self.assertIn('Path', on_path.infrastructure_display)
         self.assertIn('path-16.png', on_path.infrastructure_display)
