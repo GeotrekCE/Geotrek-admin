@@ -41,7 +41,11 @@ clean_harmless:
 
 clean: clean_harmless
 	rm -rf bin/ lib/ local/ include/ *.egg-info/
-	rm -rf var/
+	rm -rf var/cache
+	rm -rf var/log
+	rm -rf var/run
+	rm -rf var/static
+	rm -rf var/tmp
 	rm -rf etc/init/
 	rm -f .installed.cfg
 	rm -f install.log

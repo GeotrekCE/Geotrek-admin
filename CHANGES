@@ -2,6 +2,12 @@
 CHANGELOG
 =========
 
+0.22.1 (2014-02-13)
+-------------------
+
+* Prevent install script to delete existing media files from disk
+  in some situations.
+
 0.22 (2014-02-12)
 -----------------
 
