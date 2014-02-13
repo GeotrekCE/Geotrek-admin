@@ -140,12 +140,22 @@ class SplitPathTest(TestCase):
         cd_clones = Path.objects.filter(name="CD").exclude(pk=cd.pk)
         self.assertEqual(len(ab_clones), 2)
         self.assertEqual(len(cd_clones), 2)
-        self.assertEqual(ab_clones[0].geom, LineString((1, 0), (3, 0)))
-        self.assertEqual(ab_clones[1].geom, LineString((3, 0), (4, 0)))
+        # Depending on PostgreSQL fetch order
+        if ab_clones[0].geom == LineString((1, 0), (3, 0)):
+            self.assertEqual(ab_clones[0].geom, LineString((1, 0), (3, 0)))
+            self.assertEqual(ab_clones[1].geom, LineString((3, 0), (4, 0)))
+        else:
+            self.assertEqual(ab_clones[0].geom, LineString((3, 0), (4, 0)))
+            self.assertEqual(ab_clones[1].geom, LineString((1, 0), (3, 0)))
 
-        self.assertEqual(cd_clones[0].geom, LineString((1, 0), (1, -2),
-                                                       (3, -2), (3, 0)))
-        self.assertEqual(cd_clones[1].geom, LineString((3, 0), (3, 2)))
+        if cd_clones[0].geom == LineString((3, 0), (3, 2)):
+            self.assertEqual(cd_clones[0].geom, LineString((3, 0), (3, 2)))
+            self.assertEqual(cd_clones[1].geom, LineString((1, 0), (1, -2),
+                                                           (3, -2), (3, 0)))
+        else:
+            self.assertEqual(cd_clones[0].geom, LineString((1, 0), (1, -2),
+                                                           (3, -2), (3, 0)))
+            self.assertEqual(cd_clones[1].geom, LineString((3, 0), (3, 2)))
 
     def test_add_shortest_path(self):
         """
