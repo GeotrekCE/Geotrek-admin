@@ -83,7 +83,7 @@ test_js: node_modules
 tests: test test_js test_nav
 
 serve:
-	bin/django runserver_plus $(listen)
+	bin/django runserver_plus --threaded $(listen)
 
 deploy:
 	bin/develop update -f
