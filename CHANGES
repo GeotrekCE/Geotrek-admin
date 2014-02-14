@@ -2,10 +2,11 @@
 CHANGELOG
 =========
 
-0.22.2 (unreleased)
+0.22.2 (2014-02-14)
 -------------------
 
 * Fix secured media URLs when using a non empty `rooturl` setting
+* Fix proxy errors by disabling keep-alive (fixes #906)
 
 0.22.1 (2014-02-13)
 -------------------
