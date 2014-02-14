@@ -79,18 +79,6 @@ class TrekkingManagerFactory(UserFactory):
         return super(TrekkingManagerFactory, cls)._prepare(create, **kwargs)
 
 
-class EditorFactory(UserFactory):
-    is_staff = True
-
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        editor, exist = Group.objects.get_or_create(name=core_models.GROUP_EDITOR)
-        kwargs.setdefault('groups', []).append(editor)
-        return super(EditorFactory, cls)._prepare(create, **kwargs)
-
-
-## geotrek.core models ##
-
 class StructureFactory(factory.Factory):
     FACTORY_FOR = core_models.Structure
 
