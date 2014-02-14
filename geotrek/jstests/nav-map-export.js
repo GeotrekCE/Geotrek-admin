@@ -16,7 +16,7 @@ casper.test.begin('Map export', function(test) {
     });
 
     casper.then(function() {
-        test.comment('Click on screenshot button')
+        test.comment('Click on screenshot button');
         this.click('a.screenshot-control');
         this.waitForResource(baseurl + '/map_screenshot/');
     });
