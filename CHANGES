@@ -8,6 +8,7 @@ CHANGELOG
 * Fix install.sh help not being shown
 * Fix screenshots being empty if deployed behind reverse proxy with rool url (fixes #687)
 * Fix GPX file layer circle marker size (fixes #930)
+* Remove JS libraries from login page
 
 0.22.2 (2014-02-14)
 -------------------

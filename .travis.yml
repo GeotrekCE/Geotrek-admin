@@ -17,7 +17,7 @@ install:
   - if [[ $ACTION == deploy ]]; then ./install.sh --noinput; fi
   - if [[ $ACTION == deploy ]]; then make load_demo; fi
 script:
-  - if [[ $ACTION == deploy ]]; then make test_nav baseurl=http://localhost; fi
+  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then make env_test test; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage

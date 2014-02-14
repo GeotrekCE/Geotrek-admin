@@ -1,6 +1,8 @@
 SHELL = /bin/bash
 
-listen=0.0.0.0:8000
+port=8000
+host=0.0.0.0
+listen=$(host):$(port)
 baseurl=http://$(listen)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
@@ -72,7 +74,7 @@ test:
 	bin/django test --noinput geotrek
 
 test_nav:
-	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs test --baseurl=$(baseurl) $$navtest; done
+	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
 
 node_modules:
 	npm install geotrek/jstests
