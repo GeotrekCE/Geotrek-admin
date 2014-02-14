@@ -378,6 +378,13 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    if ! $freshinstall ; then
+        backup_existing_database
+
+        # Python should be fresh
+        make clean
+    fi
+
     # Python bootstrap
     make install
     echo_progress
@@ -409,18 +416,6 @@ function geotrek_setup {
 
     check_postgres_connection
 
-    if ! $freshinstall ; then
-        backup_existing_database
-
-        # In v0.22 we erased Django migrations
-        for app in authent common core infrastructure land maintenance trekking ; do
-            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
-        done;
-
-        # Python should be fresh
-        make clean
-    fi
-
     echo_step "Install Geotrek python dependencies..."
     if $dev ; then
         make env_dev
@@ -434,6 +429,13 @@ function geotrek_setup {
     success=$?
     if [ $success -ne 0 ]; then
         exit_error 3 "Could not setup python environment !"
+    fi
+
+    if ! $freshinstall ; then
+        # In v0.22 we erased Django migrations
+        for app in authent common core infrastructure land maintenance trekking ; do
+            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
+        done;
     fi
 
     if $tests ; then
