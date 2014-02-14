@@ -62,11 +62,11 @@ server {
         {% end %}
 
         {% if parts['settings'].rooturl %}
-        # Due to bug in adminsite redirects and root url (FORCE_SCRIPT_NAME)
-        rewrite  ^${parts['settings'].rooturl}/(.*)$$  /$$1  permanent;
+        # For capture and some redirections problems behind reverse proxy
+        rewrite ^${parts['settings'].rooturl}(.*)$$ $$1 last;
         {% end %}
 
-        location ~ /api {
+        location ~ ^/api {
             proxy_pass http://api_server;
             proxy_read_timeout ${parts['gunicorn-api-conf'].timeout}s;
         }
