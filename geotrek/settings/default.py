@@ -78,11 +78,11 @@ MAPENTITY_CONFIG['LANGUAGES'] = _MODELTRANSLATION_LANGUAGES
 #..........................
 
 MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
-                                                        envini.get('host', section='convertit', default='0.0.0.0'),
+                                                        envini.get('host', section='convertit', default='127.0.0.1'),
                                                         envini.get('port', section='convertit', default='6543'))
 
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
-                                                     envini.get('host', section='screamshotter', default='0.0.0.0'),
+                                                     envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
 
 

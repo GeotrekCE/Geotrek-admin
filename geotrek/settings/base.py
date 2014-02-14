@@ -339,8 +339,8 @@ MAPENTITY_CONFIG = {
     'TITLE': gettext_noop("Geotrek"),
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://0.0.0.0:6543',
-    'CAPTURE_SERVER': 'http://0.0.0.0:8001',
+    'CONVERSION_SERVER': 'http://127.0.0.1:6543',
+    'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
 }
 
