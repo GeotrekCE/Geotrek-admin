@@ -8,6 +8,8 @@ fi
 # Go to folder of install.sh
 cd "$(dirname "$0")"
 
+#------------------------------------------------------------------------------
+
 # Redirect whole output to log file
 rm -f install.log
 touch install.log
@@ -15,7 +17,6 @@ chmod 600 install.log
 
 exec 3>&1 4>&2
 exec 1> install.log 2>&1
-
 
 #------------------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ settingsfile=etc/settings.ini
 branch=master
 
 usage () {
-    cat <<- _EOF_
+    exec 2>&4
+    cat >&2 <<- _EOF_
 Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
@@ -37,6 +39,7 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
+    exec 2>&1
     return
 }
 
