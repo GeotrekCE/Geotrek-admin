@@ -49,8 +49,12 @@ class AuthentDatabaseTest(TestCase):
     def tearDown(self):
         query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
 
+    @override_settings(AUTHENT_DATABASE=None)
+    def test_base_missing(self):
+        self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))
+
     @override_settings(AUTHENT_TABLENAME=None)
-    def test_confmissing(self):
+    def test_table_missing(self):
         self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))
 
     def test_conftablemissing(self):
@@ -101,14 +105,20 @@ class AuthentDatabaseTest(TestCase):
         def test_level(username, level, groups):
             query_db("UPDATE %s SET level = %s WHERE username = '%s'" % (settings.AUTHENT_TABLENAME, level, username))
             user = self.backend.authenticate('a', 'a')
-            usergroups = user.groups.all()
-            for group in groups:
-                self.assertTrue(Group.objects.get(name=group) in usergroups)
+            if user:
+                usergroups = user.groups.all()
+                for group in groups:
+                    self.assertTrue(Group.objects.get(name=group) in usergroups)
             return user
 
+        user = test_level('a', 0, [])
+        self.assertEqual(user, None)
         test_level('a', 2, [GROUP_EDITOR])
         test_level('a', 3, [GROUP_PATH_MANAGER])
         test_level('a', 4, [GROUP_TREKKING_MANAGER])
         user = test_level('a', 6, [])
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
+
+    def test_get_user_returns_none_if_unknown(self):
+        self.assertEqual(self.backend.get_user(-1), None)
