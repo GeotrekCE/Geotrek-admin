@@ -246,6 +246,20 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
 
+    def test_profile_json(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_profile_svg(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_profile_svg', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+
 
 class TrekViewTranslationTest(TestCase):
     def setUp(self):
