@@ -4,7 +4,7 @@ import logging
 import traceback
 from functools import wraps
 
-from django.db import connection, transaction, models
+from django.db import connection, models
 from django.conf import settings
 
 
