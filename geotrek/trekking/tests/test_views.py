@@ -260,6 +260,11 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
 
+    def test_weblink_popup(self):
+        url = reverse('trekking:weblink_add')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
 
 class TrekViewTranslationTest(TestCase):
     def setUp(self):
