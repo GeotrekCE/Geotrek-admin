@@ -146,18 +146,6 @@ class TopologyFactory(factory.Factory):
         return topo_mixin
 
 
-class TopologyInBoundsRandomGeomFactory(TopologyFactory):
-    @classmethod
-    def create_pathaggregation_from_topo(cls, topo_mixin):
-        return PathAggregationInBoundsRandomGeomFactory.create(topo_object=topo_mixin)
-
-
-class TopologyInBoundsExistingGeomFactory(TopologyFactory):
-    @classmethod
-    def create_pathaggregation_from_topo(cls, topo_mixin):
-        return PathAggregationInBoundsExistingGeomFactory.create(topo_object=topo_mixin)
-
-
 class PathAggregationFactory(factory.Factory):
     FACTORY_FOR = models.PathAggregation
 
@@ -167,11 +155,3 @@ class PathAggregationFactory(factory.Factory):
     start_position = 0.0
     end_position = 1.0
     order = 0
-
-
-class PathAggregationInBoundsRandomGeomFactory(PathAggregationFactory):
-    path = factory.SubFactory(PathInBoundsRandomGeomFactory)
-
-
-class PathAggregationInBoundsExistingGeomFactory(PathAggregationFactory):
-    path = factory.SubFactory(PathInBoundsExistingGeomFactory)
