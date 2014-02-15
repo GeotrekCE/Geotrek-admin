@@ -215,6 +215,23 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
+    def test_json_detail(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        detailjson = json.loads(response.content)
+        self.assertDictEqual(detailjson['route'],
+                             {"id": trek.route.id,
+                              "label": trek.route.route})
+        self.assertDictEqual(detailjson['difficulty'],
+                             {"id": trek.difficulty.id,
+                              "label": trek.difficulty.difficulty})
+        self.assertDictEqual(detailjson['information_desk'],
+                             {"id": trek.information_desk.id,
+                              "name": trek.information_desk.name,
+                              "description": trek.information_desk.description})
+
     def test_overriden_document(self):
         trek = TrekFactory.create()
         # Will have to mock screenshot, though.
