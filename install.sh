@@ -327,6 +327,7 @@ _EOF_
 
 
 function backup_existing_database {
+    set +x
     if $interactive ; then
         exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
@@ -335,6 +336,7 @@ function backup_existing_database {
     else
         REPLY=N;
     fi
+    set -x
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)

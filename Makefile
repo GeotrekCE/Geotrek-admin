@@ -49,8 +49,9 @@ clean: clean_harmless
 	rm -rf var/static
 	rm -rf var/tmp
 	rm -rf etc/init/
+	rm -rf etc/*.cfg
+	rm -rf etc/*.conf
 	rm -f .installed.cfg
-	rm -f install.log
 
 
 
