@@ -2,12 +2,7 @@ var utils = require('./_nav-utils.js');
 
 casper.test.begin('Create a new intervention', function(test) {
 
-    var baseurl = casper.cli.options['baseurl'];
-
-    utils.setUp();
-    utils.loadCookies();
-
-    casper.start(baseurl + '/intervention/add/', function () {
+    casper.start(utils.baseurl + '/intervention/add/', function () {
         casper.waitForSelector('a.linetopology-control');
     });
 
@@ -22,8 +17,11 @@ casper.test.begin('Create a new intervention', function(test) {
 
     casper.then(function () {
         test.pass('Point control was activated.');
-        test.assertExists('.leaflet-control.disabled a.linetopology-control',
-                          'Line topology control was disabled.');
+        casper.waitForSelector('.leaflet-control.disabled a.linetopology-control');
+    });
+
+    casper.then(function () {
+        test.pass('Line topology control was disabled.');
 
         casper.mouseEvent('mousemove', '#map_topology');
         casper.click('#map_topology');
@@ -32,7 +30,7 @@ casper.test.begin('Create a new intervention', function(test) {
 
     casper.then(function () {
         test.pass('Point marker was added.');
-        casper.wait(200);
+        casper.wait(1000);
     });
 
      casper.then(function () {
@@ -44,10 +42,13 @@ casper.test.begin('Create a new intervention', function(test) {
         casper.waitForSelector('.leaflet-control.enabled a.linetopology-control');
     });
 
-     casper.then(function () {
+    casper.then(function () {
         test.pass('Line control was activated.');
-        test.assertExists('.leaflet-control.disabled a.pointtopology-control',
-                          'Point topology control was disabled.');
+        casper.waitForSelector('.leaflet-control.disabled a.pointtopology-control');
+    });
+
+    casper.then(function () {
+        test.pass('Point topology control was disabled.');
 
         test.assertNotExists('.leaflet-marker-pane .leaflet-marker-draggable',
                              'Point marker was removed.');

@@ -2,12 +2,7 @@ var utils = require('./_nav-utils.js');
 
 casper.test.begin('Create a new poi', function(test) {
 
-    var baseurl = casper.cli.options['baseurl'];
-
-    utils.setUp();
-    utils.loadCookies();
-
-    casper.start(baseurl + '/poi/add/', function () {
+    casper.start(utils.baseurl + '/poi/add/', function () {
         casper.waitForSelector('a.pointtopology-control');
     });
 

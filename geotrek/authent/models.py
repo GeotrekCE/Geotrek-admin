@@ -124,7 +124,7 @@ class UserProfile(StructureRelated):
         g = Group.objects.get_or_create(name=GROUP_EDITOR)[0]
         return self.has_group(g) or self.is_path_manager or self.user.is_superuser
 
-User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 # Force all apps to appear in Admin
 # TODO: this is obviously wrong: using Django perms instead of groups, it can be removed.

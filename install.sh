@@ -8,6 +8,8 @@ fi
 # Go to folder of install.sh
 cd "$(dirname "$0")"
 
+#------------------------------------------------------------------------------
+
 # Redirect whole output to log file
 rm -f install.log
 touch install.log
@@ -15,7 +17,6 @@ chmod 600 install.log
 
 exec 3>&1 4>&2
 exec 1> install.log 2>&1
-
 
 #------------------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ settingsfile=etc/settings.ini
 branch=master
 
 usage () {
-    cat <<- _EOF_
+    exec 2>&4
+    cat >&2 <<- _EOF_
 Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
@@ -37,6 +39,7 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
+    exec 2>&1
     return
 }
 
@@ -324,6 +327,7 @@ _EOF_
 
 
 function backup_existing_database {
+    set +x
     if $interactive ; then
         exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
@@ -332,6 +336,7 @@ function backup_existing_database {
     else
         REPLY=N;
     fi
+    set -x
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)
@@ -375,6 +380,13 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    if ! $freshinstall ; then
+        backup_existing_database
+
+        # Python should be fresh
+        make clean
+    fi
+
     # Python bootstrap
     make install
     echo_progress
@@ -406,18 +418,6 @@ function geotrek_setup {
 
     check_postgres_connection
 
-    if ! $freshinstall ; then
-        backup_existing_database
-
-        # In v0.22 we erased Django migrations
-        for app in authent common core infrastructure land maintenance trekking ; do
-            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
-        done;
-
-        # Python should be fresh
-        make clean
-    fi
-
     echo_step "Install Geotrek python dependencies..."
     if $dev ; then
         make env_dev
@@ -431,6 +431,13 @@ function geotrek_setup {
     success=$?
     if [ $success -ne 0 ]; then
         exit_error 3 "Could not setup python environment !"
+    fi
+
+    if ! $freshinstall ; then
+        # In v0.22 we erased Django migrations
+        for app in authent common core infrastructure land maintenance trekking ; do
+            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
+        done;
     fi
 
     if $tests ; then

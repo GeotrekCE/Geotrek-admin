@@ -2,6 +2,19 @@
 CHANGELOG
 =========
 
+0.22.3 (unreleased)
+-------------------
+
+* Fix install.sh help not being shown
+* Fix screenshots being empty if deployed behind reverse proxy with rool url (fixes #687)
+* Fix GPX file layer circle marker size (fixes #930)
+* Remove JS libraries from login page
+* Fix install.log being removed during installation
+* Fix execution characters being shown during DB backup prompt
+* Fix PhantomJS and CasperJS installation and deployment
+* Added more automatic frontend tests
+* Default allowed hosts is now `*`
+
 0.22.2 (2014-02-14)
 -------------------
 
