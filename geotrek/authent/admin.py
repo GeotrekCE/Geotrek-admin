@@ -60,8 +60,3 @@ class PathManagerModelAdmin(AuthentModelAdmin):
 class TrekkingManagerModelAdmin(AuthentModelAdmin):
     def _has_permission(self, user):
         return user.profile.is_trekking_manager
-
-
-class EditorModelAdmin(AuthentModelAdmin):
-    def _has_permission(self, user):
-        return user.profile.is_editor

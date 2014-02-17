@@ -1,5 +1,8 @@
 import os
 
+import mock
+
+from django.db import connection
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -10,6 +13,7 @@ from mapentity.tests import MapEntityTest
 from geotrek.settings import EnvIniReader
 from .factories import AttachmentFactory
 from .utils import almostequal, sampling, sql_extent, uniquify
+from .utils.postgresql import debug_pg_notices
 
 
 class CommonTest(MapEntityTest):
@@ -25,12 +29,21 @@ class CommonTest(MapEntityTest):
 class ViewsTest(TestCase):
 
     def setUp(self):
-        user = User.objects.create_user('homer', 'h@s.com', 'dooh')
-        success = self.client.login(username=user.username, password='dooh')
+        self.user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        success = self.client.login(username=self.user.username, password='dooh')
         self.assertTrue(success)
 
     def test_settings_json(self):
         url = reverse('common:settings_json')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_admin_check_extents(self):
+        url = reverse('common:check_extents')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.user.is_superuser = True
+        self.user.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -54,6 +67,20 @@ class UtilsTest(TestCase):
 
     def test_uniquify(self):
         self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
+
+    def test_postgresql_notices(self):
+        def raisenotice():
+            cursor = connection.cursor()
+            cursor.execute("""
+                CREATE OR REPLACE FUNCTION raisenotice() RETURNS boolean AS $$
+                BEGIN
+                RAISE NOTICE 'hello'; RETURN FALSE;
+                END; $$ LANGUAGE plpgsql;
+                SELECT raisenotice();""")
+        raisenotice = debug_pg_notices(raisenotice)
+        with mock.patch('geotrek.common.utils.postgresql.logger') as fake_log:
+            raisenotice()
+            fake_log.debug.assert_called_with('hello')
 
 
 class EnvIniTests(TestCase):

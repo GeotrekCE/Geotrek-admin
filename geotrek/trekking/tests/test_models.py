@@ -7,7 +7,8 @@ from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.land.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory)
+from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory,
+                                        WebLinkFactory)
 from geotrek.trekking.models import Trek
 
 
@@ -174,3 +175,11 @@ class RelatedObjectsTest(TestCase):
         self.assertEqual(len(trek.pictures), 1)
         self.assertNotEqual(trek.thumbnail, None)
 
+
+class WebLinkTest(TestCase):
+    def test_category_serializable(self):
+        wl = WebLinkFactory()
+        dictcat = wl.serializable_category
+        self.assertDictEqual(dictcat,
+                             {'pictogram': wl.category.pictogram.url,
+                              'label': wl.category.label})

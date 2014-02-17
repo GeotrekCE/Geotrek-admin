@@ -320,6 +320,7 @@ _EOF_
             # Listen to all network interfaces (useful for VM etc.)
             listen="'*'"
             sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
+            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/9.1/main/postgresql.conf
             sudo /etc/init.d/postgresql restart
         fi
     fi

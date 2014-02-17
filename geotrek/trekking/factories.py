@@ -45,11 +45,19 @@ class DifficultyLevelFactory(factory.Factory):
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
 
 
+class WebLinkCategoryFactory(factory.Factory):
+    FACTORY_FOR = models.WebLinkCategory
+
+    label = factory.Sequence(lambda n: u"Category %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+
+
 class WebLinkFactory(factory.Factory):
     FACTORY_FOR = models.WebLink
 
     name = factory.Sequence(lambda n: u"web link name %s" % n)
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
+    category = factory.SubFactory(WebLinkCategoryFactory)
 
 
 class InformationDeskFactory(factory.Factory):
