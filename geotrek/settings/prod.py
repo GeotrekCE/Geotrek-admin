@@ -4,7 +4,7 @@ from .default import *
 #  Django Production
 #..........................
 
-ALLOWED_HOSTS = tuple(envini.getstrings('host'))
+ALLOWED_HOSTS = tuple(envini.getstrings('host', default='*'))
 
 USE_X_FORWARDED_HOST = True
 

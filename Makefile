@@ -1,6 +1,8 @@
 SHELL = /bin/bash
 
-listen=0.0.0.0:8000
+port=8000
+host=0.0.0.0
+listen=$(host):$(port)
 baseurl=http://$(listen)
 user=$(shell whoami)
 version=$(shell git describe --tags --abbrev=0)
@@ -41,10 +43,15 @@ clean_harmless:
 
 clean: clean_harmless
 	rm -rf bin/ lib/ local/ include/ *.egg-info/
-	rm -rf var/
+	rm -rf var/cache
+	rm -rf var/log
+	rm -rf var/run
+	rm -rf var/static
+	rm -rf var/tmp
 	rm -rf etc/init/
+	rm -rf etc/*.cfg
+	rm -rf etc/*.conf
 	rm -f .installed.cfg
-	rm -f install.log
 
 
 
@@ -68,7 +75,7 @@ test:
 	bin/django test --noinput geotrek
 
 test_nav:
-	for navtest in `ls geotrek/jstests/nav-*.js`; do casperjs test --baseurl=$(baseurl) $$navtest; done
+	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
 
 node_modules:
 	npm install geotrek/jstests
@@ -79,7 +86,7 @@ test_js: node_modules
 tests: test test_js test_nav
 
 serve:
-	bin/django runserver_plus $(listen)
+	bin/django runserver_plus --threaded $(listen)
 
 deploy:
 	bin/develop update -f

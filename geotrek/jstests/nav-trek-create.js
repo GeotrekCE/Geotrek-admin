@@ -2,12 +2,7 @@ var utils = require('./_nav-utils.js');
 
 casper.test.begin('Create a new trek', function(test) {
 
-    var baseurl = casper.cli.options['baseurl'];
-
-    utils.setUp();
-    utils.loadCookies();
-
-    casper.start(baseurl + '/trek/add/', function () {
+    casper.start(utils.baseurl + '/trek/add/', function () {
         casper.waitForSelector('a.linetopology-control');
     });
 

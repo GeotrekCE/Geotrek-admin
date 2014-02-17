@@ -20,12 +20,12 @@ server {
 
     client_max_body_size 10M;
 
-    location ${parts['django'].staticurl} {
+    location ${parts['django'].staticurl[:-1]} {
         expires ${options.expiretime};
         alias ${parts['django'].staticroot};
     }
 
-    location ${parts['django'].mediaurl_secure} {
+    location ${parts['django'].mediaurl_secure[:-1]} {
         internal;
         expires ${options.expiretime};
         alias ${parts['django'].mediaroot};
@@ -52,6 +52,8 @@ server {
         proxy_set_header Host $$http_host;
         proxy_redirect off;
 
+        keepalive_timeout 0;
+
         {% if options.cache in ['True', 'true'] %}
             proxy_cache             ${options.cachename};
             proxy_cache_key         $$scheme$$host$$uri$$is_args$$args;
@@ -60,11 +62,11 @@ server {
         {% end %}
 
         {% if parts['settings'].rooturl %}
-        # Due to bug in adminsite redirects and root url (FORCE_SCRIPT_NAME)
-        rewrite  ^${parts['settings'].rooturl}/(.*)$$  /$$1  permanent;
+        # For capture and some redirections problems behind reverse proxy
+        rewrite ^${parts['settings'].rooturl}(.*)$$ $$1 last;
         {% end %}
 
-        location ~ /api {
+        location ~ ^/api {
             proxy_pass http://api_server;
             proxy_read_timeout ${parts['gunicorn-api-conf'].timeout}s;
         }

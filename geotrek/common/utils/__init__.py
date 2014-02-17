@@ -54,7 +54,8 @@ def sql_extent(sql):
     cursor.execute(sql)
     result = cursor.fetchall()
     row = result[0]
-    value = row[0].replace('BOX(', '').replace(')', '').replace(',', ' ')
+    extent = row[0] or '0 0 0 0'
+    value = extent.replace('BOX(', '').replace(')', '').replace(',', ' ')
     return tuple([float(v) for v in value.split()])
 
 

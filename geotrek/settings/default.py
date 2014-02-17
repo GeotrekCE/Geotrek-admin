@@ -37,9 +37,9 @@ FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 # Keep default values equal to buildout default values
 DEPLOY_ROOT = envini.get('deployroot', section="django", default=DEPLOY_ROOT)
-MEDIA_URL = envini.get('mediaurl', section="django", default=MEDIA_URL)
 MEDIA_URL_SECURE = envini.get('mediaurl_secure', section="django", default=MEDIA_URL_SECURE)
 STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
+MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
 MEDIA_ROOT =  envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
 STATIC_ROOT =  envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
 CACHE_ROOT =  envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
@@ -78,11 +78,11 @@ MAPENTITY_CONFIG['LANGUAGES'] = _MODELTRANSLATION_LANGUAGES
 #..........................
 
 MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
-                                                        envini.get('host', section='convertit', default='0.0.0.0'),
+                                                        envini.get('host', section='convertit', default='127.0.0.1'),
                                                         envini.get('port', section='convertit', default='6543'))
 
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
-                                                     envini.get('host', section='screamshotter', default='0.0.0.0'),
+                                                     envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
 
 

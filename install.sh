@@ -8,6 +8,8 @@ fi
 # Go to folder of install.sh
 cd "$(dirname "$0")"
 
+#------------------------------------------------------------------------------
+
 # Redirect whole output to log file
 rm -f install.log
 touch install.log
@@ -15,7 +17,6 @@ chmod 600 install.log
 
 exec 3>&1 4>&2
 exec 1> install.log 2>&1
-
 
 #------------------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ settingsfile=etc/settings.ini
 branch=master
 
 usage () {
-    cat <<- _EOF_
+    exec 2>&4
+    cat >&2 <<- _EOF_
 Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
@@ -37,6 +39,7 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
+    exec 2>&1
     return
 }
 
@@ -74,7 +77,7 @@ done
 function echo_step () {
     set +x
     exec 2>&4
-    echo -e "\e[92m\e[1m$1\e[0m" >&2
+    echo -e "\n\e[92m\e[1m$1\e[0m" >&2
     exec 2>&1
     set -x
 }
@@ -97,6 +100,14 @@ function echo_error () {
     set -x
 }
 
+
+function echo_progress () {
+    set +x
+    exec 2>&4
+    echo -e ".\c" >&2
+    exec 2>&1
+    set -x
+}
 
 function exit_error () {
     code=$1
@@ -182,21 +193,30 @@ function check_postgres_connection {
 
 function minimum_system_dependencies {
     sudo apt-get install -y -qq unzip wget python-software-properties
+    echo_progress
     sudo apt-add-repository -y ppa:git-core/ppa
     sudo apt-add-repository -y ppa:ubuntugis/ppa
+    echo_progress
     sudo apt-get update -qq
+    echo_progress
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
+    echo_progress
 }
 
 
 function geotrek_system_dependencies {
     sudo apt-get install -y -qq libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
+    echo_progress
     sudo apt-get install -y -qq postgresql-client gdal-bin
+    echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
+    echo_progress
 
     if $prod || $standalone ; then
         sudo apt-get install -y -qq ntp fail2ban
+        echo_progress
         sudo apt-get install -y -qq nginx memcached
+        echo_progress
     fi
 }
 
@@ -205,6 +225,7 @@ function convertit_system_dependencies {
     if $standalone ; then
         echo_step "Conversion server dependencies..."
         sudo apt-get install -y -qq libreoffice unoconv inkscape
+        echo_progress
     fi
 }
 
@@ -224,12 +245,14 @@ function screamshotter_system_dependencies {
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
+        echo_progress
 
         wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
         ln -sf $libpath/*casperjs*/bin/casperjs $binpath/casperjs
+        echo_progress
 
         if ! $dev ; then
             # Install system-wide binaries
@@ -243,6 +266,7 @@ function screamshotter_system_dependencies {
 function install_postgres_local {
     echo_step "Installing postgresql server locally..."
     sudo apt-get install -y -qq postgresql postgis postgresql-server-dev-9.1
+    echo_progress
 
     dbname=$(ini_value $settingsfile dbname)
     dbuser=$(ini_value $settingsfile dbuser)
@@ -263,6 +287,7 @@ function install_postgres_local {
         sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
         sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
         sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
+        echo_progress
 
         # Open local and host connection for this user as md5
         sudo sed -i "/DISABLE/a \
@@ -275,6 +300,7 @@ local    ${dbname}     ${dbuser}                   md5
 host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
 _EOF_
         sudo /etc/init.d/postgresql restart
+        echo_progress
     fi
 
     if $dev || $tests ; then
@@ -294,6 +320,7 @@ _EOF_
             # Listen to all network interfaces (useful for VM etc.)
             listen="'*'"
             sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
+            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/9.1/main/postgresql.conf
             sudo /etc/init.d/postgresql restart
         fi
     fi
@@ -301,6 +328,7 @@ _EOF_
 
 
 function backup_existing_database {
+    set +x
     if $interactive ; then
         exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
@@ -309,6 +337,7 @@ function backup_existing_database {
     else
         REPLY=N;
     fi
+    set -x
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)
@@ -352,8 +381,16 @@ function geotrek_setup {
        mv /tmp/Geotrek-$branch/* .
     fi
 
+    if ! $freshinstall ; then
+        backup_existing_database
+
+        # Python should be fresh
+        make clean
+    fi
+
     # Python bootstrap
     make install
+    echo_progress
 
     if $freshinstall && $interactive && ($prod || $standalone) ; then
         # Prompt user to edit/review settings
@@ -364,8 +401,10 @@ function geotrek_setup {
 
     echo_step "Configure Unicode and French locales..."
     sudo apt-get update > /dev/null
+    echo_progress
     sudo apt-get install -y -qq language-pack-en-base language-pack-fr-base
     sudo locale-gen fr_FR.UTF-8
+    echo_progress
 
     echo_step "Install Geotrek system dependencies..."
     geotrek_system_dependencies
@@ -379,18 +418,6 @@ function geotrek_setup {
     fi
 
     check_postgres_connection
-
-    if ! $freshinstall ; then
-        backup_existing_database
-
-        # In v0.22 we erased Django migrations
-        for app in authent common core infrastructure land maintenance trekking ; do
-            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
-        done;
-
-        # Python should be fresh
-        make clean
-    fi
 
     echo_step "Install Geotrek python dependencies..."
     if $dev ; then
@@ -407,6 +434,13 @@ function geotrek_setup {
         exit_error 3 "Could not setup python environment !"
     fi
 
+    if ! $freshinstall ; then
+        # In v0.22 we erased Django migrations
+        for app in authent common core infrastructure land maintenance trekking ; do
+            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
+        done;
+    fi
+
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
         bin/django syncdb --noinput
@@ -416,6 +450,7 @@ function geotrek_setup {
 
         echo_step "Generate services configuration files..."
         make deploy
+        echo_progress
 
         # If buildout was successful, deploy really !
         if [ -f etc/init/supervisor.conf ]; then
@@ -439,6 +474,7 @@ function geotrek_setup {
             sudo cp etc/init/supervisor.conf /etc/init/geotrek.conf
             sudo stop geotrek
             sudo start geotrek
+            echo_progress
         else
             exit_error 6 "Geotrek package could not be installed."
         fi
@@ -448,7 +484,6 @@ function geotrek_setup {
 
     echo_step "Done."
 }
-
 
 precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 
