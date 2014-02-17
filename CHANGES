@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.22.3 (unreleased)
+0.22.3 (2014-02-17)
 -------------------
 
 * Fix install.sh help not being shown
