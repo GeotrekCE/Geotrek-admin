@@ -17,13 +17,13 @@ install:
   - if [[ $ACTION == deploy ]]; then ./install.sh --noinput; fi
 script:
   - if [[ $ACTION == deploy ]]; then make load_demo; fi
+  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then make env_test test; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage
   - if [[ $ACTION == test ]]; then rm -rf ./var/media/maps/*; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
 after_success:
-  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
   - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
