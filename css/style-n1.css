@@ -48,8 +48,8 @@
 		z-index: 1;
 		top: 0;
 		left: 50%;
-		width: 15em;
-		margin-left: -7.5em;
+		width: 12em;
+		margin-left: -4.5em;
 		height: 4em;
 	}
 	
@@ -131,7 +131,7 @@
 
 			#nav > ul > li.break
 			{
-				margin-left: 20em;
+				margin-left: 16em;
 			}
 			
 	.dropotron
