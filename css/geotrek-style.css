@@ -1,4 +1,16 @@
 
+#logo {
+    background: url('../images/logo_geotrek.png') no-repeat;
+}
+
+    #logo span {
+        padding-left: 5em;
+    }
+
 #hero ul.actions {
     padding-bottom: 1em;
+}
+
+#nav li {
+    font-weight: bold;
 }
