@@ -955,7 +955,7 @@
     #promo-wrapper
     {
         position: relative;
-        background: url('../images/promo.jpg') center center;
+        background-color: #97BB35;
         background-size: cover;
         color: #fff;
         text-align: center;
