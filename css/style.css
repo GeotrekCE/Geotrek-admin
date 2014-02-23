@@ -50,7 +50,7 @@
     
         a:hover
         {
-            color: #f35858;
+            color: #97BB35;
             border-bottom-color: rgba(255,255,255,0);
         }
 
@@ -109,7 +109,7 @@
         header > span
         {
             display: block;
-            color: #f34848;
+            color: #97BB35;
         }
 
         header.major
@@ -417,8 +417,8 @@
 
             .button:hover
             {
-                color: #f35858;
-                border-color: rgba(243,88,88,0.5);
+                color: #97BB35;
+                border-color: rgba(151,187,53,0.5);
             }
             
             .button:active
@@ -917,6 +917,7 @@
         {
             position: relative;
             z-index: 2;
+            padding: 0 6em;
         }
     
         .image-wrapper.first:before

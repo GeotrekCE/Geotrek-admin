@@ -14,8 +14,8 @@ skel.init({
 	boxModel: 'border',
 	breakpoints: {
 		'n1': { range: '*', containers: 1200, grid: { gutters: 50 } },
-		'n2': { range: '-1280', containers: 960, grid: { gutters: 40 } },
-		'n3': { range: '-1230', containers: 'fluid', grid: { gutters: 40 } },
+		'n2': { range: '-1320', containers: 960, grid: { gutters: 40 } },
+		'n3': { range: '-1300', containers: 'fluid', grid: { gutters: 40 } },
 		'n4': { range: '-820', lockViewport: true, containers: 'fluid', grid: { gutters: 30, collapse: 1 } },
 		'n5': { range: '-640', lockViewport: true, containers: 'fluid', grid: { gutters: 30, collapse: 2 } },
 		'n6': { range: '-568', lockViewport: true, containers: 'fluid', grid: { gutters: 15, collapse: 2 } }
