@@ -11,6 +11,8 @@ class Command(BaseCommand):
     args = '<point_layer>'
     help = 'Load a layer with point geometries in a model\n'
     can_import_settings = True
+    field_name = 'name'
+    field_poitype = 'type'
 
     def handle(self, *args, **options):
 
@@ -39,8 +41,14 @@ class Command(BaseCommand):
             feature = layer.GetFeature(i)
             featureGeom = feature.GetGeometryRef()
             geometry = GEOSGeometry(featureGeom.ExportToWkt())
-            self.create_poi(geometry)
+            name = feature.GetFieldAsString(self.field_name)
+            if name:
+                name = name.decode('utf-8')
+            poitype = feature.GetFieldAsString(self.field_poitype)
+            if poitype:
+                poitype = poitype.decode('utf-8')
+            self.create_poi(geometry, name, poitype)
 
-    def create_poi(self, geometry):
+    def create_poi(self, geometry,  name, poitype):
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         TopologyHelper.deserialize(serialized)

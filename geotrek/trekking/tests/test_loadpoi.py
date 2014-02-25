@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from StringIO import StringIO
 from mock import patch, call
@@ -52,3 +53,20 @@ class LoadPOITest(TestCase):
             call2 = mocked.call_args_list[1][0]
             self.assertEquals(call1[0], geom1)
             self.assertEquals(call2[0], geom2)
+
+    def test_create_pois_receives_fields_names_and_types(self):
+        with patch.object(Command, 'create_poi') as mocked:
+            self.cmd.execute(self.filename)
+            call1 = mocked.call_args_list[0][0]
+            call2 = mocked.call_args_list[1][0]
+            self.assertEquals(call1[1], 'pont')
+            self.assertEquals(call2[1], 'pancarte 1')
+            self.assertEquals(call1[2], u'équipement')
+            self.assertEquals(call2[2], 'signaletique')
+
+    def test_create_pois_receives_null_if_field_missing(self):
+        self.cmd.field_name = 'name2'
+        with patch.object(Command, 'create_poi') as mocked:
+            self.cmd.execute(self.filename)
+            call1 = mocked.call_args_list[0][0]
+            self.assertEquals(call1[1], None)
