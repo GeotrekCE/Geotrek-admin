@@ -1,4 +1,13 @@
 
+/* Basic theme colors 
+
+    Makina Corpus green : #97BB35;
+    Title text : #525758;
+
+
+*/
+
+
 #logo {
     background: url('../images/logo_geotrek.png') -3px -2px no-repeat;
 }
@@ -24,3 +33,22 @@
 #promo-wrapper.light {
     background: white;
 }
+
+.wrapper.dark {
+    background-color: #97BB35;
+    color: white;
+}
+    .wrapper.dark a:hover {
+        color: #525758;
+        border-color: #525758;
+    }
+
+        .wrapper.dark .image-wrapper img {
+            background-color: white;
+            padding: 1em;
+        }
+
+        .wrapper.dark.pictos .image-wrapper img {
+            background-color: inherit;
+            padding: 1em;
+        }
