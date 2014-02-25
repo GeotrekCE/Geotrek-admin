@@ -21,10 +21,6 @@
     height: auto;
 }
 
-#promo-wrapper {
-    padding: 0;
+#promo-wrapper.light {
+    background: white;
 }
-
-    #promo-wrapper.light {
-        background: white;
-    }

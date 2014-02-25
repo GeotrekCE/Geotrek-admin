@@ -917,7 +917,6 @@
         {
             position: relative;
             z-index: 2;
-            padding: 0 6em;
         }
     
         .image-wrapper.first:before
