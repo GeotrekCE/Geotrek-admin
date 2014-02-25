@@ -1,11 +1,11 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.gis.geos import GEOSGeometry
-
-from django.conf import settings
 import os.path
 
-from geotrek.core.helpers import TopologyHelper
+from django.core.management.base import BaseCommand, CommandError
+from django.contrib.gis.geos import GEOSGeometry
+from django.conf import settings
 
+from geotrek.core.helpers import TopologyHelper
+from geotrek.trekking.models import POI, POIType
 
 class Command(BaseCommand):
     args = '<point_layer>'
@@ -50,5 +50,9 @@ class Command(BaseCommand):
             self.create_poi(geometry, name, poitype)
 
     def create_poi(self, geometry,  name, poitype):
-        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        TopologyHelper.deserialize(serialized)
+        poitype, created = POIType.objects.get_or_create(label=poitype)
+        poi = POI.objects.create(name=name, type=poitype)
+
+        #serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+        #topology = TopologyHelper.deserialize(serialized)
+        #poi.mutate(topology)

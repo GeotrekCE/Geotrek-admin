@@ -17,7 +17,7 @@ class LoadPOITest(TestCase):
         self.cmd = Command()
         self.filename = os.path.join(os.path.dirname(__file__),
                                      'data', 'poi.shp')
-        PathFactory.create()
+        self.path = PathFactory.create()
 
     def test_command_fails_if_no_arg(self):
         self.assertRaises(CommandError, self.cmd.execute)
@@ -32,12 +32,6 @@ class LoadPOITest(TestCase):
         output = StringIO()
         self.cmd.execute(self.filename, stdout=output)
         self.assertIn('2 objects found', output.getvalue())
-
-    # def test_pois_are_created(self):
-    #     before = len(POI.objects.all())
-    #     self.cmd.execute(self.filename)
-    #     after = len(POI.objects.all())
-    #     self.assertEquals(after - before, 2)
 
     def test_create_pois_is_executed(self):
         with patch.object(Command, 'create_poi') as mocked:
@@ -70,3 +64,10 @@ class LoadPOITest(TestCase):
             self.cmd.execute(self.filename)
             call1 = mocked.call_args_list[0][0]
             self.assertEquals(call1[1], None)
+
+    def test_pois_are_created(self):
+        geom = GEOSGeometry('POINT(1 1)')
+        before = len(POI.objects.all())
+        self.cmd.create_poi(geom, 'bridge', 'infra')
+        after = len(POI.objects.all())
+        self.assertEquals(after - before, 1)
