@@ -14,3 +14,17 @@
 #nav li {
     font-weight: bold;
 }
+
+.owl-carousel .item img{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#promo-wrapper {
+    padding: 0;
+}
+
+    #promo-wrapper.light {
+        background: white;
+    }

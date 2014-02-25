@@ -16,8 +16,11 @@
         <script src="js/jquery.dropotron.min.js"></script>
         <script src="js/skel.min.js"></script>
         <script src="js/skel-panels.min.js"></script>
+        <script src="js/owl.carousel.min.js"></script>
         <script src="js/init.js"></script>
         <link rel="stylesheet" href="css/geotrek-style.css" />
+        <link rel="stylesheet" href="css/owl.carousel.css" />
+        <link rel="stylesheet" href="css/owl.theme.css" />
         <noscript>
             <link rel="stylesheet" href="css/skel-noscript.css" />
             <link rel="stylesheet" href="css/style.css" />
@@ -104,11 +107,14 @@
             </div>
 
         <!-- Promo -->
-            <div id="promo-wrapper">
+            <div id="promo-wrapper" class="light">
 
-                <section id="promo">
-                    <h2>Une application web dans l'air du temps</h2>
-                    <a href="#" class="button">Voir les technos</a>
+                <header class="major">
+                        <h2>Des images magnifiques</h2>
+                </header>
+                <section class="owl-carousel">
+                    <div class="item"><img src="images/carousel_slide1.png" alt="Slide 1"></div>
+                    <div class="item"><img src="images/carousel_slide2.png" alt="Slide 2"></div>
                 </section>
 
             </div>
@@ -148,6 +154,16 @@
                 </section>
 
             </div>
+
+        <!-- Promo -->
+            <div id="promo-wrapper">
+
+                <section id="promo">
+                    <h2>Une application web dans l'air du temps</h2>
+                    <a href="#" class="button">Voir les technos</a>
+                </section>
+
+            </div>            
 
         <!-- Footer Wrapper -->
             <div id="footer-wrapper">
