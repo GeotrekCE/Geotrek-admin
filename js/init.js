@@ -50,7 +50,7 @@ skel.init({
 
 $(document).ready(function() {
 
-	jQuery(".owl-carousel").owlCarousel({
+	$(".owl-carousel").owlCarousel({
  	
 		// navigation : true, // Show next and prev buttons
 		slideSpeed : 300,
@@ -66,4 +66,22 @@ $(document).ready(function() {
 		// itemsMobile : false
 			 
 	});
+
+	$("#footer-wrapper form").on('submit', function(event) {
+		event.preventDefault();
+
+		$.ajax({
+		  dataType: 'jsonp',
+		  url: "http://getsimpleform.com/messages/ajax?form_api_token=d14432edc1269f479dc16265ec79dc72",
+		  data: {
+		    name: $(this).find('[name="name"]').val(),
+		    email: $(this).find('[name="email"]').val(),
+		    message: $(this).find('[name="message"]').val()
+		  }
+		}).done(function() {
+			$("#footer-wrapper .confirmed").show();
+		});
+
+	});
+
 });
