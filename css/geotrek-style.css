@@ -56,9 +56,13 @@
     font-size: 80%;
 }
 
+    #news span.date {
+        margin-top: 1em;
+    }
+
 #news p {
     font-size: 80%;
-    line-height: 100%;
+    line-height: 1.5;
 }
 
 input[type="submit"] {
