@@ -4,7 +4,6 @@
     Makina Corpus green : #97BB35;
     Title text : #525758;
 
-
 */
 
 
@@ -64,6 +63,10 @@
 
 input[type="submit"] {
     cursor: pointer;
+}
+
+.confirmed {
+    margin-left: 1em;
 }
 
 /*********************************************************************************/
