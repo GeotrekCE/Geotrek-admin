@@ -70,9 +70,9 @@ class SnappedLineStringField(LineStringField):
 
             # Geometry is like usual
             geom = fromstr(geom)
-            geom.srid = settings.API_SRID
             if geom is None:
                 raise ValueError("Invalid geometry in JSON")
+            geom.srid = settings.API_SRID
             geom.transform(settings.SRID)
 
             # We have the list of snapped paths, we use them to modify the
@@ -80,17 +80,14 @@ class SnappedLineStringField(LineStringField):
             snaplist = value.get('snap', [])
             if geom.num_coords != len(snaplist):
                 raise ValueError("Snap list length != %s (%s)" % (geom.num_coords, snaplist))
-            paths_pk = [(i, p) for (i, p) in enumerate(snaplist)]
-            paths = [(i, Path.objects.get(pk=pk)) for (i, pk) in paths_pk if pk is not None]
-            paths = dict(paths)
+            paths = [Path.objects.get(pk=pk) if pk is not None else None
+                     for pk in snaplist]
             coords = list(geom.coords)
-            for i, vertex in enumerate(coords):
-                path = paths.get(i)
+            for i, (vertex, path) in enumerate(zip(coords, paths)):
                 if path:
                     # Snap vertex on path
                     snap = path.snap(Point(*vertex, srid=geom.srid))
-                    vertex = snap.coords
-                coords[i] = vertex
+                    coords[i] = snap.coords
             return LineString(*coords, srid=settings.SRID)
         except (TypeError, Path.DoesNotExist, ValueError) as e:
             logger.warning("User input error: %s" % e)

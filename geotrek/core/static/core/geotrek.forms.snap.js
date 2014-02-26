@@ -41,7 +41,7 @@ MapEntity.GeometryField.GeometryFieldPathMixin = {
      */
     buildPathsLayer: function (objectsLayer) {
         var pathsLayer = new L.ObjectsLayer(null, {
-            style: L.Util.extend(window.SETTINGS.map.styles.path, {clickable: true})
+            style: L.Util.extend({clickable: true}, window.SETTINGS.map.styles.path)
         });
         this._map.addLayer(pathsLayer);
         // Start ajax loading at last
@@ -103,6 +103,12 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
             this._pathsLayer = this.buildPathsLayer(this._objectsLayer);
             this._guidesLayers.push(this._pathsLayer);
         }
+        else {
+            // It should like paths everywhere in the application
+            var style = window.SETTINGS.map.styles.path;
+            this._objectsLayer.options.style = style;
+            this._objectsLayer.options.styles.default = style;
+        }
 
         if (this._geometry) {
             // null if not loaded (e.g. creation form)
@@ -128,11 +134,10 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
             console.warn('Unsupported layer type for snap.');
             return;
         }
-        var handler = layer.snapediting = new handlerClass(this._map, layer);
+        layer.editing = new handlerClass(this._map, layer);
         for (var i=0, n=this._guidesLayers.length; i<n; i++) {
-            handler.addGuideLayer(this._guidesLayers[i]);
+            layer.editing.addGuideLayer(this._guidesLayers[i]);
         }
-        handler.enable();
 
         // Since snapping happens only once the geometry is created.
         // We are out of Leaflet.Draw.
