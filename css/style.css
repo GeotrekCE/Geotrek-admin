@@ -1120,3 +1120,32 @@ section.news {
     overflow-y: scroll;
     max-height:360px;
 }
+
+/*********************************************************************************/
+/* Nav                                                                           */
+/*********************************************************************************/
+
+nav {
+    height: 2em;
+    left: 0;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    color: #52575C;
+    background-color: #EBEDF0;
+}
+
+    nav ul {
+        margin-bottom: 0.5em;
+        background-color: #EBEDF0;
+    }
+
+    nav li {
+        display: inline-block;
+        margin: 0 0.5em;
+        position: relative;
+        top: 0;
+        transition: top 0.15s ease-in-out 0s;
+    }

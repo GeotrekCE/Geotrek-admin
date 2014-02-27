@@ -41,7 +41,7 @@
 	
 		.homepage #header-wrapper
 		{
-			padding: 5em 0 4em 0;
+			padding: 7em 0 4em 0;
 		}
 	
 	#promo-wrapper
@@ -58,7 +58,7 @@
 /* Header                                                                        */
 /*********************************************************************************/
 
-	#nav
+	/*#nav
 	{
 		position: relative;
 		margin: 0.5em 0 0 0;
@@ -74,7 +74,7 @@
 			#nav > ul > li.break
 			{
 				margin-left: 0;
-			}
+			}*/
 			
 	.dropotron.level-0
 	{

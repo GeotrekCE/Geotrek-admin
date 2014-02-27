@@ -46,7 +46,7 @@
 	{
 		position: absolute;
 		z-index: 1;
-		top: 0;
+		top: 2em;
 		left: 50%;
 		width: 12em;
 		margin-left: -4.5em;
@@ -71,7 +71,7 @@
 			text-transform: uppercase;
 		}
 
-	#nav
+	/*#nav
 	{
 		text-align: center;
 		position: absolute;
@@ -131,7 +131,7 @@
 			#nav > ul > li.break
 			{
 				margin-left: 16em;
-			}
+			}*/
 			
 	.dropotron
 	{
