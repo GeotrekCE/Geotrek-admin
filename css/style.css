@@ -937,7 +937,6 @@
     {
         position: relative;
         background: url('../images/header_img.png') no-repeat;
-        background-attachment: fixed;
     }
     
         #header-wrapper:before
