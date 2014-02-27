@@ -30,3 +30,8 @@
 				padding-top: 0;
 				margin-top: 0;
 			}
+
+	section.news {
+    	overflow-y: auto;
+    	max-height: none;
+	}
