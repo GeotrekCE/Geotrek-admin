@@ -6,6 +6,8 @@ CHANGELOG
 -------------------
 
 * Fix install.sh not compiling locale messages (fixes #965)
+* Moved trek completeness fields to setting `TREK_COMPLETENESS_FIELDS`. Duration
+  and difficulty were added, arrival was removed (fixes #967)
 
 0.22.3 (2014-02-17)
 -------------------
