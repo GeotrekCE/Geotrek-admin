@@ -10,6 +10,7 @@ CHANGELOG
   and difficulty were added, arrival was removed (fixes #967)
 * Fix regression about source locale messages (fixes #970)
 * Fix regression link `Back to application` lost from adminsite (fixes #971)
+* Serve uploaded files as attachments (fixes #972)
 
 0.22.3 (2014-02-17)
 -------------------
