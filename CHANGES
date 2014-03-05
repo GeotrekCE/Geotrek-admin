@@ -9,6 +9,7 @@ CHANGELOG
 * Moved trek completeness fields to setting `TREK_COMPLETENESS_FIELDS`. Duration
   and difficulty were added, arrival was removed (fixes #967)
 * Fix regression about source locale messages (fixes #970)
+* Fix regression link `Back to application` lost from adminsite (fixes #971)
 
 0.22.3 (2014-02-17)
 -------------------
