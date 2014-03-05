@@ -227,3 +227,9 @@ Pictogrammes monochromes vectoriels (facultatif) :
 * Thématiques randonnées
 * Types de points d'intérêt
 * Usages
+
+
+Divers
+------
+
+* Google Analytics account number
