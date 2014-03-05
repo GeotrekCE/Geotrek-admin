@@ -24,7 +24,7 @@ class AdminSiteTest(TestCase):
     def test_user_cant_access(self):
         self.login(self.user)
         response = self.client.get('/admin/')
-        self.assertContains(response, 'Log in | Django site admin')
+        self.assertContains(response, 'Log in | Geotrek administration')
 
     def test_admin_can_see_everything(self):
         self.login(self.admin)
