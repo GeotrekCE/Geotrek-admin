@@ -3,7 +3,9 @@
 #..........................
 #
 # (Note: If you edit this file out of install process,
-#  re-run "./install.sh" to apply changes)
+#  re-run "./install.sh" to apply changes.
+#  Running "make env_standalone deploy" is faster and might be enough
+#  depending on the entries you modified...)
 
 [settings]
 

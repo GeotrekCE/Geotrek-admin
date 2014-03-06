@@ -59,5 +59,9 @@ License
     :target: http://www.parcoalpimarittime.it
 
 
+.. image:: http://geotrek.fr/images/logo-pnrgc.png
+    :target: http://www.parc-grands-causses.fr
+
+
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
