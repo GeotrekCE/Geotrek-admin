@@ -359,7 +359,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def is_complete(self):
         """It should also have a description, etc.
         """
-        mandatory = ['departure', 'arrival', 'description_teaser']
+        mandatory = settings.TREK_COMPLETENESS_FIELDS
         for f in mandatory:
             if not getattr(self, f):
                 return False
