@@ -47,6 +47,11 @@
             padding: 1em;
         }
 
+        .wrapper.light .image-wrapper img {
+            background-color: #97BB35;
+            padding: 1em;
+        }
+
         .wrapper.dark.pictos .image-wrapper img {
             background-color: inherit;
             padding: 1em;

@@ -1134,12 +1134,11 @@ nav {
     width: 100%;
     z-index: 1000;
     color: #52575C;
-    background-color: #EBEDF0;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
     nav ul {
         margin-bottom: 0.5em;
-        background-color: #EBEDF0;
     }
 
     nav li {
