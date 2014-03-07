@@ -1,0 +1,154 @@
+
+/* Basic theme colors 
+
+    Makina Corpus green : #97BB35;
+    Title text : #525758;
+
+*/
+
+
+#logo {
+    background: url('../images/logo_geotrek.png') -3px -2px no-repeat;
+}
+
+    #logo span {
+        padding-left: 5em;
+    }
+
+#hero ul.actions {
+    padding-bottom: 1em;
+}
+
+#nav li {
+    font-weight: bold;
+}
+
+.owl-carousel .item img{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#promo-wrapper.light {
+    background: white;
+}
+
+.wrapper.dark {
+    background-color: #97BB35;
+    color: white;
+}
+    .wrapper.dark a:hover {
+        color: #525758;
+        border-color: #525758;
+    }
+
+        .wrapper.dark .image-wrapper img {
+            background-color: white;
+            padding: 1em;
+        }
+
+        .wrapper.dark.pictos .image-wrapper img {
+            background-color: inherit;
+            padding: 1em;
+        }
+
+#news span {
+    font-size: 80%;
+}
+
+    #news span.date {
+        margin-top: 1em;
+    }
+
+#news p {
+    font-size: 80%;
+    line-height: 1.5;
+}
+
+input[type="submit"] {
+    cursor: pointer;
+}
+
+.confirmed {
+    margin-left: 1em;
+}
+
+/*********************************************************************************/
+/* Styling from Dopetrope theme                                                  */
+/*********************************************************************************/
+    ul.dates
+    {
+    }
+    
+        ul.dates li
+        {
+            position: relative;
+            border-top: solid 1px #ddd;
+            padding: 1.3em 0 1.3em 6.75em;
+        }
+
+        ul.dates .date
+        {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 1.3em;
+            background-color: #97BB35;
+            height: 3.5em;
+            text-align: center;
+            color: #fff;
+            line-height: 1em;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding: 0.5em 0.75em 0 1em;
+        }
+
+            ul.dates .date:after
+            {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                right: -1.2em;
+                border-left: solid 1.25em #97BB35;
+                border-top: solid 1.8em transparent;
+                border-bottom: solid 1.8em transparent;
+            }
+        
+            ul.dates .date strong
+            {
+                display: block;
+                font-size: 1.75em;
+                padding-top: 0.15em;
+            }
+            
+        ul.dates h3
+        {
+            font-size: 1.1em;
+        }
+            
+        ul.dates p
+        {
+            margin: 0;
+        }
+
+        ul.dates li:first-child
+        {
+            border-top: 0;
+            padding-top: 0;
+        }
+        
+            ul.dates li:first-child .date
+            {
+                top: 0;
+            }
+
+.wrapper.dark ul.dates .date
+{
+    background-color: #fff;
+    color: #97BB35;
+}
+
+.wrapper.dark ul.dates .date:after
+{
+    border-left: solid 1.25em #fff;
+}
