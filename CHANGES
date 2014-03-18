@@ -14,6 +14,7 @@ CHANGELOG
 * Fix missing thumbnail in trek and POI detail pages
 * Fix black background on map captures (fixes #979)
 * Increased scale text size on map captures (fixes #850)
+* Show map attributions on map captures (fixes #852)
 
 0.22.4 (2014-03-06)
 -------------------
