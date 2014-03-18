@@ -12,6 +12,7 @@ CHANGELOG
 * Fix attached files not shown after file upload/delete (fixes #933)
 * Fix links being removed from trek descriptions (fixes #981)
 * Fix missing thumbnail in trek and POI detail pages
+* Fix black background on map captures (fixes #979)
 
 0.22.4 (2014-03-06)
 -------------------
