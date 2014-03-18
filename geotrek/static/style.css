@@ -1,5 +1,5 @@
 /*
- * This file contains styles that are specific to Geotrek, 
+ * This file contains styles that are specific to Geotrek,
  * with no reason to be in MapEntity.
  * (paths, aggregations, altimetric profile, etc.)
  */
@@ -83,6 +83,9 @@ img.marker-snapped {
 .leaflet-label.landlabel {
     font-weight: normal;
     font: 10px/12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.leaflet-label.landlabel:before {
+    top: 0px;
 }
 
 
