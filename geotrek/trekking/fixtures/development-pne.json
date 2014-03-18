@@ -21,7 +21,7 @@
         "advised_parking": "<p>Advised parking 0</p>",
         "name_it": null,
         "departure_it": null,
-        "parking_location": "POINT (1.0000000000000000 1.0000000000000000)",
+        "parking_location": "POINT(5.95 44.9)",
         "description_teaser": "<p>description_teaser 0</p>",
         "networks": [],
         "access": "<p>access 0</p>",
@@ -78,6 +78,52 @@
     "fields": {
         "slope": 0.0,
         "kind": "TREK",
+        "descent": 0,
+        "deleted": false,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z",
+        "length": 0,
+        "max_elevation": 0,
+        "geom": "LINESTRING (0 0, 1 1)",
+        "offset": 0.0,
+        "geom_3d": "LINESTRING Z (0 0 0, 1 1 0)",
+        "ascent": 0,
+        "min_elevation": 0
+    }},
+
+
+
+    {
+        "pk": 9015,
+        "model": "trekking.poi",
+        "fields": {
+            "name": "name 0",
+            "name_fr": null,
+            "name_en": null,
+            "name_it": null,
+            "description": "description 0",
+            "description_fr": null,
+            "description_en": null,
+            "description_it": null,
+            "type": 1
+        }
+    },
+    {
+        "model": "core.pathaggregation",
+        "fields": {
+            "path": 1,
+            "end_position": 0.5,
+            "start_position": 0.5,
+            "order": 1,
+            "topo_object": 9015
+        }
+    },
+    {
+    "pk": 9015,
+    "model": "core.topology",
+    "fields": {
+        "slope": 0.0,
+        "kind": "POI",
         "descent": 0,
         "deleted": false,
         "date_update": "2014-02-12T11:21:48.961Z",
