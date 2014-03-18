@@ -24,6 +24,10 @@
             <td>{% if poi.description %}{{ poi.description|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ poi.thumbnail.url }}"></td>
+        </tr>
 
         {% include "core/elevationinfo_fragment.html" %}
 
