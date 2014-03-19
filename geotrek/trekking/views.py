@@ -179,12 +179,7 @@ class TrekDocumentPublic(TrekDocument):
             setattr(trek, attr, plain_text(getattr(trek, attr)))
         context['object'] = trek
         context['trek'] = trek
-        ratio = trek.get_geom_aspect_ratio()
-        if ratio > 1.0:
-            mapimage_ratio = (12, 12/ratio)
-        else:
-            mapimage_ratio = (10*ratio, 10)
-        context['mapimage_ratio'] = mapimage_ratio
+        context['mapimage_ratio'] = trek.get_map_image_size()
         return context
 
     def render_to_response(self, context, **response_kwargs):
