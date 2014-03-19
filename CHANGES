@@ -17,6 +17,8 @@ CHANGELOG
 * Show map attributions on map captures (fixes #852)
 * Fix aspect ratios of map in trek public documents (fixes #849)
 
+* Added north arrow in map image exports (fixes #851)
+
 
 0.22.4 (2014-03-06)
 -------------------
