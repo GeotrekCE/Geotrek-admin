@@ -16,6 +16,9 @@ CHANGELOG
 * Increased scale text size on map captures (fixes #850)
 * Show map attributions on map captures (fixes #852)
 * Fix aspect ratios of map in trek public documents (fixes #849)
+* Fix objects list not being filtered on map extent (fixes #982)
+* Fix coherence of map layer when text search in objects list (fixes #702)
+* Fix number of results not refresh on text search (fixes #865)
 
 * Added north arrow in map image exports (fixes #851)
 * Removed darker effect on backgrounds for map image exports, and added internal
