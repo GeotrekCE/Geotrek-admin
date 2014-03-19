@@ -18,6 +18,8 @@ CHANGELOG
 * Fix aspect ratios of map in trek public documents (fixes #849)
 
 * Added north arrow in map image exports (fixes #851)
+* Removed darker effect on backgrounds for map image exports, and added internal
+  advanced setting ``MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True``
 
 
 0.22.4 (2014-03-06)
