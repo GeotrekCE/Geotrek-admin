@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.22.5 (unreleased)
+0.22.5 (2014-03-19)
 -------------------
 
 * Fix compilation of translations (ref #970)
