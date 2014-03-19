@@ -200,7 +200,7 @@
         </tr>
         <tr>
             <th>{% trans "Thumbnail" %}</th>
-            <td><img src="{{ trek.picture|thumbnail_url:"small-square" }}"></td>
+            <td><img src="{{ trek.thumbnail.url }}"></td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

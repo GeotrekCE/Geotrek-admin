@@ -7,6 +7,29 @@ CHANGELOG
 
 * Nothing changed yet.
 
+0.22.5 (2014-03-19)
+-------------------
+
+* Fix compilation of translations (ref #970)
+* Fix distinction between languages and translated languages (fixes #968)
+* Fix history tabs not being shown after upgrade to Django 1.6 (fixes #975)
+* Fix regression on land layer label colors (fixes #980)
+* Fix attached files not shown after file upload/delete (fixes #933)
+* Fix links being removed from trek descriptions (fixes #981)
+* Fix missing thumbnail in trek and POI detail pages
+* Fix black background on map captures (fixes #979)
+* Increased scale text size on map captures (fixes #850)
+* Show map attributions on map captures (fixes #852)
+* Fix aspect ratios of map in trek public documents (fixes #849)
+* Fix objects list not being filtered on map extent (fixes #982)
+* Fix coherence of map layer when text search in objects list (fixes #702)
+* Fix number of results not refresh on text search (fixes #865)
+
+* Added north arrow in map image exports (fixes #851)
+* Removed darker effect on backgrounds for map image exports, and added internal
+  advanced setting ``MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True``
+
+
 0.22.4 (2014-03-06)
 -------------------
 
