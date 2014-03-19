@@ -212,6 +212,19 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
 
+    def get_geom_aspect_ratio(self):
+        """ Force trek aspect ratio to fit height and width of
+        image in public document.
+        """
+        s = self.get_map_image_size()
+        return float(s[0]) / s[1]
+
+    def get_map_image_size(self):
+        """
+        Map image size in public trek document
+        """
+        return (13, 11)
+
     def get_attachment_print(self):
         """
         Look in attachment if there is document to be used as print version

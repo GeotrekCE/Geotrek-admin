@@ -342,6 +342,7 @@ MAPENTITY_CONFIG = {
     'CONVERSION_SERVER': 'http://127.0.0.1:6543',
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
+    'MAP_BACKGROUND_FOGGED': True,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
