@@ -424,7 +424,7 @@ class AltimetryHelper(object):
                     FROM columns, lines
                 ),
                 draped AS (
-                    SELECT id, ST_Value(mnt.rast, p.geom) AS altitude
+                    SELECT id, ST_Value(mnt.rast, p.geom)::int AS altitude
                     FROM mnt, points2d AS p
                     WHERE ST_Intersects(mnt.rast, p.geom)
                 ),
@@ -435,11 +435,15 @@ class AltimetryHelper(object):
                 ),
                 extent_latlng AS (
                     SELECT ST_Envelope(ST_Union(geomll)) AS extent,
+                           MIN(altitude) AS min_z,
+                           MAX(altitude) AS max_z,
                            AVG(altitude) AS center_z
                     FROM all_draped
                 )
             SELECT extent,
                    center_z,
+                   min_z,
+                   max_z,
                    resolution.x AS resolution_w,
                    resolution.y AS resolution_h,
                    altitude
@@ -449,7 +453,7 @@ class AltimetryHelper(object):
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
-        envelop, center_z, resolution_w, resolution_h, a = first
+        envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
         envelop = GEOSGeometry(envelop, srid=4326)
         envelop_native = envelop.transform(settings.SRID, clone=True)
 
@@ -460,7 +464,8 @@ class AltimetryHelper(object):
                 altitudes.append(row)
                 row = []
             else:
-                row.append(record[4])
+                elevation = record[6] - min_z
+                row.append(elevation)
         altitudes.append(row)
 
         area = {
@@ -469,7 +474,7 @@ class AltimetryHelper(object):
                 'y': envelop_native.centroid.y,
                 'lat': envelop.centroid.y,
                 'lng': envelop.centroid.x,
-                'z': center_z
+                'z': int(center_z)
             },
             'resolution': {
                 'x': resolution_w,
@@ -483,6 +488,10 @@ class AltimetryHelper(object):
                 'lng': envelop.coords[0][2][1] - envelop.coords[0][0][1]
             },
             'extent': {
+                'altitudes': {
+                    'min': min_z,
+                    'max': max_z
+                },
                 'southwest': {'lat': envelop.coords[0][0][1],
                               'lng': envelop.coords[0][0][0],
                               'x': envelop_native.coords[0][0][0],

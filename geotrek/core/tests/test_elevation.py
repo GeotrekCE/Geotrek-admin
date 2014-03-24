@@ -131,9 +131,6 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(len(self.area['altitudes']), 30)
         self.assertEqual(len(self.area['altitudes'][0]), 49)
 
-    def test_altitude_is_none_when_no_dem_value(self):
-        self.assertEqual(self.area['altitudes'][10][10], None)
-
     def test_area_provides_resolution(self):
         self.assertEqual(self.area['resolution']['x'], 49)
         self.assertEqual(self.area['resolution']['y'], 30)
@@ -165,3 +162,8 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(extent['northeast']['lng'], -1.3556168180869463)
         self.assertEqual(extent['southwest']['lat'], -5.98385630920877)
         self.assertEqual(extent['southwest']['lng'], -1.363330663055411)
+
+    def test_area_provides_altitudes_extent(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['altitudes']['max'], 45)
+        self.assertEqual(extent['altitudes']['min'], 0)
