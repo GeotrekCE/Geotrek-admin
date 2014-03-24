@@ -71,3 +71,8 @@ class LoadPOITest(TestCase):
         self.cmd.create_poi(geom, 'bridge', 'infra')
         after = len(POI.objects.all())
         self.assertEquals(after - before, 1)
+
+    def test_pois_are_attached_to_paths(self):
+        geom = GEOSGeometry('POINT(1 1)')
+        poi = self.cmd.create_poi(geom, 'bridge', 'infra')
+        self.assertEquals([self.path], list(poi.paths.all()))

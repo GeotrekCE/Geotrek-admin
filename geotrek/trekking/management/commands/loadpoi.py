@@ -52,7 +52,10 @@ class Command(BaseCommand):
     def create_poi(self, geometry,  name, poitype):
         poitype, created = POIType.objects.get_or_create(label=poitype)
         poi = POI.objects.create(name=name, type=poitype)
-
-        #serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        #topology = TopologyHelper.deserialize(serialized)
-        #poi.mutate(topology)
+        # Use existing topology helpers to transform a Point(x, y)
+        # to a path aggregation (topology)
+        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+        topology = TopologyHelper.deserialize(serialized)
+        # Move deserialization aggregations to the POI
+        poi.mutate(topology)
+        return poi
