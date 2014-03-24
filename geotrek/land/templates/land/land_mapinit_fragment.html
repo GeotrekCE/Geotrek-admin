@@ -1,21 +1,6 @@
 {% load i18n %}
 
 (function () {
-
-    // Add land layers
-    var landLayers = [{url:'{% url 'land:district_layer' %}', name: '{% trans "District" %}', id: 'district'},
-                      {url:'{% url 'land:city_layer' %}', name: '{% trans "City" %}', id: 'city'},
-                      {url:'{% url 'land:restrictedarea_layer' %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
-    for (var i=0; i<landLayers.length; i++) {
-        var landLayer = landLayers[i];
-        var layer = new L.ObjectsLayer(null, {
-            indexing: false,
-            style: L.Util.extend(window.SETTINGS.map.styles[landLayer.id], { clickable:false })
-        });
-        layer.load(landLayer.url);
-        map.layerscontrol.addOverlay(layer, landLayer.name);
-    }
-
     // Add management layers
     var managementLayers = [{url:'{% url 'land:landedge_layer' %}', name: '{% trans "Land type" %}', id: 'land'},
                             {url:'{% url 'land:physicaledge_layer' %}', name: '{% trans "Physical type" %}', id: 'physical'},
@@ -23,7 +8,7 @@
                             {url:'{% url 'land:signagemanagementedge_layer' %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
                             {url:'{% url 'land:workmanagementedge_layer' %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
 
-    // We have a list of colors, each layer has a *color_index*, and will *consume* a color 
+    // We have a list of colors, each layer has a *color_index*, and will *consume* a color
     // from the list. This way we may not have the same color twice on the map.
     var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool);
 

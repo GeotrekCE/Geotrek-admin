@@ -221,6 +221,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.core',
     'geotrek.infrastructure',
     'geotrek.maintenance',
+    'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
 )

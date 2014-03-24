@@ -1,0 +1,18 @@
+{% load i18n %}
+
+(function () {
+
+    // Add land layers
+    var landLayers = [{url:'{% url 'zoning:district_layer' %}', name: '{% trans "District" %}', id: 'district'},
+                      {url:'{% url 'zoning:city_layer' %}', name: '{% trans "City" %}', id: 'city'},
+                      {url:'{% url 'zoning:restrictedarea_layer' %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
+    for (var i=0; i<landLayers.length; i++) {
+        var landLayer = landLayers[i];
+        var layer = new L.ObjectsLayer(null, {
+            indexing: false,
+            style: L.Util.extend(window.SETTINGS.map.styles[landLayer.id], { clickable:false })
+        });
+        layer.load(landLayer.url);
+        map.layerscontrol.addOverlay(layer, landLayer.name);
+    }
+})();

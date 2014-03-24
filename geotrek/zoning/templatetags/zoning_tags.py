@@ -1,7 +1,8 @@
 from django import template
 from django.conf import settings
 
-from geotrek.land.models import District, City, RestrictedArea
+from geotrek.zoning.models import District, City, RestrictedArea
+
 
 register = template.Library()
 
@@ -24,7 +25,7 @@ def get_bbox_areas():
         for area in RestrictedArea.objects.all()
     ]
 
-@register.inclusion_tag('land/bbox.html')
+@register.inclusion_tag('zoning/_bbox_fragment.html')
 def combobox_bbox_land():
     cities = get_bbox_cities() if settings.LAND_BBOX_CITIES_ENABLED else []
     districts = get_bbox_districts() if settings.LAND_BBOX_DISTRICTS_ENABLED else []

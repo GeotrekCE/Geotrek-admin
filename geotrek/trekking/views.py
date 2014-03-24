@@ -18,7 +18,7 @@ from paperclip.models import Attachment
 from geotrek.authent.decorators import trekking_manager_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
-from geotrek.land.models import District, City, RestrictedArea
+from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilter, POIFilter
