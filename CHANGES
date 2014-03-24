@@ -5,7 +5,9 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
-* Nothing changed yet.
+* Command to import shapefile with points into POI as topologies (fixes #952)
+* Add views to serve DEM on object area as JSON
+
 
 0.22.5 (2014-03-19)
 -------------------
