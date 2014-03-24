@@ -74,6 +74,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
+
 class ElevationProfileTest(TestCase):
     def test_elevation_profile_wrong_geom(self):
         geom = MultiLineString(LineString((1.5, 2.5, 8), (2.5, 2.5, 10)),
@@ -91,3 +92,29 @@ class ElevationProfileTest(TestCase):
         self.assertIn('Generated with pygal', svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
+
+
+class ElevationAreaTest(TestCase):
+    def setUp(self):
+        self.geom = LineString((0, 0), (1000, 0), srid=settings.SRID)
+        self.area = AltimetryHelper.elevation_area(self.geom)
+
+    def test_area_has_nice_ratio_if_horizontal(self):
+        self.assertEqual(self.area['extent']['width'], 1000 + 2*100)
+        self.assertEqual(self.area['extent']['height'], 732.6007326007326)
+
+    def test_area_has_nice_ratio_if_vertical(self):
+        geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['extent']['width'], 732.6007326007326)
+        self.assertEqual(area['extent']['height'], 1000 + 2*100)
+
+    def test_area_has_nice_ratio_if_square_enough(self):
+        geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['extent']['width'], 1000 + 2*100)
+        self.assertEqual(area['extent']['height'], 1000 + 2*100)
+
+    def test_area_provides_altitudes_as_matrix(self):
+        self.assertEqual(len(area['altitudes']), 52)
+        self.assertEqual(len(area['altitudes'][0]), 14)

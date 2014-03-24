@@ -366,3 +366,36 @@ class AltimetryHelper(object):
         line_chart.range = [floor_elevation, max_elevation]
         line_chart.add('', elevations)
         return line_chart.render()
+
+    @classmethod
+    def _nice_extent(cls, geom):
+
+        geom_buffer = geom.buffer(100)
+        center = geom_buffer.centroid
+        xmin, ymin, xmax, ymax = geom_buffer.extent
+        width = xmax - xmin
+        height = ymax - ymin
+
+        min_ratio = 1 / 1.638  # golden ratio
+        if width > height:
+            height = max(width * min_ratio, height)
+        else:
+            width = max(height * min_ratio, width)
+        xmin, ymin, xmax, ymax = (center.x - width / 2.0,
+                                  center.y - height / 2.0,
+                                  center.x + width / 2.0,
+                                  center.y + height / 2.0)
+        return (xmin, ymin, xmax, ymax)
+
+    @classmethod
+    def elevation_area(cls, geom):
+        xmin, ymin, xmax, ymax = cls._nice_extent(geom)
+        width = xmax - xmin
+        height = ymax - ymin
+        area = {
+            'extent': {
+                'width': width,
+                'height': height,
+            }
+        }
+        return area
