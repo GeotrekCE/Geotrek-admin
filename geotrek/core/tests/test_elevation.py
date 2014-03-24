@@ -112,20 +112,20 @@ class ElevationAreaTest(TestCase):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
     def test_area_has_nice_ratio_if_horizontal(self):
-        self.assertEqual(self.area['extent']['width'], 1200)
-        self.assertEqual(self.area['extent']['height'], 740)
+        self.assertEqual(self.area['size']['x'], 1279.891115717939)
+        self.assertEqual(self.area['size']['y'], 720.584765965119)
 
     def test_area_has_nice_ratio_if_vertical(self):
         geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['extent']['width'], 740)
-        self.assertEqual(area['extent']['height'], 1200)
+        self.assertEqual(area['size']['x'], 857.3491587060271)
+        self.assertEqual(area['size']['y'], 1192.679208965972)
 
     def test_area_has_nice_ratio_if_square_enough(self):
         geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['extent']['width'], 1200)
-        self.assertEqual(area['extent']['height'], 1199)
+        self.assertEqual(area['size']['x'], 1329.4983884341782)
+        self.assertEqual(area['size']['y'], 1167.8420933671296)
 
     def test_area_provides_altitudes_as_matrix(self):
         self.assertEqual(len(self.area['altitudes']), 30)
@@ -139,9 +139,23 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(self.area['resolution']['y'], 30)
 
     def test_area_provides_center_as_latlng(self):
-        self.assertEqual(self.area['center']['lat'], -1.3594737405711788)
-        self.assertEqual(self.area['center']['lng'], -5.9813921901338825)
+        self.assertEqual(self.area['center']['lng'], -1.3594737405711788)
+        self.assertEqual(self.area['center']['lat'], -5.9813921901338825)
 
     def test_area_provides_center_as_xy(self):
         self.assertEqual(self.area['center']['x'], 599.9838401941068)
         self.assertEqual(self.area['center']['y'], 362.4986762258873)
+
+    def test_area_provides_extent_as_xy(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['northwest']['x'], 3.657317957957275)
+        self.assertEqual(extent['northwest']['y'], 791.1184938047081)
+        self.assertEqual(extent['southeast']['x'], 1196.3493496947922)
+        self.assertEqual(extent['southeast']['y'], -66.11507440451533)
+
+    def test_area_provides_extent_as_latlng(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['northeast']['lat'], -5.978928071058993)
+        self.assertEqual(extent['northeast']['lng'], -1.3556168180869463)
+        self.assertEqual(extent['southwest']['lat'], -5.98385630920877)
+        self.assertEqual(extent['southwest']['lng'], -1.363330663055411)

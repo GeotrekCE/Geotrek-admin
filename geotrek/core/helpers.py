@@ -390,9 +390,6 @@ class AltimetryHelper(object):
     def elevation_area(cls, geom, precision=None):
         precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
         xmin, ymin, xmax, ymax = cls._nice_extent(geom)
-        width = xmax - xmin
-        height = ymax - ymin
-
         cursor = connection.cursor()
         try:
             cursor.execute('SELECT * FROM mnt LIMIT 1;')
@@ -462,17 +459,37 @@ class AltimetryHelper(object):
             'center': {
                 'x': envelop_native.centroid.x,
                 'y': envelop_native.centroid.y,
-                'lat': envelop.centroid.x,
-                'lng': envelop.centroid.y,
+                'lat': envelop.centroid.y,
+                'lng': envelop.centroid.x,
                 'z': center_z
             },
             'resolution': {
                 'x': resolution_w,
                 'y': resolution_h
             },
+            'size': {
+                'x': envelop_native.coords[0][2][0] - envelop_native.coords[0][0][0],
+                'y': envelop_native.coords[0][2][1] - envelop_native.coords[0][0][1],
+                'lat': envelop.coords[0][2][0] - envelop.coords[0][0][0],
+                'lng': envelop.coords[0][2][1] - envelop.coords[0][0][1]
+            },
             'extent': {
-                'width': width,
-                'height': height,
+                'southwest': {'lat': envelop.coords[0][0][1],
+                              'lng': envelop.coords[0][0][0],
+                              'x': envelop_native.coords[0][0][0],
+                              'y':  envelop_native.coords[0][0][1]},
+                'northwest': {'lat': envelop.coords[0][1][1],
+                              'lng': envelop.coords[0][1][0],
+                              'x': envelop_native.coords[0][1][0],
+                              'y':  envelop_native.coords[0][1][1]},
+                'northeast': {'lat': envelop.coords[0][2][1],
+                              'lng': envelop.coords[0][2][0],
+                              'x': envelop_native.coords[0][2][0],
+                              'y':  envelop_native.coords[0][2][1]},
+                'southeast': {'lat': envelop.coords[0][3][1],
+                              'lng': envelop.coords[0][3][0],
+                              'x': envelop_native.coords[0][3][0],
+                              'y':  envelop_native.coords[0][3][1]}
             },
             'altitudes': altitudes
         }
