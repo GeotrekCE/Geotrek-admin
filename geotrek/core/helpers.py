@@ -3,7 +3,7 @@ import logging
 
 from django.conf import settings
 from django.db import connection
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString
@@ -392,12 +392,13 @@ class AltimetryHelper(object):
         xmin, ymin, xmax, ymax = cls._nice_extent(geom)
         width = xmax - xmin
         height = ymax - ymin
+
         cursor = connection.cursor()
         try:
             cursor.execute('SELECT * FROM mnt LIMIT 1;')
-            HAS_MNT = True
         except:
-            HAS_MNT = False
+            return {}
+
         sql = """
             -- Author: Celian Garcia
             WITH columns AS (
@@ -407,9 +408,9 @@ class AltimetryHelper(object):
                     SELECT generate_series({ymin}::int, {ymax}::int, {precision}) AS y
                 ),
                 resolution AS (
-                    SELECT col.count AS x, lin.count AS y
-                    FROM (SELECT COUNT(x) AS count FROM columns) AS col,
-                         (SELECT COUNT(y) AS count FROM lines)   AS lin
+                    SELECT x, y
+                    FROM (SELECT COUNT(x) AS x FROM columns) AS col,
+                         (SELECT COUNT(y) AS y FROM lines)   AS lin
                 ),
                 points2d AS (
                     SELECT row_number() OVER () AS id,
@@ -418,40 +419,57 @@ class AltimetryHelper(object):
                     FROM columns, lines
                 ),
                 draped AS (
-                    SELECT p.geomll AS geomll, ST_Value(mnt.rast, p.geom) AS altitude
+                    SELECT id, ST_Value(mnt.rast, p.geom) AS altitude
                     FROM mnt, points2d AS p
                     WHERE ST_Intersects(mnt.rast, p.geom)
-                    ORDER BY id
+                ),
+                all_draped AS (
+                    SELECT geomll, altitude
+                    FROM points2d LEFT JOIN draped ON (points2d.id = draped.id)
+                    ORDER BY points2d.id
                 ),
                 extent_latlng AS (
                     SELECT ST_Envelope(ST_Union(geomll)) AS extent,
                            AVG(altitude) AS center_z
-                    FROM draped
+                    FROM all_draped
                 )
             SELECT extent,
                    center_z,
                    resolution.x AS resolution_w,
                    resolution.y AS resolution_h,
                    altitude
-            FROM extent_latlng, resolution, draped;
+            FROM extent_latlng, resolution, all_draped;
         """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
                    srid=settings.SRID, precision=precision)
-        altitudes = []
-        if HAS_MNT:
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            first = result[0]
-            envelop, center_z, resolution_w, resolution_h, a = first
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        first = result[0]
+        envelop, center_z, resolution_w, resolution_h, a = first
+        envelop = GEOSGeometry(envelop, srid=4326)
+        envelop_native = envelop.transform(settings.SRID, clone=True)
 
-            row = []
-            for i, record in enumerate(result):
-                if i > 0 and i % resolution_w == 0:
-                    altitudes.append(row)
-                    row = []
-                else:
-                    row.append(record[4])
+        altitudes = []
+        row = []
+        for i, record in enumerate(result):
+            if i > 0 and i % resolution_w == 0:
+                altitudes.append(row)
+                row = []
+            else:
+                row.append(record[4])
+        altitudes.append(row)
 
         area = {
+            'center': {
+                'x': envelop_native.centroid.x,
+                'y': envelop_native.centroid.y,
+                'lat': envelop.centroid.x,
+                'lng': envelop.centroid.y,
+                'z': center_z
+            },
+            'resolution': {
+                'x': resolution_w,
+                'y': resolution_h
+            },
             'extent': {
                 'width': width,
                 'height': height,

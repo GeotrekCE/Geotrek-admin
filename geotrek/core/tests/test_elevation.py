@@ -97,7 +97,7 @@ class ElevationProfileTest(TestCase):
 class ElevationAreaTest(TestCase):
     def setUp(self):
         self._fill_raster()
-        self.geom = LineString((0, 0), (1000, 0), srid=settings.SRID)
+        self.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
         self.area = AltimetryHelper.elevation_area(self.geom)
 
     def _fill_raster(self):
@@ -112,7 +112,7 @@ class ElevationAreaTest(TestCase):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
     def test_area_has_nice_ratio_if_horizontal(self):
-        self.assertEqual(self.area['extent']['width'], 1199)
+        self.assertEqual(self.area['extent']['width'], 1200)
         self.assertEqual(self.area['extent']['height'], 740)
 
     def test_area_has_nice_ratio_if_vertical(self):
@@ -128,5 +128,20 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(area['extent']['height'], 1199)
 
     def test_area_provides_altitudes_as_matrix(self):
-        self.assertEqual(len(self.area['altitudes']), 18)
-        self.assertEqual(len(self.area['altitudes'][0]), 48)
+        self.assertEqual(len(self.area['altitudes']), 30)
+        self.assertEqual(len(self.area['altitudes'][0]), 49)
+
+    def test_altitude_is_none_when_no_dem_value(self):
+        self.assertEqual(self.area['altitudes'][10][10], None)
+
+    def test_area_provides_resolution(self):
+        self.assertEqual(self.area['resolution']['x'], 49)
+        self.assertEqual(self.area['resolution']['y'], 30)
+
+    def test_area_provides_center_as_latlng(self):
+        self.assertEqual(self.area['center']['lat'], -1.3594737405711788)
+        self.assertEqual(self.area['center']['lng'], -5.9813921901338825)
+
+    def test_area_provides_center_as_xy(self):
+        self.assertEqual(self.area['center']['x'], 599.9838401941068)
+        self.assertEqual(self.area['center']['y'], 362.4986762258873)
