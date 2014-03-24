@@ -76,7 +76,8 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships', 'map_image_url']
+               'cities', 'districts', 'relationships', 'map_image_url',
+               'elevation_area_url']
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

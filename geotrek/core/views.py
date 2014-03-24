@@ -69,6 +69,18 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         return data
 
 
+class ElevationArea(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
+    """Extract elevation profile on an area and return it as JSON"""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ElevationArea, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        obj = self.get_object()
+        return obj.get_elevation_area()
+
+
 class PathLayer(MapEntityLayer):
     model = Path
     properties = ['name']

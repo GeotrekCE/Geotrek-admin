@@ -142,7 +142,7 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(self.area['resolution']['step'], 25)
         geom = LineString((100, 370), (100100, 370), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['resolution']['step'], 334)
+        self.assertEqual(area['resolution']['step'], 668)
 
     def test_area_provides_center_as_latlng(self):
         self.assertEqual(self.area['center']['lng'], -1.3594737405711788)

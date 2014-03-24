@@ -55,6 +55,9 @@ class AltimetryMixin(models.Model):
     def get_elevation_profile(self):
         return AltimetryHelper.elevation_profile(self.geom_3d)
 
+    def get_elevation_area(self):
+        return AltimetryHelper.elevation_area(self.geom)
+
     def get_elevation_profile_svg(self):
         return AltimetryHelper.profile_svg(self.get_elevation_profile())
 
