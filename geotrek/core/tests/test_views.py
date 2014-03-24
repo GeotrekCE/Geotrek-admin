@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from geotrek.common.tests import CommonTest
 
@@ -14,6 +15,11 @@ class ViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
     userfactory = PathManagerFactory
+
+    def login(self):
+        user = PathManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
 
     def get_bad_data(self):
         return {'geom': '{"geom": "LINESTRING (0.0 0.0, 1.0 1.0)"}'}, _("Linestring invalid snapping.")
@@ -71,14 +77,20 @@ class ViewsTest(CommonTest):
         super(CommonTest, self).test_basic_format()
 
     def test_manager_can_delete(self):
-        user = PathManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
         path = PathFactory()
         response = self.client.get(path.get_detail_url())
         self.assertEqual(response.status_code, 200)
         response = self.client.post(path.get_delete_url())
         self.assertEqual(response.status_code, 302)
+
+    def test_elevation_area_json(self):
+        self.login()
+        path = self.modelfactory.create()
+        url = reverse('core:path_elevation_area', kwargs={'pk': path.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
 
 class TrailViewsTest(TestCase):

@@ -3,7 +3,7 @@ import logging
 
 from django.conf import settings
 from django.db import connection
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import LineString
@@ -366,3 +366,148 @@ class AltimetryHelper(object):
         line_chart.range = [floor_elevation, max_elevation]
         line_chart.add('', elevations)
         return line_chart.render()
+
+    @classmethod
+    def _nice_extent(cls, geom):
+        geom_buffer = geom.buffer(100)
+        center = geom_buffer.centroid
+        xmin, ymin, xmax, ymax = geom_buffer.extent
+        width = xmax - xmin
+        height = ymax - ymin
+
+        min_ratio = 1 / 1.618  # golden ratio
+        if width > height:
+            height = max(width * min_ratio, height)
+        else:
+            width = max(height * min_ratio, width)
+        xmin, ymin, xmax, ymax = (int(center.x - width / 2.0),
+                                  int(center.y - height / 2.0),
+                                  int(center.x + width / 2.0),
+                                  int(center.y + height / 2.0))
+        return (xmin, ymin, xmax, ymax)
+
+    @classmethod
+    def elevation_area(cls, geom):
+        xmin, ymin, xmax, ymax = cls._nice_extent(geom)
+        width = xmax - xmin
+        height = ymax - ymin
+        precision = settings.ALTIMETRIC_PROFILE_PRECISION
+        max_resolution = settings.ALTIMETRIC_AREA_MAX_RESOLUTION
+        if width / precision > max_resolution:
+            precision = int(width / max_resolution)
+        if height / precision > 10000:
+            precision = int(width / max_resolution)
+        cursor = connection.cursor()
+        try:
+            cursor.execute('SELECT * FROM mnt LIMIT 1;')
+        except:
+            logger.warn("No DEM present")
+            return {}
+
+        sql = """
+            -- Author: Celian Garcia
+            WITH columns AS (
+                    SELECT generate_series({xmin}::int, {xmax}::int, {precision}) AS x
+                ),
+                lines AS (
+                    SELECT generate_series({ymin}::int, {ymax}::int, {precision}) AS y
+                ),
+                resolution AS (
+                    SELECT x, y
+                    FROM (SELECT COUNT(x) AS x FROM columns) AS col,
+                         (SELECT COUNT(y) AS y FROM lines)   AS lin
+                ),
+                points2d AS (
+                    SELECT row_number() OVER () AS id,
+                           ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
+                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
+                    FROM columns, lines
+                ),
+                draped AS (
+                    SELECT id, ST_Value(mnt.rast, p.geom)::int AS altitude
+                    FROM mnt, points2d AS p
+                    WHERE ST_Intersects(mnt.rast, p.geom)
+                ),
+                all_draped AS (
+                    SELECT geomll, altitude
+                    FROM points2d LEFT JOIN draped ON (points2d.id = draped.id)
+                    ORDER BY points2d.id
+                ),
+                extent_latlng AS (
+                    SELECT ST_Envelope(ST_Union(geomll)) AS extent,
+                           MIN(altitude) AS min_z,
+                           MAX(altitude) AS max_z,
+                           AVG(altitude) AS center_z
+                    FROM all_draped
+                )
+            SELECT extent,
+                   center_z,
+                   min_z,
+                   max_z,
+                   resolution.x AS resolution_w,
+                   resolution.y AS resolution_h,
+                   altitude
+            FROM extent_latlng, resolution, all_draped;
+        """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
+                   srid=settings.SRID, precision=precision)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        first = result[0]
+        envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
+        envelop = GEOSGeometry(envelop, srid=4326)
+        envelop_native = envelop.transform(settings.SRID, clone=True)
+
+        altitudes = []
+        row = []
+        for i, record in enumerate(result):
+            if i > 0 and i % resolution_w == 0:
+                altitudes.append(row)
+                row = []
+            elevation = (record[6] or 0.0) - min_z
+            row.append(elevation)
+        altitudes.append(row)
+
+        area = {
+            'center': {
+                'x': envelop_native.centroid.x,
+                'y': envelop_native.centroid.y,
+                'lat': envelop.centroid.y,
+                'lng': envelop.centroid.x,
+                'z': int(center_z)
+            },
+            'resolution': {
+                'x': resolution_w,
+                'y': resolution_h,
+                'step': precision
+            },
+            'size': {
+                'x': envelop_native.coords[0][2][0] - envelop_native.coords[0][0][0],
+                'y': envelop_native.coords[0][2][1] - envelop_native.coords[0][0][1],
+                'lat': envelop.coords[0][2][0] - envelop.coords[0][0][0],
+                'lng': envelop.coords[0][2][1] - envelop.coords[0][0][1]
+            },
+            'extent': {
+                'altitudes': {
+                    'min': min_z,
+                    'max': max_z
+                },
+                'southwest': {'lat': envelop.coords[0][0][1],
+                              'lng': envelop.coords[0][0][0],
+                              'x': envelop_native.coords[0][0][0],
+                              'y':  envelop_native.coords[0][0][1]},
+                'northwest': {'lat': envelop.coords[0][1][1],
+                              'lng': envelop.coords[0][1][0],
+                              'x': envelop_native.coords[0][1][0],
+                              'y':  envelop_native.coords[0][1][1]},
+                'northeast': {'lat': envelop.coords[0][2][1],
+                              'lng': envelop.coords[0][2][0],
+                              'x': envelop_native.coords[0][2][0],
+                              'y':  envelop_native.coords[0][2][1]},
+                'southeast': {'lat': envelop.coords[0][3][1],
+                              'lng': envelop.coords[0][3][0],
+                              'x': envelop_native.coords[0][3][0],
+                              'y':  envelop_native.coords[0][3][1]}
+            },
+            'altitudes': altitudes
+        }
+        return area
