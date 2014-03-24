@@ -387,13 +387,21 @@ class AltimetryHelper(object):
         return (xmin, ymin, xmax, ymax)
 
     @classmethod
-    def elevation_area(cls, geom, precision=None):
-        precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
+    def elevation_area(cls, geom):
         xmin, ymin, xmax, ymax = cls._nice_extent(geom)
+        width = xmax - xmin
+        height = ymax - ymin
+        precision = settings.ALTIMETRIC_PROFILE_PRECISION
+        max_resolution = settings.ALTIMETRIC_AREA_MAX_RESOLUTION
+        if width / precision > max_resolution:
+            precision = int(width / max_resolution)
+        if height / precision > 10000:
+            precision = int(width / max_resolution)
         cursor = connection.cursor()
         try:
             cursor.execute('SELECT * FROM mnt LIMIT 1;')
         except:
+            logger.warn("No DEM present")
             return {}
 
         sql = """
@@ -465,7 +473,8 @@ class AltimetryHelper(object):
             },
             'resolution': {
                 'x': resolution_w,
-                'y': resolution_h
+                'y': resolution_h,
+                'step': precision
             },
             'size': {
                 'x': envelop_native.coords[0][2][0] - envelop_native.coords[0][0][0],
