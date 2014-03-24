@@ -96,25 +96,37 @@ class ElevationProfileTest(TestCase):
 
 class ElevationAreaTest(TestCase):
     def setUp(self):
+        self._fill_raster()
         self.geom = LineString((0, 0), (1000, 0), srid=settings.SRID)
         self.area = AltimetryHelper.elevation_area(self.geom)
 
+    def _fill_raster(self):
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+        for y in range(0, 5):
+            for x in range(0, 4):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+
     def test_area_has_nice_ratio_if_horizontal(self):
-        self.assertEqual(self.area['extent']['width'], 1000 + 2*100)
-        self.assertEqual(self.area['extent']['height'], 732.6007326007326)
+        self.assertEqual(self.area['extent']['width'], 1199)
+        self.assertEqual(self.area['extent']['height'], 740)
 
     def test_area_has_nice_ratio_if_vertical(self):
         geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['extent']['width'], 732.6007326007326)
-        self.assertEqual(area['extent']['height'], 1000 + 2*100)
+        self.assertEqual(area['extent']['width'], 740)
+        self.assertEqual(area['extent']['height'], 1200)
 
     def test_area_has_nice_ratio_if_square_enough(self):
         geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['extent']['width'], 1000 + 2*100)
-        self.assertEqual(area['extent']['height'], 1000 + 2*100)
+        self.assertEqual(area['extent']['width'], 1200)
+        self.assertEqual(area['extent']['height'], 1199)
 
     def test_area_provides_altitudes_as_matrix(self):
-        self.assertEqual(len(area['altitudes']), 52)
-        self.assertEqual(len(area['altitudes'][0]), 14)
+        self.assertEqual(len(self.area['altitudes']), 18)
+        self.assertEqual(len(self.area['altitudes'][0]), 48)

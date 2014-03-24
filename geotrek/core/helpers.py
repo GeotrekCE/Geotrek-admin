@@ -369,33 +369,93 @@ class AltimetryHelper(object):
 
     @classmethod
     def _nice_extent(cls, geom):
-
         geom_buffer = geom.buffer(100)
         center = geom_buffer.centroid
         xmin, ymin, xmax, ymax = geom_buffer.extent
         width = xmax - xmin
         height = ymax - ymin
 
-        min_ratio = 1 / 1.638  # golden ratio
+        min_ratio = 1 / 1.618  # golden ratio
         if width > height:
             height = max(width * min_ratio, height)
         else:
             width = max(height * min_ratio, width)
-        xmin, ymin, xmax, ymax = (center.x - width / 2.0,
-                                  center.y - height / 2.0,
-                                  center.x + width / 2.0,
-                                  center.y + height / 2.0)
+        xmin, ymin, xmax, ymax = (int(center.x - width / 2.0),
+                                  int(center.y - height / 2.0),
+                                  int(center.x + width / 2.0),
+                                  int(center.y + height / 2.0))
         return (xmin, ymin, xmax, ymax)
 
     @classmethod
-    def elevation_area(cls, geom):
+    def elevation_area(cls, geom, precision=None):
+        precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
         xmin, ymin, xmax, ymax = cls._nice_extent(geom)
         width = xmax - xmin
         height = ymax - ymin
+        cursor = connection.cursor()
+        try:
+            cursor.execute('SELECT * FROM mnt LIMIT 1;')
+            HAS_MNT = True
+        except:
+            HAS_MNT = False
+        sql = """
+            -- Author: Celian Garcia
+            WITH columns AS (
+                    SELECT generate_series({xmin}::int, {xmax}::int, {precision}) AS x
+                ),
+                lines AS (
+                    SELECT generate_series({ymin}::int, {ymax}::int, {precision}) AS y
+                ),
+                resolution AS (
+                    SELECT col.count AS x, lin.count AS y
+                    FROM (SELECT COUNT(x) AS count FROM columns) AS col,
+                         (SELECT COUNT(y) AS count FROM lines)   AS lin
+                ),
+                points2d AS (
+                    SELECT row_number() OVER () AS id,
+                           ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
+                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
+                    FROM columns, lines
+                ),
+                draped AS (
+                    SELECT p.geomll AS geomll, ST_Value(mnt.rast, p.geom) AS altitude
+                    FROM mnt, points2d AS p
+                    WHERE ST_Intersects(mnt.rast, p.geom)
+                    ORDER BY id
+                ),
+                extent_latlng AS (
+                    SELECT ST_Envelope(ST_Union(geomll)) AS extent,
+                           AVG(altitude) AS center_z
+                    FROM draped
+                )
+            SELECT extent,
+                   center_z,
+                   resolution.x AS resolution_w,
+                   resolution.y AS resolution_h,
+                   altitude
+            FROM extent_latlng, resolution, draped;
+        """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
+                   srid=settings.SRID, precision=precision)
+        altitudes = []
+        if HAS_MNT:
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            first = result[0]
+            envelop, center_z, resolution_w, resolution_h, a = first
+
+            row = []
+            for i, record in enumerate(result):
+                if i > 0 and i % resolution_w == 0:
+                    altitudes.append(row)
+                    row = []
+                else:
+                    row.append(record[4])
+
         area = {
             'extent': {
                 'width': width,
                 'height': height,
-            }
+            },
+            'altitudes': altitudes
         }
         return area
