@@ -130,6 +130,7 @@ class ElevationAreaTest(TestCase):
     def test_area_provides_altitudes_as_matrix(self):
         self.assertEqual(len(self.area['altitudes']), 30)
         self.assertEqual(len(self.area['altitudes'][0]), 49)
+        self.assertEqual(len(self.area['altitudes'][-1]), 49)
 
     def test_area_provides_resolution(self):
         self.assertEqual(self.area['resolution']['x'], 49)

@@ -463,9 +463,8 @@ class AltimetryHelper(object):
             if i > 0 and i % resolution_w == 0:
                 altitudes.append(row)
                 row = []
-            else:
-                elevation = record[6] - min_z
-                row.append(elevation)
+            elevation = (record[6] or 0.0) - min_z
+            row.append(elevation)
         altitudes.append(row)
 
         area = {
