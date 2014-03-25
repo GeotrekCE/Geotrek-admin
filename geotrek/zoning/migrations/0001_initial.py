@@ -2,7 +2,7 @@
 from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+from django.db import models, connection
 
 
 class Migration(SchemaMigration):
@@ -10,58 +10,64 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         """Models were moved from geotrek.land
         """
-        # # Adding model 'RestrictedAreaType'
-        # db.create_table('f_b_zonage', (
-        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        #     ('name', self.gf('django.db.models.fields.CharField')(max_length=200, db_column='nom')),
-        # ))
-        # db.send_create_signal(u'zoning', ['RestrictedAreaType'])
+        if 'l_secteur' in connection.introspection.table_names():
+            # Was installed via geotrek.land initial migrations
+            # (i.e upgrade to v0.23)
+            # See land/migrations/0001_initial.py
+            return
 
-        # # Adding model 'RestrictedArea'
-        # db.create_table('l_zonage_reglementaire', (
-        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        #     ('name', self.gf('django.db.models.fields.CharField')(max_length=250, db_column='zonage')),
-        #     ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        #     ('area_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.RestrictedAreaType'], db_column='type')),
-        # ))
-        # db.send_create_signal(u'zoning', ['RestrictedArea'])
+        # Adding model 'RestrictedAreaType'
+        db.create_table('f_b_zonage', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=200, db_column='nom')),
+        ))
+        db.send_create_signal(u'zoning', ['RestrictedAreaType'])
 
-        # # Adding model 'RestrictedAreaEdge'
-        # db.create_table('f_t_zonage', (
-        #     ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
-        #     ('restricted_area', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.RestrictedArea'], db_column='zone')),
-        # ))
-        # db.send_create_signal(u'zoning', ['RestrictedAreaEdge'])
+        # Adding model 'RestrictedArea'
+        db.create_table('l_zonage_reglementaire', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=250, db_column='zonage')),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('area_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.RestrictedAreaType'], db_column='type')),
+        ))
+        db.send_create_signal(u'zoning', ['RestrictedArea'])
 
-        # # Adding model 'City'
-        # db.create_table('l_commune', (
-        #     ('code', self.gf('django.db.models.fields.CharField')(max_length=6, primary_key=True, db_column='insee')),
-        #     ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='commune')),
-        #     ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        # ))
-        # db.send_create_signal(u'zoning', ['City'])
+        # Adding model 'RestrictedAreaEdge'
+        db.create_table('f_t_zonage', (
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
+            ('restricted_area', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.RestrictedArea'], db_column='zone')),
+        ))
+        db.send_create_signal(u'zoning', ['RestrictedAreaEdge'])
 
-        # # Adding model 'CityEdge'
-        # db.create_table('f_t_commune', (
-        #     ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
-        #     ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.City'], db_column='commune')),
-        # ))
-        # db.send_create_signal(u'zoning', ['CityEdge'])
+        # Adding model 'City'
+        db.create_table('l_commune', (
+            ('code', self.gf('django.db.models.fields.CharField')(max_length=6, primary_key=True, db_column='insee')),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='commune')),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+        ))
+        db.send_create_signal(u'zoning', ['City'])
 
-        # # Adding model 'District'
-        # db.create_table('l_secteur', (
-        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        #     ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='secteur')),
-        #     ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
-        # ))
-        # db.send_create_signal(u'zoning', ['District'])
+        # Adding model 'CityEdge'
+        db.create_table('f_t_commune', (
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
+            ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.City'], db_column='commune')),
+        ))
+        db.send_create_signal(u'zoning', ['CityEdge'])
 
-        # # Adding model 'DistrictEdge'
-        # db.create_table('f_t_secteur', (
-        #     ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
-        #     ('district', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.District'], db_column='secteur')),
-        # ))
-        # db.send_create_signal(u'zoning', ['DistrictEdge'])
+        # Adding model 'District'
+        db.create_table('l_secteur', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='secteur')),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+        ))
+        db.send_create_signal(u'zoning', ['District'])
+
+        # Adding model 'DistrictEdge'
+        db.create_table('f_t_secteur', (
+            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
+            ('district', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.District'], db_column='secteur')),
+        ))
+        db.send_create_signal(u'zoning', ['DistrictEdge'])
 
 
     def backwards(self, orm):
