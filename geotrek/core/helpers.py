@@ -421,7 +421,7 @@ class AltimetryHelper(object):
                     SELECT row_number() OVER () AS id,
                            ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
                            ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
-                    FROM columns, lines
+                    FROM lines, columns
                 ),
                 draped AS (
                     SELECT id, ST_Value(mnt.rast, p.geom)::int AS altitude
@@ -429,18 +429,19 @@ class AltimetryHelper(object):
                     WHERE ST_Intersects(mnt.rast, p.geom)
                 ),
                 all_draped AS (
-                    SELECT geomll, altitude
+                    SELECT geomll, geom, altitude
                     FROM points2d LEFT JOIN draped ON (points2d.id = draped.id)
                     ORDER BY points2d.id
                 ),
                 extent_latlng AS (
-                    SELECT ST_Envelope(ST_Union(geomll)) AS extent,
+                    SELECT ST_Envelope(ST_Union(geom)) AS extent,
                            MIN(altitude) AS min_z,
                            MAX(altitude) AS max_z,
                            AVG(altitude) AS center_z
                     FROM all_draped
                 )
             SELECT extent,
+                   ST_transform(extent, 4326),
                    center_z,
                    min_z,
                    max_z,
@@ -453,9 +454,9 @@ class AltimetryHelper(object):
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
-        envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
+        envelop_native, envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
         envelop = GEOSGeometry(envelop, srid=4326)
-        envelop_native = envelop.transform(settings.SRID, clone=True)
+        envelop_native = GEOSGeometry(envelop_native, srid=settings.SRID)
 
         altitudes = []
         row = []
@@ -463,7 +464,7 @@ class AltimetryHelper(object):
             if i > 0 and i % resolution_w == 0:
                 altitudes.append(row)
                 row = []
-            elevation = (record[6] or 0.0) - min_z
+            elevation = (record[7] or 0.0) - min_z
             row.append(elevation)
         altitudes.append(row)
 
