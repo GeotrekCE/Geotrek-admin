@@ -224,6 +224,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
+    'geotrek.tourism',
 )
 
 SERIALIZATION_MODULES = {
