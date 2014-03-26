@@ -70,16 +70,39 @@ $(document).ready(function() {
     $("#footer-wrapper form").on('submit', function(event) {
         event.preventDefault();
 
+        var name = $(this).find('[name="name"]').val();
+        var email = $(this).find('[name="email"]').val();
+
+        $('input').removeClass('error');
+
+        var nameIsEmpty = (!!name == "");
+        if (nameIsEmpty) {
+            $(this).find('[name="name"]').addClass('error');
+        }
+
+        var emailIsEmpty = (!!email == "");
+        if (emailIsEmpty) {
+            $(this).find('[name="email"]').addClass('error');
+        }
+
+        if (nameIsEmpty || emailIsEmpty) {
+            $("#footer-wrapper .form-errors").show();
+            $("#footer-wrapper .confirmed").hide();
+            return false;
+        }
         $.ajax({
           dataType: 'jsonp',
-          url: "http://getsimpleform.com/messages/ajax?form_api_token=e81d577ce1527ee5f3cd7ecc6208826f",
+          url: "http://getsimpleform.com/messages/ajax?form_api_token=d14432edc1269f479dc16265ec79dc72",
           data: {
-            name: $(this).find('[name="name"]').val(),
-            email: $(this).find('[name="email"]').val(),
+            name: name,
+            email: email,
+            phone: $(this).find('[name="phone"]').val(),
             message: $(this).find('[name="message"]').val()
           }
         }).done(function() {
             $("#footer-wrapper .confirmed").show();
+            $("#footer-wrapper .form-errors").hide();
+            $('input').removeClass('error');
         });
 
     });

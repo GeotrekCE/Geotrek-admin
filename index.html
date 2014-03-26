@@ -224,14 +224,17 @@
                             Nos experts sont là pour répondre à vos questions.</span>
                         </header>
                         <div class="row">
-                            <section class="6u">
+                            <section class="8u">
                                 <form method="post" action="http://getsimpleform.com/messages?form_api_token=d14432edc1269f479dc16265ec79dc72">
                                     <div class="row half">
-                                        <div class="6u">
-                                            <input name="name" placeholder="Nom" type="text" class="text" title="Nom" />
+                                        <div class="4u">
+                                            <input name="name" placeholder="Nom*" type="text" class="text" title="Nom" />
                                         </div>
-                                        <div class="6u">
-                                            <input name="email" placeholder="Email" type="text" class="text" title="Email" />
+                                        <div class="5u">
+                                            <input name="email" placeholder="Email*" type="text" class="text" title="Email" />
+                                        </div>
+                                        <div class="3u">
+                                            <input name="phone" placeholder="Téléphone" type="text" class="text" title="Téléphone" />
                                         </div>
                                     </div>
                                     <div class="row half">
@@ -245,12 +248,13 @@
                                                 <!-- the redirect_to is optional, the form will redirect to the referrer on submission -->
                                                 <li><input type="submit" class="button" value="Envoyer un message"></li>
                                                 <span class="confirmed" style="display: none;">Message envoyé !</span>
+                                                <span class="form-errors" style="display: none;">Formulaire incomplet !</span>
                                             </ul>
                                         </div>
                                     </div>
                                 </form>
                             </section>
-                            <section class="6u">
+                            <section class="4u">
                                 <div class="row no-collapse-1">
                                     <ul class="divided icons 12u">
                                         <li class="fa fa-envelope-o"><a href="mailto:projets-sig@makina-corpus.com"><span>projets-sig@makina-corpus.com</span></a></li>

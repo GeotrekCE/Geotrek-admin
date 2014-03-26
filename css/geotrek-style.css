@@ -78,8 +78,20 @@ input[type="submit"] {
     cursor: pointer;
 }
 
-.confirmed {
+.confirmed, .form-errors {
     margin-left: 1em;
+}
+
+.confirmed {
+    color: #97BB35;
+}
+
+.form-errors {
+    color: red;
+}
+
+input.error {
+    border-color: red !important;
 }
 
 /*********************************************************************************/
