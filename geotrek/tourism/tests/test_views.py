@@ -1,5 +1,6 @@
 import json
 
+import mock
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -67,17 +68,33 @@ class DataSourceListViewTests(TrekkingManagerTest):
 
 class DataSourceViewTests(TrekkingManagerTest):
     def setUp(self):
+        self.source = DataSource.objects.create(title='title',
+                                                url='http://source.com',
+                                                type=DATA_SOURCE_TYPES.GEOJSON)
+        self.url = reverse('tourism:datasource_geojson', kwargs={'pk': self.source.pk})
         self.login()
 
     def tearDown(self):
         self.client.logout()
 
     def test_failing_sources_return_empty_data(self):
-        source = DataSource.objects.create(title='title',
-                                           url='http://source.com',
-                                           type=DATA_SOURCE_TYPES.GEOJSON)
-        url = reverse('tourism:datasource_geojson', kwargs={'pk': source.pk})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        datasource = json.loads(response.content)
-        self.assertEqual(datasource, {})
+        with mock.patch('requests.get') as mocked:
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+            datasource = json.loads(response.content)
+            self.assertEqual(datasource, {})
+
+    def test_source_is_fetched_upon_view_call(self):
+        with mock.patch('requests.get') as mocked:
+            self.client.get(self.url)
+            mocked.assert_called_once_with(self.source.url)
+
+    # def test_source_is_returned_as_geojson(self):
+    #     with mock.patch('requests.get') as mocked:
+    #         print mocked.json
+    #         mocked.json.return_value = {'type': 'foo'}
+
+    #         response = self.client.get(self.url)
+    #         self.assertEqual(json.loads(response.content),
+    #                          {'type': 'foo'})
+

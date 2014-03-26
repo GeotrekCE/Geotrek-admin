@@ -1,3 +1,4 @@
+import requests
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
@@ -32,7 +33,10 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
     model = DataSource
 
     def get_context_data(self, *args, **kwargs):
-        return {}
+        source = self.get_object()
+        response = requests.get(source.url)
+        geojson = dict(response.json())
+        return geojson
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
