@@ -12,6 +12,7 @@ CHANGELOG
 
 ** Internal changes **
 
+* An error is raised if SRID has not unit in meters (fixes #921)
 * Zoning and land modules are now splitted (fixes #954)
 
 
