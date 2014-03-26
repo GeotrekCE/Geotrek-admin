@@ -20,13 +20,14 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
+VERSION=${VERSION:-v0.22.5}
 dev=false
 tests=false
 prod=false
 standalone=true
 interactive=true
 settingsfile=etc/settings.ini
-branch=master
+
 
 usage () {
     exec 2>&4
@@ -374,11 +375,11 @@ function geotrek_setup {
 
     if [ ! -f Makefile ]; then
        echo_step "Downloading Geotrek latest stable version..."
-       wget --quiet https://github.com/makinacorpus/Geotrek/archive/$branch.zip
-       unzip $branch.zip -d /tmp > /dev/null
-       rm -f /tmp/Geotrek-$branch/install.sh
+       wget --quiet https://github.com/makinacorpus/Geotrek/archive/$VERSION.zip
+       unzip $VERSION.zip -d /tmp > /dev/null
+       rm -f /tmp/Geotrek-$VERSION/install.sh
        shopt -s dotglob nullglob
-       mv /tmp/Geotrek-$branch/* .
+       mv /tmp/Geotrek-$VERSION/* .
     fi
 
     if ! $freshinstall ; then
