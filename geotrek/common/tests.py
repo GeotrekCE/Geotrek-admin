@@ -14,6 +14,7 @@ from geotrek.settings import EnvIniReader
 from .factories import AttachmentFactory
 from .utils import almostequal, sampling, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
+from . import check_srid_has_meter_unit
 
 
 class CommonTest(MapEntityTest):
@@ -24,6 +25,13 @@ class CommonTest(MapEntityTest):
         AttachmentFactory.create(obj=obj)
         AttachmentFactory.create(obj=obj)
         self.assertEqual(len(obj.attachments), 2)
+
+
+class StartupCheckTest(TestCase):
+    def test_error_is_raised_if_srid_is_not_meters(self):
+        delattr(check_srid_has_meter_unit, '_checked')
+        with self.settings(SRID=4326):
+            self.assertRaises(ImproperlyConfigured, check_srid_has_meter_unit, None)
 
 
 class ViewsTest(TestCase):
