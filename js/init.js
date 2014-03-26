@@ -103,6 +103,7 @@ $(document).ready(function() {
             $("#footer-wrapper .confirmed").show();
             $("#footer-wrapper .form-errors").hide();
             $('input').removeClass('error');
+            $('#contact-form [name]').val('');
         });
 
     });
