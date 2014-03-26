@@ -90,9 +90,10 @@ $(document).ready(function() {
             $("#footer-wrapper .confirmed").hide();
             return false;
         }
+
         $.ajax({
           dataType: 'jsonp',
-          url: "http://getsimpleform.com/messages/ajax?form_api_token=d14432edc1269f479dc16265ec79dc72",
+          url: "http://getsimpleform.com/messages/ajax?form_api_token=e81d577ce1527ee5f3cd7ecc6208826f",
           data: {
             name: name,
             email: email,
