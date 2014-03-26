@@ -7,15 +7,21 @@ from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.tourism.models import DataSource, DATA_SOURCE_TYPES
 
 
-class TourismAdminViewsTests(TestCase):
+class TrekkingManagerTest(TestCase):
+    def login(self):
+        user = TrekkingManagerFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+
+
+class TourismAdminViewsTests(TrekkingManagerTest):
 
     def setUp(self):
         self.source = DataSource.objects.create(title='S',
                                                 url='http://source.com',
                                                 type=DATA_SOURCE_TYPES.GEOJSON)
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
 
     def test_trekking_managers_can_access_data_sources_admin_site(self):
         url = reverse('admin:tourism_datasource_changelist')
@@ -28,7 +34,7 @@ class TourismAdminViewsTests(TestCase):
         self.assertContains(response, 'title_fr')
 
 
-class DataSourceListViewTests(TestCase):
+class DataSourceListViewTests(TrekkingManagerTest):
     def setUp(self):
         self.source = DataSource.objects.create(title='title',
                                                 title_it='titolo',
@@ -40,11 +46,6 @@ class DataSourceListViewTests(TestCase):
 
     def tearDown(self):
         self.client.logout()
-
-    def login(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
 
     def test_sources_are_listed_as_json(self):
         self.assertEqual(self.response.status_code, 200)
@@ -62,3 +63,21 @@ class DataSourceListViewTests(TestCase):
         datasources = json.loads(response.content)
         self.assertEqual(datasources[0]['title'],
                          self.source.title_it)
+
+
+class DataSourceViewTests(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_failing_sources_return_empty_data(self):
+        source = DataSource.objects.create(title='title',
+                                           url='http://source.com',
+                                           type=DATA_SOURCE_TYPES.GEOJSON)
+        url = reverse('tourism:datasource_geojson', kwargs={'pk': source.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        datasource = json.loads(response.content)
+        self.assertEqual(datasource, {})
