@@ -81,45 +81,6 @@ msgstr "Tronçon de gestion signalétique"
 msgid "Signage management edges"
 msgstr "Tronçons de gestion signalétique"
 
-msgid "Restricted area type"
-msgstr "Type de zonage réglementaire"
-
-msgid "Restricted area"
-msgstr "Zonage réglementaire"
-
-msgid "Restricted areas"
-msgstr "Zonage réglementaire"
-
-msgid "Restricted area edge"
-msgstr "Tronçon de zonage réglementaire"
-
-msgid "Restricted area edges"
-msgstr "Tronçons de zonage réglementaire"
-
-msgid "Cities"
-msgstr "Communes"
-
-msgid "City edge"
-msgstr "Tronçon de commune"
-
-msgid "City edges"
-msgstr "Tronçons de commune"
-
-msgid "District"
-msgstr "Secteur"
-
-msgid "Districts"
-msgstr "Secteurs"
-
-msgid "District edge"
-msgstr "Tronçon de secteur"
-
-msgid "District edges"
-msgstr "Tronçons de secteur"
-
-msgid "Restricted Area"
-msgstr "Zone réglementaire"
-
 msgid "Add competence edge"
 msgstr "Renseigner l'organisme compétent"
 
