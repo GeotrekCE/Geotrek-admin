@@ -5,8 +5,14 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
+** New features **
+
 * Command to import shapefile with points into POI as topologies (fixes #952)
 * Add views to serve DEM on object area as JSON
+
+** Internal changes **
+
+* Zoning and land modules are now splitted (fixes #954)
 
 
 0.22.5 (2014-03-19)
