@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.land.factories import DistrictFactory, CityFactory
+from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory,
                                         WebLinkFactory)
 from geotrek.trekking.models import Trek

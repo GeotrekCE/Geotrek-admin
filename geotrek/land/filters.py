@@ -9,10 +9,10 @@ from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.common.filters import StructureRelatedFilterSet
 
+from geotrek.zoning.models import City, District
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
     SignageManagementEdge, WorkManagementEdge,
-    City, District
 )
 
 

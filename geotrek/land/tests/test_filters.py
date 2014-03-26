@@ -2,12 +2,12 @@
 
 from django.test import TestCase
 
+from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds
 from geotrek.land.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
 
-from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds
 
 class LandFiltersTest(TestCase):
 
