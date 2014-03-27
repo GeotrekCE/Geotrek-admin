@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.tourism.models import DataSource, DATA_SOURCE_TYPES
+from geotrek.tourism.factories import DataSourceFactory
 
 
 class TrekkingManagerTest(TestCase):
@@ -22,9 +23,7 @@ class TrekkingManagerTest(TestCase):
 class TourismAdminViewsTests(TrekkingManagerTest):
 
     def setUp(self):
-        self.source = DataSource.objects.create(title='S',
-                                                url='http://source.com',
-                                                type=DATA_SOURCE_TYPES.GEOJSON)
+        self.source = DataSourceFactory.create()
         self.login()
 
     def test_trekking_managers_can_access_data_sources_admin_site(self):
@@ -40,10 +39,7 @@ class TourismAdminViewsTests(TrekkingManagerTest):
 
 class DataSourceListViewTests(TrekkingManagerTest):
     def setUp(self):
-        self.source = DataSource.objects.create(title='title',
-                                                title_it='titolo',
-                                                url='http://source.com',
-                                                type=DATA_SOURCE_TYPES.GEOJSON)
+        self.source = DataSourceFactory.create(title_it='titolo')
         self.login()
         self.url = reverse('tourism:datasource_list_json')
         self.response = self.client.get(self.url)
@@ -76,9 +72,7 @@ class DataSourceListViewTests(TrekkingManagerTest):
 
 class DataSourceViewTests(TrekkingManagerTest):
     def setUp(self):
-        self.source = DataSource.objects.create(title='title',
-                                                url='http://source.com',
-                                                type=DATA_SOURCE_TYPES.GEOJSON)
+        self.source = DataSourceFactory.create(type=DATA_SOURCE_TYPES.GEOJSON)
         self.url = reverse('tourism:datasource_geojson', kwargs={'pk': self.source.pk})
         self.login()
 
@@ -130,9 +124,7 @@ class DataSourceTourInFranceViewTests(TrekkingManagerTest):
         filename = os.path.join(here, 'data', 'sit-averyon-02.01.14.xml')
         self.sample = open(filename).read()
 
-        self.source = DataSource.objects.create(title='title',
-                                                url='http://source.com',
-                                                type=DATA_SOURCE_TYPES.TOURINFRANCE)
+        self.source = DataSourceFactory.create(type=DATA_SOURCE_TYPES.TOURINFRANCE)
         self.url = reverse('tourism:datasource_geojson', kwargs={'pk': self.source.pk})
         self.login()
 
