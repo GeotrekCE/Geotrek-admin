@@ -1,17 +1,26 @@
 {% load i18n %}
 
-{% if appname == "trekking" %}
 (function () {
+
+    function locationMarker(source, feature, latlng) {
+        var html = L.Util.template('<img width="16" src="{pictogram_url}"/>',
+                                   source);
+        var icon = L.divIcon({html: html,
+                              className: 'tourism-datasource-marker',
+                              iconSize: [16, 0]});
+        var marker = L.marker(latlng, {icon: icon});
+        return marker;
+    }
+
     $.getJSON('{% url 'tourism:datasource_list_json' %}', function (data) {
         for (var i=0; i<data.length; i++) {
-            var dataLayer = data[i];
+            var dataSource = data[i];
             var layer = new L.ObjectsLayer(null, {
                 indexing: false,
-                pointToLayer: function (feature, latlng) { return L.marker(latlng); }
+                pointToLayer: function (feature, latlng) { return locationMarker(dataSource, feature, latlng); }
             });
-            layer.load(dataLayer.geojson_url);
-            map.layerscontrol.addOverlay(layer, dataLayer.title);
+            layer.load(dataSource.geojson_url);
+            map.layerscontrol.addOverlay(layer, dataSource.title);
         }
     })
 })();
-{% endif %}

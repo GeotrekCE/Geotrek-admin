@@ -29,7 +29,7 @@ class DataSourceList(JSONResponseMixin, ListView):
                 'title': ds.title,
                 'url': ds.url,
                 'type': ds.type,
-                'pictogram': ds.pictogram.url,
+                'pictogram_url': ds.pictogram.url,
                 'geojson_url': geojson_url,
             })
         return results

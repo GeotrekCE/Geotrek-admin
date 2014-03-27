@@ -16,6 +16,10 @@ casper.test.begin('Data sources can be added to the map', function(test) {
 
     casper.then(function () {
         test.pass('Markers are shown on map');
+
+        var xpath = '//img[contains(@src, "/media/upload/datasource-refugee.svg")]';
+        test.assertExists({type: 'xpath', path: xpath},
+                          'Category icons are shown');
     });
 
     casper.run(function done() {
