@@ -89,14 +89,23 @@ class DataSourceViewTests(TrekkingManagerTest):
             response = self.client.get(self.url)
             self.assertEqual(response.status_code, 200)
             datasource = json.loads(response.content)
-            self.assertEqual(datasource, {})
+            self.assertEqual(datasource['features'], [])
 
-    def test_source_is_returned_as_geojson(self):
+    def test_source_is_returned_as_geojson_when_invalid_geojson(self):
         with mock.patch('requests.get') as mocked:
-            mocked().text = '{"type": "foo"}'
+            mocked().text = '{"bar": "foo"}'
             response = self.client.get(self.url)
-            self.assertEqual(json.loads(response.content),
-                             {'type': 'foo'})
+            geojson = json.loads(response.content)
+            self.assertEqual(geojson['type'], 'FeatureCollection')
+            self.assertEqual(geojson['features'], [])
+
+    def test_source_is_returned_as_geojson_when_invalid_response(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = '404 page not found'
+            response = self.client.get(self.url)
+            geojson = json.loads(response.content)
+            self.assertEqual(geojson['type'], 'FeatureCollection')
+            self.assertEqual(geojson['features'], [])
 
 
 class DataSourceTourInFranceViewTests(TrekkingManagerTest):

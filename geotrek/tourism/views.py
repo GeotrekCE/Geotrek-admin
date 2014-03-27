@@ -1,6 +1,8 @@
 import json
+import logging
 
 import requests
+import geojson
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
@@ -9,6 +11,9 @@ from tif2geojson import tif2geojson
 from mapentity.views import JSONResponseMixin
 
 from geotrek.tourism.models import DataSource, DATA_SOURCE_TYPES
+
+
+logger = logging.getLogger(__name__)
 
 
 class DataSourceList(JSONResponseMixin, ListView):
@@ -38,12 +43,19 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
         source = self.get_object()
         response = requests.get(source.url)
         if source.type == DATA_SOURCE_TYPES.GEOJSON:
-            geojson = json.loads(response.text)
+            try:
+                result = json.loads(response.text)
+                assert result.get('type') == 'FeatureCollection'
+                assert result.get('features') is not None
+            except (ValueError, AssertionError) as e:
+                logger.error(u"Source '%s' returns invalid GeoJSON" % source.url)
+                logger.error(e)
+                result = geojson.FeatureCollection(features=[])
         elif source.type == DATA_SOURCE_TYPES.TOURINFRANCE:
-            geojson = tif2geojson(response.text)
+            result = tif2geojson(response.text)
         else:
             raise NotImplementedError
-        return geojson
+        return result
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
