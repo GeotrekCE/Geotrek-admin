@@ -20,6 +20,15 @@ casper.test.begin('Data sources can be added to the map', function(test) {
         var xpath = '//img[contains(@src, "/media/upload/datasource-refugee.svg")]';
         test.assertExists({type: 'xpath', path: xpath},
                           'Category icons are shown');
+
+        casper.click('.tourism-datasource-marker:nth-of-type(1)');
+        casper.waitForSelector('.leaflet-popup');
+    });
+
+    casper.then(function () {
+        test.pass('Popup is shown on click');
+        test.assertExists('.leaflet-popup span.title',
+                            'Properties are shown within popup');
     });
 
     casper.run(function done() {

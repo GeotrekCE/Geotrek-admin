@@ -9,6 +9,17 @@
                               className: 'tourism-datasource-marker',
                               iconSize: [16, 0]});
         var marker = L.marker(latlng, {icon: icon});
+
+        marker.on('click', function (e) {
+            var props = L.Util.extend({title:'', description:'', website: ''},
+                                      feature.properties);
+                content = L.Util.template("<span class=title>{% trans "Title" %}</span>: {title}<br/>" +
+                                          "<span class=title>{% trans "Description" %}</span>: {description}<br/>" +
+                                          "<span class=title>{% trans "Website" %}</span>: {website}", props);
+
+            marker.bindPopup(content)
+                  .openPopup();
+        });
         return marker;
     }
 
