@@ -1,6 +1,7 @@
 import json
 
 import mock
+from requests.exceptions import ConnectionError
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -102,6 +103,14 @@ class DataSourceViewTests(TrekkingManagerTest):
     def test_source_is_returned_as_geojson_when_invalid_response(self):
         with mock.patch('requests.get') as mocked:
             mocked().text = '404 page not found'
+            response = self.client.get(self.url)
+            geojson = json.loads(response.content)
+            self.assertEqual(geojson['type'], 'FeatureCollection')
+            self.assertEqual(geojson['features'], [])
+
+    def test_source_is_returned_as_geojson_when_network_problem(self):
+        with mock.patch('requests.get') as mocked:
+            mocked.side_effect = ConnectionError
             response = self.client.get(self.url)
             geojson = json.loads(response.content)
             self.assertEqual(geojson['type'], 'FeatureCollection')

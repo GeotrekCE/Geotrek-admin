@@ -2,6 +2,7 @@ import json
 import logging
 
 import requests
+from requests.exceptions import RequestException
 import geojson
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -41,7 +42,16 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
 
     def get_context_data(self, *args, **kwargs):
         source = self.get_object()
-        response = requests.get(source.url)
+
+        default_result = geojson.FeatureCollection(features=[])
+
+        try:
+            response = requests.get(source.url)
+        except RequestException as e:
+            logger.error(u"Source '%s' cannot be downloaded" % source.url)
+            logger.exception(e)
+            return default_result
+
         if source.type == DATA_SOURCE_TYPES.GEOJSON:
             try:
                 result = json.loads(response.text)
@@ -49,12 +59,15 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
                 assert result.get('features') is not None
             except (ValueError, AssertionError) as e:
                 logger.error(u"Source '%s' returns invalid GeoJSON" % source.url)
-                logger.error(e)
-                result = geojson.FeatureCollection(features=[])
+                logger.exception(e)
+                result = default_result
+
         elif source.type == DATA_SOURCE_TYPES.TOURINFRANCE:
             result = tif2geojson(response.text)
+
         else:
             raise NotImplementedError
+
         return result
 
     @method_decorator(login_required)
