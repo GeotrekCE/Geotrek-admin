@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if appname == "trekking" %}
+(function () {
+    $.getJSON('{% url 'tourism:datasource_list_json' %}', function (data) {
+        for (var i=0; i<data.length; i++) {
+            var dataLayer = data[i];
+            var layer = new L.ObjectsLayer(null, {
+                indexing: false,
+                pointToLayer: function (feature, latlng) { return L.marker(latlng); }
+            });
+            layer.load(dataLayer.geojson_url);
+            map.layerscontrol.addOverlay(layer, dataLayer.title);
+        }
+    })
+})();
+{% endif %}
