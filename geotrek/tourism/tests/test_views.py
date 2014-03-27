@@ -77,24 +77,42 @@ class DataSourceViewTests(TrekkingManagerTest):
     def tearDown(self):
         self.client.logout()
 
-    def test_failing_sources_return_empty_data(self):
+    def test_source_is_fetched_upon_view_call(self):
         with mock.patch('requests.get') as mocked:
+            mocked().text = '{}'
+            self.client.get(self.url)
+            mocked.assert_called_with(self.source.url)
+
+    def test_empty_source_response_return_empty_data(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = '{}'
             response = self.client.get(self.url)
             self.assertEqual(response.status_code, 200)
             datasource = json.loads(response.content)
             self.assertEqual(datasource, {})
 
-    def test_source_is_fetched_upon_view_call(self):
+    def test_source_is_returned_as_geojson(self):
         with mock.patch('requests.get') as mocked:
-            self.client.get(self.url)
-            mocked.assert_called_once_with(self.source.url)
+            mocked().text = '{"type": "foo"}'
+            response = self.client.get(self.url)
+            self.assertEqual(json.loads(response.content),
+                             {'type': 'foo'})
 
-    # def test_source_is_returned_as_geojson(self):
-    #     with mock.patch('requests.get') as mocked:
-    #         print mocked.json
-    #         mocked.json.return_value = {'type': 'foo'}
 
-    #         response = self.client.get(self.url)
-    #         self.assertEqual(json.loads(response.content),
-    #                          {'type': 'foo'})
+class DataSourceTourInFranceViewTests(TrekkingManagerTest):
+    def setUp(self):
+        self.source = DataSource.objects.create(title='title',
+                                                url='http://source.com',
+                                                type=DATA_SOURCE_TYPES.TOURINFRANCE)
+        self.url = reverse('tourism:datasource_geojson', kwargs={'pk': self.source.pk})
+        self.login()
 
+    def tearDown(self):
+        self.client.logout()
+
+    def test_source_is_returned_as_geojson_when_tourinfrance(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = "<xml></xml>"
+            response = self.client.get(self.url)
+            geojson = json.loads(response.content)
+            self.assertEqual(geojson['type'], 'FeatureCollection')
