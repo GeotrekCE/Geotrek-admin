@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+import os
 import json
 
 import mock
@@ -124,6 +126,10 @@ class DataSourceViewTests(TrekkingManagerTest):
 
 class DataSourceTourInFranceViewTests(TrekkingManagerTest):
     def setUp(self):
+        here = os.path.dirname(__file__)
+        filename = os.path.join(here, 'data', 'sit-averyon-02.01.14.xml')
+        self.sample = open(filename).read()
+
         self.source = DataSource.objects.create(title='title',
                                                 url='http://source.com',
                                                 type=DATA_SOURCE_TYPES.TOURINFRANCE)
@@ -139,3 +145,12 @@ class DataSourceTourInFranceViewTests(TrekkingManagerTest):
             response = self.client.get(self.url)
             geojson = json.loads(response.content)
             self.assertEqual(geojson['type'], 'FeatureCollection')
+
+    def test_source_is_returned_in_language_request(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertEqual(feature['properties']['description'],
+                             u'Ubicada en la región minera del Aveyron, nuestra casa rural os permitirá decubrir la naturaleza y el patrimonio industrial de la cuenca de Aubin y Decazeville.')

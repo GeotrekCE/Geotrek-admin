@@ -65,7 +65,8 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
                 result = default_result
 
         elif source.type == DATA_SOURCE_TYPES.TOURINFRANCE:
-            result = tif2geojson(response.text)
+            language = self.request.LANGUAGE_CODE
+            result = tif2geojson(response.text, lang=language)
 
         else:
             raise NotImplementedError
