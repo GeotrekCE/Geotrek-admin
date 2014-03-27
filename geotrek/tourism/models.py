@@ -24,6 +24,10 @@ class DataSource(models.Model):
     def __unicode__(self):
         return self.title
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('tourism:datasource_geojson', [str(self.id)])
+
     def pictogram_img(self):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")

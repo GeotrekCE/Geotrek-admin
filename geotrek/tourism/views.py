@@ -23,12 +23,14 @@ class DataSourceList(JSONResponseMixin, ListView):
     def get_context_data(self):
         results = []
         for ds in self.get_queryset():
+            geojson_url = self.request.build_absolute_uri(ds.get_absolute_url())
             results.append({
                 'id': ds.id,
                 'title': ds.title,
                 'url': ds.url,
                 'type': ds.type,
                 'pictogram': ds.pictogram or '',
+                'geojson_url': geojson_url,
             })
         return results
 

@@ -66,6 +66,11 @@ class DataSourceListViewTests(TrekkingManagerTest):
         self.assertEqual(datasources[0]['title'],
                          self.source.title_it)
 
+    def test_sources_provide_geojson_absolute_url(self):
+        datasources = json.loads(self.response.content)
+        self.assertEqual(datasources[0]['geojson_url'],
+                         u'http://testserver/api/datasource/datasource-%s.geojson' % self.source.id)
+
 
 class DataSourceViewTests(TrekkingManagerTest):
     def setUp(self):
