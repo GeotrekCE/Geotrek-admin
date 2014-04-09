@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-v0.22.5}
+VERSION=${VERSION:-0.22.5}
 dev=false
 tests=false
 prod=false
@@ -375,8 +375,8 @@ function geotrek_setup {
 
     if [ ! -f Makefile ]; then
        echo_step "Downloading Geotrek latest stable version..."
-       wget --quiet https://github.com/makinacorpus/Geotrek/archive/$VERSION.zip
-       unzip $VERSION.zip -d /tmp > /dev/null
+       wget --quiet https://github.com/makinacorpus/Geotrek/archive/v$VERSION.zip
+       unzip v$VERSION.zip -d /tmp > /dev/null
        rm -f /tmp/Geotrek-$VERSION/install.sh
        shopt -s dotglob nullglob
        mv /tmp/Geotrek-$VERSION/* .
