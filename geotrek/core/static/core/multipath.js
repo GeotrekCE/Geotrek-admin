@@ -87,15 +87,11 @@ L.Control.PointTopology = L.Control.extend({
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
         link.title = L.Control.PointTopology.TITLE;
-        var self = this;
-        L.DomEvent
-                .addListener(link, 'click', L.DomEvent.stopPropagation)
-                .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', this.toggle, this);
-        return this._container;
-    },
 
-    onRemove: function (map) {
+        L.DomEvent.addListener(link, 'click', L.DomEvent.stopPropagation)
+                  .addListener(link, 'click', L.DomEvent.preventDefault)
+                  .addListener(link, 'click', this.toggle, this);
+        return this._container;
     }
 });
 
@@ -174,21 +170,15 @@ L.Control.LineTopology = L.Control.extend({
         link.href = '#';
         link.title = L.Control.LineTopology.TITLE;
 
-        var self = this;
-        L.DomEvent
-                .addListener(link, 'click', L.DomEvent.stopPropagation)
-                .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', this.toggle, this);
+        L.DomEvent.addListener(link, 'click', L.DomEvent.stopPropagation)
+                  .addListener(link, 'click', L.DomEvent.preventDefault)
+                  .addListener(link, 'click', this.toggle, this);
 
         // Control is not activable until paths and graph are loaded
         this.activable(false);
 
         return this._container;
-    },
-
-    onRemove: function (map) {
     }
-
 });
 
 
@@ -320,6 +310,8 @@ L.Handler.MultiPath = L.Handler.extend({
     // Reset the whole state
     reset: function() {
         var self = this;
+
+        this.showPathGeom(null);
 
         // remove all markers from PointOnPolyline objects
         this.steps && $.each(this.steps, function(i, pop) {
