@@ -358,7 +358,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     removeHooks: function() {
         this._container.style.cursor = '';
-        this.guidesLayer.off('click', this._onClick, this);
+        this._guidesLayer.off('click', this._onClick, this);
 
         this.stepsToggleActivate(false);
 

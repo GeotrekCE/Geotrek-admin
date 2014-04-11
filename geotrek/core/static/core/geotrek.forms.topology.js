@@ -80,6 +80,11 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         // Make sure paths stay above other layers
         this._pathsLayer.bringToFront();
 
+        // We now have the path, we can find out the topology bounds.
+        var topo = this.store.load();
+        if (topo)
+            this._map.fitBounds(this._topologyBounds(topo));
+
         if (this._pointControl)
             this._pointControl.activable(true);
         if (this._lineControl)
@@ -114,6 +119,12 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
     },
 
     load: function () {
+        if (this._pathsLayer === null) {
+            // Use basic behaviour from MapEntityField until
+            this._setView();
+            return;
+        }
+
         var topo = this.store.load();
         if (topo) {
             console.debug("Deserialize topology: " + topo);
@@ -124,5 +135,25 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
                 this._pointControl.handler.restoreTopology(topo);
             }
         }
+    },
+
+    _topologyBounds: function (topo) {
+        var bounds = L.latLngBounds([]);
+        if (topo.lat && topo.lng) {
+            bounds.extend(L.latLng([topo.lat - 0.005, topo.lng - 0.005]));
+            bounds.extend(L.latLng([topo.lat + 0.005, topo.lng + 0.005]));
+        }
+        else {
+            var paths =  [];
+            for (var i=0; i<topo.length; i++) {
+                var subtopology = topo[i];
+                for (var j=0; j<subtopology.paths.length; j++) {
+                    var pathPk = subtopology.paths[j];
+                    var pathLayer = this._pathsLayer.getLayer(pathPk);
+                    bounds.extend(pathLayer.getBounds());
+                }
+            }
+        }
+        return bounds;
     }
 });
