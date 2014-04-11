@@ -3,12 +3,26 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from extended_choices import Choices
+from multiselectfield import MultiSelectField
 
 
 DATA_SOURCE_TYPES = Choices(
     ('GEOJSON', 'GEOJSON', _("GeoJSON")),
     ('TOURINFRANCE', 'TOURINFRANCE', _("TourInFrance")),
 )
+
+
+def _get_target_choices():
+    """ Populate choices using installed apps names.
+    """
+    hidden = ['geotrek.core', 'geotrek.common',
+              'geotrek.authent', 'geotrek.tourism']
+    apps = [('public', _("Public website"))]
+    for app in settings.INSTALLED_APPS:
+        if app.startswith('geotrek.') and app not in hidden:
+            appname = app.replace('geotrek.', '')
+            apps.append((appname, _(appname.capitalize())))
+    return tuple(apps)
 
 
 class DataSource(models.Model):
@@ -20,6 +34,8 @@ class DataSource(models.Model):
                                  db_column='picto', max_length=512)
     type = models.CharField(db_column="type", max_length=32,
                             choices=DATA_SOURCE_TYPES)
+    targets = MultiSelectField(verbose_name=_(u"Display"),
+                               choices=_get_target_choices(), null=True, blank=True)
 
     def __unicode__(self):
         return self.title
