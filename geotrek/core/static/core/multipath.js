@@ -138,6 +138,7 @@ L.Handler.PointTopology = L.Draw.Marker.extend({
         marker.on('move snap', function (e) {
             this.fire('computed_topology', {topology: marker});
         }, this);
+        this.fire('computed_topology', {topology: marker});
     }
 });
 
