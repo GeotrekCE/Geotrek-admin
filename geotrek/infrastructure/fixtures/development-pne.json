@@ -1,0 +1,39 @@
+[
+    {
+        "pk": 10015,
+        "model": "infrastructure.signage",
+        "fields": {
+            "name": "name 0",
+            "description": "description 0",
+            "type": 43
+        }
+    },
+    {
+        "model": "core.pathaggregation",
+        "fields": {
+            "path": 1,
+            "end_position": 0.98,
+            "start_position": 0.75,
+            "order": 1,
+            "topo_object": 10015
+        }
+    },
+    {
+    "pk": 10015,
+    "model": "core.topology",
+    "fields": {
+        "slope": 0.0,
+        "kind": "SIGNAGE",
+        "descent": 0,
+        "deleted": false,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z",
+        "length": 0,
+        "max_elevation": 0,
+        "geom": "LINESTRING (933635.9306511494796723 6428715.8264568652957678, 933608.8633763707475737 6428684.0458154212683439, 933550.8021533503197134 6428663.0655454518273473, 933441.1352932214504108 6428571.8860088549554348)",
+        "offset": 0.0,
+        "geom_3d": "LINESTRING Z (0 0 0, 1 1 0)",
+        "ascent": 0,
+        "min_elevation": 0
+    }}
+]
