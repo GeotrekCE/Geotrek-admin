@@ -124,4 +124,16 @@ $(document).ready(function() {
     });
 
 
+    // Reveal CSS animation
+    $(window).scroll(function() {
+        $('.animated').each(function(){
+        var elemPos = $(this).offset().top;
+
+        var topOfWindow = $(window).scrollTop();
+            if (elemPos < topOfWindow+400) {
+                $(this).addClass("revealed");
+            }
+        });
+    });
+
 });

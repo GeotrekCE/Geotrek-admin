@@ -95,6 +95,64 @@ input.error {
 }
 
 /*********************************************************************************/
+/* Animation with images overlapping                                             */
+/*********************************************************************************/
+
+.wrapper.dark .overlap-animation img,
+.wrapper.light .overlap-animation img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: transparent;
+
+    opacity: 0;
+    transform: translateX(150%);
+    -webkit-transform: translateX(150%);
+
+    transition: all 1s ease;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    -o-transition: all 1s ease;
+}
+
+.wrapper.dark .overlap-animation.revealed img,
+.wrapper.light .overlap-animation.revealed img {
+    opacity: 1;
+
+    transform: translateX(0%);
+    -webkit-transform: translateX(0%);
+    -ms-transform: translateX(0%);
+    -o-transform: translateX(0%);
+}
+
+    .wrapper.dark .overlap-animation img.delay-1,
+    .wrapper.light .overlap-animation img.delay-1 {
+        transition-delay: 300ms;
+        -webkit-transition-delay: 300ms;
+        -ms-transition-delay: 300ms;
+        -o-transition-delay: 300ms;
+    }
+
+    .wrapper.dark .overlap-animation img.delay-2,
+    .wrapper.light .overlap-animation img.delay-2 {
+        transition-delay: 700ms;
+        -webkit-transition-delay: 700ms;
+        -ms-transition-delay: 700ms;
+        -o-transition-delay: 700ms;
+    }
+
+    .wrapper.dark .overlap-animation img.delay-3,
+    .wrapper.light .overlap-animation img.delay-3 {
+        transition-delay: 1s;
+        -webkit-transition-delay: 1s;
+        -ms-transition-delay: 1s;
+        -o-transition-delay: 1s;
+    }
+
+
+
+/*********************************************************************************/
 /* Styling from Dopetrope theme                                                  */
 /*********************************************************************************/
     ul.dates
