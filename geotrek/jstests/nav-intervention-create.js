@@ -10,6 +10,10 @@ casper.test.begin('Create a new intervention', function(test) {
         test.pass('Line topology control available.');
         test.assertExists('a.pointtopology-control', 'Point topology control available.');
 
+        casper.waitWhileSelector('.leaflet-control.control-disabled');
+    });
+
+    casper.then(function () {
         test.info('Activate point');
         casper.click('a.pointtopology-control');
         casper.waitForSelector('.leaflet-control.enabled a.pointtopology-control');
@@ -17,14 +21,14 @@ casper.test.begin('Create a new intervention', function(test) {
 
     casper.then(function () {
         test.pass('Point control was activated.');
-        casper.waitForSelector('.leaflet-control.disabled a.linetopology-control');
+        casper.waitForSelector('.leaflet-control.control-disabled a.linetopology-control');
     });
 
     casper.then(function () {
         test.pass('Line topology control was disabled.');
 
-        casper.mouseEvent('mousemove', '#map_topology');
-        casper.click('#map_topology');
+        casper.mouseEvent('mousemove', '#id_topology_map');
+        casper.click('#id_topology_map');
         casper.waitForSelector('.leaflet-marker-pane .leaflet-marker-draggable');
     });
 
@@ -44,7 +48,7 @@ casper.test.begin('Create a new intervention', function(test) {
 
     casper.then(function () {
         test.pass('Line control was activated.');
-        casper.waitForSelector('.leaflet-control.disabled a.pointtopology-control');
+        casper.waitForSelector('.leaflet-control.control-disabled a.pointtopology-control');
     });
 
     casper.then(function () {

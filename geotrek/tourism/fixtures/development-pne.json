@@ -9,6 +9,7 @@
         "title_es": "OSM - Refugios",
         "title_it": "OSM - Refugi",
         "type": "GEOJSON",
-        "title_fr": "OSM - Refuges"
+        "title_fr": "OSM - Refuges",
+        "targets": ["trekking"]
     }
 }]

@@ -113,7 +113,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         function graphError(jqXHR, textStatus, errorThrown) {
             this._pathsLayer.fire('data:loaded');
             $(this._map._container).addClass('map-error');
-            console.error("Could not load url '" + window.SETTINGS.url.path_graph + "': " + textStatus);
+            console.error("Could not load url '" + window.SETTINGS.urls.path_graph + "': " + textStatus);
             console.error(errorThrown);
         }
     },

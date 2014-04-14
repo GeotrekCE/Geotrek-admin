@@ -52,7 +52,7 @@ class TopologyHelper(object):
             return Topology.objects.get(pk=int(serialized))
         except Topology.DoesNotExist:
             raise
-        except ValueError:
+        except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
 
         objdict = serialized

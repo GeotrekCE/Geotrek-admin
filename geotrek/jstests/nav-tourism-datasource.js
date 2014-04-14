@@ -31,6 +31,15 @@ casper.test.begin('Data sources can be added to the map', function(test) {
                             'Properties are shown within popup');
     });
 
+    casper.thenOpen(utils.baseurl + '/path/list/', function(response) {
+        casper.waitForResource('/api/datasource/datasources.json');
+    });
+
+    casper.then(function () {
+        test.assertTextDoesntExist('OSM - ',
+                                   'Tourism layer is not shown if target does not match');
+    });
+
     casper.run(function done() {
         test.done();
     });
