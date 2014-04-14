@@ -71,7 +71,7 @@
                     <header>
                         <h2>Gérez et valorisez vos sentiers avec Geotrek</h2>
                     </header>
-                    <p>Geotrek est composé d’une application pour<br> les <strong>gestionnaires</strong> et d’un portail pour le <strong>grand public</strong>.</p>
+                    <p>Geotrek est composé d’une application pour<br/> les <strong>gestionnaires</strong> et d’un portail pour le <strong>grand public</strong>.</p>
                     <ul class="actions">
                         <li><a href="#management" class="button">En savoir plus</a></li>
                     </ul>
@@ -87,9 +87,19 @@
                 <header class="major">
                     <h2>De la gestion...</h2>
                 </header>
-                <div class="image-wrapper first">
-                    <img class="image full" src="images/geotrek_application.png" alt="Capture d'écran de l'application de gestion de sentiers Geotrek">
+                <div class="image-wrapper">
+                    <div class="owl-carousel">
+                        <div class="item"><img src="images/capture-2.jpg" alt=""></div>
+                        <div class="item"><img src="images/capture-1.jpg" alt=""></div>
+                        <div class="item"><img src="images/capture-3.jpg" alt=""></div>
+                        <div class="item"><img src="images/capture-4.jpg" alt=""></div>
+                        <div class="item"><img src="images/capture-5.jpg" alt=""></div>
+                    </div>
                 </div>
+
+
+
+
                 <div class="row features">
                     <section class="4u feature">
                         <header>
@@ -141,6 +151,129 @@
             </div>
 
         </div>
+
+
+		<!-- Image + Texte -->
+		<div id="publication" class="wrapper light">
+
+			<div class="container">
+
+				<header class="major">
+				    <h2>Les tronçons comme réferentiel commun...</h2>
+				</header>
+
+				<div class="row features">
+				    <section class="5u feature">
+				        <h3>... pour une meilleure gestion</h3>
+				        </header>
+				        <p>Tous les objets sont décrits à partir du réseau de tronçons, à l'aide de <a href="http://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique">la segmentation dynamique</a>.</p>
+                        <p>Cela permet de garantir une cohérence géométrique et topologique, mais
+                           aussi d'associer toutes vos données entre elles, grâce aux superpositions sur le réseau.</p>
+				    </section>
+				    <section class="7u feature">
+				        <div class="image-wrapper">
+				            <div class="image-wrapper overlap-animation animated">
+						        <img src="images/troncons-anim-1.svg" alt=""/>
+						        <img src="images/troncons-anim-2.svg" alt="" class="delay-1" />
+						        <img src="images/troncons-anim-3.svg" alt="" class="delay-2" />
+						        <img src="images/troncons-anim-4.svg" alt="" class="delay-3"/>
+						    </div>
+				        </div>
+				    </section>
+
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<!-- Image + Texte -->
+		<div id="publication" class="wrapper dark">
+
+			<div class="container">
+
+				<header class="major">
+				    <h2>Toute la puissance de PostGIS 2</h2>
+				</header>
+
+				<div class="row features">
+
+				    <section class="7u feature">
+				        <div class="image-wrapper">
+				            <a href="http://makina-corpus.com/blog/metier/2014/affichage-dun-mnt-avec-babylon-js-a-partir-de-donnees-postgresql" class="image full"><img src="images/capture-webgl.jpg" alt="Représentation 3D du terrain" /></a>
+				        </div>
+				    </section>
+				    <section class="5u feature">
+				        <h3>Exploiter la composante 3D</h3>
+				        <p>L'édition des objets s'effectue en 2D, et leur géométrie est <a href="http://makina-corpus.com/blog/metier/draper-des-lignes-sur-un-mnt-avec-postgis">drappée
+		automatiquement</a> en 3D sur un Modèle Numérique de Terrain stocké en base au format raster.</p>
+
+
+				        <h3>Gestion topologique des sentiers</h3>
+				        <p>Le socle de l'application repose sur un réseau topologique de tronçons, qui permet d'assurer le découpage des arrêtes aux intersections, ainsi que le "magnétisme" (snapping) des noeuds du réseau.</p>
+
+				    </section>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div id="management" class="wrapper light">
+
+			<div class="container">
+
+				<header class="major">
+				    <h2>Architecture de Geotrek</h2>
+				</header>
+				<div class="image-wrapper first">
+				    <a href="#" class="image full"><img src="images/architecture.svg" alt="" /></a>
+				</div>
+			</div>
+		</div>
+
+
+
+        <!-- Technologies -->
+        <div id="tutoriaux" class="wrapper dark">
+
+            <div class="container">
+                <div class="row features">
+                    <section class="6u feature">
+                        <header>
+                            <h2><i class="fa fa-cogs"></i> Tutoriaux</h2>
+                        </header>
+                        <p>
+                          <ul>
+                            <li><a href="http://makina-corpus.com/blog/metier/la-segmentation-dynamique">La segmentation dynamique</a></li>
+                            <li><a href="http://makina-corpus.com/blog/metier/draper-des-lignes-sur-un-mnt-avec-postgis">Drappage de lignes sur un MNT</a></li>
+                            <li><a href="http://makina-corpus.com/blog/metier/utiliser-les-topologies-postgis-pour-nettoyer-un-filaire-de-voirie">Utiliser les topologies PostGIS pour nettoyer un filaire de voirie</a></li>
+                            <li>
+                            <a href="http://blog.mathieu-leplatre.info/cheap-debugging-of-postgresql-triggers-in-django.html">Debug PostgreSQL triggers with Django</a> ( <em>en</em> )</li>
+                            <li>
+                            <a href="http://blog.mathieu-leplatre.info/leaflet-tiles-in-lambert-93-projection-2154.html">Leaflet et tuiles en Lambert-93</a> ( <em>en</em> )</li>
+                          </ul>
+                        </p>
+                    </section>
+                    <section class="6u feature">
+                        <header>
+                            <h2><i class="fa fa-reply-all"></i> Prestations</h2>
+                        </header>
+                        <ul>
+                            <li>Hébergement</li>
+                            <li>Personnalisation</li>
+                            <li>Assistance et formations</li>
+                            <li>Intégration de données</li>
+                            <li>Développement et ajout de fonctionnalités</li>
+                            <li>. . .</li>
+                        </ul>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+
 
 
         <!-- Actus Wrapper -->
@@ -223,45 +356,6 @@
 
             </div>
 
-
-        <!-- Technologies -->
-        <div id="tutoriaux" class="wrapper dark">
-
-            <div class="container">
-                <div class="row features">
-                    <section class="6u feature">
-                        <header>
-                            <h2><i class="fa fa-cogs"></i> Tutoriaux</h2>
-                        </header>
-                        <p>
-                          <ul>
-                            <li><a href="http://makina-corpus.com/blog/metier/la-segmentation-dynamique">La segmentation dynamique</a></li>
-                            <li><a href="http://makina-corpus.com/blog/metier/draper-des-lignes-sur-un-mnt-avec-postgis">Drappage de lignes sur un MNT</a></li>
-                            <li><a href="http://makina-corpus.com/blog/metier/utiliser-les-topologies-postgis-pour-nettoyer-un-filaire-de-voirie">Utiliser les topologies PostGIS pour nettoyer un filaire de voirie</a></li>
-                            <li>
-                            <a href="http://blog.mathieu-leplatre.info/cheap-debugging-of-postgresql-triggers-in-django.html">Debug PostgreSQL triggers with Django</a> ( <em>en</em> )</li>
-                            <li>
-                            <a href="http://blog.mathieu-leplatre.info/leaflet-tiles-in-lambert-93-projection-2154.html">Leaflet et tuiles en Lambert-93</a> ( <em>en</em> )</li>
-                          </ul>
-                        </p>
-                    </section>
-                    <section class="6u feature">
-                        <header>
-                            <h2><i class="fa fa-reply-all"></i> Prestations</h2>
-                        </header>
-                        <ul>
-                            <li>Hébergement</li>
-                            <li>Personnalisation</li>
-                            <li>Assistance et formations</li>
-                            <li>Intégration de données</li>
-                            <li>Développement et ajout de fonctionnalités</li>
-                            <li>. . .</li>
-                        </ul>
-                    </section>
-                </div>
-
-            </div>
-        </div>
 
         <!-- Footer Wrapper -->
             <div id="footer-wrapper">
