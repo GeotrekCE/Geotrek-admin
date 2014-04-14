@@ -9,6 +9,7 @@ L.FieldStore.TopologyStore = L.FieldStore.extend({
     },
 
     _serialize: function (layer) {
+        var serialized;
         if (layer instanceof L.Marker) {
             var p = layer.getLatLng();
             serialized = {lat: p.lat, lng: p.lng};
@@ -66,6 +67,13 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
             control.handler.on('computed_topology', function (e) {
                 this.store.save(e.topology);
             }, this);
+            // Make sure, we clean-up geometries when user changes from point to line
+            control.handler.on('enabled', resetTopologies, this);
+        }
+
+        function resetTopologies() {
+            if (this._pointControl) this._pointControl.handler.reset();
+            if (this._lineControl) this._lineControl.handler.reset();
         }
     },
 
