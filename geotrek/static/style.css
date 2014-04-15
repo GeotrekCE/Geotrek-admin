@@ -10,9 +10,9 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-color: #ffa;
 }
 
-.leaflet-control.disabled a {
+.leaflet-control.control-disabled a {
     cursor: default;
-    background-color: #E6E6E6;
+    background-color: #B4B4B4;
     color: #bbb;
 }
 
@@ -26,32 +26,66 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
 
 /* Point topology */
 
-img.leaflet-marker-add {
-    background-image: url('core/images/marker-add.png');
+.marker-point {
+    padding-left: 25px;
+    padding-top: 41px;
+    background-image: url('core/images/marker-add.png') ;
+    background-repeat: no-repeat;
+    height: 0px !important;
+    width: 0px !important;
+
 }
 
-img.marker-snapped {
+.marker-point.marker-snapped {
     background-image: url('core/images/marker-snap.png');
 }
 
 
 .marker-source {
+    padding-left: 25px;
+    padding-top: 41px;
+    background-repeat: no-repeat;
+    height: 0px !important;
+    width: 0px !important;
+
     background-image: url('mapentity/images/marker-source.png');
 }
 
+.marker-drag {
+    padding-left: 25px;
+    padding-top: 41px;
+    background-repeat: no-repeat;
+    height: 0px !important;
+    width: 0px !important;
+
+    margin-left: -9px !important;
+    margin-top: -9px !important;
+
+    background-image: url('core/images/marker-drag.png');
+}
+
 .marker-target {
+    padding-left: 25px;
+    padding-top: 41px;
+    background-repeat: no-repeat;
+    height: 0px !important;
+    width: 0px !important;
+
     background-image: url('mapentity/images/marker-target.png');
 }
 
 .marker-source.marker-snapped {
     background-image: url('core/images/marker-source-snap.png');
 }
+
 .marker-target.marker-snapped {
     background-image: url('core/images/marker-target-snap.png');
 }
 
 .marker-drag { background-image: url('core/images/marker-drag.png') }
-.marker-drag.marker-snapped { background-image: url('core/images/marker-drag-snap.png') }
+.marker-drag.marker-snapped {
+    background-image: url('core/images/marker-drag-snap.png');
+}
 
 .linetopology-control {
     background-image: url(core/images/linetopology-control.png);
