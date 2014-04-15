@@ -221,8 +221,10 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.core',
     'geotrek.infrastructure',
     'geotrek.maintenance',
+    'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
+    'geotrek.tourism',
 )
 
 SERIALIZATION_MODULES = {
@@ -342,6 +344,7 @@ MAPENTITY_CONFIG = {
     'CONVERSION_SERVER': 'http://127.0.0.1:6543',
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
+    'MAP_BACKGROUND_FOGGED': True,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -354,6 +357,8 @@ ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
 ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
+ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -405,6 +410,8 @@ LAND_BBOX_CITIES_ENABLED = True
 LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
+TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
+                            'description_teaser']
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
 
 # Static offsets in projection units

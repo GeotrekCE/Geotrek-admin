@@ -2,7 +2,7 @@
 from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+from django.db import models, connection
 
 
 class Migration(SchemaMigration):
@@ -59,6 +59,12 @@ class Migration(SchemaMigration):
             ('organization', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['common.Organism'], db_column='organisme')),
         ))
         db.send_create_signal(u'land', ['SignageManagementEdge'])
+
+        if 'l_secteur' in connection.introspection.table_names():
+            # Was installed via geotrek.zoning initial migrations
+            # (i.e fresh install)
+            # See zoning/migrations/0001_initial.py
+            return
 
         # Adding model 'RestrictedAreaType'
         db.create_table('f_b_zonage', (

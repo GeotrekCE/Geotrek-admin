@@ -10,7 +10,7 @@ After editing ``etc/settings.ini``, refresh the running instance with :
 
 ::
 
-    make deploy
+    make env_standalone deploy
 
 
 There a few cases where running ``install.sh`` would be necessary. If you
@@ -77,7 +77,7 @@ However, it is still possible to write a custom Django setting file.
     [django]
     settings = settings.custom
 
-* As for any change in settings, re-run ``make deploy``.
+* As for any change in settings, re-run ``make env_standalone deploy``.
 
 
 ============

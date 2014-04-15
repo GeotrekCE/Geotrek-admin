@@ -1,5 +1,5 @@
 /*
- * This file contains styles that are specific to Geotrek, 
+ * This file contains styles that are specific to Geotrek,
  * with no reason to be in MapEntity.
  * (paths, aggregations, altimetric profile, etc.)
  */
@@ -10,9 +10,9 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-color: #ffa;
 }
 
-.leaflet-control.disabled a {
+.leaflet-control.control-disabled a {
     cursor: default;
-    background-color: #E6E6E6;
+    background-color: #B4B4B4;
     color: #bbb;
 }
 
@@ -97,26 +97,13 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
 
 
 
-
-/* Force tiles opacity and no transition on every tile layer */
-.leaflet-tile-pane .leaflet-layer .leaflet-tile-loaded,
-.leaflet-tile-pane .leaflet-fade-anim .leaflet-tile {
-    opacity: 0.75;
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
-    transition: none;
-}
-
-.leaflet-container {
-    background-color: #000;
-}
-
-
 /* Land labels */
 .leaflet-label.landlabel {
     font-weight: normal;
     font: 10px/12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.leaflet-label.landlabel:before {
+    top: 0px;
 }
 
 

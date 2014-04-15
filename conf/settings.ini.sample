@@ -3,7 +3,9 @@
 #..........................
 #
 # (Note: If you edit this file out of install process,
-#  re-run "./install.sh" to apply changes)
+#  re-run "./install.sh" to apply changes.
+#  Running "make env_standalone deploy" is faster and might be enough
+#  depending on the entries you modified...)
 
 [settings]
 
@@ -28,7 +30,7 @@ secret_key = change_this_key_with_a_value_of_your_choice
 #  GIS settings
 #..........................
 
-# EPSG code of the coordinate system to use
+# EPSG code of the coordinate system to use (projection unit must be meter)
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
 spatial_extent = 924861,6375196,985649,6448688

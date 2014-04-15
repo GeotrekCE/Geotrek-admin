@@ -18,7 +18,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory
-from geotrek.land.factories import DistrictFactory
+from geotrek.zoning.factories import DistrictFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
@@ -232,6 +232,12 @@ class TrekCustomViewTests(TestCase):
                               "name": trek.information_desk.name,
                               "description": trek.information_desk.description})
 
+    def test_json_detail_has_elevation_area_url(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
+        detailjson = json.loads((self.client.get(url)).content)
+        self.assertEqual(detailjson['elevation_area_url'], '/api/trek/%s/dem.json' % trek.pk)
+
     def test_overriden_document(self):
         trek = TrekFactory.create()
         # Will have to mock screenshot, though.
@@ -249,6 +255,13 @@ class TrekCustomViewTests(TestCase):
     def test_profile_json(self):
         trek = TrekFactory.create()
         url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_elevation_area_json(self):
+        trek = TrekFactory.create()
+        url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')

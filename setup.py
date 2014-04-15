@@ -29,6 +29,8 @@ setup(
         'simplekml == 1.2.1',
         'pygal == 1.1.0',
         'django-extended-choices == 0.3.0',
+        'django-multiselectfield == 0.1.1',
+        'tif2geojson == 0.1.1',
         'mapentity',  # pinned by buildout
     ] + test_requirements,
     tests_requires=test_requirements,

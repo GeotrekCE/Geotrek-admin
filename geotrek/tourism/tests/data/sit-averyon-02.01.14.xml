@@ -1,0 +1,3567 @@
+<?xml version="1.0"?>
+<listeOI xmlns="http://www.caravelis.com/webservice/data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.caravelis.com/webservice/data http://www.caravelis.com/webservice/data/listeOI.xsd">
+				<OIs COUNT="5"><tif:OI xmlns:tif="http://www.tourinfrance.net/Tourinfrance3/" xmlns:fmp="http://www.filemaker.com/fmpdsoresult" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns="http://www.tourinfrance.net/Tourinfrance3/">
+  <tif:DublinCore>
+    <dc:title xml:lang="FR">G&#xEE;te d'&#xE9;tape "Les Volets Bleus"</dc:title>
+    <dc:identifier>TFO024499558523</dc:identifier>
+    <tif:Classification code="02.01.14">H&#xE9;bergement d'accueil collectif</tif:Classification>
+    
+    
+    <dc:subject xml:lang="FR">Oasis de verdure &#xE0; 5 minutes du centre ville.</dc:subject>
+    <dc:description xml:lang="FR">Situ&#xE9; dans la r&#xE9;gion mini&#xE8;re de l'Aveyron, le g&#xEE;te vous permettra de profiter de la nature, mais aussi du patrimoine industriel du bassin d'Aubin et de Decazeville. Proximit&#xE9; &#xE9;galement de la Vall&#xE9;e du Lot (baignade, sport nautique, p&#xEA;che, cheval, VTT...). A proximit&#xE9; de tous commerces et services. Table d'h&#xF4;te familiale et conviviale.&lt;br/&gt;</dc:description>
+    <dc:publisher>Comit&#xE9; D&#xE9;partemenal du Tourisme de l'Aveyron</dc:publisher>
+    <dc:creator>pierre</dc:creator>
+    <dc:contributor>pierre</dc:contributor>
+    
+    <dcterms:created>08-10-10</dcterms:created>
+    <dcterms:modified>14-03-26</dcterms:modified>
+    
+    
+    <tif:ControlledVocabulary code="02.01.14.99">G&#xEE;tes d'&#xE9;tape</tif:ControlledVocabulary>
+    <dc:description xml:lang="EN">Situated in the old mining area of the Aveyron, the g&#xEE;te enables you to make the most of the environment but also of the industrial heritage of the Aubin-Decazeville area.</dc:description>
+    
+    <dc:description xml:lang="ES">Ubicada en la regi&#xF3;n minera del Aveyron, nuestra casa rural os permitir&#xE1; decubrir la naturaleza y el patrimonio industrial de la cuenca de Aubin y Decazeville.</dc:description>
+  </tif:DublinCore>
+  <tif:Update>
+    <sy:updatePeriod>yearly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <sy:updateBase>2008-01-01</sy:updateBase>
+  </tif:Update>
+  <tif:Multimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/accueil.jpg</tif:URL>
+      <tif:Nom>Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Accueil</tif:LegendeRessource>
+      <tif:TailleRessource>55669</tif:TailleRessource>
+      <tif:Largeur>480</tif:Largeur>
+      <tif:Hauteur>319</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Les Volets Bleus</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/voletsbleus.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">G&#xEE;te d'&#xE9;tape Les Volets Bleus</tif:LegendeRessource>
+      <tif:TailleRessource unite="octets">119777</tif:TailleRessource>
+      <tif:Largeur>584</tif:Largeur>
+      <tif:Hauteur>393</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Jean BRIN</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/voletsbleus2.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">G&#xEE;te d'&#xE9;tape Les Volets Bleus</tif:LegendeRessource>
+      <tif:TailleRessource unite="octets">94670</tif:TailleRessource>
+      <tif:Largeur>500</tif:Largeur>
+      <tif:Hauteur>338</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Jean BRIN</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/patio.jpg</tif:URL>
+      <tif:Nom>Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Patio</tif:LegendeRessource>
+      <tif:TailleRessource>88994</tif:TailleRessource>
+      <tif:Largeur>265</tif:Largeur>
+      <tif:Hauteur>400</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Les Volets Bleus</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/lune.jpg</tif:URL>
+      <tif:Nom>Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Lune</tif:LegendeRessource>
+      <tif:TailleRessource>272750</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>450</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Les Volets Bleus</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024499558523/TFO024499558523-14a/medias/jpg/jardin.jpg</tif:URL>
+      <tif:Nom>Les Volets Bleus</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Le jardin</tif:LegendeRessource>
+      <tif:TailleRessource>61267</tif:TailleRessource>
+      <tif:Largeur>480</tif:Largeur>
+      <tif:Hauteur>319</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Les Volets Bleus</tif:Copyright>
+    </tif:DetailMultimedia>
+  </tif:Multimedia>
+  <tif:Contacts>
+    <tif:DetailContact libelle="Etab/Lieu/Structure" type="04.03.13">
+      <tif:RaisonSociale>Les Volets Bleus</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          <tif:Adr1>3 Rue Camille Douls</tif:Adr1>
+          
+          
+          <tif:CodePostal>12300</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+          
+          
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              <tif:Civilite type="04.01.02">Madame</tif:Civilite>
+              <tif:Nom>VILLETORTE</tif:Nom>
+              <tif:Prenom>Lauriane</tif:Prenom>
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330565644905</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  <tif:Coord>0781022758</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>contact@voletsbleusdecazeville.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.voletsbleus-decazeville.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+          <tif:Commune code="12089">Decazeville</tif:Commune>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+  </tif:Contacts>
+  
+  <tif:Classements>
+    <tif:DetailClassement id="1" type="06.98.14" libelle="GR 65">
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.99.93" libelle="TripAdvisor" id="2">
+      
+      <tif:NumeroClassement>&lt;div id="TA_selfservprop106" class="TA_selfservprop"&gt;&lt;ul id="FX9rgYhUzuK" class="TA_links hm00KvBYN0l9"&gt;            &lt;li id="YYvp3y" class="rkQYdQIs1"&gt;Avis de voyageurs sur &lt;a href="http://www.tripadvisor.fr/Hotel_Review-g1580253-d1797780-Reviews-Les_Volets_Bleus-Decazeville_Aveyron_Midi_Pyrenees.html"&gt;Les Volets Bleus&lt;/a&gt;&lt;/li&gt;      &lt;/ul&gt;  &lt;/div&gt;&lt;script src="http://www.jscache.com/wejs?wtype=selfservprop&amp;amp;uniq=106&amp;amp;locationId=1797780&amp;amp;lang=fr&amp;amp;rating=true&amp;amp;nreviews=5&amp;amp;writereviewlink=true&amp;amp;popIdx=true&amp;amp;iswide=false"&gt;&lt;/script&gt;</tif:NumeroClassement>
+      
+    </tif:DetailClassement>
+  </tif:Classements>
+  
+  <tif:Geolocalisations>
+    <tif:DetailGeolocalisation type="08.01.03" libelle="Point" xml:lang="FR">
+      <tif:Zone type="08.02.07.02" libelle="Ferm&#xE9;" xml:lang="FR">
+        
+        <tif:Points>
+          <tif:DetailPoint type="08.02.05.11" libelle="Principal" xml:lang="FR">
+            <tif:Nom xml:lang="FR">Les Volets Bleus</tif:Nom>
+            <tif:Commune code="12089">Decazeville</tif:Commune>
+            <tif:Coordonnees>
+              <tif:DetailCoordonnees type="08.02.02.03" libelle="G&#xE9;ographiques (UTM compatible avec GPS)" xml:lang="FR">
+                <tif:Latitude>44.56384647420258</tif:Latitude>
+                <tif:Longitude>2.249247714233391</tif:Longitude>
+                <tif:Altitude>224</tif:Altitude>
+              </tif:DetailCoordonnees>
+            </tif:Coordonnees>
+            <tif:Environnements>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="P&#xE9;riph&#xE9;rie de la ville" type="08.02.03.13">
+                <tif:Nom xml:lang="FR">Decazeville</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">0.5</tif:Distance>
+                <tif:Commune code="12089">Decazeville</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">GR 65</tif:Nom>
+                
+                
+                <tif:ObservationDetailEnvironnement xml:lang="FR">Sur le Chemin de Saint Jacques de Compostelle</tif:ObservationDetailEnvironnement>
+              </tif:DetailEnvironnement>
+            </tif:Environnements>
+            
+            <tif:Acces>
+              <tif:DetailAcces xml:lang="FR" libelle="A&#xE9;roport/A&#xE9;rodrome" type="08.02.06.01">
+                <tif:Nom xml:lang="FR">Rodez - Marcillac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">25</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare SNCF" type="08.02.06.06">
+                <tif:Nom xml:lang="FR">Viviez - Decazeville</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">5</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare Routi&#xE8;re" type="08.02.06.08">
+                <tif:Nom xml:lang="FR">Decazeville</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">5</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Route" type="08.02.06.10">
+                <tif:Nom xml:lang="FR">RD840</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">0.3</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Autoroute" type="08.02.06.02">
+                <tif:Nom xml:lang="FR">S&#xE9;verac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">75</tif:Distance>
+                
+              </tif:DetailAcces>
+            </tif:Acces>
+          </tif:DetailPoint>
+        </tif:Points>
+      </tif:Zone>
+    </tif:DetailGeolocalisation>
+  </tif:Geolocalisations>
+  <tif:Periodes>
+    <tif:DetailPeriode type="09.01.06" libelle="Ouverture" id="1">
+      
+      
+      <tif:Dates>
+        <tif:DetailDates>
+          <tif:DateDebut>2014-04-01</tif:DateDebut>
+          <tif:DateFin>2014-10-15</tif:DateFin>
+        </tif:DetailDates>
+      </tif:Dates>
+    </tif:DetailPeriode>
+  </tif:Periodes>
+  <tif:Clienteles>
+    <tif:DetailClienteles type="10.01.01" libelle="Individuels">
+      <tif:DetailClient type="10.02.27" libelle="Tout public" id="1">
+        <tif:Nom>Individuel tout public</tif:Nom>
+        <tif:GroupeRef>O</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+  </tif:Clienteles>
+  <tif:Langues>
+    <tif:Usage type="11.01.01" libelle="Accueil">
+      <tif:Langue xml:lang="FR">Fran&#xE7;ais</tif:Langue>
+      <tif:Langue xml:lang="ES">Espagnol</tif:Langue>
+      <tif:Langue xml:lang="EN">Anglais</tif:Langue>
+    </tif:Usage>
+  </tif:Langues>
+  
+  <tif:Tarifs>
+    <tif:DetailTarifs>
+      <tif:DetailTarif type="13.04.04.86" libelle="Nuit&#xE9;e adulte">
+        <tif:Nom>Nuit&#xE9;e adulte</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>13</tif:TarifMin>
+        <tif:TarifMax>20</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.05.06" libelle="Repas adulte">
+        <tif:Nom>Repas adulte</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>13</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.03.02" libelle="Petit-d&#xE9;jeuner">
+        <tif:Nom>Petit-d&#xE9;jeuner</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>5</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.03.05" libelle="Demi-pension">
+        <tif:Nom>Demi-pension</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>31</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">31</tif:MontantPourcent>
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.48" libelle="Location">
+        <tif:Nom>Location drap avec serviette</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>4</tif:TarifMin>
+        <tif:TarifMax>6</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">0</tif:MontantPourcent>
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.87" libelle="Tarif lave-linge">
+        <tif:Nom>Tarif lave-linge</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>4</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">4</tif:MontantPourcent>
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.86" libelle="Tarif s&#xE8;che-linge">
+        <tif:Nom>Tarif s&#xE8;che-linge</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>4</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">4</tif:MontantPourcent>
+        
+      </tif:DetailTarif>
+    </tif:DetailTarifs>
+    <tif:ModesPaiement>
+      <tif:ModePaiement type="13.02.08">Ch&#xE8;que</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.14">Esp&#xE8;ces</tif:ModePaiement>
+      
+    </tif:ModesPaiement>
+  </tif:Tarifs>
+  <tif:Capacites>
+    <tif:CapacitesGlobales type="14.01.02" libelle="Capacit&#xE9; Globale">
+      <tif:Capacite unite="01.03.01.06" libelle="Chambre" xml:lang="FR" classee="N">4</tif:Capacite>
+      <tif:Capacite unite="01.03.01.14" libelle="Personne" xml:lang="FR" classee="N">15</tif:Capacite>
+    </tif:CapacitesGlobales>
+    <tif:CapacitesUnites>
+      <tif:DetailCapaciteUnite type="01.03.01.06" libelle="Chambre">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            <tif:CapaciteMoyenne>2</tif:CapaciteMoyenne>
+            
+            
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>1</tif:NbUnites>
+        <tif:DescriptionCapaciteUnite xml:lang="FR">Chambre sanitaires privatifs : 1 douche + 1 lavabo + 1 WC</tif:DescriptionCapaciteUnite>
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.20" libelle="Dortoir">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            
+            
+            
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>3</tif:NbUnites>
+        <tif:DescriptionCapaciteUnite xml:lang="FR">Dortoirs sanitaires collectifs : 3 douches + 4 lavabos + 2 WC
+Capacit&#xE9; : 17 personnes</tif:DescriptionCapaciteUnite>
+      </tif:DetailCapaciteUnite>
+    </tif:CapacitesUnites>
+  </tif:Capacites>
+  <tif:OffresPrestations>
+    <tif:DetailOffrePrestation type="15.05" libelle="Equipements">
+      <tif:DetailPrestation id="1">
+        <tif:Prestation type="15.05.996">Coin cuisine/gestion libre</tif:Prestation>
+        <tif:Nom>Coin cuisine/gestion libre</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="2">
+        <tif:Prestation type="15.05.998">Commerce alimentaire</tif:Prestation>
+        <tif:Nom>Commerce alimentaire</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0.4</tif:Distance>
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="3">
+        <tif:Prestation type="15.05.56">Local mat&#xE9;riel ferm&#xE9;</tif:Prestation>
+        <tif:Nom>Local mat&#xE9;riel ferm&#xE9;</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="15">
+        <tif:Prestation type="15.05.02">Abris pour v&#xE9;lo ou VTT</tif:Prestation>
+        <tif:Nom>Abris pour v&#xE9;lo ou VTT</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="17">
+        <tif:Prestation type="15.05.129">Toilettes</tif:Prestation>
+        <tif:Nom>Toilettes</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="19">
+        <tif:Prestation type="15.05.126">Terrasse/balcon</tif:Prestation>
+        <tif:Nom>Terrasse/balcon</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="18">
+        <tif:Prestation type="15.05.112">Sentiers balis&#xE9;s</tif:Prestation>
+        <tif:Nom>Sentiers balis&#xE9;s</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        <tif:DescriptionPrestation xml:lang="FR">GR 65</tif:DescriptionPrestation>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="21">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        <tif:DureePrest unite="01.03.03.03" libelle="heure">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="22">
+        <tif:Prestation type="15.05.14">Barbecue</tif:Prestation>
+        <tif:Nom>Barbecue</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="23">
+        <tif:Prestation type="15.05.19">Boulodrome</tif:Prestation>
+        <tif:Nom>Boulodrome</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="26">
+        <tif:Prestation type="15.05.29">Cin&#xE9;ma</tif:Prestation>
+        <tif:Nom>Cin&#xE9;ma</tif:Nom>
+        
+        
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Distance unite="01.03.02.01" libelle="km">1</tif:Distance>
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="27">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        
+        
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Distance unite="01.03.02.01" libelle="km">0.5</tif:Distance>
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="30">
+        <tif:Prestation type="15.05.987">Wifi &#xE0; l'accueil</tif:Prestation>
+        <tif:Nom>Wifi &#xE0; l'accueil</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="31">
+        <tif:Prestation type="15.05.999">Wifi partout</tif:Prestation>
+        <tif:Nom>Wifi partout</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.03" libelle="Conforts">
+      <tif:DetailPrestation id="9">
+        <tif:Prestation type="15.03.21">Draps et linges compris</tif:Prestation>
+        <tif:Nom>Draps et linges compris</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        <tif:DescriptionPrestation xml:lang="FR">Draps fournis : taies d'oreiller + couverture + draps housse</tif:DescriptionPrestation>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="12">
+        <tif:Prestation type="15.03.22">Eau chaude</tif:Prestation>
+        <tif:Nom>Eau chaude</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="13">
+        <tif:Prestation type="15.03.27">Lave linge collectif</tif:Prestation>
+        <tif:Nom>Lave linge collectif</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="24">
+        <tif:Prestation type="15.03.43">S&#xE8;che linge collectif</tif:Prestation>
+        <tif:Nom>S&#xE8;che linge collectif</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="25">
+        <tif:Prestation type="15.03.19">Douche</tif:Prestation>
+        <tif:Nom>Douche</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="32">
+        <tif:Prestation type="15.03.01">Acc&#xE8;s Internet</tif:Prestation>
+        <tif:Nom>Acc&#xE8;s Internet</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.06" libelle="Services">
+      <tif:DetailPrestation id="5">
+        <tif:Prestation type="15.06.47">Location de linge</tif:Prestation>
+        <tif:Nom>Location de linge</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="28">
+        <tif:Prestation type="15.06.82">Restaurant</tif:Prestation>
+        <tif:Nom>Restaurant</tif:Nom>
+        
+        
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Distance unite="01.03.02.01" libelle="km">0.1</tif:Distance>
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="29">
+        <tif:Prestation type="15.06.196">Portage des bagages</tif:Prestation>
+        <tif:Nom>Portage des bagages</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12089">Decazeville</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+  </tif:OffresPrestations>
+  <tif:DescriptionsComplementaires>
+    <tif:DetailDescriptionComplementaire type="16.01.05" libelle="Identification" xml:lang="FR">
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.04" libelle="Descriptif" xml:lang="FR">
+      
+      
+      
+    </tif:DetailDescriptionComplementaire>
+  </tif:DescriptionsComplementaires>
+  
+  
+  
+  
+</tif:OI><tif:OI xmlns:tif="http://www.tourinfrance.net/Tourinfrance3/" xmlns:fmp="http://www.filemaker.com/fmpdsoresult" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns="http://www.tourinfrance.net/Tourinfrance3/">
+  <tif:DublinCore>
+    <dc:title xml:lang="FR">Les Hauts de Najac</dc:title>
+    <dc:identifier>TFO023905990469</dc:identifier>
+    <tif:Classification code="02.01.14">H&#xE9;bergement d'accueil collectif</tif:Classification>
+    
+    
+    <dc:subject xml:lang="FR">Au coeur du Rouergue, d&#xE9;couvrez NAJAC, une bastide m&#xE9;di&#xE9;vale b&#xE2;tie sur une cr&#xEA;te rocheuse dans un m&#xE9;andre des gorges de l'Aveyron. Dans un pays verdoyant Najac respire au rythme des rivi&#xE8;res, des vall&#xE9;es et des ch&#xE2;teaux.</dc:subject>
+    <dc:description xml:lang="FR">Parfaitement int&#xE9;gr&#xE9; &#xE0; l'environnement dans un parc de 6 hectares, les 101 chambres et les 68 pavillons dominent la Forteresse de Najac. La salle du restaurant tr&#xE8;s spacieuse poss&#xE8;de une architecture remarquable, un bar avec terrasse qui domine la piscine ext&#xE9;rieure. De nombreuses salles permettent : animation, spectacles, s&#xE9;minaires, groupes de travail, espace d&#xE9;couverte. L'acc&#xE8;s WIFI est gratuit. Un espace forme donne acc&#xE8;s &#xE0; des bains bouillonnants, au hammam et &#xE0; une salle de musculation. Quelque soit la formule de s&#xE9;jour r&#xE9;serv&#xE9;e en pension, demi pension ou en location, vous b&#xE9;n&#xE9;ficierez de toutes les installations sportives du village ainsi que des animations de soir&#xE9;es. Certains services sont ouverts pendant les vacances scolaires : clubs enfants de 3 mois &#xE0; 6 ans, animations jeunes de 7 &#xE0; 11 ans en juillet et ao&#xFB;t. Le village poss&#xE8;de un parcours ornithologique.&lt;br/&gt;</dc:description>
+    <dc:publisher>Comit&#xE9; D&#xE9;partemenal du Tourisme de l'Aveyron</dc:publisher>
+    <dc:creator>pierre</dc:creator>
+    <dc:contributor>pierre</dc:contributor>
+    
+    <dcterms:created>08-10-03</dcterms:created>
+    <dcterms:modified>14-03-27</dcterms:modified>
+    
+    
+    <tif:ControlledVocabulary code="02.01.14.05">Villages de vacances</tif:ControlledVocabulary>
+    <dc:subject xml:lang="EN">In the heart of the Rouergue, discover NAJAC, a mediaeval bastide built on a rocky crest in the meander of the Gorges de l'Avayron. In a lush green land Najac breathes to the rhythm of the rivers, valleys and the ch&#xE2;teaux.</dc:subject>
+    <dc:description xml:lang="EN">Perfectly integrated into the environment in 15 acres of parkland, the 101 bedrooms and 68 chalets overlook the fortress of Najac. The very spacious restaurant dining room boasts remarkable architecture, a bar with terrace overlooks the outdoor swimming pool. Numerous rooms allow for entertainments and shows, but also reading. Wi-Fi internet access is free. A fitness area gives access to boiling baths, Turkish bath and fitness room. Whatever the package reserved, full-board, half-board or self-catering, you benefit from all the sports installations in the village as well as the evening entertainment. Certain services are open during the school holidays: children's clubs (3 months to 6 years old) children's activities for 7 to 11 year olds in July and August. The village has an ornithological trail.</dc:description>
+    <dc:subject xml:lang="ES">En el coraz&#xF3;n del Rouergue, venid a descubrir el pueblo de Najac, una bastide medieval construida en una cresta rocosa, en un meandro de las gargantas del Aveyron.  En una zona verde, Najac vive al ritmo de los r&#xED;os, entre valles y castillos.</dc:subject>
+    <dc:description xml:lang="ES">&#xA0;Perfectamente integradas en el paisaje, en un parque de 6 hect&#xE1;reas, las 101 habitaciones y los 68 pabellones dominan la fortaleza de Najac. La sala espaciosa del restaurante se caracteriza por su hermosa arquitectura, un bar con terraza que domina la piscina exterior. Numerosas salas para animaciones, espect&#xE1;culos, seminarios, grupos de trabajo, espacio muse&#xED;stico.  Acceso WIFI gratuito. Un espacio fitness con ba&#xF1;os de burbujas, hammam y sala de musculaci&#xF3;n. Sea cual sea la f&#xF3;rmula de alquiler elegida,  en pensi&#xF3;n completa, media pensi&#xF3;n o alquiler sencillo, disfrutar&#xE9;is de todas las instalaciones deportivas del pueblo as&#xED; como los espect&#xE1;culos nocturnos. Algunos servicios permanecen disponibles durante las vacaciones escolares: clubs infantiles para ni&#xF1;os de 3 meses hasta 6 a&#xF1;os, animaciones para j&#xF3;venes de 7 a 11 a&#xF1;os en julio y agosto. El pueblo dispone de un recorrdio ornitol&#xF3;gico.</dc:description>
+  </tif:DublinCore>
+  <tif:Update>
+    <sy:updatePeriod>yearly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <sy:updateBase>2008-01-01</sy:updateBase>
+  </tif:Update>
+  <tif:Multimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/vuedelapiscinepataugeoire.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Piscine</tif:LegendeRessource>
+      <tif:TailleRessource>149404</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>402</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/exterieurhebergement.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Exterieure h&#xE9;bergement</tif:LegendeRessource>
+      <tif:TailleRessource>215206</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>402</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/hautsdenajaclogements.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Logement ext&#xE9;rieur</tif:LegendeRessource>
+      <tif:TailleRessource>395823</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>412</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Didier CAVAILLES</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/vueensemble.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Vue d'ensemble</tif:LegendeRessource>
+      <tif:TailleRessource>252944</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>298</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/interieurlogement.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Int&#xE9;rieure h&#xE9;bergement</tif:LegendeRessource>
+      <tif:TailleRessource>131401</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>406</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/espaceforme.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Salle de gym</tif:LegendeRessource>
+      <tif:TailleRessource>68027</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>299</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/echiquiergeant.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Jeu d'&#xE9;chec g&#xE9;ant</tif:LegendeRessource>
+      <tif:TailleRessource>196469</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>402</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO023905990469/TFO023905990469-14a/medias/jpg/salledanimation.jpg</tif:URL>
+      <tif:Nom>Village vacances VVF Villages Vacances Bleues Les Hauts de Najac</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Salle d'animation</tif:LegendeRessource>
+      <tif:TailleRessource>164236</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>399</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>Madame Delphine Joannet</tif:Copyright>
+    </tif:DetailMultimedia>
+  </tif:Multimedia>
+  <tif:Contacts>
+    <tif:DetailContact libelle="Etab/Lieu/Structure" type="04.03.13">
+      <tif:RaisonSociale>Village Vacances VVF Villages Vacances Bleues "Les Hauts de Najac"</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          <tif:Adr2>Puech Moutonnier</tif:Adr2>
+          
+          <tif:CodePostal>12270</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+          
+          
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330565297431</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330473430043</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  <tif:Coord>+330565297479</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>najacvalvacancesbleues@vvfvillages.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.vvfvillages.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+          <tif:Commune code="12167">Najac</tif:Commune>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact type="04.03.30" libelle="Propri&#xE9;taire">
+      <tif:RaisonSociale>Mairie de Najac</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          <tif:Adr1>9 rue du Bourguet</tif:Adr1>
+          
+          
+          <tif:Commune code="12167">Najac</tif:Commune>
+          <tif:CodePostal>12270</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact libelle="Centrale de r&#xE9;servation" type="04.03.06">
+      <tif:RaisonSociale>VVF Villages resa</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          
+          
+          
+          
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330473430043</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.vvfvillages.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact libelle="Centrale de r&#xE9;servation" type="04.03.06">
+      <tif:RaisonSociale>Vacances bleues</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          
+          
+          
+          
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330825394959</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.vacancesbleues.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact libelle="Gestionnaire" type="04.03.17">
+      <tif:RaisonSociale>VAL VAC - VVF - Vacances Bleues</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          
+          
+          <tif:Commune code="12167">Najac</tif:Commune>
+          <tif:CodePostal>12270</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+  </tif:Contacts>
+  <tif:InformationsLegales>
+    <tif:ModeGestion type="05.01.01">Associatif</tif:ModeGestion>
+    <tif:SIRET>38073769200026</tif:SIRET>
+    <tif:APE_NAF>913E</tif:APE_NAF>
+    
+    
+  </tif:InformationsLegales>
+  <tif:Classements>
+    <tif:DetailClassement type="06.04.01.06" libelle="H&#xE9;bergement d'accueil collectif" id="1">
+      <tif:Classement type="06.04.01.06.07">3 &#xE9;toiles</tif:Classement>
+      <tif:DateClassement>2013-10-30</tif:DateClassement>
+      
+      <tif:ObservationDetailClassement xml:lang="FR">Le VVF Vacances Bleues de Najac a &#xE9;t&#xE9; class&#xE9; 3 &#xE9;toiles le 30/10/2013. Il a une capacit&#xE9; d'accueil de 449 personnes et 169 logements.</tif:ObservationDetailClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.01" libelle="Agr&#xE9;ments" xml:lang="FR" id="2">
+      <tif:Classement type="06.01.05.05" xml:lang="FR">Minist&#xE8;re du Tourisme</tif:Classement>
+      <tif:DateClassement>1991-10-11</tif:DateClassement>
+      <tif:NumeroClassement>92.12.702</tif:NumeroClassement>
+      <tif:ObservationDetailClassement xml:lang="FR">Confort</tif:ObservationDetailClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.03.05.01" libelle="Loisirs de France" xml:lang="FR" id="3">
+      <tif:Classement type="06.03.05.01.03" xml:lang="FR">3 Lutins bleus (nombreux et vari&#xE9;s)</tif:Classement>
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.03.05.01" libelle="Loisirs de France" xml:lang="FR" id="4">
+      <tif:Classement type="06.03.05.01.06" xml:lang="FR">3 Lutins blancs (divers et vari&#xE9;s)</tif:Classement>
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.03.05.01" libelle="Loisirs de France" xml:lang="FR" id="5">
+      <tif:Classement type="06.03.05.01.09" xml:lang="FR">3 Lutins rouges (tr&#xE8;s bon et complets)</tif:Classement>
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="6" type="06.98.01.OT12167" libelle="OFFICE DE TOURISME DE NAJAC">
+      
+      
+      <tif:Classement type="06.98.01.OT12167.01">Classe 1</tif:Classement>
+      <tif:DateClassement>2010-01-01</tif:DateClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement id="7" type="06.98.17" libelle="PBVF">
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.99.93" libelle="TripAdvisor" id="8">
+      
+      <tif:NumeroClassement>&lt;div id="TA_selfservprop778" class="TA_selfservprop"&gt;&lt;ul id="9oxyq7q" class="TA_links JJ0gcUt"&gt;            &lt;li id="c8QVwVt" class="7ZkLGUDgL"&gt;Avis de voyageurs sur &lt;a href="http://www.tripadvisor.fr/Hotel_Review-g425067-d1772999-Reviews-Les_Hauts_de_Najac-Najac_Aveyron_Midi_Pyrenees.html"&gt;Les Hauts de Najac&lt;/a&gt;&lt;/li&gt;      &lt;/ul&gt;  &lt;/div&gt;&lt;script src="http://www.jscache.com/wejs?wtype=selfservprop&amp;amp;uniq=778&amp;amp;locationId=1772999&amp;amp;lang=fr&amp;amp;rating=true&amp;amp;nreviews=5&amp;amp;writereviewlink=true&amp;amp;popIdx=true&amp;amp;iswide=false"&gt;&lt;/script&gt;</tif:NumeroClassement>
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.02.05.01" libelle="Villages de vacances" id="9">
+      <tif:Classement type="06.02.05.01.28">VVF</tif:Classement>
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="10" type="06.98.33" libelle="Groupe">
+      <tif:ObservationDetailClassement xml:lang="FR">aw</tif:ObservationDetailClassement>
+      
+      <tif:DateClassement>2013-03-25</tif:DateClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement id="11" type="06.98.26.OT12300" libelle="Edition papier">
+      <tif:ObservationDetailClassement xml:lang="FR">Dans un parc de 6 hectares, 101 chambres et 68 pavillons dominent la Forteresse. Salle de restaurant spacieuse, bar, terrasse, piscine, spectacles, s&#xE9;minaires, groupes de travail, espace d&#xE9;couverte, WIFI, espace forme (bains bouillonnants, hammam &amp; salle de muscu), clubs enfants, animations jeunes.</tif:ObservationDetailClassement>
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="12" type="06.98.01.OT12300" libelle="OFFICE DE TOURISME REGIONAL DE VILLEFRANCHE DE ROUERGUE">
+      
+      
+      <tif:Classement type="06.98.01.OT12300.01">Classe 1</tif:Classement>
+      
+    </tif:DetailClassement>
+  </tif:Classements>
+  
+  <tif:Geolocalisations>
+    <tif:DetailGeolocalisation type="08.01.03" libelle="Point" xml:lang="FR">
+      <tif:Zone type="08.02.07.02" libelle="Ferm&#xE9;" xml:lang="FR">
+        
+        <tif:Points>
+          <tif:DetailPoint type="08.02.05.11" libelle="Principal" xml:lang="FR">
+            <tif:Nom xml:lang="FR">Village vacances Valvvf Les Hauts de Najac</tif:Nom>
+            <tif:Commune code="12167">Najac</tif:Commune>
+            <tif:Coordonnees>
+              <tif:DetailCoordonnees type="08.02.02.03" libelle="G&#xE9;ographiques (UTM compatible avec GPS)" xml:lang="FR">
+                <tif:Latitude>44.21004049762928</tif:Latitude>
+                <tif:Longitude>1.988440063476573</tif:Longitude>
+                <tif:Altitude>400</tif:Altitude>
+              </tif:DetailCoordonnees>
+            </tif:Coordonnees>
+            <tif:Environnements>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">GR 36</tif:Nom>
+                
+                
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A la campagne" type="08.02.03.01">
+                
+                
+                
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="En p&#xE9;riph&#xE9;rie de village" type="08.02.03.96">
+                
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">2</tif:Distance>
+                <tif:Commune code="12167">Najac</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+            </tif:Environnements>
+            
+            <tif:Acces>
+              <tif:DetailAcces xml:lang="FR" libelle="A&#xE9;roport/A&#xE9;rodrome" type="08.02.06.01">
+                <tif:Nom xml:lang="FR">Rodez</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">80</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare SNCF" type="08.02.06.06">
+                <tif:Nom xml:lang="FR">Najac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">5</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Commune de proximit&#xE9;" type="08.02.06.04">
+                <tif:Nom xml:lang="FR">Najac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">2</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Autoroute" type="08.02.06.02">
+                <tif:Nom xml:lang="FR">Caussade</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">40</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Route" type="08.02.06.10">
+                <tif:Nom xml:lang="FR">D239</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">0.5</tif:Distance>
+                
+              </tif:DetailAcces>
+            </tif:Acces>
+          </tif:DetailPoint>
+        </tif:Points>
+      </tif:Zone>
+    </tif:DetailGeolocalisation>
+  </tif:Geolocalisations>
+  <tif:Periodes>
+    <tif:DetailPeriode type="09.01.06" libelle="Ouverture" id="1">
+      
+      
+      <tif:Dates>
+        <tif:DetailDates>
+          <tif:DateDebut>2014-04-12</tif:DateDebut>
+          <tif:DateFin>2014-09-27</tif:DateFin>
+        </tif:DetailDates>
+      </tif:Dates>
+    </tif:DetailPeriode>
+  </tif:Periodes>
+  <tif:Clienteles>
+    <tif:DetailClienteles type="10.01.01" libelle="Individuels">
+      <tif:DetailClient type="10.02.27" libelle="Tout public" id="1">
+        <tif:Nom>Individuel tout public</tif:Nom>
+        <tif:GroupeRef>O</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+    <tif:DetailClienteles type="10.01.02" libelle="Groupes">
+      <tif:DetailClient id="2" type="10.02.27" libelle="Tout public">
+        
+        <tif:GroupeRef>N</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+  </tif:Clienteles>
+  <tif:Langues>
+    <tif:Usage type="11.01.01" libelle="Accueil">
+      <tif:Langue xml:lang="FR">Fran&#xE7;ais</tif:Langue>
+      <tif:Langue xml:lang="ES">Espagnol</tif:Langue>
+      <tif:Langue xml:lang="EN">Anglais</tif:Langue>
+      <tif:Langue xml:lang="DE">Allemand</tif:Langue>
+      <tif:Langue xml:lang="OC">Occitan</tif:Langue>
+    </tif:Usage>
+  </tif:Langues>
+  
+  <tif:Tarifs>
+    <tif:DetailTarifs>
+      <tif:DetailTarif type="13.04.06.94" libelle="Prix logement seul (h&#xE9;bergement en dur)">
+        <tif:Nom>Prix logement seul (h&#xE9;bergement en dur)</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>65</tif:TarifMin>
+        <tif:TarifMax>152</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Location 4 personnes, 2 pi&#xE8;ces. Prix &#xE0; la nuit.</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.06.94" libelle="Prix logement seul (h&#xE9;bergement en dur)">
+        <tif:Nom>Prix logement seul (h&#xE9;bergement en dur)</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>82</tif:TarifMin>
+        <tif:TarifMax>181</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Maximum location 3 pi&#xE8;ces 6 personnes. Prix &#xE0; la nuit.</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.06.92" libelle="Prix formule autre">
+        <tif:Nom>1/2 pension</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>46</tif:TarifMin>
+        <tif:TarifMax>76</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Prix &#xE0; la nuit et par personne</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.06.92" libelle="Prix formule autre">
+        <tif:Nom>Pension compl&#xE8;te</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>55</tif:TarifMin>
+        <tif:TarifMax>85</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Prix &#xE0; la nuit et par personne</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.06.91" libelle="Prix week-end">
+        <tif:Nom>Prix week-end</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>133</tif:TarifMin>
+        <tif:TarifMax>153</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.06.90" libelle="Prix groupe demi-pension / nuit">
+        <tif:Nom>Prix groupe demi-pension / nuit</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>41.3</tif:TarifMin>
+        <tif:TarifMax>64.5</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">0</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Prix &#xE0; la nuit et par personne</tif:DescriptionTarif>
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.99" libelle="Taxe de s&#xE9;jour en sus">
+        <tif:Nom>Taxe de s&#xE9;jour en sus</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">A partir de 13 ans</tif:DescriptionTarif>
+        
+        
+        
+      </tif:DetailTarif>
+    </tif:DetailTarifs>
+    <tif:ModesPaiement>
+      <tif:ModePaiement type="13.02.03">Bons CAF</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.04">Carte bleue</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.08">Ch&#xE8;que</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.11">Ch&#xE8;ques Vacances</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.14">Esp&#xE8;ces</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.15">Eurocard - Mastercard</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.97">Premium</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.19">Visa</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.98">Visa Internationnale</tif:ModePaiement>
+      
+    </tif:ModesPaiement>
+  </tif:Tarifs>
+  <tif:Capacites>
+    <tif:CapacitesGlobales type="14.01.02" libelle="Capacit&#xE9; Globale">
+      <tif:Capacite unite="01.03.01.14" libelle="Personne" xml:lang="FR" classee="O">449</tif:Capacite>
+      <tif:Capacite unite="01.03.01.06" libelle="Chambre" xml:lang="FR" classee="O">101</tif:Capacite>
+      <tif:Capacite unite="01.03.01.24" libelle="Appartement" xml:lang="FR" classee="O">68</tif:Capacite>
+      <tif:Capacite unite="01.03.01.07" libelle="Couvert" xml:lang="FR" classee="N">350</tif:Capacite>
+      <tif:Superficie unite="01.03.04.02" libelle="ha" xml:lang="FR" classee="N">22</tif:Superficie>
+    </tif:CapacitesGlobales>
+    <tif:CapacitesUnites>
+      <tif:DetailCapaciteUnite type="01.03.01.24" libelle="Appartement">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            
+            <tif:CapaciteMini>4</tif:CapaciteMini>
+            <tif:CapaciteMaxi>6</tif:CapaciteMaxi>
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>68</tif:NbUnites>
+        
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.06" libelle="Chambre">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            
+            <tif:CapaciteMini>2</tif:CapaciteMini>
+            <tif:CapaciteMaxi>4</tif:CapaciteMaxi>
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>101</tif:NbUnites>
+        
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.24" libelle="Appartement">
+        <tif:Nom xml:lang="FR">Appartement pour handicap&#xE9;s</tif:Nom>
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            <tif:CapaciteMoyenne>1</tif:CapaciteMoyenne>
+            
+            
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>1</tif:NbUnites>
+        
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.06" libelle="Chambre">
+        <tif:Nom xml:lang="FR">Chambre pour handicap&#xE9;s</tif:Nom>
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            <tif:CapaciteMoyenne>1</tif:CapaciteMoyenne>
+            
+            
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>3</tif:NbUnites>
+        
+      </tif:DetailCapaciteUnite>
+    </tif:CapacitesUnites>
+  </tif:Capacites>
+  <tif:OffresPrestations>
+    <tif:DetailOffrePrestation type="15.05" libelle="Equipements">
+      <tif:DetailPrestation id="2">
+        <tif:Prestation type="15.05.65">Parking autocar</tif:Prestation>
+        <tif:Nom>Parking autocar</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="6">
+        <tif:Prestation type="15.05.24">Cabine t&#xE9;l&#xE9;phonique / Point Phone</tif:Prestation>
+        <tif:Nom>Cabine t&#xE9;l&#xE9;phonique / Point Phone</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="5">
+        <tif:Prestation type="15.05.12">Bar</tif:Prestation>
+        <tif:Nom>Bar</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="8">
+        <tif:Prestation type="15.05.86">Restaurant</tif:Prestation>
+        <tif:Nom>Restaurant</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="9">
+        <tif:Prestation type="15.05.126">Terrasse/balcon</tif:Prestation>
+        <tif:Nom>Terrasse/balcon</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="10">
+        <tif:Prestation type="15.05.108">Salon de t&#xE9;l&#xE9;vision</tif:Prestation>
+        <tif:Nom>Salon de t&#xE9;l&#xE9;vision</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="21">
+        <tif:Prestation type="15.05.04">Acc&#xE8;s handicap&#xE9;s</tif:Prestation>
+        <tif:Nom>Acc&#xE8;s handicap&#xE9;s</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="22">
+        <tif:Prestation type="15.05.63">Parc</tif:Prestation>
+        <tif:Nom>Parc</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="24">
+        <tif:Prestation type="15.05.997">Pataugeoire</tif:Prestation>
+        <tif:Nom>Pataugeoire</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="25">
+        <tif:Prestation type="15.05.118">Tennis</tif:Prestation>
+        <tif:Nom>Tennis</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="26">
+        <tif:Prestation type="15.05.59">Mini-golf</tif:Prestation>
+        <tif:Nom>Mini-golf</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="30">
+        <tif:Prestation type="15.05.44">Hammam</tif:Prestation>
+        <tif:Nom>Hammam</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="31">
+        <tif:Prestation type="15.05.47">Jacuzzi</tif:Prestation>
+        <tif:Nom>Jacuzzi</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="34">
+        <tif:Prestation type="15.05.95">Salle de gym</tif:Prestation>
+        <tif:Nom>Salle de gym</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="35">
+        <tif:Prestation type="15.05.96">Salle de jeux</tif:Prestation>
+        <tif:Nom>Salle de jeux</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="36">
+        <tif:Prestation type="15.05.05">Aire de jeux</tif:Prestation>
+        <tif:Nom>Aire de jeux</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="37">
+        <tif:Prestation type="15.05.29">Cin&#xE9;ma</tif:Prestation>
+        <tif:Nom>Cin&#xE9;ma</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="41">
+        <tif:Prestation type="15.05.115">Stade</tif:Prestation>
+        <tif:Nom>Stade</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="48">
+        <tif:Prestation type="15.05.87">Rivi&#xE8;re</tif:Prestation>
+        <tif:Nom>Rivi&#xE8;re</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">3</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="49">
+        <tif:Prestation type="15.05.25">Cano&#xEB;-Kayak</tif:Prestation>
+        <tif:Nom>Cano&#xEB;-Kayak</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">3</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="54">
+        <tif:Prestation type="15.05.71">Piscine couverte</tif:Prestation>
+        <tif:Nom>Piscine couverte</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">20</tif:Distance>
+        <tif:Commune code="12300">Villefranche-de-Rouergue</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="55">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="58">
+        <tif:Prestation type="15.05.987">Wifi &#xE0; l'accueil</tif:Prestation>
+        <tif:Nom>Wifi &#xE0; l'accueil</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="59">
+        <tif:Prestation type="15.05.64">Parking</tif:Prestation>
+        <tif:Nom>Parking</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="63">
+        <tif:Prestation type="15.05.99">Salle de r&#xE9;union</tif:Prestation>
+        <tif:Nom>Salle de r&#xE9;union</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.03" libelle="Conforts">
+      <tif:DetailPrestation id="3">
+        <tif:Prestation type="15.03.53">T&#xE9;l&#xE9;phone</tif:Prestation>
+        <tif:Nom>T&#xE9;l&#xE9;phone</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="4">
+        <tif:Prestation type="15.03.52">T&#xE9;l&#xE9;copie</tif:Prestation>
+        <tif:Nom>T&#xE9;l&#xE9;copie</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="53">
+        <tif:Prestation type="15.03.01">Acc&#xE8;s Internet</tif:Prestation>
+        <tif:Nom>Acc&#xE8;s Internet</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="61">
+        <tif:Prestation type="15.03.14">Climatisation</tif:Prestation>
+        <tif:Nom>Climatisation</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="62">
+        <tif:Prestation type="15.03.56">T&#xE9;l&#xE9;vision</tif:Prestation>
+        <tif:Nom>T&#xE9;l&#xE9;vision</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.06" libelle="Services">
+      <tif:DetailPrestation id="7">
+        <tif:Prestation type="15.06.73">Plats cuisin&#xE9;s</tif:Prestation>
+        <tif:Nom>Plats cuisin&#xE9;s</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="11">
+        <tif:Prestation type="15.06.15">Blanchisserie</tif:Prestation>
+        <tif:Nom>Blanchisserie</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="12">
+        <tif:Prestation type="15.06.41">Lave linge</tif:Prestation>
+        <tif:Nom>Lave linge</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="13">
+        <tif:Prestation type="15.06.37">Halte Garderie</tif:Prestation>
+        <tif:Nom>Halte Garderie</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="14">
+        <tif:Prestation type="15.06.36">Garderie</tif:Prestation>
+        <tif:Nom>Garderie</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="15">
+        <tif:Prestation type="15.06.65">Navette a&#xE9;roport ou gare</tif:Prestation>
+        <tif:Nom>Navette gare</tif:Nom>
+        <tif:DureePrest unite="01.03.03.03" libelle="heure">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        <tif:DescriptionPrestation xml:lang="FR">Gare uniquement</tif:DescriptionPrestation>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="16">
+        <tif:Prestation type="15.06.49">Location de mat&#xE9;riel de sport</tif:Prestation>
+        <tif:Nom>Location de mat&#xE9;riel de sport</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="18">
+        <tif:Prestation type="15.06.16">Boutique</tif:Prestation>
+        <tif:Nom>Boutique</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="19">
+        <tif:Prestation type="15.06.14">Biblioth&#xE8;que</tif:Prestation>
+        <tif:Nom>Biblioth&#xE8;que</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="20">
+        <tif:Prestation type="15.06.81">R&#xE9;servations de prestations ext&#xE9;rieures</tif:Prestation>
+        <tif:Nom>R&#xE9;servations de prestations ext&#xE9;rieures</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="32">
+        <tif:Prestation type="15.06.192">Massage</tif:Prestation>
+        <tif:Nom>Massage</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="51">
+        <tif:Prestation type="15.06.26">Commerces</tif:Prestation>
+        <tif:Nom>Commerces</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">2</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="60">
+        <tif:Prestation type="15.06.23">Club Enfants</tif:Prestation>
+        <tif:Nom>Club Enfants</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.02" libelle="Activit&#xE9;s">
+      <tif:DetailPrestation id="27">
+        <tif:Prestation type="15.02.16">&#xC9;quitation</tif:Prestation>
+        <tif:Nom>&#xC9;quitation</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="28">
+        <tif:Prestation type="15.02.69">VTT - V&#xE9;lo</tif:Prestation>
+        <tif:Nom>VTT - V&#xE9;lo</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="29">
+        <tif:Prestation type="15.02.34">Ping-Pong</tif:Prestation>
+        <tif:Nom>Ping-Pong</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="33">
+        <tif:Prestation type="15.02.24">Musculation</tif:Prestation>
+        <tif:Nom>Musculation</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="39">
+        <tif:Prestation type="15.02.01">Animation</tif:Prestation>
+        <tif:Nom>Animation</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="40">
+        <tif:Prestation type="15.02.45">Soir&#xE9;es-animations</tif:Prestation>
+        <tif:Nom>Soir&#xE9;es-animations</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="43">
+        <tif:Prestation type="15.02.39">Randonn&#xE9;e p&#xE9;destre</tif:Prestation>
+        <tif:Nom>Randonn&#xE9;e p&#xE9;destre</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="45">
+        <tif:Prestation type="15.02.16">&#xC9;quitation</tif:Prestation>
+        <tif:Nom>&#xC9;quitation</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="50">
+        <tif:Prestation type="15.02.31">P&#xEA;che</tif:Prestation>
+        <tif:Nom>P&#xEA;che</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">3</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="56">
+        <tif:Prestation type="15.02.96">Tir &#xE0; l'arc</tif:Prestation>
+        <tif:Nom>Tir &#xE0; l'arc</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.07" libelle="Activit&#xE9;s Pleine Nature">
+      <tif:DetailPrestation id="52">
+        <tif:Prestation type="15.07.16">VTT</tif:Prestation>
+        <tif:Nom>VTT</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">5</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+  </tif:OffresPrestations>
+  <tif:DescriptionsComplementaires>
+    <tif:DetailDescriptionComplementaire type="16.01.05" libelle="Identification" xml:lang="FR">
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.04" libelle="Descriptif" xml:lang="FR">
+      
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.03" libelle="Compl&#xE9;ment" xml:lang="FR">
+      <tif:Description type="16.02.09" libelle="Informations compl&#xE9;mentaires" xml:lang="FR">Parcours ornithologique</tif:Description>
+      
+      
+    </tif:DetailDescriptionComplementaire>
+  </tif:DescriptionsComplementaires>
+  
+  
+  
+  
+</tif:OI><tif:OI xmlns:tif="http://www.tourinfrance.net/Tourinfrance3/" xmlns:fmp="http://www.filemaker.com/fmpdsoresult" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns="http://www.tourinfrance.net/Tourinfrance3/">
+  <tif:DublinCore>
+    <dc:title xml:lang="FR">G&#xEE;te de groupe et de s&#xE9;jour Paysan de la Ferme de Daoudou</dc:title>
+    <dc:identifier>TFO024413651003</dc:identifier>
+    <tif:Classification code="02.01.14">H&#xE9;bergement d'accueil collectif</tif:Classification>
+    
+    
+    <dc:subject xml:lang="FR">Dans les Gorges de l'Aveyron et du Viaur &#xE0; Daoudou, la ferme vous accueille avec ses chevaux Fjord pour d&#xE9;couvrir une nature et un site pr&#xE9;serv&#xE9;s.</dc:subject>
+    <dc:description xml:lang="FR">Nos g&#xEE;tes sont dans les anciens corps de ferme restaur&#xE9;s. Ils comportent chambres, s&#xE9;jour avec coin cuisine, chemin&#xE9;e, et sanitaires privatifs. Ils peuvent &#xEA;tre lou&#xE9;s individuellement ou ensemble. Une piscine sur place. Une salle commune avec chemin&#xE9;e peut &#xEA;tre mise &#xE0; disposition.&lt;br/&gt;</dc:description>
+    <dc:publisher>Comit&#xE9; D&#xE9;partemenal du Tourisme de l'Aveyron</dc:publisher>
+    <dc:creator>pierre</dc:creator>
+    <dc:contributor>pierre</dc:contributor>
+    
+    <dcterms:created>08-10-09</dcterms:created>
+    <dcterms:modified>14-03-27</dcterms:modified>
+    
+    
+    <tif:ControlledVocabulary code="02.01.14.99">G&#xEE;tes d'&#xE9;tape</tif:ControlledVocabulary>
+    <tif:ControlledVocabulary code="02.01.14.98">G&#xEE;tes de s&#xE9;jour</tif:ControlledVocabulary>
+    <dc:subject xml:lang="EN">In the Gorges de l'Aveyron and the Gorges du Viaur in Daoudou, the farm welcomes you with its Fjord horses to discover the countryside and a conserved site.</dc:subject>
+    <dc:description xml:lang="EN">Our g&#xEE;tes are in a restored old  farm. Bedrooms with kitchenettes, fireplace and private sanitary facilities. They can be rented individually or together. A swimming pool is at your disposition.</dc:description>
+    <dc:subject xml:lang="ES">En las gargantas del Aveyron y del Viaur, en Daoudou, la granja os da la bienvenida con sus caballos Fjord para descubrir una naturaleza y un paraje natural preservados.</dc:subject>
+    <dc:description xml:lang="ES">Nuestros alojamientos rurales est&#xE1;n instalados en antiguos caser&#xED;os reformados. Disponen de habitaciones, salones de estar con cocina americana, chimeneas y ba&#xF1;os privados. Se pueden alquilar individualmente o en conjunto. Tambi&#xE9;n hay una piscina.  &#xA0;</dc:description>
+  </tif:DublinCore>
+  <tif:Update>
+    <sy:updatePeriod>yearly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <sy:updateBase>2008-01-01</sy:updateBase>
+  </tif:Update>
+  <tif:Multimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/photogiteetapedaoudou2013.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape et de s&#xE9;jour Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">G&#xEE;te d'&#xE9;tape et de s&#xE9;jour Paysan de la Ferme de Daoudou</tif:LegendeRessource>
+      <tif:TailleRessource>213709</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>449</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/giteexterieurdaoudou.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Ext&#xE9;rieur du g&#xEE;te</tif:LegendeRessource>
+      <tif:TailleRessource>155255</tif:TailleRessource>
+      <tif:Largeur>300</tif:Largeur>
+      <tif:Hauteur>400</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/caleche.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Balade en cal&#xE8;che</tif:LegendeRessource>
+      <tif:TailleRessource>98000</tif:TailleRessource>
+      <tif:Largeur>500</tif:Largeur>
+      <tif:Hauteur>375</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/cheval1.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Randonn&#xE9;e &#xE0; cheval</tif:LegendeRessource>
+      <tif:TailleRessource>99044</tif:TailleRessource>
+      <tif:Largeur>500</tif:Largeur>
+      <tif:Hauteur>375</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/cheval2.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">&#xC9;levage</tif:LegendeRessource>
+      <tif:TailleRessource>85443</tif:TailleRessource>
+      <tif:Largeur>500</tif:Largeur>
+      <tif:Hauteur>333</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO024413651003/TFO024413651003-14a/medias/jpg/cheval3.jpg</tif:URL>
+      <tif:Nom>G&#xEE;te d'&#xE9;tape Paysan de la Ferme de Daoudou</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Cours</tif:LegendeRessource>
+      <tif:TailleRessource>102890</tif:TailleRessource>
+      <tif:Largeur>500</tif:Largeur>
+      <tif:Hauteur>375</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>FERME EQUESTRE DE DAOUDOU</tif:Copyright>
+    </tif:DetailMultimedia>
+  </tif:Multimedia>
+  <tif:Contacts>
+    <tif:DetailContact libelle="Etab/Lieu/Structure" type="04.03.13">
+      <tif:RaisonSociale>G&#xEE;te d'&#xE9;tape et de s&#xE9;jour paysan</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          <tif:Adr2>Daoudou</tif:Adr2>
+          
+          <tif:CodePostal>12270</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+          
+          
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              <tif:Civilite type="04.01.02">Madame</tif:Civilite>
+              <tif:Nom>GAUFFRE</tif:Nom>
+              <tif:Prenom>Marie-Pascale</tif:Prenom>
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330565297411</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>ferme.daoudou@wanadoo.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.daoudou.fr</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+          <tif:Commune code="12167">Najac</tif:Commune>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact libelle="Propri&#xE9;taire" type="04.03.30">
+      <tif:RaisonSociale>Mme Marie-Pascale GAUFFRE</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse><tif:Adr2>Daoudou</tif:Adr2><tif:Commune code="12167">Najac</tif:Commune><tif:CodePostal>12270</tif:CodePostal><tif:Pays code="FR">FRANCE</tif:Pays>
+                null
+                <tif:Personnes><tif:DetailPersonne type="04.04.05" libelle="Moyen de communication"><tif:Civilite type="04.01.02">Madame</tif:Civilite><tif:Nom>GAUFFRE</tif:Nom><tif:Prenom>Marie-Pascale</tif:Prenom><tif:MoyensCommunications><tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone"><tif:Coord>+330565297411</tif:Coord></tif:DetailMoyenCom><tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l"><tif:Coord>ferme.daoudou@wanadoo.fr</tif:Coord></tif:DetailMoyenCom><tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)"><tif:Coord>www.daoudou.fr</tif:Coord></tif:DetailMoyenCom></tif:MoyensCommunications></tif:DetailPersonne></tif:Personnes>
+              </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+  </tif:Contacts>
+  <tif:InformationsLegales>
+    <tif:ModeGestion type="05.01.02">Priv&#xE9;</tif:ModeGestion>
+  </tif:InformationsLegales>
+  <tif:Classements>
+    <tif:DetailClassement type="06.01" libelle="Agr&#xE9;ments" xml:lang="FR" id="1">
+      <tif:Classement type="06.01.05.04" xml:lang="FR">Minist&#xE8;re de la Jeunesse et des Sports</tif:Classement>
+      <tif:DateClassement>2001-02-20</tif:DateClassement>
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="2" type="06.98.01.OT12167" libelle="OFFICE DE TOURISME DE NAJAC">
+      
+      
+      <tif:Classement type="06.98.01.OT12167.01">Classe 1</tif:Classement>
+      <tif:DateClassement>2010-01-01</tif:DateClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement id="3" type="06.98.17" libelle="PBVF">
+      
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="4" type="06.98.01.OT12300" libelle="OFFICE DE TOURISME REGIONAL DE VILLEFRANCHE DE ROUERGUE">
+      
+      
+      <tif:Classement type="06.98.01.OT12300.01">Classe 1</tif:Classement>
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="5" type="06.98.26.OT12300" libelle="Edition papier">
+      <tif:ObservationDetailClassement xml:lang="FR">En famille ou entre amis, vous pouvez regrouper tous nos g&#xEE;tes, en g&#xEE;te de groupe (+ salle commune avec chemin&#xE9;e); Sur place, rando. &#xE0; cheval.</tif:ObservationDetailClassement>
+      
+      
+    </tif:DetailClassement>
+  </tif:Classements>
+  
+  <tif:Geolocalisations>
+    <tif:DetailGeolocalisation type="08.01.03" libelle="Point" xml:lang="FR">
+      <tif:Zone type="08.02.07.02" libelle="Ferm&#xE9;" xml:lang="FR">
+        
+        <tif:Points>
+          <tif:DetailPoint type="08.02.05.11" libelle="Principal" xml:lang="FR">
+            <tif:Nom xml:lang="FR">Daoudou</tif:Nom>
+            <tif:Commune code="12167">Najac</tif:Commune>
+            <tif:Coordonnees>
+              <tif:DetailCoordonnees type="08.02.02.03" libelle="G&#xE9;ographiques (UTM compatible avec GPS)" xml:lang="FR">
+                <tif:Latitude>44.19259867170238</tif:Latitude>
+                <tif:Longitude>1.9574862380981362</tif:Longitude>
+                <tif:Altitude>365</tif:Altitude>
+              </tif:DetailCoordonnees>
+            </tif:Coordonnees>
+            <tif:Environnements>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">GR 36</tif:Nom>
+                
+                <tif:Commune code="12001">Agen-d'Aveyron</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A la campagne" type="08.02.03.01">
+                
+                
+                <tif:Commune code="null">null</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="Dans un hameau / lieu-dit" type="08.02.03.97">
+                <tif:Nom xml:lang="FR">Daoudou</tif:Nom>
+                
+                <tif:Commune code="null">null</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+            </tif:Environnements>
+            
+            <tif:Acces>
+              <tif:DetailAcces xml:lang="FR" libelle="A&#xE9;roport/A&#xE9;rodrome" type="08.02.06.01">
+                <tif:Nom xml:lang="FR">Rodez</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">85</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare SNCF" type="08.02.06.06">
+                <tif:Nom xml:lang="FR">Najac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">7</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Autoroute" type="08.02.06.02">
+                <tif:Nom xml:lang="FR">Caussade</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">40</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Commune de proximit&#xE9;" type="08.02.06.04">
+                <tif:Nom xml:lang="FR">Najac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">7</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare Routi&#xE8;re" type="08.02.06.08">
+                <tif:Nom xml:lang="FR">Villefranche de Rouergue</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">23</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Route (Nationale/D&#xE9;partementale)" type="08.02.06.11">
+                <tif:Nom xml:lang="FR">D594</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">2</tif:Distance>
+                
+              </tif:DetailAcces>
+            </tif:Acces>
+          </tif:DetailPoint>
+        </tif:Points>
+      </tif:Zone>
+    </tif:DetailGeolocalisation>
+  </tif:Geolocalisations>
+  <tif:Periodes>
+    <tif:DetailPeriode type="09.01.06" libelle="Ouverture" id="1">
+      
+      <tif:ObservationDetailPeriode xml:lang="FR">&#xC0; partir de 8 personnes.</tif:ObservationDetailPeriode>
+      <tif:Dates>
+        <tif:DetailDates>
+          <tif:DateDebut>2014-01-01</tif:DateDebut>
+          <tif:DateFin>2014-12-31</tif:DateFin>
+        </tif:DetailDates>
+      </tif:Dates>
+    </tif:DetailPeriode>
+  </tif:Periodes>
+  <tif:Clienteles>
+    
+    <tif:DetailClienteles type="10.01.02" libelle="Groupes">
+      <tif:DetailClient id="3" type="10.02.27" libelle="Tout public">
+        <tif:Nom>Groupes tout public</tif:Nom>
+        <tif:GroupeRef>N</tif:GroupeRef>
+        <tif:NbPersMin>10</tif:NbPersMin>
+        <tif:NbPersMax>10</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+  </tif:Clienteles>
+  <tif:Langues>
+    <tif:Usage type="11.01.01" libelle="Accueil">
+      <tif:Langue xml:lang="FR">Fran&#xE7;ais</tif:Langue>
+      <tif:Langue xml:lang="EN">Anglais</tif:Langue>
+    </tif:Usage>
+  </tif:Langues>
+  
+  <tif:Tarifs>
+    <tif:DetailTarifs>
+      <tif:DetailTarif type="13.04.04.86" libelle="Nuit&#xE9;e adulte">
+        <tif:Nom>Nuit&#xE9;e adulte</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>20</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Le G&#xEE;te Groupe fonctionne uniquement &#xE0; partir de 8 personnes.</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.99" libelle="Taxe de s&#xE9;jour en sus">
+        <tif:Nom>Taxe de s&#xE9;jour en sus</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>0.3</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">0.3</tif:MontantPourcent>
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.87" libelle="Tarif lave-linge">
+        <tif:Nom>Tarif lave-linge</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">0</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Gratuit</tif:DescriptionTarif>
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.01.86" libelle="Tarif s&#xE8;che-linge">
+        <tif:Nom>Tarif s&#xE8;che-linge</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">0</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">Gratuit</tif:DescriptionTarif>
+      </tif:DetailTarif>
+    </tif:DetailTarifs>
+    <tif:ModesPaiement>
+      <tif:ModePaiement type="13.02.03">Bons CAF</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.08">Ch&#xE8;que</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.11">Ch&#xE8;ques Vacances</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.14">Esp&#xE8;ces</tif:ModePaiement>
+      <tif:ObservationModePaiement>Pass Evasion, MSA, Ch&#xE8;que Sport, Ch&#xE8;que Ado.</tif:ObservationModePaiement>
+    </tif:ModesPaiement>
+  </tif:Tarifs>
+  <tif:Capacites>
+    <tif:CapacitesGlobales type="14.01.02" libelle="Capacit&#xE9; Globale">
+      <tif:Capacite unite="01.03.01.06" libelle="Chambre" xml:lang="FR" classee="N">8</tif:Capacite>
+      <tif:Capacite unite="01.03.01.22" libelle="G&#xEE;te" xml:lang="FR" classee="N">3</tif:Capacite>
+      <tif:Capacite unite="01.03.01.14" libelle="Personne" xml:lang="FR" classee="N">20</tif:Capacite>
+    </tif:CapacitesGlobales>
+    <tif:CapacitesUnites>
+      <tif:DetailCapaciteUnite type="01.03.01.22" libelle="G&#xEE;te">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            
+            
+            
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>3</tif:NbUnites>
+        <tif:DescriptionCapaciteUnite xml:lang="FR">3 sanitaires privatifs : 1 douche + 1 lavabo + 1 WC</tif:DescriptionCapaciteUnite>
+      </tif:DetailCapaciteUnite>
+    </tif:CapacitesUnites>
+  </tif:Capacites>
+  <tif:OffresPrestations>
+    <tif:DetailOffrePrestation type="15.06" libelle="Services">
+      <tif:DetailPrestation id="3">
+        <tif:Prestation type="15.06.05">Animaux accept&#xE9;s</tif:Prestation>
+        <tif:Nom>Animaux accept&#xE9;s</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="4">
+        <tif:Prestation type="15.06.41">Lave linge</tif:Prestation>
+        <tif:Nom>Lave linge</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        <tif:DescriptionPrestation xml:lang="FR">Gratuit</tif:DescriptionPrestation>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="8">
+        <tif:Prestation type="15.06.198">Accueil des cavaliers</tif:Prestation>
+        <tif:Nom>Accueil des cavaliers</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.05" libelle="Equipements">
+      <tif:DetailPrestation id="2">
+        <tif:Prestation type="15.05.996">Coin cuisine/gestion libre</tif:Prestation>
+        <tif:Nom>Coin cuisine/gestion libre</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="5">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12167">Najac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="6">
+        <tif:Prestation type="15.05.04">Acc&#xE8;s handicap&#xE9;s</tif:Prestation>
+        <tif:Nom>Acc&#xE8;s handicap&#xE9;s</tif:Nom>
+        <tif:DureePrest unite="01.03.03.03" libelle="heure">0</tif:DureePrest>
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="7">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        <tif:DureePrest unite="01.03.03.03" libelle="heure">0</tif:DureePrest>
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.03" libelle="Conforts">
+      <tif:DetailPrestation id="9">
+        <tif:Prestation type="15.03.43">S&#xE8;che linge collectif</tif:Prestation>
+        <tif:Nom>S&#xE8;che linge collectif</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:DescriptionPrestation xml:lang="FR">Gratuit</tif:DescriptionPrestation>
+        
+        <tif:Commune code="12167">Najac</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+  </tif:OffresPrestations>
+  <tif:DescriptionsComplementaires>
+    <tif:DetailDescriptionComplementaire type="16.01.05" libelle="Identification" xml:lang="FR">
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.04" libelle="Descriptif" xml:lang="FR">
+      
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.03" libelle="Compl&#xE9;ment" xml:lang="FR">
+      <tif:Description type="16.02.09" libelle="Informations compl&#xE9;mentaires" xml:lang="FR">Services &#xE9;questres : pr&#xE9;s, aliments, foin / nous pouvons partager sur place les soins aux animaux.
+Nous faisons de l'accueil social soit en groupe style transfert, soit individuel type s&#xE9;jour de rupture soit familial avec dans la famille un adulte ou un enfant handicap&#xE9;.</tif:Description>
+      
+      
+    </tif:DetailDescriptionComplementaire>
+  </tif:DescriptionsComplementaires>
+  
+  
+  
+  
+</tif:OI><tif:OI xmlns:tif="http://www.tourinfrance.net/Tourinfrance3/" xmlns:fmp="http://www.filemaker.com/fmpdsoresult" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns="http://www.tourinfrance.net/Tourinfrance3/">
+  <tif:DublinCore>
+    <dc:title xml:lang="FR">Chalet et G&#xEE;te de Brameloup</dc:title>
+    <dc:identifier>TFO16017196097</dc:identifier>
+    <tif:Classification code="02.01.14">H&#xE9;bergement d'accueil collectif</tif:Classification>
+    
+    
+    <dc:subject xml:lang="FR">En plein coeur de l'Aubrac, au pied des pistes de ski de la petite station de Brameloup, un h&#xE9;bergement id&#xE9;al pour accueillir tout type de groupe &#xE9;t&#xE9; comme hiver.</dc:subject>
+    <dc:description xml:lang="FR">Le &lt;strong&gt;chalet de Brameloup&lt;/strong&gt; accueille groupes et familles, au coeur de la for&#xEA;t domaniale d'&lt;strong&gt;Aubrac&lt;/strong&gt;, au pied de la station de &lt;strong&gt;Brameloup&lt;/strong&gt;, dans un cadre &#xE9;poustouflant. 51 lits r&#xE9;partis sur deux structures. &lt;br/&gt;En gestion libre ou en pension compl&#xE8;te, profitez des grands espaces et des activit&#xE9;s de pleine nature propos&#xE9;es toute l'ann&#xE9;e. &lt;br/&gt;A votre disposition, un g&#xEE;te de 16 personnes et un chalet de 35 personnes.&lt;br/&gt;</dc:description>
+    <dc:publisher>Comit&#xE9; D&#xE9;partemenal du Tourisme de l'Aveyron</dc:publisher>
+    <dc:creator>Office de Tourisme d'Espalion</dc:creator>
+    <dc:contributor>Office de Tourisme d'Espalion</dc:contributor>
+    
+    <dcterms:created>08-06-11</dcterms:created>
+    <dcterms:modified>14-03-27</dcterms:modified>
+    
+    <dc:subject xml:lang="EN">Right in the heart of the Aubrac, at the foot of the ski slopes of the small ski resort of Brameloup, idea accommodation for all types of groups in both summer and winter.</dc:subject>
+    <dc:description xml:lang="EN">The chalet de Brameloup welcomes groups and families in an amazing setting. 47 beds spread out over two structures. Self-catering or full-board, make the most of the great open spaces and outdoor activities offered all year round. A 12 person g&#xEE;te is available and a 35 person chalet.</dc:description>
+    <tif:ControlledVocabulary code="02.01.14.02">Centres de jeunes</tif:ControlledVocabulary>
+    <tif:ControlledVocabulary code="02.01.14.03">Centres de vacances</tif:ControlledVocabulary>
+    <tif:ControlledVocabulary code="02.01.14.98">G&#xEE;tes de s&#xE9;jour</tif:ControlledVocabulary>
+    <dc:subject xml:lang="ES">En pleno coraz&#xF3;n del Aubrac, a pie de pistas en la peque&#xF1;a estaci&#xF3;n de Brameloup, un alojamiento ideal para recibir a todos tipos de grupos tanto en verano como en invierno.</dc:subject>
+    <dc:description xml:lang="ES">El chalet de Brameloup recibe a grupos y familias en un entorno magn&#xED;fico. 47 camas distribuidas en dos edificios. Que elij&#xE1;is un alojamiento s&#xF3;lo o un alquiler en pensi&#xF3;n completa, disfrutar&#xE9;is de los grandes espacios y de las actividades al aire libre durante todo el a&#xF1;o. Una casa rural con capacidad para 12 personas y un chalet para 35 personas est&#xE1;n a vuestra disposici&#xF3;n.</dc:description>
+  </tif:DublinCore>
+  <tif:Update>
+    <sy:updatePeriod>yearly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <sy:updateBase>2008-01-01</sy:updateBase>
+  </tif:Update>
+  <tif:Multimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/chaletfaceneige.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>236515</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>450</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/p1010006.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>234511</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>448</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/p1010011.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>219925</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>448</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/p1010021.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>220074</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>448</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/imgp1138.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>250864</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>450</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO16017196097/TFO16017196097-14a/medias/jpg/th_31_111027141424.jpg</tif:URL>
+      <tif:Nom>Chalet et G&#xEE;te de Brameloup</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet et G&#xEE;te de Brameloup</tif:LegendeRessource>
+      <tif:TailleRessource>13365</tif:TailleRessource>
+      <tif:Largeur>214</tif:Largeur>
+      <tif:Hauteur>167</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC</tif:Copyright>
+    </tif:DetailMultimedia>
+  </tif:Multimedia>
+  <tif:Contacts>
+    <tif:DetailContact type="04.03.13" libelle="Etab/Lieu/Structure">
+      <tif:RaisonSociale>CHALET DE BRAMELOUP</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          <tif:Adr1>Brameloup</tif:Adr1>
+          
+          
+          <tif:CodePostal>12470</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          
+          
+          
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330676829705</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>info@adalpa.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.adalpa.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+          <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact type="04.03.33" libelle="R&#xE9;servation">
+      <tif:RaisonSociale>ADALPA</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          <tif:Adr2>Gages</tif:Adr2>
+          
+          <tif:Commune code="12157">Montrozier</tif:Commune>
+          <tif:CodePostal>12630</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330676829705</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>info@adalpa.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>www.adalpa.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  <tif:Coord>www.facebook.com/pages/Adalpa-Aveyron/268762516528589?ref=ts&amp;fref=ts</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+  </tif:Contacts>
+  <tif:InformationsLegales>
+    <tif:ModeGestion type="05.01.01">Associatif</tif:ModeGestion>
+    <tif:SIRET>33839276400043</tif:SIRET>
+    <tif:APE_NAF>926C</tif:APE_NAF>
+    
+    
+  </tif:InformationsLegales>
+  <tif:Classements>
+    <tif:DetailClassement type="06.01" libelle="Agr&#xE9;ments" xml:lang="FR" id="1">
+      <tif:Classement type="06.01.05.04" xml:lang="FR">Minist&#xE8;re de la Jeunesse et des Sports</tif:Classement>
+      <tif:DateClassement>2011-04-19</tif:DateClassement>
+      <tif:NumeroClassement>121870002</tif:NumeroClassement>
+      <tif:ObservationDetailClassement xml:lang="FR">Mise &#xE0; jour le 15/11/12. Capacit&#xE9; d'accueil : 55 personnes.</tif:ObservationDetailClassement>
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.01" libelle="Agr&#xE9;ments" xml:lang="FR" id="2">
+      <tif:Classement type="06.01.05.03" xml:lang="FR">Minist&#xE8;re de l'Education Nationale</tif:Classement>
+      
+      <tif:NumeroClassement>87 01 97</tif:NumeroClassement>
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement type="06.04.97.99" libelle="Conformit&#xE9; ERP/SDIS" id="3">
+      <tif:DateClassement>2008-09-02</tif:DateClassement>
+      
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="4" type="06.98.01.OT12224" libelle="OFFICE DE TOURISME INTERCANTONAL SAINT GENIEZ  / CAMPAGNAC">
+      
+      
+      <tif:Classement type="06.98.01.OT12224.02">Classe 2</tif:Classement>
+      <tif:DateClassement>2014-03-24</tif:DateClassement>
+    </tif:DetailClassement>
+  </tif:Classements>
+  <tif:PrestationsLiees>
+    <tif:DetailPrestationLiee type="07.01.04" identifier="TFO087988011714" xml:lang="FR">Activit&#xE9;s de pleine nature</tif:DetailPrestationLiee>
+    <tif:DetailPrestationLiee type="07.01.04" identifier="TFO059220864163" xml:lang="FR">Activit&#xE9;s de pleine nature</tif:DetailPrestationLiee>
+    <tif:DetailPrestationLiee type="07.01.04" identifier="TFO059218129886" xml:lang="FR">Activit&#xE9;s de pleine nature</tif:DetailPrestationLiee>
+    <tif:DetailPrestationLiee type="07.01.04" identifier="TFO059219350270" xml:lang="FR">Activit&#xE9;s de pleine nature</tif:DetailPrestationLiee>
+  </tif:PrestationsLiees>
+  <tif:Geolocalisations>
+    <tif:DetailGeolocalisation type="08.01.03" libelle="Point" xml:lang="FR">
+      <tif:Zone type="08.02.07.02" libelle="Ferm&#xE9;" xml:lang="FR">
+        <tif:Nom code="08.02.04.17">Midi-Pyr&#xE9;n&#xE9;es</tif:Nom>
+        <tif:Points>
+          <tif:DetailPoint type="08.02.05.11" libelle="Principal" xml:lang="FR">
+            <tif:Nom xml:lang="FR">CHALET DE BRAMELOUP</tif:Nom>
+            <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+            <tif:Coordonnees>
+              <tif:DetailCoordonnees type="08.02.02.03" libelle="G&#xE9;ographiques (UTM compatible avec GPS)" xml:lang="FR">
+                <tif:Longitude>3.0181366680145327</tif:Longitude>
+                <tif:Latitude>44.58403754372787</tif:Latitude>
+                <tif:Altitude>1300</tif:Altitude>
+              </tif:DetailCoordonnees>
+            </tif:Coordonnees>
+            <tif:Environnements>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">GR 65</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">0</tif:Distance>
+                <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">Tour des Monts d'Aubrac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">0</tif:Distance>
+                <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="En for&#xEA;t" type="08.02.03.10">
+                <tif:Nom xml:lang="FR">For&#xEA;t Domaniale d'Aubrac</tif:Nom>
+                
+                
+                
+              </tif:DetailEnvironnement>
+            </tif:Environnements>
+            <tif:Cartes>
+              
+            </tif:Cartes>
+            <tif:Acces>
+              <tif:DetailAcces xml:lang="FR" libelle="A&#xE9;roport/A&#xE9;rodrome" type="08.02.06.01">
+                <tif:Nom xml:lang="FR">Rodez-Marcillac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">80</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Gare SNCF" type="08.02.06.06">
+                <tif:Nom xml:lang="FR">Rodez</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">78</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Route" type="08.02.06.10">
+                <tif:Nom xml:lang="FR">D219</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">3</tif:Distance>
+                
+              </tif:DetailAcces>
+              <tif:DetailAcces xml:lang="FR" libelle="Autoroute" type="08.02.06.02">
+                <tif:Nom xml:lang="FR">A75 - &#xE9;changeur Aumont Aubrac</tif:Nom>
+                <tif:Distance unite="01.03.02.01" libelle="km" xml:lang="FR">30</tif:Distance>
+                
+              </tif:DetailAcces>
+            </tif:Acces>
+          </tif:DetailPoint>
+        </tif:Points>
+      </tif:Zone>
+    </tif:DetailGeolocalisation>
+  </tif:Geolocalisations>
+  <tif:Periodes>
+    <tif:DetailPeriode type="09.01.06" libelle="Ouverture" id="1">
+      
+      
+      <tif:Dates>
+        <tif:DetailDates>
+          <tif:DateDebut>2014-01-01</tif:DateDebut>
+          <tif:DateFin>2014-12-31</tif:DateFin>
+        </tif:DetailDates>
+      </tif:Dates>
+    </tif:DetailPeriode>
+  </tif:Periodes>
+  <tif:Clienteles>
+    <tif:DetailClienteles type="10.01.01" libelle="Individuels">
+      <tif:DetailClient type="10.02.27" libelle="Tout public" id="1">
+        
+        <tif:GroupeRef>O</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+    <tif:DetailClienteles type="10.01.02" libelle="Groupes">
+      <tif:DetailClient id="2" type="10.02.27" libelle="Tout public">
+        <tif:Nom>groupe</tif:Nom>
+        <tif:GroupeRef>N</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+  </tif:Clienteles>
+  <tif:Langues>
+    <tif:Usage type="11.01.01" libelle="Accueil">
+      <tif:Langue xml:lang="FR">Francais</tif:Langue>
+    </tif:Usage>
+  </tif:Langues>
+  
+  <tif:Tarifs>
+    <tif:ModesPaiement>
+      <tif:ModePaiement type="13.02.03">Bons CAF</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.11">Ch&#xE8;ques Vacances</tif:ModePaiement>
+      
+    </tif:ModesPaiement>
+    <tif:DetailTarifs>
+      <tif:DetailTarif type="13.04.06.94" libelle="Prix logement seul (h&#xE9;bergement en dur)">
+        <tif:Nom>Prix logement seul - g&#xEE;te 16 places</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>170</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">g&#xEE;te 16 places / nuit (+ 30 &#x20AC;/jour si chauffe)</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.03.05" libelle="Demi-pension">
+        <tif:Nom>Demi-pension</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>20.5</tif:TarifMin>
+        <tif:TarifMax>26</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.03.04" libelle="Pension compl&#xE8;te">
+        <tif:Nom>Pension compl&#xE8;te</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>35</tif:TarifMin>
+        <tif:TarifMax>40.1</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        <tif:DescriptionTarif xml:lang="FR">repas gastronomique avec traiteur</tif:DescriptionTarif>
+        
+        
+      </tif:DetailTarif>
+    </tif:DetailTarifs>
+  </tif:Tarifs>
+  <tif:Capacites>
+    <tif:CapacitesGlobales type="14.01.02" libelle="Capacit&#xE9; Globale">
+      <tif:Capacite unite="01.03.01.22" libelle="G&#xEE;te" xml:lang="FR" classee="O">1</tif:Capacite>
+      <tif:Capacite unite="01.03.01.27" libelle="Chalet" xml:lang="FR" classee="O">1</tif:Capacite>
+      <tif:Capacite unite="01.03.01.14" libelle="Personne" xml:lang="FR" classee="O">55</tif:Capacite>
+      <tif:Capacite unite="01.03.01.07" libelle="Couvert" xml:lang="FR" classee="O">60</tif:Capacite>
+    </tif:CapacitesGlobales>
+    <tif:CapacitesUnites>
+      <tif:DetailCapaciteUnite type="01.03.01.27" libelle="Chalet">
+        
+        <tif:Dispositions>
+          <tif:DetailDisposition type="14.03.03.05" libelle="Ind&#xE9;termin&#xE9;e">
+            
+            
+            <tif:CapaciteMaxi>35</tif:CapaciteMaxi>
+          </tif:DetailDisposition>
+        </tif:Dispositions>
+        <tif:NbUnites>1</tif:NbUnites>
+        
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.06" libelle="Chambre">
+        <tif:Nom xml:lang="FR">Chambres du chalet</tif:Nom>
+        <tif:NbUnites>8</tif:NbUnites>
+        
+        
+        <tif:SurfaceMoyenne>0</tif:SurfaceMoyenne>
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.22" libelle="G&#xEE;te">
+        
+        <tif:NbUnites>1</tif:NbUnites>
+        
+        <tif:SurfaceMoyenne unite="01.03.04.01" libelle="m2">0</tif:SurfaceMoyenne>
+        
+      </tif:DetailCapaciteUnite>
+      <tif:DetailCapaciteUnite type="01.03.01.20" libelle="Dortoir">
+        <tif:Nom xml:lang="FR">2 Dortoirs du g&#xEE;te</tif:Nom>
+        <tif:NbUnites>2</tif:NbUnites>
+        
+        <tif:SurfaceMoyenne unite="01.03.04.01" libelle="m2">0</tif:SurfaceMoyenne>
+        
+      </tif:DetailCapaciteUnite>
+    </tif:CapacitesUnites>
+  </tif:Capacites>
+  <tif:OffresPrestations>
+    <tif:DetailOffrePrestation type="15.05" libelle="Equipements">
+      <tif:DetailPrestation id="1">
+        <tif:Prestation type="15.05.65">Parking autocar</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="3">
+        <tif:Prestation type="15.05.108">Salon de t&#xE9;l&#xE9;vision</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="6">
+        <tif:Prestation type="15.05.55">Lac et Plan d'eau</tif:Prestation>
+        <tif:DureePrest unite="01.03.03.03" libelle="heure">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">3</tif:Distance>
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        <tif:Nom>les Picades</tif:Nom>
+        
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    
+    <tif:DetailOffrePrestation type="15.06" libelle="Services">
+      <tif:DetailPrestation id="12">
+        <tif:Prestation type="15.06.41">Lave linge</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="24">
+        <tif:Prestation type="15.06.19">Cabine t&#xE9;l&#xE9;phonique / Point Phone</tif:Prestation>
+        <tif:Nom>Cabine t&#xE9;l&#xE9;phonique / Point Phone</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.02" libelle="Activit&#xE9;s">
+      <tif:DetailPrestation id="14">
+        <tif:Prestation type="15.02.42">Ski alpin</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="15">
+        <tif:Prestation type="15.02.43">Ski de fond</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="17">
+        <tif:Prestation type="15.02.01">Animation</tif:Prestation>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        <tif:Nom>Animation enfants</tif:Nom>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="19">
+        <tif:Prestation type="15.02.39">Randonn&#xE9;e p&#xE9;destre</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="22">
+        <tif:Prestation type="15.02.31">P&#xEA;che</tif:Prestation>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>N</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="25">
+        <tif:Prestation type="15.02.69">VTT - V&#xE9;lo</tif:Prestation>
+        <tif:Nom>VTT - V&#xE9;lo</tif:Nom>
+        
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="27">
+        <tif:Prestation type="15.02.96">Tir &#xE0; l'arc</tif:Prestation>
+        <tif:Nom>Tir &#xE0; l'arc</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="28">
+        <tif:Prestation type="15.02.39">Randonn&#xE9;e p&#xE9;destre</tif:Prestation>
+        <tif:Nom>raquettes &#xE0; neige</tif:Nom>
+        <tif:DureePrest unite="01.03.03.07" libelle="ann&#xE9;e">0</tif:DureePrest>
+        <tif:NbPrest>1</tif:NbPrest>
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>O</tif:Payant>
+        <tif:Distance unite="01.03.02.01" libelle="km">0</tif:Distance>
+        <tif:Commune code="12187">Prades-d'Aubrac</tif:Commune>
+        
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+  </tif:OffresPrestations>
+  <tif:DescriptionsComplementaires>
+    <tif:DetailDescriptionComplementaire type="16.01.05" libelle="Identification" xml:lang="FR">
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.04" libelle="Descriptif" xml:lang="FR">
+      
+      
+      
+    </tif:DetailDescriptionComplementaire>
+  </tif:DescriptionsComplementaires>
+  
+  
+  
+  
+</tif:OI><tif:OI xmlns:tif="http://www.tourinfrance.net/Tourinfrance3/" xmlns:fmp="http://www.filemaker.com/fmpdsoresult" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns="http://www.tourinfrance.net/Tourinfrance3/">
+  <tif:DublinCore>
+    <dc:title xml:lang="FR">Village de Chalets Hameau des Celles Basses</dc:title>
+    <dc:identifier>TFO080043817713</dc:identifier>
+    <tif:Classification code="02.01.14">H&#xE9;bergement d'accueil collectif</tif:Classification>
+    
+    
+    <dc:subject xml:lang="FR">5 chalets tous identiques tr&#xE8;s bien expos&#xE9;s sur un terrain d'une surface de plus de 5 000 m&#xB2;.</dc:subject>
+    <dc:description xml:lang="FR">"Situ&#xE9; au coeur des Gorges de l'Aveyron, entre Villefranche-de-Rouergue et Najac, le Hameau des Celles Basses vous accueille toute l'ann&#xE9;e. Le Hameau des Celles Basses a ouvert ses portes en 2009. La structure, constitu&#xE9;e de 5 chalets haut de gamme et d'une piscine vous garantira des vacances tout confort. Nos chalets, en ossature bois, mod&#xE8;le prestige de l'entreprise Fabre 2012, vous assureront tout le confort d'une maison individuelle. Nos chalets sont con&#xE7;us jusqu'&#xE0; 6 personnes. Le Hameau des Celles Basses est situ&#xE9; sur les hauteurs de la commune de Monteils. Vous pourrez ainsi profiter du calme d'un lieu pr&#xE9;serv&#xE9;, id&#xE9;alement expos&#xE9;, avec un acc&#xE8;s direct &#xE0; la for&#xEA;t et aux chemins de randonn&#xE9;es p&#xE9;destres ou VTT".&lt;br/&gt;</dc:description>
+    <dc:publisher>Comit&#xE9; D&#xE9;partemental du Tourisme de l'Aveyron</dc:publisher>
+    <dc:creator>OFFICE DE TOURISME REGIONAL DE VILLEFRANCHE DE ROUERGUE</dc:creator>
+    <dc:contributor>OFFICE DE TOURISME DE NAJAC</dc:contributor>
+    
+    <dcterms:created>10-07-15</dcterms:created>
+    <dcterms:modified>14-03-27</dcterms:modified>
+    
+    
+    <dc:subject xml:lang="EN">The chalet is 2 star rated and can accommodate 5 people</dc:subject>
+    <dc:description xml:lang="EN">Situated in the heart of the Gorges de l'Aveyron, between Vilelfranche-de-Rouergue and Najac, the Hameau des Celles Basses welcomes you all year round. The Hameau des Celles Basses opened its doors in 2009. the complex, made up of 5 high quality chalets and a swimming pool guarantees comfortable quality holidays. Our wooden chalets (Fabre 2012 prestige model) assure you all the comfort of a detached house and are designed for up to 6 people. The Hameau des Celles Basses is situated near Monteils. You will also be able to enjoy the calm of a preserved environment, ideally exposed, with direct access to the forest, footpaths and mountain bike tracks.</dc:description>
+    <tif:ControlledVocabulary code="02.01.04.01.02">Meubl&#xE9;s et G&#xEE;tes</tif:ControlledVocabulary>
+    <tif:ControlledVocabulary code="02.01.14.05">Villages de vacances</tif:ControlledVocabulary>
+  </tif:DublinCore>
+  <tif:Update>
+    <sy:updatePeriod>yearly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <sy:updateBase>2010-01-01</sy:updateBase>
+  </tif:Update>
+  <tif:Multimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/p1010029.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses Chalet 1</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalets</tif:LegendeRessource>
+      <tif:TailleRessource>269089</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>450</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme Iches</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/chaletexterieur.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalet</tif:LegendeRessource>
+      <tif:TailleRessource>304310</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>474</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme ICHES</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/chalets.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chalets en bois</tif:LegendeRessource>
+      <tif:TailleRessource>334839</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>450</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme ICHES</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/piscine.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Piscine</tif:LegendeRessource>
+      <tif:TailleRessource>236822</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>405</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme ICHES</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/salon.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Salon</tif:LegendeRessource>
+      <tif:TailleRessource>163458</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>398</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme ICHES</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/4_1.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses Chalet 1</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chambre adulte</tif:LegendeRessource>
+      <tif:TailleRessource>172375</tif:TailleRessource>
+      <tif:Largeur>600</tif:Largeur>
+      <tif:Hauteur>398</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme Iches</tif:Copyright>
+    </tif:DetailMultimedia>
+    <tif:DetailMultimedia type="03.01.01" libelle="Image" xml:lang="FR">
+      <tif:URL>http://www.caravelis.com/xml/oi/TFO080043817713/TFO080043817713-14a/medias/jpg/1_1.jpg</tif:URL>
+      <tif:Nom>Village de Chalets Hameau des Celles Basses Chalet 1</tif:Nom>
+      <tif:LegendeRessource xml:lang="FR">Chambre enfant</tif:LegendeRessource>
+      <tif:TailleRessource>90727</tif:TailleRessource>
+      <tif:Largeur>265</tif:Largeur>
+      <tif:Hauteur>400</tif:Hauteur>
+      <tif:TypeMime>image/jpeg</tif:TypeMime>
+      <tif:Copyright>M. et Mme Iches</tif:Copyright>
+    </tif:DetailMultimedia>
+  </tif:Multimedia>
+  
+  <tif:Classements>
+    <tif:DetailClassement type="06.04.01.04" libelle="Locatifs" id="1">
+      <tif:Classement type="06.04.01.04.02">2 &#xE9;toiles</tif:Classement>
+      <tif:DateClassement>2010-06-30</tif:DateClassement>
+      <tif:NumeroClassement>12.150.10.002</tif:NumeroClassement>
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="2" type="06.98.01.OT12300" libelle="OFFICE DE TOURISME REGIONAL DE VILLEFRANCHE DE ROUERGUE">
+      
+      
+      <tif:Classement type="06.98.01.OT12300.01">Classe 1</tif:Classement>
+      
+    </tif:DetailClassement>
+    <tif:DetailClassement id="3" type="06.98.26.OT12300" libelle="Edition papier">
+      <tif:ObservationDetailClassement xml:lang="FR">5 chalets (6 pers. maxi) identiques situ&#xE9; au coeur des Gorges de l'Aveyron. Acc&#xE8;s direct &#xE0; la for&#xEA;t et aux chemins de randonn&#xE9;es. Salle commune. Jardin.</tif:ObservationDetailClassement>
+      
+      
+    </tif:DetailClassement>
+  </tif:Classements>
+  
+  <tif:Periodes>
+    <tif:DetailPeriode type="09.01.06" libelle="Ouverture" id="1">
+      
+      
+      <tif:Dates>
+        <tif:DetailDates>
+          <tif:DateDebut>2014-01-01</tif:DateDebut>
+          <tif:DateFin>2014-12-31</tif:DateFin>
+        </tif:DetailDates>
+      </tif:Dates>
+    </tif:DetailPeriode>
+  </tif:Periodes>
+  <tif:Clienteles>
+    <tif:DetailClienteles type="10.01.01" libelle="Individuels">
+      <tif:DetailClient type="10.02.27" libelle="Tout public" id="1">
+        <tif:Nom>Individuel tout public</tif:Nom>
+        <tif:GroupeRef>O</tif:GroupeRef>
+        <tif:NbPersMin>0</tif:NbPersMin>
+        <tif:NbPersMax>0</tif:NbPersMax>
+        <tif:AgeMin>0</tif:AgeMin>
+        <tif:AgeMax>0</tif:AgeMax>
+      </tif:DetailClient>
+    </tif:DetailClienteles>
+  </tif:Clienteles>
+  <tif:Langues>
+    <tif:Usage type="11.01.01" libelle="Accueil">
+      <tif:Langue xml:lang="FR">Fran&#xE7;ais</tif:Langue>
+      <tif:Langue xml:lang="EN">Anglais</tif:Langue>
+    </tif:Usage>
+  </tif:Langues>
+  
+  <tif:Tarifs>
+    <tif:DetailTarifs>
+      <tif:DetailTarif type="13.04.04.85" libelle="Location Semaine Basse Saison">
+        <tif:Nom>Location Semaine Basse Saison</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>232</tif:TarifMin>
+        <tif:TarifMax>290</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.04.83" libelle="Location Semaine Moyenne Saison">
+        <tif:Nom>Location Semaine Moyenne Saison</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>280</tif:TarifMin>
+        <tif:TarifMax>350</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.04.84" libelle="Location Semaine Haute Saison">
+        <tif:Nom>Location Semaine Haute Saison</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>470</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.04.82" libelle="Location Semaine Tr&#xE8;s Haute Saison">
+        <tif:Nom>Location Semaine Tr&#xE8;s Haute Saison</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        <tif:TarifStandard>690</tif:TarifStandard>
+        
+        
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.04.07" libelle="Week-end (meubl&#xE9;)">
+        <tif:Nom>Week-end (meubl&#xE9;)</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>100</tif:TarifMin>
+        <tif:TarifMax>125</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+      <tif:DetailTarif type="13.04.04.02" libelle="Mid-week (meubl&#xE9;)">
+        <tif:Nom>Mid-week (meubl&#xE9;)</tif:Nom>
+        <tif:TarifRef>N</tif:TarifRef>
+        
+        <tif:TarifMin>156</tif:TarifMin>
+        <tif:TarifMax>195</tif:TarifMax>
+        <tif:TarifMode type="13.03.01">A la journ&#xE9;e</tif:TarifMode>
+        
+        <tif:MontantPourcent type="13.05.01">Montant</tif:MontantPourcent>
+        
+        
+        
+      </tif:DetailTarif>
+    </tif:DetailTarifs>
+    <tif:ModesPaiement>
+      <tif:ModePaiement type="13.02.08">Ch&#xE8;que</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.11">Ch&#xE8;ques Vacances</tif:ModePaiement>
+      <tif:ModePaiement type="13.02.14">Esp&#xE8;ces</tif:ModePaiement>
+      
+    </tif:ModesPaiement>
+  </tif:Tarifs>
+  <tif:Capacites>
+    <tif:CapacitesGlobales type="14.01.02" libelle="Capacit&#xE9; Globale">
+      <tif:Capacite unite="01.03.01.14" libelle="Personne" xml:lang="FR" classee="O">5</tif:Capacite>
+      <tif:Superficie unite="01.03.04.01" libelle="m2" xml:lang="FR" classee="N">35</tif:Superficie>
+    </tif:CapacitesGlobales>
+  </tif:Capacites>
+  <tif:OffresPrestations>
+    <tif:DetailOffrePrestation type="15.05" libelle="Equipements">
+      <tif:DetailPrestation id="1">
+        <tif:Prestation type="15.05.72">Piscine d&#xE9;couverte</tif:Prestation>
+        <tif:Nom>Piscine d&#xE9;couverte</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="6">
+        <tif:Prestation type="15.05.106">Salon</tif:Prestation>
+        <tif:Nom>Salon TV</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="8">
+        <tif:Prestation type="15.05.999">Wifi partout</tif:Prestation>
+        <tif:Nom>Wifi partout</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="9">
+        <tif:Prestation type="15.05.99">Salle de r&#xE9;union</tif:Prestation>
+        <tif:Nom>Salle de r&#xE9;union</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.06" libelle="Services">
+      <tif:DetailPrestation id="2">
+        <tif:Prestation type="15.06.05">Animaux accept&#xE9;s</tif:Prestation>
+        <tif:Nom>Animaux accept&#xE9;s</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="5">
+        <tif:Prestation type="15.06.14">Biblioth&#xE8;que</tif:Prestation>
+        <tif:Nom>Biblioth&#xE8;que</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+      <tif:DetailPrestation id="7">
+        <tif:Prestation type="15.06.41">Lave linge</tif:Prestation>
+        <tif:Nom>Lave linge</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.03" libelle="Conforts">
+      <tif:DetailPrestation id="3">
+        <tif:Prestation type="15.03.01">Acc&#xE8;s Internet</tif:Prestation>
+        <tif:Nom>Acc&#xE8;s Internet Wifi</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+    <tif:DetailOffrePrestation type="15.02" libelle="Activit&#xE9;s">
+      <tif:DetailPrestation id="4">
+        <tif:Prestation type="15.02.34">Ping-Pong</tif:Prestation>
+        <tif:Nom>Ping-Pong</tif:Nom>
+        
+        
+        <tif:Inclus>O</tif:Inclus>
+        <tif:Payant>N</tif:Payant>
+        
+        
+        <tif:Commune code="12150">Monteils</tif:Commune>
+      </tif:DetailPrestation>
+    </tif:DetailOffrePrestation>
+  </tif:OffresPrestations>
+  <tif:DescriptionsComplementaires>
+    <tif:DetailDescriptionComplementaire type="16.01.05" libelle="Identification" xml:lang="FR">
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.04" libelle="Descriptif" xml:lang="FR">
+      
+      
+      
+    </tif:DetailDescriptionComplementaire>
+    <tif:DetailDescriptionComplementaire type="16.01.03" libelle="Compl&#xE9;ment" xml:lang="FR">
+      <tif:Description type="16.02.09" libelle="Informations compl&#xE9;mentaires" xml:lang="FR">B&#xE2;timent commun avec services (biblioth&#xE8;que, salon TV, ping-pong, lave linge).</tif:Description>
+      
+      
+    </tif:DetailDescriptionComplementaire>
+  </tif:DescriptionsComplementaires>
+  
+  
+  
+  
+  <tif:Contacts>
+    <tif:DetailContact libelle="Etab/Lieu/Structure" type="04.03.13">
+      <tif:RaisonSociale>Village de Chalets Hameau des Celles Basses</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          <tif:Adr2>Les Celles Basses</tif:Adr2>
+          
+          <tif:Commune code="12150">Monteils</tif:Commune>
+          <tif:CodePostal>12200</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              <tif:Civilite type="04.01.04">Monsieur et Madame</tif:Civilite>
+              <tif:Nom>ICHES</tif:Nom>
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  <tif:Coord>0684390865</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>contact@chalets-aveyron.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>http://www.chalets-aveyron.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.01" libelle="Page Facebook (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05.02" libelle="Autres r&#xE9;seaux sociaux (URL)">
+                  
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+    <tif:DetailContact libelle="Propri&#xE9;taire" type="04.03.30">
+      <tif:RaisonSociale>M. et Mme ICHES</tif:RaisonSociale>
+      
+      <tif:Adresses>
+        <tif:DetailAdresse>
+          
+          
+          
+          <tif:Commune code="12150">Monteils</tif:Commune>
+          <tif:CodePostal>12200</tif:CodePostal>
+          
+          <tif:Pays code="FR">FRANCE</tif:Pays>
+          <tif:Personnes>
+            <tif:DetailPersonne type="04.04.05" libelle="Moyen de communication">
+              <tif:Civilite type="04.01.04">Monsieur et Madame</tif:Civilite>
+              <tif:Nom>ICHES</tif:Nom>
+              
+              
+              
+              <tif:MoyensCommunications>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330565296248</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.01" libelle="T&#xE9;l&#xE9;phone">
+                  <tif:Coord>+330565296734</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.99" libelle="Portable">
+                  <tif:Coord>0684390865</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.02" libelle="T&#xE9;l&#xE9;copieur /fax">
+                  
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.04" libelle="M&#xE8;l">
+                  <tif:Coord>contact@chalets-aveyron.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+                <tif:DetailMoyenCom type="04.02.05" libelle="Site web (URL)">
+                  <tif:Coord>http://www.chalets-aveyron.com</tif:Coord>
+                  
+                </tif:DetailMoyenCom>
+              </tif:MoyensCommunications>
+            </tif:DetailPersonne>
+          </tif:Personnes>
+        </tif:DetailAdresse>
+      </tif:Adresses>
+    </tif:DetailContact>
+  </tif:Contacts>
+  <tif:Geolocalisations>
+    <tif:DetailGeolocalisation type="08.01.03" libelle="Point" xml:lang="FR">
+      <tif:Zone type="08.02.07.02" libelle="Ferm&#xE9;" xml:lang="FR">
+        <tif:Nom code="">Village de Chalets Hameau des Celles Basses Chalet 1</tif:Nom>
+        <tif:Points>
+          <tif:DetailPoint type="08.02.05.11" libelle="Principal" xml:lang="FR">
+            <tif:Nom xml:lang="FR">Village de Chalets Hameau des Celles Basses Chalet 1</tif:Nom>
+            <tif:Commune code="12150">Monteils</tif:Commune>
+            <tif:Coordonnees>
+              <tif:DetailCoordonnees type="08.02.02.03" libelle="G&#xE9;ographiques (UTM compatible avec GPS)" xml:lang="FR">
+                <tif:Latitude>44.26320207197451</tif:Latitude>
+                <tif:Longitude>1.971957674407978</tif:Longitude>
+                <tif:Altitude>241</tif:Altitude>
+              </tif:DetailCoordonnees>
+            </tif:Coordonnees>
+            <tif:Environnements>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="A proximit&#xE9; d'un GR" type="08.02.03.99">
+                <tif:Nom xml:lang="FR">GR 36</tif:Nom>
+                
+                
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="Dans un hameau / lieu-dit" type="08.02.03.97">
+                <tif:Nom xml:lang="FR">Les Celles Basses</tif:Nom>
+                
+                
+                
+              </tif:DetailEnvironnement>
+              <tif:DetailEnvironnement xml:lang="FR" libelle="En p&#xE9;riph&#xE9;rie de village" type="08.02.03.96">
+                <tif:Nom xml:lang="FR">Monteils</tif:Nom>
+                
+                
+                
+              </tif:DetailEnvironnement>
+            </tif:Environnements>
+            
+            
+          </tif:DetailPoint>
+        </tif:Points>
+      </tif:Zone>
+    </tif:DetailGeolocalisation>
+  </tif:Geolocalisations>
+</tif:OI></OIs></listeOI>

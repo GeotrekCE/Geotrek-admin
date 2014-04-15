@@ -58,6 +58,10 @@ class BaseTopologyWidget(MapWidget):
             return None
 
     def render(self, name, value, attrs=None):
+        """Renders the fields. Parent class calls `serialize()` with the value.
+        """
+        if isinstance(value, int):
+            value = Topology.objects.get(pk=value)
         attrs = attrs or {}
         attrs.update(is_line_topology=self.is_line_topology,
                      is_point_topology=self.is_point_topology)

@@ -74,6 +74,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
+
 class ElevationProfileTest(TestCase):
     def test_elevation_profile_wrong_geom(self):
         geom = MultiLineString(LineString((1.5, 2.5, 8), (2.5, 2.5, 10)),
@@ -91,3 +92,79 @@ class ElevationProfileTest(TestCase):
         self.assertIn('Generated with pygal', svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
+
+
+class ElevationAreaTest(TestCase):
+    def setUp(self):
+        self._fill_raster()
+        self.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
+        self.area = AltimetryHelper.elevation_area(self.geom)
+
+    def _fill_raster(self):
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+        for y in range(0, 5):
+            for x in range(0, 4):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+
+    def test_area_has_nice_ratio_if_horizontal(self):
+        self.assertEqual(self.area['size']['x'], 1200.0)
+        self.assertEqual(self.area['size']['y'], 725.0)
+
+    def test_area_has_nice_ratio_if_vertical(self):
+        geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['size']['x'], 725.0)
+        self.assertEqual(area['size']['y'], 1200.0)
+
+    def test_area_has_nice_ratio_if_square_enough(self):
+        geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['size']['x'], 1200.0)
+        self.assertEqual(area['size']['y'], 1175.0)
+
+    def test_area_provides_altitudes_as_matrix(self):
+        self.assertEqual(len(self.area['altitudes']), 30)
+        self.assertEqual(len(self.area['altitudes'][0]), 49)
+        self.assertEqual(len(self.area['altitudes'][-1]), 49)
+
+    def test_area_provides_resolution(self):
+        self.assertEqual(self.area['resolution']['x'], 49)
+        self.assertEqual(self.area['resolution']['y'], 30)
+
+    def test_resolution_step_depends_on_geometry_size(self):
+        self.assertEqual(self.area['resolution']['step'], 25)
+        geom = LineString((100, 370), (100100, 370), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['resolution']['step'], 668)
+
+    def test_area_provides_center_as_latlng(self):
+        self.assertEqual(self.area['center']['lng'], -1.3594736317756084)
+        self.assertEqual(self.area['center']['lat'], -5.981392181086671)
+
+    def test_area_provides_center_as_xy(self):
+        self.assertEqual(self.area['center']['x'], 600.0)
+        self.assertEqual(self.area['center']['y'], 362.5)
+
+    def test_area_provides_extent_as_xy(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['northwest']['x'], 0)
+        self.assertEqual(extent['northwest']['y'], 725.0)
+        self.assertEqual(extent['southeast']['x'], 1200.0)
+        self.assertEqual(extent['southeast']['y'], 0)
+
+    def test_area_provides_extent_as_latlng(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['northeast']['lat'], -5.978928071058993)
+        self.assertEqual(extent['northeast']['lng'], -1.3558658459929058)
+        self.assertEqual(extent['southwest']['lat'], -5.98385630920877)
+        self.assertEqual(extent['southwest']['lng'], -1.3630812101179008)
+
+    def test_area_provides_altitudes_extent(self):
+        extent = self.area['extent']
+        self.assertEqual(extent['altitudes']['max'], 45)
+        self.assertEqual(extent['altitudes']['min'], 0)

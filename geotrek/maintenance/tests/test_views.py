@@ -9,7 +9,7 @@ from django.test import TestCase
 import json
 
 from geotrek.common.tests import CommonTest
-from mapentity.serializers import ZipShapeSerializer, shapefile_files
+from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory

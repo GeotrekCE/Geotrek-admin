@@ -1,16 +1,34 @@
 L.Mixin.ActivableControl = {
-    activable: function (state) {
+    activable: function (activable) {
         /**
          * Allow to prevent user to activate the control.
          * (it is like setEnable(state), but ``enable`` word is used
          *  for handler already)
          */
-        this._activable = state;
+        this._activable = activable;
         if (this._container) {
-            if (state)
-                L.DomUtil.removeClass(this._container, 'disabled');
+            if (activable)
+                L.DomUtil.removeClass(this._container, 'control-disabled');
             else
-                L.DomUtil.addClass(this._container, 'disabled');
+                L.DomUtil.addClass(this._container, 'control-disabled');
+        }
+
+        this.handler.on('enabled', function (e) {
+            L.DomUtil.addClass(this._container, 'enabled');
+        }, this);
+        this.handler.on('disabled', function (e) {
+            L.DomUtil.removeClass(this._container, 'enabled');
+        }, this);
+    },
+
+    setState: function (state) {
+        if (state) {
+            this.handler.enable.call(this.handler);
+            this.handler.fire('enabled');
+        }
+        else {
+            this.handler.disable.call(this.handler);
+            this.handler.fire('disabled');
         }
     },
 
@@ -20,16 +38,7 @@ L.Mixin.ActivableControl = {
         if (!this._activable)
             return;  // do nothing if not activable
 
-        if (this.handler.enabled()) {
-            this.handler.disable.call(this.handler);
-            this.handler.fire('disabled');
-            L.DomUtil.removeClass(this._container, 'enabled');
-        }
-        else {
-            this.handler.enable.call(this.handler);
-            this.handler.fire('enabled');
-            L.DomUtil.addClass(this._container, 'enabled');
-        }
+        this.setState(!this.handler.enabled());
     },
 };
 
@@ -45,7 +54,7 @@ L.Control.ExclusiveActivation = L.Class.extend({
         control.activable(true);
         control.handler.on('enabled', function (e) {
             // When this control is enabled, activate this one,
-            // and disable the others !
+            // disable the others and prevent them to be activable.
             $.each(self._controls, function (i, c) {
                 if (c != control) {
                     c.activable(false);
@@ -83,19 +92,15 @@ L.Control.PointTopology = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
+        this._container = L.DomUtil.create('div', 'leaflet-draw leaflet-control leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out pointtopology-control', this._container);
         link.href = '#';
         link.title = L.Control.PointTopology.TITLE;
-        var self = this;
-        L.DomEvent
-                .addListener(link, 'click', L.DomEvent.stopPropagation)
-                .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', this.toggle, this);
-        return this._container;
-    },
 
-    onRemove: function (map) {
+        L.DomEvent.addListener(link, 'click', L.DomEvent.stopPropagation)
+                  .addListener(link, 'click', L.DomEvent.preventDefault)
+                  .addListener(link, 'click', this.toggle, this);
+        return this._container;
     }
 });
 
@@ -103,29 +108,36 @@ L.Control.PointTopology = L.Control.extend({
 L.Handler.PointTopology = L.Draw.Marker.extend({
     initialize: function (map, guidesLayer, options) {
         L.Draw.Marker.prototype.initialize.call(this, map, options);
-        this._marker = null;
+        this._topoMarker = null;
         this._guidesLayer = guidesLayer;
 
         map.on('draw:created', this._onDrawn, this);
     },
 
+    reset: function() {
+        if (this._topoMarker) {
+            this._map.removeLayer(this._topoMarker);
+        }
+        this.fire('computed_topology', {topology: null});
+    },
+
     restoreTopology: function (topo) {
-        this._marker = L.marker([topo.lat, topo.lng]);
-        this._initMarker(this._marker);
+        this._topoMarker = L.marker([topo.lat, topo.lng]);
+        this._initMarker(this._topoMarker);
         if (topo.snap) {
-            this._marker.fire('move');  // snap to closest
+            this._topoMarker.fire('move');  // snap to closest
         }
     },
 
     _onDrawn: function (e) {
         if (e.layerType === 'marker') {
-            if (this._marker !== null) {
-                this._map.removeLayer(this._marker);
+            if (this._topoMarker !== null) {
+                this._map.removeLayer(this._topoMarker);
             }
 
-            this.fire('added');
-            this._marker = e.layer;
-            this._initMarker(this._marker);
+            this.fire('topo:created');
+            this._topoMarker = L.marker(e.layer.getLatLng());
+            this._initMarker(this._topoMarker);
         }
     },
 
@@ -138,7 +150,9 @@ L.Handler.PointTopology = L.Draw.Marker.extend({
         marker.on('move snap', function (e) {
             this.fire('computed_topology', {topology: marker});
         }, this);
-    }
+        // Fire now : don't wait for move/snap (i.e. on click)
+        this.fire('computed_topology', {topology: marker});
+    },
 });
 
 
@@ -168,26 +182,20 @@ L.Control.LineTopology = L.Control.extend({
     },
 
     onAdd: function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-bar leaflet-control-zoom');
+        this._container = L.DomUtil.create('div', 'leaflet-draw leaflet-control leaflet-bar leaflet-control-zoom');
         var link = L.DomUtil.create('a', 'leaflet-control-zoom-out linetopology-control', this._container);
         link.href = '#';
         link.title = L.Control.LineTopology.TITLE;
 
-        var self = this;
-        L.DomEvent
-                .addListener(link, 'click', L.DomEvent.stopPropagation)
-                .addListener(link, 'click', L.DomEvent.preventDefault)
-                .addListener(link, 'click', this.toggle, this);
+        L.DomEvent.addListener(link, 'click', L.DomEvent.stopPropagation)
+                  .addListener(link, 'click', L.DomEvent.preventDefault)
+                  .addListener(link, 'click', this.toggle, this);
 
         // Control is not activable until paths and graph are loaded
         this.activable(false);
 
         return this._container;
-    },
-
-    onRemove: function (map) {
     }
-
 });
 
 
@@ -299,7 +307,6 @@ L.Handler.MultiPath = L.Handler.extend({
         this.reset();
         this.enable();
 
-
         console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
                                                          latlng:state.start_ll.toString()},
                                                   end:  {pk:state.end_layer.properties.pk,
@@ -319,6 +326,8 @@ L.Handler.MultiPath = L.Handler.extend({
     // Reset the whole state
     reset: function() {
         var self = this;
+
+        this.showPathGeom(null);
 
         // remove all markers from PointOnPolyline objects
         this.steps && $.each(this.steps, function(i, pop) {
@@ -358,7 +367,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     removeHooks: function() {
         this._container.style.cursor = '';
-        this.guidesLayer.off('click', this._onClick, this);
+        this._guidesLayer.off('click', this._onClick, this);
 
         this.stepsToggleActivate(false);
 

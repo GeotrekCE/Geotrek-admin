@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from .models import PhysicalType, LandType, RestrictedAreaType
+from .models import PhysicalType, LandType
 
 
 class PhysicalTypeAdmin(admin.ModelAdmin):
@@ -19,4 +19,3 @@ class LandTypeAdmin(admin.ModelAdmin):
 
 admin.site.register(PhysicalType, PhysicalTypeAdmin)
 admin.site.register(LandType, LandTypeAdmin)
-admin.site.register(RestrictedAreaType)

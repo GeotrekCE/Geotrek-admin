@@ -1,0 +1,41 @@
+{% load i18n %}
+
+(function () {
+
+    function locationMarker(source, feature, latlng) {
+        var html = L.Util.template('<img width="16" src="{pictogram_url}"/>',
+                                   source);
+        var icon = L.divIcon({html: html,
+                              className: 'tourism-datasource-marker',
+                              iconSize: [16, 0]});
+        var marker = L.marker(latlng, {icon: icon});
+
+        marker.on('click', function (e) {
+            var props = L.Util.extend({title:'', description:'', website: ''},
+                                      feature.properties);
+                content = L.Util.template("<span class=title>{% trans "Title" %}</span>: {title}<br/>" +
+                                          "<span class=title>{% trans "Description" %}</span>: {description}<br/>" +
+                                          "<span class=title>{% trans "Website" %}</span>: {website}", props);
+
+            marker.bindPopup(content)
+                  .openPopup();
+        });
+        return marker;
+    }
+
+    $.getJSON('{% url 'tourism:datasource_list_json' %}', function (data) {
+        for (var i=0; i<data.length; i++) {
+            var dataSource = data[i];
+            var is_visible = (!dataSource.targets || dataSource.targets.indexOf('{{ appname }}') > -1);
+            if (!is_visible)
+                continue;
+
+            var layer = new L.ObjectsLayer(null, {
+                indexing: false,
+                pointToLayer: function (feature, latlng) { return locationMarker(dataSource, feature, latlng); }
+            });
+            layer.load(dataSource.geojson_url);
+            map.layerscontrol.addOverlay(layer, dataSource.title);
+        }
+    })
+})();

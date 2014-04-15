@@ -176,6 +176,11 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_document_public', [str(self.pk)])
 
     @property
+    @models.permalink
+    def elevation_area_url(self):
+        return ('trekking:trek_elevation_area', [str(self.pk)])
+
+    @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
@@ -211,6 +216,19 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             src = os.path.join(settings.MEDIA_ROOT, attached.name)
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
+
+    def get_geom_aspect_ratio(self):
+        """ Force trek aspect ratio to fit height and width of
+        image in public document.
+        """
+        s = self.get_map_image_size()
+        return float(s[0]) / s[1]
+
+    def get_map_image_size(self):
+        """
+        Map image size in public trek document
+        """
+        return (13, 11)
 
     def get_attachment_print(self):
         """
@@ -359,7 +377,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def is_complete(self):
         """It should also have a description, etc.
         """
-        mandatory = ['departure', 'arrival', 'description_teaser']
+        mandatory = settings.TREK_COMPLETENESS_FIELDS
         for f in mandatory:
             if not getattr(self, f):
                 return False

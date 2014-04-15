@@ -69,13 +69,13 @@ Shutdown previous running version, and run install :
 
     # Shutdown previous version
     ../previous-version/bin/supervisorctl stop all
-    sudo service supervisor stop
+    sudo stop geotrek
 
     # Re-run install
     ./install.sh
 
     # Reload configuration
-    sudo service supervisor restart
+    sudo restart geotrek
 
     # Empty cache
     sudo service memcached restart

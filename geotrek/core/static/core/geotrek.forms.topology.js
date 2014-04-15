@@ -9,6 +9,7 @@ L.FieldStore.TopologyStore = L.FieldStore.extend({
     },
 
     _serialize: function (layer) {
+        var serialized;
         if (layer instanceof L.Marker) {
             var p = layer.getLatLng();
             serialized = {lat: p.lat, lng: p.lng};
@@ -66,6 +67,13 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
             control.handler.on('computed_topology', function (e) {
                 this.store.save(e.topology);
             }, this);
+            // Make sure, we clean-up geometries when user changes from point to line
+            control.handler.on('enabled', resetTopologies, this);
+        }
+
+        function resetTopologies() {
+            if (this._pointControl) this._pointControl.handler.reset();
+            if (this._lineControl) this._lineControl.handler.reset();
         }
     },
 
@@ -79,6 +87,11 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
     _loadTopologyGraph: function () {
         // Make sure paths stay above other layers
         this._pathsLayer.bringToFront();
+
+        // We now have the path, we can find out the topology bounds.
+        var topo = this.store.load();
+        if (topo)
+            this._map.fitBounds(this._topologyBounds(topo));
 
         if (this._pointControl)
             this._pointControl.activable(true);
@@ -100,7 +113,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         function graphError(jqXHR, textStatus, errorThrown) {
             this._pathsLayer.fire('data:loaded');
             $(this._map._container).addClass('map-error');
-            console.error("Could not load url '" + window.SETTINGS.url.path_graph + "': " + textStatus);
+            console.error("Could not load url '" + window.SETTINGS.urls.path_graph + "': " + textStatus);
             console.error(errorThrown);
         }
     },
@@ -114,6 +127,12 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
     },
 
     load: function () {
+        if (this._pathsLayer === null) {
+            // Use basic behaviour from MapEntityField until
+            this._setView();
+            return;
+        }
+
         var topo = this.store.load();
         if (topo) {
             console.debug("Deserialize topology: " + topo);
@@ -124,5 +143,25 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
                 this._pointControl.handler.restoreTopology(topo);
             }
         }
+    },
+
+    _topologyBounds: function (topo) {
+        var bounds = L.latLngBounds([]);
+        if (topo.lat && topo.lng) {
+            bounds.extend(L.latLng([topo.lat - 0.005, topo.lng - 0.005]));
+            bounds.extend(L.latLng([topo.lat + 0.005, topo.lng + 0.005]));
+        }
+        else {
+            var paths =  [];
+            for (var i=0; i<topo.length; i++) {
+                var subtopology = topo[i];
+                for (var j=0; j<subtopology.paths.length; j++) {
+                    var pathPk = subtopology.paths[j];
+                    var pathLayer = this._pathsLayer.getLayer(pathPk);
+                    bounds.extend(pathLayer.getBounds());
+                }
+            }
+        }
+        return bounds;
     }
 });

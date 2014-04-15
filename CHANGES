@@ -5,8 +5,51 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
-* Nothing changed yet.
+** New features **
 
+* Command to import shapefile with points into POI as topologies (fixes #952)
+* Add views to serve DEM on object area as JSON
+
+** Internal changes **
+
+* An error is raised if SRID has not unit in meters (fixes #921)
+* Zoning and land modules are now splitted (fixes #954)
+
+
+0.22.5 (2014-03-19)
+-------------------
+
+* Fix compilation of translations (ref #970)
+* Fix distinction between languages and translated languages (fixes #968)
+* Fix history tabs not being shown after upgrade to Django 1.6 (fixes #975)
+* Fix regression on land layer label colors (fixes #980)
+* Fix attached files not shown after file upload/delete (fixes #933)
+* Fix links being removed from trek descriptions (fixes #981)
+* Fix missing thumbnail in trek and POI detail pages
+* Fix black background on map captures (fixes #979)
+* Increased scale text size on map captures (fixes #850)
+* Show map attributions on map captures (fixes #852)
+* Fix aspect ratios of map in trek public documents (fixes #849)
+* Fix objects list not being filtered on map extent (fixes #982)
+* Fix coherence of map layer when text search in objects list (fixes #702)
+* Fix number of results not refresh on text search (fixes #865)
+
+* Added north arrow in map image exports (fixes #851)
+* Removed darker effect on backgrounds for map image exports, and added internal
+  advanced setting ``MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True``
+
+
+0.22.4 (2014-03-06)
+-------------------
+
+* Fix install.sh not compiling locale messages (fixes #965)
+* Moved trek completeness fields to setting `TREK_COMPLETENESS_FIELDS`. Duration
+  and difficulty were added, arrival was removed (fixes #967)
+* Fix regression about source locale messages (fixes #970)
+* Fix regression link `Back to application` lost from adminsite (fixes #971)
+* Serve uploaded files as attachments (fixes #972)
+* Remove help texts being shown from filter forms (fixes #966)
+* Fix form pills for translated languages (fixes #968)
 
 0.22.3 (2014-02-17)
 -------------------

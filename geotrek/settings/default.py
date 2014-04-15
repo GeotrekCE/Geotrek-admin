@@ -70,7 +70,8 @@ TITLE = envini.get('title', MAPENTITY_CONFIG['TITLE'])
 MAPENTITY_CONFIG['TITLE'] = TITLE
 MAPENTITY_CONFIG['ROOT_URL'] = ROOT_URL
 MAPENTITY_CONFIG['LANGUAGE_CODE'] = LANGUAGE_CODE
-MAPENTITY_CONFIG['LANGUAGES'] = _MODELTRANSLATION_LANGUAGES
+MAPENTITY_CONFIG['LANGUAGES'] = LANGUAGES
+MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = _MODELTRANSLATION_LANGUAGES
 
 
 #
@@ -84,6 +85,9 @@ MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', s
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
+
+# We override the default Adminsite template, add its location for template loader
+TEMPLATE_DIRS += (os.path.join(DEPLOY_ROOT, 'lib', 'src', 'mapentity', 'mapentity', 'templates'),)
 
 
 #
