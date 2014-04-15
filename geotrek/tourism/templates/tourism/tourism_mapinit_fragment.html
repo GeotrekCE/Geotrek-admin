@@ -26,7 +26,7 @@
     $.getJSON('{% url 'tourism:datasource_list_json' %}', function (data) {
         for (var i=0; i<data.length; i++) {
             var dataSource = data[i];
-            var is_visible = (!dataSource.targets || dataSource.targets.indexOf('{{ appname }}') > 0);
+            var is_visible = (!dataSource.targets || dataSource.targets.indexOf('{{ appname }}') > -1);
             if (!is_visible)
                 continue;
 
