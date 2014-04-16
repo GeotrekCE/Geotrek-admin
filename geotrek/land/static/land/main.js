@@ -1,12 +1,13 @@
-{% load i18n %}
+$(window).on('entity:map', function (e, data) {
 
-(function () {
+    var map = data.map;
+
     // Add management layers
-    var managementLayers = [{url:'{% url 'land:landedge_layer' %}', name: '{% trans "Land type" %}', id: 'land'},
-                            {url:'{% url 'land:physicaledge_layer' %}', name: '{% trans "Physical type" %}', id: 'physical'},
-                            {url:'{% url 'land:competenceedge_layer' %}', name: '{% trans "Competence" %}', id: 'competence'},
-                            {url:'{% url 'land:signagemanagementedge_layer' %}', name: '{% trans "Signage management" %}', id: 'signagemanagement'},
-                            {url:'{% url 'land:workmanagementedge_layer' %}', name: '{% trans "Work management" %}', id: 'workmanagement'}];
+    var managementLayers = [{url: window.SETTINGS.urls.landedge_layer, name: tr('Land type'), id: 'land'},
+                            {url: window.SETTINGS.urls.physicaledge_layer, name: tr('Physical type'), id: 'physical'},
+                            {url: window.SETTINGS.urls.competenceedge_layer, name: tr('Competence'), id: 'competence'},
+                            {url: window.SETTINGS.urls.signagemanagementedge_layer, name: tr('Signage management'), id: 'signagemanagement'},
+                            {url: window.SETTINGS.urls.workmanagementedge_layer, name: tr('Work management'), id: 'workmanagement'}];
 
     // We have a list of colors, each layer has a *color_index*, and will *consume* a color
     // from the list. This way we may not have the same color twice on the map.
@@ -45,5 +46,4 @@
         layer.load(managementLayer.url);
         map.layerscontrol.addOverlay(layer, managementLayer.name);
     }
-
-})();
+});

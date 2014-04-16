@@ -1,6 +1,8 @@
-{% load i18n %}
+$(window).on('entity:map', function (e, data) {
 
-(function () {
+    var map = data.map;
+
+    var template = $('#tourism-popup-template').html();
 
     function locationMarker(source, feature, latlng) {
         var html = L.Util.template('<img width="16" src="{pictogram_url}"/>',
@@ -13,9 +15,7 @@
         marker.on('click', function (e) {
             var props = L.Util.extend({title:'', description:'', website: ''},
                                       feature.properties);
-                content = L.Util.template("<span class=title>{% trans "Title" %}</span>: {title}<br/>" +
-                                          "<span class=title>{% trans "Description" %}</span>: {description}<br/>" +
-                                          "<span class=title>{% trans "Website" %}</span>: {website}", props);
+                content = L.Util.template(template, props);
 
             marker.bindPopup(content)
                   .openPopup();
@@ -23,19 +23,21 @@
         return marker;
     }
 
-    $.getJSON('{% url 'tourism:datasource_list_json' %}', function (data) {
+    $.getJSON(window.SETTINGS.urls.tourism_datasources, function (data) {
         for (var i=0; i<data.length; i++) {
             var dataSource = data[i];
-            var is_visible = (!dataSource.targets || dataSource.targets.indexOf('{{ appname }}') > -1);
+            var is_visible = (!dataSource.targets || dataSource.targets.indexOf(data.appname) > -1);
             if (!is_visible)
                 continue;
 
             var layer = new L.ObjectsLayer(null, {
                 indexing: false,
-                pointToLayer: function (feature, latlng) { return locationMarker(dataSource, feature, latlng); }
+                pointToLayer: function (feature, latlng) {
+                    return locationMarker(dataSource, feature, latlng);
+                }
             });
             layer.load(dataSource.geojson_url);
             map.layerscontrol.addOverlay(layer, dataSource.title);
         }
-    })
-})();
+    });
+});

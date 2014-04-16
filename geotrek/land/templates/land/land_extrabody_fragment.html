@@ -1,0 +1,15 @@
+{% load static i18n %}
+<script type="text/javascript">
+    MapEntity.i18n['Land type'] = "{% trans "Land type" %}";
+    MapEntity.i18n['Physical type'] = "{% trans "Physical type" %}";
+    MapEntity.i18n['Competence'] = "{% trans "Competence" %}";
+    MapEntity.i18n['Signage management'] = "{% trans "Signage management" %}";
+    MapEntity.i18n['Work management'] = "{% trans "Work management" %}";
+
+    window.SETTINGS.urls['landedge_layer'] = "{% url "land:landedge_layer" %}";
+    window.SETTINGS.urls['physicaledge_layer'] = "{% url "land:physicaledge_layer" %}";
+    window.SETTINGS.urls['competenceedge_layer'] = "{% url "land:competenceedge_layer" %}";
+    window.SETTINGS.urls['signagemanagementedge_layer'] = "{% url "land:signagemanagementedge_layer" %}";
+</script>
+</script>
+<script type="text/javascript" src="{% static "land/main.js" %}"></script>

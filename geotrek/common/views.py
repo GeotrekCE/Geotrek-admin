@@ -69,8 +69,6 @@ class JSSettings(BaseJSSettings):
             colorspool=settings.LAND_COLORS_POOL,
         )
         dictsettings['version'] = __version__
-        dictsettings.setdefault('urls', {})
-        dictsettings['urls']['path_graph'] = reverse('core:path_json_graph')
         return dictsettings
 
 
