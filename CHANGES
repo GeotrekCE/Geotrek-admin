@@ -10,6 +10,8 @@ CHANGELOG
 * Command to import shapefile with points into POI as topologies (fixes #952)
 * Add views to serve DEM on object area as JSON
 
+* Permission to allow users or groups to bypass structure restrictions
+
 ** Internal changes **
 
 * An error is raised if SRID has not unit in meters (fixes #921)

@@ -35,6 +35,7 @@ class Structure(models.Model):
         verbose_name = _(u"Structure")
         verbose_name_plural = _(u"Structures")
         ordering = ['name']
+        permissions = (("can_bypass_structure", _("Can by structure")),)
 
 
 def default_structure():

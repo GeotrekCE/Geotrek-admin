@@ -65,8 +65,9 @@ def same_structure_required(redirect_to):
             if isinstance(result, HttpResponseRedirect):
                 return result
 
+            can_bypass_structure = request.user.has_perm('can_bypass_structure')
             obj = hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None)
-            if obj.same_structure(request.user):
+            if can_bypass_structure or obj.same_structure(request.user):
                 return result
             messages.warning(request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
 
