@@ -210,8 +210,8 @@ PROJECT_APPS += (
     'tinymce',
     'easy_thumbnails',
     'shapes',
-    'mapentity',
     'paperclip',
+    'mapentity',
 )
 
 
@@ -345,6 +345,7 @@ MAPENTITY_CONFIG = {
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
     'MAP_BACKGROUND_FOGGED': True,
+    'GEOJSON_LAYERS_CACHE_BACKEND': 'fat'
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

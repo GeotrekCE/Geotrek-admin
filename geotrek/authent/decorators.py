@@ -7,46 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import available_attrs
 
 
-__all__ = ('path_manager_required',
-           'trekking_manager_required',
-           'editor_required',)
-
-
-def user_passes_test_or_redirect(f, redirect_to, msg):
-    """
-    Check if a user has expected group membership.
-    """
-    # TODO : why not django's user_pass_test(f, login_url=url) decorator ?
-    def decorator(view_func):
-        @wraps(view_func, assigned=available_attrs(view_func))
-        def _wrapped_view(request, *args, **kwargs):
-            if f(request.user):
-                return view_func(request, *args, **kwargs)
-            messages.warning(request, msg)
-            return redirect(redirect_to, *args, **kwargs)
-        return _wrapped_view
-    return decorator
-
-
-def path_manager_required(redirect_to):
-    # TODO : decorate wrapped fonction with login_required instead of testing is_authenticated
-    f = lambda u: u.is_authenticated() and u.profile.is_path_manager
-    m = _(u'Access to the requested resource is restricted to path managers. You have been redirected.')
-    return user_passes_test_or_redirect(f, redirect_to, m)
-
-
-def trekking_manager_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_trekking_manager
-    m = _(u'Access to the requested resource is restricted to communication managers. You have been redirected.')
-    return user_passes_test_or_redirect(f, redirect_to, m)
-
-
-def editor_required(redirect_to):
-    f = lambda u: u.is_authenticated() and u.profile.is_editor
-    m = _(u'Access to the requested resource is restricted to work editor. You have been redirected.')
-    return user_passes_test_or_redirect(f, redirect_to, m)
-
-
 def same_structure_required(redirect_to):
     """
     A decorator for class-based views. It relies on ``self.get_object()``
@@ -67,7 +27,7 @@ def same_structure_required(redirect_to):
 
             can_bypass_structure = request.user.has_perm('can_bypass_structure')
             obj = hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None)
-            if can_bypass_structure or obj.same_structure(request.user):
+            if can_bypass_structure or (obj and obj.same_structure(request.user)):
                 return result
             messages.warning(request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
 

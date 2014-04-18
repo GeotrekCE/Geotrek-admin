@@ -17,14 +17,9 @@ from .utils.postgresql import debug_pg_notices
 from . import check_srid_has_meter_unit
 
 
+@load_fixtures
 class CommonTest(MapEntityTest):
-    def test_attachment(self):
-        if self.model is None:
-            return  # Abstract test should not run
-        obj = self.modelfactory.create()
-        AttachmentFactory.create(obj=obj)
-        AttachmentFactory.create(obj=obj)
-        self.assertEqual(len(obj.attachments), 2)
+    pass
 
 
 class StartupCheckTest(TestCase):
