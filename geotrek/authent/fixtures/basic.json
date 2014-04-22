@@ -1,0 +1,142 @@
+[
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents communication",
+            "permissions": [
+
+                ["add_trek", "trekking", "trek"],
+                ["change_trek", "trekking", "trek"],
+                ["delete_trek", "trekking", "trek"],
+                ["export_trek", "trekking", "trek"],
+                ["add_poi", "trekking", "poi"],
+                ["change_poi", "trekking", "poi"],
+                ["delete_poi", "trekking", "poi"],
+                ["export_poi", "trekking", "poi"],
+
+
+                ["add_attachment", "paperclip", "attachment"],
+                ["change_attachment", "paperclip", "attachment"],
+                ["delete_attachment", "paperclip", "attachment"],
+                ["delete_foreign_attachments", "paperclip", "attachment"],
+
+
+                ["read_path", "core", "path"],
+                ["read_trail", "core", "trail"],
+
+                ["read_signage", "infrastructure", "baseinfrastructure"],
+                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["read_intervention", "maintenance", "intervention"],
+                ["read_project", "maintenance", "project"],
+
+                ["read_competenceedge", "land", "competenceedge"],
+                ["read_landedge", "land", "landedge"],
+                ["read_physicaledge", "land", "physicaledge"],
+                ["read_signagemanagementedge", "land", "signagemanagementedge"],
+                ["read_workmanagementedge", "land", "workmanagementedge"],
+
+                ["read_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"]
+
+            ]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9dacteurs",
+            "permissions": [
+
+                ["add_attachment", "paperclip", "attachment"],
+                ["change_attachment", "paperclip", "attachment"],
+                ["delete_attachment", "paperclip", "attachment"],
+                ["delete_foreign_attachments", "paperclip", "attachment"]
+            ]
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents sentiers",
+            "permissions": [
+                ["add_path", "core", "path"],
+                ["change_path", "core", "path"],
+                ["delete_path", "core", "path"],
+                ["export_path", "core", "path"],
+                ["add_trail", "core", "trail"],
+                ["change_trail", "core", "trail"],
+                ["delete_trail", "core", "trail"],
+                ["export_trail", "core", "trail"],
+
+                ["add_signage", "infrastructure", "baseinfrastructure"],
+                ["change_signage", "infrastructure", "baseinfrastructure"],
+                ["delete_signage", "infrastructure", "baseinfrastructure"],
+                ["export_signage", "infrastructure", "baseinfrastructure"],
+                ["add_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["change_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["delete_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["export_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["add_competenceedge", "land", "competenceedge"],
+                ["change_competenceedge", "land", "competenceedge"],
+                ["delete_competenceedge", "land", "competenceedge"],
+                ["export_competenceedge", "land", "competenceedge"],
+                ["add_landedge", "land", "landedge"],
+                ["change_landedge", "land", "landedge"],
+                ["delete_landedge", "land", "landedge"],
+                ["export_landedge", "land", "landedge"],
+                ["add_physicaledge", "land", "physicaledge"],
+                ["change_physicaledge", "land", "physicaledge"],
+                ["delete_physicaledge", "land", "physicaledge"],
+                ["export_physicaledge", "land", "physicaledge"],
+                ["add_signagemanagementedge", "land", "signagemanagementedge"],
+                ["change_signagemanagementedge", "land", "signagemanagementedge"],
+                ["delete_signagemanagementedge", "land", "signagemanagementedge"],
+                ["export_signagemanagementedge", "land", "signagemanagementedge"],
+                ["add_workmanagementedge", "land", "workmanagementedge"],
+                ["change_workmanagementedge", "land", "workmanagementedge"],
+                ["delete_workmanagementedge", "land", "workmanagementedge"],
+                ["export_workmanagementedge", "land", "workmanagementedge"],
+
+                ["add_intervention", "maintenance", "intervention"],
+                ["change_intervention", "maintenance", "intervention"],
+                ["delete_intervention", "maintenance", "intervention"],
+                ["export_intervention", "maintenance", "intervention"],
+                ["add_project", "maintenance", "project"],
+                ["change_project", "maintenance", "project"],
+                ["delete_project", "maintenance", "project"],
+                ["export_project", "maintenance", "project"],
+
+
+                ["add_attachment", "paperclip", "attachment"],
+                ["change_attachment", "paperclip", "attachment"],
+                ["delete_attachment", "paperclip", "attachment"],
+                ["delete_foreign_attachments", "paperclip", "attachment"],
+
+
+                ["read_path", "core", "path"],
+                ["read_trail", "core", "trail"],
+
+                ["read_signage", "infrastructure", "baseinfrastructure"],
+                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["read_intervention", "maintenance", "intervention"],
+                ["read_project", "maintenance", "project"],
+
+                ["read_competenceedge", "land", "competenceedge"],
+                ["read_landedge", "land", "landedge"],
+                ["read_physicaledge", "land", "physicaledge"],
+                ["read_signagemanagementedge", "land", "signagemanagementedge"],
+                ["read_workmanagementedge", "land", "workmanagementedge"],
+
+                ["read_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"]
+            ]
+        }
+    }
+]
+

@@ -6,20 +6,18 @@ from django.db import connection
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth.models import User
 
 from mapentity.tests import MapEntityTest
+from mapentity.factories import UserFactory
 
 from geotrek.settings import EnvIniReader
-from .factories import AttachmentFactory
 from .utils import almostequal, sampling, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
 from . import check_srid_has_meter_unit
 
 
-@load_fixtures
 class CommonTest(MapEntityTest):
-    pass
+    fixtures = ['minimal.json', 'basic.json']
 
 
 class StartupCheckTest(TestCase):
@@ -32,7 +30,7 @@ class StartupCheckTest(TestCase):
 class ViewsTest(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        self.user = UserFactory.create(username='homer', password='dooh')
         success = self.client.login(username=self.user.username, password='dooh')
         self.assertTrue(success)
 
