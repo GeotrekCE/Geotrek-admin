@@ -19,7 +19,7 @@
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
-                ["delete_foreign_attachments", "paperclip", "attachment"],
+                ["delete_attachment_others", "paperclip", "attachment"],
 
 
                 ["read_path", "core", "path"],
@@ -53,7 +53,7 @@
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
-                ["delete_foreign_attachments", "paperclip", "attachment"]
+                ["delete_attachment_others", "paperclip", "attachment"]
             ]
         }
     },
@@ -115,7 +115,7 @@
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
-                ["delete_foreign_attachments", "paperclip", "attachment"],
+                ["delete_attachment_others", "paperclip", "attachment"],
 
 
                 ["read_path", "core", "path"],
