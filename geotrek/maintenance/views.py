@@ -5,7 +5,7 @@ import logging
 from django.utils.decorators import method_decorator
 
 from geotrek.common.views import FormsetMixin
-from geotrek.authent.decorators import same_structure_required, editor_required
+from geotrek.authent.decorators import same_structure_required
 from geotrek.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from geotrek.infrastructure.models import Infrastructure, Signage
@@ -40,14 +40,10 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
-    def can_edit(self):
-        intervention = self.get_object()
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_editor and
-            intervention.same_structure(self.request.user) and
-            intervention.topology is not None
-        )
+    def context_data(self, *args, **kwargs):
+        context = super(InterventionDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class InterventionDocument(MapEntityDocument):
@@ -62,10 +58,6 @@ class ManDayFormsetMixin(FormsetMixin):
 class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
     model = Intervention
     form_class = InterventionCreateForm
-
-    @method_decorator(editor_required('maintenance:intervention_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(InterventionCreate, self).dispatch(*args, **kwargs)
 
     def on_infrastucture(self):
         pk = self.request.GET.get('infrastructure')
@@ -99,7 +91,6 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     queryset = Intervention.objects.existing()
     form_class = InterventionForm
 
-    @method_decorator(editor_required('maintenance:intervention_detail'))
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
         return super(InterventionUpdate, self).dispatch(*args, **kwargs)
@@ -108,7 +99,6 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 class InterventionDelete(MapEntityDelete):
     model = Intervention
 
-    @method_decorator(editor_required('maintenance:intervention_detail'))
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
         return super(InterventionDelete, self).dispatch(*args, **kwargs)
@@ -140,12 +130,10 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
 class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_editor and
-            self.get_object().same_structure(self.request.user)
-        )
+    def context_data(self, *args, **kwargs):
+        context = super(ProjectDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class ProjectDocument(MapEntityDocument):
@@ -161,16 +149,11 @@ class ProjectCreate(FundingFormsetMixin, MapEntityCreate):
     model = Project
     form_class = ProjectForm
 
-    @method_decorator(editor_required('maintenance:intervention_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(ProjectCreate, self).dispatch(*args, **kwargs)
-
 
 class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
     queryset = Project.objects.existing()
     form_class = ProjectForm
 
-    @method_decorator(editor_required('maintenance:project_detail'))
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
         return super(ProjectUpdate, self).dispatch(*args, **kwargs)
@@ -179,7 +162,6 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 class ProjectDelete(MapEntityDelete):
     model = Project
 
-    @method_decorator(editor_required('maintenance:project_detail'))
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
         return super(ProjectDelete, self).dispatch(*args, **kwargs)

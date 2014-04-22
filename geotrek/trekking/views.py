@@ -15,7 +15,6 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 from mapentity.serializers import plain_text, GPXSerializer
 from paperclip.models import Attachment
 
-from geotrek.authent.decorators import trekking_manager_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.zoning.models import District, City, RestrictedArea
@@ -154,11 +153,6 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
 class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager)
-
 
 class TrekMapImage(MapEntityMapImage):
     model = Trek
@@ -219,26 +213,14 @@ class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 
-    @method_decorator(trekking_manager_required('trekking:trek_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekCreate, self).dispatch(*args, **kwargs)
-
 
 class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
     queryset = Trek.objects.existing()
     form_class = TrekForm
 
-    @method_decorator(trekking_manager_required('trekking:trek_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekUpdate, self).dispatch(*args, **kwargs)
-
 
 class TrekDelete(MapEntityDelete):
     model = Trek
-
-    @method_decorator(trekking_manager_required('trekking:trek_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
 class POILayer(MapEntityLayer):
@@ -306,26 +288,14 @@ class POICreate(MapEntityCreate):
     model = POI
     form_class = POIForm
 
-    @method_decorator(trekking_manager_required('trekking:poi_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(POICreate, self).dispatch(*args, **kwargs)
-
 
 class POIUpdate(MapEntityUpdate):
     queryset = POI.objects.existing()
     form_class = POIForm
 
-    @method_decorator(trekking_manager_required('trekking:poi_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(POIUpdate, self).dispatch(*args, **kwargs)
-
 
 class POIDelete(MapEntityDelete):
     model = POI
-
-    @method_decorator(trekking_manager_required('trekking:poi_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(POIDelete, self).dispatch(*args, **kwargs)
 
 
 class WebLinkCreatePopup(CreateView):

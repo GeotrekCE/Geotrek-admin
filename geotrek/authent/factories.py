@@ -1,5 +1,6 @@
 import factory
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 
 from mapentity.factories import UserFactory
@@ -11,7 +12,8 @@ class PathManagerFactory(UserFactory):
 
     @classmethod
     def _prepare(cls, create, **kwargs):
-        pathmanager, exist = Group.objects.get(pk=core_models.GROUP_PATH_MANAGER_ID)
+        GROUP_PATH_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']
+        pathmanager, exist = Group.objects.get(pk=GROUP_PATH_MANAGER_ID)
         kwargs.setdefault('groups', []).append(pathmanager)
         return super(PathManagerFactory, cls)._prepare(create, **kwargs)
 
@@ -21,7 +23,8 @@ class TrekkingManagerFactory(UserFactory):
 
     @classmethod
     def _prepare(cls, create, **kwargs):
-        pathmanager, exist = Group.objects.get(pk=core_models.GROUP_PATH_MANAGER_ID)
+        GROUP_TREKKING_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']
+        pathmanager, exist = Group.objects.get(pk=GROUP_TREKKING_MANAGER_ID)
         kwargs.setdefault('groups', []).append(pathmanager)
         return super(TrekkingManagerFactory, cls)._prepare(create, **kwargs)
 

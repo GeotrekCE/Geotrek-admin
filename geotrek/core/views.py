@@ -13,7 +13,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDelete, MapEntityFormat,
                              JSONResponseMixin, HttpJSONResponse, LastModifiedMixin)
 
-from geotrek.authent.decorators import path_manager_required, same_structure_required
+from geotrek.authent.decorators import same_structure_required
 
 from .models import Path, Trail
 from .forms import PathForm
@@ -103,11 +103,10 @@ class PathFormatList(MapEntityFormat, PathList):
 class PathDetail(MapEntityDetail):
     model = Path
 
-    def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager and \
-                self.get_object().same_structure(self.request.user))
+    def context_data(self, *args, **kwargs):
+        context = super(PathDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class PathDocument(MapEntityDocument):
@@ -122,16 +121,11 @@ class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
-    @method_decorator(path_manager_required('core:path_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(PathCreate, self).dispatch(*args, **kwargs)
-
 
 class PathUpdate(MapEntityUpdate):
     model = Path
     form_class = PathForm
 
-    @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
@@ -140,7 +134,6 @@ class PathUpdate(MapEntityUpdate):
 class PathDelete(MapEntityDelete):
     model = Path
 
-    @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)

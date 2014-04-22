@@ -37,6 +37,12 @@ AUTH_PROFILE_MODULE = 'authent.UserProfile'
 # Settings required for geotrek.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
 AUTHENT_TABLENAME = None
+AUTHENT_GROUPS_MAPPING = {
+    'PATH_MANAGER': 1,
+    'TREKKING_MANAGER': 2,
+    'EDITOR': 3,
+    'READER': 4,
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

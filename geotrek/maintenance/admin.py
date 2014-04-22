@@ -1,49 +1,48 @@
 from django.contrib import admin
 
-from geotrek.authent.admin import PathManagerModelAdmin
 from geotrek.maintenance.models import (
     Contractor, InterventionStatus, InterventionType, InterventionDisorder,
     ProjectType, ProjectDomain, InterventionJob,
 )
 
 
-class ContractorAdmin(PathManagerModelAdmin):
+class ContractorAdmin(admin.ModelAdmin):
     list_display = ('contractor', 'structure')
     search_fields = ('contractor', 'structure')
     list_filter = ('structure',)
 
 
-class InterventionStatusAdmin(PathManagerModelAdmin):
+class InterventionStatusAdmin(admin.ModelAdmin):
     list_display = ('status', 'structure')
     search_fields = ('status', 'structure')
     list_filter = ('structure',)
 
 
-class InterventionTypeAdmin(PathManagerModelAdmin):
+class InterventionTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
     list_filter = ('structure',)
 
 
-class InterventionDisorderAdmin(PathManagerModelAdmin):
+class InterventionDisorderAdmin(admin.ModelAdmin):
     list_display = ('disorder', 'structure')
     search_fields = ('disorder', 'structure')
     list_filter = ('structure',)
 
 
-class InterventionJobAdmin(PathManagerModelAdmin):
+class InterventionJobAdmin(admin.ModelAdmin):
     list_display = ('job', 'cost', 'structure')
     search_fields = ('job', 'structure')
     list_filter = ('structure',)
 
 
-class ProjectTypeAdmin(PathManagerModelAdmin):
+class ProjectTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
     list_filter = ('structure',)
 
 
-class ProjectDomainAdmin(PathManagerModelAdmin):
+class ProjectDomainAdmin(admin.ModelAdmin):
     list_display = ('domain', 'structure')
     search_fields = ('domain', 'structure')
     list_filter = ('structure',)
