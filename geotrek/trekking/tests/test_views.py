@@ -24,8 +24,9 @@ from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
                                         ThemeFactory, InformationDeskFactory)
+from geotrek.trekking.templatetags import trekking_tags
 
-from ..templatetags import trekking_tags
+from .base import TrekkingManagerTest
 
 
 class POIViewsTest(CommonTest):
@@ -169,12 +170,10 @@ class TrekViewsLiveTest(AuthentFixturesTest, MapEntityLiveTest):
     userfactory = TrekkingManagerFactory
 
 
-class TrekCustomViewTests(AuthentFixturesTest):
+class TrekCustomViewTests(TrekkingManagerTest):
 
     def setUp(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create()
@@ -281,7 +280,7 @@ class TrekCustomViewTests(AuthentFixturesTest):
         self.assertEqual(response.status_code, 200)
 
 
-class TrekViewTranslationTest(AuthentFixturesTest):
+class TrekViewTranslationTest(TrekkingManagerTest):
     def setUp(self):
         self.trek = TrekFactory.build()
         self.trek.name_fr = 'Voie lactee'
@@ -291,11 +290,6 @@ class TrekViewTranslationTest(AuthentFixturesTest):
 
     def tearDown(self):
         self.client.logout()
-
-    def login(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
 
     def test_json_translation(self):
         url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})

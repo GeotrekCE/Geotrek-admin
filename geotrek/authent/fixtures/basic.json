@@ -123,8 +123,11 @@
 
                 ["add_difficultylevel", "trekking", "difficultylevel"],
                 ["change_difficultylevel", "trekking", "difficultylevel"],
-                ["delete_difficultylevel", "trekking", "difficultylevel"]
+                ["delete_difficultylevel", "trekking", "difficultylevel"],
 
+                ["add_datasource", "tourism", "datasource"],
+                ["change_datasource", "tourism", "datasource"],
+                ["delete_datasource", "tourism", "datasource"]
             ]
         }
     },
