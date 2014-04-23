@@ -1,63 +1,5 @@
 [
     {
-        "pk": 2,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9f\u00e9rents communication",
-            "permissions": [
-
-                ["add_trek", "trekking", "trek"],
-                ["change_trek", "trekking", "trek"],
-                ["delete_trek", "trekking", "trek"],
-                ["export_trek", "trekking", "trek"],
-                ["add_poi", "trekking", "poi"],
-                ["change_poi", "trekking", "poi"],
-                ["delete_poi", "trekking", "poi"],
-                ["export_poi", "trekking", "poi"],
-
-
-                ["add_attachment", "paperclip", "attachment"],
-                ["change_attachment", "paperclip", "attachment"],
-                ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"],
-
-
-                ["read_path", "core", "path"],
-                ["read_trail", "core", "trail"],
-
-                ["read_signage", "infrastructure", "baseinfrastructure"],
-                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
-
-                ["read_intervention", "maintenance", "intervention"],
-                ["read_project", "maintenance", "project"],
-
-                ["read_competenceedge", "land", "competenceedge"],
-                ["read_landedge", "land", "landedge"],
-                ["read_physicaledge", "land", "physicaledge"],
-                ["read_signagemanagementedge", "land", "signagemanagementedge"],
-                ["read_workmanagementedge", "land", "workmanagementedge"],
-
-                ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"]
-
-            ]
-        }
-    },
-    {
-        "pk": 3,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9dacteurs",
-            "permissions": [
-
-                ["add_attachment", "paperclip", "attachment"],
-                ["change_attachment", "paperclip", "attachment"],
-                ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"]
-            ]
-        }
-    },
-    {
         "pk": 1,
         "model": "auth.group",
         "fields": {
@@ -135,6 +77,68 @@
 
                 ["read_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"]
+            ]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9f\u00e9rents communication",
+            "permissions": [
+
+                ["add_trek", "trekking", "trek"],
+                ["change_trek", "trekking", "trek"],
+                ["delete_trek", "trekking", "trek"],
+                ["export_trek", "trekking", "trek"],
+                ["add_poi", "trekking", "poi"],
+                ["change_poi", "trekking", "poi"],
+                ["delete_poi", "trekking", "poi"],
+                ["export_poi", "trekking", "poi"],
+
+
+                ["add_attachment", "paperclip", "attachment"],
+                ["change_attachment", "paperclip", "attachment"],
+                ["delete_attachment", "paperclip", "attachment"],
+                ["delete_attachment_others", "paperclip", "attachment"],
+
+
+                ["read_path", "core", "path"],
+                ["read_trail", "core", "trail"],
+
+                ["read_signage", "infrastructure", "baseinfrastructure"],
+                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["read_intervention", "maintenance", "intervention"],
+                ["read_project", "maintenance", "project"],
+
+                ["read_competenceedge", "land", "competenceedge"],
+                ["read_landedge", "land", "landedge"],
+                ["read_physicaledge", "land", "physicaledge"],
+                ["read_signagemanagementedge", "land", "signagemanagementedge"],
+                ["read_workmanagementedge", "land", "workmanagementedge"],
+
+                ["read_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"],
+
+                ["add_difficultylevel", "trekking", "difficultylevel"],
+                ["change_difficultylevel", "trekking", "difficultylevel"],
+                ["delete_difficultylevel", "trekking", "difficultylevel"]
+
+            ]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "R\u00e9dacteurs",
+            "permissions": [
+
+                ["add_attachment", "paperclip", "attachment"],
+                ["change_attachment", "paperclip", "attachment"],
+                ["delete_attachment", "paperclip", "attachment"],
+                ["delete_attachment_others", "paperclip", "attachment"]
             ]
         }
     }

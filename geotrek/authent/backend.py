@@ -3,6 +3,7 @@ from collections import namedtuple
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, check_password
+from django.contrib.auth.backends import ModelBackend
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
 
@@ -16,7 +17,7 @@ FIELDS = 'username, first_name, last_name, password, email, level, structure, la
 Credentials = namedtuple('Credentials', FIELDS)
 
 
-class DatabaseBackend(object):
+class DatabaseBackend(ModelBackend):
     """
     Authenticate against a table in Authent database.
     """
@@ -63,10 +64,10 @@ class DatabaseBackend(object):
         GROUP_READER_ID = settings.AUTHENT_GROUPS_MAPPING['READER']
 
         # Set groups according to level
-        editor_group, created = Group.objects.get_or_create(name=GROUP_EDITOR_ID)
-        path_manager_group, created = Group.objects.get_or_create(name=GROUP_PATH_MANAGER_ID)
-        trek_manager_group, created = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER_ID)
-        reader_group, created = Group.objects.get_or_create(name=GROUP_READER_ID)
+        editor_group = Group.objects.get(id=GROUP_EDITOR_ID)
+        path_manager_group = Group.objects.get(id=GROUP_PATH_MANAGER_ID)
+        trek_manager_group = Group.objects.get(id=GROUP_TREKKING_MANAGER_ID)
+        reader_group = Group.objects.get(id=GROUP_READER_ID)
 
         user.groups.remove(reader_group)
         if credentials.level == 1:

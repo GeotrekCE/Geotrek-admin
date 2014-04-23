@@ -1,12 +1,12 @@
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
 
-from ..models import Structure, GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
+from.base import AuthentFixturesTest
+from ..models import Structure
 from ..backend import DatabaseBackend
 
 
@@ -37,12 +37,8 @@ def password2md5(password):
 @override_settings(AUTHENT_DATABASE='default',
                    AUTHENT_TABLENAME='authent_table',
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
-class AuthentDatabaseTest(TestCase):
+class AuthentDatabaseTest(AuthentFixturesTest):
     def setUp(self):
-        groups = (GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR)
-        for group in groups:
-            Group.objects.get_or_create(name=group)
-
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
 
@@ -108,14 +104,14 @@ class AuthentDatabaseTest(TestCase):
             if user:
                 usergroups = user.groups.all()
                 for group in groups:
-                    self.assertTrue(Group.objects.get(name=group) in usergroups)
+                    self.assertTrue(Group.objects.get(id=group) in usergroups)
             return user
 
         user = test_level('a', 0, [])
         self.assertEqual(user, None)
-        test_level('a', 2, [GROUP_EDITOR])
-        test_level('a', 3, [GROUP_PATH_MANAGER])
-        test_level('a', 4, [GROUP_TREKKING_MANAGER])
+        test_level('a', 2, [settings.AUTHENT_GROUPS_MAPPING['EDITOR']])
+        test_level('a', 3, [settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']])
+        test_level('a', 4, [settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']])
         user = test_level('a', 6, [])
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)

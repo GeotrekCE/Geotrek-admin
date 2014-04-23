@@ -2,34 +2,25 @@ import os
 
 import mock
 
-from django.conf import settings
 from django.db import connection
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import ugettext_lazy as _
 
 from mapentity.tests import MapEntityTest
 from mapentity.factories import UserFactory
 
 from geotrek.settings import EnvIniReader
+from geotrek.authent.tests import AuthentFixturesTest
 from .utils import almostequal, sampling, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
 from . import check_srid_has_meter_unit
 
 
-class CommonTest(MapEntityTest):
-    fixtures = [os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'minimal.json'),
-                os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'basic.json')]
-
-    def _pre_setup(self):
-        from geotrek.core import urls
-        from geotrek.land import urls
-        from geotrek.maintenance import urls
-        from geotrek.infrastructure import urls
-        from geotrek.trekking import urls
-        from geotrek.tourism import urls
-
-        return super(CommonTest, self)._pre_setup()
+class CommonTest(AuthentFixturesTest, MapEntityTest):
+    def get_bad_data(self):
+        return {'topology': 'doh!'}, _(u'Topology is not valid.')
 
 
 class StartupCheckTest(TestCase):

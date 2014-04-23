@@ -1,11 +1,12 @@
-from django.test import TestCase
+from mapentity.factories import SuperUserFactory
 
+from .base import AuthentFixturesTest
 from .. import factories
 
 
-class AdminSiteTest(TestCase):
+class AdminSiteTest(AuthentFixturesTest):
     def setUp(self):
-        self.admin = factories.SuperUserFactory.create(password='booh')
+        self.admin = SuperUserFactory.create(password='booh')
         self.pathmanager = factories.PathManagerFactory.create(password='booh')
         self.trekmanager = factories.TrekkingManagerFactory.create(password='booh')
         self.user = factories.UserFactory.create(password='booh')
@@ -37,7 +38,7 @@ class AdminSiteTest(TestCase):
         self.assertContains(response, 'Land')
         self.assertContains(response, 'Trekking')
 
-    def test_path_manager_cannot_see_trekking(self):
+    def test_path_manager_cannot_see_trekking_apps(self):
         self.login(self.pathmanager)
         response = self.client.get('/admin/core/')
         self.assertEquals(response.status_code, 200)
@@ -50,7 +51,7 @@ class AdminSiteTest(TestCase):
         self.assertNotContains(response, 'Land')
         self.assertNotContains(response, 'Trekking')
 
-    def test_trek_manager_cannot_see_core(self):
+    def test_trek_manager_cannot_see_core_apps(self):
         self.login(self.trekmanager)
         response = self.client.get('/admin/core/')
         self.assertEquals(response.status_code, 404)

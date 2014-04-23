@@ -2,13 +2,14 @@ from django.test import TestCase
 from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 
+from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.factories import TrekkingManagerFactory
 
 from ..models import Trek
 from ..factories import TrekFactory, DifficultyLevelFactory
 
 
-class DifficultyLevelTest(TestCase):
+class DifficultyLevelTest(AuthentFixturesTest):
     def setUp(self):
         self.user = TrekkingManagerFactory.create(password='booh')
         self.difficulty = DifficultyLevelFactory.create()

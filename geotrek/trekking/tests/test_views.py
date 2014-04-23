@@ -14,6 +14,7 @@ from django.db import connection
 from mapentity.tests import MapEntityLiveTest
 
 from geotrek.common.factories import AttachmentFactory
+from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
@@ -53,6 +54,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
 
     def test_listing_number_queries(self):
+        self.login()
         # Create many instances
         for i in range(100):
             self.modelfactory.create()
@@ -161,13 +163,13 @@ class TrekViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200)
 
 
-class TrekViewsLiveTest(MapEntityLiveTest):
+class TrekViewsLiveTest(AuthentFixturesTest, MapEntityLiveTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
 
 
-class TrekCustomViewTests(TestCase):
+class TrekCustomViewTests(AuthentFixturesTest):
 
     def setUp(self):
         user = TrekkingManagerFactory(password='booh')
@@ -279,7 +281,7 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class TrekViewTranslationTest(TestCase):
+class TrekViewTranslationTest(AuthentFixturesTest):
     def setUp(self):
         self.trek = TrekFactory.build()
         self.trek.name_fr = 'Voie lactee'
