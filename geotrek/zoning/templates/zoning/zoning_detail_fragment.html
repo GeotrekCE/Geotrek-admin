@@ -4,14 +4,14 @@
 <table class="table">
     <tr>
         <th>{% trans "Cities" %}</th>
-        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.cities %}</td>
+        <td>{% include "common/_detail_valuelist_fragment.html" with valuelist=object.cities %}</td>
     </tr>
     <tr>
         <th>{% trans "Districts" %}</th>
-        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.districts %}</td>
+        <td>{% include "common/_detail_valuelist_fragment.html" with valuelist=object.districts %}</td>
     </tr>
     <tr>
         <th>{% trans "Restricted areas" %}</th>
-        <td>{% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.areas %}</td>
+        <td>{% include "common/_detail_valuelist_fragment.html" with valuelist=object.areas %}</td>
     </tr>
 </table>
