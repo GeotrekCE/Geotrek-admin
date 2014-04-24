@@ -14,6 +14,24 @@
                 ["delete_trail", "core", "trail"],
                 ["export_trail", "core", "trail"],
 
+                ["add_datasource", "core", "datasource"],
+                ["change_datasource", "core", "datasource"],
+                ["delete_datasource", "core", "datasource"],
+                ["add_stake", "core", "stake"],
+                ["change_stake", "core", "stake"],
+                ["delete_stake", "core", "stake"],
+                ["add_usage", "core", "usage"],
+                ["change_usage", "core", "usage"],
+                ["delete_usage", "core", "usage"],
+                ["add_network", "core", "network"],
+                ["change_network", "core", "network"],
+                ["delete_network", "core", "network"],
+                ["add_comfort", "core", "comfort"],
+                ["change_comfort", "core", "comfort"],
+                ["delete_comfort", "core", "comfort"],
+
+
+
                 ["add_signage", "infrastructure", "baseinfrastructure"],
                 ["change_signage", "infrastructure", "baseinfrastructure"],
                 ["delete_signage", "infrastructure", "baseinfrastructure"],
@@ -22,6 +40,12 @@
                 ["change_infrastructure", "infrastructure", "baseinfrastructure"],
                 ["delete_infrastructure", "infrastructure", "baseinfrastructure"],
                 ["export_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["add_infrastructuretype", "infrastructure", "infrastructuretype"],
+                ["change_infrastructuretype", "infrastructure", "infrastructuretype"],
+                ["delete_infrastructuretype", "infrastructure", "infrastructuretype"],
+
+
 
                 ["add_competenceedge", "land", "competenceedge"],
                 ["change_competenceedge", "land", "competenceedge"],
@@ -44,6 +68,15 @@
                 ["delete_workmanagementedge", "land", "workmanagementedge"],
                 ["export_workmanagementedge", "land", "workmanagementedge"],
 
+                ["add_physicaltype", "land", "physicaltype"],
+                ["change_physicaltype", "land", "physicaltype"],
+                ["delete_physicaltype", "land", "physicaltype"],
+                ["add_landtype", "land", "landtype"],
+                ["change_landtype", "land", "landtype"],
+                ["delete_landtype", "land", "landtype"],
+
+
+
                 ["add_intervention", "maintenance", "intervention"],
                 ["change_intervention", "maintenance", "intervention"],
                 ["delete_intervention", "maintenance", "intervention"],
@@ -53,12 +86,35 @@
                 ["delete_project", "maintenance", "project"],
                 ["export_project", "maintenance", "project"],
 
+                ["add_contractor", "maintenance", "contractor"],
+                ["change_contractor", "maintenance", "contractor"],
+                ["delete_contractor", "maintenance", "contractor"],
+                ["add_interventionstatus", "maintenance", "interventionstatus"],
+                ["change_interventionstatus", "maintenance", "interventionstatus"],
+                ["delete_interventionstatus", "maintenance", "interventionstatus"],
+                ["add_interventiontype", "maintenance", "interventiontype"],
+                ["change_interventiontype", "maintenance", "interventiontype"],
+                ["delete_interventiontype", "maintenance", "interventiontype"],
+                ["add_interventiondisorder", "maintenance", "interventiondisorder"],
+                ["change_interventiondisorder", "maintenance", "interventiondisorder"],
+                ["delete_interventiondisorder", "maintenance", "interventiondisorder"],
+                ["add_interventionjob", "maintenance", "interventionjob"],
+                ["change_interventionjob", "maintenance", "interventionjob"],
+                ["delete_interventionjob", "maintenance", "interventionjob"],
+                ["add_projecttype", "maintenance", "projecttype"],
+                ["change_projecttype", "maintenance", "projecttype"],
+                ["delete_projecttype", "maintenance", "projecttype"],
+                ["add_projectdomain", "maintenance", "projectdomain"],
+                ["change_projectdomain", "maintenance", "projectdomain"],
+                ["delete_projectdomain", "maintenance", "projectdomain"],
 
+
+
+                ["read_attachment", "paperclip", "attachment"],
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
                 ["delete_attachment_others", "paperclip", "attachment"],
-
 
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
@@ -96,12 +152,42 @@
                 ["delete_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
 
+                ["add_difficultylevel", "trekking", "difficultylevel"],
+                ["change_difficultylevel", "trekking", "difficultylevel"],
+                ["delete_difficultylevel", "trekking", "difficultylevel"],
+                ["add_poitype", "trekking", "poitype"],
+                ["change_poitype", "trekking", "poitype"],
+                ["delete_poitype", "trekking", "poitype"],
+                ["add_theme", "trekking", "theme"],
+                ["change_theme", "trekking", "theme"],
+                ["delete_theme", "trekking", "theme"],
+                ["add_treknetwork", "trekking", "treknetwork"],
+                ["change_treknetwork", "trekking", "treknetwork"],
+                ["delete_treknetwork", "trekking", "treknetwork"],
+                ["add_usage", "trekking", "usage"],
+                ["change_usage", "trekking", "usage"],
+                ["delete_usage", "trekking", "usage"],
+                ["add_weblink", "trekking", "weblink"],
+                ["change_weblink", "trekking", "weblink"],
+                ["delete_weblink", "trekking", "weblink"],
+                ["add_weblinkcategory", "trekking", "weblinkcategory"],
+                ["change_weblinkcategory", "trekking", "weblinkcategory"],
+                ["delete_weblinkcategory", "trekking", "weblinkcategory"],
+                ["add_informationdesk", "trekking", "informationdesk"],
+                ["change_informationdesk", "trekking", "informationdesk"],
+                ["delete_informationdesk", "trekking", "informationdesk"],
 
+                ["add_datasource", "tourism", "datasource"],
+                ["change_datasource", "tourism", "datasource"],
+                ["delete_datasource", "tourism", "datasource"],
+
+
+
+                ["read_attachment", "paperclip", "attachment"],
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
                 ["delete_attachment_others", "paperclip", "attachment"],
-
 
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
@@ -119,15 +205,7 @@
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
                 ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"],
-
-                ["add_difficultylevel", "trekking", "difficultylevel"],
-                ["change_difficultylevel", "trekking", "difficultylevel"],
-                ["delete_difficultylevel", "trekking", "difficultylevel"],
-
-                ["add_datasource", "tourism", "datasource"],
-                ["change_datasource", "tourism", "datasource"],
-                ["delete_datasource", "tourism", "datasource"]
+                ["read_poi", "trekking", "poi"]
             ]
         }
     },
@@ -138,10 +216,67 @@
             "name": "R\u00e9dacteurs",
             "permissions": [
 
+
+                ["add_intervention", "maintenance", "intervention"],
+                ["change_intervention", "maintenance", "intervention"],
+                ["delete_intervention", "maintenance", "intervention"],
+                ["export_intervention", "maintenance", "intervention"],
+
+                ["add_signage", "infrastructure", "baseinfrastructure"],
+                ["change_signage", "infrastructure", "baseinfrastructure"],
+                ["delete_signage", "infrastructure", "baseinfrastructure"],
+                ["export_signage", "infrastructure", "baseinfrastructure"],
+                ["add_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["change_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["delete_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["export_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["add_competenceedge", "land", "competenceedge"],
+                ["change_competenceedge", "land", "competenceedge"],
+                ["delete_competenceedge", "land", "competenceedge"],
+                ["export_competenceedge", "land", "competenceedge"],
+                ["add_landedge", "land", "landedge"],
+                ["change_landedge", "land", "landedge"],
+                ["delete_landedge", "land", "landedge"],
+                ["export_landedge", "land", "landedge"],
+                ["add_physicaledge", "land", "physicaledge"],
+                ["change_physicaledge", "land", "physicaledge"],
+                ["delete_physicaledge", "land", "physicaledge"],
+                ["export_physicaledge", "land", "physicaledge"],
+                ["add_signagemanagementedge", "land", "signagemanagementedge"],
+                ["change_signagemanagementedge", "land", "signagemanagementedge"],
+                ["delete_signagemanagementedge", "land", "signagemanagementedge"],
+                ["export_signagemanagementedge", "land", "signagemanagementedge"],
+                ["add_workmanagementedge", "land", "workmanagementedge"],
+                ["change_workmanagementedge", "land", "workmanagementedge"],
+                ["delete_workmanagementedge", "land", "workmanagementedge"],
+                ["export_workmanagementedge", "land", "workmanagementedge"],
+
+
+
+                ["read_attachment", "paperclip", "attachment"],
                 ["add_attachment", "paperclip", "attachment"],
                 ["change_attachment", "paperclip", "attachment"],
                 ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"]
+                ["delete_attachment_others", "paperclip", "attachment"],
+
+                ["read_path", "core", "path"],
+                ["read_trail", "core", "trail"],
+
+                ["read_signage", "infrastructure", "baseinfrastructure"],
+                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["read_intervention", "maintenance", "intervention"],
+                ["read_project", "maintenance", "project"],
+
+                ["read_competenceedge", "land", "competenceedge"],
+                ["read_landedge", "land", "landedge"],
+                ["read_physicaledge", "land", "physicaledge"],
+                ["read_signagemanagementedge", "land", "signagemanagementedge"],
+                ["read_workmanagementedge", "land", "workmanagementedge"],
+
+                ["read_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"]
             ]
         }
     }

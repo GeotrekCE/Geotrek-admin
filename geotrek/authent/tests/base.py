@@ -3,6 +3,8 @@ import os
 from django.test import TestCase
 from django.conf import settings
 
+from mapentity import registry
+
 
 class AuthentFixturesTest(TestCase):
     fixtures = [os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'minimal.json'),
@@ -17,11 +19,12 @@ class AuthentFixturesTest(TestCase):
         imported after test setup, importing them here allows permissions to be
         available before test `setUp()` methods.
         """
-        from geotrek.core import urls
-        from geotrek.land import urls
-        from geotrek.maintenance import urls
-        from geotrek.infrastructure import urls
-        from geotrek.trekking import urls
-        from geotrek.tourism import urls
+        if not registry.registry.keys():
+            from geotrek.core import urls
+            from geotrek.land import urls
+            from geotrek.maintenance import urls
+            from geotrek.infrastructure import urls
+            from geotrek.trekking import urls
+            from geotrek.tourism import urls
 
         return super(AuthentFixturesTest, self)._pre_setup()

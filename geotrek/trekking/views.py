@@ -31,7 +31,8 @@ class FlattenPicturesMixin(object):
         https://code.djangoproject.com/ticket/17484
         """
         opts = self.model._meta
-        return ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
+        extra = ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
+        return extra + super(FlattenPicturesMixin, self).get_template_names()
 
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.

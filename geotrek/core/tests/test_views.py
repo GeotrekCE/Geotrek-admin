@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.test import TestCase
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
+from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
@@ -93,7 +93,7 @@ class ViewsTest(CommonTest):
         self.assertEqual(response['Content-Type'], 'application/json')
 
 
-class TrailViewsTest(TestCase):
+class TrailViewsTest(AuthentFixturesTest):
 
     def test_detail_page(self):
         user = PathManagerFactory(password='booh')
