@@ -48,7 +48,8 @@ class AdminSiteTest(AuthentFixturesTest):
         self.assertContains(response, 'Core')
         self.assertContains(response, 'Maintenance')
         self.assertContains(response, 'Infrastructure')
-        self.assertNotContains(response, 'Land')
+        self.assertContains(response, 'Land')
+        self.assertNotContains(response, 'Zoning')
         self.assertNotContains(response, 'Trekking')
 
     def test_trek_manager_cannot_see_core_apps(self):
@@ -58,8 +59,9 @@ class AdminSiteTest(AuthentFixturesTest):
         response = self.client.get('/admin/trekking/')
         self.assertEquals(response.status_code, 200)
         response = self.client.get('/admin/')
+        self.assertContains(response, 'Trekking')
         self.assertNotContains(response, 'Core')
         self.assertNotContains(response, 'Maintenance')
         self.assertNotContains(response, 'Infrastructure')
+        self.assertNotContains(response, 'Zoning')
         self.assertNotContains(response, 'Land')
-        self.assertContains(response, 'Trekking')

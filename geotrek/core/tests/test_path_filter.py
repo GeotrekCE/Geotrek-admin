@@ -2,19 +2,21 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 import json
 
-from geotrek.authent.factories import UserFactory
+from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.factories import PathManagerFactory
+
 from geotrek.core.models import Path
 from geotrek.core.factories import PathFactory
 
 
-class PathFilterTest(TestCase):
+class PathFilterTest(AuthentFixturesTest):
 
     def test_paths_bystructure(self):
         PathFactory(length=1)
         PathFactory(length=70)
-        
+
         password = 'toto'
-        user = UserFactory(password=password)
+        user = PathManagerFactory(password=password)
         result = self.client.login(username=user.username, password=password)
         self.assertTrue(result, u"The client successfully logged in")
 

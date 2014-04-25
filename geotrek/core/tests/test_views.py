@@ -95,15 +95,19 @@ class ViewsTest(CommonTest):
 
 class TrailViewsTest(AuthentFixturesTest):
 
-    def test_detail_page(self):
+    def login(self):
         user = PathManagerFactory(password='booh')
         success = self.client.login(username=user.username, password='booh')
         self.assertTrue(success)
+
+    def test_detail_page(self):
+        self.login()
         trail = TrailFactory()
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
     def test_document_export(self):
+        self.login()
         trail = TrailFactory()
         # Mock screenshot
         with open(trail.get_map_image_path(), 'wb') as f:

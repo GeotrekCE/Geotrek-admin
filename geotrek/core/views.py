@@ -163,11 +163,16 @@ def get_graph_json(request):
     return HttpJSONResponse(json_graph)
 
 
+class TrailList(MapEntityList):
+    model = Trail
+
+
 class TrailDetail(MapEntityDetail):
     model = Trail
 
-    def can_edit(self):
-        return False
+
+class TrailUpdate(MapEntityUpdate):
+    model = Trail
 
 
 class TrailDocument(MapEntityDocument):

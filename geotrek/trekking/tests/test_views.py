@@ -3,6 +3,7 @@
 import json
 from collections import OrderedDict
 
+import mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -239,11 +240,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
         detailjson = json.loads((self.client.get(url)).content)
         self.assertEqual(detailjson['elevation_area_url'], '/api/trek/%s/dem.json' % trek.pk)
 
-    def test_overriden_document(self):
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_overriden_document(self, get_attributes_html):
         trek = TrekFactory.create()
-        # Will have to mock screenshot, though.
+
+        get_attributes_html.return_value = '<p>mock</p>'
         with open(trek.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
+        with open(trek.get_elevation_chart_path(), 'w') as f:
+            f.write('***' * 1000)
+
         response = self.client.get(trek.get_document_public_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
