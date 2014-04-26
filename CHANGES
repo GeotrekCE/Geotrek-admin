@@ -9,11 +9,22 @@ CHANGELOG
 
 * Command to import shapefile with points into POI as topologies (fixes #952)
 * Add views to serve DEM on object area as JSON
+* New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
+  and added to maps (by module, or published on *Geotrek-rando*...)
 
 ** Internal changes **
 
 * An error is raised if SRID has not unit in meters (fixes #921)
 * Zoning and land modules are now splitted (fixes #954)
+* Complete refactor of geographical form fields. Now uses *django-mapentity*
+  from its own repository instead of internal orphan branch.
+
+
+:notes:
+
+    * Delete the following folders before upgrading ::
+
+        rm -rf lib/src/django-modeltranslation lib/src/mapentity
 
 
 0.22.5 (2014-03-19)
