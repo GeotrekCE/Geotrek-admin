@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.22.6 (unreleased)
+0.22.6 (2014-04-27)
 -------------------
 
 * Remove hard-coded mentions of EPSG:2154 in database initial
