@@ -2,6 +2,16 @@
 CHANGELOG
 =========
 
+0.22.6 (unreleased)
+-------------------
+
+* Remove hard-coded mentions of EPSG:2154 in database initial
+  migrations (fixes #1020)
+* Fix version download and unzip in installation script.
+
+Thanks Noël Martinon, from Guadeloupe National Park, for reporting both issues.
+
+
 0.22.5 (2014-03-19)
 -------------------
 
