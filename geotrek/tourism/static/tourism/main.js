@@ -23,9 +23,9 @@ $(window).on('entity:map', function (e, data) {
         return marker;
     }
 
-    $.getJSON(window.SETTINGS.urls.tourism_datasources, function (data) {
-        for (var i=0; i<data.length; i++) {
-            var dataSource = data[i];
+    $.getJSON(window.SETTINGS.urls.tourism_datasources, function (datasources) {
+        for (var i=0; i<datasources.length; i++) {
+            var dataSource = datasources[i];
             var is_visible = (!dataSource.targets || dataSource.targets.indexOf(data.appname) > -1);
             if (!is_visible)
                 continue;
