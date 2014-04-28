@@ -1,0 +1,8 @@
+{% load static i18n %}
+<script type="text/javascript">
+    MapEntity.i18n['Paths'] = "{% trans "Paths" %}";
+
+    window.SETTINGS.urls['path_layer'] = "{% url "core:path_layer" %}";
+    window.SETTINGS.urls['path_graph'] = "{% url "core:path_json_graph" %}";
+</script>
+<script type="text/javascript" src="{% static "core/main.js" %}"></script>

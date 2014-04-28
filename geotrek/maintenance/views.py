@@ -3,6 +3,7 @@
 import logging
 
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
@@ -133,6 +134,11 @@ class ProjectDetail(MapEntityDetail):
     def context_data(self, *args, **kwargs):
         context = super(ProjectDetail, self).context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDetail, self).get_context_data(**kwargs)
+        context['empty_map_message'] = _("No intervention related.")
         return context
 
 
