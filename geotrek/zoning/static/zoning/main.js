@@ -1,11 +1,11 @@
-{% load i18n %}
+$(window).on('entity:map', function (e, data) {
 
-(function () {
+    var map = data.map;
 
     // Add land layers
-    var landLayers = [{url:'{% url 'zoning:district_layer' %}', name: '{% trans "District" %}', id: 'district'},
-                      {url:'{% url 'zoning:city_layer' %}', name: '{% trans "City" %}', id: 'city'},
-                      {url:'{% url 'zoning:restrictedarea_layer' %}', name: '{% trans "Restricted Area" %}', id:'restrictedarea'}];
+    var landLayers = [{url: window.SETTINGS.urls.district_layer, name: tr("District"), id: 'district'},
+                      {url: window.SETTINGS.urls.city_layer, name: tr("City"), id: 'city'},
+                      {url: window.SETTINGS.urls.restrictedarea_layer, name: tr("Restricted Aread"), id:'restrictedarea'}];
     for (var i=0; i<landLayers.length; i++) {
         var landLayer = landLayers[i];
         var layer = new L.ObjectsLayer(null, {
@@ -15,4 +15,4 @@
         layer.load(landLayer.url);
         map.layerscontrol.addOverlay(layer, landLayer.name);
     }
-})();
+});

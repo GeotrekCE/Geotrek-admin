@@ -18,7 +18,7 @@ CHANGELOG
 * Zoning and land modules are now splitted (fixes #954)
 * Complete refactor of geographical form fields. Now uses *django-mapentity*
   from its own repository instead of internal orphan branch.
-
+* Complete refactor of maps initialization, without inline preprocessed JavaScript
 
 :notes:
 

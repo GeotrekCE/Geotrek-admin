@@ -6,6 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 
+handler403 = 'mapentity.views.handler403'
 handler404 = 'mapentity.views.handler404'
 handler500 = 'mapentity.views.handler500'
 
