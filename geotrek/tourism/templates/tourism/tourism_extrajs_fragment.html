@@ -1,0 +1,5 @@
+{% load static %}
+<script type="text/javascript">
+    window.SETTINGS.urls['tourism_datasources'] = "{% url "tourism:datasource_list_json" %}";
+</script>
+<script type="text/javascript" src="{% static "tourism/main.js" %}"></script>
