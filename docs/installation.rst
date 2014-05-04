@@ -25,7 +25,7 @@ the last version with the following commands :
 
 ::
 
-    curl https://raw.github.com/makinacorpus/Geotrek/master/install.sh > install.sh
+    curl https://raw.githubusercontent.com/makinacorpus/Geotrek/master/install.sh > install.sh
     chmod +x install.sh
     ./install.sh
 
