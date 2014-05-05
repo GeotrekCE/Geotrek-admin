@@ -12,8 +12,8 @@ from .models import NoDeleteMixin
 
 class CommonForm(MapEntityForm):
 
-    class Meta(MapEntityForm.Meta):
-        pass
+    class Meta:
+        fields = []
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)

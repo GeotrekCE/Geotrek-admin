@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import mock
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
@@ -106,11 +107,12 @@ class TrailViewsTest(AuthentFixturesTest):
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
-    def test_document_export(self):
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_document_export(self, get_attributes_html):
+        get_attributes_html.return_value = '<p>mock</p>'
         self.login()
         trail = TrailFactory()
-        # Mock screenshot
-        with open(trail.get_map_image_path(), 'wb') as f:
-            f.write('This is fake PNG file')
+        with open(trail.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)

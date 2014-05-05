@@ -31,11 +31,6 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
 class PhysicalEdgeDetail(MapEntityDetail):
     queryset = PhysicalEdge.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
-
 
 class PhysicalEdgeDocument(MapEntityDocument):
     model = PhysicalEdge
@@ -77,11 +72,6 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
 class LandEdgeDetail(MapEntityDetail):
     queryset = LandEdge.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
-
 
 class LandEdgeDocument(MapEntityDocument):
     model = LandEdge
@@ -121,11 +111,6 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
 
 class CompetenceEdgeDetail(MapEntityDetail):
     queryset = CompetenceEdge.objects.existing()
-
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
 
 
 class CompetenceEdgeDocument(MapEntityDocument):
@@ -168,11 +153,6 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
 class WorkManagementEdgeDetail(MapEntityDetail):
     queryset = WorkManagementEdge.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
-
 
 class WorkManagementEdgeDocument(MapEntityDocument):
     model = WorkManagementEdge
@@ -213,11 +193,6 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
 
 class SignageManagementEdgeDetail(MapEntityDetail):
     queryset = SignageManagementEdge.objects.existing()
-
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_path_manager)
 
 
 class SignageManagementEdgeDocument(MapEntityDocument):

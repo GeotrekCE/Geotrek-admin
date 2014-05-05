@@ -13,9 +13,9 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 
 from mapentity.tests import MapEntityLiveTest
+from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import AttachmentFactory
-from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
@@ -165,10 +165,10 @@ class TrekViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200)
 
 
-class TrekViewsLiveTest(AuthentFixturesTest, MapEntityLiveTest):
+class TrekViewsLiveTest(MapEntityLiveTest):
     model = Trek
     modelfactory = TrekFactory
-    userfactory = TrekkingManagerFactory
+    userfactory = SuperUserFactory
 
 
 class TrekCustomViewTests(TrekkingManagerTest):
