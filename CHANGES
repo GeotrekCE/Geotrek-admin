@@ -17,6 +17,7 @@ CHANGELOG
 * Add a setting to serve attached files as download (default: True) (fixes #976)
 * Force browser's cache revalidation of geojson data (fixes #843)
 * Track objects creations, changes and deletions (fixes #300)
+* Added a reader group (fixes #495)
 
 ** Internal changes **
 
@@ -33,6 +34,12 @@ CHANGELOG
     * Delete the following folders before upgrading ::
 
         rm -rf lib/src/django-modeltranslation lib/src/mapentity
+
+    * After upgrading, load the default permissions of the four groups, otherwise
+      users won't have access to their modules ::
+
+        bin/django loaddata geotrek/authent/fixtures/minimal.json
+        bin/django loaddata geotrek/authent/fixtures/basic.json
 
     * After upgrading, make sure the user specified in *Geotrek-rando*
       configuration has the following permissions:
