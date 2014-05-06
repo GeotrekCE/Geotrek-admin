@@ -12,7 +12,8 @@ CHANGELOG
 * New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
   and added to maps (by module, or published on *Geotrek-rando*...)
 
-* Permission to allow users or groups to bypass structure restrictions
+* New permission to control download of attachments
+* New permission to allow users or groups to bypass structure restrictions
 
 ** Internal changes **
 
