@@ -11,9 +11,12 @@ CHANGELOG
 * Add views to serve DEM on object area as JSON
 * New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
   and added to maps (by module, or published on *Geotrek-rando*...)
-
+* Show number of attached files in tab (fixes #743)
 * New permission to control download of attachments
 * New permission to allow users or groups to bypass structure restrictions
+* Add a setting to serve attached files as download (default: True) (fixes #976)
+* Force browser's cache revalidation of geojson data (fixes #843)
+* Track objects creations, changes and deletions (fixes #300)
 
 ** Internal changes **
 
@@ -22,6 +25,8 @@ CHANGELOG
 * Complete refactor of geographical form fields. Now uses *django-mapentity*
   from its own repository instead of internal orphan branch.
 * Complete refactor of maps initialization, without inline preprocessed JavaScript
+* Rely on Django permissions to control access to detail, list and exports (fixes #675)
+
 
 :notes:
 
