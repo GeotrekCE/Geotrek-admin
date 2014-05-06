@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic.edit import BaseDetailView
 from django.core.cache import get_cache
 from django.shortcuts import redirect
@@ -148,6 +149,7 @@ class PathDelete(MapEntityDelete):
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
+@force_cache_validation
 def get_graph_json(request):
     cache = get_cache('fat')
     key = 'path_graph_json'

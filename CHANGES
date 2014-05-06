@@ -5,6 +5,10 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
+** Bug fixes **
+
+* Force browser cache revalidation for path graph (fixes #1029)
+
 ** New features **
 
 * Command to import shapefile with points into POI as topologies (fixes #952)
