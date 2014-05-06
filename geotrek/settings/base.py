@@ -224,6 +224,7 @@ PROJECT_APPS += (
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.authent',
     'geotrek.common',
+    'geotrek.altimetry',
     'geotrek.core',
     'geotrek.infrastructure',
     'geotrek.maintenance',

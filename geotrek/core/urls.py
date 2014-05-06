@@ -2,12 +2,9 @@ from django.conf.urls import patterns, url
 
 from mapentity import registry
 
-from .models import Path, Trail
-from .views import (
-    ElevationChart,
-    ElevationArea,
-    get_graph_json,
-)
+from geotrek.altimetry.views import ElevationChart, ElevationArea
+from geotrek.core.models import Path, Trail
+from geotrek.core.views import get_graph_json
 
 
 urlpatterns = patterns('',
