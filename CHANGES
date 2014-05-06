@@ -34,6 +34,15 @@ CHANGELOG
 
         rm -rf lib/src/django-modeltranslation lib/src/mapentity
 
+    * After upgrading, make sure the user specified in *Geotrek-rando*
+      configuration has the following permissions:
+
+      - ``paperclip | attachment | Can read attachments``
+      - ``trekking | Trek | Can read Trek``
+      - ``trekking | Trek | Can export Trek``
+      - ``trekking | POI | Can read POI``
+      - ``trekking | POI | Can export POI``
+
 
 0.22.5 (2014-03-19)
 -------------------
