@@ -85,11 +85,8 @@ MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', s
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
-
-for eggdir in os.listdir(os.path.join(DEPLOY_ROOT, 'lib', 'eggs')):
-    if eggdir.startswith('mapentity'):
-        # We override the default Adminsite template, add its location for template loader
-        TEMPLATE_DIRS += (os.path.join(DEPLOY_ROOT, 'lib', 'eggs', eggdir, 'mapentity', 'templates'),)
+TEMPLATE_DIRS += (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
+                               'mapentity', 'templates'),)
 
 
 #
