@@ -13,18 +13,8 @@ from django.core.exceptions import ImproperlyConfigured
 
 from mapentity import registry
 from mapentity.helpers import api_bbox
-from mapentity.management import create_mapentity_models_permissions
 
 from geotrek.common.utils.postgresql import load_sql_files
-
-
-"""
-    Ensure MapEntity permissions are really created on syncdb/migrate
-"""
-
-def create_permissions_post_migrate(sender, **kwargs):
-    for model in registry.registry.keys():
-        create_mapentity_models_permissions(None, model=model)
 
 
 """
@@ -60,13 +50,11 @@ def check_srid_has_meter_unit(sender, **kwargs):
 if settings.TEST and not settings.SOUTH_TESTS_MIGRATE:
     pre_syncdb.connect(check_srid_has_meter_unit, dispatch_uid="geotrek.core.checksrid")
     post_syncdb.connect(run_initial_sql_post_syncdb, dispatch_uid="geotrek.core.sqlautoload")
-    post_syncdb.connect(create_permissions_post_migrate, dispatch_uid="geotrek.core.create_permissions")
     # During tests, the signal is received twice unfortunately
     # https://code.djangoproject.com/ticket/17977
 else:
     pre_migrate.connect(check_srid_has_meter_unit, dispatch_uid="geotrek.core.checksrid")
     post_migrate.connect(run_initial_sql_post_migrate, dispatch_uid="geotrek.core.sqlautoload")
-    post_migrate.connect(create_permissions_post_migrate, dispatch_uid="geotrek.core.create_permissions")
 
 
 """
