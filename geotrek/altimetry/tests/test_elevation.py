@@ -5,7 +5,7 @@ from django.contrib.gis.geos import MultiLineString, LineString
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
-from geotrek.core.helpers import AltimetryHelper
+from geotrek.altimetry.helpers import AltimetryHelper
 
 
 class ElevationTest(TestCase):
