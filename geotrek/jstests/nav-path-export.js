@@ -14,7 +14,7 @@ casper.test.begin('Path exports files', function(test) {
                          'Profile is SVG');
     });
 
-    casper.thenOpen(utils.baseurl + '/convert/?url=/api/path/1/profile.svg&from=image/svg%2Bxml&to=image/png', function(response) {
+    casper.thenOpen(utils.baseurl + '/convert/?url=' + utils.baseurl + '/api/path/1/profile.svg&from=image/svg%2Bxml&to=image/png', function(response) {
         test.assertEqual(200, response.status, 'Image profile conversion works');
         test.assertEqual('image/png; charset=UTF-8', response.contentType,
                          'Profile can be converted to PNG');
@@ -26,7 +26,7 @@ casper.test.begin('Path exports files', function(test) {
                          'Document is ODT');
     });
 
-    casper.thenOpen(utils.baseurl + '/convert/?url=/document/path-1.odt', function(response) {
+    casper.thenOpen(utils.baseurl + '/convert/?url=' + utils.baseurl + '/document/path-1.odt', function(response) {
         test.assertEqual(200, response.status, 'Document conversion works');
         test.assertEqual('application/pdf; charset=UTF-8', response.contentType,
                          'Document can be converted to PDF');

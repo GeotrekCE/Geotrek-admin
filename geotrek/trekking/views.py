@@ -198,7 +198,8 @@ class TrekPrint(DocumentConvert):
     queryset = Trek.objects.existing()
 
     def source_url(self):
-        return self.get_object().get_document_public_url()
+        url = self.get_object().get_document_public_url()
+        return self.request.build_absolute_uri(url)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
