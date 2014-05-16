@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')),
     url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')),
     url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')),
+    url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'^paperclip/', include('paperclip.urls')),
