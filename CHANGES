@@ -22,6 +22,7 @@ CHANGELOG
 * Force browser's cache revalidation of geojson data (fixes #843)
 * Track objects creations, changes and deletions (fixes #300)
 * Added a reader group (fixes #495)
+* Topologies are not recreated if user did not edit field (fixes #833)
 
 ** Internal changes **
 
