@@ -1,0 +1,17 @@
+[
+{
+    "pk": 1,
+    "model": "feedback.report",
+    "fields": {
+        "comment": "<p></p>",
+        "category": null,
+        "context_object_id": null,
+        "name": "Moi",
+        "date_update": "2014-05-16T21:03:21.134Z",
+        "date_insert": "2014-05-16T21:03:21.134Z",
+        "geom": "POINT (940094.8598260157741606 6435868.0598825141787529)",
+        "context_content_type": null,
+        "email": "toi@you.com"
+    }
+}
+]
