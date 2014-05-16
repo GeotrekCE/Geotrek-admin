@@ -4,20 +4,11 @@ import json
 
 import mock
 from requests.exceptions import ConnectionError
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from geotrek.authent.factories import TrekkingManagerFactory
-from geotrek.tourism.models import DataSource, DATA_SOURCE_TYPES
+from geotrek.trekking.tests import TrekkingManagerTest
+from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import DataSourceFactory
-
-
-class TrekkingManagerTest(TestCase):
-    def login(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):

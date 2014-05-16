@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.authent.decorators import same_structure_required, editor_required
+from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilter, SignageFilter
@@ -32,11 +32,10 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
 class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_editor and
-            self.get_object().same_structure(self.request.user))
+    def context_data(self, *args, **kwargs):
+        context = super(InfrastructureDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class InfrastructureDocument(MapEntityDocument):
@@ -47,16 +46,11 @@ class InfrastructureCreate(MapEntityCreate):
     model = Infrastructure
     form_class = InfrastructureForm
 
-    @method_decorator(editor_required('infrastructure:infrastructure_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(InfrastructureCreate, self).dispatch(*args, **kwargs)
-
 
 class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
     form_class = InfrastructureForm
 
-    @method_decorator(editor_required('infrastructure:infrastructure_detail'))
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
@@ -65,7 +59,6 @@ class InfrastructureUpdate(MapEntityUpdate):
 class InfrastructureDelete(MapEntityDelete):
     model = Infrastructure
 
-    @method_decorator(editor_required('infrastructure:infrastructure_detail'))
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureDelete, self).dispatch(*args, **kwargs)
@@ -93,11 +86,10 @@ class SignageFormatList(MapEntityFormat, SignageList):
 class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_editor and
-            self.get_object().same_structure(self.request.user))
+    def context_data(self, *args, **kwargs):
+        context = super(SignageDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class SignageDocument(MapEntityDocument):
@@ -108,16 +100,11 @@ class SignageCreate(MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
-    @method_decorator(editor_required('infrastructure:signage_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(SignageCreate, self).dispatch(*args, **kwargs)
-
 
 class SignageUpdate(MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 
-    @method_decorator(editor_required('infrastructure:signage_detail'))
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageUpdate, self).dispatch(*args, **kwargs)
@@ -126,7 +113,6 @@ class SignageUpdate(MapEntityUpdate):
 class SignageDelete(MapEntityDelete):
     model = Signage
 
-    @method_decorator(editor_required('infrastructure:signage_detail'))
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageDelete, self).dispatch(*args, **kwargs)

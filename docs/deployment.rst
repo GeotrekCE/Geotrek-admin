@@ -28,6 +28,29 @@ is available at *http://server/tools/extent/*.
     Administrator privileges are required.
 
 
+Users management
+----------------
+
+Geotrek relies on Django authentication and permissions system : Users belong to
+groups and permissions can be assigned at user or group-level.
+
+The whole configuration of user, groups and permissions is available in the *AdminSite*,
+if you did not enable *External authent* (see below).
+
+By default four groups are created :
+
+* Readers
+* Path managers
+* Trek managers
+* Editor
+
+Once the application is installed, it is possible to modify the default permissions
+of these existing groups, create new ones etc...
+
+If you want to allow the users to access the *AdminSite*, give them the *staff*
+status using the dedicated checkbox.
+
+
 External authent
 ----------------
 

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.test import TestCase
+import mock
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
+from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
@@ -93,20 +94,25 @@ class ViewsTest(CommonTest):
         self.assertEqual(response['Content-Type'], 'application/json')
 
 
-class TrailViewsTest(TestCase):
+class TrailViewsTest(AuthentFixturesTest):
 
-    def test_detail_page(self):
+    def login(self):
         user = PathManagerFactory(password='booh')
         success = self.client.login(username=user.username, password='booh')
         self.assertTrue(success)
+
+    def test_detail_page(self):
+        self.login()
         trail = TrailFactory()
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
-    def test_document_export(self):
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_document_export(self, get_attributes_html):
+        get_attributes_html.return_value = '<p>mock</p>'
+        self.login()
         trail = TrailFactory()
-        # Mock screenshot
-        with open(trail.get_map_image_path(), 'wb') as f:
-            f.write('This is fake PNG file')
+        with open(trail.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)

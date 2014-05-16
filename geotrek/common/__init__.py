@@ -11,6 +11,7 @@ from django.db import connection
 from django.db.models.signals import pre_syncdb, post_syncdb
 from django.core.exceptions import ImproperlyConfigured
 
+from mapentity import registry
 from mapentity.helpers import api_bbox
 
 from geotrek.common.utils.postgresql import load_sql_files

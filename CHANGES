@@ -15,6 +15,13 @@ CHANGELOG
 * Add views to serve DEM on object area as JSON
 * New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
   and added to maps (by module, or published on *Geotrek-rando*...)
+* Show number of attached files in tab (fixes #743)
+* New permission to control download of attachments
+* New permission to allow users or groups to bypass structure restrictions
+* Add a setting to serve attached files as download (default: True) (fixes #976)
+* Force browser's cache revalidation of geojson data (fixes #843)
+* Track objects creations, changes and deletions (fixes #300)
+* Added a reader group (fixes #495)
 
 ** Internal changes **
 
@@ -23,12 +30,29 @@ CHANGELOG
 * Complete refactor of geographical form fields. Now uses *django-mapentity*
   from its own repository instead of internal orphan branch.
 * Complete refactor of maps initialization, without inline preprocessed JavaScript
+* Rely on Django permissions to control access to detail, list and exports (fixes #675)
+
 
 :notes:
 
     * Delete the following folders before upgrading ::
 
         rm -rf lib/src/django-modeltranslation lib/src/mapentity
+
+    * After upgrading, load the default permissions of the four groups, otherwise
+      users won't have access to their modules ::
+
+        bin/django loaddata geotrek/authent/fixtures/minimal.json
+        bin/django loaddata geotrek/authent/fixtures/basic.json
+
+    * After upgrading, make sure the user specified in *Geotrek-rando*
+      configuration has the following permissions:
+
+      - ``paperclip | attachment | Can read attachments``
+      - ``trekking | Trek | Can read Trek``
+      - ``trekking | Trek | Can export Trek``
+      - ``trekking | POI | Can read POI``
+      - ``trekking | POI | Can export POI``
 
 
 0.22.5 (2014-03-19)

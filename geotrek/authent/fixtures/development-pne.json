@@ -1,6 +1,5 @@
 [
     {
-        "pk": 1, 
         "model": "auth.user", 
         "fields": {
             "username": "admin", 
@@ -22,12 +21,13 @@
         "model": "authent.userprofile", 
         "fields": {
             "language": "fr", 
-            "user": 1, 
+            "user": [
+                "admin"
+            ], 
             "structure": 1
         }
     }, 
     {
-        "pk": 2, 
         "model": "auth.user", 
         "fields": {
             "username": "sheldon", 
@@ -49,48 +49,13 @@
         "model": "authent.userprofile", 
         "fields": {
             "language": "fr", 
-            "user": 2, 
+            "user": [
+                "sheldon"
+            ], 
             "structure": 1
         }
     },
     {
-        "pk": 2,
-        "model": "auth.user",
-        "fields": {
-            "username": "sheldon",
-            "first_name": "",
-            "last_name": "",
-            "is_active": true,
-            "is_superuser": false,
-            "is_staff": false,
-            "last_login": "2012-07-20T23:24:31.911Z",
-            "groups": [],
-            "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$EbTI2JNKTyMu$7+fjM/SoYnkyekY5KmeHbHf5rLkoJmC5CD8mfvO+e2c=",
-            "email": "sheldon@yopmail.com",
-            "date_joined": "2012-07-20T23:24:31.911Z"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "auth.user",
-        "fields": {
-            "username": "admin",
-            "first_name": "",
-            "last_name": "",
-            "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
-            "last_login": "2012-07-25T09:13:26.495Z",
-            "groups": [],
-            "user_permissions": [],
-            "password": "pbkdf2_sha256$10000$M7URcO1rPRGv$2vCwLDAnfwCvP6lyA3Qo6PQ5Zqrz0YkccetVIHByODU=",
-            "email": "admin@yopmail.com",
-            "date_joined": "2012-07-20T23:19:16.306Z"
-        }
-    },
-    {
-        "pk": 3,
         "model": "auth.user",
         "fields": {
             "username": "sentiers",
@@ -110,7 +75,6 @@
         }
     },
     {
-        "pk": 4,
         "model": "auth.user",
         "fields": {
             "username": "comm",
@@ -130,7 +94,6 @@
         }
     },
     {
-        "pk": 5,
         "model": "auth.user",
         "fields": {
             "username": "redacteur",

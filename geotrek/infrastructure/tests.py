@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
-
-from django.test import TestCase
 import json
 
-from geotrek.common.tests import CommonTest
+from django.test import TestCase
 
+from geotrek.common.tests import CommonTest
+from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.maintenance.factories import InterventionFactory
@@ -131,11 +131,11 @@ class InfraFilterTestMixin():
         self.assertItemsEqual(topo_pk, [ good_topo.pk ])
 
 
-class SignageFilterTest(InfraFilterTestMixin, TestCase):
+class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = SignageFactory
     filterset = SignageFilter
 
 
-class InfrastructureFilterTest(InfraFilterTestMixin, TestCase):
+class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = InfrastructureFactory
     filterset = InfrastructureFilter

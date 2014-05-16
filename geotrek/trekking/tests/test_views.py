@@ -3,6 +3,7 @@
 import json
 from collections import OrderedDict
 
+import mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -12,6 +13,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 
 from mapentity.tests import MapEntityLiveTest
+from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
@@ -23,8 +25,9 @@ from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
                                         ThemeFactory, InformationDeskFactory)
+from geotrek.trekking.templatetags import trekking_tags
 
-from ..templatetags import trekking_tags
+from .base import TrekkingManagerTest
 
 
 class POIViewsTest(CommonTest):
@@ -53,6 +56,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
 
     def test_listing_number_queries(self):
+        self.login()
         # Create many instances
         for i in range(100):
             self.modelfactory.create()
@@ -164,15 +168,13 @@ class TrekViewsTest(CommonTest):
 class TrekViewsLiveTest(MapEntityLiveTest):
     model = Trek
     modelfactory = TrekFactory
-    userfactory = TrekkingManagerFactory
+    userfactory = SuperUserFactory
 
 
-class TrekCustomViewTests(TestCase):
+class TrekCustomViewTests(TrekkingManagerTest):
 
     def setUp(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.login()
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create()
@@ -238,11 +240,16 @@ class TrekCustomViewTests(TestCase):
         detailjson = json.loads((self.client.get(url)).content)
         self.assertEqual(detailjson['elevation_area_url'], '/api/trek/%s/dem.json' % trek.pk)
 
-    def test_overriden_document(self):
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_overriden_document(self, get_attributes_html):
         trek = TrekFactory.create()
-        # Will have to mock screenshot, though.
+
+        get_attributes_html.return_value = '<p>mock</p>'
         with open(trek.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
+        with open(trek.get_elevation_chart_path(), 'w') as f:
+            f.write('***' * 1000)
+
         response = self.client.get(trek.get_document_public_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
@@ -279,7 +286,7 @@ class TrekCustomViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class TrekViewTranslationTest(TestCase):
+class TrekViewTranslationTest(TrekkingManagerTest):
     def setUp(self):
         self.trek = TrekFactory.build()
         self.trek.name_fr = 'Voie lactee'
@@ -289,11 +296,6 @@ class TrekViewTranslationTest(TestCase):
 
     def tearDown(self):
         self.client.logout()
-
-    def login(self):
-        user = TrekkingManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
 
     def test_json_translation(self):
         url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
