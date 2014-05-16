@@ -1,0 +1,26 @@
+msgid "Name"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Invalid geometry value."
+msgstr ""
