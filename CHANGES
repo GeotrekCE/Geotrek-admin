@@ -23,6 +23,7 @@ CHANGELOG
 * Track objects creations, changes and deletions (fixes #300)
 * Added a reader group (fixes #495)
 * Topologies are not recreated if user did not edit field (fixes #833)
+* Added setting to serve attachments as download or within the browser (fixes #976)
 
 ** Internal changes **
 

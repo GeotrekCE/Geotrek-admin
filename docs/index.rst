@@ -8,6 +8,7 @@ Contents:
 
    installation
    deployment
+   advanced-configuration
    troubleshooting
    design
    development
