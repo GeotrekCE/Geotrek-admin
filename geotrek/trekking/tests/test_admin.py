@@ -55,3 +55,23 @@ class DifficultyLevelTest(AuthentFixturesTest):
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertNotEquals(trek.difficulty, self.difficulty)
         self.assertEquals(trek.difficulty_id, 4)
+
+
+class DeleteObjectTest(AuthentFixturesTest):
+    def setUp(self):
+        self.user = TrekkingManagerFactory.create(password='booh')
+        self.difficulty = DifficultyLevelFactory.create()
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+
+    def tearDown(self):
+        self.client.logout()
+        self.user.delete()
+
+    def test_weblink_can_be_deleted(self):
+        detail_url = reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk])
+        delete_url = reverse('admin:trekking_difficultylevel_delete', args=[self.difficulty.pk])
+        response = self.client.post(delete_url, {'post': 'yes'})
+        self.assertEquals(response.status_code, 302)
+        response = self.client.get(detail_url)
+        self.assertEquals(response.status_code, 404)

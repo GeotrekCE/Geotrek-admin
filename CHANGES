@@ -8,11 +8,12 @@ CHANGELOG
 ** Bug fixes **
 
 * Force browser cache revalidation for path graph (fixes #1029)
+* Fix deletion porblems in AdminSite (fixes #1008)
 
 ** New features **
 
 * Command to import shapefile with points into POI as topologies (fixes #952)
-* Add views to serve DEM on object area as JSON
+* Add views to serve DEM on object area as JSON (*Geotrek-Rando 3D*)
 * New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
   and added to maps (by module, or published on *Geotrek-rando*...)
 * Show number of attached files in tab (fixes #743)
