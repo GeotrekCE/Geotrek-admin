@@ -9,34 +9,33 @@ from modeltranslation.admin import TranslationAdmin
 
 from tinymce.widgets import TinyMCE
 
-from geotrek.authent.admin import TrekkingManagerModelAdmin
 from .models import (
     POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
     WebLinkCategory, InformationDesk, Trek
 )
 
 
-class POITypeAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class POITypeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 
-class ThemeAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class ThemeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
 
-class TrekNetworkAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class TrekNetworkAdmin(TranslationAdmin):
     list_display = ('network',)
     search_fields = ('network',)
 
 
-class UsageAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class UsageAdmin(TranslationAdmin):
     list_display = ('usage', 'pictogram_img')
     search_fields = ('usage',)
 
 
-class RouteAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class RouteAdmin(TranslationAdmin):
     list_display = ('route',)
     search_fields = ('route',)
 
@@ -53,7 +52,7 @@ class DifficultyLevelForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyLevelAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class DifficultyLevelAdmin(TranslationAdmin):
     form = DifficultyLevelForm
     list_display = ('id', 'difficulty',)
     search_fields = ('difficulty',)
@@ -101,17 +100,17 @@ class DifficultyLevelAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
         return super(DifficultyLevelAdmin, self).response_change(request, obj)
 
 
-class WebLinkAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class WebLinkAdmin(TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
 
 
-class WebLinkCategoryAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class WebLinkCategoryAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
 
 
-class InformationDeskAdmin(TrekkingManagerModelAdmin, TranslationAdmin):
+class InformationDeskAdmin(TranslationAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 

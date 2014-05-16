@@ -11,7 +11,7 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add land edge" %}</a>
             </p>
             {% endif %}
-            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.land_edges %}
+            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.land_edges %}
         </td>
     </tr>
     {% endif %}
@@ -25,7 +25,7 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add physical edge" %}</a>
             </p>
             {% endif %}
-            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.physical_edges %}
+            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.physical_edges %}
         </td>
     </tr>
     {% endif %}
@@ -37,7 +37,7 @@
             <p class="autohide"><a href="{% url 'land:competenceedge_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add competence edge" %}</a>
             </p>
-            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.competence_edges %}
+            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.competence_edges %}
         </td>
     </tr>
     {% endif %}
@@ -51,7 +51,7 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add work management edge" %}</a>
             </p>
             {% endif %}
-            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.work_edges %}
+            {% include "mapentity/mapentity_detail_valuelist_fragment.html" with valuelist=object.work_edges %}
         </td>
     </tr>
     {% endif %}
@@ -65,7 +65,7 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add signage management edge" %}</a>
             </p>
             {% endif %}
-            {% include "mapentity/entity_detail_valuelist_fragment.html" with valuelist=object.signage_edges %}
+            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.signage_edges %}
         </td>
     </tr>
     {% endif %}

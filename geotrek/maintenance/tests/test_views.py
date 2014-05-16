@@ -228,6 +228,7 @@ class ProjectViewsTest(CommonTest):
         }
 
     def test_project_layer(self):
+        self.login()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         InterventionFactory.create(project=p1)
@@ -243,6 +244,8 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
     def test_project_bbox_filter(self):
+        self.login()
+
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()

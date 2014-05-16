@@ -87,7 +87,7 @@ MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', sect
                                                      envini.get('port', section='screamshotter', default='8001'))
 
 # We override the default Adminsite template, add its location for template loader
-TEMPLATE_DIRS += (os.path.join(DEPLOY_ROOT, 'lib', 'src', 'mapentity', 'mapentity', 'templates'),)
+TEMPLATE_DIRS += (os.path.join(DEPLOY_ROOT, 'lib', 'eggs', 'mapentity', 'mapentity', 'templates'),)
 
 
 #

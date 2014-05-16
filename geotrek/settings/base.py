@@ -37,6 +37,12 @@ AUTH_PROFILE_MODULE = 'authent.UserProfile'
 # Settings required for geotrek.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
 AUTHENT_TABLENAME = None
+AUTHENT_GROUPS_MAPPING = {
+    'PATH_MANAGER': 1,
+    'TREKKING_MANAGER': 2,
+    'EDITOR': 3,
+    'READER': 4,
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -210,8 +216,8 @@ PROJECT_APPS += (
     'tinymce',
     'easy_thumbnails',
     'shapes',
-    'mapentity',
     'paperclip',
+    'mapentity',
 )
 
 
@@ -345,6 +351,7 @@ MAPENTITY_CONFIG = {
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
     'MAP_BACKGROUND_FOGGED': True,
+    'GEOJSON_LAYERS_CACHE_BACKEND': 'fat'
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

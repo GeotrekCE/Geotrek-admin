@@ -7,8 +7,9 @@ from django.test.utils import override_settings
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
+from mapentity.factories import SuperUserFactory
+
 from geotrek.authent.models import UserProfile
-from geotrek.authent.factories import UserFactory
 
 
 @override_settings(LOGIN_URL='/login/')
@@ -21,7 +22,9 @@ class LoginTestCase(TestCase):
 
 class UserProfileTest(TestCase):
     def setUp(self):
-        self.user = UserFactory(password=u"Bar")
+        self.user = SuperUserFactory(password=u"Bar")
+        success = self.client.login(username=self.user.username, password=u"Bar")
+        self.assertTrue(success)
 
     def test_profile(self):
         self.assertTrue(isinstance(self.user.profile, UserProfile))
@@ -31,8 +34,6 @@ class UserProfileTest(TestCase):
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
 
     def test_language(self):
-        success = self.client.login(username=self.user.username, password=u"Bar")
-        self.assertTrue(success)
         response = self.client.get(reverse('core:path_list'))
         self.assertEqual(200, response.status_code)
         self.assertContains(response, "Logout")
@@ -54,14 +55,14 @@ class UserProfileTest(TestCase):
         self.assertEqual(self.client.session['django_language'], u"fr")
         self.assertContains(response, u"Déconnexion")
 
-    def test_admin(self):
-        self.assertFalse(self.user.is_staff)
-        success = self.client.login(username=self.user.username, password=u"Bar")
-        self.assertTrue(success)
-        response = self.client.get(reverse('core:path_list'))
-        self.assertNotContains(response, '<a href="/admin/">Admin</a>')
-
-        self.user.is_staff = True
-        self.user.save()
+    def test_link_to_adminsite_visible_to_staff(self):
+        self.assertTrue(self.user.is_staff)
         response = self.client.get(reverse('core:path_list'))
         self.assertContains(response, '<a href="/admin/">Admin</a>')
+
+    def test_link_to_adminsite_not_visible_to_others(self):
+        self.user.is_staff = False
+        self.user.save()
+        self.client.login(username=self.user.username, password=u"Bar")
+        response = self.client.get(reverse('core:path_list'))
+        self.assertNotContains(response, '<a href="/admin/">Admin</a>')

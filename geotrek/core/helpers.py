@@ -65,20 +65,38 @@ class TopologyHelper(object):
         if not isinstance(objdict, (list,)):
             lat = objdict.get('lat')
             lng = objdict.get('lng')
+            pk = objdict.get('pk')
             kind = objdict.get('kind')
             # Point topology ?
             if lat and lng:
+                if pk:
+                    try:
+                        return Topology.objects.get(pk=int(pk))
+                    except (Topology.DoesNotExist, ValueError):
+                        pass
+
                 return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
             else:
                 objdict = [objdict]
 
-        # Path aggregation, remove all existing
         if len(objdict) == 0:
             raise ValueError("Invalid serialized topology : empty list found")
+
+        # If pk is still here, the user did not edit it.
+        # Return existing topology instead
+        pk = objdict[0].get('pk')
+        if pk:
+            try:
+                return Topology.objects.get(pk=int(pk))
+            except (Topology.DoesNotExist, ValueError):
+                pass
+
         kind = objdict[0].get('kind')
         offset = objdict[0].get('offset', 0.0)
         topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+        # Remove all existing path aggregation (WTF: created from factory ?)
         PathAggregation.objects.filter(topo_object=topology).delete()
+
         try:
             counter = 0
             for j, subtopology in enumerate(objdict):
@@ -155,7 +173,7 @@ class TopologyHelper(object):
         # Point topology
         if topology.ispoint():
             point = topology.geom.transform(settings.API_SRID, clone=True)
-            objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
+            objdict = dict(pk=topology.pk, kind=topology.kind, lng=point.x, lat=point.y)
             if topology.offset == 0:
                 objdict['snap'] = topology.aggregations.all()[0].path.pk
         else:
@@ -170,6 +188,7 @@ class TopologyHelper(object):
                 last = i == len(aggregations) - 1
                 intermediary = aggr.start_position == aggr.end_position
 
+                current.setdefault('pk', topology.pk)
                 current.setdefault('kind', topology.kind)
                 current.setdefault('offset', topology.offset)
                 if not intermediary:
