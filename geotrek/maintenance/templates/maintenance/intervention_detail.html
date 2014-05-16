@@ -101,7 +101,7 @@
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
             </td>
         </tr>
-        {% include "core/elevationinfo_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ intervention|verbose:"comments" }}</th>
             <td>{% if intervention.comments %}{{ intervention.comments|safe }}

@@ -51,7 +51,7 @@
             <th>{{ trek|verbose:"duration" }}</th>
             <td>{{ trek.duration|duration }}</td>
         </tr>
-        {% include "core/elevationinfo_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ trek|verbose:"route" }}</th>
             <td>{% if trek.route %}{{ trek.route|safe }}
@@ -209,7 +209,7 @@
 
 {% block mappanel %}
     {{ block.super }}
-    {% include "core/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile_svg" %}
+    {% include "altimetry/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile_svg" %}
 {% endblock mappanel %}
 
 {% block extrabody %}

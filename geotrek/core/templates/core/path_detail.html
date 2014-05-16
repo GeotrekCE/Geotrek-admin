@@ -7,7 +7,7 @@
     {% if not path.valid %}
         <div class="alert alert-error"><strong>{% trans "Not validated" %}</strong></div>
     {% endif %}
-    
+
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
         {{ path.comments|default:_("None")|safe }}
@@ -28,7 +28,7 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        {% include "core/elevationinfo_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ path|verbose:"trail" }}</th>
             <td>{{ path.trail_display|safe }}</td>
@@ -73,5 +73,5 @@
 
 {% block mappanel %}
     {{ block.super }}
-    {% include "core/altimetric_profile_fragment.html" with profile_url="core:path_profile_svg" %}
+    {% include "altimetry/altimetric_profile_fragment.html" with profile_url="core:path_profile_svg" %}
 {% endblock mappanel %}
