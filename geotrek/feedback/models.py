@@ -44,6 +44,16 @@ class Report(MapEntityMixin, TimeStampedModel):
         verbose_name_plural = _(u"Reports")
         ordering = ['-date_insert']
 
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def name_display(self):
+        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                  self.get_detail_url(),
+                                                                  self,
+                                                                  self)
+
 
 class ReportCategory(models.Model):
     category = models.CharField(verbose_name=_(u"Category"),
@@ -53,3 +63,6 @@ class ReportCategory(models.Model):
         db_table = 'f_b_categorie'
         verbose_name = _(u"Category")
         verbose_name_plural = _(u"Categories")
+
+    def __unicode__(self):
+        return self.category
