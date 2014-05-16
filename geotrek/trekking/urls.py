@@ -2,8 +2,8 @@ from django.conf.urls import patterns, url
 
 from mapentity import registry
 
-from geotrek.core.views import (ElevationProfile, ElevationChart,
-                                ElevationArea)
+from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
+                                     ElevationArea)
 from . import models
 from .views import (
     TrekDocumentPublic, TrekPrint,

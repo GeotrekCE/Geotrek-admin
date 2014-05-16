@@ -3,8 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from mapentity.views.generic import (JSONResponseMixin,
-                                     LastModifiedMixin)
+from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
 
 class HttpSVGResponse(HttpResponse):
