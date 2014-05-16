@@ -1,5 +1,19 @@
 L.FieldStore.TopologyStore = L.FieldStore.extend({
 
+    lock: function () {
+        this._locked = true;
+    },
+
+    unlock: function () {
+        this._locked = false;
+    },
+
+    save: function (layer) {
+        if (this._locked)
+            return;
+        L.FieldStore.prototype.save.call(this, layer);
+    },
+
     _deserialize: function (value) {
         if (value === undefined || value === '')
             return null;
@@ -135,6 +149,8 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
         var topo = this.store.load();
         if (topo) {
+            // Lock modification of initial value during load
+            this.store.lock();
             console.debug("Deserialize topology: " + topo);
             if (this._lineControl && !topo.lat && !topo.lng) {
                 this._lineControl.handler.restoreTopology(topo);
@@ -142,6 +158,8 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
             if (this._pointControl && topo.lat && topo.lng) {
                 this._pointControl.handler.restoreTopology(topo);
             }
+            // Unlock now, user can edit
+            this.store.unlock();
         }
     },
 
