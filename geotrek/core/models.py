@@ -45,13 +45,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"), db_column='confort')
-
-    # Override default manager
-    objects = models.GeoManager()
-
-    trail = models.ForeignKey('Trail',
-                              null=True, blank=True, related_name='paths',
-                              verbose_name=_("Trail"), db_column='sentier')
     datasource = models.ForeignKey('Datasource',
                                    null=True, blank=True, related_name='paths',
                                    verbose_name=_("Datasource"), db_column='source')
@@ -64,6 +57,9 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     networks = models.ManyToManyField('Network',
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
+
+    # Override default manager
+    objects = models.GeoManager()
 
     is_reversed = False
 
@@ -436,8 +432,9 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
-
+class Trail(MapEntityMixin, Topology, StructureRelated):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
@@ -453,18 +450,16 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
         return self.name
 
     @property
-    def geom(self):
-        geom = None
-        for p in self.paths.all():
-            if geom is None:
-                geom = LineString(p.geom.coords, srid=settings.SRID)
-            else:
-                geom = geom.union(p.geom)
-        return geom
-
-    @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
                                                                   self.get_detail_url(),
                                                                   self,
                                                                   self)
+
+    @classmethod
+    def path_trails(cls, path):
+        return cls.objects.filter(aggregations__path=path).distinct('pk')
+
+
+Path.add_property('trails', lambda self: Trail.path_trails(self))
+Topology.add_property('trails', lambda self: Trail.overlapping(self))
