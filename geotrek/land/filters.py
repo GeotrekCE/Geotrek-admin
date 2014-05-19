@@ -2,12 +2,15 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from django_filters import ModelChoiceFilter
 from mapentity.filters import MapEntityFilterSet
 
-from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.common.filters import StructureRelatedFilterSet
+
+from geotrek.core.filters import TopoFilter, PathFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
+from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
+from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
 
 from geotrek.zoning.models import City, District
 from .models import (
@@ -16,21 +19,22 @@ from .models import (
 )
 
 
+
 class PhysicalEdgeFilterSet(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+    class Meta:
         model = PhysicalEdge
-        fields = MapEntityFilterSet.Meta.fields + ['physical_type']
+        fields = ['physical_type']
 
 
 class LandEdgeFilterSet(StructureRelatedFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
+    class Meta:
         model = LandEdge
-        fields = MapEntityFilterSet.Meta.fields + ['land_type']
+        fields = ['land_type']
 
 
 class OrganismFilterSet(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
-        fields = MapEntityFilterSet.Meta.fields + ['organization']
+    class Meta:
+        fields = ['organization']
 
 
 class CompetenceEdgeFilterSet(OrganismFilterSet):
@@ -46,81 +50,6 @@ class WorkManagementEdgeFilterSet(OrganismFilterSet):
 class SignageManagementEdgeFilterSet(OrganismFilterSet):
     class Meta(OrganismFilterSet.Meta):
         model = SignageManagementEdge
-
-
-"""
-
-    Welcome in the land of complexity.
-
-    (also known as over-engineering)
-
-"""
-
-
-def filter(qs, edges):
-    """
-    This piece of code was moved from core, and should be rewritten nicely
-    with managers : TODO !
-    """
-    # TODO: this is wrong, land should not depend on maintenance
-    import geotrek.maintenance as maintenance
-
-    overlapping = Topology.overlapping(edges)
-
-    # In case, we filter on paths
-    if qs.model == Path:
-        paths = []
-        for o in overlapping:
-            paths.extend(o.paths.all())
-        return qs.filter(pk__in=[path.pk for path in set(paths)])
-
-    # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
-    elif issubclass(qs.model, maintenance.models.Intervention):
-        return qs.filter(topology__in=[topo.pk for topo in overlapping])
-    elif issubclass(qs.model, maintenance.models.Project):
-        # Find all interventions overlapping those edges
-        interventions = filter(maintenance.models.Intervention.objects.existing()
-                                                              .select_related('project')
-                                                              .filter(project__in=qs),
-                               edges)
-        # Return only the projects concerned by the interventions
-        projects = []
-        for intervention in interventions:
-            projects.append(intervention.project.pk)
-        return qs.filter(pk__in=set(projects))
-
-    else:
-        assert issubclass(qs.model, Topology), "%s is not a Topology as expected" % qs.model
-        return qs.filter(pk__in=[topo.pk for topo in overlapping])
-
-
-class TopoFilter(ModelChoiceFilter):
-
-    model = None
-    queryset = None
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', self.get_queryset())
-        super(TopoFilter, self).__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
-
-    def get_queryset(self):
-        if self.queryset is not None:
-            return self.queryset
-        return self.model.objects.all()
-
-    def filter(self, qs, value):
-        """Overrides parent filter() method completely."""
-        if not value:
-            return qs
-        if issubclass(value.__class__, Topology):
-            edges = Topology.objects.filter(pk=value.pk)
-        else:
-            edges = self.value_to_edges(value)
-        return filter(qs, edges)
-
-    def value_to_edges(self, value):
-        raise NotImplementedError
 
 
 class TopoFilterPhysicalType(TopoFilter):
@@ -172,31 +101,22 @@ class TopoFilterWorkManagementEdge(TopoFilter):
         return value.workmanagementedge_set.select_related('organization').all()
 
 
-class EdgeFilterSet(MapEntityFilterSet):
-    city = TopoFilterCity(label=_('City'), required=False)
-    district = TopoFilterDistrict(label=_('District'), required=False)
-
-    physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
-    land_type = TopoFilterLandType(label=_('Land type'), required=False)
-
-    competence = TopoFilterCompetenceEdge(label=_('Competence'), required=False)
-    signage = TopoFilterSignageManagementEdge(label=_('Signage management'), required=False)
-    work = TopoFilterWorkManagementEdge(label=_('Work management'), required=False)
-
-    class Meta(MapEntityFilterSet.Meta):
-        fields = MapEntityFilterSet.Meta.fields
+def add_edge_filters(filter_set):
+    filter_set.add_filters({
+        'city': TopoFilterCity(label=_('City'), required=False),
+        'district': TopoFilterDistrict(label=_('District'), required=False),
+        'physical_type': TopoFilterPhysicalType(label=_('Physical type'), required=False),
+        'land_type': TopoFilterLandType(label=_('Land type'), required=False),
+        'competence': TopoFilterCompetenceEdge(label=_('Competence'), required=False),
+        'signage': TopoFilterSignageManagementEdge(label=_('Signage management'), required=False),
+        'work': TopoFilterWorkManagementEdge(label=_('Work management'), required=False),
+    })
 
 
-class EdgeStructureRelatedFilterSet(StructureRelatedFilterSet):
-    city = TopoFilterCity(label=_('City'), required=False)
-    district = TopoFilterDistrict(label=_('District'), required=False)
-
-    physical_type = TopoFilterPhysicalType(label=_('Physical type'), required=False)
-    land_type = TopoFilterLandType(label=_('Land type'), required=False)
-
-    competence = TopoFilterCompetenceEdge(label=_('Competence'), required=False)
-    signage = TopoFilterSignageManagementEdge(label=_('Signage management'), required=False)
-    work = TopoFilterWorkManagementEdge(label=_('Work management'), required=False)
-
-    class Meta(StructureRelatedFilterSet.Meta):
-        fields = StructureRelatedFilterSet.Meta.fields
+add_edge_filters(TrekFilterSet)
+add_edge_filters(POIFilterSet)
+add_edge_filters(InterventionFilterSet)
+add_edge_filters(ProjectFilterSet)
+add_edge_filters(PathFilterSet)
+add_edge_filters(InfrastructureFilterSet)
+add_edge_filters(SignageFilterSet)
