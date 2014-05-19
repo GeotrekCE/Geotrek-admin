@@ -1,6 +1,10 @@
-from mapentity.factories import SuperUserFactory
+import requests
+
 from django.utils.translation import ugettext_lazy as _
 from django.test import LiveServerTestCase
+from django.contrib.auth.models import Permission
+from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.helpers import smart_urljoin
 
 from geotrek.common.tests import CommonTest
 from geotrek.feedback import models as feedback_models
@@ -24,4 +28,43 @@ class ReportViewsTest(CommonTest):
 
 
 class CreateReportsAPITest(LiveServerTestCase):
-    pass
+    def setUp(self):
+        self.user = UserFactory(password='booh')
+        perm = Permission.objects.get_by_natural_key('add_report', 'feedback', 'report')
+        self.user.user_permissions.add(perm)
+
+        self.login_url = smart_urljoin(self.live_server_url, '/login/')
+        self.add_url = smart_urljoin(self.live_server_url, '/report/add/')
+
+        self.session = requests.Session()
+        self.login()
+
+    def login(self):
+        response = self.session.get(self.login_url)
+        csrftoken = response.cookies.get('csrftoken', '')
+        response = self.session.post(self.login_url,
+                                     {'username': self.user.username,
+                                      'password': 'booh',
+                                      'csrfmiddlewaretoken': csrftoken},
+                                     allow_redirects=False)
+        self.assertEqual(response.status_code, 302)
+
+    def post_report_data(self, data):
+        response = self.session.get(self.add_url,
+                                    allow_redirects=False)
+        self.assertEqual(response.status_code, 200)
+        csrf = response.cookies['csrftoken']
+        data['csrfmiddlewaretoken'] = csrf
+        response = self.session.post(self.add_url, data=data,
+                                     allow_redirects=False)
+        return response
+
+    def test_reports_can_be_created_using_post(self):
+        data = {
+            'geom': '{"type": "Point", "coordinates": [0, 0]}',
+            'name': 'You Yeah',
+            'email': 'yeah@you.com'
+        }
+        response = self.post_report_data(data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
