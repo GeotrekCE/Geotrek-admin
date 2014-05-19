@@ -1,5 +1,6 @@
 from mapentity.factories import SuperUserFactory
 from django.utils.translation import ugettext_lazy as _
+from django.test import LiveServerTestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.feedback import models as feedback_models
@@ -20,3 +21,7 @@ class ReportViewsTest(CommonTest):
             'name': 'You Yeah',
             'email': 'yeah@you.com',
         }
+
+
+class CreateReportsAPITest(LiveServerTestCase):
+    pass

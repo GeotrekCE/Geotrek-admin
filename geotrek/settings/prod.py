@@ -33,7 +33,6 @@ ADMINS = tuple([('Admin %s' % TITLE, admin) for admin in admins])
 managers = envini.getstrings('mailmanagers')
 MANAGERS = tuple([('Manager %s' % TITLE, manager) for manager in managers])
 
-EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
 DEFAULT_FROM_EMAIL = envini.get('mailfrom', admins[0])
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_HOST = envini.get('mailhost')

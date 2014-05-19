@@ -4,9 +4,13 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.models import TimeStampedModel
+
+from .helpers import send_report_managers
 
 
 class Report(MapEntityMixin, TimeStampedModel):
@@ -53,6 +57,13 @@ class Report(MapEntityMixin, TimeStampedModel):
                                                                   self.get_detail_url(),
                                                                   self,
                                                                   self)
+
+
+@receiver(post_save, sender=Report, dispatch_uid="on_report_created")
+def on_report_created(sender, instance, created, **kwargs):
+    """ Send an email to managers when a report is created.
+    """
+    send_report_managers(instance)
 
 
 class ReportCategory(models.Model):
