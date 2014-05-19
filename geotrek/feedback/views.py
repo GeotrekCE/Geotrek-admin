@@ -24,4 +24,5 @@ class CategoryList(mapentity_views.JSONResponseMixin, ListView):
         return super(CategoryList, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        return [{'label': c.category} for c in self.object_list]
+        return [{'id': c.id,
+                 'label': c.category} for c in self.object_list]

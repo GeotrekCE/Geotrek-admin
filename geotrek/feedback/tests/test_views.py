@@ -96,6 +96,7 @@ class ListCategoriesTest(BaseAPITest):
     def test_categories_can_be_obtained_as_json(self):
         response = self.session.get(self.categories_url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[0]['id'], self.cat.id)
         self.assertEqual(response.json()[0]['label'], self.cat.category)
 
     def test_categories_are_translated(self):
