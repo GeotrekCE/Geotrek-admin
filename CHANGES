@@ -14,6 +14,7 @@ CHANGELOG
 
 * Force browser cache revalidation for path graph (fixes #1029)
 * Fix deletion porblems in AdminSite (fixes #1008)
+* Trek advised parking and public transport are translatable (fixes #1024)
 
 ** New features **
 
