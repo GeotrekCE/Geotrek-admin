@@ -132,7 +132,10 @@
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
                 ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"]
+                ["read_poi", "trekking", "poi"],
+
+                ["add_report", "feedback", "report"],
+                ["read_report", "feedback", "report"]
             ]
         }
     },
@@ -205,7 +208,10 @@
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
                 ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"]
+                ["read_poi", "trekking", "poi"],
+
+                ["add_report", "feedback", "report"],
+                ["read_report", "feedback", "report"]
             ]
         }
     },
@@ -276,7 +282,10 @@
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
                 ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"]
+                ["read_poi", "trekking", "poi"],
+
+                ["add_report", "feedback", "report"],
+                ["read_report", "feedback", "report"]
             ]
         }
     }

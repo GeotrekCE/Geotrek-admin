@@ -232,6 +232,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.land',
     'geotrek.trekking',
     'geotrek.tourism',
+    'geotrek.feedback',
 )
 
 SERIALIZATION_MODULES = {
@@ -270,7 +271,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'logging.NullHandler'
         },
         'console': {
             'level': 'DEBUG',

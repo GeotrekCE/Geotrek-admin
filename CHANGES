@@ -5,6 +5,11 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
+** Breaking changes **
+
+* Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``
+* Permission systems has been refactored (*see below*)
+
 ** Bug fixes **
 
 * Force browser cache revalidation for path graph (fixes #1029)
@@ -57,6 +62,7 @@ CHANGELOG
       - ``trekking | Trek | Can export Trek``
       - ``trekking | POI | Can read POI``
       - ``trekking | POI | Can export POI``
+      - ``feedback | Report | Can add report``
 
 
 0.22.5 (2014-03-19)

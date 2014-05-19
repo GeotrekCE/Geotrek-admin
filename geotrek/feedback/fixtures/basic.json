@@ -1,0 +1,38 @@
+[
+{
+    "pk": 1,
+    "model": "feedback.reportcategory",
+    "fields": {
+        "category": "Obstacle",
+        "category_en": "Obstacle",
+        "category_fr": "Obstacle"
+    }
+},
+{
+    "pk": 2,
+    "model": "feedback.reportcategory",
+    "fields": {
+        "category": "Signage",
+        "category_en": "Signage",
+        "category_fr": "Signal\u00e9tique"
+    }
+},
+{
+    "pk": 3,
+    "model": "feedback.reportcategory",
+    "fields": {
+        "category": "Markers",
+        "category_en": "Markers",
+        "category_fr": "Marquage"
+    }
+},
+{
+    "pk": 4,
+    "model": "feedback.reportcategory",
+    "fields": {
+        "category": "Other",
+        "category_en": "Other",
+        "category_fr": "Autre"
+    }
+}
+]

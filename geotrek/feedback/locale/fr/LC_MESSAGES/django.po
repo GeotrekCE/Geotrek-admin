@@ -1,0 +1,41 @@
+msgid "Feedback from {name} ({email})"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+#, python-format
+msgid "%(name)s (%(email)s) has sent a feedback on category %(category)s."
+msgstr "%(name)s (%(email)s) a signalé un problème dans la catégorie %(category)s."
+
+#, python-format
+msgid "Comment : %(comment)s"
+msgstr "Commentaire : %(comment)s"
+
+#, python-format
+msgid "Lat : %(lat)s / Lon : %(lng)s"
+msgstr ""
+
+msgid "Invalid geometry value."
+msgstr ""
