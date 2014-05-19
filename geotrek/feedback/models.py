@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.db import models
 from django.contrib.gis.db import models as gis_models
@@ -11,6 +13,9 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.models import TimeStampedModel
 
 from .helpers import send_report_managers
+
+
+logger = logging.getLogger(__name__)
 
 
 class Report(MapEntityMixin, TimeStampedModel):
@@ -63,7 +68,11 @@ class Report(MapEntityMixin, TimeStampedModel):
 def on_report_created(sender, instance, created, **kwargs):
     """ Send an email to managers when a report is created.
     """
-    send_report_managers(instance)
+    try:
+        send_report_managers(instance)
+    except Exception as e:
+        logger.error('Email could not be sent to managers.')
+        logger.exception(e)  # This sends an email to admins :)
 
 
 class ReportCategory(models.Model):
