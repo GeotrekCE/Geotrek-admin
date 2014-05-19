@@ -9,6 +9,8 @@ from geotrek.feedback import models as feedback_models
 class ReportCategoryFactory(factory.Factory):
     FACTORY_FOR = feedback_models.ReportCategory
 
+    category = factory.Sequence(lambda n: u"Category %s" % n)
+
 
 class ReportFactory(factory.Factory):
     FACTORY_FOR = feedback_models.Report
