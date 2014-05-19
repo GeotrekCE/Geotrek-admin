@@ -15,7 +15,7 @@ from geotrek.authent.decorators import same_structure_required
 
 from .models import Path, Trail
 from .forms import PathForm
-from .filters import PathFilter
+from .filters import PathFilterSet
 from . import graph as graph_lib
 
 
@@ -36,7 +36,7 @@ class PathLayer(MapEntityLayer):
 
 class PathList(MapEntityList):
     queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
-    filterform = PathFilter
+    filterform = PathFilterSet
     columns = ['id', 'name', 'networks', 'stake', 'trail']
 
 

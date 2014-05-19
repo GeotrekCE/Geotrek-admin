@@ -26,7 +26,7 @@ class InterventionYearSelect(Select):
         return super(InterventionYearSelect, self).render_options(*args, **kwargs)
 
 
-class InterventionFilter(EdgeStructureRelatedFilterSet):
+class InterventionFilterSet(EdgeStructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects')
     year = YearFilter(name='date', widget=InterventionYearSelect, label=_(u"Year"))
 
@@ -48,7 +48,7 @@ class ProjectYearSelect(Select):
         return super(ProjectYearSelect, self).render_options(*args, **kwargs)
 
 
-class ProjectFilter(EdgeStructureRelatedFilterSet):
+class ProjectFilterSet(EdgeStructureRelatedFilterSet):
     bbox = PythonPolygonFilter(name='geom')
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,

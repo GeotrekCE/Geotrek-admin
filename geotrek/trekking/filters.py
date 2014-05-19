@@ -4,7 +4,7 @@ from geotrek.land.filters import TopoFilter, EdgeFilterSet
 from .models import Trek, POI
 
 
-class TrekFilter(EdgeFilterSet):
+class TrekFilterSet(EdgeFilterSet):
     class Meta(EdgeFilterSet.Meta):
         model = Trek
         fields = EdgeFilterSet.Meta.fields + ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
@@ -14,7 +14,7 @@ class POITrekFilter(TopoFilter):
     queryset = Trek.objects.existing()
 
 
-class POIFilter(EdgeFilterSet):
+class POIFilterSet(EdgeFilterSet):
     trek = POITrekFilter(label=_("Trek"), required=False)
 
     class Meta(EdgeFilterSet.Meta):

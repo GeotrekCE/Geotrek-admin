@@ -5,7 +5,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
-from .filters import PhysicalEdgeFilter, LandEdgeFilter, CompetenceEdgeFilter, WorkManagementEdgeFilter, SignageManagementEdgeFilter
+from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 
 
@@ -16,7 +16,7 @@ class PhysicalEdgeLayer(MapEntityLayer):
 
 class PhysicalEdgeList(MapEntityList):
     queryset = PhysicalEdge.objects.existing()
-    filterform = PhysicalEdgeFilter
+    filterform = PhysicalEdgeFilterSet
     columns = ['id', 'physical_type']
 
 
@@ -57,7 +57,7 @@ class LandEdgeLayer(MapEntityLayer):
 
 class LandEdgeList(MapEntityList):
     queryset = LandEdge.objects.existing()
-    filterform = LandEdgeFilter
+    filterform = LandEdgeFilterSet
     columns = ['id', 'land_type']
 
 
@@ -97,7 +97,7 @@ class CompetenceEdgeLayer(MapEntityLayer):
 
 class CompetenceEdgeList(MapEntityList):
     queryset = CompetenceEdge.objects.existing()
-    filterform = CompetenceEdgeFilter
+    filterform = CompetenceEdgeFilterSet
     columns = ['id', 'organization']
 
 
@@ -138,7 +138,7 @@ class WorkManagementEdgeLayer(MapEntityLayer):
 
 class WorkManagementEdgeList(MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
-    filterform = WorkManagementEdgeFilter
+    filterform = WorkManagementEdgeFilterSet
     columns = ['id', 'organization']
 
 
@@ -179,7 +179,7 @@ class SignageManagementEdgeLayer(MapEntityLayer):
 
 class SignageManagementEdgeList(MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
-    filterform = SignageManagementEdgeFilter
+    filterform = SignageManagementEdgeFilterSet
     columns = ['id', 'organization']
 
 

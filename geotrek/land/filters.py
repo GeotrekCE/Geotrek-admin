@@ -16,35 +16,35 @@ from .models import (
 )
 
 
-class PhysicalEdgeFilter(MapEntityFilterSet):
+class PhysicalEdgeFilterSet(MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
         fields = MapEntityFilterSet.Meta.fields + ['physical_type']
 
 
-class LandEdgeFilter(StructureRelatedFilterSet):
+class LandEdgeFilterSet(StructureRelatedFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
         fields = MapEntityFilterSet.Meta.fields + ['land_type']
 
 
-class OrganismFilter(MapEntityFilterSet):
+class OrganismFilterSet(MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         fields = MapEntityFilterSet.Meta.fields + ['organization']
 
 
-class CompetenceEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
+class CompetenceEdgeFilterSet(OrganismFilterSet):
+    class Meta(OrganismFilterSet.Meta):
         model = CompetenceEdge
 
 
-class WorkManagementEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
+class WorkManagementEdgeFilterSet(OrganismFilterSet):
+    class Meta(OrganismFilterSet.Meta):
         model = WorkManagementEdge
 
 
-class SignageManagementEdgeFilter(OrganismFilter):
-    class Meta(OrganismFilter.Meta):
+class SignageManagementEdgeFilterSet(OrganismFilterSet):
+    class Meta(OrganismFilterSet.Meta):
         model = SignageManagementEdge
 
 

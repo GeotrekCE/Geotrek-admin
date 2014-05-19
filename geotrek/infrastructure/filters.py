@@ -7,13 +7,13 @@ from geotrek.maintenance.filters import InterventionYearSelect
 from .models import INFRASTRUCTURE_TYPES, Infrastructure, Signage
 
 
-class InfrastructureFilter(EdgeStructureRelatedFilterSet):
+class InfrastructureFilterSet(EdgeStructureRelatedFilterSet):
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InterventionYearSelect,
                                    label=_(u"Intervention year"))
 
     def __init__(self, *args, **kwargs):
-        super(InfrastructureFilter, self).__init__(*args, **kwargs)
+        super(InfrastructureFilterSet, self).__init__(*args, **kwargs)
         field = self.form.fields['type']
         field.queryset = field.queryset.exclude(type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
@@ -22,13 +22,13 @@ class InfrastructureFilter(EdgeStructureRelatedFilterSet):
         fields = EdgeStructureRelatedFilterSet.Meta.fields + ['type__type', 'type']
 
 
-class SignageFilter(EdgeStructureRelatedFilterSet):
+class SignageFilterSet(EdgeStructureRelatedFilterSet):
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InterventionYearSelect,
                                    label=_(u"Intervention year"))
 
     def __init__(self, *args, **kwargs):
-        super(SignageFilter, self).__init__(*args, **kwargs)
+        super(SignageFilterSet, self).__init__(*args, **kwargs)
         field = self.form.fields['type']
         field.queryset = field.queryset.filter(type=INFRASTRUCTURE_TYPES.SIGNAGE)
 

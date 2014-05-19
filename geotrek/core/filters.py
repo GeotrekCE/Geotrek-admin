@@ -9,7 +9,7 @@ from geotrek.common.filters import OptionalRangeFilter
 from geotrek.land.filters import EdgeStructureRelatedFilterSet
 
 
-class PathFilter(EdgeStructureRelatedFilterSet):
+class PathFilterSet(EdgeStructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     comments = CharFilter(label=_('Comments'), lookup_type='icontains')
