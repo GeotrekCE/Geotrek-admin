@@ -61,6 +61,7 @@ CHANGELOG
       - ``trekking | Trek | Can export Trek``
       - ``trekking | POI | Can read POI``
       - ``trekking | POI | Can export POI``
+      - ``feedback | Report | Can add report``
 
 
 0.22.5 (2014-03-19)
