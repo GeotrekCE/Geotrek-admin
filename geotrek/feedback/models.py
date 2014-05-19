@@ -32,6 +32,7 @@ class Report(MapEntityMixin, TimeStampedModel):
                                  default=None,
                                  verbose_name=_(u"Category"))
     geom = gis_models.PointField(null=True,
+                                 blank=True,
                                  default=None,
                                  verbose_name=_(u"Location"),
                                  srid=settings.SRID)

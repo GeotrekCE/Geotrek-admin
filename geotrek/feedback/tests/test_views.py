@@ -39,6 +39,12 @@ class CreateReportsAPITest(LiveServerTestCase):
         self.session = requests.Session()
         self.login()
 
+        self.data = {
+            'geom': '{"type": "Point", "coordinates": [0, 0]}',
+            'name': 'You Yeah',
+            'email': 'yeah@you.com'
+        }
+
     def login(self):
         response = self.session.get(self.login_url)
         csrftoken = response.cookies.get('csrftoken', '')
@@ -57,14 +63,14 @@ class CreateReportsAPITest(LiveServerTestCase):
         data['csrfmiddlewaretoken'] = csrf
         response = self.session.post(self.add_url, data=data,
                                      allow_redirects=False)
+        self.assertEqual(response.status_code, 302)
         return response
 
     def test_reports_can_be_created_using_post(self):
-        data = {
-            'geom': '{"type": "Point", "coordinates": [0, 0]}',
-            'name': 'You Yeah',
-            'email': 'yeah@you.com'
-        }
-        response = self.post_report_data(data)
-        self.assertEqual(response.status_code, 302)
+        self.post_report_data(self.data)
+        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+
+    def test_reports_can_be_created_without_geom(self):
+        self.data.pop('geom')
+        self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
