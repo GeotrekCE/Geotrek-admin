@@ -275,11 +275,6 @@ class POIFormatList(MapEntityFormat, POIList):
 class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager)
-
 
 class POIDocument(MapEntityDocument):
     model = POI

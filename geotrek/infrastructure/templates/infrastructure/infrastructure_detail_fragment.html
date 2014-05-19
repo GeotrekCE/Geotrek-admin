@@ -5,7 +5,7 @@
     <tr>
         <th>{% trans "Infrastructures" %}</th>
         <td>
-            {% if user.profile.is_editor %}
+            {% if perms.infrastructure.add_infrastructure %}
             <p class="autohide"><a href="{% url 'infrastructure:infrastructure_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new infrastructure" %}</a>
             </p>
@@ -25,7 +25,7 @@
     <tr>
         <th>{% trans "Signages" %}</th>
         <td>
-            {% if user.profile.is_editor %}
+            {% if perms.infrastructure.add_signage %}
             <p class="autohide"><a href="{% url 'infrastructure:signage_add' %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
             </p>
