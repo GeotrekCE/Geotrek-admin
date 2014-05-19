@@ -46,24 +46,12 @@
         <tr>
             <th>{{ path|verbose:"usages" }}</th>
             <td>
-                {% for usage in  path.usages.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ usage }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.usages.all %}
             </td>
         </tr><tr>
             <th>{{ path|verbose:"networks" }}</th>
             <td>
-                {% for network in  path.networks.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ network }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.networks.all %}
             </td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}

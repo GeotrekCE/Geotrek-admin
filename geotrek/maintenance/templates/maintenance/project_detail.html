@@ -53,13 +53,7 @@
         <tr>
             <th>{{ project|verbose:"contractors" }}</th>
             <td>
-                {% for contractor in  project.contractors.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ contractor }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=project.contractors.all %}
             </td>
         </tr>
         <tr>
