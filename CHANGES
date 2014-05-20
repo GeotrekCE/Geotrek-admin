@@ -32,6 +32,7 @@ CHANGELOG
 * Topologies are not recreated if user did not edit field (fixes #833)
 * Added setting to serve attachments as download or within the browser (fixes #976)
 * Added static file for projection EPSG:32620
+* Show land objects in menu (fixes #942)
 
 ** Internal changes **
 
