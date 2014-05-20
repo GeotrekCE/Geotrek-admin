@@ -66,9 +66,11 @@ class Report(MapEntityMixin, TimeStampedModel):
 
 
 @receiver(post_save, sender=Report, dispatch_uid="on_report_created")
-def on_report_created(sender, instance, created, **kwargs):
+def on_report_saved(sender, instance, created, **kwargs):
     """ Send an email to managers when a report is created.
     """
+    if not created:
+        return
     try:
         send_report_managers(instance)
     except Exception as e:
