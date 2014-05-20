@@ -15,7 +15,7 @@
     <ul class="dropdown-menu">
         {% if modelname != 'landedge' %}<li><a href="{% url 'land:landedge_list' %}">{% trans "Land types" %}</a></li>{% endif %}
         {% if modelname != 'physicaledge' %}<li><a href="{% url 'land:physicaledge_list' %}">{% trans "Physical types" %}</a></li>{% endif %}
-        {% if modelname != 'competenceedge' %}<li><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence zones" %}</a></li>{% endif %}
+        {% if modelname != 'competenceedge' %}<li><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence paths" %}</a></li>{% endif %}
         {% if modelname != 'signagemanagementedge' %}<li><a href="{% url 'land:signagemanagementedge_list' %}">{% trans "Signage management" %}</a></li>{% endif %}
         {% if modelname != 'workmanagementedge' %}<li><a href="{% url 'land:workmanagementedge_list' %}">{% trans "Work management" %}</a></li>{% endif %}
     </ul>
