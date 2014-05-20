@@ -14,7 +14,7 @@ from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
                                               InfrastructureTypeFactory)
-from geotrek.infrastructure.filters import SignageFilter, InfrastructureFilter
+from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
 
 
 class InfrastructureTest(TestCase):
@@ -133,9 +133,9 @@ class InfraFilterTestMixin():
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = SignageFactory
-    filterset = SignageFilter
+    filterset = SignageFilterSet
 
 
 class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = InfrastructureFactory
-    filterset = InfrastructureFilter
+    filterset = InfrastructureFilterSet

@@ -20,7 +20,7 @@ from geotrek.common.views import FormsetMixin
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
-from .filters import TrekFilter, POIFilter
+from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 
 
@@ -60,7 +60,7 @@ class TrekLayer(MapEntityLayer):
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
-    filterform = TrekFilter
+    filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
 
 
@@ -231,7 +231,7 @@ class POILayer(MapEntityLayer):
 
 class POIList(FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
-    filterform = POIFilter
+    filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
 
 

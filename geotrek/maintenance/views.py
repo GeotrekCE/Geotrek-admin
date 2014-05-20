@@ -11,7 +11,7 @@ from geotrek.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList
                                 MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from geotrek.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
-from .filters import InterventionFilter, ProjectFilter
+from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
 
@@ -26,7 +26,7 @@ class InterventionLayer(MapEntityLayer):
 
 class InterventionList(MapEntityList):
     queryset = Intervention.objects.existing()
-    filterform = InterventionFilter
+    filterform = InterventionFilterSet
     columns = ['id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake']
 
 
@@ -116,7 +116,7 @@ class ProjectLayer(MapEntityLayer):
 
 class ProjectList(MapEntityList):
     queryset = Project.objects.existing()
-    filterform = ProjectFilter
+    filterform = ProjectFilterSet
     columns = ['id', 'name', 'period', 'type', 'domain']
 
 

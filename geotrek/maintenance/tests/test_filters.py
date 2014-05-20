@@ -9,7 +9,7 @@ from geotrek.land.factories import (
 )
 from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
-from geotrek.maintenance.filters import (ProjectFilter, InterventionFilter,
+from geotrek.maintenance.filters import (ProjectFilterSet, InterventionFilterSet,
                                          InterventionYearSelect, ProjectYearSelect)
 from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
                                            InfrastructureInterventionFactory)
@@ -43,7 +43,7 @@ class InterventionFilteringByLandTest(TestCase):
         # filter by physical type
         data = { 'physical_type': edge.physical_type.pk }
 
-        qs = InterventionFilter(data=data).qs
+        qs = InterventionFilterSet(data=data).qs
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_inter)
 
@@ -57,7 +57,7 @@ class InterventionFilteringByLandTest(TestCase):
         # filter by land type
         data = { 'land_type': edge.land_type.pk }
 
-        qs = InterventionFilter(data=data).qs
+        qs = InterventionFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_inter)
@@ -73,7 +73,7 @@ class InterventionFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'competence': edge.organization.pk }
 
-        qs = InterventionFilter(data=data).qs
+        qs = InterventionFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_inter)
@@ -89,7 +89,7 @@ class InterventionFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'work': edge.organization.pk }
 
-        qs = InterventionFilter(data=data).qs
+        qs = InterventionFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_inter)
@@ -105,7 +105,7 @@ class InterventionFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'signage': edge.organization.pk }
 
-        qs = InterventionFilter(data=data).qs
+        qs = InterventionFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_inter)
@@ -146,7 +146,7 @@ class ProjectFilteringByLandTest(TestCase):
         # filter by physical type
         data = { 'physical_type': edge.physical_type.pk }
 
-        qs = ProjectFilter(data=data).qs
+        qs = ProjectFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
@@ -161,7 +161,7 @@ class ProjectFilteringByLandTest(TestCase):
         # filter by land type
         data = { 'land_type': edge.land_type.pk }
 
-        qs = ProjectFilter(data=data).qs
+        qs = ProjectFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
@@ -177,7 +177,7 @@ class ProjectFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'competence': edge.organization.pk }
 
-        qs = ProjectFilter(data=data).qs
+        qs = ProjectFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
@@ -193,7 +193,7 @@ class ProjectFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'work': edge.organization.pk }
 
-        qs = ProjectFilter(data=data).qs
+        qs = ProjectFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
@@ -209,7 +209,7 @@ class ProjectFilteringByLandTest(TestCase):
         # filter by organization
         data = { 'signage': edge.organization.pk }
 
-        qs = ProjectFilter(data=data).qs
+        qs = ProjectFilterSet(data=data).qs
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], seek_proj)
@@ -219,7 +219,7 @@ class InterventionYearsFilterTest(TestCase):
     def setUp(self):
         InfrastructureInterventionFactory.create(date=datetime(2012, 11, 10))
         InfrastructureInterventionFactory.create(date=datetime(1932, 11, 10))
-        self.filter = InterventionFilter()
+        self.filter = InterventionFilterSet()
         self.widget = self.filter.filters['year'].field.widget
 
     def test_year_choices_come_from_interventions(self):
@@ -240,7 +240,7 @@ class ProjectYearsFilterTest(TestCase):
     def setUp(self):
         ProjectFactory.create(begin_year=1500, end_year=2000)
         ProjectFactory.create(begin_year=1700, end_year=1800)
-        self.filter = ProjectFilter()
+        self.filter = ProjectFilterSet()
         self.widget = self.filter.filters['in_year'].field.widget
 
     def test_year_choices_come_from_project(self):

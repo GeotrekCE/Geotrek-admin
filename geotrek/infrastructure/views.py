@@ -6,7 +6,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
 from .models import Infrastructure, Signage
-from .filters import InfrastructureFilter, SignageFilter
+from .filters import InfrastructureFilterSet, SignageFilterSet
 from .forms import InfrastructureForm, SignageForm
 
 
@@ -17,7 +17,7 @@ class InfrastructureLayer(MapEntityLayer):
 
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
-    filterform = InfrastructureFilter
+    filterform = InfrastructureFilterSet
     columns = ['id', 'name', 'type', 'cities']
 
 
@@ -71,7 +71,7 @@ class SignageLayer(MapEntityLayer):
 
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
-    filterform = SignageFilter
+    filterform = SignageFilterSet
     columns = ['id', 'name', 'type', 'cities']
 
 

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from geotrek.land.tests.test_filters import LandFiltersTest
 
-from geotrek.trekking.filters import TrekFilter
+from geotrek.trekking.filters import TrekFilterSet
 from geotrek.trekking.factories import TrekFactory
 
 
 class TrekFilterLandTest(LandFiltersTest):
 
-    filterclass = TrekFilter
+    filterclass = TrekFilterSet
 
 
     def create_pair_of_distinct_path(self):
