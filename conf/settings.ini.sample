@@ -47,8 +47,10 @@ scan_attributions = IGN Scan
 #  Email settings
 #..........................
 
-# Recipient
-mailadmin = admin@yourdomain.tld
+# Recipients
+mailadmins = admin@yourdomain.tld
+mailmanagers = manager1@yourdomain.tld, manager2@yourdomain.tld
+
 # Server config
 mailfrom =
 mailhost =

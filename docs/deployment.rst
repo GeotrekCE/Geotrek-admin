@@ -51,34 +51,23 @@ If you want to allow the users to access the *AdminSite*, give them the *staff*
 status using the dedicated checkbox.
 
 
-External authent
-----------------
+Email settings
+--------------
 
-You can authenticate user against a remote database table or view.
+Geotrek will send emails :
 
-To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
+* to administrators when internal errors occur
+* to managers when a feedback report is created
 
-Expected columns in table/view are :
+Email configuration takes place in ``etc/settings.ini``, where you control
+recipients emails as well as server parameters (host, user, password, ...)
 
-* username : string (*unique*)
-* first_name : string
-* last_name : string
-* password : string (simple md5 encoded, or full hashed and salted password)
-* email : string
-* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 6: administrator)
-* structure : string
-* lang : string (language code)
+You can test you configuration with the following command. A fake email will
+be sent to the managers :
 
+::
 
-:notes:
-
-    User management will be disabled from Administration backoffice.
-
-    In order to disable remote login, just remove *authent_dbname* value in settings
-    file, and update instance (see paragraph above).
-
-    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
-    for more details.
+    bin/django test_managers_emails
 
 
 Advanced Configuration

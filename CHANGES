@@ -5,10 +5,18 @@ CHANGELOG
 0.23 (unreleased)
 -----------------
 
+** Breaking changes **
+
+* Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``
+* Permission systems has been refactored (*see below*)
+
 ** Bug fixes **
 
 * Force browser cache revalidation for path graph (fixes #1029)
 * Fix deletion porblems in AdminSite (fixes #1008)
+* Trek advised parking and public transport are translatable (fixes #1024)
+* Fix missing translation "no filters" and "current criterias" (fixes #884)
+* Fix PDF versions of documents not being translated (fixes #1028)
 
 ** New features **
 
@@ -26,6 +34,7 @@ CHANGELOG
 * Topologies are not recreated if user did not edit field (fixes #833)
 * Added setting to serve attachments as download or within the browser (fixes #976)
 * Added static file for projection EPSG:32620
+* Show land objects in menu (fixes #942)
 
 ** Internal changes **
 
@@ -57,6 +66,7 @@ CHANGELOG
       - ``trekking | Trek | Can export Trek``
       - ``trekking | POI | Can read POI``
       - ``trekking | POI | Can export POI``
+      - ``feedback | Report | Can add report``
 
 
 0.22.5 (2014-03-19)

@@ -7,7 +7,8 @@ from geotrek.trekking import models as trekking_models
 
 class TrekTO(TranslationOptions):
     fields = ('name', 'departure', 'arrival', 'description_teaser',
-              'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice', )
+              'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice',
+              'advised_parking', 'public_transport')
 
 
 class POITO(TranslationOptions):

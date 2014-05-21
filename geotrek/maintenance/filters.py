@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
 
 from geotrek.core.models import Topology
-from geotrek.land.filters import EdgeStructureRelatedFilterSet
+from geotrek.common.filters import StructureRelatedFilterSet
 
 from .models import Intervention, Project
 
@@ -26,13 +26,13 @@ class InterventionYearSelect(Select):
         return super(InterventionYearSelect, self).render_options(*args, **kwargs)
 
 
-class InterventionFilter(EdgeStructureRelatedFilterSet):
+class InterventionFilterSet(StructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects')
     year = YearFilter(name='date', widget=InterventionYearSelect, label=_(u"Year"))
 
-    class Meta(EdgeStructureRelatedFilterSet.Meta):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
-        fields = EdgeStructureRelatedFilterSet.Meta.fields + [
+        fields = StructureRelatedFilterSet.Meta.fields + [
             'status', 'type', 'stake', 'project'
         ]
 
@@ -48,12 +48,12 @@ class ProjectYearSelect(Select):
         return super(ProjectYearSelect, self).render_options(*args, **kwargs)
 
 
-class ProjectFilter(EdgeStructureRelatedFilterSet):
+class ProjectFilterSet(StructureRelatedFilterSet):
     bbox = PythonPolygonFilter(name='geom')
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
                                 label=_(u"Year of activity"))
 
-    class Meta(EdgeStructureRelatedFilterSet.Meta):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Project
-        fields = EdgeStructureRelatedFilterSet.Meta.fields
+        fields = StructureRelatedFilterSet.Meta.fields

@@ -17,6 +17,7 @@ INSTALLED_APPS += (
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.MemcachedCache'
 CACHES['default']['LOCATION'] = '127.0.0.1:11211'
 
+LOGGING['handlers']['mail_admins']['class'] = 'django.utils.log.AdminEmailHandler'
 LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
                                   'formatter': 'simple',
                                   'filename': os.path.join(DEPLOY_ROOT, 'var', 'log', 'geotrek.log')}
@@ -27,12 +28,13 @@ LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 #  Email settings
 #..........................
 
-ADMINS = (
-    ('Admin %s' % TITLE, envini.get('mailadmin')),
-)
-MANAGERS = ADMINS
-EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
-DEFAULT_FROM_EMAIL = envini.get('mailfrom', envini.get('mailadmin'))
+admins = envini.getstrings('mailadmins')
+ADMINS = tuple([('Admin %s' % TITLE, admin) for admin in admins])
+
+managers = envini.getstrings('mailmanagers')
+MANAGERS = tuple([('Manager %s' % TITLE, manager) for manager in managers])
+
+DEFAULT_FROM_EMAIL = envini.get('mailfrom', admins[0])
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_HOST = envini.get('mailhost')
 EMAIL_HOST_USER = envini.get('mailhost')

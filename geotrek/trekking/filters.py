@@ -1,22 +1,23 @@
 from django.utils.translation import ugettext_lazy as _
-from geotrek.land.filters import TopoFilter, EdgeFilterSet
+from mapentity.filters import MapEntityFilterSet
+from geotrek.core.filters import TopoFilter
 
 from .models import Trek, POI
 
 
-class TrekFilter(EdgeFilterSet):
-    class Meta(EdgeFilterSet.Meta):
+class TrekFilterSet(MapEntityFilterSet):
+    class Meta:
         model = Trek
-        fields = EdgeFilterSet.Meta.fields + ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
+        fields = ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
 
 
 class POITrekFilter(TopoFilter):
     queryset = Trek.objects.existing()
 
 
-class POIFilter(EdgeFilterSet):
+class POIFilterSet(MapEntityFilterSet):
     trek = POITrekFilter(label=_("Trek"), required=False)
 
-    class Meta(EdgeFilterSet.Meta):
+    class Meta:
         model = POI
-        fields = EdgeFilterSet.Meta.fields + ['type', 'trek']
+        fields = ['type', 'trek']

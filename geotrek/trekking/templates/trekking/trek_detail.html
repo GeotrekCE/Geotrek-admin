@@ -119,37 +119,19 @@
         <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
-                {% for t in trek.themes.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.themes.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"usages" }}</th>
             <td>
-                {% for u in trek.usages.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ u }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.usages.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
-                {% for n in trek.networks.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ n }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.networks.all %}
             </td>
         </tr>
         <tr>
@@ -171,25 +153,13 @@
         <tr>
             <th>{{ trek|verbose:"web_links" }}</th>
             <td>
-                {% for w in trek.web_links.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ w }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.web_links.all %}
             </td>
         </tr>
         <tr>
             <th>{% trans "POI types" %}</th>
             <td>
-                {% for t in trek.poi_types %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.poi_types %}
             </td>
         </tr>
         <tr>

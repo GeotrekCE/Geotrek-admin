@@ -55,10 +55,10 @@ msgid "Land types"
 msgstr "Types foncier"
 
 msgid "Land edge"
-msgstr "Tronçon foncier"
+msgstr "Statut"
 
 msgid "Land edges"
-msgstr "Tronçons foncier"
+msgstr "Statuts"
 
 msgid "Organism"
 msgstr "Organisme"
@@ -99,11 +99,8 @@ msgstr "Renseigner le gestionnaire travaux"
 msgid "Add signage management edge"
 msgstr "Renseigner le gestionnaire signalétique"
 
-msgid "Manage land"
-msgstr "Gestion foncière"
-
-msgid "Competence zones"
-msgstr "Zones de compétence"
+msgid "Competence paths"
+msgstr "Compétence sentiers"
 
 msgid "Add a new intervention"
 msgstr "Ajouter une intervention"
