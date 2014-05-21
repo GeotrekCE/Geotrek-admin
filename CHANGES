@@ -16,6 +16,7 @@ CHANGELOG
 * Fix deletion porblems in AdminSite (fixes #1008)
 * Trek advised parking and public transport are translatable (fixes #1024)
 * Fix missing translation "no filters" and "current criterias" (fixes #884)
+* Fix PDF versions of documents not being translated (fixes #1028)
 
 ** New features **
 
