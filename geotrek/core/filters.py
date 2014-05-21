@@ -34,7 +34,7 @@ class TopologyFilter(ModelChoiceFilter):
             edges = Topology.objects.filter(pk=value.pk)
         else:
             edges = self.value_to_edges(value)
-        return TopologyFilter._topology_filter(qs, edges)
+        return self._topology_filter(qs, edges)
 
     def value_to_edges(self, value):
         """
@@ -42,8 +42,7 @@ class TopologyFilter(ModelChoiceFilter):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def _topology_filter(qs, edges):
+    def _topology_filter(self, qs, edges):
         """
         This piece of code should be rewritten nicely with managers : TODO !
         """
