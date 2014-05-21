@@ -14,8 +14,8 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from geotrek.authent.decorators import same_structure_required
 
 from .models import Path, Trail
-from .forms import PathForm
-from .filters import PathFilterSet
+from .forms import PathForm, TrailForm
+from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 
 
@@ -35,9 +35,9 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
+    queryset = Path.objects.prefetch_related('networks').select_related('stake')
     filterform = PathFilterSet
-    columns = ['id', 'name', 'networks', 'stake', 'trail']
+    columns = ['id', 'name', 'networks', 'stake']
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -112,17 +112,55 @@ def get_graph_json(request):
     return HttpJSONResponse(json_graph)
 
 
+class TrailLayer(MapEntityLayer):
+    model = Trail
+    properties = ['name']
+
+
 class TrailList(MapEntityList):
     model = Trail
+    filterform = TrailFilterSet
+    columns = ['id', 'name']
+
+
+class TrailJsonList(MapEntityJsonList, TrailList):
+    pass
+
+
+class TrailFormatList(MapEntityFormat, TrailList):
+    pass
 
 
 class TrailDetail(MapEntityDetail):
     model = Trail
 
-
-class TrailUpdate(MapEntityUpdate):
-    model = Trail
+    def context_data(self, *args, **kwargs):
+        context = super(TrailDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class TrailDocument(MapEntityDocument):
     model = Trail
+
+
+class TrailCreate(MapEntityCreate):
+    model = Trail
+    form_class = TrailForm
+
+
+class TrailUpdate(MapEntityUpdate):
+    model = Trail
+    form_class = TrailForm
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(PathUpdate, self).dispatch(*args, **kwargs)
+
+
+class TrailDelete(MapEntityDelete):
+    model = Trail
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrailDelete, self).dispatch(*args, **kwargs)

@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django_filters import CharFilter, ModelChoiceFilter
 
-from .models import Topology, Path
+from .models import Topology, Path, Trail
 
 from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
 
@@ -86,3 +86,8 @@ class PathFilterSet(StructureRelatedFilterSet):
         fields = StructureRelatedFilterSet.Meta.fields + [
                     'valid', 'length', 'networks']
 
+
+
+class TrailFilterSet(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
+        model = Trail

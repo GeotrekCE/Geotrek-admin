@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 import floppyforms as forms
 
 from geotrek.common.forms import CommonForm
-from .models import Path
+from .models import Path, Trail
 from .helpers import PathHelper
 from .fields import TopologyField, SnappedLineStringField
 
@@ -86,3 +86,9 @@ class PathForm(CommonForm):
             self.save_m2m()
 
         return path
+
+
+class TrailForm(TopologyForm):
+    class Meta(CommonForm.Meta):
+        model = Trail
+        fields = CommonForm.Meta.fields + ['structure', 'name']
