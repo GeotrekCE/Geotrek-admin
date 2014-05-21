@@ -3,6 +3,7 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -17,7 +18,7 @@ class Migration(SchemaMigration):
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
             ('comment', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
             ('category', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['feedback.ReportCategory'], null=True, blank=True)),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.PointField')(default=None, srid=2154, null=True)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.PointField')(default=None, srid=settings.SRID, null=True)),
             ('context_content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
             ('context_object_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
         ))
@@ -56,7 +57,7 @@ class Migration(SchemaMigration):
             'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
-            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'default': 'None', 'srid': '2154', 'null': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'default': 'None', 'srid': '%s' % settings.SRID, 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
