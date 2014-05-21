@@ -104,7 +104,8 @@ class TopologyFilterTrail(TopologyFilter):
     queryset = Trail.objects.existing()
 
 
-for filterset in (InfrastructureFilterSet, SignageFilterSet, InterventionFilterSet, ProjectFilterSet):
+for filterset in (PathFilterSet, InfrastructureFilterSet, SignageFilterSet,
+                  InterventionFilterSet, ProjectFilterSet):
     filterset.add_filters({
         'trail': TopologyFilterTrail(label=_('Trail'), required=False)
     })
