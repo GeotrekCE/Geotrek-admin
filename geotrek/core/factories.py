@@ -61,7 +61,6 @@ class PathFactory(StructureRelatedDefaultFactory):
     max_elevation = 0
 
     # FK that could also be null
-    trail = factory.SubFactory(TrailFactory)
     comfort = factory.SubFactory(ComfortFactory)
     datasource = factory.SubFactory(DatasourceFactory)
     stake = factory.SubFactory(StakeFactory)
