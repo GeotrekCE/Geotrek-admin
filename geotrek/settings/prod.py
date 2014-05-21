@@ -24,6 +24,13 @@ LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 
+
+# Optimitizations
+#..........................
+
+DATABASES['default']['CONN_MAX_AGE'] = 600
+
+
 #
 #  Email settings
 #..........................
