@@ -52,6 +52,13 @@ class SignageManagementEdgeFilterSet(OrganismFilterSet):
         model = SignageManagementEdge
 
 
+"""
+
+    Injected filter fields
+
+"""
+
+
 class TopologyFilterPhysicalType(TopologyFilter):
     model = PhysicalType
 

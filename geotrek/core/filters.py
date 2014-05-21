@@ -6,6 +6,8 @@ from django_filters import CharFilter, ModelChoiceFilter
 from .models import Topology, Path, Trail
 
 from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
+from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 
 
 class TopologyFilter(ModelChoiceFilter):
@@ -97,3 +99,13 @@ class TrailFilterSet(StructureRelatedFilterSet):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + [
                     'name', 'departure', 'arrival', 'comments']
+
+
+class TopologyFilterTrail(TopologyFilter):
+    queryset = Trail.objects.existing()
+
+
+for filterset in (InfrastructureFilterSet, SignageFilterSet, InterventionFilterSet, ProjectFilterSet):
+    filterset.add_filters({
+        'trail': TopologyFilterTrail(label=_('Trail'), required=False)
+    })
