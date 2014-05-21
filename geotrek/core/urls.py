@@ -14,4 +14,4 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += registry.register(Path)
-urlpatterns += registry.register(Trail, menu=False)
+urlpatterns += registry.register(Trail)
