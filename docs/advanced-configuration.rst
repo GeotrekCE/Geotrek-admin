@@ -11,14 +11,18 @@ Geotrek configuration is currently restricted to values present in ``etc/setting
 
 However, it is still possible to write a custom Django setting file.
 
-* Create your a file in *geotrek/settings/custom.py* with the following content ::
+* Create your a file in *geotrek/settings/custom.py* with the following content :
+
+.. code-block :: python
 
     from .prod import *
 
     # My custom value
     HIDDEN_OPTION = 3.14
 
-* Add this ``etc/settings.ini`` to specify the newly created setting ::
+* Add this ``etc/settings.ini`` to specify the newly created setting :
+
+.. code-block :: ini
 
     [django]
     settings = settings.custom
@@ -36,7 +40,7 @@ Its configuration can be customized using advanced settings (see above paragraph
 For example, in order to control which buttons are to be shown, and which tags
 are to be kept when cleaning-up, add this bloc :
 
-::
+.. code-block :: python
 
     TINYMCE_DEFAULT_CONFIG = {
         'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
@@ -55,9 +59,31 @@ View attachments in the browser
 Attached files are downloaded by default by browser, with the following line,
 files will be opened in the browser :
 
-::
+.. code-block :: python
 
     MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
+
+
+Using Google Maps projection in the Web interface
+-------------------------------------------------
+
+Just add this line in your custom production settings file :
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['SRID'] = 3857
+
+Your data will still be stored using the SRID you specified in the ``settings.ini``
+file.
+
+Now you can use WMTS or *OpenStreetMap* tiles for example :
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('Scan', 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
+        ('Ortho', 'http://{s}.tiles.mapbox.com/v3/openstreetmap.map-4wvf9l0l/{z}/{x}/{y}.jpg', '(c) MapBox'),
+    ]
 
 
 External authent

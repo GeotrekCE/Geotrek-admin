@@ -35,6 +35,7 @@ CHANGELOG
 * Added setting to serve attachments as download or within the browser (fixes #976)
 * Added static file for projection EPSG:32620
 * Show land objects in menu (fixes #942)
+* Documented configuration of custom projections (fixes #1037)
 
 ** Internal changes **
 
