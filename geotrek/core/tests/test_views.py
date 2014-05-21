@@ -73,7 +73,7 @@ class ViewsTest(CommonTest):
         test_structure(s2, st2)
 
     def test_basic_format(self):
-        self.modelfactory.create(trail=None)
+        self.modelfactory.create()
         self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 

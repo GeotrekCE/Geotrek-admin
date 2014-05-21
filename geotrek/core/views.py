@@ -133,7 +133,7 @@ class TrailDetail(MapEntityDetail):
 
 
 class TrailDocument(MapEntityDocument):
-    queryset = Trail.objects.existing()
+    model = Trail
 
 
 class TrailCreate(MapEntityCreate):
