@@ -52,14 +52,14 @@ def filter(qs, edges):
         return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class TopoFilter(ModelChoiceFilter):
+class TopologyFilter(ModelChoiceFilter):
 
     model = None
     queryset = None
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('queryset', self.get_queryset())
-        super(TopoFilter, self).__init__(*args, **kwargs)
+        super(TopologyFilter, self).__init__(*args, **kwargs)
         self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
 
     def get_queryset(self):

@@ -7,7 +7,7 @@ from mapentity.filters import MapEntityFilterSet
 from geotrek.common.models import Organism
 from geotrek.common.filters import StructureRelatedFilterSet
 
-from geotrek.core.filters import TopoFilter, PathFilterSet
+from geotrek.core.filters import TopologyFilter, PathFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
@@ -52,49 +52,49 @@ class SignageManagementEdgeFilterSet(OrganismFilterSet):
         model = SignageManagementEdge
 
 
-class TopoFilterPhysicalType(TopoFilter):
+class TopologyFilterPhysicalType(TopologyFilter):
     model = PhysicalType
 
     def value_to_edges(self, value):
         return value.physicaledge_set.all()
 
 
-class TopoFilterLandType(TopoFilter):
+class TopologyFilterLandType(TopologyFilter):
     model = LandType
 
     def value_to_edges(self, value):
         return value.landedge_set.all()
 
 
-class TopoFilterCity(TopoFilter):
+class TopologyFilterCity(TopologyFilter):
     model = City
 
     def value_to_edges(self, value):
         return value.cityedge_set.all()
 
 
-class TopoFilterDistrict(TopoFilter):
+class TopologyFilterDistrict(TopologyFilter):
     model = District
 
     def value_to_edges(self, value):
         return value.districtedge_set.all()
 
 
-class TopoFilterCompetenceEdge(TopoFilter):
+class TopologyFilterCompetenceEdge(TopologyFilter):
     model = Organism
 
     def value_to_edges(self, value):
         return value.competenceedge_set.select_related('organization').all()
 
 
-class TopoFilterSignageManagementEdge(TopoFilter):
+class TopologyFilterSignageManagementEdge(TopologyFilter):
     model = Organism
 
     def value_to_edges(self, value):
         return value.signagemanagementedge_set.select_related('organization').all()
 
 
-class TopoFilterWorkManagementEdge(TopoFilter):
+class TopologyFilterWorkManagementEdge(TopologyFilter):
     model = Organism
 
     def value_to_edges(self, value):
@@ -103,13 +103,13 @@ class TopoFilterWorkManagementEdge(TopoFilter):
 
 def add_edge_filters(filter_set):
     filter_set.add_filters({
-        'city': TopoFilterCity(label=_('City'), required=False),
-        'district': TopoFilterDistrict(label=_('District'), required=False),
-        'physical_type': TopoFilterPhysicalType(label=_('Physical type'), required=False),
-        'land_type': TopoFilterLandType(label=_('Land type'), required=False),
-        'competence': TopoFilterCompetenceEdge(label=_('Competence'), required=False),
-        'signage': TopoFilterSignageManagementEdge(label=_('Signage management'), required=False),
-        'work': TopoFilterWorkManagementEdge(label=_('Work management'), required=False),
+        'city': TopologyFilterCity(label=_('City'), required=False),
+        'district': TopologyFilterDistrict(label=_('District'), required=False),
+        'physical_type': TopologyFilterPhysicalType(label=_('Physical type'), required=False),
+        'land_type': TopologyFilterLandType(label=_('Land type'), required=False),
+        'competence': TopologyFilterCompetenceEdge(label=_('Competence'), required=False),
+        'signage': TopologyFilterSignageManagementEdge(label=_('Signage management'), required=False),
+        'work': TopologyFilterWorkManagementEdge(label=_('Work management'), required=False),
     })
 
 
