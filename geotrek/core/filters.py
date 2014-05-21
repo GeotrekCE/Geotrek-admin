@@ -62,10 +62,10 @@ class TopologyFilter(ModelChoiceFilter):
             return qs.filter(topology__in=[topo.pk for topo in overlapping])
         elif issubclass(qs.model, maintenance.models.Project):
             # Find all interventions overlapping those edges
-            interventions = filter(maintenance.models.Intervention.objects.existing()
-                                                                  .select_related('project')
-                                                                  .filter(project__in=qs),
-                                   edges)
+            interventions = self._topology_filter(maintenance.models.Intervention.objects.existing()
+                                                                    .select_related('project')
+                                                                    .filter(project__in=qs),
+                                                  edges)
             # Return only the projects concerned by the interventions
             projects = []
             for intervention in interventions:
