@@ -87,7 +87,13 @@ class PathFilterSet(StructureRelatedFilterSet):
                     'valid', 'length', 'networks']
 
 
-
 class TrailFilterSet(StructureRelatedFilterSet):
+    name = CharFilter(label=_('Name'), lookup_type='icontains')
+    departure = CharFilter(label=_('Departure'), lookup_type='icontains')
+    arrival = CharFilter(label=_('Arrival'), lookup_type='icontains')
+    comments = CharFilter(label=_('Comments'), lookup_type='icontains')
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
+        fields = StructureRelatedFilterSet.Meta.fields + [
+                    'name', 'departure', 'arrival', 'comments']

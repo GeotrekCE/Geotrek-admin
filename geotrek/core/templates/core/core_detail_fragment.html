@@ -1,10 +1,9 @@
 {% load i18n %}
 
+<h3>{% trans "Management" %}</h3>
+<table class="table">
+
 {% if modelname != "path" %}
-
-  <h3>{% trans "Management" %}</h3>
-  <table class="table">
-
     {% if object.topology %}
         {% include "core/aggregations_list_fragment.html" with object=object.topology %}
     {% elif object.aggregations %}
@@ -14,7 +13,9 @@
     {% else %}
         <span class="none">{% trans "No information" %}</span>
     {% endif %}
+{% endif %}
 
+{% if modelname != "trail" %}
     <tr>
         <th>{% trans "Trails" %}</th>
         <td>
@@ -27,6 +28,6 @@
             {% endfor %}
         </td>
     </tr>
-
-  </table>
 {% endif %}
+
+</table>

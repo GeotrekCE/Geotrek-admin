@@ -442,9 +442,11 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
 
     class Meta:
         db_table = 'l_t_sentier'
-        verbose_name = _(u"Trails")
+        verbose_name = _(u"Trail")
         verbose_name_plural = _(u"Trails")
         ordering = ['name']
+
+    objects = Topology.get_manager_cls(models.GeoManager)()
 
     def __unicode__(self):
         return self.name
@@ -458,7 +460,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
 
     @classmethod
     def path_trails(cls, path):
-        return cls.objects.filter(aggregations__path=path).distinct('pk')
+        return cls.objects.filter(aggregations__path=path)
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self))

@@ -113,26 +113,18 @@ def get_graph_json(request):
 
 
 class TrailLayer(MapEntityLayer):
-    model = Trail
+    queryset = Trail.objects.existing()
     properties = ['name']
 
 
 class TrailList(MapEntityList):
-    model = Trail
+    queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    columns = ['id', 'name']
-
-
-class TrailJsonList(MapEntityJsonList, TrailList):
-    pass
-
-
-class TrailFormatList(MapEntityFormat, TrailList):
-    pass
+    columns = ['id', 'name', 'departure', 'arrival']
 
 
 class TrailDetail(MapEntityDetail):
-    model = Trail
+    queryset = Trail.objects.existing()
 
     def context_data(self, *args, **kwargs):
         context = super(TrailDetail, self).context_data(*args, **kwargs)
@@ -141,7 +133,7 @@ class TrailDetail(MapEntityDetail):
 
 
 class TrailDocument(MapEntityDocument):
-    model = Trail
+    queryset = Trail.objects.existing()
 
 
 class TrailCreate(MapEntityCreate):
@@ -150,7 +142,7 @@ class TrailCreate(MapEntityCreate):
 
 
 class TrailUpdate(MapEntityUpdate):
-    model = Trail
+    queryset = Trail.objects.existing()
     form_class = TrailForm
 
     @same_structure_required('core:trail_detail')
@@ -159,7 +151,7 @@ class TrailUpdate(MapEntityUpdate):
 
 
 class TrailDelete(MapEntityDelete):
-    model = Trail
+    queryset = Trail.objects.existing()
 
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
