@@ -8,29 +8,56 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Trail.id'
-        db.delete_column('l_t_sentier', u'id')
 
-        # Deleting field 'Trail.date_update'
+        # Keep track of previous paths associated to trails
+        by_paths = {}
+        for path, trail in db.execute('SELECT id, sentier FROM l_t_troncon;'):
+            by_paths.setdefault(trail, []).append(path)
+
+        # Deleting trail reference from path
+        db.delete_column('l_t_troncon', 'sentier')
+
+        # Fields are now in topology model
         db.delete_column('l_t_sentier', 'date_update')
-
-        # Deleting field 'Trail.date_insert'
         db.delete_column('l_t_sentier', 'date_insert')
+
 
         # Adding field 'Trail.topo_object'
         db.add_column('l_t_sentier', 'topo_object',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default=None, to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement'),
+                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], null=True, db_column='evenement'),
                       keep_default=False)
 
-        # Deleting field 'Path.trail'
-        db.delete_column('l_t_troncon', 'sentier')
+        # Restore NAIVELY previous trails
+        from geotrek.core.models import Topology
+
+        trails = db.execute('SELECT id FROM l_t_sentier')
+        print "Migrating %s trails" % len(trails)
+
+        for (trail,) in trails:
+            topo = Topology()
+            topo.kind = 'TRAIL'
+            topo.save()
+            print "Created empty topology %s" % topo.pk
+
+            db.execute('UPDATE l_t_sentier SET evenement = %s WHERE id = %s', (topo.pk, trail))
+
+            trail_paths = by_paths.get(trail, [])
+            print "%s paths for trail %s" % (len(trail_paths), trail)
+            for path in trail_paths:
+                db.execute('INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre) VALUES (%s,%s, 0.0, 1.0, 1)', (
+                    path, topo.pk))
+
+        db.execute('ALTER TABLE l_t_sentier ALTER COLUMN evenement SET NOT NULL')
+        db.execute('ALTER TABLE l_t_sentier DROP CONSTRAINT l_t_sentier_pkey CASCADE')
+        db.execute('ALTER TABLE l_t_sentier DROP COLUMN IF EXISTS id')
+        db.execute('ALTER TABLE l_t_sentier ADD CONSTRAINT l_t_sentier_pkey PRIMARY KEY (evenement)')
 
 
     def backwards(self, orm):
 
         # User chose to not deal with backwards NULL issues for 'Trail.id'
         raise RuntimeError("Cannot reverse this migration. 'Trail.id' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'Trail.id'
         db.add_column('l_t_sentier', u'id',
                       self.gf('django.db.models.fields.AutoField')(primary_key=True),
@@ -39,7 +66,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'Trail.date_update'
         raise RuntimeError("Cannot reverse this migration. 'Trail.date_update' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'Trail.date_update'
         db.add_column('l_t_sentier', 'date_update',
                       self.gf('django.db.models.fields.DateTimeField')(auto_now=True, db_column='date_update', blank=True),
@@ -48,7 +75,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'Trail.date_insert'
         raise RuntimeError("Cannot reverse this migration. 'Trail.date_insert' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'Trail.date_insert'
         db.add_column('l_t_sentier', 'date_insert',
                       self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_column='date_insert', blank=True),
