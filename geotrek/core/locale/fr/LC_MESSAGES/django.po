@@ -204,3 +204,9 @@ msgstr "Non validé"
 
 msgid "Add a path"
 msgstr "Ajouter un tronçon"
+
+msgid "Add a new path"
+msgstr "Ajouter un tronçon"
+
+msgid "Add a new trail"
+msgstr "Ajouter un sentier"
