@@ -47,6 +47,7 @@ CHANGELOG
 * Complete refactor of maps initialization, without inline preprocessed JavaScript
 * Rely on Django permissions to control access to detail, list and exports (fixes #675)
 * Core and altimetry modules are now splitted (fixes #996)
+* Renamed treks POIs GeoJSON properties
 
 :notes:
 
