@@ -39,6 +39,10 @@ Read all release notes carefully.
 * Added static file for projection EPSG:32620
 * Show land objects in menu (fixes #942)
 * Documented configuration of custom projections (fixes #1037)
+* Buttons in the list menu to add new objects easily
+* Add fullscreen button on maps (fixes #904)
+* Add all controls on detail map (fixes #907)
+* Add a button to close filters (fixes #424)
 
 ** Internal changes **
 
