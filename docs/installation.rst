@@ -48,6 +48,9 @@ See information below for configuration and loading initial demonstration data.
 Software update
 ---------------
 
+Before upgrading, **READ CAREFULLY** the release notes, either from the ``CHANGES``
+files `or online <https://github.com/makinacorpus/Geotrek/releases>`_.
+
 Keep previous versions in separate folders (**recommended**).
 
 First, copy your old configuration and uploaded files to your new folder.

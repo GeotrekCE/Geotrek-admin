@@ -10,6 +10,7 @@ Contents:
    deployment
    advanced-configuration
    troubleshooting
+   faq
    design
    development
 

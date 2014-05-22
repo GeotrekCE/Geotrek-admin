@@ -43,6 +43,7 @@ Read all release notes carefully.
 * Add fullscreen button on maps (fixes #904)
 * Add all controls on detail map (fixes #907)
 * Add a button to close filters (fixes #424)
+* Added new sections in documention : *FAQ* and *Advanced configuration*
 
 ** Internal changes **
 
