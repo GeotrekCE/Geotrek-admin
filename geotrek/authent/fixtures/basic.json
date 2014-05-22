@@ -288,6 +288,24 @@
                 ["read_report", "feedback", "report"]
             ]
         }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "Geotrek-rando",
+            "permissions": [
+
+                ["read_attachment", "paperclip", "attachment"],
+                ["add_attachment", "paperclip", "attachment"],
+
+                ["read_trek", "trekking", "trek"],
+                ["export_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"],
+                ["export_poi", "trekking", "poi"],
+
+                ["add_report", "feedback", "report"],
+            ]
+        }
     }
 ]
-
