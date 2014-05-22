@@ -304,7 +304,7 @@
                 ["read_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
 
-                ["add_report", "feedback", "report"],
+                ["add_report", "feedback", "report"]
             ]
         }
     }
