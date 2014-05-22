@@ -189,7 +189,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         poislayer = json.loads(response.content)
         poifeature = poislayer['features'][0]
-        self.assertTrue('serializable_thumbnail' in poifeature['properties'])
+        self.assertTrue('thumbnail' in poifeature['properties'])
 
     def test_gpx(self):
         trek = TrekWithPOIsFactory.create()

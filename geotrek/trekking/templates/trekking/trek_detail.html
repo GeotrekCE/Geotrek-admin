@@ -207,12 +207,6 @@
 
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
-                for (var i=0, n = data.features.length; i<n; i++) {
-                    var f = data.features[i];
-                    f.properties.type = f.properties.serializable_type;
-                    f.properties.thumbnail = f.properties.serializable_thumbnail;
-                }
-
                 var pois = new POILayer(data),
                     poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
