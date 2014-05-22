@@ -1,7 +1,7 @@
 .. _advanced-configuration-section:
 
 ======================
-Advanced Configuration
+ADVANCED CONFIGURATION
 ======================
 
 Custom setting file

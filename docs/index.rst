@@ -11,6 +11,7 @@ Contents:
    advanced-configuration
    troubleshooting
    faq
+   user-manual
    design
    development
 
