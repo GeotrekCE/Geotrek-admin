@@ -68,6 +68,10 @@ Read all release notes carefully.
           WHERE l_t_sentier.id = l_t_troncon.sentier
         );
 
+    * Before upgrade, rename ``mailadmin`` to ``mailadmins`` and add
+      a new line ``mailmanagers`` in ``etc/settings.ini``. See *Email settings*
+      section in documentation.
+
     * Just before upgrading, delete the following folders  ::
 
         rm -rf lib/src/django-modeltranslation lib/src/mapentity
@@ -80,8 +84,16 @@ Read all release notes carefully.
         bin/django loaddata geotrek/authent/fixtures/minimal.json
         bin/django loaddata geotrek/authent/fixtures/basic.json
 
-    * After upgrading, make sure the user specified in *Geotrek-rando*
-      configuration has the following permissions:
+    * After upgrading, make sure *Active* is checked for the user *__internal__*
+      otherwise screenshotting won't work.
+
+    * After upgrading, load basic data for the new module ::
+
+        bin/django loaddata geotrek/feedback/fixtures/basic.json
+
+    * After upgrading, make sure the user specified in *Geotrek-rando* is
+      in the group *Geotrek-rando*, or has at least the following permissions
+      in the AdminSite :
 
       - ``paperclip | attachment | Can read attachments``
       - ``trekking | Trek | Can read Trek``

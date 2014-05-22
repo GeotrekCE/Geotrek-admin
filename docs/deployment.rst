@@ -89,7 +89,8 @@ Geotrek will send emails :
 * to managers when a feedback report is created
 
 Email configuration takes place in ``etc/settings.ini``, where you control
-recipients emails as well as server parameters (host, user, password, ...)
+recipients emails (``mailadmins``, ``mailmanagers``) as well as server
+parameters (``host``, ``user``, ``password``, ...)
 
 You can test you configuration with the following command. A fake email will
 be sent to the managers :
