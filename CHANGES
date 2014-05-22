@@ -8,6 +8,7 @@ CHANGELOG
 ** Bug fixes **
 
 * Fixed regression when editing topologies without modification
+* Fixed widget for Trails to allow linear topologies only
 
 
 0.23 (2014-05-22)

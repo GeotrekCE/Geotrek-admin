@@ -96,4 +96,7 @@ class TrailForm(TopologyForm):
         model = Trail
         fields = CommonForm.Meta.fields + ['structure', 'name',
         'departure', 'arrival', 'comments']
-        widgets = {'topology': LineTopologyWidget()}
+
+    def __init__(self, *args, **kwargs):
+        super(TrailForm, self).__init__(*args, **kwargs)
+        self.fields['topology'].widget = LineTopologyWidget()
