@@ -28,12 +28,6 @@ class NetworkAdmin(admin.ModelAdmin):
     list_filter = ('structure',)
 
 
-class TrailAdmin(admin.ModelAdmin):
-    list_display = ('name', 'structure')
-    search_fields = ('name', 'structure')
-    list_filter = ('structure',)
-
-
 class ComfortAdmin(admin.ModelAdmin):
     list_display = ('comfort', 'structure')
     search_fields = ('comfort', 'structure')
@@ -44,5 +38,4 @@ admin.site.register(Datasource, DatasourceAdmin)
 admin.site.register(Stake, StakeAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(Network, NetworkAdmin)
-admin.site.register(Trail, TrailAdmin)
 admin.site.register(Comfort, ComfortAdmin)

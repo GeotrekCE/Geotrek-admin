@@ -145,13 +145,3 @@ class PathGeometryTest(TestCase):
         # Snap both
         path_snapped = PathFactory.create(geom=LineString((0, 0), (3.0, 0)))
         self.assertEqual(path_snapped.geom.coords, ((0, 0), (3.0, math.sin(3))))
-
-
-class TrailTest(TestCase):
-
-    def test_geom(self):
-        t = TrailFactory.create()
-        self.assertTrue(t.geom is None)
-        p = PathFactory.create()
-        t.paths.add(p)
-        self.assertFalse(t.geom is None)

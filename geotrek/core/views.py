@@ -5,7 +5,6 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.core.cache import get_cache
 from django.shortcuts import redirect
-
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -14,8 +13,8 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from geotrek.authent.decorators import same_structure_required
 
 from .models import Path, Trail
-from .forms import PathForm
-from .filters import PathFilterSet
+from .forms import PathForm, TrailForm
+from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 
 
@@ -35,9 +34,28 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
+    queryset = Path.objects.prefetch_related('networks').select_related('stake')
     filterform = PathFilterSet
-    columns = ['id', 'name', 'networks', 'stake', 'trail']
+    columns = ['id', 'name', 'networks', 'stake', 'trails']
+
+    def get_queryset(self):
+        """
+        denormalize ``trail`` column from list.
+        """
+        qs = super(PathList, self).get_queryset()
+
+        denormalized = {}
+        paths_id = qs.values_list('id', flat=True)
+        paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
+        by_id = dict([(trail.id, trail) for trail in paths_trails])
+        trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
+        for trail_id, path_id in trails_paths_ids:
+            denormalized.setdefault(path_id, []).append(by_id[trail_id])
+
+        for path in qs:
+            path_trails = denormalized.get(path.id, [])
+            setattr(path, '_trails', path_trails)
+            yield path
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -112,17 +130,47 @@ def get_graph_json(request):
     return HttpJSONResponse(json_graph)
 
 
+class TrailLayer(MapEntityLayer):
+    queryset = Trail.objects.existing()
+    properties = ['name']
+
+
 class TrailList(MapEntityList):
-    model = Trail
+    queryset = Trail.objects.existing()
+    filterform = TrailFilterSet
+    columns = ['id', 'name', 'departure', 'arrival']
 
 
 class TrailDetail(MapEntityDetail):
-    model = Trail
+    queryset = Trail.objects.existing()
 
-
-class TrailUpdate(MapEntityUpdate):
-    model = Trail
+    def context_data(self, *args, **kwargs):
+        context = super(TrailDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class TrailDocument(MapEntityDocument):
+    queryset = Trail.objects.existing()
+
+
+class TrailCreate(MapEntityCreate):
     model = Trail
+    form_class = TrailForm
+
+
+class TrailUpdate(MapEntityUpdate):
+    queryset = Trail.objects.existing()
+    form_class = TrailForm
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrailUpdate, self).dispatch(*args, **kwargs)
+
+
+class TrailDelete(MapEntityDelete):
+    queryset = Trail.objects.existing()
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrailDelete, self).dispatch(*args, **kwargs)

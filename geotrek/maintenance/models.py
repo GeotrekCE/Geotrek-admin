@@ -229,17 +229,11 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
         return cls.objects.existing().filter(topology__aggregations__path=path)
 
     @classmethod
-    def trail_interventions(cls, trail):
-        """ Interventions of a trail is the union of interventions on all its paths """
-        return cls.objects.existing().filter(topology__aggregations__path__trail=trail)
-
-    @classmethod
     def topology_interventions(cls, topology):
         topos = Topology.overlapping(topology).values_list('pk', flat=True)
         return cls.objects.existing().filter(topology__in=topos).distinct('pk')
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
-Trail.add_property('interventions', lambda self: Intervention.trail_interventions(self))
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self))
 
 
@@ -438,10 +432,6 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
         return cls.objects.filter(interventions__in=path.interventions).distinct()
 
     @classmethod
-    def trail_projects(cls, trail):
-        return cls.objects.filter(interventions__in=trail.interventions).distinct()
-
-    @classmethod
     def topology_projects(cls, topology):
         return cls.objects.filter(interventions__in=topology.interventions).distinct()
 
@@ -465,7 +455,6 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
 
 Path.add_property('projects', lambda self: Project.path_projects(self))
 Topology.add_property('projects', lambda self: Project.topology_projects(self))
-Trail.add_property('projects', lambda self: Project.trail_projects(self))
 
 
 class ProjectType(StructureRelated):

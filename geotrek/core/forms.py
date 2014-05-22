@@ -3,9 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 import floppyforms as forms
 
 from geotrek.common.forms import CommonForm
-from .models import Path
-from .helpers import PathHelper
-from .fields import TopologyField, SnappedLineStringField
+from geotrek.core.widgets import LineTopologyWidget
+from geotrek.core.models import Path, Trail
+from geotrek.core.helpers import PathHelper
+from geotrek.core.fields import TopologyField, SnappedLineStringField
 
 
 class TopologyForm(CommonForm):
@@ -58,7 +59,7 @@ class PathForm(CommonForm):
         model = Path
         fields = CommonForm.Meta.fields + \
             ['structure',
-             'name', 'stake', 'comfort', 'trail', 'departure', 'arrival', 'comments',
+             'name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
              'datasource', 'networks', 'usages', 'valid', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
@@ -86,3 +87,11 @@ class PathForm(CommonForm):
             self.save_m2m()
 
         return path
+
+
+class TrailForm(TopologyForm):
+    class Meta(CommonForm.Meta):
+        model = Trail
+        fields = CommonForm.Meta.fields + ['structure', 'name',
+        'departure', 'arrival', 'comments']
+        widgets = {'topology': LineTopologyWidget()}

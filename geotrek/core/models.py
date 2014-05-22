@@ -45,13 +45,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"), db_column='confort')
-
-    # Override default manager
-    objects = models.GeoManager()
-
-    trail = models.ForeignKey('Trail',
-                              null=True, blank=True, related_name='paths',
-                              verbose_name=_("Trail"), db_column='sentier')
     datasource = models.ForeignKey('Datasource',
                                    null=True, blank=True, related_name='paths',
                                    verbose_name=_("Datasource"), db_column='source')
@@ -64,6 +57,9 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     networks = models.ManyToManyField('Network',
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
+
+    # Override default manager
+    objects = models.GeoManager()
 
     is_reversed = False
 
@@ -144,19 +140,22 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     def name_csv_display(self):
         return unicode(self)
 
+    @classproperty
+    def trails_verbose_name(cls):
+        return _("Trails")
+
     @property
-    def trail_display(self):
-        if self.trail:
-            return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.trail.pk,
-                                                                      self.trail.get_detail_url(),
-                                                                      self.trail,
-                                                                      self.trail)
+    def trails_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([t.name_display for t in trails])
         return _("None")
 
     @property
-    def trail_csv_display(self):
-        if self.trail:
-            return unicode(self.trail)
+    def trails_csv_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([unicode(t) for t in trails])
         return _("None")
 
 
@@ -436,8 +435,9 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
-
+class Trail(MapEntityMixin, Topology, StructureRelated):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
@@ -445,22 +445,14 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
 
     class Meta:
         db_table = 'l_t_sentier'
-        verbose_name = _(u"Trails")
+        verbose_name = _(u"Trail")
         verbose_name_plural = _(u"Trails")
         ordering = ['name']
 
+    objects = Topology.get_manager_cls(models.GeoManager)()
+
     def __unicode__(self):
         return self.name
-
-    @property
-    def geom(self):
-        geom = None
-        for p in self.paths.all():
-            if geom is None:
-                geom = LineString(p.geom.coords, srid=settings.SRID)
-            else:
-                geom = geom.union(p.geom)
-        return geom
 
     @property
     def name_display(self):
@@ -468,3 +460,11 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
                                                                   self.get_detail_url(),
                                                                   self,
                                                                   self)
+
+    @classmethod
+    def path_trails(cls, path):
+        return cls.objects.filter(aggregations__path=path)
+
+
+Path.add_property('trails', lambda self: Trail.path_trails(self))
+Topology.add_property('trails', lambda self: Trail.overlapping(self))

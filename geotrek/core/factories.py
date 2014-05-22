@@ -34,15 +34,6 @@ class NetworkFactory(factory.Factory):
     network = factory.Sequence(lambda n: u"Network %s" % n)
 
 
-class TrailFactory(factory.Factory):
-    FACTORY_FOR = models.Trail
-
-    name =  factory.Sequence(lambda n: u"Name %s" % n)
-    departure =  factory.Sequence(lambda n: u"Departure %s" % n)
-    arrival =  factory.Sequence(lambda n: u"Arrival %s" % n)
-    comments =  factory.Sequence(lambda n: u"Comments %s" % n)
-
-
 class ComfortFactory(factory.Factory):
     FACTORY_FOR = models.Comfort
 
@@ -70,7 +61,6 @@ class PathFactory(StructureRelatedDefaultFactory):
     max_elevation = 0
 
     # FK that could also be null
-    trail = factory.SubFactory(TrailFactory)
     comfort = factory.SubFactory(ComfortFactory)
     datasource = factory.SubFactory(DatasourceFactory)
     stake = factory.SubFactory(StakeFactory)
@@ -155,3 +145,12 @@ class PathAggregationFactory(factory.Factory):
     start_position = 0.0
     end_position = 1.0
     order = 0
+
+
+class TrailFactory(TopologyFactory):
+    FACTORY_FOR = models.Trail
+
+    name =  factory.Sequence(lambda n: u"Name %s" % n)
+    departure =  factory.Sequence(lambda n: u"Departure %s" % n)
+    arrival =  factory.Sequence(lambda n: u"Arrival %s" % n)
+    comments =  factory.Sequence(lambda n: u"Comments %s" % n)

@@ -73,20 +73,12 @@ class RestrictedAreaEdge(Topology):
                           .filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_area_edges(cls, trail):
-        return cls.objects.select_related('restricted_area')\
-                          .select_related('restricted_area__area_type')\
-                          .filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_area_edges(cls, topology):
         return cls.overlapping(topology).select_related('restricted_area')\
                                         .select_related('restricted_area__area_type')
 
 Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges)
 Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
-Trail.add_property('area_edges', RestrictedAreaEdge.trail_area_edges)
-Trail.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges)
 Topology.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)))
 Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [])
@@ -135,17 +127,11 @@ class CityEdge(Topology):
         return cls.objects.select_related('city').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_city_edges(cls, trail):
-        return cls.objects.select_related('city').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_city_edges(cls, topology):
         return cls.overlapping(topology).select_related('city')
 
 Path.add_property('city_edges', CityEdge.path_city_edges)
 Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
-Trail.add_property('city_edges', CityEdge.trail_city_edges)
-Trail.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 Topology.add_property('city_edges', CityEdge.topology_city_edges)
 Topology.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)))
 Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [])
@@ -192,17 +178,11 @@ class DistrictEdge(Topology):
         return cls.objects.select_related('district').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_district_edges(cls, trail):
-        return cls.objects.select_related('district').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_district_edges(cls, topology):
         return cls.overlapping(topology).select_related('district')
 
 Path.add_property('district_edges', DistrictEdge.path_district_edges)
 Path.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
-Trail.add_property('district_edges', DistrictEdge.trail_district_edges)
-Trail.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
 Topology.add_property('district_edges', DistrictEdge.topology_district_edges)
 Topology.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)))
 Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [])
