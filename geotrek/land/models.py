@@ -64,15 +64,10 @@ class PhysicalEdge(MapEntityMixin, Topology):
         return cls.objects.select_related('physical_type').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_physicals(cls, trail):
-        return cls.objects.select_related('physical_type').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_physicals(cls, topology):
         return cls.overlapping(topology).select_related('physical_type')
 
 Path.add_property('physical_edges', PhysicalEdge.path_physicals)
-Trail.add_property('physical_edges',PhysicalEdge.trail_physicals)
 Topology.add_property('physical_edges', PhysicalEdge.topology_physicals)
 Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [])
 Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'))
@@ -133,15 +128,10 @@ class LandEdge(MapEntityMixin, Topology):
         return cls.objects.select_related('land_type').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_lands(cls, trail):
-        return cls.objects.select_related('land_type').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_lands(cls, topology):
         return cls.overlapping(topology).select_related('land_type')
 
 Path.add_property('land_edges', LandEdge.path_lands)
-Trail.add_property('land_edges', LandEdge.trail_lands)
 Topology.add_property('land_edges', LandEdge.topology_lands)
 Intervention.add_property('land_edges', lambda self: self.topology.land_edges if self.topology else [])
 Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges'))
@@ -188,15 +178,10 @@ class CompetenceEdge(MapEntityMixin, Topology):
         return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_competences(cls, trail):
-        return cls.objects.select_related('organization').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_competences(cls, topology):
         return cls.overlapping(Topology.objects.get(pk=topology.pk)).select_related('organization')
 
 Path.add_property('competence_edges', CompetenceEdge.path_competences)
-Trail.add_property('competence_edges', CompetenceEdge.trail_competences)
 Topology.add_property('competence_edges', CompetenceEdge.topology_competences)
 Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [])
 Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'))
@@ -243,15 +228,10 @@ class WorkManagementEdge(MapEntityMixin, Topology):
         return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_works(cls, trail):
-        return cls.objects.select_related('organization').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_works(cls, topology):
         return cls.overlapping(topology).select_related('organization')
 
 Path.add_property('work_edges', WorkManagementEdge.path_works)
-Trail.add_property('work_edges', WorkManagementEdge.trail_works)
 Topology.add_property('work_edges', WorkManagementEdge.topology_works)
 Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [])
 Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'))
@@ -298,15 +278,10 @@ class SignageManagementEdge(MapEntityMixin, Topology):
         return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def trail_signages(cls, trail):
-        return cls.objects.select_related('organization').filter(aggregations__path__trail=trail).distinct('pk')
-
-    @classmethod
     def topology_signages(cls, topology):
         return cls.overlapping(topology).select_related('organization')
 
 Path.add_property('signage_edges', SignageManagementEdge.path_signages)
-Trail.add_property('signage_edges', SignageManagementEdge.trail_signages)
 Topology.add_property('signage_edges', SignageManagementEdge.topology_signages)
 Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [])
 Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'))

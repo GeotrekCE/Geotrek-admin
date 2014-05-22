@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
-from geotrek.core.filters import TopoFilter
+from geotrek.core.filters import TopologyFilter
 
 from .models import Trek, POI
 
@@ -11,7 +11,7 @@ class TrekFilterSet(MapEntityFilterSet):
         fields = ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
 
 
-class POITrekFilter(TopoFilter):
+class POITrekFilter(TopologyFilter):
     queryset = Trek.objects.existing()
 
 

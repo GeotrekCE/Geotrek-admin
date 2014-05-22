@@ -18,5 +18,7 @@
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe }}</td>
         </tr>
+
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}

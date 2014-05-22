@@ -7,11 +7,16 @@ CHANGELOG
 
 ** Breaking changes **
 
+Read all release notes carefully.
+
+* Trails are now managed as topologies (fixes #370).
+  Existing trails geometries are likely to be **LOST** (*see below*)
 * Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``
 * Permission systems has been refactored (*see below*)
 
 ** Bug fixes **
 
+* Force browser cache revalidation of geojson data (fixes #843)
 * Force browser cache revalidation for path graph (fixes #1029)
 * Fix deletion porblems in AdminSite (fixes #1008)
 * Trek advised parking and public transport are translatable (fixes #1024)
@@ -28,11 +33,9 @@ CHANGELOG
 * New permission to control download of attachments
 * New permission to allow users or groups to bypass structure restrictions
 * Add a setting to serve attached files as download (default: True) (fixes #976)
-* Force browser's cache revalidation of geojson data (fixes #843)
 * Track objects creations, changes and deletions (fixes #300)
 * Added a reader group (fixes #495)
 * Topologies are not recreated if user did not edit field (fixes #833)
-* Added setting to serve attachments as download or within the browser (fixes #976)
 * Added static file for projection EPSG:32620
 * Show land objects in menu (fixes #942)
 * Documented configuration of custom projections (fixes #1037)
@@ -51,11 +54,22 @@ CHANGELOG
 
 :notes:
 
-    * Delete the following folders before upgrading ::
+    * Before upgrading, backup your trail records and geometries, using pgAdmin ::
+
+        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentiers;
+        CREATE TABLE backup_troncons_sentiers AS (
+          SELECT l_t_troncon.id AS troncon, l_t_sentier.id, l_t_sentier.nom
+          FROM l_t_troncon, l_t_sentier
+          WHERE l_t_sentier.id = l_t_troncon.sentier
+        );
+
+    * Just before upgrading, delete the following folders  ::
 
         rm -rf lib/src/django-modeltranslation lib/src/mapentity
 
-    * After upgrading, load the default permissions of the four groups, otherwise
+:notes:
+
+    * After upgrading, load the default permissions of the previous groups, otherwise
       users won't have access to their modules ::
 
         bin/django loaddata geotrek/authent/fixtures/minimal.json
@@ -70,6 +84,9 @@ CHANGELOG
       - ``trekking | POI | Can read POI``
       - ``trekking | POI | Can export POI``
       - ``feedback | Report | Can add report``
+
+    * After upgrading, compare visually the resulting migrated trails using QGis,
+      by opening both layers ``l_v_sentiers`` and ``backup_sentiers``.
 
 
 0.22.5 (2014-03-19)
