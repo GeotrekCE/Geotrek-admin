@@ -64,6 +64,8 @@ env_dev: install clean_harmless
 	make all_compilemessages
 	bin/django syncdb --noinput --migrate
 	bin/django sync_translation_fields --noinput
+	bin/django update_translation_fields
+	bin/django update_permissions
 
 env_prod: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
@@ -98,6 +100,7 @@ deploy:
 	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
+	bin/django update_permissions
 	bin/supervisorctl restart all
 
 all_makemessages: install
