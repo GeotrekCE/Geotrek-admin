@@ -42,7 +42,9 @@ class TopologyForm(CommonForm):
     def save(self, *args, **kwargs):
         topology = self.cleaned_data.pop('topology')
         instance = super(TopologyForm, self).save(*args, **kwargs)
-        instance.mutate(topology)
+        was_edited = instance.pk != topology.pk
+        if was_edited:
+            instance.mutate(topology)
         return instance
 
 

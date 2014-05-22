@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.23.1 (unreleased)
+-------------------
+
+** Bug fixes **
+
+* Fixed regression when editing topologies without modification
+
+
 0.23 (2014-05-22)
 -----------------
 
