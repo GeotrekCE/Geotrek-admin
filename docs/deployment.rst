@@ -28,56 +28,82 @@ is available at *http://server/tools/extent/*.
     Administrator privileges are required.
 
 
-External authent
+Custom spatial reference
+------------------------
+
+*Geotrek* comes with a few projection systems included (*EPSG:2154*, *EPSG:32600*,
+*EPSG:32620*, *EPSG:32632*)
+
+In order to use a specific projection system :
+
+* Make sure the SRID is present in the ``spatial_ref_sys`` table. See PostGIS
+  documentation to add new ones
+* Download the JavaScript *proj4js* definition from `http://spatialreference.org`_
+  and save it to `Geotrek/static/proj4js/<SRID>.js`
+
+Using the command-line :
+
+::
+
+    curl "http://spatialreference.org/ref/epsg/<SRID>/proj4js/" > Geotrek/static/proj4js/<SRID>.js
+
+
+:note:
+
+    *Geotrek* won't run if the spatial reference has not a metric unit.
+
+It's possible to store your data using a specific SRID, and use a classic
+Google Maps projection (3857) in the Web interface (useful for *WMTS* or *OpenStreetMap* layers).
+See :ref:`advanced configuration <advanced-configuration-section>`...
+
+
+Users management
 ----------------
 
-You can authenticate user against a remote database table or view.
+Geotrek relies on Django authentication and permissions system : Users belong to
+groups and permissions can be assigned at user or group-level.
 
-To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
+The whole configuration of user, groups and permissions is available in the *AdminSite*,
+if you did not enable *External authent* (see below).
 
-Expected columns in table/view are :
+By default four groups are created :
 
-* username : string (*unique*)
-* first_name : string
-* last_name : string
-* password : string (simple md5 encoded, or full hashed and salted password)
-* email : string
-* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 6: administrator)
-* structure : string
-* lang : string (language code)
+* Readers
+* Path managers
+* Trek managers
+* Editor
 
+Once the application is installed, it is possible to modify the default permissions
+of these existing groups, create new ones etc...
 
-:notes:
-
-    User management will be disabled from Administration backoffice.
-
-    In order to disable remote login, just remove *authent_dbname* value in settings
-    file, and update instance (see paragraph above).
-
-    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
-    for more details.
+If you want to allow the users to access the *AdminSite*, give them the *staff*
+status using the dedicated checkbox.
 
 
-Custom setting file
--------------------
+Email settings
+--------------
 
-Geotrek configuration is currently restricted to values present in ``etc/settings.ini``.
+Geotrek will send emails :
 
-However, it is still possible to write a custom Django setting file.
+* to administrators when internal errors occur
+* to managers when a feedback report is created
 
-* Create your a file in *geotrek/settings/custom.py* with the following content ::
+Email configuration takes place in ``etc/settings.ini``, where you control
+recipients emails (``mailadmins``, ``mailmanagers``) as well as server
+parameters (``host``, ``user``, ``password``, ...)
 
-    from .prod import *
+You can test you configuration with the following command. A fake email will
+be sent to the managers :
 
-    # My custom value
-    HIDDEN_OPTION = 3.14
+::
 
-* Add this ``etc/settings.ini`` to specify the newly created setting ::
+    bin/django test_managers_emails
 
-    [django]
-    settings = settings.custom
 
-* As for any change in settings, re-run ``make env_standalone deploy``.
+Advanced Configuration
+----------------------
+
+See :ref:`advanced configuration <advanced-configuration-section>`...
 
 
 ============
@@ -165,30 +191,6 @@ You might also need to deploy logo images in the following places :
 
 * ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
-
-
-
-WYSIWYG editor configuration
-----------------------------
-
-Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
-
-Its configuration can be customized using advanced settings (see above paragraph).
-
-For example, in order to control which buttons are to be shown, and which tags
-are to be kept when cleaning-up, add this bloc :
-
-::
-
-    TINYMCE_DEFAULT_CONFIG = {
-        'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
-        'valid_elements': "img,p,a,em/i,strong/b",
-    }
-
-This will apply to all text fields.
-
-For more information on configuration entries available, please refer to the
-official documentation of *TinyMCE version 3*.
 
 
 ===========

@@ -6,30 +6,34 @@ from django.db import connection
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from mapentity.tests import MapEntityTest
+from mapentity.factories import UserFactory
 
 from geotrek.settings import EnvIniReader
-from .factories import AttachmentFactory
+from geotrek.authent.tests import AuthentFixturesTest
 from .utils import almostequal, sampling, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
+from . import check_srid_has_meter_unit
 
 
-class CommonTest(MapEntityTest):
-    def test_attachment(self):
-        if self.model is None:
-            return  # Abstract test should not run
-        obj = self.modelfactory.create()
-        AttachmentFactory.create(obj=obj)
-        AttachmentFactory.create(obj=obj)
-        self.assertEqual(len(obj.attachments), 2)
+class CommonTest(AuthentFixturesTest, MapEntityTest):
+    def get_bad_data(self):
+        return {'topology': 'doh!'}, _(u'Topology is not valid.')
+
+
+class StartupCheckTest(TestCase):
+    def test_error_is_raised_if_srid_is_not_meters(self):
+        delattr(check_srid_has_meter_unit, '_checked')
+        with self.settings(SRID=4326):
+            self.assertRaises(ImproperlyConfigured, check_srid_has_meter_unit, None)
 
 
 class ViewsTest(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        self.user = UserFactory.create(username='homer', password='dooh')
         success = self.client.login(username=self.user.username, password='dooh')
         self.assertTrue(success)
 

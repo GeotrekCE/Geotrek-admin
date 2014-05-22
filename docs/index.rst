@@ -8,7 +8,10 @@ Contents:
 
    installation
    deployment
+   advanced-configuration
    troubleshooting
+   faq
+   user-manual
    design
    development
 

@@ -2,6 +2,110 @@
 CHANGELOG
 =========
 
+0.23 (unreleased)
+-----------------
+
+** Breaking changes **
+
+Read all release notes carefully.
+
+* Trails are now managed as topologies (fixes #370).
+  Existing trails geometries are likely to be **LOST** (*see below*)
+* Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``
+* Permission systems has been refactored (*see below*)
+
+** Bug fixes **
+
+* Force browser cache revalidation of geojson data (fixes #843)
+* Force browser cache revalidation for path graph (fixes #1029)
+* Fix deletion porblems in AdminSite (fixes #1008)
+* Trek advised parking and public transport are translatable (fixes #1024)
+* Fix missing translation "no filters" and "current criterias" (fixes #884)
+* Fix PDF versions of documents not being translated (fixes #1028)
+
+** New features **
+
+* Command to import shapefile with points into POI as topologies (fixes #952)
+* Add views to serve DEM on object area as JSON (*Geotrek-Rando 3D*)
+* New tourism module : external datasources can be configured from Adminsite (*GeoJSON, TourInFrance, ...*)
+  and added to maps (by module, or published on *Geotrek-rando*...)
+* Show number of attached files in tab (fixes #743)
+* New permission to control download of attachments
+* New permission to allow users or groups to bypass structure restrictions
+* Add a setting to serve attached files as download (default: True) (fixes #976)
+* Track objects creations, changes and deletions (fixes #300)
+* Added a reader group (fixes #495)
+* Topologies are not recreated if user did not edit field (fixes #833)
+* Added static file for projection EPSG:32620
+* Show land objects in menu (fixes #942)
+* Documented configuration of custom projections (fixes #1037)
+* Buttons in the list menu to add new objects easily
+* Add fullscreen button on maps (fixes #904)
+* Add all controls on detail map (fixes #907)
+* Add a button to close filters (fixes #424)
+* Added new sections in documention : *FAQ*, *User-manal* and *Advanced configuration*
+
+** Internal changes **
+
+* Enabled database connection pooling in production
+* An error is raised if SRID has not unit in meters (fixes #921)
+* Zoning and land modules are now splitted (fixes #954)
+* Complete refactor of geographical form fields. Now uses *django-mapentity*
+  from its own repository instead of internal orphan branch.
+* Complete refactor of maps initialization, without inline preprocessed JavaScript
+* Rely on Django permissions to control access to detail, list and exports (fixes #675)
+* Core and altimetry modules are now splitted (fixes #996)
+* Renamed treks POIs GeoJSON properties
+
+:notes:
+
+    * Before upgrading, backup your trail records and geometries, using pgAdmin ::
+
+        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentiers;
+        CREATE TABLE backup_troncons_sentiers AS (
+          SELECT l_t_troncon.id AS troncon, l_t_sentier.id, l_t_sentier.nom
+          FROM l_t_troncon, l_t_sentier
+          WHERE l_t_sentier.id = l_t_troncon.sentier
+        );
+
+    * Before upgrade, rename ``mailadmin`` to ``mailadmins`` and add
+      a new line ``mailmanagers`` in ``etc/settings.ini``. See *Email settings*
+      section in documentation.
+
+    * Just before upgrading, delete the following folders  ::
+
+        rm -rf lib/src/django-modeltranslation lib/src/mapentity
+
+:notes:
+
+    * After upgrading, load the default permissions of the previous groups, otherwise
+      users won't have access to their modules ::
+
+        bin/django loaddata geotrek/authent/fixtures/minimal.json
+        bin/django loaddata geotrek/authent/fixtures/basic.json
+
+    * After upgrading, make sure *Active* is checked for the user *__internal__*
+      otherwise screenshotting won't work.
+
+    * After upgrading, load basic data for the new module ::
+
+        bin/django loaddata geotrek/feedback/fixtures/basic.json
+
+    * After upgrading, make sure the user specified in *Geotrek-rando* is
+      in the group *Geotrek-rando*, or has at least the following permissions
+      in the AdminSite :
+
+      - ``paperclip | attachment | Can read attachments``
+      - ``trekking | Trek | Can read Trek``
+      - ``trekking | Trek | Can export Trek``
+      - ``trekking | POI | Can read POI``
+      - ``trekking | POI | Can export POI``
+      - ``feedback | Report | Can add report``
+
+    * After upgrading, compare visually the resulting migrated trails using QGis,
+      by opening both layers ``l_v_sentiers`` and ``backup_sentiers``.
+
+
 0.22.6 (2014-04-27)
 -------------------
 

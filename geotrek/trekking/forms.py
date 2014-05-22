@@ -6,7 +6,7 @@ import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
-from mapentity.widgets import Point2DWidget, SelectMultipleWithPop
+from mapentity.widgets import SelectMultipleWithPop
 
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
@@ -31,8 +31,6 @@ TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through
 
 
 class TrekForm(TopologyForm):
-    parking_location = forms.gis.GeometryField(widget=Point2DWidget, required=False)
-
     fieldslayout = [
         Div(
             HTML("""
@@ -41,8 +39,7 @@ class TrekForm(TopologyForm):
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
-                Div(
-                    'name',
+                Div('name',
                     'published',
                     'is_park_centered',
                     'departure',
@@ -54,6 +51,10 @@ class TrekForm(TopologyForm):
                     'access',
                     'description_teaser',
                     'description',
+
+                    'pk',
+                    'model',
+
                     css_id="main",
                     css_class="tab-pane active"
                 ),

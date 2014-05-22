@@ -193,6 +193,8 @@ function check_postgres_connection {
 
 
 function minimum_system_dependencies {
+    sudo apt-get update -qq
+    echo_progress
     sudo apt-get install -y -qq unzip wget python-software-properties
     echo_progress
     sudo apt-add-repository -y ppa:git-core/ppa

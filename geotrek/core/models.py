@@ -1,94 +1,24 @@
 # -*- coding: utf-8 -*-
-import os
 import logging
 import functools
 
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geos import fromstr, LineString, Point
+from django.contrib.gis.geos import fromstr, LineString
 
 from mapentity.models import MapEntityMixin
-from mapentity.helpers import is_file_newer, convertit_download
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.models import TimeStampedModel, NoDeleteMixin
 from geotrek.common.utils import classproperty
 from geotrek.common.utils.postgresql import debug_pg_notices
+from geotrek.altimetry.models import AltimetryMixin
 
-from .helpers import PathHelper, TopologyHelper, AltimetryHelper
+from .helpers import PathHelper, TopologyHelper
 
 
 logger = logging.getLogger(__name__)
-
-
-class AltimetryMixin(models.Model):
-    # Computed values (managed at DB-level with triggers)
-    geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
-                                   editable=False, null=True, default=None)
-    length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-    slope = models.FloatField(editable=False, null=True, blank=True, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
-
-    COLUMNS = ['length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope']
-
-    class Meta:
-        abstract = True
-
-    def reload(self, fromdb=None):
-        """Reload fields computed at DB-level (triggers)
-        """
-        if fromdb is None:
-            fromdb = self.__class__.objects.get(pk=self.pk)
-        self.geom_3d = fromdb.geom_3d
-        self.length = fromdb.length
-        self.ascent = fromdb.ascent
-        self.descent = fromdb.descent
-        self.min_elevation = fromdb.min_elevation
-        self.max_elevation = fromdb.max_elevation
-        self.slope = fromdb.slope
-        return self
-
-    def get_elevation_profile(self):
-        return AltimetryHelper.elevation_profile(self.geom_3d)
-
-    def get_elevation_profile_svg(self):
-        return AltimetryHelper.profile_svg(self.get_elevation_profile())
-
-    @models.permalink
-    def get_elevation_chart_url(self):
-        """Generic url. Will fail if there is no such url defined
-        for the required model (see core.Path and trekking.Trek)
-        """
-        app_label = self._meta.app_label
-        model_name = self._meta.module_name
-        return ('%s:%s_profile_svg' % (app_label, model_name), [str(self.pk)])
-
-    def get_elevation_chart_path(self):
-        """Path to the PNG version of elevation chart.
-        """
-        basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
-        if not os.path.exists(basefolder):
-            os.mkdir(basefolder)
-        return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
-
-    def prepare_elevation_chart(self, request):
-        """Converts SVG elevation URI to PNG on disk.
-        """
-        from .views import HttpSVGResponse
-        path = self.get_elevation_chart_path()
-        # Do nothing if image is up-to-date
-        if is_file_newer(path, self.date_update):
-            return
-        # Download converted chart as png using convertit
-        source = request.build_absolute_uri(self.get_elevation_chart_url())
-        convertit_download(source,
-                           path,
-                           from_type=HttpSVGResponse.content_type,
-                           to_type='image/png')
 
 
 # GeoDjango note:
@@ -115,13 +45,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"), db_column='confort')
-
-    # Override default manager
-    objects = models.GeoManager()
-
-    trail = models.ForeignKey('Trail',
-                              null=True, blank=True, related_name='paths',
-                              verbose_name=_("Trail"), db_column='sentier')
     datasource = models.ForeignKey('Datasource',
                                    null=True, blank=True, related_name='paths',
                                    verbose_name=_("Datasource"), db_column='source')
@@ -134,6 +57,9 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     networks = models.ManyToManyField('Network',
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
+
+    # Override default manager
+    objects = models.GeoManager()
 
     is_reversed = False
 
@@ -214,19 +140,22 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     def name_csv_display(self):
         return unicode(self)
 
+    @classproperty
+    def trails_verbose_name(cls):
+        return _("Trails")
+
     @property
-    def trail_display(self):
-        if self.trail:
-            return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.trail.pk,
-                                                                      self.trail.get_detail_url(),
-                                                                      self.trail,
-                                                                      self.trail)
+    def trails_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([t.name_display for t in trails])
         return _("None")
 
     @property
-    def trail_csv_display(self):
-        if self.trail:
-            return unicode(self.trail)
+    def trails_csv_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([unicode(t) for t in trails])
         return _("None")
 
 
@@ -240,6 +169,9 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
 
     geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
+
+    """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
+    srid = settings.API_SRID
 
     class Meta:
         db_table = 'e_t_evenement'
@@ -503,8 +435,9 @@ class Network(StructureRelated):
         return self.network
 
 
-class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
-
+class Trail(MapEntityMixin, Topology, StructureRelated):
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
@@ -512,22 +445,14 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
 
     class Meta:
         db_table = 'l_t_sentier'
-        verbose_name = _(u"Trails")
+        verbose_name = _(u"Trail")
         verbose_name_plural = _(u"Trails")
         ordering = ['name']
 
+    objects = Topology.get_manager_cls(models.GeoManager)()
+
     def __unicode__(self):
         return self.name
-
-    @property
-    def geom(self):
-        geom = None
-        for p in self.paths.all():
-            if geom is None:
-                geom = LineString(p.geom.coords, srid=settings.SRID)
-            else:
-                geom = geom.union(p.geom)
-        return geom
 
     @property
     def name_display(self):
@@ -535,3 +460,11 @@ class Trail(MapEntityMixin, TimeStampedModel, StructureRelated):
                                                                   self.get_detail_url(),
                                                                   self,
                                                                   self)
+
+    @classmethod
+    def path_trails(cls, path):
+        return cls.objects.filter(aggregations__path=path)
+
+
+Path.add_property('trails', lambda self: Trail.path_trails(self))
+Topology.add_property('trails', lambda self: Trail.overlapping(self))

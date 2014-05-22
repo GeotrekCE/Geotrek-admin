@@ -1,9 +1,11 @@
 import json
+import time
 
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
+from django.utils.http import http_date
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
@@ -16,6 +18,7 @@ class SimpleGraph(TestCase):
         user = User.objects.create_user('homer', 'h@s.com', 'dooh')
         success = self.client.login(username=user.username, password='dooh')
         self.assertTrue(success)
+        self.url = reverse('core:path_json_graph')
 
     def test_python_graph_from_path(self):
         p_1_1 = (1., 1.)
@@ -55,17 +58,27 @@ class SimpleGraph(TestCase):
         self.assertDictEqual(computed_graph, graph)
 
     def test_json_graph_empty(self):
-        url = reverse('core:path_json_graph')
-        response = self.client.get(url)
+
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         graph = json.loads(response.content)
         self.assertDictEqual({'edges': {}, 'nodes': {}}, graph)
 
     def test_json_graph_simple(self):
         path = PathFactory(geom=LineString((0, 0), (1, 1)))
-        url = reverse('core:path_json_graph')
-        response = self.client.get(url)
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         graph = json.loads(response.content)
         self.assertDictEqual({'edges': {str(path.pk): {u'id': path.pk, u'length': 1.4142135623731, u'nodes_id': [1, 2]}},
                               'nodes': {u'1': {u'2': path.pk}, u'2': {u'1': path.pk}}}, graph)
+
+    def test_json_graph_headers(self):
+        """
+        Last modified depends on
+        """
+        PathFactory(geom=LineString((0, 0), (1, 1)))
+        response = self.client.get(self.url)
+        last_modified = response['Last-Modified']
+        expires = response['Expires']
+        self.assertNotEqual(expires, None)
+        self.assertEqual(expires, last_modified)

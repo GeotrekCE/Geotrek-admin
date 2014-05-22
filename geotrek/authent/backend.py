@@ -3,10 +3,11 @@ from collections import namedtuple
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group, check_password
+from django.contrib.auth.backends import ModelBackend
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
 
-from .models import Structure, GROUP_PATH_MANAGER, GROUP_TREKKING_MANAGER, GROUP_EDITOR
+from . import models as authent_models
 
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ FIELDS = 'username, first_name, last_name, password, email, level, structure, la
 Credentials = namedtuple('Credentials', FIELDS)
 
 
-class DatabaseBackend(object):
+class DatabaseBackend(ModelBackend):
     """
     Authenticate against a table in Authent database.
     """
@@ -52,27 +53,34 @@ class DatabaseBackend(object):
 
         # Update structure and lang
         profile = user.profile
-        profile.structure, created = Structure.objects.get_or_create(name=credentials.structure)
+        profile.structure, created = authent_models.Structure.objects.get_or_create(name=credentials.structure)
         profile.language = credentials.lang
         profile.save()
 
     def _update_groups(self, user, credentials):
-        # Set groups according to level
-        editor_group, created = Group.objects.get_or_create(name=GROUP_EDITOR)
-        path_manager_group, created = Group.objects.get_or_create(name=GROUP_PATH_MANAGER)
-        trek_manager_group, created = Group.objects.get_or_create(name=GROUP_TREKKING_MANAGER)
+        GROUP_PATH_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']
+        GROUP_TREKKING_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']
+        GROUP_EDITOR_ID = settings.AUTHENT_GROUPS_MAPPING['EDITOR']
+        GROUP_READER_ID = settings.AUTHENT_GROUPS_MAPPING['READER']
 
+        # Set groups according to level
+        editor_group = Group.objects.get(id=GROUP_EDITOR_ID)
+        path_manager_group = Group.objects.get(id=GROUP_PATH_MANAGER_ID)
+        trek_manager_group = Group.objects.get(id=GROUP_TREKKING_MANAGER_ID)
+        reader_group = Group.objects.get(id=GROUP_READER_ID)
+
+        user.groups.remove(reader_group)
         if credentials.level == 1:
-            pass  # read-only
+            user.groups.add(reader_group)  # read-only
         user.groups.remove(editor_group)
         if credentials.level == 2:
-            user.groups.add(editor_group)   # Editor
+            user.groups.add(editor_group)  # Editor
         user.groups.remove(path_manager_group)
         if credentials.level == 3:
-            user.groups.add(path_manager_group)   # Path manager
+            user.groups.add(path_manager_group)  # Path manager
         user.groups.remove(trek_manager_group)
         if credentials.level == 4:
-            user.groups.add(trek_manager_group)   # Trekking manager
+            user.groups.add(trek_manager_group)  # Trekking manager
 
     def query_credentials(self, username):
         if not settings.AUTHENT_DATABASE:

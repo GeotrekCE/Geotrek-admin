@@ -30,7 +30,7 @@ secret_key = change_this_key_with_a_value_of_your_choice
 #  GIS settings
 #..........................
 
-# EPSG code of the coordinate system to use
+# EPSG code of the coordinate system to use (projection unit must be meter)
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
 spatial_extent = 924861,6375196,985649,6448688
@@ -47,8 +47,10 @@ scan_attributions = IGN Scan
 #  Email settings
 #..........................
 
-# Recipient
-mailadmin = admin@yourdomain.tld
+# Recipients
+mailadmins = admin@yourdomain.tld
+mailmanagers = manager1@yourdomain.tld, manager2@yourdomain.tld
+
 # Server config
 mailfrom =
 mailhost =

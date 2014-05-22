@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
 import json
-from django.http import HttpResponse
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
-from django.views.generic.edit import BaseDetailView
+from django.views.decorators.cache import never_cache as force_cache_validation
 from django.core.cache import get_cache
 from django.shortcuts import redirect
-
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
-                             JSONResponseMixin, HttpJSONResponse, LastModifiedMixin)
+                             HttpJSONResponse)
 
-from geotrek.authent.decorators import path_manager_required, same_structure_required
+from geotrek.authent.decorators import same_structure_required
 
 from .models import Path, Trail
-from .forms import PathForm
-from .filters import PathFilter
+from .forms import PathForm, TrailForm
+from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 
 
@@ -31,53 +28,34 @@ def last_list(request):
 home = last_list
 
 
-class HttpSVGResponse(HttpResponse):
-    content_type = 'image/svg+xml'
-    def __init__(self, content='', **kwargs):
-        kwargs['content_type'] = self.content_type
-        super(HttpSVGResponse, self).__init__(content, **kwargs)
-
-
-class ElevationChart(LastModifiedMixin, BaseDetailView):
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ElevationChart, self).dispatch(*args, **kwargs)
-
-    def render_to_response(self, context, **response_kwargs):
-        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(),
-                               **response_kwargs)
-
-
-class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
-    """Extract elevation profile from a path and return it as JSON"""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ElevationProfile, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """
-        Put elevation profile into response context.
-        """
-        obj = self.get_object()
-        data = {}
-        # Formatted as distance, elevation, [lng, lat]
-        for step in obj.get_elevation_profile():
-            formatted = step[0], step[3], step[1:3]
-            data.setdefault('profile', []).append(formatted)
-        return data
-
-
 class PathLayer(MapEntityLayer):
     model = Path
     properties = ['name']
 
 
 class PathList(MapEntityList):
-    queryset = Path.objects.prefetch_related('networks').select_related('stake', 'trail')
-    filterform = PathFilter
-    columns = ['id', 'name', 'networks', 'stake', 'trail']
+    queryset = Path.objects.prefetch_related('networks').select_related('stake')
+    filterform = PathFilterSet
+    columns = ['id', 'name', 'networks', 'stake', 'trails']
+
+    def get_queryset(self):
+        """
+        denormalize ``trail`` column from list.
+        """
+        qs = super(PathList, self).get_queryset()
+
+        denormalized = {}
+        paths_id = qs.values_list('id', flat=True)
+        paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
+        by_id = dict([(trail.id, trail) for trail in paths_trails])
+        trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
+        for trail_id, path_id in trails_paths_ids:
+            denormalized.setdefault(path_id, []).append(by_id[trail_id])
+
+        for path in qs:
+            path_trails = denormalized.get(path.id, [])
+            setattr(path, '_trails', path_trails)
+            yield path
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -91,11 +69,10 @@ class PathFormatList(MapEntityFormat, PathList):
 class PathDetail(MapEntityDetail):
     model = Path
 
-    def can_edit(self):
-        return self.request.user.is_superuser or \
-               (hasattr(self.request.user, 'profile') and \
-                self.request.user.profile.is_path_manager and \
-                self.get_object().same_structure(self.request.user))
+    def context_data(self, *args, **kwargs):
+        context = super(PathDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class PathDocument(MapEntityDocument):
@@ -110,16 +87,11 @@ class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
-    @method_decorator(path_manager_required('core:path_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(PathCreate, self).dispatch(*args, **kwargs)
-
 
 class PathUpdate(MapEntityUpdate):
     model = Path
     form_class = PathForm
 
-    @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathUpdate, self).dispatch(*args, **kwargs)
@@ -128,7 +100,6 @@ class PathUpdate(MapEntityUpdate):
 class PathDelete(MapEntityDelete):
     model = Path
 
-    @method_decorator(path_manager_required('core:path_detail'))
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
@@ -136,6 +107,7 @@ class PathDelete(MapEntityDelete):
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
+@force_cache_validation
 def get_graph_json(request):
     cache = get_cache('fat')
     key = 'path_graph_json'
@@ -158,12 +130,47 @@ def get_graph_json(request):
     return HttpJSONResponse(json_graph)
 
 
-class TrailDetail(MapEntityDetail):
-    model = Trail
+class TrailLayer(MapEntityLayer):
+    queryset = Trail.objects.existing()
+    properties = ['name']
 
-    def can_edit(self):
-        return False
+
+class TrailList(MapEntityList):
+    queryset = Trail.objects.existing()
+    filterform = TrailFilterSet
+    columns = ['id', 'name', 'departure', 'arrival']
+
+
+class TrailDetail(MapEntityDetail):
+    queryset = Trail.objects.existing()
+
+    def context_data(self, *args, **kwargs):
+        context = super(TrailDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
 
 
 class TrailDocument(MapEntityDocument):
+    queryset = Trail.objects.existing()
+
+
+class TrailCreate(MapEntityCreate):
     model = Trail
+    form_class = TrailForm
+
+
+class TrailUpdate(MapEntityUpdate):
+    queryset = Trail.objects.existing()
+    form_class = TrailForm
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrailUpdate, self).dispatch(*args, **kwargs)
+
+
+class TrailDelete(MapEntityDelete):
+    queryset = Trail.objects.existing()
+
+    @same_structure_required('core:trail_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrailDelete, self).dispatch(*args, **kwargs)

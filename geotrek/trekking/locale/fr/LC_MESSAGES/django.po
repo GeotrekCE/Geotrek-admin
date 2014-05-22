@@ -234,6 +234,9 @@ msgstr "POIs"
 msgid "Add POI"
 msgstr "Ajouter un POI"
 
+msgid "Add a new POI"
+msgstr "Ajouter un POI"
+
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
 "a better apparence in public portal."
@@ -294,9 +297,6 @@ msgstr "Ajouter un itinéraire"
 
 msgid "POIs"
 msgstr "POIs"
-
-msgid "Add a new POI"
-msgstr "Ajouter un POI"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

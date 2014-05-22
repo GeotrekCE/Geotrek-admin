@@ -37,6 +37,12 @@ AUTH_PROFILE_MODULE = 'authent.UserProfile'
 # Settings required for geotrek.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
 AUTHENT_TABLENAME = None
+AUTHENT_GROUPS_MAPPING = {
+    'PATH_MANAGER': 1,
+    'TREKKING_MANAGER': 2,
+    'EDITOR': 3,
+    'READER': 4,
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -210,19 +216,23 @@ PROJECT_APPS += (
     'tinymce',
     'easy_thumbnails',
     'shapes',
-    'mapentity',
     'paperclip',
+    'mapentity',
 )
 
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.authent',
     'geotrek.common',
+    'geotrek.altimetry',
     'geotrek.core',
     'geotrek.infrastructure',
     'geotrek.maintenance',
+    'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
+    'geotrek.tourism',
+    'geotrek.feedback',
 )
 
 SERIALIZATION_MODULES = {
@@ -261,7 +271,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'logging.NullHandler'
         },
         'console': {
             'level': 'DEBUG',
@@ -343,6 +353,7 @@ MAPENTITY_CONFIG = {
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
     'MAP_BACKGROUND_FOGGED': True,
+    'GEOJSON_LAYERS_CACHE_BACKEND': 'fat'
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -355,6 +366,8 @@ ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
 ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
+ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -368,10 +381,11 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
     'PLUGINS': {
-        'topofields': {'js': ['core/dijkstra.js',
+        'topofields': {'js': ['core/geotrek.forms.snap.js',
+                              'core/geotrek.forms.topology.js',
+                              'core/dijkstra.js',
                               'core/multipath.js',
-                              'core/topology_helper.js',
-                              'core/formfield.js']}
+                              'core/topology_helper.js']}
     }
 }
 

@@ -616,9 +616,13 @@ class TopologyLoopTests(TestCase):
 
         # De/Serializing should work too
         serialized = """
-           [{"kind": "TOPOLOGY","positions":{"0":[0.3,1],"1":[0, 0.4]},"paths":[%(pk1)s,%(pk2)s],"offset": 0.0},
-            {"kind": "TOPOLOGY","positions":{"0":[0.4, 0.8]},"paths":[%(pk2)s],"offset": 0.0},
-            {"kind": "TOPOLOGY","positions":{"0":[0.8,1],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s],"offset": 0.0}]""" % {'pk1': p1.pk, 'pk2': p2.pk}
+           [{"kind": "TOPOLOGY","positions":{"0":[0.3,1],"1":[0, 0.4]},"paths":[%(pk1)s,%(pk2)s],"offset": 0.0,"pk": %(topo)s},
+            {"kind": "TOPOLOGY","positions":{"0":[0.4, 0.8]},"paths":[%(pk2)s],"offset": 0.0,"pk": %(topo)s},
+            {"kind": "TOPOLOGY","positions":{"0":[0.8,1],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s],"offset": 0.0,"pk": %(topo)s}]""" % {
+            'topo': topo.pk,
+            'pk1': p1.pk,
+            'pk2': p2.pk
+        }
 
         self.assertEqual(json.loads(serialized), json.loads(topo.serialize()))
         topod = Topology.deserialize(serialized)
@@ -654,6 +658,7 @@ class TopologySerialization(TestCase):
         # +|========>+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path)
+        test_objdict['pk'] = topo.pk
         test_objdict['positions']['0'] = [0.0, 1.0]
         objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
@@ -661,6 +666,7 @@ class TopologySerialization(TestCase):
         # +<========|+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path, start=1.0, end=0.0)
+        test_objdict['pk'] = topo.pk
         test_objdict['positions']['0'] = [1.0, 0.0]
         objdict = json.loads(topo.serialize())
         self.assertDictEqual(objdict[0], test_objdict)
@@ -670,6 +676,7 @@ class TopologySerialization(TestCase):
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path, start=0.0, end=1.0)
         topo.add_path(path2, start=1.0, end=0.0)
+        test_objdict['pk'] = topo.pk
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [0.0, 1.0], '1': [1.0, 0.0]}
         objdict = json.loads(topo.serialize())
@@ -679,6 +686,7 @@ class TopologySerialization(TestCase):
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path, start=1.0, end=0.0)
         topo.add_path(path2, start=0.0, end=1.0)
+        test_objdict['pk'] = topo.pk
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [1.0, 0.0], '1': [0.0, 1.0]}
         objdict = json.loads(topo.serialize())
@@ -691,9 +699,28 @@ class TopologySerialization(TestCase):
         fieldvalue = topology.serialize()
         # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
         field = json.loads(fieldvalue)
-        self.assertTrue(almostequal(field['lat'],  -5.983))
-        self.assertTrue(almostequal(field['lng'],  -1.363))
+        self.assertEqual(field['pk'],  topology.pk)
+        self.assertTrue(almostequal(field['lat'], -5.983))
+        self.assertTrue(almostequal(field['lng'], -1.363))
         self.assertEqual(field['kind'],  "TOPOLOGY")
+
+
+class TopologyDerialization(TestCase):
+
+    def test_deserialize_foreignkey(self):
+        topology = TopologyFactory.create(offset=1, no_path=True)
+        deserialized = Topology.deserialize(topology.pk)
+        self.assertEqual(topology,  deserialized)
+
+    def test_deserialize_unedited_point_topology(self):
+        topology = TopologyFactory.create(offset=1, no_path=True)
+        deserialized = Topology.deserialize({'pk': topology.pk})
+        self.assertEqual(topology,  deserialized)
+
+    def test_deserialize_unedited_line_topology(self):
+        topology = TopologyFactory.create(offset=1, no_path=True)
+        deserialized = Topology.deserialize([{'pk': topology.pk}, {}])
+        self.assertEqual(topology,  deserialized)
 
     def test_deserialize_line(self):
         path = PathFactory.create()

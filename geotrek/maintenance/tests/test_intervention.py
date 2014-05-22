@@ -91,19 +91,6 @@ class InterventionTest(TestCase):
 
         self.assertItemsEqual(p.projects, [proj])
 
-    def test_trail_helpers(self):
-        t = TrailFactory.create()
-        self.assertEqual(0, len(t.interventions))
-
-        p = PathFactory.create()
-        t.paths.add(p)
-
-        topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p)
-        i = InterventionFactory(topology=topo)
-        self.assertEqual(1, len(t.interventions))
-        self.assertItemsEqual([i], t.interventions)
-
     def test_helpers(self):
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()

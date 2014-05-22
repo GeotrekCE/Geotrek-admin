@@ -9,7 +9,7 @@ from django.test import TestCase
 import json
 
 from geotrek.common.tests import CommonTest
-from mapentity.serializers import ZipShapeSerializer, shapefile_files
+from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
@@ -228,6 +228,7 @@ class ProjectViewsTest(CommonTest):
         }
 
     def test_project_layer(self):
+        self.login()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         InterventionFactory.create(project=p1)
@@ -243,6 +244,8 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
     def test_project_bbox_filter(self):
+        self.login()
+
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()

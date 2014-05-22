@@ -1,4 +1,4 @@
-{% extends "mapentity/entity_detail.html" %}
+{% extends "mapentity/mapentity_detail.html" %}
 {% load i18n field_verbose_name %}
 
 {% block detailspanel %}
@@ -53,13 +53,7 @@
         <tr>
             <th>{{ project|verbose:"contractors" }}</th>
             <td>
-                {% for contractor in  project.contractors.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ contractor }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=project.contractors.all %}
             </td>
         </tr>
         <tr>
@@ -87,12 +81,3 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}
-
-
-{% block mappanel %}
-{% if object.geom %}
-    {% include "mapentity/mapgeometry_fragment.html" %}
-{% else %}
-    <p class="nomap">{% trans "No intervention related." %}</p>
-{% endif %}
-{% endblock mappanel %}

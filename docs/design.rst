@@ -57,7 +57,6 @@ We have a couple of Django conventions infringements:
   component of all park organisation data, it has to behave consistently whether data is
   modified through the Web application or raw access tools (pgadmin, QGIS).
   (For example, insertion & update timestamps, geometry computation or DEM wrapping.)
-* View access checking based on groups instead of Django perms (**TODO**: should be refactored, `issue 675 <https://github.com/makinacorpus/Geotrek/issues/675>`_)
 * Safe delete: update field ``deleted = True`` instead of performing actual delete in table.
   Requires every querysets to be filtered on deleted. (**TODO**: use dango-safedelete, `issue 813 <https://github.com/makinacorpus/Geotrek/issues/813>`_)
 

@@ -4,8 +4,9 @@ from geotrek.infrastructure.factories import InfrastructureFactory, SignageFacto
 from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
 from geotrek.core.factories import TopologyFactory, PathAggregationFactory
 from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
-                                    CompetenceEdgeFactory, CityEdgeFactory, DistrictEdgeFactory,
-                                    RestrictedAreaEdgeFactory)
+                                    CompetenceEdgeFactory)
+from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
+                                      RestrictedAreaEdgeFactory)
 
 
 class ProjectTest(TestCase):

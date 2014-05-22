@@ -1,4 +1,4 @@
-{% extends "mapentity/entity_detail.html" %}
+{% extends "mapentity/mapentity_detail.html" %}
 {% load i18n l10n static trekking_tags field_verbose_name thumbnail %}
 
 
@@ -51,7 +51,7 @@
             <th>{{ trek|verbose:"duration" }}</th>
             <td>{{ trek.duration|duration }}</td>
         </tr>
-        {% include "core/elevationinfo_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ trek|verbose:"route" }}</th>
             <td>{% if trek.route %}{{ trek.route|safe }}
@@ -119,37 +119,19 @@
         <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
-                {% for t in trek.themes.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.themes.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"usages" }}</th>
             <td>
-                {% for u in trek.usages.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ u }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.usages.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
-                {% for n in trek.networks.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ n }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.networks.all %}
             </td>
         </tr>
         <tr>
@@ -171,25 +153,13 @@
         <tr>
             <th>{{ trek|verbose:"web_links" }}</th>
             <td>
-                {% for w in trek.web_links.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ w }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.web_links.all %}
             </td>
         </tr>
         <tr>
             <th>{% trans "POI types" %}</th>
             <td>
-                {% for t in trek.poi_types %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ t }}</li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.poi_types %}
             </td>
         </tr>
         <tr>
@@ -209,7 +179,7 @@
 
 {% block mappanel %}
     {{ block.super }}
-    {% include "core/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile_svg" %}
+    {% include "altimetry/altimetric_profile_fragment.html" with profile_url="trekking:trek_profile_svg" %}
 {% endblock mappanel %}
 
 {% block extrabody %}
@@ -237,12 +207,6 @@
 
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
-                for (var i=0, n = data.features.length; i<n; i++) {
-                    var f = data.features[i];
-                    f.properties.type = f.properties.serializable_type;
-                    f.properties.thumbnail = f.properties.serializable_thumbnail;
-                }
-
                 var pois = new POILayer(data),
                     poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {

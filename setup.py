@@ -5,11 +5,6 @@ from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-test_requirements = [
-    'factory_boy == 1.1.5',
-]
-
-
 setup(
     name='geotrek',
     version=open(os.path.join(here, 'VERSION')).read().strip(),
@@ -29,9 +24,10 @@ setup(
         'simplekml == 1.2.1',
         'pygal == 1.1.0',
         'django-extended-choices == 0.3.0',
+        'django-multiselectfield == 0.1.1',
+        'tif2geojson == 0.1.1',
         'mapentity',  # pinned by buildout
-    ] + test_requirements,
-    tests_requires=test_requirements,
+    ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
     classifiers=['Natural Language :: English',

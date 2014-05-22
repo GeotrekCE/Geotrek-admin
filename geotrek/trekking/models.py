@@ -176,6 +176,11 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_document_public', [str(self.pk)])
 
     @property
+    @models.permalink
+    def elevation_area_url(self):
+        return ('trekking:trek_elevation_area', [str(self.pk)])
+
+    @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 

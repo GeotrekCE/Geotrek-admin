@@ -1,4 +1,4 @@
-{% extends "mapentity/entity_detail.html" %}
+{% extends "mapentity/mapentity_detail.html" %}
 {% load i18n static field_verbose_name %}
 
 
@@ -18,5 +18,7 @@
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe }}</td>
         </tr>
+
+        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock detailspanel %}

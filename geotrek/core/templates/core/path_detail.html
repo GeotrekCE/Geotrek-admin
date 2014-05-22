@@ -1,4 +1,4 @@
-{% extends "mapentity/entity_detail.html" %}
+{% extends "mapentity/mapentity_detail.html" %}
 {% load i18n static field_verbose_name %}
 
 {% block detailspanel %}
@@ -7,7 +7,7 @@
     {% if not path.valid %}
         <div class="alert alert-error"><strong>{% trans "Not validated" %}</strong></div>
     {% endif %}
-    
+
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
         {{ path.comments|default:_("None")|safe }}
@@ -28,11 +28,8 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        {% include "core/elevationinfo_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
-            <th>{{ path|verbose:"trail" }}</th>
-            <td>{{ path.trail_display|safe }}</td>
-        </tr><tr>
             <th>{{ path|verbose:"datasource" }}</th>
             <td>{% if path.datasource %}{{ path.datasource }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
@@ -46,24 +43,12 @@
         <tr>
             <th>{{ path|verbose:"usages" }}</th>
             <td>
-                {% for usage in  path.usages.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ usage }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.usages.all %}
             </td>
         </tr><tr>
             <th>{{ path|verbose:"networks" }}</th>
             <td>
-                {% for network in  path.networks.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li> {{ network }} </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.networks.all %}
             </td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
@@ -73,5 +58,5 @@
 
 {% block mappanel %}
     {{ block.super }}
-    {% include "core/altimetric_profile_fragment.html" with profile_url="core:path_profile_svg" %}
+    {% include "altimetry/altimetric_profile_fragment.html" with profile_url="core:path_profile_svg" %}
 {% endblock mappanel %}

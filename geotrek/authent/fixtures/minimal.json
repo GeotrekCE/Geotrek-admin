@@ -1,26 +1,31 @@
 [
     {
-        "pk": 1,
+        "pk": 4,
         "model": "auth.group",
         "fields": {
-            "name": "R\u00e9f\u00e9rents sentiers",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 2,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9f\u00e9rents communication",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 3,
-        "model": "auth.group",
-        "fields": {
-            "name": "R\u00e9dacteurs",
-            "permissions": []
+            "name": "Lecteurs",
+            "permissions": [
+                ["read_path", "core", "path"],
+                ["read_trail", "core", "trail"],
+
+                ["read_signage", "infrastructure", "baseinfrastructure"],
+                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+
+                ["read_intervention", "maintenance", "intervention"],
+                ["read_project", "maintenance", "project"],
+
+                ["read_competenceedge", "land", "competenceedge"],
+                ["read_landedge", "land", "landedge"],
+                ["read_physicaledge", "land", "physicaledge"],
+                ["read_signagemanagementedge", "land", "signagemanagementedge"],
+                ["read_workmanagementedge", "land", "workmanagementedge"],
+
+                ["read_trek", "trekking", "trek"],
+                ["read_poi", "trekking", "poi"],
+
+                ["add_report", "feedback", "report"],
+                ["read_report", "feedback", "report"]
+            ]
         }
     }
 ]

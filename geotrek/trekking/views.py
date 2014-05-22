@@ -15,13 +15,12 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 from mapentity.serializers import plain_text, GPXSerializer
 from paperclip.models import Attachment
 
-from geotrek.authent.decorators import trekking_manager_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
-from geotrek.land.models import District, City, RestrictedArea
+from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
-from .filters import TrekFilter, POIFilter
+from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 
 
@@ -32,7 +31,8 @@ class FlattenPicturesMixin(object):
         https://code.djangoproject.com/ticket/17484
         """
         opts = self.model._meta
-        return ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
+        extra = ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
+        return extra + super(FlattenPicturesMixin, self).get_template_names()
 
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.
@@ -60,7 +60,7 @@ class TrekLayer(MapEntityLayer):
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
-    filterform = TrekFilter
+    filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
 
 
@@ -76,7 +76,8 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships', 'map_image_url']
+               'cities', 'districts', 'relationships', 'map_image_url',
+               'elevation_area_url']
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -134,7 +135,9 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    properties = ['pk', 'name', 'description', 'serializable_thumbnail', 'serializable_type', 'serializable_pictures']
+    properties = {'pk':'pk', 'name':'name', 'description':'description',
+                  'max_elevation':'elevation', 'serializable_thumbnail':'thumbnail',
+                  'serializable_type':'type', 'serializable_pictures':'pictures'}
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -152,11 +155,6 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
 
 class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
-
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager)
 
 
 class TrekMapImage(MapEntityMapImage):
@@ -218,26 +216,14 @@ class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 
-    @method_decorator(trekking_manager_required('trekking:trek_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekCreate, self).dispatch(*args, **kwargs)
-
 
 class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
     queryset = Trek.objects.existing()
     form_class = TrekForm
 
-    @method_decorator(trekking_manager_required('trekking:trek_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekUpdate, self).dispatch(*args, **kwargs)
-
 
 class TrekDelete(MapEntityDelete):
     model = Trek
-
-    @method_decorator(trekking_manager_required('trekking:trek_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
 class POILayer(MapEntityLayer):
@@ -247,7 +233,7 @@ class POILayer(MapEntityLayer):
 
 class POIList(FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
-    filterform = POIFilter
+    filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
 
 
@@ -291,11 +277,6 @@ class POIFormatList(MapEntityFormat, POIList):
 class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
-    def can_edit(self):
-        return self.request.user.is_superuser or (
-            hasattr(self.request.user, 'profile') and
-            self.request.user.profile.is_trekking_manager)
-
 
 class POIDocument(MapEntityDocument):
     model = POI
@@ -305,26 +286,14 @@ class POICreate(MapEntityCreate):
     model = POI
     form_class = POIForm
 
-    @method_decorator(trekking_manager_required('trekking:poi_list'))
-    def dispatch(self, *args, **kwargs):
-        return super(POICreate, self).dispatch(*args, **kwargs)
-
 
 class POIUpdate(MapEntityUpdate):
     queryset = POI.objects.existing()
     form_class = POIForm
 
-    @method_decorator(trekking_manager_required('trekking:poi_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(POIUpdate, self).dispatch(*args, **kwargs)
-
 
 class POIDelete(MapEntityDelete):
     model = POI
-
-    @method_decorator(trekking_manager_required('trekking:poi_detail'))
-    def dispatch(self, *args, **kwargs):
-        return super(POIDelete, self).dispatch(*args, **kwargs)
 
 
 class WebLinkCreatePopup(CreateView):
