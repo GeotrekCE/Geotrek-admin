@@ -140,19 +140,22 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
     def name_csv_display(self):
         return unicode(self)
 
+    @classproperty
+    def trails_verbose_name(cls):
+        return _("Trails")
+
     @property
-    def trail_display(self):
-        if self.trail:
-            return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.trail.pk,
-                                                                      self.trail.get_detail_url(),
-                                                                      self.trail,
-                                                                      self.trail)
+    def trails_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([t.name_display for t in trails])
         return _("None")
 
     @property
-    def trail_csv_display(self):
-        if self.trail:
-            return unicode(self.trail)
+    def trails_csv_display(self):
+        trails = getattr(self, '_trails', self.trails)
+        if trails:
+            return ", ".join([unicode(t) for t in trails])
         return _("None")
 
 

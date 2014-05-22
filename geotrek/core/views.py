@@ -5,7 +5,6 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.core.cache import get_cache
 from django.shortcuts import redirect
-
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -37,7 +36,26 @@ class PathLayer(MapEntityLayer):
 class PathList(MapEntityList):
     queryset = Path.objects.prefetch_related('networks').select_related('stake')
     filterform = PathFilterSet
-    columns = ['id', 'name', 'networks', 'stake']
+    columns = ['id', 'name', 'networks', 'stake', 'trails']
+
+    def get_queryset(self):
+        """
+        denormalize ``trail`` column from list.
+        """
+        qs = super(PathList, self).get_queryset()
+
+        denormalized = {}
+        paths_id = qs.values_list('id', flat=True)
+        paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
+        by_id = dict([(trail.id, trail) for trail in paths_trails])
+        trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
+        for trail_id, path_id in trails_paths_ids:
+            denormalized.setdefault(path_id, []).append(by_id[trail_id])
+
+        for path in qs:
+            path_trails = denormalized.get(path.id, [])
+            setattr(path, '_trails', path_trails)
+            yield path
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -147,7 +165,7 @@ class TrailUpdate(MapEntityUpdate):
 
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
-        return super(PathUpdate, self).dispatch(*args, **kwargs)
+        return super(TrailUpdate, self).dispatch(*args, **kwargs)
 
 
 class TrailDelete(MapEntityDelete):
