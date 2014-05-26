@@ -20,6 +20,7 @@ CHANGELOG
 * Fix POI translated fields not tabbed (fixes #1065)
 * Fix missing translation of "Add a new POI" (fixes #1086)
 * Fix invalid snapping when save path without editing geometry (fixes #1099)
+* Add missing properties in feedback report detail page.
 
 ** Internal changes **
 
