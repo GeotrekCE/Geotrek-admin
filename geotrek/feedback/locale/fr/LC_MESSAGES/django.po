@@ -1,29 +1,29 @@
 msgid "Feedback from {name} ({email})"
-msgstr ""
+msgstr "Signalement de {name} ({email})"
 
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 msgid "Email"
 msgstr ""
 
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 msgid "Category"
-msgstr ""
+msgstr "Catégorie"
 
 msgid "Location"
-msgstr ""
+msgstr "Emplacement"
 
 msgid "Report"
-msgstr ""
+msgstr "Signalement"
 
 msgid "Reports"
-msgstr ""
+msgstr "Signalements"
 
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #, python-format
 msgid "%(name)s (%(email)s) has sent a feedback on category %(category)s."
@@ -39,3 +39,6 @@ msgstr ""
 
 msgid "Invalid geometry value."
 msgstr ""
+
+msgid "Add a new report"
+msgstr "Créer un signalement"
