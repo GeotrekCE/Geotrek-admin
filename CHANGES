@@ -22,6 +22,7 @@ CHANGELOG
 * Fix invalid snapping when save path without editing geometry (fixes #1099)
 * Add missing properties in feedback report detail page.
 * Hide all modules information in report detail page.
+* Add missing translations of feedback module.
 
 ** Internal changes **
 

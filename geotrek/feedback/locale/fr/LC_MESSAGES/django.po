@@ -63,3 +63,6 @@ msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
+
+msgid "Add a new report"
+msgstr "Créer un signalement"
