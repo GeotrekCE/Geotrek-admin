@@ -2,7 +2,6 @@
 {% load i18n field_verbose_name %}
 
 {% block detailspanel %}
-    {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ project|verbose:"name" }}</th>
@@ -80,4 +79,5 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {{ block.super }}
 {% endblock detailspanel %}

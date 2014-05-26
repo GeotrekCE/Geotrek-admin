@@ -9,7 +9,6 @@
 
 
 {% block detailspanel %}
-    {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ poi|verbose:"type" }}</th>
@@ -33,4 +32,5 @@
 
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {{ block.super }}
 {% endblock detailspanel %}
