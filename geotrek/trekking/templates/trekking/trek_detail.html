@@ -21,7 +21,6 @@
 
 
 {% block detailspanel %}
-    {{ block.super }}
 
     {% if not trek.published %}
         <div class="alert alert-warning"><strong>{% trans "Not published" %}</strong></div>
@@ -174,6 +173,7 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {{ block.super }}
 {% endblock detailspanel %}
 
 

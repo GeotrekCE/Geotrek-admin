@@ -6,6 +6,7 @@ CHANGELOG
 -----------------
 
 * Add missing properties in feedback report detail page.
+* Hide all modules information in report detail page.
 
 
 0.23 (2014-05-22)

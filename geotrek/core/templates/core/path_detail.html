@@ -2,8 +2,6 @@
 {% load i18n static field_verbose_name %}
 
 {% block detailspanel %}
-    {{ block.super }}
-
     {% if not path.valid %}
         <div class="alert alert-error"><strong>{% trans "Not validated" %}</strong></div>
     {% endif %}
@@ -53,6 +51,7 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {{ block.super }}
 {% endblock detailspanel %}
 
 
