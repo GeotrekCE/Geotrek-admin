@@ -256,6 +256,10 @@ msgstr "Ajouter une intervention"
 msgid "Maintenance"
 msgstr "Maintenance"
 
+msgid "Works"
+msgstr "Travaux"
+
+
 #, python-format
 msgid ""
 "\n"
