@@ -254,7 +254,7 @@ msgid "Add intervention"
 msgstr "Ajouter une intervention"
 
 msgid "Maintenance"
-msgstr "Maintenance"
+msgstr "Entretient"
 
 msgid "Works"
 msgstr "Travaux"

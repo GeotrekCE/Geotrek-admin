@@ -10,6 +10,8 @@ CHANGELOG
 * Add missing translations of feedback module.
 
 * Detail page : replace "Maintenance" by "Works" (fixes #889)
+* Detail page : interventions on paths are now grouped together,
+  and a small icon is shown (fixes #735)
 
 0.23 (2014-05-22)
 -----------------

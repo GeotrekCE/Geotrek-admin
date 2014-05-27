@@ -1,11 +1,17 @@
 {% load i18n %}
-{% for i in interventions %}
-    {% if forloop.first %}<ul>{% endif %}
-    <li>{{ i.name_display|safe }}
-        {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
-        ({{ i.date }})
-    </li>
-    {% if forloop.last %}</ul>{% endif %}
+
+{% regroup interventions by on_infrastructure as interventions_list %}
+
+{% for intervention in interventions_list %}
+    <ul>
+        {% for i in intervention.list %}
+          <li>{{ i.infrastructure_display|safe }}
+              {{ i.name_display|safe }}
+              {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
+              ({{ i.date }})
+          </li>
+        {% endfor %}
+    </ul>
 {% empty %}
     <span class="none">{% trans "None" %}</span>
 {% endfor %}
