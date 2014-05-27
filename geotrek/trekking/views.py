@@ -12,7 +12,7 @@ from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, JSONResponseMixin, DocumentConvert)
-from mapentity.serializers import plain_text, GPXSerializer
+from mapentity.serializers import plain_text
 from paperclip.models import Attachment
 
 from geotrek.core.models import AltimetryMixin
@@ -22,6 +22,7 @@ from geotrek.zoning.models import District, City, RestrictedArea
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
+from .serializers import TrekGPXSerializer
 
 
 class FlattenPicturesMixin(object):
@@ -110,7 +111,7 @@ class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
         return super(TrekGPXDetail, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context):
-        gpx_serializer = GPXSerializer()
+        gpx_serializer = TrekGPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
         gpx_serializer.serialize([self.get_object()], stream=response, geom_field='geom')

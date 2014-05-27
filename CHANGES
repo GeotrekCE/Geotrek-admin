@@ -9,6 +9,10 @@ CHANGELOG
 * Hide all modules information in report detail page.
 * Add missing translations of feedback module.
 
+** New features **
+
+* Add POIs on trek GPX (fixes #774)
+
 
 0.23 (2014-05-22)
 -----------------

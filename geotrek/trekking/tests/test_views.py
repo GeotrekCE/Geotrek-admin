@@ -191,25 +191,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
 
-    def test_gpx(self):
-        trek = TrekWithPOIsFactory.create()
-        trek.description_en = 'Nice trek'
-        trek.description_it = 'Bonnito iti'
-        trek.description_fr = 'Jolie rando'
-        trek.save()
-
-        url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/gpx+xml')
-
-        parsed = BeautifulSoup(response.content)
-        self.assertEqual(len(parsed.findAll('rte')), 1)
-        self.assertEqual(len(parsed.findAll('rtept')), 2)
-        route = parsed.findAll('rte')[0]
-        description = route.find('desc').string
-        self.assertTrue(description.startswith(trek.description_it))
-
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()
         url = reverse('trekking:trek_kml_detail', kwargs={'pk': trek.pk})
@@ -284,6 +265,45 @@ class TrekCustomViewTests(TrekkingManagerTest):
         url = reverse('trekking:weblink_add')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+
+class TrekGPXTest(TrekkingManagerTest):
+
+    def setUp(self):
+        self.login()
+
+        self.trek = TrekWithPOIsFactory.create()
+        self.trek.description_en = 'Nice trek'
+        self.trek.description_it = 'Bonnito iti'
+        self.trek.description_fr = 'Jolie rando'
+        self.trek.save()
+
+        url = reverse('trekking:trek_gpx_detail', kwargs={'pk': self.trek.pk})
+        self.response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        self.parsed = BeautifulSoup(self.response.content)
+
+    def test_gpx_is_served_with_content_type(self):
+        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
+
+    def test_gpx_trek_as_route_points(self):
+        self.assertEqual(len(self.parsed.findAll('rte')), 1)
+        self.assertEqual(len(self.parsed.findAll('rtept')), 2)
+
+    def test_gpx_translated_using_accept_language(self):
+        route = self.parsed.findAll('rte')[0]
+        description = route.find('desc').string
+        self.assertTrue(description.startswith(self.trek.description_it))
+
+    def test_gpx_contains_pois(self):
+        waypoints = self.parsed.findAll('wpt')
+        pois = self.trek.pois.all()
+        self.assertEqual(len(waypoints), len(pois))
+        waypoint = waypoints[0]
+        name = waypoint.find('name').string
+        description = waypoint.find('desc').string
+        self.assertEqual(name, u"%s: %s" % (pois[0].type, pois[0].name))
+        self.assertEqual(description, pois[0].description)
 
 
 class TrekViewTranslationTest(TrekkingManagerTest):
