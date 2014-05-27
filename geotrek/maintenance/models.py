@@ -327,8 +327,8 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
     constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes',
                                   help_text=_(u"Specific conditions, ..."))
-    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout',
-                             help_text=_(u"€"))
+    global_cost = models.FloatField(verbose_name=_(u"Global cost"), default=0, db_column='cout_global',
+                                    help_text=_(u"€"))
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
                                 help_text=_(u"Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,

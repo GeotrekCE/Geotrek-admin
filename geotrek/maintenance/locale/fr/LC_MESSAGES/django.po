@@ -135,6 +135,9 @@ msgstr "Fonction"
 msgid "Cost"
 msgstr "Coût"
 
+msgid "Global cost"
+msgstr "Coût global"
+
 msgid "Intervention's job"
 msgstr "Fonction"
 

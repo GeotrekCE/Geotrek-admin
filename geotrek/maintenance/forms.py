@@ -164,7 +164,7 @@ class ProjectForm(CommonForm):
                     'begin_year',
                     'end_year',
                     'constraint',
-                    'cost',
+                    'global_cost',
                     'comments',
 
                     'pk',
@@ -187,7 +187,7 @@ class ProjectForm(CommonForm):
         fields = CommonForm.Meta.fields + \
             ['structure',
              'name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
-             'cost', 'comments', 'project_owner', 'project_manager', 'contractors']
+             'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

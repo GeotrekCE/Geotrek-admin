@@ -204,7 +204,7 @@ class ProjectViewsTest(CommonTest):
             'begin_year': '2010',
             'end_year': '2012',
             'constraints': '',
-            'cost': '12',
+            'global_cost': '12',
             'comments': '',
             'contractors':  ContractorFactory.create().pk,
             'project_owner': OrganismFactory.create().pk,
