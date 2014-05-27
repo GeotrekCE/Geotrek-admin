@@ -431,6 +431,18 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     def period_verbose_name(cls):
         return _("Period")
 
+    @property
+    def interventions_total_cost(self):
+        total = 0
+        qs = self.interventions.existing()
+        for i in qs.prefetch_related('manday_set', 'manday_set__function'):
+            total += i.total_cost
+        return total
+
+    @classproperty
+    def interventions_total_cost_verbose_name(cls):
+        return _("Interventions total cost")
+
     def __unicode__(self):
         return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
 

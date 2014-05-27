@@ -8,7 +8,8 @@
           <li>{{ i.infrastructure_display|safe }}
               {{ i.name_display|safe }}
               {% if i.stake %}<span class="label">{{ i.stake }}</span>{% endif %}
-              ({{ i.date }}, {{ i.total_cost|floatformat:2 }} &euro;)
+              – {{ i.total_cost|floatformat:2 }} &euro; –
+              ({{ i.date }})
           </li>
         {% endfor %}
     </ul>

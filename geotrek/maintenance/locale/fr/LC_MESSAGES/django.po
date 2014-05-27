@@ -229,6 +229,9 @@ msgstr "Jour-Homme"
 msgid "Total cost:"
 msgstr "Coût total:"
 
+msgid "Interventions total cost"
+msgstr "Coût total des interventions"
+
 msgid "Related Project"
 msgstr "Chantier"
 

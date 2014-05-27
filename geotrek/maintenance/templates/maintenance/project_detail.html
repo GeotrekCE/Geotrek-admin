@@ -20,6 +20,10 @@
             <td>{{ project.global_cost }} &euro;</td>
         </tr>
         <tr>
+            <th>{{ project|verbose:"interventions_total_cost" }}</th>
+            <td>{{ project.interventions_total_cost }} &euro;</td>
+        </tr>
+        <tr>
             <th>{{ project|verbose:"type" }}</th>
             <td>{% if project.type %}{{ project.type }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

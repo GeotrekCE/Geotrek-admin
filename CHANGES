@@ -13,6 +13,7 @@ CHANGELOG
 * Detail page : interventions on paths are now grouped together,
   and a small icon is shown (fixes #735)
 * Detail page : show intervention costs (ref #958, fixes #764)
+* Show project intervention total costs (fixes #958)
 
 0.23 (2014-05-22)
 -----------------
