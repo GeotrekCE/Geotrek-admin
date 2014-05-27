@@ -9,6 +9,11 @@ CHANGELOG
 * Hide all modules information in report detail page.
 * Add missing translations of feedback module.
 
+** New features **
+
+* Allow to override the Trek public document template
+  (see *advanced configuration* in docs)
+
 
 0.23 (2014-05-22)
 -----------------

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import json
 from collections import OrderedDict
 
@@ -11,6 +12,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
 from django.db import connection
+from django.template.loader import find_template
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -258,6 +260,17 @@ class TrekCustomViewTests(TrekkingManagerTest):
         response = self.client.get(trek.get_document_public_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('django.template.loaders.filesystem.open', create=True)
+    def test_overriden_public_template(self, open_patched):
+        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+        def fake_exists(f, *args):
+            if f == overriden_template:
+                return mock.MagicMock(spec=file)
+            raise IOError
+        open_patched.side_effect = fake_exists
+        find_template('trekking/trek_public.odt')
+        open_patched.assert_called_with(overriden_template, 'rb')
 
     def test_profile_json(self):
         trek = TrekFactory.create()

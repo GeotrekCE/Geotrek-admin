@@ -114,3 +114,17 @@ Expected columns in table/view are :
 
     Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
+
+
+Override public document OpenOffice template
+--------------------------------------------
+
+Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
+``var/media/templates/trekking/trek_public.odt``.
+
+Edit the copy using *OpenOffice*.
+
+.. note ::
+
+    The default template may change in the future versions. You will be
+    in charge of porting the modification to your copy.
