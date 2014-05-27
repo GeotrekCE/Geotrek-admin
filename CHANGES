@@ -12,6 +12,7 @@ CHANGELOG
 * Detail page : replace "Maintenance" by "Works" (fixes #889)
 * Detail page : interventions on paths are now grouped together,
   and a small icon is shown (fixes #735)
+* Detail page : show intervention costs (ref #958, fixes #764)
 
 0.23 (2014-05-22)
 -----------------

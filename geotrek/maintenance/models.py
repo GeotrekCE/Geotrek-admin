@@ -189,11 +189,18 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
         return total
 
     @property
-    def total_cost(self):
+    def total_cost_mandays(self):
         total = 0.0
         for md in self.manday_set.all():
             total += md.cost
         return total
+
+    @property
+    def total_cost(self):
+        return self.total_cost_mandays + \
+               self.material_cost + \
+               self.heliport_cost + \
+               self.subcontract_cost
 
     @classproperty
     def geomfield(cls):
