@@ -25,7 +25,24 @@ var PolylineExtremities = {
             'markerUnits': 'strokeWidth',
             'orient': 'auto',
             'path': 'M 0 0 L 0 8 L 8 8 L 8 0 z'
-        }
+        },
+        dotM: {
+            'viewBox': '0 0 20 20',
+            'refX': '10',
+            'refY': '10',
+            'markerUnits': 'strokeWidth',
+            'orient': 'auto',
+            'path': 'M 10, 10 m -7.5, 0 a 7.5,7.5 0 1,0 15,0 a 7.5,7.5 0 1,0 -15,0'
+        },
+        dotL: {
+            'viewBox': '0 0 45 45',
+            'refX': '22.5',
+            'refY': '22.5',
+            'markerUnits': 'strokeWidth',
+            'orient': 'auto',
+            // http://stackoverflow.com/a/10477334
+            'path': 'M 22.5, 22.5 m -20, 0 a 20,20 0 1,0 40,0 a 20,20 0 1,0 -40,0'
+        },
     },
 
     onAdd: function (map) {
