@@ -9,6 +9,10 @@ CHANGELOG
 * Hide all modules information in report detail page.
 * Add missing translations of feedback module.
 
+** New features **
+
+* Public TREK export - hide block label if value is empty (fixes #873)
+
 
 0.23.1 (2014-05-22)
 -------------------
