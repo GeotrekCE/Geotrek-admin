@@ -18,6 +18,8 @@ CHANGELOG
 * Detail page : show intervention costs (ref #958, fixes #764)
 * Show project intervention total costs (fixes #958)
 * Add POIs on trek GPX (fixes #774)
+* Allow to override the Trek public document template
+  (see *advanced configuration* in docs)
 
 
 0.23.1 (2014-05-22)

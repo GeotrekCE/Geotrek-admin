@@ -203,10 +203,6 @@ class TrekPrint(DocumentConvert):
     def source_url(self):
         return self.get_object().get_document_public_url()
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekPrint, self).dispatch(*args, **kwargs)
-
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
     context_name = 'relationship_formset'
