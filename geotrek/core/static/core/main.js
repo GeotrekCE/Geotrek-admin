@@ -13,3 +13,9 @@ $(window).on('entity:map', function (e, data) {
         paths.addTo(map);
     }
 });
+
+$(window).on('entity:view:list', function () {
+    // Move all topology-filters to separate tab
+    $('#mainfilter .topology-filter').parent('p')
+                                     .detach().appendTo('#mainfilter > .right');
+});
