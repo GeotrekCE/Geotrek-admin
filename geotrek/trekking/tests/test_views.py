@@ -291,6 +291,10 @@ class TrekGPXTest(TrekkingManagerTest):
         self.trek.description_fr = 'Jolie rando'
         self.trek.save()
 
+        for poi in self.trek.pois.all():
+            poi.description_it = poi.description
+            poi.save()
+
         url = reverse('trekking:trek_gpx_detail', kwargs={'pk': self.trek.pk})
         self.response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
         self.parsed = BeautifulSoup(self.response.content)
