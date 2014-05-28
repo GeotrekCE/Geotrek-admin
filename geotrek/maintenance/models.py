@@ -189,11 +189,18 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
         return total
 
     @property
-    def total_cost(self):
+    def total_cost_mandays(self):
         total = 0.0
         for md in self.manday_set.all():
             total += md.cost
         return total
+
+    @property
+    def total_cost(self):
+        return self.total_cost_mandays + \
+               self.material_cost + \
+               self.heliport_cost + \
+               self.subcontract_cost
 
     @classproperty
     def geomfield(cls):
@@ -320,8 +327,8 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
     constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes',
                                   help_text=_(u"Specific conditions, ..."))
-    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout',
-                             help_text=_(u"€"))
+    global_cost = models.FloatField(verbose_name=_(u"Global cost"), default=0, db_column='cout_global',
+                                    help_text=_(u"€"))
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
                                 help_text=_(u"Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
@@ -423,6 +430,18 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     @classproperty
     def period_verbose_name(cls):
         return _("Period")
+
+    @property
+    def interventions_total_cost(self):
+        total = 0
+        qs = self.interventions.existing()
+        for i in qs.prefetch_related('manday_set', 'manday_set__function'):
+            total += i.total_cost
+        return total
+
+    @classproperty
+    def interventions_total_cost_verbose_name(cls):
+        return _("Interventions total cost")
 
     def __unicode__(self):
         return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)

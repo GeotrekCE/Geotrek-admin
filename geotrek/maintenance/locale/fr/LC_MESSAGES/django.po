@@ -135,6 +135,9 @@ msgstr "Fonction"
 msgid "Cost"
 msgstr "Coût"
 
+msgid "Global cost"
+msgstr "Coût global"
+
 msgid "Intervention's job"
 msgstr "Fonction"
 
@@ -226,6 +229,9 @@ msgstr "Jour-Homme"
 msgid "Total cost:"
 msgstr "Coût total:"
 
+msgid "Interventions total cost"
+msgstr "Coût total des interventions"
+
 msgid "Related Project"
 msgstr "Chantier"
 
@@ -254,7 +260,11 @@ msgid "Add intervention"
 msgstr "Ajouter une intervention"
 
 msgid "Maintenance"
-msgstr "Maintenance"
+msgstr "Entretient"
+
+msgid "Works"
+msgstr "Travaux"
+
 
 #, python-format
 msgid ""

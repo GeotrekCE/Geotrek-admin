@@ -12,6 +12,11 @@ CHANGELOG
 ** New features **
 
 * Public TREK export - hide block label if value is empty (fixes #873)
+* Detail page : replace "Maintenance" by "Works" (fixes #889)
+* Detail page : interventions on paths are now grouped together,
+  and a small icon is shown (fixes #735)
+* Detail page : show intervention costs (ref #958, fixes #764)
+* Show project intervention total costs (fixes #958)
 
 
 0.23.1 (2014-05-22)
