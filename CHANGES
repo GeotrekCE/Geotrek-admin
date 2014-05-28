@@ -23,6 +23,8 @@ CHANGELOG
 * Add missing properties in feedback report detail page.
 * Hide all modules information in report detail page.
 * Add missing translations of feedback module.
+* Show object type in ODT export (fixes #1000)
+
 
 ** Internal changes **
 
