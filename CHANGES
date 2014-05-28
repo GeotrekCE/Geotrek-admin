@@ -20,6 +20,7 @@ CHANGELOG
 * Add POIs on trek GPX (fixes #774)
 * Allow to override the Trek public document template
   (see *advanced configuration* in docs)
+* Close calendar after date choice in intervention form (fixes #928)
 
 
 0.23.1 (2014-05-22)
