@@ -28,6 +28,10 @@ CHANGELOG
 * Show paths extremities on map (fixes #355)
 * Close calendar after date choice in intervention form (fixes #928)
 
+** Bug fixes **
+
+* Fixed Signage and Infrastructure year filter label (fixes #293)
+
 
 0.23.1 (2014-05-22)
 -------------------
