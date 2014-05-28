@@ -17,14 +17,14 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
 
-    in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"), default=False,
-                                         db_column='maintenance', help_text=_(u"Recurrent"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))
     date = models.DateField(default=datetime.now, verbose_name=_(u"Date"), db_column='date',
                             help_text=_(u"When ?"))
     comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire',
                                 help_text=_(u"Remarks and notes"))
+    subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
+                                         db_column='sous_traitance')
 
     ## Technical information ##
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')

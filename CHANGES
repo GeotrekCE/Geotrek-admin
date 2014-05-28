@@ -22,6 +22,7 @@ CHANGELOG
   (see *advanced configuration* in docs)
 * Close list filter when click outside (fixes #916)
 * Intervention disorders is not mandatory anymore (fixes #661)
+* Rename recurrent field to subcontracting on intervention (fixes #911)
 
 
 0.23.1 (2014-05-22)
