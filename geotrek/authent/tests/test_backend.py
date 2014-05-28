@@ -24,7 +24,8 @@ _CREATE_TABLE_STATEMENT = """
 
 
 def query_db(sqlquery):
-    cursor = connections[settings.AUTHENT_DATABASE or 'default'].cursor()
+    connection = connections[settings.AUTHENT_DATABASE or 'default']
+    cursor = connection.cursor()
     cursor.execute(sqlquery)
     return cursor
 
@@ -41,9 +42,11 @@ class AuthentDatabaseTest(AuthentFixturesTest):
     def setUp(self):
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
+        self.deleted = False
 
     def tearDown(self):
-        query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
+        if not self.deleted:
+            query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
 
     @override_settings(AUTHENT_DATABASE=None)
     def test_base_missing(self):
@@ -53,10 +56,12 @@ class AuthentDatabaseTest(AuthentFixturesTest):
     def test_table_missing(self):
         self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))
 
-    def test_conftablemissing(self):
-        query_db("DROP TABLE IF EXISTS %s;" % settings.AUTHENT_TABLENAME)
+    def test_raises_improperly_configured_when_tablemissing(self):
+        query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
         self.assertRaises(ImproperlyConfigured, self.backend.authenticate, ('toto', 'totopwd'))
-        query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
+        self.deleted = True
+
+    def test_returns_none_if_user_is_invalid(self):
         self.assertEqual(None, self.backend.authenticate('toto', 'totopwd'))
 
     def test_invalid(self):

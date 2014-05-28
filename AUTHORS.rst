@@ -14,6 +14,7 @@ Makina Corpus
 * Chloé Morisset
 * Frédéric Bonifas
 * Célian Garcia
+* Gaël Utard
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com

@@ -114,3 +114,19 @@ Expected columns in table/view are :
 
     Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
     for more details.
+
+
+External map layers
+-------------------
+
+In order to display external layers in *Geotrek* and *Geotrek-rando*, it is
+possible to define external datasources.
+
+So far, the following formats are supported :
+
+* GeoJSON
+* TIF (*TourInFrance*)
+
+From the Administration backoffice, create datasources using a name, an URL, and
+a pictogram. You can choose if this layer should be displayed in the different
+Geotrek modules, or published to the public Website (*Geotrek-rando*).
