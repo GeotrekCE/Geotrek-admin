@@ -51,7 +51,8 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
                              verbose_name=_(u"Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
+                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"),
+                                       blank=True)
 
     jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_(u"Jobs"))
 
