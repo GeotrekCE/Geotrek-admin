@@ -39,8 +39,8 @@ msgstr "Sur %s"
 msgid "Fundings"
 msgstr "Financements"
 
-msgid "Recurrent intervention"
-msgstr "Entretien courant"
+msgid "Subcontracting"
+msgstr "Sous-traitance"
 
 msgid "Recurrent"
 msgstr "Récurrent"

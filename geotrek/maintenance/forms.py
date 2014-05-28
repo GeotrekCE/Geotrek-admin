@@ -65,7 +65,7 @@ class InterventionForm(CommonForm):
                     'disorders',
                     'type',
                     'comments',
-                    'in_maintenance',
+                    'subcontracting',
                     'length',
                     'width',
                     'height',
@@ -99,7 +99,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure',
-             'name', 'date', 'status', 'disorders', 'type', 'comments', 'in_maintenance', 'length', 'width',
+             'name', 'date', 'status', 'disorders', 'type', 'comments', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
