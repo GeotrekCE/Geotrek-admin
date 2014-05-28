@@ -11,6 +11,9 @@ $(window).on('entity:map', function (e, data) {
         paths.load(window.SETTINGS.urls.path_layer);
         map.layerscontrol.addOverlay(paths, tr('Paths'));
         paths.addTo(map);
+        paths.on('data:loaded', function (e) {
+            paths.showExtremities(window.SETTINGS.map.paths_line_marker);
+        });
     }
 });
 

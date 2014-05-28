@@ -358,6 +358,7 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
+PATHS_LINE_MARKER = 'dotL'
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
@@ -381,6 +382,7 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
     'PLUGINS': {
+        'geotrek': {'js': ['core/leaflet.lineextremities.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',
