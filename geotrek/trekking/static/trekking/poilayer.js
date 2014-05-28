@@ -22,9 +22,17 @@ var POILayer = L.MarkerClusterGroup.extend({
     },
 
     poisMarker: function(featureData, latlng) {
+        // Label
+        var category = featureData.properties.type.label,
+            name = featureData.properties.name,
+            poiLabel = category + '&nbsp;: ' + name;
+        if (name.indexOf(category) === 0) {  // startswith
+            poiLabel = name;
+        }
+
         var img = L.Util.template('<img src="{SRC}" title="{TITLE}">', {
             SRC: featureData.properties.type.pictogram,
-            TITLE: featureData.properties.type.label
+            TITLE: poiLabel
         });
 
         var poicon = new L.DivIcon({className: 'poi-marker-icon',
