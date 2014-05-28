@@ -26,6 +26,8 @@ CHANGELOG
 * Show object type in ODT export (fixes #1000)
 * Show POI name on hover instead of category in trek detail pages (fixes #1004)
 * Show paths extremities on map (fixes #355)
+* Close calendar after date choice in intervention form (fixes #928)
+
 
 0.23.1 (2014-05-22)
 -------------------
