@@ -12,7 +12,7 @@ $(window).on('entity:map', function (e, data) {
         map.layerscontrol.addOverlay(paths, tr('Paths'));
         paths.addTo(map);
         paths.on('data:loaded', function (e) {
-            paths.showExtremities('stopM');
+            paths.showExtremities(window.SETTINGS.map.paths_line_marker);
         });
     }
 });

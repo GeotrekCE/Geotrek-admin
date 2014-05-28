@@ -358,6 +358,7 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
+PATHS_LINE_MARKER = 'stopM'
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
