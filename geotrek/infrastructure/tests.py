@@ -97,13 +97,16 @@ class InfraFilterTestMixin():
     factory = None
     filterset = None
 
-    def test_intervention_filter(self):
-        model = self.factory._associated_class
-
+    def login(self):
         user = PathManagerFactory(password='booh')
         success = self.client.login(username=user.username, password='booh')
         self.assertTrue(success)
 
+
+    def test_intervention_filter(self):
+        self.login()
+
+        model = self.factory._associated_class
         # We will filter by this year
         year_idx, year = self.filterset.declared_filters['intervention_year'].get_choices()[1]
         good_date_year = datetime.datetime(year=year, month=2, day=2)
@@ -129,6 +132,14 @@ class InfraFilterTestMixin():
         topo_pk = json.loads(response.content)['map_obj_pk']
 
         self.assertItemsEqual(topo_pk, [ good_topo.pk ])
+
+    def test_intervention_filter_has_correct_label(self):
+        self.login()
+        model = self.factory._associated_class
+        response = self.client.get(model.get_list_url())
+        intervention_year_label = SignageFilterSet().form.fields['intervention_year'].label
+        self.assertContains(response,
+                            '<option value="0">%s</option>' % unicode(intervention_year_label))
 
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):

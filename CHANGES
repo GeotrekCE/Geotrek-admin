@@ -21,6 +21,10 @@ CHANGELOG
 * Allow to override the Trek public document template
   (see *advanced configuration* in docs)
 
+** Bug fixes **
+
+* Fixed Signage and Infrastructure year filter label (fixes #293)
+
 
 0.23.1 (2014-05-22)
 -------------------
