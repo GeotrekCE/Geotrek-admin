@@ -15,6 +15,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 from mapentity.serializers import plain_text
 from paperclip.models import Attachment
 
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.zoning.models import District, City, RestrictedArea
@@ -209,7 +210,7 @@ class TrekRelationshipFormsetMixin(FormsetMixin):
     formset_class = TrekRelationshipFormSet
 
 
-class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
+class TrekCreate(TrekRelationshipFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 

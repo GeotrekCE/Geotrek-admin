@@ -1,8 +1,7 @@
-from django.utils.decorators import method_decorator
-
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
+from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
 from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
@@ -36,7 +35,7 @@ class PhysicalEdgeDocument(MapEntityDocument):
     model = PhysicalEdge
 
 
-class PhysicalEdgeCreate(MapEntityCreate):
+class PhysicalEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = PhysicalEdge
     form_class = PhysicalEdgeForm
 
@@ -77,7 +76,7 @@ class LandEdgeDocument(MapEntityDocument):
     model = LandEdge
 
 
-class LandEdgeCreate(MapEntityCreate):
+class LandEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = LandEdge
     form_class = LandEdgeForm
 
@@ -117,7 +116,7 @@ class CompetenceEdgeDocument(MapEntityDocument):
     model = CompetenceEdge
 
 
-class CompetenceEdgeCreate(MapEntityCreate):
+class CompetenceEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = CompetenceEdge
     form_class = CompetenceEdgeForm
 
@@ -158,7 +157,7 @@ class WorkManagementEdgeDocument(MapEntityDocument):
     model = WorkManagementEdge
 
 
-class WorkManagementEdgeCreate(MapEntityCreate):
+class WorkManagementEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = WorkManagementEdge
     form_class = WorkManagementEdgeForm
 
@@ -199,7 +198,7 @@ class SignageManagementEdgeDocument(MapEntityDocument):
     model = SignageManagementEdge
 
 
-class SignageManagementEdgeCreate(MapEntityCreate):
+class SignageManagementEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = SignageManagementEdge
     form_class = SignageManagementEdgeForm
 

@@ -28,6 +28,7 @@ CHANGELOG
 * Show paths extremities on map (fixes #355)
 * Close calendar after date choice in intervention form (fixes #928)
 * Renamed Attachment submit button (fixes #925)
+* Ability to reuse topology when adding objects from detail pages (fixes #574, fixes #998)
 
 ** Bug fixes **
 

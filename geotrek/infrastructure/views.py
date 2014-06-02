@@ -1,9 +1,8 @@
-from django.utils.decorators import method_decorator
-
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
 from .models import Infrastructure, Signage
 from .filters import InfrastructureFilterSet, SignageFilterSet
@@ -42,7 +41,7 @@ class InfrastructureDocument(MapEntityDocument):
     model = Infrastructure
 
 
-class InfrastructureCreate(MapEntityCreate):
+class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Infrastructure
     form_class = InfrastructureForm
 

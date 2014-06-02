@@ -2,13 +2,13 @@
 
 import logging
 
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from geotrek.core.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from geotrek.infrastructure.models import Infrastructure, Signage
 from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
@@ -56,7 +56,7 @@ class ManDayFormsetMixin(FormsetMixin):
     formset_class = ManDayFormSet
 
 
-class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
+class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Intervention
     form_class = InterventionCreateForm
 
@@ -76,16 +76,12 @@ class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
         """
         Returns the initial data to use for forms on this view.
         """
-        initial = self.initial.copy()
+        initial = super(InterventionCreate, self).get_initial()
         infrastructure = self.on_infrastucture()
         if infrastructure:
+            # Create intervention on an infrastructure
             initial['infrastructure'] = infrastructure
         return initial
-
-    def get_context_data(self, **kwargs):
-        context = super(InterventionCreate, self).get_context_data(**kwargs)
-        context['infrastructure'] = self.on_infrastucture()
-        return context
 
 
 class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):

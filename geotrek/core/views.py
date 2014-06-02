@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
+
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
@@ -12,10 +14,13 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 
 from geotrek.authent.decorators import same_structure_required
 
-from .models import Path, Trail
+from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
+
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -26,6 +31,25 @@ def last_list(request):
     return redirect(last)
 
 home = last_list
+
+
+class CreateFromTopologyMixin(object):
+    def on_topology(self):
+        pk = self.request.GET.get('topology')
+        if pk:
+            try:
+                return Topology.objects.existing().get(pk=pk)
+            except Topology.DoesNotExist:
+                logger.warning("Intervention on unknown topology %s" % pk)
+        return None
+
+    def get_initial(self):
+        initial = super(CreateFromTopologyMixin, self).get_initial()
+        # Create intervention with an existing topology as initial data
+        topology = self.on_topology()
+        if topology:
+            initial['topology'] = topology
+        return initial
 
 
 class PathLayer(MapEntityLayer):
@@ -154,7 +178,7 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
