@@ -421,6 +421,8 @@ LAND_BBOX_CITIES_ENABLED = True
 LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
+TRAIL_MODEL_ENABLED = True
+
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']
 TREK_DAY_DURATION = 10  # Max duration to be done in one day

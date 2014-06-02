@@ -28,6 +28,8 @@ CHANGELOG
 * Show paths extremities on map (fixes #355)
 * Close calendar after date choice in intervention form (fixes #928)
 * Renamed Attachment submit button (fixes #925)
+* Allow to disable trails notion (fixes #997)
+  (see *advanced configuration* in docs)
 
 ** Bug fixes **
 

@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 
 <h3>{% trans "Management" %}</h3>
 <table class="table">
@@ -15,7 +15,8 @@
     {% endif %}
 {% endif %}
 
-{% if modelname != "trail" %}
+{% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
+{% if trail_enabled and modelname != "trail" %}
     <tr>
         <th>{% trans "Trails" %}</th>
         <td>
