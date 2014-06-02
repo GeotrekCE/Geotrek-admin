@@ -298,8 +298,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         super(Topology, self).save(*args, **kwargs)
         self.reload()
 
-    def serialize(self):
-        return TopologyHelper.serialize(self)
+    def serialize(self, **kwargs):
+        return TopologyHelper.serialize(self, **kwargs)
 
     @classmethod
     def deserialize(cls, serialized):

@@ -48,7 +48,7 @@ class CreateFromTopologyMixin(object):
         # Create intervention with an existing topology as initial data
         topology = self.on_topology()
         if topology:
-            initial['topology'] = topology
+            initial['topology'] = topology.serialize(with_pk=False)
         return initial
 
 
