@@ -102,8 +102,8 @@
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
-            <th>{{ intervention|verbose:"comments" }}</th>
-            <td>{% if intervention.comments %}{{ intervention.comments|safe }}
+            <th>{{ intervention|verbose:"description" }}</th>
+            <td>{% if intervention.description %}{{ intervention.description|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
