@@ -176,9 +176,10 @@ Attributs (facultatifs) :
 * Auteur
 * Titre
 * Légende
+* Catégorie (Photographie, illustration, …)
 
 Il convient de fournir des photos dans la résolution la plus grande possible,
-les aperçus et encarts sont générés automatiquement de la publication.
+les aperçus et encarts sont générés automatiquement lors de la publication.
 
 
 Fonds de carte
@@ -191,6 +192,16 @@ Pour les fonds scan et orthophoto, plusieurs approches possibles :
 * Accès Geoportail IGN
 * OpenStreetMap + Bing Maps
 * Compte MapBox
+
+Pour le Géoportail, il faut commander deux clés :
+
+* Portail public (ex : rando.votresite.com)
+* Portail d'administration (ex : votresite-geotrek.makina-corpus.net)
+
+Pour au moins deux couches à chaque fois :
+
+* Plan (ex. Scan, Scan Express, …)
+* Orthophotographie
 
 
 Configuration fonctionnelle
@@ -232,4 +243,5 @@ Pictogrammes monochromes vectoriels (facultatif) :
 Divers
 ------
 
-* Google Analytics account number
+* Clé de compte Google Analytics pour le suivi des visites
+* Email pour les notifications (formulaire de signalement...)
