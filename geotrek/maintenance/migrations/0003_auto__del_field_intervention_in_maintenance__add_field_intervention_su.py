@@ -9,10 +9,10 @@ from django.conf import settings
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.rename_column('m_t_chantier', 'maintenance', 'subcontracting')
+        db.rename_column('m_t_intervention', 'maintenance', 'sous_traitance')
 
     def backwards(self, orm):
-        db.rename_column('m_t_chantier', 'subcontracting', 'maintenance')
+        db.rename_column('m_t_intervention', 'sous_traitance', 'maintenance')
 
     models = {
         u'authent.structure': {
