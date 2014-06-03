@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.forms.widgets import CheckboxInput
 from django.forms.models import inlineformset_factory
 
 import floppyforms as forms
@@ -86,6 +87,11 @@ class TrekForm(TopologyForm):
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
         self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
+
+        # Get rid of ugly NullBooleanField widget
+        if settings.TREK_PUBLISHED_BY_LANG:
+            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+                self.fields['published_%s' % l[0]].widget = CheckboxInput()
 
     class Meta(TopologyForm.Meta):
         model = Trek
