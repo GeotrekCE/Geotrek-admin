@@ -370,6 +370,8 @@ ALTIMETRIC_PROFILE_FONTSIZE = 25
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
+TREK_PUBLISHED_BY_LANG = True
+
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'SRID': SRID,
