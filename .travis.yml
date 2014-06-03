@@ -12,7 +12,7 @@ before_install:
   - "wget http://depot.makina-corpus.org/public/geotrek/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
   - make etc/settings.ini
-  - echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini
+  - if [[ $TRAVIS_PULL_REQUEST != false ]]; then echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini; fi
 install:
   - deactivate
   - if [[ $ACTION == test ]]; then ./install.sh --tests; fi
