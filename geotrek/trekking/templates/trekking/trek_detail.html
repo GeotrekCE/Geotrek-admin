@@ -179,7 +179,7 @@
                     {% if status.status %}
                     <li class="active">
                         <img src="{% static "images/flags/"|add:status.lang|add:".png" %}" alt="{{ status.lang }}">
-                        {{ status.language }}
+                        <a href="?lang={{ status.lang }}">{{ status.language }}</a>
                     </li>
                     {% endif %}
                 {% endfor %}

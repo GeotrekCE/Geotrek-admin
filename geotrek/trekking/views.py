@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
+from django.utils import translation
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
 from django.contrib.auth.decorators import login_required
@@ -156,6 +157,13 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
 
 class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super(TrekDetail, self).dispatch(*args, **kwargs)
 
 
 class TrekMapImage(MapEntityMapImage):
