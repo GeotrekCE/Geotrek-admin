@@ -28,6 +28,10 @@ CHANGELOG
 * Show paths extremities on map (fixes #355)
 * Close calendar after date choice in intervention form (fixes #928)
 * Renamed Attachment submit button (fixes #925)
+* Publication status is now controlled by language (fixes #1003). Previous
+  behaviour can restored by setting ``TREK_PUBLISHED_BY_LANG``` to False.
+* Added publication date on trek (ref #1003)
+* Ability to see a trek in the different published languages (ref #1003)
 
 ** Bug fixes **
 
