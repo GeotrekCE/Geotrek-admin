@@ -31,6 +31,27 @@ class TrekTest(TestCase):
         self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
 
+    def test_any_published_property(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = False
+        t.published_it = False
+        t.save()
+        self.assertFalse(t.any_published)
+        t.published_it = True
+        t.save()
+        self.assertTrue(t.any_published)
+
+    def test_published_status(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = False
+        t.published_it = True
+        t.save()
+        self.assertEqual(t.published_status,
+            [{'lang': 'en', 'language': 'English', 'status': None},
+             {'lang': 'es', 'language': 'Spanish', 'status': None},
+             {'lang': 'fr', 'language': 'French', 'status': False},
+             {'lang': 'it', 'language': 'Italian', 'status': True}])
+
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()

@@ -202,6 +202,31 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_elevation_area', [str(self.pk)])
 
     @property
+    def any_published(self):
+        """Returns True if the trek is published in at least one of the language
+        """
+        if settings.TREK_PUBLISHED_BY_LANG:
+            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+                if getattr(self, 'published_%s' % l[0], False):
+                    return True
+        return self.published
+
+    @property
+    def published_status(self):
+        status = []
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if settings.TREK_PUBLISHED_BY_LANG:
+                published = getattr(self, 'published_%s' % l[0], True)
+            else:
+                published = self.published
+            status.append({
+                'lang': l[0],
+                'language': l[1],
+                'status': published
+            })
+        return status
+
+    @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
