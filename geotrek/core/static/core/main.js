@@ -36,11 +36,11 @@ $(window).on('entity:map', function (e, data) {
                 return;
             }
 
-            // Bring to back when the last path item is added
-            var layers = pathsLayer.getLayers(),
-                last = layers[layers.length - 1];
-            if (e.layer == last) {
-                pathsLayer.bringToBack();
+            if (e.layer == pathsLayer) {
+                // Bring to back when the last path item is added
+                setTimeout(function () {
+                    pathsLayer.bringToBack();
+                }, 300);
             }
         });
 
