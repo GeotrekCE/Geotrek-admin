@@ -32,6 +32,7 @@ CHANGELOG
 ** Bug fixes **
 
 * Fixed Signage and Infrastructure year filter label (fixes #293)
+* Fixed paths layers not always shown below other layers (fixes #912)
 
 
 0.23.2 (2014-06-13)

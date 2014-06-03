@@ -1,19 +1,50 @@
+MapEntity.pathsLayer = function buildPathLayer(options) {
+    var options = options || {};
+    options.style = L.Util.extend(options.style || {}, window.SETTINGS.map.styles.path);
+
+    var pathsLayer = new L.ObjectsLayer(null, options);
+
+    // Show paths extremities
+    pathsLayer.on('data:loaded', function (e) {
+        pathsLayer.showExtremities(window.SETTINGS.map.paths_line_marker);
+    });
+
+    // Start ajax loading at last
+    pathsLayer.load(window.SETTINGS.urls.path_layer, true);
+
+    return pathsLayer;
+};
+
+
 $(window).on('entity:map', function (e, data) {
     var map = data.map;
 
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
     if (!/add|update/.test(data.view) && (data.view == 'detail' || data.modelname != 'path')) {
-        var paths = new L.ObjectsLayer(null, {
+
+        var pathsLayer = MapEntity.pathsLayer({
             indexing: false,
-            style: L.Util.extend(window.SETTINGS.map.styles.path, { clickable:false })
+            style: { clickable:false }
         });
-        paths.load(window.SETTINGS.urls.path_layer);
-        map.layerscontrol.addOverlay(paths, tr('Paths'));
-        paths.addTo(map);
-        paths.on('data:loaded', function (e) {
-            paths.showExtremities(window.SETTINGS.map.paths_line_marker);
+        pathsLayer.addTo(map);
+
+        map.on('layeradd', function (e) {
+
+            if (!pathsLayer._map) {
+                // Paths currently not shown
+                return;
+            }
+
+            // Bring to back when the last path item is added
+            var layers = pathsLayer.getLayers(),
+                last = layers[layers.length - 1];
+            if (e.layer == last) {
+                pathsLayer.bringToBack();
+            }
         });
+
+        map.layerscontrol.addOverlay(pathsLayer, tr('Paths'));
     }
 });
 
