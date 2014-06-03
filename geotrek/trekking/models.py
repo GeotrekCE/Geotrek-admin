@@ -1,6 +1,7 @@
 import os
 import logging
 import shutil
+import datetime
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -125,6 +126,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     # See https://github.com/deschler/django-modeltranslation/issues/247
     published = models.NullBooleanField(verbose_name=_(u"Published"), null=True,
                                         help_text=_(u"Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+                                        null=True, blank=True, editable=False,
+                                        db_column='date_publication')
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
@@ -176,6 +180,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.publication_date is None and self.published:
+            self.publication_date = datetime.date.today()
+        if self.publication_date is not None and not self.published:
+            self.publication_date = None
+        super(Trek, self).save(*args, **kwargs)
 
     @property
     def slug(self):

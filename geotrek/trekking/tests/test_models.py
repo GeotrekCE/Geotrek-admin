@@ -87,6 +87,33 @@ class TrekTest(TestCase):
                          list(Trek.objects.all().values_list('name', flat=True)))
 
 
+class TrekPublicationDateTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.create(published=False)
+
+    def test_default_value_is_null(self):
+        self.assertIsNone(self.trek.publication_date)
+
+    def test_takes_current_date_when_published_becomes_true(self):
+        self.trek.published = True
+        self.trek.save()
+        self.assertIsNotNone(self.trek.publication_date)
+
+    def test_becomes_null_when_unpublished(self):
+        self.test_takes_current_date_when_published_becomes_true()
+        self.trek.published = False
+        self.trek.save()
+        self.assertIsNone(self.trek.publication_date)
+
+    def test_date_is_not_updated_when_saved_again(self):
+        import datetime
+        self.test_takes_current_date_when_published_becomes_true()
+        old_date = datetime.date(2003, 8, 6)
+        self.trek.publication_date = old_date
+        self.trek.save()
+        self.assertEqual(self.trek.publication_date, old_date)
+
+
 class RelatedObjectsTest(TestCase):
     def test_helpers(self):
         trek = TrekFactory.create(no_path=True)
