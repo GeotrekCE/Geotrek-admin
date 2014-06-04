@@ -208,10 +208,10 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -qq libjson0 gdal-bin libgdal-dev libproj0 libgeos-c1
+    sudo apt-get install -y -qq --no-upgrade libjson0 gdal-bin libgdal-dev libproj0 libgeos-c1
     echo_progress
     # PostgreSQL client and headers
-    sudo apt-get install -y -qq postgresql-client postgresql-server-dev-9.1
+    sudo apt-get install -y -qq --no-upgrade postgresql-client postgresql-server-dev-all
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
@@ -296,9 +296,9 @@ function install_postgres_local {
         # Open local and host connection for this user as md5
         sudo sed -i "/DISABLE/a \
 # Automatically added by Geotrek installation :\
-local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
+local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/*/main/pg_hba.conf
 
-        cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
+        cat << _EOF_ | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
 # Automatically added by Geotrek installation :
 local    ${dbname}     ${dbuser}                   md5
 host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
@@ -323,8 +323,8 @@ _EOF_
 
             # Listen to all network interfaces (useful for VM etc.)
             listen="'*'"
-            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
-            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/9.1/main/postgresql.conf
+            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/*/main/postgresql.conf
+            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
             sudo /etc/init.d/postgresql restart
         fi
     fi
