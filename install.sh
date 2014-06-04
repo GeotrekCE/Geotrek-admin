@@ -208,9 +208,10 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -qq libjson0 libgdal-dev libproj0 libgeos-c1
+    sudo apt-get install -y -qq libjson0 gdal-bin libgdal-dev libproj0 libgeos-c1
     echo_progress
-    sudo apt-get install -y -qq postgresql-client gdal-bin
+    # PostgreSQL client and headers
+    sudo apt-get install -y -qq postgresql-client postgresql-server-dev-9.1
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
@@ -268,7 +269,7 @@ function screamshotter_system_dependencies {
 
 function install_postgres_local {
     echo_step "Installing postgresql server locally..."
-    sudo apt-get install -y -qq postgresql postgis postgresql-server-dev-9.1
+    sudo apt-get install -y -qq postgresql postgis
     echo_progress
 
     dbname=$(ini_value $settingsfile dbname)
