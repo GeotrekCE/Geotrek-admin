@@ -181,7 +181,7 @@ function check_postgres_connection {
     # Check that database connection is correct
     dbport=$(ini_value $settingsfile dbport)
     export PGPASSWORD=$dbpassword
-    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT PostGIS_full_version();"
     result=$?
     export PGPASSWORD=
     if [ ! $result -eq 0 ]
