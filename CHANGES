@@ -12,6 +12,7 @@ CHANGELOG
 ** Installation **
 
 * UbuntuGIS stable maintainer have *upgraded* (sic) GDAL to 1.10.0.
+* Fixed content types migration of land to zoning apps (Thanks Noël Martinon)
 
 
 0.23.1 (2014-05-22)
