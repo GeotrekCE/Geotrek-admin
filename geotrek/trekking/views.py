@@ -193,7 +193,7 @@ class TrekDocumentPublic(TrekDocument):
         except ObjectDoesNotExist:
             pass
         # Prepare altimetric graph
-        trek.prepare_elevation_chart(self.request)
+        trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
