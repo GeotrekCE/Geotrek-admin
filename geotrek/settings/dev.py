@@ -14,7 +14,7 @@ SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
 #..........................
 
 INSTALLED_APPS = (
-    'debug_toolbar',
+    #'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
 

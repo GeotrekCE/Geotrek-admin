@@ -29,6 +29,7 @@ The most minimal components required to run an instance are :
 * PostGIS 2 server
 * GDAL, GEOS, libproj
 * gettext
+* libfreetype
 * libxml2, libxslt
 * Usual Python dev stuff
 
