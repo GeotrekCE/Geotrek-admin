@@ -22,6 +22,7 @@ BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
 etc/settings.ini:
 	mkdir -p etc/
+	touch etc/__init__.py
 	cp conf/settings.ini.sample etc/settings.ini
 	chmod -f 600 etc/settings.ini
 
