@@ -43,7 +43,7 @@ introduced by the word *Free* in English ("free" as freedom, or "free" as costle
 therefore started to spread the word *Open Source* instead.
 
 Today, those copies of Open Source software can be obtained on the Internet for free
-of course. But yet, the GNU Software Fundation still recommends to claim a financial contribution when
+of course. But yet, the GNU Software Fundation `still recommends to claim a financial contribution <https://www.gnu.org/philosophy/selling.en.html>`_ when
 distributing them, in order to support the development and maintenance. And note that nowadays,
 many of the most important Open Source applications have their own fundation, focused on
 collecting funds for development and maintenance.
@@ -85,7 +85,7 @@ the source code is probably the least common action. For example :
 * Write and talk about *Geotrek*, at conferences, workgroups, forums ;
 
 * Translate the documentation ;
-* Translate the menus, buttons and labels ;
+* Translate the menus, buttons and labels (we use `Transifex <https://www.transifex.com/organization/makina-corpus>`_) ;
 * Maintain the installation script for different Linux distributions (*requires some basic Linux skills*) ;
 * Fix bugs or improve layout and apparence (*requires Webmaster skills*) ;
 * Fix bugs or improve core modules (*requires python/Django skills*).
