@@ -6,6 +6,17 @@ env:
   - ACTION=deploy
 
 before_install:
+  # GDAL packaging is miserable, install here outside UbuntuGIS ppa
+  - sudo apt-get update -qq
+  - sudo apt-get download -y libgdal-dev
+  - sudo dpkg --install --force-all libgdal-dev*.deb
+  - ls -l /usr/lib/libgdal*
+  - sudo ln -sf /usr/lib/libgdal.so.1 /usr/lib/libgdal.so
+  - sudo apt-cache policy python-gdal
+  - sudo apt-cache policy libgdal-dev
+  - sed -i "s/gdal-bin//" install.sh
+  - sed -i "s/libgdal-dev//" install.sh
+  - sed -i "s/GDAL==.*/GDAL==1.9.0/" conf/buildout.cfg
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg

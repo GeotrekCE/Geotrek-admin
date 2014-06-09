@@ -208,17 +208,8 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1
+    sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1 gdal-bin libgdal-dev
     echo_progress
-
-    sudo apt-cache policy libgdal-dev
-    if ! $tests ; then
-        sudo apt-get install -y gdal-bin libgdal-dev
-    else
-        gdalversion=1.9.0-3.1~pgdg12.4+1
-        sudo apt-get install -y gdal-bin=$gdalversion libgdal-dev=$gdalversion
-    fi
-
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-9.1 postgresql-server-dev-all
     echo_progress
