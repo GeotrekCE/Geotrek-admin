@@ -179,7 +179,12 @@ function ini_value () {
 function check_postgres_connection {
     echo_step "Check postgres connexion settings..."
     # Check that database connection is correct
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
     dbport=$(ini_value $settingsfile dbport)
+    dbuser=$(ini_value $settingsfile dbuser)
+    dbpassword=$(ini_value $settingsfile dbpassword)
+
     export PGPASSWORD=$dbpassword
     psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT PostGIS_full_version();"
     result=$?
