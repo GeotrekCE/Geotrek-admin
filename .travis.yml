@@ -11,8 +11,16 @@ before_install:
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
   - "wget http://depot.makina-corpus.org/public/geotrek/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
+  # Use lastest django-mapentity, useful when developing both
   - make etc/settings.ini
   - if [[ $TRAVIS_PULL_REQUEST != false ]]; then echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini; fi
+  # Since Travis provides PostGIS, incompatible with gdal1h, use it.
+  - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
+  - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
+  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
+  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek';" -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE geotrekdb TO geotrek;' -U postgres
+  - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
 install:
   - deactivate
   - if [[ $ACTION == test ]]; then ./install.sh --tests || cat ./install.log; fi
