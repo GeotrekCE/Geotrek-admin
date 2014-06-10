@@ -1,8 +1,9 @@
 {% load static i18n %}
 <script type="text/javascript">
-    MapEntity.i18n['District'] = "{% trans "District" %}";
-    MapEntity.i18n['City'] = "{% trans "City" %}";
-    MapEntity.i18n['Restricted Area'] = "{% trans "Restricted Area" %}";
+    MapEntity.i18n['Zoning'] = "{% trans "Zoning" %}";
+    MapEntity.i18n['Districts'] = "{% trans "Districts" %}";
+    MapEntity.i18n['Cities'] = "{% trans "Cities" %}";
+    MapEntity.i18n['Restricted areas'] = "{% trans "Restricted areas" %}";
 
     window.SETTINGS.urls['city_layer'] = "{% url "zoning:city_layer" %}";
     window.SETTINGS.urls['district_layer'] = "{% url "zoning:district_layer" %}";

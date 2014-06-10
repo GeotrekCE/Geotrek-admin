@@ -22,7 +22,7 @@ $(window).on('entity:map', function (e, data) {
             onEachFeature: initLandLayer(managementLayer),
         });
         layer.load(managementLayer.url);
-        map.layerscontrol.addOverlay(layer, managementLayer.name);
+        map.layerscontrol.addOverlay(layer, managementLayer.name, tr('Land'));
     }
 
 

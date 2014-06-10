@@ -9,7 +9,7 @@ $(window).on('entity:map', function (e, data) {
             style: L.Util.extend(window.SETTINGS.map.styles.path, { clickable:false })
         });
         paths.load(window.SETTINGS.urls.path_layer);
-        map.layerscontrol.addOverlay(paths, tr('Paths'));
+        map.layerscontrol.addOverlay(paths, tr('Paths'), tr('Objects'));
         paths.addTo(map);
         paths.on('data:loaded', function (e) {
             paths.showExtremities(window.SETTINGS.map.paths_line_marker);

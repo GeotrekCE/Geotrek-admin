@@ -37,7 +37,7 @@ $(window).on('entity:map', function (e, data) {
                 }
             });
             layer.load(dataSource.geojson_url);
-            map.layerscontrol.addOverlay(layer, dataSource.title);
+            map.layerscontrol.addOverlay(layer, dataSource.title, tr('Data sources'));
         }
     });
 });
