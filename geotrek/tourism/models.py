@@ -12,6 +12,7 @@ from multiselectfield import MultiSelectField
 DATA_SOURCE_TYPES = Choices(
     ('GEOJSON', 'GEOJSON', _("GeoJSON")),
     ('TOURINFRANCE', 'TOURINFRANCE', _("TourInFrance")),
+    ('SITRA', 'SITRA', _("Sitra")),
 )
 
 

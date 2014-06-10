@@ -126,10 +126,17 @@ So far, the following formats are supported :
 
 * GeoJSON
 * TIF (*TourInFrance*)
+* SITRA (*SIT Rhone-Alpes*)
 
 From the Administration backoffice, create datasources using a name, an URL, and
 a pictogram. You can choose if this layer should be displayed in the different
 Geotrek modules, or published to the public Website (*Geotrek-rando*).
+
+:notes:
+
+    For SITRA to work with multilang, make sure that the different
+    locales are in the query (``query={"apiKey":"...","locales":["fr","en"]...``)
+
 
 Override public document OpenOffice template
 --------------------------------------------
