@@ -404,7 +404,13 @@ MAP_STYLES = {
 
     'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
     'district':       {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'restrictedarea': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+
+    'restrictedarea-1': {'weight': 2, 'color': 'plum', 'opacity': 0.8, 'fillOpacity': 0.5},
+    'restrictedarea-2': {'weight': 2, 'color': 'violet', 'opacity': 0.8, 'fillOpacity': 0.5},
+    'restrictedarea-3': {'weight': 2, 'color': 'pink', 'opacity': 0.8, 'fillOpacity': 0.5},
+    'restrictedarea-4': {'weight': 2, 'color': 'deeppink', 'opacity': 0.8, 'fillOpacity': 0.5},
+    'restrictedarea-5': {'weight': 2, 'color': 'orchid', 'opacity': 0.8, 'fillOpacity': 0.5},
+    'restrictedarea-6': {'weight': 2, 'color': 'darkviolet', 'opacity': 0.8, 'fillOpacity': 0.5},
 
     'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},

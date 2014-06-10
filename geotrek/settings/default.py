@@ -115,7 +115,6 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])
 MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])
 MAP_STYLES['district']['color'] = envini.get('layercolor_land', MAP_STYLES['district']['color'])
-MAP_STYLES['restrictedarea']['color'] = envini.get('layercolor_land', MAP_STYLES['restrictedarea']['color'])
 
 _others_color = envini.get('layercolor_others', None)
 if _others_color:
