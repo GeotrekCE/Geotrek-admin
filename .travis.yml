@@ -19,9 +19,9 @@ before_install:
   # GDAL-fix -- packaging is miserable, no way to obtain libgdal-dev for libgdal1 when libgdal1h available
   - sudo apt-get update -qq
   - sudo apt-get download -y libgdal-dev
-  - sudo dpkg --install --force-all libgdal-dev*.deb
-  - ls -l /usr/lib/libgdal*
+  - sudo dpkg-deb -x libgdal-dev*.deb /
   - sudo ln -sf /usr/lib/libgdal.so.1 /usr/lib/libgdal.so
+  - sudo ldconfig
   # GDAL-fix -- Do not install GDAL from install script
   - sed -i "s/gdal-bin//" install.sh
   - sed -i "s/libgdal-dev//" install.sh
