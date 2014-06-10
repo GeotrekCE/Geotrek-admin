@@ -22,8 +22,7 @@ before_install:
   - sudo dpkg --install --force-all libgdal-dev*.deb
   - ls -l /usr/lib/libgdal*
   - sudo ln -sf /usr/lib/libgdal.so.1 /usr/lib/libgdal.so
-  - sudo apt-cache policy python-gdal
-  - sudo apt-cache policy libgdal-dev
+  # GDAL-fix -- Do not install GDAL from install script
   - sed -i "s/gdal-bin//" install.sh
   - sed -i "s/libgdal-dev//" install.sh
   - sed -i "s/GDAL==.*/GDAL==1.9.0/" conf/buildout.cfg
@@ -32,7 +31,7 @@ before_install:
   # GDAL-fix -- Use Travis PostGIS, initialize DB
   - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
-  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek';" -U postgres
+  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek' SUPERUSER;" -U postgres
   - psql -c 'GRANT ALL PRIVILEGES ON DATABASE geotrekdb TO geotrek;' -U postgres
   - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
   # GDAL-fix -- End (remove with Ubuntu 14.04)
