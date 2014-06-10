@@ -27,6 +27,7 @@ etc/settings.ini:
 
 bin/python:
 	virtualenv .
+	mkdir -p lib/src
 	mkdir -p lib/eggs
 	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
 	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
