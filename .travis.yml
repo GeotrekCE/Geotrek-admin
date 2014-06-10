@@ -29,6 +29,8 @@ before_install:
   # GDAL-fix -- Do not install postgis locally, trick test on host
   - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
   # GDAL-fix -- Use Travis PostGIS, initialize DB
+  - sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
+  - sudo /etc/init.d/postgresql restart
   - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
   - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek' SUPERUSER;" -U postgres
