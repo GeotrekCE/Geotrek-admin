@@ -14,7 +14,7 @@ before_install:
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
   # Use lastest django-mapentity, useful when developing both
   - make etc/settings.ini
-  - if [[ $TRAVIS_PULL_REQUEST != false ]]; then echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini; fi
+  - echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini
 
   # GDAL-fix -- packaging is miserable, no way to obtain libgdal-dev for libgdal1 when libgdal1h available
   - sudo apt-get update -qq
