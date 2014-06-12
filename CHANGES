@@ -11,6 +11,7 @@ CHANGELOG
 * Fixed JSON DEM area extent for treks
 * Fixed targets list for tourism datasources
 * Cache tourism datasources for one day (setting ``CACHE_TIMEOUT_TOURISM_DATASOURCES``)
+* Fix crashes with TourInFrance sources
 
 ** Installation **
 
