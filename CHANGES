@@ -15,6 +15,10 @@ CHANGELOG
 * Add link to OSM in feedback email (fixes #1089, #1093)
 * Fix feedback email translation (fixes #1087)
 
+** Internal changes **
+
+* Upgraded to Mapentity 1.4.0
+
 ** Installation **
 
 * Fixed content types migration of land to zoning apps (Thanks Noël Martinon)
