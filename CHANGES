@@ -13,6 +13,7 @@ CHANGELOG
 * Cache tourism datasources for one day (setting ``CACHE_TIMEOUT_TOURISM_DATASOURCES``)
 * Fix crashes with TourInFrance sources
 * Add link to OSM in feedback email (fixes #1089, #1093)
+* Fix feedback email translation (fixes #1087)
 
 ** Installation **
 
