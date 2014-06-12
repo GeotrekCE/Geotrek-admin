@@ -1,6 +1,9 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import lazy
+
+from mapentity import registry
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -15,13 +18,11 @@ DATA_SOURCE_TYPES = Choices(
 def _get_target_choices():
     """ Populate choices using installed apps names.
     """
-    hidden = ['geotrek.core', 'geotrek.common',
-              'geotrek.authent', 'geotrek.tourism']
     apps = [('public', _("Public website"))]
-    for app in settings.INSTALLED_APPS:
-        if app.startswith('geotrek.') and app not in hidden:
-            appname = app.replace('geotrek.', '')
-            apps.append((appname, _(appname.capitalize())))
+    for model, entity in registry.registry.items():
+        if entity.menu:
+            appname = model._meta.app_label.lower()
+            apps.append((appname, unicode(entity.label)))
     return tuple(apps)
 
 
@@ -35,7 +36,8 @@ class DataSource(models.Model):
     type = models.CharField(db_column="type", max_length=32,
                             choices=DATA_SOURCE_TYPES)
     targets = MultiSelectField(verbose_name=_(u"Display"),
-                               choices=_get_target_choices(), null=True, blank=True)
+                               max_length=512,
+                               choices=lazy(_get_target_choices, tuple)(), null=True, blank=True)
 
     def __unicode__(self):
         return self.title

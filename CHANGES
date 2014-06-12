@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fixed land records not shown in detail pages
 * Fixed JSON DEM area extent for treks
+* Fixed targets list for datasources
 
 ** Installation **
 
