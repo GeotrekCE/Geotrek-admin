@@ -319,8 +319,8 @@
         "model": "trekking.theme",
         "fields": {
             "pictogram": "upload/theme-history@2x.png",
-            "label_fr": "Archelogie et histoire",
-            "label": "Archelogie et histoire"
+            "label_fr": "Arch\u00e9ologie et histoire",
+            "label": "Arch\u00e9ologie et histoire"
         }
     },
     {
