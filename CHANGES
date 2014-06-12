@@ -9,9 +9,10 @@ CHANGELOG
 
 * Fixed land records not shown in detail pages
 * Fixed JSON DEM area extent for treks
-* Fixed targets list for tourism datasources
+* Fixed targets list for tourism datasources (fixes #1091)
 * Cache tourism datasources for one day (setting ``CACHE_TIMEOUT_TOURISM_DATASOURCES``)
 * Fix crashes with TourInFrance sources
+* Add link to OSM in feedback email (fixes #1089, #1093)
 
 ** Installation **
 
