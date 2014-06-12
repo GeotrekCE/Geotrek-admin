@@ -437,3 +437,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }
+
+CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
+CACHE_TIMEOUT_TOURISM_DATASOURCES = 60 * 60 * 24

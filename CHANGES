@@ -9,7 +9,8 @@ CHANGELOG
 
 * Fixed land records not shown in detail pages
 * Fixed JSON DEM area extent for treks
-* Fixed targets list for datasources
+* Fixed targets list for tourism datasources
+* Cache tourism datasources for one day (setting ``CACHE_TIMEOUT_TOURISM_DATASOURCES``)
 
 ** Installation **
 
