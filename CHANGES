@@ -12,8 +12,26 @@ CHANGELOG
 
 ** Installation **
 
-* UbuntuGIS stable maintainer have *upgraded* (sic) GDAL to 1.10.0.
 * Fixed content types migration of land to zoning apps (Thanks Noël Martinon)
+
+* UbuntuGIS stable maintainers have *upgraded* (sic) GDAL to 1.10.0.
+  Upgrading GDAL is painful, and PostGIS packages may have to be reinstalled
+  (data shouldn't be lost though). *Remember it was recommended to run PostGIS
+  on a different server*.
+
+:notes:
+
+    On June 2th 2014, the Ubuntu GIS stable repository switched from ``libgdal1``
+    to ``libgdal1h``. It broke the deployment script of many projects, including
+    *Geotrek*.
+
+    It is a good thing, since it paves the way for the last Ubuntu LTS release (14.04). However, it breaks the *Long Term Support* philosophy of the previous one (12.04), supposed to be supported until 2019.
+
+    **Morality** : we cannot trust the *Ubuntu GIS stable* repository anymore.
+
+    Regarding *Geotrek*, such upgrades of Ubuntu packages is not supposed to be covered
+    by its installation script. If you face any problems, please refer to the
+    community or commercial support (such as *Makina Corpus* for example).
 
 
 0.23.1 (2014-05-22)
