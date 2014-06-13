@@ -17,6 +17,7 @@ CHANGELOG
 * Fix problem with permission check "read attachment" in detail page (fixes #1092)
 * Fix measure control appearing twice in forms (fixes #1078)
 * Fix 404 on download buttons from list views
+* Fix POI translated fields not tabbed (fixes #1065)
 
 ** Internal changes **
 
