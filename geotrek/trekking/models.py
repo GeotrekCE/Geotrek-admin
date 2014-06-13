@@ -689,6 +689,26 @@ class InformationDesk(models.Model):
     name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Brief description"))
+    phone = models.CharField(verbose_name=_(u"Phone"), max_length=32,
+                             blank=True, null=True, db_column='telephone')
+    email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
+                              blank=True, null=True)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
+                              blank=True, null=True)
+    photo = models.FileField(verbose_name=_(u"Photo"), upload_to=settings.UPLOAD_DIR,
+                             db_column='photo', max_length=512, blank=True, null=True)
+
+    street = models.CharField(verbose_name=_(u"Street"), max_length=256,
+                              blank=True, null=True, db_column='rue')
+    postal_code = models.IntegerField(verbose_name=_(u"Postal code"),
+                                      blank=True, null=True, db_column='code')
+    municipality = models.CharField(verbose_name=_(u"Municipality"),
+                                    blank=True, null=True,
+                                    max_length=256, db_column='commune')
+
+    geom = models.PointField(verbose_name=_(u"Emplacement"), db_column='geom',
+                             blank=True, null=True,
+                             srid=settings.SRID, spatial_index=False)
 
     class Meta:
         db_table = 'o_b_renseignement'
@@ -698,6 +718,18 @@ class InformationDesk(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def latitude(self):
+        if self.geom:
+            return self.geom.y
+        return 0
+
+    @property
+    def longitude(self):
+        if self.geom:
+            return self.geom.x
+        return 0
 
 
 class POIManager(models.GeoManager):

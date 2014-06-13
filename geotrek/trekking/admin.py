@@ -4,9 +4,11 @@ from django import forms
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.db import models as gis_models
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
+from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
 
 from .models import (
@@ -110,8 +112,8 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
-class InformationDeskAdmin(TranslationAdmin):
-    list_display = ('name',)
+class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
+    list_display = ('name', 'website', 'municipality')
     search_fields = ('name',)
 
     formfield_overrides = {
