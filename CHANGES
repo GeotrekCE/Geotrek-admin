@@ -28,6 +28,7 @@ CHANGELOG
   in database (default: 1m)
 * Allow to disable trails notion (fixes #997)
   (see *advanced configuration* in docs)
+* Ability to reuse topology when adding objects from detail pages (fixes #574, fixes #998)
 
 ** Bug fixes **
 

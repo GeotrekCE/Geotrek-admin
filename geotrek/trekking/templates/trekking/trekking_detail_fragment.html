@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 <h3>{% trans "Trekking" %}</h3>
 <table class="table">
     {% if modelname != "trek" %}
@@ -6,7 +6,8 @@
         <th>{% trans "Treks" %}</th>
         <td>
             {% if perms.trekking.add_trek %}
-            <p class="autohide"><a href="{% url 'trekking:trek_add' %}" class="btn btn-mini btn-success">
+            {% is_topology_model model as is_topology_model %}
+            <p class="autohide"><a href="{% url 'trekking:trek_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new trek" %}</a>
             </p>
             {% endif %}
