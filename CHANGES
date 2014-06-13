@@ -5,10 +5,6 @@ CHANGELOG
 0.24 (unreleased)
 -----------------
 
-* Add missing properties in feedback report detail page.
-* Hide all modules information in report detail page.
-* Add missing translations of feedback module.
-
 ** New features **
 
 * Public TREK export - hide block label if value is empty (fixes #873)
@@ -32,6 +28,7 @@ CHANGELOG
 ** Bug fixes **
 
 * Fixed Signage and Infrastructure year filter label (fixes #293)
+* Clarify legend and title for attachments (fixes #888)
 
 
 0.23.2 (2014-06-13)
