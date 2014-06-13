@@ -34,6 +34,7 @@ CHANGELOG
 ** Bug fixes **
 
 * Fixed Signage and Infrastructure year filter label (fixes #293)
+* Fixed paths layers not always shown below other layers (fixes #912)
 * Clarify legend and title for attachments (fixes #888)
 * Fixed cannot clear trek fields in database (fixes #1095)
 * Fixed missing translation of "Load local file" (fixes #1085)
