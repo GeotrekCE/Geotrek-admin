@@ -275,6 +275,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.difficulty:
             return None
         return {'id': self.difficulty.pk,
+                'pictogram': os.path.join(settings.MEDIA_URL, self.difficulty.pictogram.name),
                 'label': self.difficulty.difficulty}
 
     @property
@@ -508,6 +509,9 @@ class DifficultyLevel(models.Model):
     id = models.IntegerField(primary_key=True)
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto', max_length=512,
+                                 null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_difficulte'
@@ -517,6 +521,11 @@ class DifficultyLevel(models.Model):
 
     def __unicode__(self):
         return self.difficulty
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
 
     def save(self, *args, **kwargs):
         """Manually auto-increment ids"""

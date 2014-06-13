@@ -54,9 +54,9 @@ class DifficultyLevelForm(forms.ModelForm):
 
 class DifficultyLevelAdmin(TranslationAdmin):
     form = DifficultyLevelForm
-    list_display = ('id', 'difficulty',)
+    list_display = ('id', 'difficulty', 'pictogram_img')
     search_fields = ('difficulty',)
-    fields = ('id', 'difficulty')
+    fields = ('id', 'difficulty', 'pictogram')
 
     def save_model(self, request, obj, form, change):
         """

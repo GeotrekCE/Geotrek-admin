@@ -211,6 +211,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               "label": trek.route.route})
         self.assertDictEqual(detailjson['difficulty'],
                              {"id": trek.difficulty.id,
+                              "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
                               "label": trek.difficulty.difficulty})
         self.assertDictEqual(detailjson['information_desk'],
                              {"id": trek.information_desk.id,

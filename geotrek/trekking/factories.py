@@ -43,6 +43,7 @@ class DifficultyLevelFactory(factory.Factory):
     FACTORY_FOR = models.DifficultyLevel
 
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class WebLinkCategoryFactory(factory.Factory):

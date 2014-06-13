@@ -34,6 +34,10 @@ CHANGELOG
 * Fixed cannot clear trek fields in database (fixes #1095)
 * Fixed missing translation of "Load local file" (fixes #1085)
 
+** Internal changes **
+
+* Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
+
 0.23.2 (2014-06-13)
 -------------------
 
