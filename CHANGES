@@ -14,6 +14,9 @@ CHANGELOG
 * Fix crashes with TourInFrance sources
 * Add link to OSM in feedback email (fixes #1089, #1093)
 * Fix feedback email translation (fixes #1087)
+* Fix problem with permission check "read attachment" in detail page (fixes #1092)
+* Fix measure control appearing twice in forms (fixes #1078)
+* Fix 404 on download buttons from list views
 
 ** Internal changes **
 
