@@ -6,24 +6,49 @@ env:
   - ACTION=deploy
 
 before_install:
+
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
   - "wget http://depot.makina-corpus.org/public/geotrek/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
   - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
+  # Use lastest django-mapentity, useful when developing both
   - make etc/settings.ini
   - echo -e "[sources]\nmapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop" >> etc/settings.ini
+
+  # GDAL-fix -- packaging is miserable, no way to obtain libgdal-dev for libgdal1 when libgdal1h available
+  - sudo apt-get update -qq
+  - sudo apt-get download -y libgdal-dev
+  - sudo dpkg-deb -x libgdal-dev*.deb /
+  - sudo ln -sf /usr/lib/libgdal.so.1 /usr/lib/libgdal.so
+  - sudo ldconfig
+  # GDAL-fix -- Do not install GDAL from install script
+  - sed -i "s/gdal-bin//" install.sh
+  - sed -i "s/libgdal-dev//" install.sh
+  - sed -i "s/GDAL==.*/GDAL==1.9.0/" conf/buildout.cfg
+  # GDAL-fix -- Do not install postgis locally, trick test on host
+  - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
+  # GDAL-fix -- Use Travis PostGIS, initialize DB
+  - sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
+  - sudo /etc/init.d/postgresql restart
+  - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
+  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
+  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek' SUPERUSER;" -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE geotrekdb TO geotrek;' -U postgres
+  - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
+  # GDAL-fix -- End (remove with Ubuntu 14.04)
+
 install:
   - deactivate
-  - if [[ $ACTION == test ]]; then ./install.sh --tests; fi
-  - if [[ $ACTION == deploy ]]; then ./install.sh --noinput; fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests || cat ./install.log; fi
+  - if [[ $ACTION == deploy ]]; then ./install.sh --noinput || cat ./install.log; fi
 script:
   - if [[ $ACTION == deploy ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then make env_test test; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage
-  - if [[ $ACTION == test ]]; then rm -rf ./var/media/maps/*; fi
+  - if [[ $ACTION == test ]]; then rm -rf ./var/cache/* ./var/media/maps/*; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
 after_success:
   # Report coverage results to coveralls.io

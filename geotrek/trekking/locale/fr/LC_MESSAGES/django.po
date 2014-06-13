@@ -115,7 +115,7 @@ msgid "Where to park"
 msgstr "Où se garer"
 
 msgid "Parking location"
-msgstr ""
+msgstr "Emplacement parking"
 
 msgid "Public transport"
 msgstr "Transport en commun"
@@ -130,7 +130,7 @@ msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
 
 msgid "Themes"
-msgstr "Thématique"
+msgstr "Thématiques"
 
 msgid "Networks"
 msgstr "Réseaux randonnée"
@@ -235,6 +235,9 @@ msgid "Add POI"
 msgstr "Ajouter un POI"
 
 msgid "Add a new POI"
+msgstr "Ajouter un POI"
+
+msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
 msgid ""

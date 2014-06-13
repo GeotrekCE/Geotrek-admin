@@ -4,8 +4,10 @@ import logging
 import requests
 from requests.exceptions import RequestException
 import geojson
+from django.conf import settings
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from tif2geojson import tif2geojson
@@ -74,5 +76,6 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
         return result
 
     @method_decorator(login_required)
+    @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
     def dispatch(self, *args, **kwargs):
         return super(DataSourceGeoJSON, self).dispatch(*args, **kwargs)

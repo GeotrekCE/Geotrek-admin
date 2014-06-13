@@ -2,6 +2,59 @@
 CHANGELOG
 =========
 
+0.23.2 (unreleased)
+-------------------
+
+** Bug fixes **
+
+* Fixed land records not shown in detail pages
+* Fixed JSON DEM area extent for treks
+* Fixed targets list for tourism datasources (fixes #1091)
+* Cache tourism datasources for one day (setting ``CACHE_TIMEOUT_TOURISM_DATASOURCES``)
+* Fix crashes with TourInFrance sources
+* Add link to OSM in feedback email (fixes #1089, #1093)
+* Fix feedback email translation (fixes #1087)
+* Fix problem with permission check "read attachment" in detail page (fixes #1092)
+* Fix measure control appearing twice in forms (fixes #1078)
+* Fix 404 on download buttons from list views
+* Fix POI translated fields not tabbed (fixes #1065)
+* Fix missing translation of "Add a new POI" (fixes #1086)
+* Fix invalid snapping when save path without editing geometry (fixes #1099)
+* Add missing properties in feedback report detail page.
+* Hide all modules information in report detail page.
+* Add missing translations of feedback module.
+* Show object type in ODT export (fixes #1000)
+
+
+** Internal changes **
+
+* Upgraded to Mapentity 1.4.0
+* Upgraded to Leaflet 0.7.3
+
+** Installation **
+
+* Fixed content types migration of land to zoning apps (Thanks Noël Martinon)
+
+* UbuntuGIS stable maintainers have *upgraded* (sic) GDAL to 1.10.0.
+  Upgrading GDAL is painful, and PostGIS packages may have to be reinstalled
+  (data shouldn't be lost though). *Remember it was recommended to run PostGIS
+  on a different server*.
+
+:notes:
+
+    On June 2th 2014, the Ubuntu GIS stable repository switched from ``libgdal1``
+    to ``libgdal1h``. It broke the deployment script of many projects, including
+    *Geotrek*.
+
+    It is a good thing, since it paves the way for the last Ubuntu LTS release (14.04). However, it breaks the *Long Term Support* philosophy of the previous one (12.04), supposed to be supported until 2019.
+
+    **Morality** : we cannot trust the *Ubuntu GIS stable* repository anymore.
+
+    Regarding *Geotrek*, such upgrades of Ubuntu packages is not supposed to be covered
+    by its installation script. If you face any problems, please refer to the
+    community or commercial support (such as *Makina Corpus* for example).
+
+
 0.23.1 (2014-05-22)
 -------------------
 

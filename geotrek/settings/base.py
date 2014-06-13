@@ -367,7 +367,7 @@ ALTIMETRIC_PROFILE_HEIGHT = 400
 ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
-
+ALTIMETRIC_AREA_MARGIN = 0.15
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -437,3 +437,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-error',
     messages.ERROR: 'alert-error',
 }
+
+CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
+CACHE_TIMEOUT_TOURISM_DATASOURCES = 60 * 60 * 24

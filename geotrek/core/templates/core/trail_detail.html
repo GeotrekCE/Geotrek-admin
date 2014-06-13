@@ -3,7 +3,6 @@
 
 
 {% block detailspanel %}
-    {{ block.super }}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ trail|verbose:"name" }}</th>
@@ -21,4 +20,5 @@
 
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {{ block.super }}
 {% endblock detailspanel %}

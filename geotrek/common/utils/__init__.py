@@ -39,6 +39,22 @@ class reify(object):
         return val
 
 
+class LTE(int):
+    """ Less or equal object comparator
+    Source: https://github.com/justquick/django-activity-stream/blob/22b22297054776f7864ff642b73add15b256a2ad/actstream/tests.py
+    """
+    def __new__(cls, n):
+        obj = super(LTE, cls).__new__(cls, n)
+        obj.n = n
+        return obj
+
+    def __eq__(self, other):
+        return other <= self.n
+
+    def __repr__(self):
+        return "<= %s" % self.n
+
+
 def dbnow():
     cursor = connection.cursor()
     cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
