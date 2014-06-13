@@ -130,7 +130,7 @@ msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
 
 msgid "Themes"
-msgstr "Thématique"
+msgstr "Thématiques"
 
 msgid "Networks"
 msgstr "Réseaux randonnée"
