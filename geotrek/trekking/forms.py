@@ -31,6 +31,9 @@ TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through
 
 
 class TrekForm(TopologyForm):
+
+    leftpanel_scrollable = False
+
     fieldslayout = [
         Div(
             HTML("""
@@ -56,7 +59,7 @@ class TrekForm(TopologyForm):
                     'model',
 
                     css_id="main",
-                    css_class="tab-pane active"
+                    css_class="scrollable tab-pane active"
                 ),
                 Div(
                     'disabled_infrastructure',
@@ -71,7 +74,7 @@ class TrekForm(TopologyForm):
                     'information_desk',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
-                    css_class="tab-pane"
+                    css_class="scrollable tab-pane"
                 ),
                 css_class="tab-content"
             ),

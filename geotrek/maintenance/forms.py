@@ -51,6 +51,8 @@ class InterventionForm(CommonForm):
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
+
+    leftpanel_scrollable = False
     fieldslayout = [
         Div(
             HTML("""
@@ -87,7 +89,7 @@ class InterventionForm(CommonForm):
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"
                 ),
-                css_class="tab-content"
+                css_class="scrollable tab-content"
             ),
             css_class="tabbable"
         ),
