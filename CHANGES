@@ -30,6 +30,7 @@ CHANGELOG
   (see *advanced configuration* in docs)
 * Ability to reuse topology when adding objects from detail pages (fixes #574, fixes #998)
 * Form tabs are now always visible while scrolling (fixes #926)
+* Command to generate all elevation charts (fixes #799)
 
 ** Bug fixes **
 
