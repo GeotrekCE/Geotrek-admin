@@ -232,6 +232,15 @@
         }
     },
     {
+        "pk": 7,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "Joelette",
+            "pictogram": "upload/usage-joelette.png",
+            "usage_fr": "Joelette"
+        }
+    },
+    {
         "pk": 1,
         "model": "trekking.theme",
         "fields": {
