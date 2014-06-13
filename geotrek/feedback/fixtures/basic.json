@@ -34,5 +34,33 @@
         "category_en": "Other",
         "category_fr": "Autre"
     }
+},
+{
+    "pk": 1,
+    "model": "feedback.reportstatus",
+    "fields": {
+        "status": "Nouveau"
+    }
+},
+{
+    "pk": 2,
+    "model": "feedback.reportstatus",
+    "fields": {
+        "status": "R\u00e9pondu"
+    }
+},
+{
+    "pk": 3,
+    "model": "feedback.reportstatus",
+    "fields": {
+        "status": "En cours"
+    }
+},
+{
+    "pk": 4,
+    "model": "feedback.reportstatus",
+    "fields": {
+        "status": "Trait\u00e9"
+    }
 }
 ]
