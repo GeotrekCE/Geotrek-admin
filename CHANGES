@@ -26,6 +26,8 @@ CHANGELOG
 * Renamed Attachment submit button (fixes #925)
 * Added a new setting ``PATH_SNAPPING_DISTANCE`` to control paths snapping distance
   in database (default: 1m)
+* Allow to disable trails notion (fixes #997)
+  (see *advanced configuration* in docs)
 
 ** Bug fixes **
 

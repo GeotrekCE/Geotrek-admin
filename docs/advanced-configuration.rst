@@ -30,6 +30,38 @@ However, it is still possible to write a custom Django setting file.
 * As for any change in settings, re-run ``make env_standalone deploy``.
 
 
+Disable modules and components
+------------------------------
+
+In order to disable a full set of features, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Disable infrastructure and maintenance
+    INSTALLED_APPS.pop('geotrek.infrastructure')
+    INSTALLED_APPS.pop('geotrek.maintenance')
+
+In order to remove notion of trails:
+
+.. code-block :: python
+
+    TRAIL_MODEL_ENABLED = False
+
+In order to remove zoning combo-boxes on list map:
+
+.. code-block :: python
+
+    LAND_BBOX_CITIES_ENABLED = True
+    LAND_BBOX_DISTRICTS_ENABLED = True
+    LAND_BBOX_AREAS_ENABLED = False
+
+.. notes ::
+
+    By doing so, some software upgrades may not be as smooth as usual.
+    Never forget to mention this customization if you ask for community support.
+
+
 WYSIWYG editor configuration
 ----------------------------
 
@@ -130,6 +162,7 @@ So far, the following formats are supported :
 From the Administration backoffice, create datasources using a name, an URL, and
 a pictogram. You can choose if this layer should be displayed in the different
 Geotrek modules, or published to the public Website (*Geotrek-rando*).
+
 
 Override public document OpenOffice template
 --------------------------------------------
