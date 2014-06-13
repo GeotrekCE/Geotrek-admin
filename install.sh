@@ -179,9 +179,14 @@ function ini_value () {
 function check_postgres_connection {
     echo_step "Check postgres connexion settings..."
     # Check that database connection is correct
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
     dbport=$(ini_value $settingsfile dbport)
+    dbuser=$(ini_value $settingsfile dbuser)
+    dbpassword=$(ini_value $settingsfile dbpassword)
+
     export PGPASSWORD=$dbpassword
-    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT NOW();"
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT PostGIS_full_version();"
     result=$?
     export PGPASSWORD=
     if [ ! $result -eq 0 ]
@@ -208,9 +213,10 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -qq libjson0 libgdal1 libgdal-dev libproj0 libgeos-c1
+    sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1 gdal-bin libgdal-dev
     echo_progress
-    sudo apt-get install -y -qq postgresql-client gdal-bin
+    # PostgreSQL client and headers
+    sudo apt-get install -y -q --no-upgrade postgresql-client-9.1 postgresql-server-dev-all
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
@@ -268,7 +274,8 @@ function screamshotter_system_dependencies {
 
 function install_postgres_local {
     echo_step "Installing postgresql server locally..."
-    sudo apt-get install -y -qq postgresql postgis postgresql-server-dev-9.1
+    sudo apt-get install -y -q postgresql-9.1 postgresql-9.1-postgis-2.0
+    sudo /etc/init.d/postgresql restart
     echo_progress
 
     dbname=$(ini_value $settingsfile dbname)
@@ -295,9 +302,9 @@ function install_postgres_local {
         # Open local and host connection for this user as md5
         sudo sed -i "/DISABLE/a \
 # Automatically added by Geotrek installation :\
-local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/9.1/main/pg_hba.conf
+local    ${dbname}    ${dbuser}                 md5" /etc/postgresql/*/main/pg_hba.conf
 
-        cat << _EOF_ | sudo tee -a /etc/postgresql/9.1/main/pg_hba.conf
+        cat << _EOF_ | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
 # Automatically added by Geotrek installation :
 local    ${dbname}     ${dbuser}                   md5
 host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
@@ -322,8 +329,8 @@ _EOF_
 
             # Listen to all network interfaces (useful for VM etc.)
             listen="'*'"
-            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/9.1/main/postgresql.conf
-            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/9.1/main/postgresql.conf
+            sudo sed -i "s/^#listen_addresses.*$/listen_addresses = $listen/" /etc/postgresql/*/main/postgresql.conf
+            sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
             sudo /etc/init.d/postgresql restart
         fi
     fi

@@ -97,6 +97,18 @@ class TrekForm(TopologyForm):
 
 
 class POIForm(TopologyForm):
+    fieldslayout = [
+        Div('pk',
+            'model',
+
+            'type',
+            'name',
+            'description',
+
+            css_class="tab-content"
+        )
+    ]
+
     def __init__(self, *args, **kwargs):
         super(POIForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = PointTopologyWidget()

@@ -69,12 +69,13 @@ class PathForm(CommonForm):
         self.fields['geom'].label = ''
 
     def clean_geom(self):
+        pk = self.instance.pk if self.instance and self.instance.pk else -1
         geom = self.cleaned_data['geom']
         if geom is None:
             raise forms.ValidationError(_("Invalid snapped geometry."))
         if not geom.simple:
             raise forms.ValidationError(_("Geometry is not simple."))
-        if not PathHelper.disjoint(geom, self.cleaned_data.get('pk') or -1):
+        if not PathHelper.disjoint(geom, pk):
             raise forms.ValidationError(_("Geometry overlaps another."))
         return geom
 

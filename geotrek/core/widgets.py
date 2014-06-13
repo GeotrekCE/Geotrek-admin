@@ -28,7 +28,10 @@ class SnappedLineStringWidget(MapWidget):
 
     def serialize(self, value):
         geojson = super(SnappedLineStringWidget, self).serialize(value)
-        value = {'geom': geojson}
+        snaplist = []
+        if value:
+            snaplist = [None for c in range(len(value.coords))]
+        value = {'geom': geojson, 'snap': snaplist}
         return json.dumps(value)
 
     def deserialize(self, value):

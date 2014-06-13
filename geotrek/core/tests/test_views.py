@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
+from geotrek.common.utils import LTE
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.models import default_structure
@@ -116,7 +117,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(LTE(10)):
             self.client.get(reverse('core:path_json_list'))
 
     def test_trails_are_shown_as_links_in_list(self):

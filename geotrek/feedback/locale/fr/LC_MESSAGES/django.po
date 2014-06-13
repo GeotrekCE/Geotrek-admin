@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-03 17:09+0200\n"
+"POT-Creation-Date: 2014-06-12 23:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
+#, python-brace-format
 msgid "Feedback from {name} ({email})"
 msgstr "Signalement de {name} ({email})"
 
@@ -44,20 +46,23 @@ msgstr "Signalements"
 msgid "Categories"
 msgstr "Catégories"
 
-#, python-format
-msgid "%(name)s (%(email)s) has sent a feedback on category %(category)s."
-msgstr "%(name)s (%(email)s) a signalé un problème dans la catégorie %(category)s."
+msgid "%(name)s (%(email)s) has sent a feedback."
+msgstr ""
+"%(name)s (%(email)s) a signalé un problème."
 
 #, python-format
 msgid "Comment : %(comment)s"
 msgstr "Commentaire : %(comment)s"
 
 #, python-format
-msgid "Lat : %(lat)s / Lon : %(lng)s"
+msgid ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 msgstr ""
 
 msgid "Invalid geometry value."
-msgstr ""
+msgstr "Géométrie invalide"
 
 msgid "Add a new report"
 msgstr "Créer un signalement"

@@ -103,21 +103,24 @@ class AltimetryHelper(object):
 
     @classmethod
     def _nice_extent(cls, geom):
-        geom_buffer = geom.buffer(100)
-        center = geom_buffer.centroid
+        xmin, ymin, xmax, ymax = geom.extent
+        amplitude = max(xmax - xmin, ymax - ymin)
+        geom_buffer = geom.buffer(amplitude * settings.ALTIMETRIC_AREA_MARGIN)
         xmin, ymin, xmax, ymax = geom_buffer.extent
         width = xmax - xmin
         height = ymax - ymin
+        xcenter = xmin + width / 2.0
+        ycenter = ymin + height / 2.0
 
         min_ratio = 1 / 1.618  # golden ratio
         if width > height:
             height = max(width * min_ratio, height)
         else:
             width = max(height * min_ratio, width)
-        xmin, ymin, xmax, ymax = (int(center.x - width / 2.0),
-                                  int(center.y - height / 2.0),
-                                  int(center.x + width / 2.0),
-                                  int(center.y + height / 2.0))
+        xmin, ymin, xmax, ymax = (int(xcenter - width / 2.0),
+                                  int(ycenter - height / 2.0),
+                                  int(xcenter + width / 2.0),
+                                  int(ycenter + height / 2.0))
         return (xmin, ymin, xmax, ymax)
 
     @classmethod

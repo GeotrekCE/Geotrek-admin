@@ -10,7 +10,7 @@ casper.test.begin('Trek exports files', function(test) {
 
     casper.thenOpen(utils.baseurl + '/image/trek-9000.png', function(response) {
         test.assertEqual(200, response.status, 'Image export works');
-        test.assertEqual('image/png', response.contentType,
+        test.assertMatch(response.contentType, /^image\/png/,
                          'Map export is PNG');
     });
 
@@ -22,7 +22,7 @@ casper.test.begin('Trek exports files', function(test) {
 
     casper.thenOpen(utils.baseurl + '/api/trek/trek-9000.pdf', function(response) {
         test.assertEqual(200, response.status, 'Public export works');
-        test.assertEqual('application/pdf; charset=UTF-8', response.contentType,
+        test.assertMatch(response.contentType, /^application\/pdf/,
                          'Public document can be converted to PDF');
     });
 
