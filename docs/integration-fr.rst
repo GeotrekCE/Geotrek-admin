@@ -244,4 +244,6 @@ Divers
 ------
 
 * Clé de compte Google Analytics pour le suivi des visites
+* Couple de clés pour Google Recaptcha (formulaire de signalement...)
 * Email pour les notifications (formulaire de signalement...)
+* Intervalles souhaités pour les dénivellés
