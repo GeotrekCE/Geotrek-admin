@@ -115,7 +115,7 @@ msgid "Where to park"
 msgstr "Où se garer"
 
 msgid "Parking location"
-msgstr ""
+msgstr "Emplacement parking"
 
 msgid "Public transport"
 msgstr "Transport en commun"
