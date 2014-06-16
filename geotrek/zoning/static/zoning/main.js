@@ -10,11 +10,23 @@ $(window).on('entity:map', function (e, data) {
 
     for (var i=0; i<landLayers.length; i++) {
         var landLayer = landLayers[i];
+        var style = L.Util.extend({clickable: false},
+                                  window.SETTINGS.map.styles[landLayer.id] || {});
+
+        var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool),
+            colorspool = colorspools[landLayer.id];
+        if (colorspool) {
+            var color = colorspool[i % colorspool.length];
+            style['color'] = color;
+        }
+
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
-            style: L.Util.extend(window.SETTINGS.map.styles[landLayer.id] || {}, { clickable:false })
+            style: style,
         });
         layer.load(landLayer.url);
-        map.layerscontrol.addOverlay(layer, landLayer.name, tr('Zoning'));
+
+        var nameHTML = '<span style="color: '+ style['color'] + ';">&#x2B24;</span>&nbsp;' + landLayer.name;
+        map.layerscontrol.addOverlay(layer, nameHTML, tr('Zoning'));
     }
 });

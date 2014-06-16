@@ -49,7 +49,7 @@ def restricted_area_types():
         area_type_url = reverse('zoning:restrictedarea_type_layer',
                                 kwargs={'type_pk': area_type.pk})
         serialized.append({
-            'id': 'restrictedarea-%s' % area_type.id,
+            'id': 'restrictedarea',
             'name': area_type.name,
             'url': area_type_url
         })
