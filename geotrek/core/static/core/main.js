@@ -4,12 +4,15 @@ $(window).on('entity:map', function (e, data) {
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
     if (!/add|update/.test(data.view) && (data.view == 'detail' || data.modelname != 'path')) {
+        var style = L.Util.extend({ clickable:false }, window.SETTINGS.map.styles.path);
         var paths = new L.ObjectsLayer(null, {
             indexing: false,
-            style: L.Util.extend(window.SETTINGS.map.styles.path, { clickable:false })
+            style: style,
         });
         paths.load(window.SETTINGS.urls.path_layer);
-        map.layerscontrol.addOverlay(paths, tr('Paths'), tr('Objects'));
+
+        var nameHTML = '<span style="color: '+ style['color'] + ';">&#9473;</span>&nbsp;' + tr('Paths');
+        map.layerscontrol.addOverlay(paths, nameHTML, tr('Objects'));
         paths.addTo(map);
         paths.on('data:loaded', function (e) {
             paths.showExtremities(window.SETTINGS.map.paths_line_marker);
