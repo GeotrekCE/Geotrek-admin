@@ -274,8 +274,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def serializable_difficulty(self):
         if not self.difficulty:
             return None
+        pictogram = None
+        if self.difficulty.pictogram:
+            pictogram = os.path.join(settings.MEDIA_URL,
+                                     self.difficulty.pictogram.name)
         return {'id': self.difficulty.pk,
-                'pictogram': os.path.join(settings.MEDIA_URL, self.difficulty.pictogram.name),
+                'pictogram': pictogram,
                 'label': self.difficulty.difficulty}
 
     @property
