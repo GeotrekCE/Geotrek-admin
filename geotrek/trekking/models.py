@@ -216,7 +216,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         status = []
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.TREK_PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % l[0], True)
+                published = getattr(self, 'published_%s' % l[0], None) or False
             else:
                 published = self.published
             status.append({

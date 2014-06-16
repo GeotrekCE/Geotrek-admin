@@ -47,8 +47,8 @@ class TrekTest(TestCase):
         t.published_it = True
         t.save()
         self.assertEqual(t.published_status,
-            [{'lang': 'en', 'language': 'English', 'status': None},
-             {'lang': 'es', 'language': 'Spanish', 'status': None},
+            [{'lang': 'en', 'language': 'English', 'status': False},
+             {'lang': 'es', 'language': 'Spanish', 'status': False},
              {'lang': 'fr', 'language': 'French', 'status': False},
              {'lang': 'it', 'language': 'Italian', 'status': True}])
 
