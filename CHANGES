@@ -28,6 +28,7 @@ CHANGELOG
 * Show paths extremities on map (fixes #355)
 * Close calendar after date choice in intervention form (fixes #928)
 * Renamed Attachment submit button (fixes #925)
+* Documented the configuration of map layers apparence
 
 ** Bug fixes **
 
