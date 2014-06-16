@@ -29,6 +29,8 @@ CHANGELOG
 * Close calendar after date choice in intervention form (fixes #928)
 * Renamed Attachment submit button (fixes #925)
 * Documented the configuration of map layers apparence
+* Show restricted areas by type in layer switcher (fixes #961)
+* Show layers colors in layer switcher
 
 ** Bug fixes **
 
