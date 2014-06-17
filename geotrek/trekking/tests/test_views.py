@@ -213,10 +213,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
                              {"id": trek.difficulty.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
                               "label": trek.difficulty.difficulty})
-        self.assertDictEqual(detailjson['information_desk'],
-                             {"id": trek.information_desk.id,
-                              "name": trek.information_desk.name,
-                              "description": trek.information_desk.description})
+        self.assertEqual(detailjson['information_desk_layer'],
+                         '/api/trek/%s/information_desks.geojson' % trek.pk)
 
     def test_json_detail_has_elevation_area_url(self):
         trek = TrekFactory.create()
@@ -398,6 +396,55 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
             self.client.logout() # Django 1.6 keeps language in session
+
+
+class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
+
+    def setUp(self):
+        self.trek = TrekFactory.create()
+        self.information_desk1 = InformationDeskFactory.create()
+        self.information_desk2 = InformationDeskFactory.create(photo=None)
+        self.information_desk3 = InformationDeskFactory.create()
+        self.trek.information_desks.add(self.information_desk1)
+        self.trek.information_desks.add(self.information_desk2)
+        self.url = reverse('trekking:trek_information_desk_geojson', kwargs={'pk': self.trek.pk})
+
+    def test_trek_layer_is_login_required(self):
+        self.client.logout()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 302)
+
+    def test_information_desks_layer_contains_only_trek_records(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        self.assertEqual(len(dataset['features']), 2)
+
+    def test_information_desk_layer_has_null_if_no_photo(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        second = dataset['features'][1]
+        self.assertEqual(second['properties']['photo_url'], None)
+
+    def test_information_desk_layer_gives_all_model_attributes(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        first = dataset['features'][0]
+        self.assertEqual(sorted(first['properties'].keys()),
+                         ['description',
+                          'email',
+                          'id',
+                          'latitude',
+                          'longitude',
+                          'model',
+                          'municipality',
+                          'name',
+                          'phone',
+                          'photo_url',
+                          'postal_code',
+                          'website'])
 
 
 class TemplateTagsTest(TestCase):
