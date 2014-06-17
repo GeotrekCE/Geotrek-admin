@@ -168,7 +168,8 @@ class Migration(SchemaMigration):
         u'trekking.difficultylevel': {
             'Meta': {'ordering': "['id']", 'object_name': 'DifficultyLevel', 'db_table': "'o_b_difficulte'"},
             'difficulty': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'difficulte'"}),
-            'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'null': 'True', 'db_column': "'picto'", 'blank': 'True'})
         },
         u'trekking.informationdesk': {
             'Meta': {'ordering': "['name']", 'object_name': 'InformationDesk', 'db_table': "'o_b_renseignement'"},
@@ -220,14 +221,15 @@ class Migration(SchemaMigration):
             'description_teaser': ('django.db.models.fields.TextField', [], {'db_column': "'chapeau'", 'blank': 'True'}),
             'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'difficulte'", 'to': u"orm['trekking.DifficultyLevel']"}),
             'disabled_infrastructure': ('django.db.models.fields.TextField', [], {'db_column': "'handicap'", 'blank': 'True'}),
-            'duration': ('django.db.models.fields.FloatField', [], {'default': '0', 'null': 'True', 'db_column': "'duree'", 'blank': 'True'}),
+            'duration': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'duree'", 'blank': 'True'}),
             'information_desk': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'renseignement'", 'to': u"orm['trekking.InformationDesk']"}),
             'is_park_centered': ('django.db.models.fields.BooleanField', [], {'db_column': "'coeur'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.TrekNetwork']", 'db_table': "'o_r_itineraire_reseau'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
             'parking_location': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom_parking'", 'blank': 'True'}),
             'public_transport': ('django.db.models.fields.TextField', [], {'db_column': "'transport'", 'blank': 'True'}),
-            'published': ('django.db.models.fields.BooleanField', [], {'db_column': "'public'"}),
+            'publication_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'db_column': "'date_publication'", 'blank': 'True'}),
+            'published': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'db_column': "'public'", 'blank': 'True'}),
             'related_treks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'related_treks+'", 'symmetrical': 'False', 'through': u"orm['trekking.TrekRelationship']", 'to': u"orm['trekking.Trek']"}),
             'route': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'parcours'", 'to': u"orm['trekking.Route']"}),
             'themes': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['trekking.Theme']", 'db_table': "'o_r_itineraire_theme'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
