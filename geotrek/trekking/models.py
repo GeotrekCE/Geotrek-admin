@@ -768,8 +768,8 @@ class POIType(models.Model):
 
     class Meta:
         db_table = 'o_b_poi'
-        verbose_name = _(u"POI")
-        verbose_name_plural = _(u"POI")
+        verbose_name = _(u"POI type")
+        verbose_name_plural = _(u"POI types")
         ordering = ['label']
 
     def __unicode__(self):

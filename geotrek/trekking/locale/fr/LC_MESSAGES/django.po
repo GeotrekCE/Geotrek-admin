@@ -283,6 +283,9 @@ msgstr "Tronçons"
 msgid "Circuit"
 msgstr "Circuit"
 
+msgid "POI type"
+msgstr "Type de POI"
+
 msgid "POI types"
 msgstr "Types de POI"
 
