@@ -12,6 +12,12 @@ class ReportCategoryFactory(factory.Factory):
     category = factory.Sequence(lambda n: u"Category %s" % n)
 
 
+class ReportStatusFactory(factory.Factory):
+    FACTORY_FOR = feedback_models.ReportStatus
+
+    status = factory.Sequence(lambda n: u"Status %s" % n)
+
+
 class ReportFactory(factory.Factory):
     FACTORY_FOR = feedback_models.Report
 

@@ -13,7 +13,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
 
 class ReportList(mapentity_views.MapEntityList):
     model = feedback_models.Report
-    columns = ['id', 'name', 'email', 'category', 'date_insert']
+    columns = ['id', 'name', 'email', 'category', 'status', 'date_insert']
 
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
