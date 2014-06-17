@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -10,11 +9,10 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from tif2geojson import tif2geojson
 from mapentity.views import JSONResponseMixin
 
-from geotrek.tourism.models import DataSource, DATA_SOURCE_TYPES
-
+from geotrek.tourism.models import DataSource
+from .helpers import post_process
 
 logger = logging.getLogger(__name__)
 
@@ -56,24 +54,11 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
             logger.exception(e)
             return default_result
 
-        if source.type == DATA_SOURCE_TYPES.GEOJSON:
-            try:
-                result = json.loads(response.text)
-                assert result.get('type') == 'FeatureCollection'
-                assert result.get('features') is not None
-            except (ValueError, AssertionError) as e:
-                logger.error(u"Source '%s' returns invalid GeoJSON" % source.url)
-                logger.exception(e)
-                result = default_result
+        try:
+            return post_process(source, self.request.LANGUAGE_CODE, response.text)
+        except (ValueError, AssertionError) as e:
+            return default_result
 
-        elif source.type == DATA_SOURCE_TYPES.TOURINFRANCE:
-            language = self.request.LANGUAGE_CODE
-            result = tif2geojson(response.text, lang=language)
-
-        else:
-            raise NotImplementedError
-
-        return result
 
     @method_decorator(login_required)
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))

@@ -26,6 +26,7 @@ setup(
         'django-extended-choices == 0.3.0',
         'django-multiselectfield == 0.1.1',
         'tif2geojson == 0.1.2',
+        'geojson',
         'mapentity',  # pinned by buildout
     ],
     license='BSD, see LICENSE file.',

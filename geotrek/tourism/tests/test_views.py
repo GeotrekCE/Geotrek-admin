@@ -137,3 +137,81 @@ class DataSourceTourInFranceViewTests(TrekkingManagerTest):
             feature = geojson['features'][0]
             self.assertEqual(feature['properties']['description'],
                              u'Ubicada en la región minera del Aveyron, nuestra casa rural os permitirá decubrir la naturaleza y el patrimonio industrial de la cuenca de Aubin y Decazeville.')
+
+
+class DataSourceSitraViewTests(TrekkingManagerTest):
+    def setUp(self):
+        here = os.path.dirname(__file__)
+        filename = os.path.join(here, 'data', 'sitra-multilang-10.06.14.json')
+        self.sample = open(filename).read()
+
+        self.source = DataSourceFactory.create(type=DATA_SOURCE_TYPES.SITRA)
+        self.url = reverse('tourism:datasource_geojson', kwargs={'pk': self.source.pk})
+        self.login()
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_source_is_returned_as_geojson_when_sitra(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = "{}"
+            response = self.client.get(self.url)
+            geojson = json.loads(response.content)
+            self.assertEqual(geojson['type'], 'FeatureCollection')
+
+    def test_source_is_returned_in_language_request(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertEqual(feature['properties']['title'],
+                             u'Refugios en Valgaudemar')
+
+    def test_default_language_is_returned_when_not_available(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertEqual(feature['properties']['description'],
+                             u"Randonnée idéale pour bons marcheurs, une immersion totale dans la vallée du Valgaudemar, au coeur du territoire préservé du Parc national des Ecrins. Un grand voyage ponctué d'étapes en altitude, avec une ambiance chaleureuse dans les refuges du CAF.")
+
+    def test_website_can_be_obtained(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertEqual(feature['properties']['website'],
+                             "http://www.cirkwi.com/#!page=circuit&id=12519&langue=fr")
+
+    def test_phone_can_be_obtained(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertEqual(feature['properties']['phone'],
+                             "04 92 55 23 21")
+
+    def test_geometry_as_geojson(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertDictEqual(feature['geometry'],
+                                 {"type" : "Point",
+                                  "coordinates" : [ 6.144058, 44.826552 ]})
+
+    def test_list_of_pictures(self):
+        with mock.patch('requests.get') as mocked:
+            mocked().text = self.sample
+            response = self.client.get(self.url, HTTP_ACCEPT_LANGUAGE='es-ES')
+            geojson = json.loads(response.content)
+            feature = geojson['features'][0]
+            self.assertDictEqual(feature['properties']['pictures'][0],
+                                 {u'copyright': u'Christian Martelet',
+                                  u'legend': u'Refuges en Valgaudemar',
+                                  u'url': u'http://static.sitra-tourisme.com/filestore/objets-touristiques/images/600938.jpg'})
