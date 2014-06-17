@@ -148,6 +148,37 @@ Expected columns in table/view are :
     for more details.
 
 
+Map layers colors and style
+---------------------------
+
+All layers colors can be customized from the settings.
+See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
+layer style.
+
+.. code-block :: python
+
+    MAP_STYLE['path'] = {'color': 'red', 'weight': 5}
+
+Or change just one parameter (the opacity for example) :
+
+.. code-block :: python
+
+    MAP_STYLE['city']['opacity'] = 0.8
+
+
+Regarding colors that depend from database content, such as land layers
+(physical types, work management...) or restricted areas. We use a specific
+setting that receives a list of colors :
+
+.. code-block :: python
+
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
+
+
+See the default values in ``geotrek/settings/base.py`` for the complete list
+of available styles.
+
+
 External map layers
 -------------------
 

@@ -44,7 +44,9 @@ $(window).on('entity:map', function (e, data) {
             }
         });
 
-        map.layerscontrol.addOverlay(pathsLayer, tr('Paths'));
+        var style = pathsLayer.options.style;
+        var nameHTML = '<span style="color: '+ style['color'] + ';">&#9473;</span>&nbsp;' + tr('Paths');
+        map.layerscontrol.addOverlay(pathsLayer, nameHTML, tr('Objects'));
     }
 });
 

@@ -34,6 +34,9 @@ CHANGELOG
 * Command to generate all elevation charts (fixes #799)
 * SITRA support in Tourism datasources (fixes #1064)
 * Added status field on feedback reports (fixes #1075)
+* Documented the configuration of map layers apparence
+* Show restricted areas by type in layer switcher (fixes #961)
+* Show layers colors in layer switcher
 
 ** Bug fixes **
 

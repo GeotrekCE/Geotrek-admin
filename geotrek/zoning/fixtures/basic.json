@@ -43,6 +43,13 @@
         }
     },
     {
+        "pk": 7,
+        "model": "zoning.restrictedareatype",
+        "fields": {
+            "name": "R\u00e9serve biologique"
+        }
+    },
+    {
         "pk": 8,
         "model": "zoning.restrictedareatype",
         "fields": {
@@ -50,10 +57,17 @@
         }
     },
     {
-        "pk": 12,
+        "pk": 9,
         "model": "zoning.restrictedareatype",
         "fields": {
-            "name": "Arret\u00e9s de biotope"
+            "name": "Sites inscrits"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "zoning.restrictedareatype",
+        "fields": {
+            "name": "Zone humide prot\u00e9g\u00e9e"
         }
     },
     {
@@ -64,10 +78,10 @@
         }
     },
     {
-        "pk": 9,
+        "pk": 12,
         "model": "zoning.restrictedareatype",
         "fields": {
-            "name": "Sites inscrits"
+            "name": "Arret\u00e9s de biotope"
         }
     },
     {

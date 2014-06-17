@@ -394,19 +394,23 @@ LEAFLET_CONFIG = {
 
 """ This *pool* of colors is used to colorized lands records.
 """
-LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
-                    'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
-                    'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
-                    'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
-                    'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
+COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
+               'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+               'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
+               'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+               'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+               'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
+                                  'darkviolet', 'lightcoral', 'palevioletred',
+                                  'MediumVioletRed', 'MediumOrchid', 'Magenta',
+                                  'LightSalmon', 'HotPink', 'Fuchsia']}
 
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
 
     'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district':       {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'restrictedarea': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district':       {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
 
+    'restrictedarea':    {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
     'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},

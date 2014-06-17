@@ -214,6 +214,7 @@
                         window.location = poiUrl.replace('0', layer.properties.pk);
                     });
                 });
+                map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));
                 map.addLayer(pois);
             });
         });

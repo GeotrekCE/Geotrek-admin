@@ -67,7 +67,7 @@ class JSSettings(BaseJSSettings):
         dictsettings['map'].update(
             snap_distance=settings.SNAP_DISTANCE,
             paths_line_marker=settings.PATHS_LINE_MARKER,
-            colorspool=settings.LAND_COLORS_POOL,
+            colorspool=settings.COLORS_POOL,
         )
         dictsettings['version'] = __version__
         return dictsettings
