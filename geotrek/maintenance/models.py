@@ -21,8 +21,6 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
                             help_text=_(u"Brief summary"))
     date = models.DateField(default=datetime.now, verbose_name=_(u"Date"), db_column='date',
                             help_text=_(u"When ?"))
-    comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire',
-                                help_text=_(u"Remarks and notes"))
     subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
                                          db_column='sous_traitance')
 
@@ -58,6 +56,8 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
                                 verbose_name=_(u"Project"), db_column='chantier')
+    description = models.TextField(blank=True, verbose_name=_(u"Description"), db_column='descriptif',
+                                   help_text=_(u"Remarks and notes"))
 
     # Special manager
     objects = Topology.get_manager_cls()()
