@@ -127,7 +127,7 @@ class TrekViewsTest(CommonTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'information_desk': InformationDeskFactory.create().pk,
+            'information_desks': InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
 
             'trek_relationship_a-TOTAL_FORMS': '2',

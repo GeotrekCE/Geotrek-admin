@@ -324,14 +324,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                 'label': self.difficulty.difficulty}
 
     @property
-    def serializable_information_desk(self):
-        if not self.information_desk:
-            return None
-        return {'id': self.information_desk.pk,
-                'name': self.information_desk.name,
-                'description': self.information_desk.description}
-
-    @property
     def serializable_themes(self):
         return [{'id': t.pk,
                  'pictogram': os.path.join(settings.MEDIA_URL, t.pictogram.name),

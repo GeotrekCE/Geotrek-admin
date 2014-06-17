@@ -162,9 +162,9 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"information_desk" }}</th>
-            <td>{% if trek.information_desk %}{{ trek.information_desk.name }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <th>{{ trek|verbose:"information_desks" }}</th>
+            <td>
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.information_desks.all %}
             </td>
         </tr>
         <tr>
