@@ -167,11 +167,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            related_name='related_treks+')  # Hide reverse attribute
-    information_desk = models.ForeignKey('InformationDesk', related_name='treks',
-                                         blank=True, null=True, verbose_name=_(u"Information Desk"), db_column='renseignement')
     information_desks = models.ManyToManyField('InformationDesk',
-                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
-                                                verbose_name=_(u"Information Desk"))
+                                               db_table="o_r_itineraire_renseignement", blank=True, null=True,
+                                               verbose_name=_(u"Information desks"))
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
