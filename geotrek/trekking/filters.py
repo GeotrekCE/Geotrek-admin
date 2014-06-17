@@ -8,7 +8,8 @@ from .models import Trek, POI
 class TrekFilterSet(MapEntityFilterSet):
     class Meta:
         model = Trek
-        fields = ['published', 'difficulty', 'duration', 'themes', 'networks', 'usages', 'route', 'is_park_centered']
+        fields = ['published', 'difficulty', 'duration', 'themes', 'networks',
+                  'usages', 'route', 'is_park_centered']
 
 
 class POITrekFilter(TopologyFilter):

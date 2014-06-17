@@ -360,6 +360,7 @@
         "pk": 1,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-easy.svg",
             "difficulty": "Easy",
             "difficulty_fr": "Facile",
             "difficulty_en": "Easy"
@@ -369,6 +370,7 @@
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-rookie.svg",
             "difficulty": "Rookie",
             "difficulty_fr": "Confirmé",
             "difficulty_en": "Rookie"
@@ -378,6 +380,7 @@
         "pk": 3,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-hard.svg",
             "difficulty": "Hard",
             "difficulty_fr": "Difficile",
             "difficulty_en": "Hard"
@@ -387,8 +390,10 @@
         "pk": 4,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-active.svg",
             "difficulty": "Actif",
-            "difficulty_fr": "Actif"
+            "difficulty_fr": "Actif",
+            "difficulty_en": "Active"
         }
     },
     {
