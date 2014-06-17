@@ -715,14 +715,16 @@ class InformationDesk(models.Model):
     @property
     def latitude(self):
         if self.geom:
-            return self.geom.y
-        return 0
+            api_geom = self.geom.transform(settings.API_SRID, clone=True)
+            return api_geom.y
+        return None
 
     @property
     def longitude(self):
         if self.geom:
-            return self.geom.x
-        return 0
+            api_geom = self.geom.transform(settings.API_SRID, clone=True)
+            return api_geom.x
+        return None
 
     @property
     def photo_url(self):
