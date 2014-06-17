@@ -30,7 +30,7 @@ In brief
 * Compute 3D attributes using DEM draping
 * Publish a public website (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
 
-.. image:: http://geotrek.fr/images/intervention-opt.gif
+.. image:: http://geotrek.fr/images/capture-3.jpg
 
 More information on product website http://geotrek.fr
 
