@@ -160,7 +160,11 @@ BEGIN
     -- and write data.
     -- Since the evenement to be modified is available in NEW, we could improve
     -- performance with some refactoring.
-    PERFORM update_geometry_of_evenement(NEW.id);
+
+    -- If Geotrek-light, don't do anything
+    IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
+        PERFORM update_geometry_of_evenement(NEW.id);
+    END IF;
 
     RETURN NULL;
 END;

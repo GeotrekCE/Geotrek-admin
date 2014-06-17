@@ -824,6 +824,9 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_pois(cls, topology):
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            return cls.objects.filter(bbox__in=area)
         return cls.overlapping(topology)
 
 Path.add_property('pois', POI.path_pois)

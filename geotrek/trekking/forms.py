@@ -7,7 +7,9 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 from mapentity.widgets import SelectMultipleWithPop
+from leaflet.forms.widgets import LeafletWidget
 
+from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink
@@ -30,7 +32,31 @@ class TrekRelationshipForm(forms.ModelForm):
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
 
 
-class TrekForm(TopologyForm):
+class TrekGeomForm(CommonForm):
+    geom_field = ('geom',)
+
+    def __init__(self, *args, **kwargs):
+        super(TrekGeomForm, self).__init__(*args, **kwargs)
+        self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+
+    class Meta(CommonForm.Meta):
+        model = Trek
+        fields = CommonForm.Meta.fields + ['geom']
+
+
+class TrekTopologyForm(TopologyForm):
+    def __init__(self, *args, **kwargs):
+        super(TrekTopologyForm, self).__init__(*args, **kwargs)
+        self.fields['topology'].widget = LineTopologyWidget()
+
+    class Meta(TopologyForm.Meta):
+        model = Trek
+
+
+BaseTrekForm = TrekTopologyForm if settings.TREKKING_TOPOLOGY_ENABLED else TrekGeomForm
+
+
+class TrekForm(BaseTrekForm):
 
     leftpanel_scrollable = False
 
@@ -84,7 +110,6 @@ class TrekForm(TopologyForm):
 
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
-        self.fields['topology'].widget = LineTopologyWidget()
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
@@ -111,16 +136,28 @@ class TrekForm(TopologyForm):
 
         return trek
 
-    class Meta(TopologyForm.Meta):
-        model = Trek
-        fields = TopologyForm.Meta.fields + \
+    class Meta(BaseTrekForm.Meta):
+        fields = BaseTrekForm.Meta.fields + \
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
              'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
              'themes', 'networks', 'usages', 'web_links', 'information_desks']
 
 
-class POIForm(TopologyForm):
+class POIGeomForm(CommonForm):
+    geom_field = ('geom',)
+
+
+class POITopologyForm(TopologyForm):
+    def __init__(self, *args, **kwargs):
+        super(POITopologyForm, self).__init__(*args, **kwargs)
+        self.fields['topology'].widget = PointTopologyWidget()
+
+
+BasePOIForm = POITopologyForm if settings.TREKKING_TOPOLOGY_ENABLED else POIGeomForm
+
+
+class POIForm(BasePOIForm):
     fieldslayout = [
         Div('pk',
             'model',
@@ -133,13 +170,9 @@ class POIForm(TopologyForm):
         )
     ]
 
-    def __init__(self, *args, **kwargs):
-        super(POIForm, self).__init__(*args, **kwargs)
-        self.fields['topology'].widget = PointTopologyWidget()
-
-    class Meta(TopologyForm.Meta):
+    class Meta(BasePOIForm.Meta):
         model = POI
-        fields = TopologyForm.Meta.fields + ['name', 'description', 'type']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
