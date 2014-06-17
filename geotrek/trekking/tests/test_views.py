@@ -330,6 +330,9 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         self.trek.name_fr = 'Voie lactee'
         self.trek.name_en = 'Milky way'
         self.trek.name_it = 'Via Lattea'
+
+        self.trek.published_fr = True
+        self.trek.published_it = False
         self.trek.save()
 
     def tearDown(self):
@@ -357,6 +360,18 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.assertEqual(response.status_code, 200)
             obj = json.loads(response.content)
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
+            self.client.logout()  # Django 1.6 keeps language in session
+
+    def test_published_translation(self):
+        url = reverse('trekking:trek_layer')
+
+        for lang, expected in [('fr-FR', self.trek.published_fr),
+                               ('it-IT', self.trek.published_it)]:
+            self.login()
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            self.assertEqual(response.status_code, 200)
+            obj = json.loads(response.content)
+            self.assertEqual(obj['features'][0]['properties']['published'], expected)
             self.client.logout()  # Django 1.6 keeps language in session
 
     def test_poi_geojson_translation(self):

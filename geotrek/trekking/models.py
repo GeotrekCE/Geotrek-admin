@@ -1,6 +1,7 @@
 import os
 import logging
 import shutil
+import datetime
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -120,8 +121,15 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-    published = models.BooleanField(verbose_name=_(u"Published"),
-                                    help_text=_(u"Online"), db_column='public')
+
+    # We use a NullBooleanField because django-modeltranslation fails with null=True
+    # See https://github.com/deschler/django-modeltranslation/issues/247
+    published = models.NullBooleanField(verbose_name=_(u"Published"), null=True,
+                                        help_text=_(u"Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+                                        null=True, blank=True, editable=False,
+                                        db_column='date_publication')
+
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
@@ -132,7 +140,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
-    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
+    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
                                  help_text=_(u"In hours"))
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
@@ -173,6 +181,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.publication_date is None and self.published:
+            self.publication_date = datetime.date.today()
+        if self.publication_date is not None and not self.published:
+            self.publication_date = None
+        super(Trek, self).save(*args, **kwargs)
+
     @property
     def slug(self):
         return slugify(self.name)
@@ -185,6 +200,31 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @models.permalink
     def elevation_area_url(self):
         return ('trekking:trek_elevation_area', [str(self.pk)])
+
+    @property
+    def any_published(self):
+        """Returns True if the trek is published in at least one of the language
+        """
+        if settings.TREK_PUBLISHED_BY_LANG:
+            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+                if getattr(self, 'published_%s' % l[0], False):
+                    return True
+        return self.published
+
+    @property
+    def published_status(self):
+        status = []
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if settings.TREK_PUBLISHED_BY_LANG:
+                published = getattr(self, 'published_%s' % l[0], None) or False
+            else:
+                published = self.published
+            status.append({
+                'lang': l[0],
+                'language': l[1],
+                'status': published
+            })
+        return status
 
     @property
     def related(self):

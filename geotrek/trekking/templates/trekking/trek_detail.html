@@ -22,7 +22,7 @@
 
 {% block detailspanel %}
 
-    {% if not trek.published %}
+    {% if not trek.any_published %}
         <div class="alert alert-warning"><strong>{% trans "Not published" %}</strong></div>
     {% else %}
         {% if not trek.is_publishable %}
@@ -170,6 +170,24 @@
         <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.thumbnail.url }}"></td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"published" }}</th>
+            <td>
+            {% if trek.any_published %}
+                {% for status in trek.published_status %}
+                    {% if status.status %}
+                    <li class="active">
+                        <img src="{% static "images/flags/"|add:status.lang|add:".png" %}" alt="{{ status.lang }}">
+                        <a href="?lang={{ status.lang }}">{{ status.language }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                ({{ trek|verbose:"publication_date" }}: {{ trek.publication_date }})
+            {% else %}
+                {% trans "Not published" %}
+            {% endif %}
+            </td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

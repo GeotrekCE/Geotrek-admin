@@ -31,6 +31,27 @@ class TrekTest(TestCase):
         self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
 
+    def test_any_published_property(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = False
+        t.published_it = False
+        t.save()
+        self.assertFalse(t.any_published)
+        t.published_it = True
+        t.save()
+        self.assertTrue(t.any_published)
+
+    def test_published_status(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = False
+        t.published_it = True
+        t.save()
+        self.assertEqual(t.published_status,
+            [{'lang': 'en', 'language': 'English', 'status': False},
+             {'lang': 'es', 'language': 'Spanish', 'status': False},
+             {'lang': 'fr', 'language': 'French', 'status': False},
+             {'lang': 'it', 'language': 'Italian', 'status': True}])
+
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
@@ -85,6 +106,33 @@ class TrekTest(TestCase):
         TrekFactory.create(name='B')
         self.assertEqual([u'A', u'B', u'Ca', u'Cb'],
                          list(Trek.objects.all().values_list('name', flat=True)))
+
+
+class TrekPublicationDateTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.create(published=False)
+
+    def test_default_value_is_null(self):
+        self.assertIsNone(self.trek.publication_date)
+
+    def test_takes_current_date_when_published_becomes_true(self):
+        self.trek.published = True
+        self.trek.save()
+        self.assertIsNotNone(self.trek.publication_date)
+
+    def test_becomes_null_when_unpublished(self):
+        self.test_takes_current_date_when_published_becomes_true()
+        self.trek.published = False
+        self.trek.save()
+        self.assertIsNone(self.trek.publication_date)
+
+    def test_date_is_not_updated_when_saved_again(self):
+        import datetime
+        self.test_takes_current_date_when_published_becomes_true()
+        old_date = datetime.date(2003, 8, 6)
+        self.trek.publication_date = old_date
+        self.trek.save()
+        self.assertEqual(self.trek.publication_date, old_date)
 
 
 class RelatedObjectsTest(TestCase):

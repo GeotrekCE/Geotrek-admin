@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from modeltranslation.translator import translator, TranslationOptions
 
 from geotrek.trekking import models as trekking_models
@@ -8,7 +10,9 @@ from geotrek.trekking import models as trekking_models
 class TrekTO(TranslationOptions):
     fields = ('name', 'departure', 'arrival', 'description_teaser',
               'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice',
-              'advised_parking', 'public_transport')
+              'advised_parking', 'public_transport') + (
+              ('published',) if settings.TREK_PUBLISHED_BY_LANG else tuple()
+              )
 
 
 class POITO(TranslationOptions):

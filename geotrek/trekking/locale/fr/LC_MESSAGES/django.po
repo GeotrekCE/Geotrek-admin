@@ -66,6 +66,9 @@ msgstr "Publié"
 msgid "Online"
 msgstr "En-ligne"
 
+msgid "Publication date"
+msgstr "Date de publication"
+
 msgid "Description teaser"
 msgstr "Chapeau"
 
