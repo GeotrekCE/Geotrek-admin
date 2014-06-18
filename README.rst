@@ -63,5 +63,9 @@ License
     :target: http://www.parc-grands-causses.fr
 
 
+.. image:: http://geotrek.fr/images/logo-guillestrois.png
+    :target: http://www.guillestrois.com
+
+
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
