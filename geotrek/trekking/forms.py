@@ -1,6 +1,5 @@
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from django.forms.widgets import CheckboxInput
 from django.forms.models import inlineformset_factory
 
 import floppyforms as forms

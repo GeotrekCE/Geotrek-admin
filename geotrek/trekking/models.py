@@ -122,11 +122,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-
-    # We use a NullBooleanField because django-modeltranslation fails with null=True
-    # See https://github.com/deschler/django-modeltranslation/issues/247
-    published = models.NullBooleanField(verbose_name=_(u"Published"), null=True,
-                                        help_text=_(u"Online"), db_column='public')
+    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
+                                    help_text=_(u"Online"), db_column='public')
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
