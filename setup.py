@@ -13,7 +13,7 @@ setup(
     url='http://makina-corpus.com',
     description="Geotrek",
     long_description=open(os.path.join(here, 'README.rst')).read() + '\n\n' +
-                     open(os.path.join(here, 'CHANGES')).read(),
+                     open(os.path.join(here, 'docs', 'changelog.rst')).read(),
     install_requires=[
         'South == 0.8.4',
         'psycopg2 == 2.4.1',

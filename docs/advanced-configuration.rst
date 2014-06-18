@@ -56,7 +56,7 @@ In order to remove zoning combo-boxes on list map:
     LAND_BBOX_DISTRICTS_ENABLED = True
     LAND_BBOX_AREAS_ENABLED = False
 
-.. notes ::
+:notes:
 
     By doing so, some software upgrades may not be as smooth as usual.
     Never forget to mention this customization if you ask for community support.

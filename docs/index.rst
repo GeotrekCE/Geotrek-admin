@@ -14,6 +14,7 @@ Contents:
    user-manual
    design
    development
+   changelog
 
 
 Indices and tables
