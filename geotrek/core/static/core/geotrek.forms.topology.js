@@ -151,7 +151,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         if (topo) {
             // Lock modification of initial value during load
             this.store.lock();
-            console.debug("Deserialize topology: " + topo);
+            console.debug("Deserialize topology: " + JSON.stringify(topo));
             if (this._lineControl && !topo.lat && !topo.lng) {
                 this._lineControl.handler.restoreTopology(topo);
             }

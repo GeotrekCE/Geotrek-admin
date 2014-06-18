@@ -8,6 +8,8 @@ CHANGELOG
 ** Bug fixes **
 
 * Fix static files compression when using Google Mercator projection in maps
+* Fix intermediary points order in topology de/serialization, and remove useless 
+  topology serialization optimizations (fixes #1031)
 
 0.23.2 (unreleased)
 -------------------
