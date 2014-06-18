@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+0.23.3 (unreleased)
+-------------------
+
+** Bug fixes **
+
+* Fix static files compression when using Google Mercator projection in maps
+
 0.23.2 (unreleased)
 -------------------
 
