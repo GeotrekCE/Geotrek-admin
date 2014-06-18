@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.alias import aliases
@@ -711,6 +712,10 @@ class InformationDesk(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def description_strip(self):
+        return strip_tags(self.description)
 
     @property
     def latitude(self):
