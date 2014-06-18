@@ -97,8 +97,8 @@ serve:
 
 deploy:
 	bin/develop update -f
-	bin/django syncdb --noinput --migrate
 	bin/django collectstatic --clear --noinput --verbosity=0
+	bin/django syncdb --noinput --migrate
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
 	bin/django update_permissions
