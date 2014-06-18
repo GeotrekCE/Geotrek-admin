@@ -187,9 +187,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.publication_date is None and self.published:
+        if self.publication_date is None and self.any_published:
             self.publication_date = datetime.date.today()
-        if self.publication_date is not None and not self.published:
+        if self.publication_date is not None and not self.any_published:
             self.publication_date = None
         super(Trek, self).save(*args, **kwargs)
 
@@ -210,11 +210,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def any_published(self):
         """Returns True if the trek is published in at least one of the language
         """
-        if settings.TREK_PUBLISHED_BY_LANG:
-            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                if getattr(self, 'published_%s' % l[0], False):
-                    return True
-        return self.published
+        if not settings.TREK_PUBLISHED_BY_LANG:
+            return self.published
+
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if getattr(self, 'published_%s' % l[0], False):
+                return True
+        return False
 
     @property
     def published_status(self):
