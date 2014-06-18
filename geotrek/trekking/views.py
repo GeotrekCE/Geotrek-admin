@@ -75,7 +75,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
                'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
-               'networks', 'advice', 'ambiance', 'difficulty', 'information_desk',
+               'networks', 'advice', 'ambiance', 'difficulty',
                'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
@@ -95,6 +95,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         trek = self.get_object()
         ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
+        ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
         ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
         ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
         ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
@@ -154,6 +155,28 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
             raise Http404
         # All POIs of this trek
         return trek.pois.select_related('type')
+
+
+class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
+    model = Trek
+    srid = settings.API_SRID
+    pk_url_kwarg = 'pk'
+
+    properties = ['id', 'name', 'description', 'photo_url', 'phone',
+                  'email', 'website', 'postal_code', 'municipality',
+                  'latitude', 'longitude']
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekInformationDeskGeoJSON, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            trek_pk = self.kwargs.get(self.pk_url_kwarg)
+            trek = Trek.objects.get(pk=trek_pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.information_desks.all()
 
 
 class TrekDetail(MapEntityDetail):

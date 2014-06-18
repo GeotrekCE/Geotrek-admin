@@ -162,9 +162,9 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"information_desk" }}</th>
-            <td>{% if trek.information_desk %}{{ trek.information_desk.name }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <th>{{ trek|verbose:"information_desks" }}</th>
+            <td>
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.information_desks.all %}
             </td>
         </tr>
         <tr>
@@ -209,12 +209,13 @@
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
 
+            //
             // Parking
             {% if object.parking_location %}
                 var parkingIcon = L.icon({
                     iconUrl: "{% static "trekking/parking.png" %}",
                     iconSize: [24, 24],
-                    iconAnchor: [0, 0],
+                    iconAnchor: [12, 12],
                 });
                 var location = [{{ object.serializable_parking_location.1|unlocalize }},
                                 {{ object.serializable_parking_location.0|unlocalize }}];
@@ -223,6 +224,7 @@
                  .addTo(map);
             {% endif %}
 
+            //
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
                 var pois = new POILayer(data),
@@ -235,6 +237,24 @@
                 map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));
                 map.addLayer(pois);
             });
+
+            //
+            // Trek information desks layer
+            $.getJSON('{% url 'trekking:trek_information_desk_geojson' object.pk %}', function (data) {
+
+                var infoDeskIcon = L.icon({
+                    iconUrl: "{% static "trekking/information_desk.svg" %}",
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                });
+
+                L.geoJson(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, {icon: infoDeskIcon});
+                    }
+                }).addTo(map);
+            });
+
         });
     </script>
 {% endblock extrabody %}

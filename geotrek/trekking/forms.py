@@ -72,7 +72,7 @@ class TrekForm(TopologyForm):
                     'networks',
                     'usages',
                     'web_links',
-                    'information_desk',
+                    'information_desks',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
@@ -102,7 +102,7 @@ class TrekForm(TopologyForm):
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
              'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
-             'themes', 'networks', 'usages', 'web_links', 'information_desk']
+             'themes', 'networks', 'usages', 'web_links', 'information_desks']
 
 
 class POIForm(TopologyForm):

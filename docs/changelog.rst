@@ -41,6 +41,9 @@ CHANGELOG
   behaviour can restored by setting ``TREK_PUBLISHED_BY_LANG``` to False.
 * Added publication date on trek (ref #1003)
 * Ability to see a trek in the different published languages (ref #1003)
+* A trek can now have several information desks (fixes #1001)
+* Information desks are now shown in trek detail map (fixes #1001)
+* Information desks now have optional photo and position, as well as some additional fields (fixes #1001)
 
 **Bug fixes**
 
