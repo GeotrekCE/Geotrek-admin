@@ -95,10 +95,27 @@ class TrekForm(TopologyForm):
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
-        # Get rid of ugly NullBooleanField widget
+
+    def save(self, *args, **kwargs):
+        trek = super(TrekForm, self).save(*args, **kwargs)
+
+        # This could be bug in Django model translation with translated
+        # boolean fields. We have to set attributes manually otherwise
+        # they are not taken into account when value is False.
+        # TODO: investiguate :)
         if settings.TREK_PUBLISHED_BY_LANG:
             for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                self.fields['published_%s' % l[0]].widget = CheckboxInput()
+                field = 'published_%s' % l[0]
+                setattr(trek, field, self.cleaned_data[field])
+            trek.published = getattr(trek, 'published_%s' % settings.LANGUAGE_CODE)
+            trek.save()
+
+        return trek
+
+    def clean(self, *args, **kwargs):
+        c = super(TrekForm, self).clean(*args, **kwargs)
+        print c, self.cleaned_data
+        return c
 
     class Meta(TopologyForm.Meta):
         model = Trek
