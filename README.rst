@@ -32,6 +32,10 @@ In brief
 
 .. image:: http://geotrek.fr/images/capture-3.jpg
 
+.. image:: http://geotrek.fr/images/geotrek_rando.png
+
+.. image:: http://geotrek.fr/images/capture-webgl.jpg
+
 More information on product website http://geotrek.fr
 
 Documentation
