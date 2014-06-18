@@ -2,12 +2,12 @@ import os
 import logging
 import shutil
 import datetime
+import re
 
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.alias import aliases
@@ -16,7 +16,7 @@ from easy_thumbnails.files import get_thumbnailer
 import simplekml
 from PIL import Image
 from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from mapentity.serializers import plain_text, smart_plain_text
 
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import classproperty
@@ -715,7 +715,10 @@ class InformationDesk(models.Model):
 
     @property
     def description_strip(self):
-        return strip_tags(self.description)
+        nobr = re.compile(r'(\s*<br.*?>)+\s*', re.I)
+        newlines = nobr.sub("\n", self.description)
+        print newlines
+        return smart_plain_text(newlines)
 
     @property
     def latitude(self):
