@@ -2,13 +2,15 @@
 CHANGELOG
 =========
 
-0.23.4 (unreleased)
+0.23.4 (2014-06-18)
 -------------------
 
 **Bug fixes**
 
 * Fix massive upgrade bug, where new migrations were ignored. Due to migration
   operation introduction in 0.22 installation script.
+
+Special thanks to Noël Martinon, Félix Merzeau, Gil Deluermoz and Camille Montchicourt for their patience on this.
 
 
 0.23.3 (2014-06-18)
