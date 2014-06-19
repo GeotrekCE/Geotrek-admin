@@ -3,6 +3,15 @@ CHANGELOG
 =========
 
 
+0.23.4 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix crash when TourInFrance has malformed website or phone
+* Fix translations not being installed
+
+
 0.23.3 (unreleased)
 -------------------
 
