@@ -228,6 +228,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               u'photo': self.information_desk.photo_url,
                               u'postal_code': 28300,
                               u'street': u'0 baker street',
+                              u'municipality': u"Bailleau L'évêque-0",
                               u'website': u'http://makina-corpus.com/0'})
         self.assertEqual(detailjson['information_desk_layer'],
                          '/api/trek/%s/information_desks.geojson' % trek.pk)

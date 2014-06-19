@@ -740,6 +740,7 @@ class InformationDesk(models.Model):
             'photo': self.photo_url,
             'street': self.street,
             'postal_code': self.postal_code,
+            'municipality': self.municipality,
             'latitude': self.latitude,
             'longitude': self.longitude,
         }
