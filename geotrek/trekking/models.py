@@ -737,7 +737,7 @@ class InformationDesk(models.Model):
             'phone': self.phone,
             'email': self.email,
             'website': self.website,
-            'photo': self.photo_url,
+            'photo_url': self.photo_url,
             'street': self.street,
             'postal_code': self.postal_code,
             'municipality': self.municipality,

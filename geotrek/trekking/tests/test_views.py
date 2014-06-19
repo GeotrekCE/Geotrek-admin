@@ -225,7 +225,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               u'longitude': -1.3630761286186646,
                               u'name': u'information desk name 0',
                               u'phone': u'01 02 03 0',
-                              u'photo': self.information_desk.photo_url,
+                              u'photo_url': self.information_desk.photo_url,
                               u'postal_code': 28300,
                               u'street': u'0 baker street',
                               u'municipality': u"Bailleau L'évêque-0",
