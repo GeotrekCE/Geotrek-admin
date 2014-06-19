@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
-    url(r'^paperclip/', include('paperclip.urls')),
+    url(r'^paperclip/', include('paperclip.urls', namespace='paperclip', app_name='paperclip')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

@@ -97,6 +97,10 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
         ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
+        ctx['filelist_url'] = reverse('paperclip:get_attachments',
+                                      kwargs={'app_label': 'trekking',
+                                              'module_name': 'trek',
+                                              'pk': trek.pk})
         ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
         ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
         ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))

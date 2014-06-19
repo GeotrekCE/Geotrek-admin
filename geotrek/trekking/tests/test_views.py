@@ -232,6 +232,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               u'website': u'http://makina-corpus.com/0'})
         self.assertEqual(detailjson['information_desk_layer'],
                          '/api/trek/%s/information_desks.geojson' % trek.pk)
+        self.assertEqual(detailjson['filelist_url'],
+                         '/paperclip/get/trekking/trek/%s/' % trek.pk)
 
     def test_json_detail_has_elevation_area_url(self):
         trek = TrekFactory.create()
