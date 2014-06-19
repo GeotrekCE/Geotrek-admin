@@ -204,15 +204,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_elevation_area', [str(self.pk)])
 
     @property
-    def information_desk(self):
-        """Retrocompatibily method for Geotrek-rando.
-        """
-        try:
-            return self.information_desks.first()
-        except (ValueError, InformationDesk.DoesNotExist):
-            return None
-
-    @property
     def any_published(self):
         """Returns True if the trek is published in at least one of the language
         """
@@ -363,6 +354,23 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                  'name': w.name,
                  'category': w.serializable_category,
                  'url': w.url} for w in self.web_links.all()]
+
+    @property
+    def information_desk(self):
+        """Retrocompatibily method for Geotrek-rando.
+        """
+        try:
+            return self.information_desks.first()
+        except (ValueError, InformationDesk.DoesNotExist):
+            return None
+
+    @property
+    def serializable_information_desk(self):
+        return self.information_desk.__json__() if self.information_desk else None
+
+    @property
+    def serializable_information_desks(self):
+        return [d.__json__() for d in self.information_desks.all()]
 
     @property
     def serializable_parking_location(self):
@@ -721,6 +729,20 @@ class InformationDesk(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def __json__(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'phone': self.phone,
+            'email': self.email,
+            'website': self.website,
+            'photo': self.photo_url,
+            'street': self.street,
+            'postal_code': self.postal_code,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+        }
 
     @property
     def description_strip(self):

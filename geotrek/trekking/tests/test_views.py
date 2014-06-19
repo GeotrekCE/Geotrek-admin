@@ -202,6 +202,9 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_json_detail(self):
         trek = TrekFactory.create()
+        self.information_desk = InformationDeskFactory.create()
+        trek.information_desks.add(self.information_desk)
+
         url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -213,7 +216,19 @@ class TrekCustomViewTests(TrekkingManagerTest):
                              {"id": trek.difficulty.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
                               "label": trek.difficulty.difficulty})
-        self.assertEqual(detailjson['information_desk'], None)  # retro-compat
+        self.assertDictEqual(detailjson['information_desk'],
+                             detailjson['information_desks'][0])
+        self.assertDictEqual(detailjson['information_desks'][0],
+                             {u'description': u'<p>description 0</p>',
+                              u'email': u'email-0@makina-corpus.com',
+                              u'latitude': -5.983593666147552,
+                              u'longitude': -1.3630761286186646,
+                              u'name': u'information desk name 0',
+                              u'phone': u'01 02 03 0',
+                              u'photo': self.information_desk.photo_url,
+                              u'postal_code': 28300,
+                              u'street': u'0 baker street',
+                              u'website': u'http://makina-corpus.com/0'})
         self.assertEqual(detailjson['information_desk_layer'],
                          '/api/trek/%s/information_desks.geojson' % trek.pk)
 
