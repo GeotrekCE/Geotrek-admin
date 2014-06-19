@@ -772,7 +772,7 @@ class InformationDesk(models.Model):
             return None
         thumbnailer = get_thumbnailer(self.photo)
         try:
-            thumb_detail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            thumb_detail = thumbnailer.get_thumbnail(aliases.get('thumbnail'))
             thumb_url = os.path.join(settings.MEDIA_URL, thumb_detail.name)
         except InvalidImageFormatError:
             thumb_url = None
