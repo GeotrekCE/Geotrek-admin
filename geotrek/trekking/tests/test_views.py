@@ -213,6 +213,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                              {"id": trek.difficulty.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
                               "label": trek.difficulty.difficulty})
+        self.assertEqual(detailjson['information_desk'], None)  # retro-compat
         self.assertEqual(detailjson['information_desk_layer'],
                          '/api/trek/%s/information_desks.geojson' % trek.pk)
 

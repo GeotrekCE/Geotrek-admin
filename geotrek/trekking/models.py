@@ -204,6 +204,15 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_elevation_area', [str(self.pk)])
 
     @property
+    def information_desk(self):
+        """Retrocompatibily method for Geotrek-rando.
+        """
+        try:
+            return self.information_desks.first()
+        except (ValueError, InformationDesk.DoesNotExist):
+            return None
+
+    @property
     def any_published(self):
         """Returns True if the trek is published in at least one of the language
         """
