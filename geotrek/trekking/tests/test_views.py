@@ -452,18 +452,19 @@ class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
         dataset = json.loads(resp.content)
         first = dataset['features'][0]
         self.assertEqual(sorted(first['properties'].keys()),
-                         ['description',
-                          'email',
-                          'id',
-                          'latitude',
-                          'longitude',
-                          'model',
-                          'municipality',
-                          'name',
-                          'phone',
-                          'photo_url',
-                          'postal_code',
-                          'website'])
+                         [u'description',
+                          u'email',
+                          u'id',
+                          u'latitude',
+                          u'longitude',
+                          u'model',
+                          u'municipality',
+                          u'name',
+                          u'phone',
+                          u'photo_url',
+                          u'postal_code',
+                          u'street',
+                          u'website'])
 
 
 class TemplateTagsTest(TestCase):

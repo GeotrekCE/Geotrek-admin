@@ -29,18 +29,33 @@ $(window).on('entity:map', function (e, data) {
         });
         pathsLayer.addTo(map);
 
+        pathsLayer.on('loaded', function () {
+            if (pathsLayer._map)
+                pathsLayer.bringToBack();
+        });
+
         map.on('layeradd', function (e) {
-
-            if (!pathsLayer._map) {
-                // Paths currently not shown
-                return;
+            if (e.layer === pathsLayer) {
+                if (e.layer.loading) {
+                    e.layer.on('loaded', function () {
+                        e.layer.bringToBack();
+                    });
+                }
+                else {
+                    e.layer.bringToBack();
+                }
             }
-
-            if (e.layer == pathsLayer) {
-                // Bring to back when the last path item is added
-                setTimeout(function () {
-                    pathsLayer.bringToBack();
-                }, 300);
+            else {
+                if (e.layer instanceof L.ObjectsLayer) {
+                    if (e.layer.loading) {
+                        e.layer.on('loaded', function () {
+                            e.layer.bringToFront();
+                        });
+                    }
+                    else {
+                        e.layer.bringToFront();
+                    }
+                }
             }
         });
 
