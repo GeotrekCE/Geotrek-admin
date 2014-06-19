@@ -370,9 +370,9 @@ function geotrek_setup {
     freshinstall=true
     if [ ! -z $existing ] ; then
         freshinstall=false
-        if [ $existing \< "0.21" ]; then
+        if [ $existing \< "0.22" ]; then
             echo_warn "Geotrek $existing was detected."
-            echo_error "Geotrek 0.21+ is required."
+            echo_error "Geotrek 0.22+ is required."
             exit 7
         fi
     fi
@@ -442,13 +442,6 @@ function geotrek_setup {
     success=$?
     if [ $success -ne 0 ]; then
         exit_error 3 "Could not setup python environment !"
-    fi
-
-    if ! $freshinstall ; then
-        # In v0.22 we erased Django migrations
-        for app in authent common core infrastructure land maintenance trekking ; do
-            bin/django migrate geotrek.$app --delete-ghost-migrations --fake
-        done;
     fi
 
     if $tests ; then

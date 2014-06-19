@@ -58,10 +58,42 @@ CHANGELOG
 
 * Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
 
-0.23.2 (2014-06-13)
+
+
+0.23.5 (2014-06-19)
 -------------------
 
 **Bug fixes**
+
+* Fix crash when TourInFrance has malformed website or phone
+* Fix translations not being installed
+
+
+0.23.4 (2014-06-18)
+-------------------
+
+**Bug fixes**
+
+* Fix massive upgrade bug, where new migrations were ignored. Due to migration
+  operation introduction in 0.22 installation script.
+
+Special thanks to Noël Martinon, Félix Merzeau, Gil Deluermoz and Camille Montchicourt for their patience on this.
+
+
+0.23.3 (2014-06-18)
+-------------------
+
+** Bug fixes **
+
+* Fix static files compression when using Google Mercator projection in maps
+* Fix intermediary points order in topology de/serialization, and remove useless 
+  topology serialization optimizations (fixes #1031)
+
+
+0.23.2 (2014-06-13)
+-------------------
+
+** Bug fixes **
 
 * Fixed land records not shown in detail pages
 * Fixed JSON DEM area extent for treks
@@ -82,12 +114,12 @@ CHANGELOG
 * Show object type in ODT export (fixes #1000)
 
 
-**Internal changes**
+** Internal changes **
 
 * Upgraded to Mapentity 1.4.0
 * Upgraded to Leaflet 0.7.3
 
-**Installation**
+** Installation **
 
 * Fixed content types migration of land to zoning apps (Thanks Noël Martinon)
 
@@ -104,7 +136,7 @@ CHANGELOG
 
     It is a good thing, since it paves the way for the last Ubuntu LTS release (14.04). However, it breaks the *Long Term Support* philosophy of the previous one (12.04), supposed to be supported until 2019.
 
-   **Morality**: we cannot trust the *Ubuntu GIS stable* repository anymore.
+    **Morality** : we cannot trust the *Ubuntu GIS stable* repository anymore.
 
     Regarding *Geotrek*, such upgrades of Ubuntu packages is not supposed to be covered
     by its installation script. If you face any problems, please refer to the
@@ -114,7 +146,7 @@ CHANGELOG
 0.23.1 (2014-05-22)
 -------------------
 
-**Bug fixes**
+** Bug fixes **
 
 * Fixed regression when editing topologies without modification
 * Fixed widget for Trails to allow linear topologies only
@@ -123,16 +155,16 @@ CHANGELOG
 0.23 (2014-05-22)
 -----------------
 
-**Breaking changes**
+** Breaking changes **
 
 Read all release notes carefully.
 
 * Trails are now managed as topologies (fixes #370).
-  Existing trails geometries are likely to be**LOST**(*see below*)
+  Existing trails geometries are likely to be **LOST** (*see below*)
 * Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``
 * Permission systems has been refactored (*see below*)
 
-**Bug fixes**
+** Bug fixes **
 
 * Force browser cache revalidation of geojson data (fixes #843)
 * Force browser cache revalidation for path graph (fixes #1029)
@@ -141,7 +173,7 @@ Read all release notes carefully.
 * Fix missing translation "no filters" and "current criterias" (fixes #884)
 * Fix PDF versions of documents not being translated (fixes #1028)
 
-**New features**
+** New features **
 
 * Command to import shapefile with points into POI as topologies (fixes #952)
 * Add views to serve DEM on object area as JSON (*Geotrek-Rando 3D*)
@@ -163,7 +195,7 @@ Read all release notes carefully.
 * Add a button to close filters (fixes #424)
 * Added new sections in documention : *FAQ*, *User-manal* and *Advanced configuration*
 
-**Internal changes**
+** Internal changes **
 
 * Enabled database connection pooling in production
 * An error is raised if SRID has not unit in meters (fixes #921)

@@ -352,7 +352,7 @@ class PathAggregation(models.Model):
         verbose_name = _(u"Path aggregation")
         verbose_name_plural = _(u"Path aggregations")
         # Important - represent the order of the path in the Topology path list
-        ordering = ['id', ]
+        ordering = ['order', ]
 
 
 class Datasource(StructureRelated):

@@ -106,6 +106,7 @@ class TopologyHelper(object):
                     path = Path.objects.get(pk=path)
                     topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
                     if not last_topo and last_path:
+                        counter += 1
                         # Intermediary marker.
                         # make sure pos will be [X, X]
                         # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
@@ -180,7 +181,6 @@ class TopologyHelper(object):
             current = {}
             ipath = 0
             for i, aggr in enumerate(aggregations):
-                first = i == 0
                 last = i == len(aggregations) - 1
                 intermediary = aggr.start_position == aggr.end_position
 
@@ -190,8 +190,7 @@ class TopologyHelper(object):
                 current.setdefault('offset', topology.offset)
                 if not intermediary:
                     current.setdefault('paths', []).append(aggr.path.pk)
-                    if not aggr.is_full or first or last:
-                        current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
+                    current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
                 ipath = ipath + 1
 
                 if intermediary or last:
