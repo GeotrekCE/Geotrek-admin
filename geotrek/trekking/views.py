@@ -168,7 +168,7 @@ class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     pk_url_kwarg = 'pk'
 
     properties = ['id', 'name', 'description', 'photo_url', 'phone',
-                  'email', 'website', 'postal_code', 'municipality',
+                  'email', 'website', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude']
 
     @method_decorator(login_required)
