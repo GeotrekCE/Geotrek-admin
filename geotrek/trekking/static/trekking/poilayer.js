@@ -1,24 +1,9 @@
-var POILayer = L.MarkerClusterGroup.extend({
+var POILayer = L.GeoJSON.extend({
 
-    initialize: function (poisData) {
-        L.MarkerClusterGroup.prototype.initialize.call(this, {
-          showCoverageOnHover: false,
-          disableClusteringAtZoom: 15,
-          maxClusterRadius: 24,
-          iconCreateFunction: function(cluster) {
-              return new L.DivIcon({className: 'poi-marker-icon cluster',
-                                    iconSize: [20, 20],
-                                    iconAnchor: [12, 12],
-                                    html: '<b>' + cluster.getChildCount() + '</b>'});
-          }
-        });
-
-        for (var i=0; i < poisData.features.length; i++) {
-            var featureData = poisData.features[i],
-                marker = this.poisMarker(featureData,
-                                         L.GeoJSON.coordsToLatLng(featureData.geometry.coordinates));
-            this.addLayer(marker);
-        }
+    initialize: function (poisData, options) {
+        options = options || {};
+        options.pointToLayer = this.poisMarker.bind(this);
+        L.GeoJSON.prototype.initialize.call(this, poisData, options);
     },
 
     poisMarker: function(featureData, latlng) {

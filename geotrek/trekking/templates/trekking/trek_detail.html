@@ -202,8 +202,6 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script src="{% static "trekking/leaflet.markercluster.js" %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static "trekking/MarkerCluster.css" %}">
     <script src="{% static "trekking/poilayer.js" %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {

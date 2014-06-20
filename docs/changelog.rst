@@ -27,6 +27,7 @@ CHANGELOG
 * Information desks are now shown in trek detail map (fixes #1001)
 * Information desks now have optional photo and position, as well as some
   additional fields (fixes #1001)
+* Disabled marker cluster in trek detail map
 
 **Minor features**
 
