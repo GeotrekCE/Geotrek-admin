@@ -50,6 +50,7 @@ CHANGELOG
 * Show POI name on hover instead of category in trek detail pages (fixes #1004)
 * Form tabs are now always visible while scrolling (fixes #926)
 * New URL to obtain the attached filelist of an object
+* Remove float notation in altimetry altitude labels
 
 **Bug fixes**
 

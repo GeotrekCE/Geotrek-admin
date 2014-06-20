@@ -81,6 +81,7 @@ class AltimetryHelper(object):
                       show_dots=False,
                       x_labels_major_count=3,
                       show_minor_x_labels=False,
+                      value_formatter=lambda v: '%d' % v,
                       margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
                       width=settings.ALTIMETRIC_PROFILE_WIDTH,
                       height=settings.ALTIMETRIC_PROFILE_HEIGHT,
@@ -96,7 +97,7 @@ class AltimetryHelper(object):
         line_chart.x_title = unicode(_("Distance (m)"))
         line_chart.x_labels = [str(i) for i in x_labels]
         line_chart.y_title = unicode(_("Altitude (m)"))
-        line_chart.y_labels = [str(i) for i in y_labels]
+        line_chart.y_labels = y_labels
         line_chart.range = [floor_elevation, max_elevation]
         line_chart.add('', elevations)
         return line_chart.render()
