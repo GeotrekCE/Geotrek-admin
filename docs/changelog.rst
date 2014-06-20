@@ -5,6 +5,11 @@ CHANGELOG
 0.24 (unreleased)
 -----------------
 
+** Breaking changes **
+
+* POI icons shall now have a solid background, since no background is added
+  in trek detail map anymore.
+
 **New features**
 
 * Public TREK export - hide block label if value is empty (fixes #873)
@@ -28,6 +33,7 @@ CHANGELOG
 * Information desks now have optional photo and position, as well as some
   additional fields (fixes #1001)
 * Disabled marker cluster in trek detail map
+* Remove background and halo effect on POI icons
 
 **Minor features**
 
