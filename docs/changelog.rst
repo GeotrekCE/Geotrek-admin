@@ -70,6 +70,7 @@ CHANGELOG
 * Fixed cannot clear trek fields in database (fixes #1095)
 * Fixed missing translation of "Load local file" (fixes #1085)
 * POI types are displayed as such in adminsite
+* Fix duplicate authors in history list in detail pages
 
 **Internal changes**
 
