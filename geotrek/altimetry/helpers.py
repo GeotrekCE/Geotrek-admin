@@ -81,6 +81,7 @@ class AltimetryHelper(object):
                       show_dots=False,
                       x_labels_major_count=3,
                       show_minor_x_labels=False,
+                      truncate_label=50,
                       value_formatter=lambda v: '%d' % v,
                       margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
                       width=settings.ALTIMETRIC_PROFILE_WIDTH,
@@ -93,6 +94,7 @@ class AltimetryHelper(object):
         style = LightSolarizedStyle
         style.background = settings.ALTIMETRIC_PROFILE_BACKGROUND
         style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
+        style.font_family=settings.ALTIMETRIC_PROFILE_FONT
         line_chart = pygal.StackedLine(fill=True, style=style, **config)
         line_chart.x_title = unicode(_("Distance (m)"))
         line_chart.x_labels = [str(i) for i in x_labels]
