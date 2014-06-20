@@ -43,7 +43,13 @@ CHANGELOG
 * Ability to see a trek in the different published languages (ref #1003)
 * A trek can now have several information desks (fixes #1001)
 * Information desks are now shown in trek detail map (fixes #1001)
-* Information desks now have optional photo and position, as well as some additional fields (fixes #1001)
+* Information desks now have optional photo and position, as well as some
+  additional fields (fixes #1001)
+* New URL to obtain the attached filelist of an object
+
+**Minor features**
+
+* Improved details in trek form, use Chosen for many-to-many widgets
 
 **Bug fixes**
 
@@ -86,7 +92,7 @@ Special thanks to Noël Martinon, Félix Merzeau, Gil Deluermoz and Camille Mont
 ** Bug fixes **
 
 * Fix static files compression when using Google Mercator projection in maps
-* Fix intermediary points order in topology de/serialization, and remove useless 
+* Fix intermediary points order in topology de/serialization, and remove useless
   topology serialization optimizations (fixes #1031)
 
 

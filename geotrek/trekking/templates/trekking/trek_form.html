@@ -4,9 +4,9 @@
 
 {% block mainform %}
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
-    
+
     {% crispy form %}
-    
+
     <fieldset class="formset">
         {{ relationship_formset.management_form }}
         {% for relationship_form in relationship_formset %}
@@ -15,7 +15,7 @@
             </div>
         {% endfor %}
     </fieldset>
-    
+
     </form>
 {% endblock mainform %}
 
@@ -33,9 +33,13 @@
                 addCssClass: 'btn btn-success add-row',
                 deleteCssClass: 'delete-row',
                 addText: '{% trans "Add relation" %}',
-                deleteText: '{% trans "Remove" %}', 
+                deleteText: '{% trans "Remove" %}',
             })
 
+            $('select[multiple]').chosen({
+                no_results_text: "{% trans "No result" %}",
+                placeholder_text_multiple: "{% trans "Choose value(s)" %}",
+            });
 
             /* Show advanced tab if error in there */
             if ($('.tab-content #advanced .error').length > 0) {

@@ -16,7 +16,6 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     color: #bbb;
 }
 
-
 /* Line editing */
 
 .leaflet-editing-icon.marker-snapped {
@@ -95,6 +94,36 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-image: url(core/images/pointtopology-control.png);
 }
 
+/* Trek form */
+
+#id_parking_location_map {
+    min-height: 400px;
+}
+
+#add_id_web_links {
+    margin-top: -20px;
+    margin-left: 10px;
+}
+
+.trek_relationship_a .control-group {
+    margin-bottom: 0px;
+}
+
+.form-panel.trek .form-row.inline.controls:last-of-type {
+    margin-top: 10px;
+}
+
+.trek_relationship_a .control-group label,
+.trek_relationship_a .control-group .control {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.form-panel.trek fieldset a.delete-row,
+.form-panel.trek fieldset a.add-row {
+    float: right;
+    margin-right: 40%;
+}
 
 
 /* Land labels */

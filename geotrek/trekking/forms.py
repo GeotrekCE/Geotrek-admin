@@ -91,6 +91,11 @@ class TrekForm(TopologyForm):
         # Make sure (force) that name is required, in default language only
         self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
+        # Since we use chosen() in trek_form.html, we don't need the default help text
+        for f in ['themes', 'networks', 'usages',
+                  'web_links', 'information_desks']:
+            self.fields[f].help_text = ''
+
         # Get rid of ugly NullBooleanField widget
         if settings.TREK_PUBLISHED_BY_LANG:
             for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:

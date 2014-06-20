@@ -154,23 +154,29 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation',
                               help_text=_(u"Risks, danger, best period, ..."))
     themes = models.ManyToManyField('Theme', related_name="treks",
-                                    db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
+                                    db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    help_text=_(u"Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-                                      db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"))
+                                      db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"),
+                                      help_text=_(u"Hiking networks"))
     usages = models.ManyToManyField('Usage', related_name="treks",
-                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
+                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"),
+                                    help_text=_(u"Practicability"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
                                    blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-                                       db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
+                                       db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"),
+                                       help_text=_(u"External resources"))
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
+                                           help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField('InformationDesk',
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
-                                               verbose_name=_(u"Information desks"))
+                                               verbose_name=_(u"Information desks"),
+                                               help_text=_(u"Where to obtain information"))
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 

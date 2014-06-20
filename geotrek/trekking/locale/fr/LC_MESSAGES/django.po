@@ -243,6 +243,12 @@ msgstr "Ajouter un POI"
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
+msgid "No result"
+msgstr "Pas de résultat"
+
+msgid "Choose value(s)"
+msgstr "Choisir valeur(s)"
+
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
 "a better apparence in public portal."
