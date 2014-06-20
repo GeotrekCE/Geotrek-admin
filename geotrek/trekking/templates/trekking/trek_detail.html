@@ -212,8 +212,8 @@
             {% if object.parking_location %}
                 var parkingIcon = L.icon({
                     iconUrl: "{% static "trekking/parking.png" %}",
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12],
+                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
+                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });
                 var location = [{{ object.serializable_parking_location.1|unlocalize }},
                                 {{ object.serializable_parking_location.0|unlocalize }}];
@@ -225,8 +225,11 @@
             //
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
-                var pois = new POILayer(data),
-                    poiUrl = "{% url 'trekking:poi_detail' 0 %}";
+                var pois = new POILayer(data, {
+                    iconSize: {{ view.icon_sizes.POI }}
+                });
+
+                var poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
                         window.location = poiUrl.replace('0', layer.properties.pk);
@@ -242,8 +245,8 @@
 
                 var infoDeskIcon = L.icon({
                     iconUrl: "{% static "trekking/information_desk.svg" %}",
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12],
+                    iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
+                    iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
                 });
 
                 L.geoJson(data, {

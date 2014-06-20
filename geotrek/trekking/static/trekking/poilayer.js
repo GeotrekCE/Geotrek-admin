@@ -21,7 +21,8 @@ var POILayer = L.GeoJSON.extend({
         });
 
         var poicon = new L.DivIcon({className: 'poi-marker-icon',
-                                    iconAnchor: [12, 12],
+                                    iconSize: [this.options.iconSize, this.options.iconSize],
+                                    iconAnchor: [this.options.iconSize/2, this.options.iconSize/2],
                                     html: img}),
             marker = L.marker(latlng, {icon: poicon});
         marker.properties = featureData.properties;

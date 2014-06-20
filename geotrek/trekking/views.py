@@ -187,6 +187,14 @@ class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
 class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
 
+    @property
+    def icon_sizes(self):
+        return {
+            'POI': settings.TREK_ICON_SIZE_POI,
+            'parking': settings.TREK_ICON_SIZE_PARKING,
+            'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
+        }
+
     def dispatch(self, *args, **kwargs):
         lang = self.request.GET.get('lang')
         if lang:

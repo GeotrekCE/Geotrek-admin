@@ -34,6 +34,8 @@ CHANGELOG
   additional fields (fixes #1001)
 * Disabled marker cluster in trek detail map
 * Remove background and halo effect on POI icons
+* Added 3 new settings to control trek detail map icons size
+  (``TREK_ICON_SIZE_POI``, ``TREK_ICON_SIZE_PARKING``, ``TREK_ICON_SIZE_INFORMATION_DESK``)
 
 **Minor features**
 

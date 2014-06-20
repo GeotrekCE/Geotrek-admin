@@ -434,6 +434,9 @@ TRAIL_MODEL_ENABLED = True
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
+TREK_ICON_SIZE_POI = 18
+TREK_ICON_SIZE_PARKING = 18
+TREK_ICON_SIZE_INFORMATION_DESK = 18
 
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
