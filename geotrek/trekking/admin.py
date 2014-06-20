@@ -4,7 +4,6 @@ from django import forms
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.db import models as gis_models
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
@@ -28,7 +27,7 @@ class ThemeAdmin(TranslationAdmin):
 
 
 class TrekNetworkAdmin(TranslationAdmin):
-    list_display = ('network',)
+    list_display = ('network', 'pictogram_img')
     search_fields = ('network',)
 
 
@@ -38,7 +37,7 @@ class UsageAdmin(TranslationAdmin):
 
 
 class RouteAdmin(TranslationAdmin):
-    list_display = ('route',)
+    list_display = ('route', 'pictogram_img')
     search_fields = ('route',)
 
 
