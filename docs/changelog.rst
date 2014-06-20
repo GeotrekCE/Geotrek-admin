@@ -8,35 +8,17 @@ CHANGELOG
 **New features**
 
 * Public TREK export - hide block label if value is empty (fixes #873)
-* Detail page : replace "Maintenance" by "Works" (fixes #889)
-* Detail page : interventions on paths are now grouped together,
-  and a small icon is shown (fixes #735)
-* Detail page : show intervention costs (ref #958, fixes #764)
-* Show project intervention total costs (fixes #958)
 * Add POIs on trek GPX (fixes #774)
-* Allow to override the Trek public document template
-  (see *advanced configuration* in docs)
 * Close list filter when click outside (fixes #916)
-* Intervention disorders is not mandatory anymore (fixes #661)
 * Rename recurrent field to subcontracting on intervention (fixes #911)
 * Rename comments field to description on intervention (fixes #927)
 * Show object type in ODT export (fixes #1000)
-* Show POI name on hover instead of category in trek detail pages (fixes #1004)
 * Show paths extremities on map (fixes #355)
-* Close calendar after date choice in intervention form (fixes #928)
-* Renamed Attachment submit button (fixes #925)
-* Added a new setting ``PATH_SNAPPING_DISTANCE`` to control paths snapping distance
-  in database (default: 1m)
-* Allow to disable trails notion (fixes #997)
-  (see *advanced configuration* in docs)
 * Ability to reuse topology when adding objects from detail pages (fixes #574, fixes #998)
-* Form tabs are now always visible while scrolling (fixes #926)
 * Command to generate all elevation charts (fixes #799)
 * SITRA support in Tourism datasources (fixes #1064)
 * Added status field on feedback reports (fixes #1075)
-* Documented the configuration of map layers apparence
 * Show restricted areas by type in layer switcher (fixes #961)
-* Show layers colors in layer switcher
 * Publication status is now controlled by language (fixes #1003). Previous
   behaviour can restored by setting ``TREK_PUBLISHED_BY_LANG``` to False.
 * Added publication date on trek (ref #1003)
@@ -45,11 +27,29 @@ CHANGELOG
 * Information desks are now shown in trek detail map (fixes #1001)
 * Information desks now have optional photo and position, as well as some
   additional fields (fixes #1001)
-* New URL to obtain the attached filelist of an object
 
 **Minor features**
 
+* Intervention disorders is not mandatory anymore (fixes #661)
 * Improved details in trek form, use Chosen for many-to-many widgets
+* Documented the configuration of map layers apparence
+* Show layers colors in layer switcher
+* Detail page : replace "Maintenance" by "Works" (fixes #889)
+* Detail page : interventions on paths are now grouped together,
+  and a small icon is shown (fixes #735)
+* Detail page : show intervention costs (ref #958, fixes #764)
+* Show project intervention total costs (fixes #958)
+* Allow to override the Trek public document template
+  (see *advanced configuration* in docs)
+* Close calendar after date choice in intervention form (fixes #928)
+* Renamed Attachment submit button (fixes #925)
+* Added a new setting ``PATH_SNAPPING_DISTANCE`` to control paths snapping distance
+  in database (default: 1m)
+* Allow to disable trails notion (fixes #997)
+  (see *advanced configuration* in docs)
+* Show POI name on hover instead of category in trek detail pages (fixes #1004)
+* Form tabs are now always visible while scrolling (fixes #926)
+* New URL to obtain the attached filelist of an object
 
 **Bug fixes**
 
@@ -63,7 +63,6 @@ CHANGELOG
 **Internal changes**
 
 * Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
-
 
 
 0.23.5 (2014-06-19)
