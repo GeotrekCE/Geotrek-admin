@@ -14,7 +14,6 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 import simplekml
-from PIL import Image
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
 from mapentity.utils import is_file_newer, convertit_download
@@ -532,6 +531,11 @@ class PictogramMixin(models.Model):
     def serializable_pictogram(self):
         return self.pictogram.url if self.pictogram else None
 
+    @property
+    def serializable_pictogram_png(self):
+        png = self.pictogram_png
+        return png.url if png else None
+
     def pictogram_img(self):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
@@ -666,7 +670,8 @@ class WebLink(models.Model):
         if not self.category:
             return None
         return {'label': self.category.label,
-                'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
+                'pictogram': self.category.serializable_pictogram,
+                'pictogram_png': self.category.serializable_pictogram_png}
 
 
 class WebLinkCategory(PictogramMixin):
@@ -695,28 +700,6 @@ class Theme(PictogramMixin):
 
     def __unicode__(self):
         return self.label
-
-    @property
-    def pictogram_off(self):
-        """
-        Since pictogram can be a sprite, we want to return the left part of
-        the picture (crop right 50%).
-        If the pictogram is a square, do not crop.
-        """
-        pictogram, ext = os.path.splitext(self.pictogram.name)
-        pictopath = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
-        output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
-
-        # Recreate only if necessary !
-        is_empty = os.path.getsize(output) == 0
-        is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
-        if not os.path.exists(output) or is_empty or is_newer:
-            image = Image.open(pictopath)
-            w, h = image.size
-            if w > h:
-                image = image.crop((0, 0, w / 2, h))
-            image.save(output)
-        return open(output)
 
 
 class InformationDesk(models.Model):
@@ -848,7 +831,8 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
     @property
     def serializable_type(self):
         return {'label': self.type.label,
-                'pictogram': self.type.serializable_pictogram}
+                'pictogram': self.type.serializable_pictogram,
+                'pictogram_png': self.type.serializable_pictogram_png}
 
     @classmethod
     def path_pois(cls, path):
