@@ -316,6 +316,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def serializable_networks(self):
         return [{'id': network.id,
+                 'pictogram': network.pictogram.url,
                  'name': network.network} for network in self.networks.all()]
 
     @property
@@ -324,8 +325,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             return None
         pictogram = None
         if self.difficulty.pictogram:
-            pictogram = os.path.join(settings.MEDIA_URL,
-                                     self.difficulty.pictogram.name)
+            pictogram = self.difficulty.pictogram.url
         return {'id': self.difficulty.pk,
                 'pictogram': pictogram,
                 'label': self.difficulty.difficulty}
@@ -333,13 +333,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
-                 'pictogram': os.path.join(settings.MEDIA_URL, t.pictogram.name),
+                 'pictogram': t.pictogram.url,
                  'label': t.label} for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
-                 'pictogram': os.path.join(settings.MEDIA_URL, u.pictogram.name),
+                 'pictogram': u.pictogram.url,
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -352,6 +352,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.route:
             return None
         return {'id': self.route.pk,
+                'pictogram': self.route.pictogram.url,
                 'label': self.route.route}
 
     @property
@@ -514,7 +515,24 @@ class TrekRelationship(models.Model):
         return u"%s <--> %s" % (self.trek_a, self.trek_b)
 
 
-class TrekNetwork(models.Model):
+class PictogramMixin(models.Model):
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto', max_length=512, null=True)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def serializable_pictogram(self):
+        return self.pictogram.url if self.pictogram else None
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
+
+
+class TrekNetwork(PictogramMixin):
 
     network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
 
@@ -528,11 +546,9 @@ class TrekNetwork(models.Model):
         return self.network
 
 
-class Usage(models.Model):
+class Usage(PictogramMixin):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_usage'
@@ -541,13 +557,9 @@ class Usage(models.Model):
     def __unicode__(self):
         return self.usage
 
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
 
-class Route(models.Model):
+class Route(PictogramMixin):
 
     route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
 
@@ -561,7 +573,7 @@ class Route(models.Model):
         return self.route
 
 
-class DifficultyLevel(models.Model):
+class DifficultyLevel(PictogramMixin):
 
     """We use an IntegerField for id, since we want to edit it in Admin.
     This column is used to order difficulty levels, especially in public website
@@ -570,9 +582,6 @@ class DifficultyLevel(models.Model):
     id = models.IntegerField(primary_key=True)
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512,
-                                 null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_difficulte'
@@ -582,11 +591,6 @@ class DifficultyLevel(models.Model):
 
     def __unicode__(self):
         return self.difficulty
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
     def save(self, *args, **kwargs):
         """Manually auto-increment ids"""
@@ -637,11 +641,9 @@ class WebLink(models.Model):
                 'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
 
 
-class WebLinkCategory(models.Model):
+class WebLinkCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_web_category'
@@ -652,17 +654,10 @@ class WebLinkCategory(models.Model):
     def __unicode__(self):
         return u"%s" % self.label
 
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
-
-class Theme(models.Model):
+class Theme(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_theme'
@@ -672,11 +667,6 @@ class Theme(models.Model):
 
     def __unicode__(self):
         return self.label
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
     @property
     def pictogram_off(self):
@@ -846,11 +836,9 @@ Intervention.add_property('pois', lambda self: self.topology.pois if self.topolo
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
 
 
-class POIType(models.Model):
+class POIType(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_poi'
@@ -860,12 +848,3 @@ class POIType(models.Model):
 
     def __unicode__(self):
         return self.label
-
-    @property
-    def serializable_pictogram(self):
-        return os.path.join(settings.MEDIA_URL, self.pictogram.name)
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True

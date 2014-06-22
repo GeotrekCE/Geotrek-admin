@@ -146,6 +146,7 @@
         "pk": 2,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-PR.svg",
             "network": "PR",
             "network_fr": "PR"
         }
@@ -154,6 +155,7 @@
         "pk": 3,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-GRP.svg",
             "network": "GRP",
             "network_fr": "GRP"
         }
@@ -162,6 +164,7 @@
         "pk": 4,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-VTT.svg",
             "network": "VTT",
             "network_fr": "VTT"
         }
@@ -170,8 +173,18 @@
         "pk": 5,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-horse.svg",
             "network": "Piste \u00e9questre",
             "network_fr": "Piste \u00e9questre"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "pictogram": "upload/network-GR.svg",
+            "network": "GR",
+            "network_fr": "GR"
         }
     },
     {
@@ -336,6 +349,7 @@
         "pk": 1,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-loop.svg",
             "route": "Boucle",
             "route_fr": "Boucle"
         }
@@ -344,6 +358,7 @@
         "pk": 2,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-return.svg",
             "route": "Aller-retour",
             "route_fr": "Aller-retour"
         }
@@ -352,6 +367,7 @@
         "pk": 3,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-cross.svg",
             "route": "Travers\u00e9e",
             "route_fr": "Travers\u00e9e"
         }
