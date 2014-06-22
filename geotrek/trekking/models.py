@@ -17,6 +17,7 @@ import simplekml
 from PIL import Image
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
+from mapentity.utils import is_file_newer, convertit_download
 
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import classproperty
@@ -317,6 +318,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def serializable_networks(self):
         return [{'id': network.id,
                  'pictogram': network.pictogram.url,
+                 'pictogram_png': network.pictogram_png.url,
                  'name': network.network} for network in self.networks.all()]
 
     @property
@@ -328,18 +330,21 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             pictogram = self.difficulty.pictogram.url
         return {'id': self.difficulty.pk,
                 'pictogram': pictogram,
+                'pictogram_png': self.difficulty.pictogram_png.url,
                 'label': self.difficulty.difficulty}
 
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
                  'pictogram': t.pictogram.url,
+                 'pictogram_png': t.pictogram_png.url,
                  'label': t.label} for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
                  'pictogram': u.pictogram.url,
+                 'pictogram_png': u.pictogram_png.url,
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -353,6 +358,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
             return None
         return {'id': self.route.pk,
                 'pictogram': self.route.pictogram.url,
+                'pictogram_png': self.route.pictogram_png.url,
                 'label': self.route.route}
 
     @property
@@ -530,6 +536,28 @@ class PictogramMixin(models.Model):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
     pictogram_img.allow_tags = True
+
+    def pictogram_png(self):
+        if not self.pictogram:
+            return None
+
+        pictogram, ext = os.path.splitext(self.pictogram.name)
+        if ext.lower() != '.svg':
+            return self.pictogram
+
+        path_vecto = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
+        name_png = self.pictogram.name + '.png'
+        path_png = os.path.join(settings.MEDIA_ROOT, name_png)
+
+        if is_file_newer(path_vecto, path_png):
+            convertit_download(self.pictogram.url,
+                               path_png,
+                               from_type='image/svg+xml',
+                               to_type='image/png')
+        pictogram_png = object()
+        pictogram_png.name = name_png
+        pictogram_png.url = self.pictogram.url + '.png'
+        return pictogram_png
 
 
 class TrekNetwork(PictogramMixin):
