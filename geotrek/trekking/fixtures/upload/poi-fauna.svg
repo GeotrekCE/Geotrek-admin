@@ -1,0 +1,2358 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="128"
+   height="128"
+   id="svg3041">
+  <defs
+     id="defs3043">
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66799">
+      <feGaussianBlur
+         id="feGaussianBlur66801"
+         result="result6"
+         stdDeviation="1.5" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66803" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66805" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66863">
+      <feGaussianBlur
+         id="feGaussianBlur66865"
+         result="result6"
+         stdDeviation="1.5" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66867" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66869" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66647">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66649" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66651" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66653" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66655">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66657" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66659" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66661" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66663">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66665" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66667" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66669" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66671">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66673" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66675" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66677" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66679">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66681" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66683" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66685" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66687">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66689" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66691" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66693" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66695">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66697" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66699" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66701" />
+    </filter>
+    <clipPath
+       id="clipPath3670-7">
+      <path
+         d="m 256.208,113.587 c 3.371,-2.2 15.76,-9.42 33.03,-9.42 l 0,0 0.01,0 c 4.311,0 8.63,0.45 12.941,1.33 l 0,0 c 0.54,0.111 1.08,0.23 1.62,0.36 l 0,0 c 0.52,0.12 1.04,0.239 1.56,0.38 l 0,0 c 0.32,0.08 0.64,0.159 0.95,0.26 l 0,0 c 0.52,0.13 1.029,0.28 1.54,0.43 l 0,0 c 0.501,0.15 0.989,0.3 1.49,0.46 l 0,0 -1.32,1.2 -1.379,1.24 0,0.01 -2.771,2.49 0.45,0.48 -0.231,0.22 0,-0.01 c -0.029,-0.23 -0.119,-0.449 -0.259,-0.65 l 0,0 c -0.02,-0.03 -0.05,-0.05 -0.059,-0.08 l 0,0 c -0.391,-0.48 -1.081,-0.86 -1.97,-1.169 l 0,0 c -0.461,-0.161 -0.981,-0.301 -1.53,-0.411 l 0,0 c -0.511,-0.12 -1.061,-0.219 -1.63,-0.299 l 0,0 c -1.652,-0.231 -3.482,-0.331 -5.201,-0.331 l 0,0 c -5.211,0 -11.411,0.899 -13.17,3.42 l 0,0 c -0.411,0.59 -0.561,1.24 -0.45,1.92 l 0,0 -0.05,0 0,0.049 -23.571,-1.879 z"
+         id="path3672-1" />
+    </clipPath>
+    <clipPath
+       id="clipPath4890-4">
+      <path
+         d="m 297.059,162.327 c -0.381,-0.03 -0.881,-0.07 -1.49,-0.141 l 0,0 c -3.701,-0.429 -11.361,-1.809 -18.941,-6.239 l 0,0 c -5.474,-3.197 -11.543,-8.41 -15.768,-16.821 l 0,0 23.807,0 c 2.723,2.624 6.367,4.468 10.902,5.501 l 0,0 c 0.49,0.11 0.979,0.21 1.49,0.3 l 0,0 c 0.319,0.06 0.649,0.12 0.989,0.17 l 0,0 -0.459,17.27 c -0.131,-0.01 -0.31,-0.021 -0.53,-0.04"
+         id="path4892-8" />
+    </clipPath>
+    <clipPath
+       id="clipPath6110-7">
+      <path
+         d="m 260.86,139.126 c -3.161,-6.292 -5.289,-14.374 -5.362,-24.74 l 0,0 24.231,1.721 -0.011,0.06 0.121,0.009 c -0.601,2.291 -2.72,11.951 2.16,19.682 l 0,0 c 0.759,1.197 1.649,2.287 2.668,3.268 l 0,0 -23.807,0 z"
+         id="path6112-2" />
+    </clipPath>
+    <clipPath
+       id="clipPath7330-5">
+      <path
+         d="m 0,938.37 595.279,0 L 595.279,0 0,0 0,938.37 z"
+         id="path7332-7" />
+    </clipPath>
+    <clipPath
+       id="clipPath7346-5">
+      <path
+         d="m 298.539,145.077 0.01,-0.01 c 0.222,-0.123 2.423,-1.433 4.176,-5.941 l 0,0 7.669,0 c -1.105,5.263 -3.004,10.575 -6.095,15.411 l 0,0 c -1.02,1.62 -2.17,3.17 -3.489,4.65 l 0,0 -0.011,0.01 c -0.83,0.95 -1.72,1.871 -2.68,2.75 l 0,0 0.42,-16.87 z"
+         id="path7348-2" />
+    </clipPath>
+    <clipPath
+       id="clipPath8566-8">
+      <path
+         d="m 302.725,139.126 c 1.793,-4.608 3.118,-12.558 1.384,-25.999 l 0,0 2.61,-2.36 1.391,-1.25 1.379,-1.251 0.37,-0.339 c 0.722,3.13 3.521,16.985 0.535,31.199 l 0,0 -7.669,0 z"
+         id="path8568-6" />
+    </clipPath>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66807">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66809" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66811" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66813" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66783">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66785" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66787" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66789" />
+    </filter>
+    <clipPath
+       id="clipPath3670">
+      <path
+         d="m 256.208,113.587 c 3.371,-2.2 15.76,-9.42 33.03,-9.42 l 0,0 0.01,0 c 4.311,0 8.63,0.45 12.941,1.33 l 0,0 c 0.54,0.111 1.08,0.23 1.62,0.36 l 0,0 c 0.52,0.12 1.04,0.239 1.56,0.38 l 0,0 c 0.32,0.08 0.64,0.159 0.95,0.26 l 0,0 c 0.52,0.13 1.029,0.28 1.54,0.43 l 0,0 c 0.501,0.15 0.989,0.3 1.49,0.46 l 0,0 -1.32,1.2 -1.379,1.24 0,0.01 -2.771,2.49 0.45,0.48 -0.231,0.22 0,-0.01 c -0.029,-0.23 -0.119,-0.449 -0.259,-0.65 l 0,0 c -0.02,-0.03 -0.05,-0.05 -0.059,-0.08 l 0,0 c -0.391,-0.48 -1.081,-0.86 -1.97,-1.169 l 0,0 c -0.461,-0.161 -0.981,-0.301 -1.53,-0.411 l 0,0 c -0.511,-0.12 -1.061,-0.219 -1.63,-0.299 l 0,0 c -1.652,-0.231 -3.482,-0.331 -5.201,-0.331 l 0,0 c -5.211,0 -11.411,0.899 -13.17,3.42 l 0,0 c -0.411,0.59 -0.561,1.24 -0.45,1.92 l 0,0 -0.05,0 0,0.049 -23.571,-1.879 z"
+         id="path3672" />
+    </clipPath>
+    <clipPath
+       id="clipPath4890">
+      <path
+         d="m 297.059,162.327 c -0.381,-0.03 -0.881,-0.07 -1.49,-0.141 l 0,0 c -3.701,-0.429 -11.361,-1.809 -18.941,-6.239 l 0,0 c -5.474,-3.197 -11.543,-8.41 -15.768,-16.821 l 0,0 23.807,0 c 2.723,2.624 6.367,4.468 10.902,5.501 l 0,0 c 0.49,0.11 0.979,0.21 1.49,0.3 l 0,0 c 0.319,0.06 0.649,0.12 0.989,0.17 l 0,0 -0.459,17.27 c -0.131,-0.01 -0.31,-0.021 -0.53,-0.04"
+         id="path4892" />
+    </clipPath>
+    <clipPath
+       id="clipPath6110">
+      <path
+         d="m 260.86,139.126 c -3.161,-6.292 -5.289,-14.374 -5.362,-24.74 l 0,0 24.231,1.721 -0.011,0.06 0.121,0.009 c -0.601,2.291 -2.72,11.951 2.16,19.682 l 0,0 c 0.759,1.197 1.649,2.287 2.668,3.268 l 0,0 -23.807,0 z"
+         id="path6112" />
+    </clipPath>
+    <clipPath
+       id="clipPath7330">
+      <path
+         d="m 0,938.37 595.279,0 L 595.279,0 0,0 0,938.37 z"
+         id="path7332" />
+    </clipPath>
+    <clipPath
+       id="clipPath7346">
+      <path
+         d="m 298.539,145.077 0.01,-0.01 c 0.222,-0.123 2.423,-1.433 4.176,-5.941 l 0,0 7.669,0 c -1.105,5.263 -3.004,10.575 -6.095,15.411 l 0,0 c -1.02,1.62 -2.17,3.17 -3.489,4.65 l 0,0 -0.011,0.01 c -0.83,0.95 -1.72,1.871 -2.68,2.75 l 0,0 0.42,-16.87 z"
+         id="path7348" />
+    </clipPath>
+    <clipPath
+       id="clipPath8566">
+      <path
+         d="m 302.725,139.126 c 1.793,-4.608 3.118,-12.558 1.384,-25.999 l 0,0 2.61,-2.36 1.391,-1.25 1.379,-1.251 0.37,-0.339 c 0.722,3.13 3.521,16.985 0.535,31.199 l 0,0 -7.669,0 z"
+         id="path8568" />
+    </clipPath>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66823">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66825" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66827" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66829" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66831">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66833" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66835" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66837" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66839">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66841" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66843" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66845" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66847">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66849" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66851" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66853" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66855">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66857" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66859" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66861" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66871">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66873" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66875" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66877" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66879">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66881" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66883" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66885" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66887">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66889" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66891" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66893" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66903">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66905" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66907" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66909" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66919">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66921" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66923" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66925" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66927">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66929" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66931" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66933" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66935">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66937" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66939" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66941" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66943">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66945" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66947" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66949" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66951">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66953" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66955" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66957" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66999">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67001" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67003" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67005" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67007">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67009" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67011" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67013" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67023">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67025" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67027" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67029" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67031">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67033" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67035" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67037" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67039">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67041" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67043" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67045" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67055">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67057" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67059" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67061" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67071">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67073" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67075" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67077" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67095">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67097" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67099" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67101" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67111">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67113" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67115" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67117" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67127">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67129" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67131" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67133" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67151">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67153" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67155" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67157" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67159">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67161" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67163" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67165" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67167">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67169" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67171" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67173" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67175">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67177" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67179" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67181" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67183">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67185" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67187" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67189" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67199">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67201" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67203" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67205" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67215">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67217" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67219" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67221" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67223">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67225" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67227" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67229" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67231">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67233" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67235" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67237" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66823-0">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66825-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66827-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66829-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66831-6">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66833-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66835-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66837-6" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66839-6">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66841-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66843-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66845-7" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66847-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66849-5" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66851-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66853-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66855-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66857-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66859-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66861-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66871-8">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66873-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66875-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66877-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66879-8">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66881-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66883-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66885-6" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66887-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66889-3" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66891-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66893-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66903-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66905-1" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66907-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66909-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66919-7">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66921-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66923-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66925-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66927-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66929-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66931-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66933-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66935-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66937-1" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66939-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66941-1" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66943-1">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66945-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66947-2" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66949-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66951-1">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66953-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66955-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66957-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66999-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67001-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67003-8" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67005-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67007-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67009-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67011-2" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67013-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67023-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67025-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67027-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67029-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67031-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67033-6" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67035-9" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67037-6" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67039-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67041-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67043-8" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67045-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67055-3">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67057-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67059-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67061-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67071-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67073-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67075-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67077-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67095-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67097-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67099-2" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67101-8" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67111-8">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67113-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67115-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67117-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67127-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67129-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67131-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67133-8" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67151-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67153-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67155-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67157-1" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67159-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67161-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67163-9" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67165-6" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67167-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67169-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67171-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67173-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67175-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67177-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67179-7" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67181-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67183-1">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67185-3" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67187-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67189-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67199-3">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67201-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67203-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67205-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67215-0">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67217-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67219-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67221-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67223-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67225-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67227-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67229-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67231-7">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67233-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67235-7" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67237-1" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66823-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66825-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66827-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66829-02" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66831-0">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66833-49" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66835-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66837-68" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66839-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66841-5" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66843-7" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66845-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66847-3">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66849-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66851-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66853-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66855-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66857-3" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66859-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66861-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66871-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66873-41" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66875-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66877-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66879-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66881-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66883-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66885-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66887-1">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66889-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66891-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66893-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66903-6">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66905-6" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66907-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66909-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66919-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66921-23" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66923-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66925-1" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66927-5">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66929-3" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66931-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66933-6" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66935-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66937-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66939-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66941-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66943-6">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66945-5" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66947-7" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66949-90" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66951-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur66953-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite66955-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite66957-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter66999-6">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67001-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67003-88" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67005-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67007-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67009-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67011-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67013-8" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67023-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67025-02" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67027-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67029-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67031-7">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67033-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67035-96" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67037-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67039-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67041-6" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67043-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67045-7" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67055-38">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67057-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67059-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67061-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67071-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67073-09" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67075-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67077-7" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67095-8">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67097-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67099-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67101-4" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67111-7">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67113-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67115-59" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67117-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67127-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67129-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67131-18" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67133-7" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67151-0">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67153-4" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67155-6" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67157-10" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67159-9">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67161-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67163-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67165-8" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67167-8">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67169-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67171-3" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67173-2" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67175-1">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67177-2" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67179-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67181-0" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67183-2">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67185-7" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67187-0" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67189-9" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67199-4">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67201-9" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67203-4" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67205-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67215-03">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67217-6" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67219-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67221-3" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67223-51">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67225-8" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67227-1" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67229-5" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter67231-0">
+      <feGaussianBlur
+         stdDeviation="1.5"
+         result="result6"
+         id="feGaussianBlur67233-0" />
+      <feComposite
+         in2="result6"
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         id="feComposite67235-5" />
+      <feComposite
+         in2="SourceAlpha"
+         operator="atop"
+         in="result8"
+         result="result9"
+         id="feComposite67237-6" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata3046">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     width="128"
+     height="128"
+     x="0"
+     y="0"
+     id="rect19463"
+     style="color:#000000;fill:#ff7b00;fill-opacity:1;stroke:none;stroke-width:1.70000005;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+  <g
+     transform="matrix(1.0465261,0,0,-1.0465261,281.10899,1518.0931)"
+     id="g16611"
+     style="fill:#ffffff">
+    <g
+       transform="translate(-217.74865,1435.203)"
+       id="g3464"
+       style="fill:#ffffff">
+      <path
+         d="m 0,0 c 3.997,-0.391 -0.882,-5.007 0,-7.936 1.648,-3.491 5.017,-3.125 7.054,-7.054 5.183,-10.004 0.548,-27.024 -7.936,-27.335 -5.945,-0.216 -9.593,5.776 -10.582,10.581 C -14.055,-19.138 -3.937,-6.126 0,0"
+         id="path3466"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+    <g
+       transform="translate(-198.34965,1435.203)"
+       id="g3468"
+       style="fill:#ffffff">
+      <path
+         d="m 0,0 c 1.423,0.249 1.518,-0.833 2.646,-0.882 1.79,-6.004 10.463,-15.03 10.581,-24.689 0.077,-6.273 -3.03,-16.209 -9.699,-16.753 C -10.147,-43.44 -12.209,-13.002 1.764,-8.817 0.562,-6.491 0.722,-2.805 0,0"
+         id="path3470"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+    <g
+       transform="translate(-237.14805,1416.6874)"
+       id="g3472"
+       style="fill:#ffffff">
+      <path
+         d="m 0,0 c 3.713,-0.3 0.434,-6.982 0,-8.817 11.101,-3.314 12.562,-31.363 0.882,-33.507 -9.853,-1.808 -16.274,14.721 -11.462,24.689 1.125,2.335 3.945,3.764 5.291,6.172 C -2.718,-6.858 -3.209,-1.026 0,0"
+         id="path3474"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+    <g
+       transform="translate(-178.95175,1416.6874)"
+       id="g3476"
+       style="fill:#ffffff">
+      <path
+         d="m 0,0 c 1.424,0.248 1.519,-0.833 2.646,-0.882 1.801,-5.198 7.166,-11.436 9.699,-17.635 2.982,-7.3 -0.676,-22.448 -7.054,-23.807 C -9.502,-45.477 -11.542,-15.012 0.882,-9.699 1.534,-5.522 -0.11,-3.637 0,0"
+         id="path3478"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+    <g
+       transform="translate(-207.16805,1357.6093)"
+       id="g3480"
+       style="fill:#ffffff">
+      <path
+         d="m 0,0 c -9.051,-1.958 -10.364,-17.177 -22.926,-13.227 -5.657,1.781 -6.31,6.958 -5.291,16.753 1.348,12.96 12.226,28.656 22.926,30.861 3.982,0.821 9.076,0.579 11.463,0 C 13.869,32.52 26.33,18.286 28.215,4.408 29.179,-2.688 28.775,-11.334 22.925,-13.227 10.404,-17.276 8.205,-1.937 0,0"
+         id="path3482"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+  </g>
+</svg>
