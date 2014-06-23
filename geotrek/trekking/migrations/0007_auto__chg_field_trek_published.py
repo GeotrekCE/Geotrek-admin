@@ -15,7 +15,7 @@ class Migration(SchemaMigration):
         db.alter_column('o_t_itineraire', 'public', self.gf('django.db.models.fields.BooleanField')(db_column='public'))
 
     def backwards(self, orm):
-
+        db.execute("DROP VIEW IF EXISTS o_v_itineraire;")
         # Changing field 'Trek.published'
         db.alter_column('o_t_itineraire', 'public', self.gf('django.db.models.fields.NullBooleanField')(null=True, db_column='public'))
 
