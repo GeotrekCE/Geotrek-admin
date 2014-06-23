@@ -10,6 +10,10 @@ CHANGELOG
 * POI icons shall now have a solid background, since no background is added
   in trek detail map anymore.
 
+* Pictograms fields were added to trek difficulty, route, network. You can use
+  the images provided in the ``trekking/fixtures/upload/`` folder.
+
+
 **New features**
 
 * Public TREK export - hide block label if value is empty (fixes #873)
@@ -61,6 +65,7 @@ CHANGELOG
 * New URL to obtain the attached filelist of an object
 * Remove float notation in altimetry altitude labels
 * Control altimetry profiles font using ``ALTIMETRIC_PROFILE_FONT`` setting
+* Add pictograms to routes and networks (fixes #1102)
 
 **Bug fixes**
 
