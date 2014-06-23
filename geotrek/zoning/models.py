@@ -75,9 +75,9 @@ class RestrictedAreaEdge(Topology):
     @classmethod
     def topology_area_edges(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.objects.filter(geom__intersects=topology.geom)
-        else:
             qs = cls.overlapping(topology)
+        else:
+            qs = cls.objects.filter(geom__intersects=topology.geom)
         return qs.select_related('restricted_area')\
                  .select_related('restricted_area__area_type')
 
@@ -133,9 +133,9 @@ class CityEdge(Topology):
     @classmethod
     def topology_city_edges(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.objects.filter(geom__intersects=topology.geom)
-        else:
             qs = cls.overlapping(topology)
+        else:
+            qs = cls.objects.filter(geom__intersects=topology.geom)
         return qs.select_related('city')
 
 Path.add_property('city_edges', CityEdge.path_city_edges)
@@ -188,9 +188,9 @@ class DistrictEdge(Topology):
     @classmethod
     def topology_district_edges(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.objects.filter(geom__intersects=topology.geom)
-        else:
             qs = cls.overlapping(topology)
+        else:
+            qs = cls.objects.filter(geom__intersects=topology.geom)
         return qs.select_related('district')
 
 Path.add_property('district_edges', DistrictEdge.path_district_edges)
