@@ -95,7 +95,6 @@ class TrekForm(TopologyForm):
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
-
     def save(self, *args, **kwargs):
         trek = super(TrekForm, self).save(*args, **kwargs)
 
@@ -111,11 +110,6 @@ class TrekForm(TopologyForm):
             trek.save()
 
         return trek
-
-    def clean(self, *args, **kwargs):
-        c = super(TrekForm, self).clean(*args, **kwargs)
-        print c, self.cleaned_data
-        return c
 
     class Meta(TopologyForm.Meta):
         model = Trek
