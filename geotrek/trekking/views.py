@@ -74,7 +74,7 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
-               'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
+               'description_teaser'] + AltimetryMixin.COLUMNS + ['published', 'published_status',
                'networks', 'advice', 'ambiance', 'difficulty',
                'information_desks', 'information_desk',  # singular: retro-compat
                'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
