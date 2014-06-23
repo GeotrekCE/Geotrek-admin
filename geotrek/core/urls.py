@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, url
 
 from mapentity import registry
@@ -14,4 +15,4 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += registry.register(Path)
-urlpatterns += registry.register(Trail)
+urlpatterns += registry.register(Trail, menu=settings.TRAIL_MODEL_ENABLED)

@@ -14,6 +14,8 @@ Contents:
    user-manual
    design
    development
+   authors
+   changelog
 
 
 Indices and tables

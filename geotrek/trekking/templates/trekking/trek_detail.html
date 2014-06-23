@@ -22,7 +22,7 @@
 
 {% block detailspanel %}
 
-    {% if not trek.published %}
+    {% if not trek.any_published %}
         <div class="alert alert-warning"><strong>{% trans "Not published" %}</strong></div>
     {% else %}
         {% if not trek.is_publishable %}
@@ -162,14 +162,32 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"information_desk" }}</th>
-            <td>{% if trek.information_desk %}{{ trek.information_desk.name }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <th>{{ trek|verbose:"information_desks" }}</th>
+            <td>
+                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.information_desks.all %}
             </td>
         </tr>
         <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.thumbnail.url }}"></td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"published" }}</th>
+            <td>
+            {% if trek.any_published %}
+                {% for status in trek.published_status %}
+                    {% if status.status %}
+                    <li class="active">
+                        <img src="{% static "images/flags/"|add:status.lang|add:".png" %}" alt="{{ status.lang }}">
+                        <a href="?lang={{ status.lang }}">{{ status.language }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                ({{ trek|verbose:"publication_date" }}: {{ trek.publication_date }})
+            {% else %}
+                {% trans "Not published" %}
+            {% endif %}
+            </td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
@@ -184,19 +202,18 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script src="{% static "trekking/leaflet.markercluster.js" %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static "trekking/MarkerCluster.css" %}">
     <script src="{% static "trekking/poilayer.js" %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
 
+            //
             // Parking
             {% if object.parking_location %}
                 var parkingIcon = L.icon({
                     iconUrl: "{% static "trekking/parking.png" %}",
-                    iconSize: [24, 24],
-                    iconAnchor: [0, 0],
+                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
+                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });
                 var location = [{{ object.serializable_parking_location.1|unlocalize }},
                                 {{ object.serializable_parking_location.0|unlocalize }}];
@@ -205,17 +222,40 @@
                  .addTo(map);
             {% endif %}
 
+            //
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
-                var pois = new POILayer(data),
-                    poiUrl = "{% url 'trekking:poi_detail' 0 %}";
+                var pois = new POILayer(data, {
+                    iconSize: {{ view.icon_sizes.POI }}
+                });
+
+                var poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
                         window.location = poiUrl.replace('0', layer.properties.pk);
                     });
                 });
+                map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));
                 map.addLayer(pois);
             });
+
+            //
+            // Trek information desks layer
+            $.getJSON('{% url 'trekking:trek_information_desk_geojson' object.pk %}', function (data) {
+
+                var infoDeskIcon = L.icon({
+                    iconUrl: "{% static "trekking/information_desk.svg" %}",
+                    iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
+                    iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
+                });
+
+                L.geoJson(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, {icon: infoDeskIcon});
+                    }
+                }).addTo(map);
+            });
+
         });
     </script>
 {% endblock extrabody %}

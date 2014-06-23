@@ -146,6 +146,7 @@
         "pk": 2,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-PR.svg",
             "network": "PR",
             "network_fr": "PR"
         }
@@ -154,6 +155,7 @@
         "pk": 3,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-GRP.svg",
             "network": "GRP",
             "network_fr": "GRP"
         }
@@ -162,6 +164,7 @@
         "pk": 4,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-VTT.svg",
             "network": "VTT",
             "network_fr": "VTT"
         }
@@ -170,8 +173,18 @@
         "pk": 5,
         "model": "trekking.treknetwork",
         "fields": {
+            "pictogram": "upload/network-horse.svg",
             "network": "Piste \u00e9questre",
             "network_fr": "Piste \u00e9questre"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.treknetwork",
+        "fields": {
+            "pictogram": "upload/network-GR.svg",
+            "network": "GR",
+            "network_fr": "GR"
         }
     },
     {
@@ -229,6 +242,15 @@
             "usage": "Poussette",
             "pictogram": "upload/usage-troller.png",
             "usage_fr": "Poussette"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.usage",
+        "fields": {
+            "usage": "Joelette",
+            "pictogram": "upload/usage-joelette.png",
+            "usage_fr": "Joelette"
         }
     },
     {
@@ -319,14 +341,15 @@
         "model": "trekking.theme",
         "fields": {
             "pictogram": "upload/theme-history@2x.png",
-            "label_fr": "Archelogie et histoire",
-            "label": "Archelogie et histoire"
+            "label_fr": "Arch\u00e9ologie et histoire",
+            "label": "Arch\u00e9ologie et histoire"
         }
     },
     {
         "pk": 1,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-loop.svg",
             "route": "Boucle",
             "route_fr": "Boucle"
         }
@@ -335,6 +358,7 @@
         "pk": 2,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-return.svg",
             "route": "Aller-retour",
             "route_fr": "Aller-retour"
         }
@@ -343,6 +367,7 @@
         "pk": 3,
         "model": "trekking.route",
         "fields": {
+            "pictogram": "upload/route-cross.svg",
             "route": "Travers\u00e9e",
             "route_fr": "Travers\u00e9e"
         }
@@ -351,6 +376,7 @@
         "pk": 1,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-easy.svg",
             "difficulty": "Easy",
             "difficulty_fr": "Facile",
             "difficulty_en": "Easy"
@@ -360,6 +386,7 @@
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-rookie.svg",
             "difficulty": "Rookie",
             "difficulty_fr": "Confirmé",
             "difficulty_en": "Rookie"
@@ -369,6 +396,7 @@
         "pk": 3,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-hard.svg",
             "difficulty": "Hard",
             "difficulty_fr": "Difficile",
             "difficulty_en": "Hard"
@@ -378,8 +406,10 @@
         "pk": 4,
         "model": "trekking.difficultylevel",
         "fields": {
+            "pictogram": "upload/difficulty-active.svg",
             "difficulty": "Actif",
-            "difficulty_fr": "Actif"
+            "difficulty_fr": "Actif",
+            "difficulty_en": "Active"
         }
     },
     {

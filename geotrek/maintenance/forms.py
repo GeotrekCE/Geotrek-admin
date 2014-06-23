@@ -51,6 +51,8 @@ class InterventionForm(CommonForm):
                                             queryset=BaseInfrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
+
+    leftpanel_scrollable = False
     fieldslayout = [
         Div(
             HTML("""
@@ -64,13 +66,13 @@ class InterventionForm(CommonForm):
                     'status',
                     'disorders',
                     'type',
-                    'comments',
-                    'in_maintenance',
+                    'subcontracting',
                     'length',
                     'width',
                     'height',
                     'stake',
                     'project',
+                    'description',
                     'infrastructure',
 
                     'pk',
@@ -87,7 +89,7 @@ class InterventionForm(CommonForm):
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="tab-pane"
                 ),
-                css_class="tab-content"
+                css_class="scrollable tab-content"
             ),
             css_class="tabbable"
         ),
@@ -99,7 +101,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure',
-             'name', 'date', 'status', 'disorders', 'type', 'comments', 'in_maintenance', 'length', 'width',
+             'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
@@ -164,7 +166,7 @@ class ProjectForm(CommonForm):
                     'begin_year',
                     'end_year',
                     'constraint',
-                    'cost',
+                    'global_cost',
                     'comments',
 
                     'pk',
@@ -187,7 +189,7 @@ class ProjectForm(CommonForm):
         fields = CommonForm.Meta.fields + \
             ['structure',
              'name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
-             'cost', 'comments', 'project_owner', 'project_manager', 'contractors']
+             'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)

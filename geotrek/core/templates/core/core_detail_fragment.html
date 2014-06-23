@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 
 <h3>{% trans "Management" %}</h3>
 <table class="table">
@@ -15,10 +15,17 @@
     {% endif %}
 {% endif %}
 
-{% if modelname != "trail" %}
+{% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
+{% if trail_enabled and modelname != "trail" %}
     <tr>
         <th>{% trans "Trails" %}</th>
         <td>
+            {% if perms.core.add_trail %}
+                {% is_topology_model model as is_topology_model %}
+                <p class="autohide"><a href="{% url 'core:trail_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+                    <i class="icon-plus icon-white"></i> {% trans "Add a new trail" %}</a>
+                </p>
+            {% endif %}
             {% for t in object.trails %}
                 {% if forloop.first %}<ul>{% endif %}
                 <li><a href="{{ t.get_detail_url }}">{{ t.name_display|safe }}</a></li>

@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django_filters import CharFilter, ModelChoiceFilter
 
@@ -104,8 +103,9 @@ class TopologyFilterTrail(TopologyFilter):
     queryset = Trail.objects.existing()
 
 
-for filterset in (PathFilterSet, InfrastructureFilterSet, SignageFilterSet,
-                  InterventionFilterSet, ProjectFilterSet):
-    filterset.add_filters({
-        'trail': TopologyFilterTrail(label=_('Trail'), required=False)
-    })
+if settings.TRAIL_MODEL_ENABLED:
+    for filterset in (PathFilterSet, InfrastructureFilterSet, SignageFilterSet,
+                      InterventionFilterSet, ProjectFilterSet):
+        filterset.add_filters({
+            'trail': TopologyFilterTrail(label=_('Trail'), required=False)
+        })

@@ -4,9 +4,9 @@
 
 {% block mainform %}
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
-    
+
     {% crispy form %}
-    
+
     <fieldset class="formset">
         {{ relationship_formset.management_form }}
         {% for relationship_form in relationship_formset %}
@@ -15,7 +15,7 @@
             </div>
         {% endfor %}
     </fieldset>
-    
+
     </form>
 {% endblock mainform %}
 
@@ -33,17 +33,26 @@
                 addCssClass: 'btn btn-success add-row',
                 deleteCssClass: 'delete-row',
                 addText: '{% trans "Add relation" %}',
-                deleteText: '{% trans "Remove" %}', 
+                deleteText: '{% trans "Remove" %}',
             })
 
+            $('select[multiple]').chosen({
+                no_results_text: "{% trans "No result" %}",
+                placeholder_text_multiple: "{% trans "Choose value(s)" %}",
+            });
 
             /* Show advanced tab if error in there */
             if ($('.tab-content #advanced .error').length > 0) {
                 $('#tab-advanced a').addClass('error').click();
             }
 
-            // Initialize map states on tab change
+            // Tab changed
             $('.nav-tabs a').on('shown', function (e) {
+
+                // Recompute scrollable panels
+                $(window).trigger('resize');
+
+                // Initialize parking map view based on main map
                 if (e.target.getAttribute('href') == '#advanced') {
                     var parkingMap = window.maps[0],
                         topoMap =  window.maps[1];
@@ -53,7 +62,10 @@
                     // Synchronize map center of parking from topology
                     topoMap.on('move', function () {
                         parkingMap.setView(topoMap.getCenter(), topoMap.getZoom());
-                    })
+                    });
+                    setTimeout(function() {
+                        topoMap.fire('move');
+                    }, 300);
                 }
             })
         });

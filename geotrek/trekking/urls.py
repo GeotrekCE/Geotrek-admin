@@ -8,7 +8,7 @@ from . import models
 from .views import (
     TrekDocumentPublic, TrekPrint,
     TrekJsonDetail, TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
-    WebLinkCreatePopup
+    TrekInformationDeskGeoJSON, WebLinkCreatePopup
 )
 
 
@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^api/trek/(?P<pk>\d+)/dem.json$', ElevationArea.as_view(model=models.Trek), name="trek_elevation_area"),
     url(r'^api/trek/(?P<pk>\d+)/profile.svg$', ElevationChart.as_view(model=models.Trek), name='trek_profile_svg'),
     url(r'^api/trek/(?P<pk>\d+)/pois.geojson$', TrekPOIGeoJSON.as_view(), name="trek_poi_geojson"),
+    url(r'^api/trek/(?P<pk>\d+)/information_desks.geojson$', TrekInformationDeskGeoJSON.as_view(), name="trek_information_desk_geojson"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
 )
 

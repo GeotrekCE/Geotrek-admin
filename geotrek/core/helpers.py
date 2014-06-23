@@ -164,11 +164,13 @@ class TopologyHelper(object):
         return topology
 
     @classmethod
-    def serialize(cls, topology):
+    def serialize(cls, topology, with_pk=True):
         # Point topology
         if topology.ispoint():
             point = topology.geom.transform(settings.API_SRID, clone=True)
-            objdict = dict(pk=topology.pk, kind=topology.kind, lng=point.x, lat=point.y)
+            objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
+            if with_pk:
+                objdict['pk'] = topology.pk
             if topology.offset == 0:
                 objdict['snap'] = topology.aggregations.all()[0].path.pk
         else:
@@ -182,7 +184,8 @@ class TopologyHelper(object):
                 last = i == len(aggregations) - 1
                 intermediary = aggr.start_position == aggr.end_position
 
-                current.setdefault('pk', topology.pk)
+                if with_pk:
+                    current.setdefault('pk', topology.pk)
                 current.setdefault('kind', topology.kind)
                 current.setdefault('offset', topology.offset)
                 if not intermediary:

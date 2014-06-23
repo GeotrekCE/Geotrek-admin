@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
+import re
+
 import mock
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -161,3 +163,28 @@ class TrailViewsTest(CommonTest):
             f.write('***' * 1000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_add_trail_from_existing_topology_does_not_use_pk(self):
+        import bs4
+
+        self.login()
+        trail = TrailFactory(offset=3.14)
+        response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
+        soup = bs4.BeautifulSoup(response.content)
+        textarea_field = soup.find(id="id_topology")
+        self.assertIn('"kind": "TOPOLOGY"', textarea_field.text)
+        self.assertIn('"offset": 3.14', textarea_field.text)
+        self.assertNotIn('"pk": %s' % trail.pk, textarea_field.text)
+
+    def test_add_trail_from_existing_topology(self):
+        self.login()
+        trail = TrailFactory()
+        form_data = self.get_good_data()
+        form_data['topology'] = trail.serialize(with_pk=False)
+        response = self.client.post(Trail.get_add_url(), form_data)
+        self.assertEqual(response.status_code, 302)  # success, redirects to detail view
+        p = re.compile(r"http://testserver/trail/(\d+)/")
+        m = p.match(response['Location'])
+        new_pk = int(m.group(1))
+        new_trail = Trail.objects.get(pk=new_pk)
+        self.assertIn(trail, new_trail.trails.all())

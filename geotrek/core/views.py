@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
@@ -11,11 +14,15 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              HttpJSONResponse)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import classproperty
 
-from .models import Path, Trail
+from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
+
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -28,6 +35,25 @@ def last_list(request):
 home = last_list
 
 
+class CreateFromTopologyMixin(object):
+    def on_topology(self):
+        pk = self.request.GET.get('topology')
+        if pk:
+            try:
+                return Topology.objects.existing().get(pk=pk)
+            except Topology.DoesNotExist:
+                logger.warning("Intervention on unknown topology %s" % pk)
+        return None
+
+    def get_initial(self):
+        initial = super(CreateFromTopologyMixin, self).get_initial()
+        # Create intervention with an existing topology as initial data
+        topology = self.on_topology()
+        if topology:
+            initial['topology'] = topology.serialize(with_pk=False)
+        return initial
+
+
 class PathLayer(MapEntityLayer):
     model = Path
     properties = ['name']
@@ -36,7 +62,13 @@ class PathLayer(MapEntityLayer):
 class PathList(MapEntityList):
     queryset = Path.objects.prefetch_related('networks').select_related('stake')
     filterform = PathFilterSet
-    columns = ['id', 'name', 'networks', 'stake', 'trails']
+
+    @classproperty
+    def columns(cls):
+        columns = ['id', 'name', 'networks', 'stake']
+        if settings.TRAIL_MODEL_ENABLED:
+            columns.append('trails')
+        return columns
 
     def get_queryset(self):
         """
@@ -45,12 +77,13 @@ class PathList(MapEntityList):
         qs = super(PathList, self).get_queryset()
 
         denormalized = {}
-        paths_id = qs.values_list('id', flat=True)
-        paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
-        by_id = dict([(trail.id, trail) for trail in paths_trails])
-        trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
-        for trail_id, path_id in trails_paths_ids:
-            denormalized.setdefault(path_id, []).append(by_id[trail_id])
+        if settings.TRAIL_MODEL_ENABLED:
+            paths_id = qs.values_list('id', flat=True)
+            paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
+            by_id = dict([(trail.id, trail) for trail in paths_trails])
+            trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
+            for trail_id, path_id in trails_paths_ids:
+                denormalized.setdefault(path_id, []).append(by_id[trail_id])
 
         for path in qs:
             path_trails = denormalized.get(path.id, [])
@@ -79,7 +112,7 @@ class PathDocument(MapEntityDocument):
     model = Path
 
     def get_context_data(self, *args, **kwargs):
-        self.get_object().prepare_elevation_chart(self.request)
+        self.get_object().prepare_elevation_chart(self.request.build_absolute_uri('/'))
         return super(PathDocument, self).get_context_data(*args, **kwargs)
 
 
@@ -154,7 +187,7 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 

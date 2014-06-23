@@ -1,14 +1,15 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 
 {% if modelname != "intervention" %}
 
-<h3>{% trans "Maintenance" %}</h3>
+<h3>{% trans "Works" %}</h3>
 <table class="table">
     <tr>
         <th>{% trans "Interventions" %}</th>
         <td>
+            {% is_topology_model model as is_topology_model %}
             {% if perms.maintenance.add_intervention %}
-            <p><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% elif is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
             </p>
             {% endif %}

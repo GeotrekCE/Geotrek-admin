@@ -40,12 +40,9 @@ MapEntity.GeometryField.GeometryFieldPathMixin = {
      * (At least for the fix to propagate events)
      */
     buildPathsLayer: function (objectsLayer) {
-        var pathsLayer = new L.ObjectsLayer(null, {
-            style: L.Util.extend({clickable: true}, window.SETTINGS.map.styles.path)
-        });
+        var pathsLayer = MapEntity.pathsLayer({style: {clickable: true}});
+
         this._map.addLayer(pathsLayer);
-        // Start ajax loading at last
-        pathsLayer.load(this.modelLayerUrl('path'), true);
 
         // Propagate mouseover events, from the Path layer (on top)
         // to the objects layer (below).

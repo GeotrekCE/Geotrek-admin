@@ -29,6 +29,7 @@ The most minimal components required to run an instance are :
 * PostGIS 2 server
 * GDAL, GEOS, libproj
 * gettext
+* libfreetype
 * libxml2, libxslt
 * Usual Python dev stuff
 
@@ -115,7 +116,7 @@ Conventions
 Definition of done
 ------------------
 
-* ``CHANGES`` is up-to-date
+* ``docs/changelog.rst`` is up-to-date
 * A unit-test covers the bugfix or the new feature
 * A frontend test (:path:jstests/nav-*.js) covers the navigation bug fix or feature
 * A JS *Mocha* test (:path:jstests/tests.*.js) covers the JavaScript bug fix or feature

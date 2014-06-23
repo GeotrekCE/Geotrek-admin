@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from mapentity.helpers import is_file_newer, convertit_download
+from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
 from .helpers import AltimetryHelper
 
 
@@ -64,17 +64,18 @@ class AltimetryMixin(models.Model):
             os.mkdir(basefolder)
         return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
 
-    def prepare_elevation_chart(self, request):
+    def prepare_elevation_chart(self, rooturl):
         """Converts SVG elevation URI to PNG on disk.
         """
         from .views import HttpSVGResponse
         path = self.get_elevation_chart_path()
         # Do nothing if image is up-to-date
         if is_file_newer(path, self.date_update):
-            return
+            return False
         # Download converted chart as png using convertit
-        source = request.build_absolute_uri(self.get_elevation_chart_url())
+        source = smart_urljoin(rooturl, self.get_elevation_chart_url())
         convertit_download(source,
                            path,
                            from_type=HttpSVGResponse.content_type,
                            to_type='image/png')
+        return True

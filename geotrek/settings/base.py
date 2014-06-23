@@ -358,6 +358,8 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
+PATHS_LINE_MARKER = 'dotL'
+PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
@@ -366,8 +368,11 @@ ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
 ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
+ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
+
+TREK_PUBLISHED_BY_LANG = True
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -381,6 +386,7 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
     'PLUGINS': {
+        'geotrek': {'js': ['core/leaflet.lineextremities.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',
@@ -391,19 +397,23 @@ LEAFLET_CONFIG = {
 
 """ This *pool* of colors is used to colorized lands records.
 """
-LAND_COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
-                    'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
-                    'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
-                    'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
-                    'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3']}
+COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
+               'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+               'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
+               'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+               'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+               'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
+                                  'darkviolet', 'lightcoral', 'palevioletred',
+                                  'MediumVioletRed', 'MediumOrchid', 'Magenta',
+                                  'LightSalmon', 'HotPink', 'Fuchsia']}
 
 MAP_STYLES = {
     'path':           {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
 
     'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district':       {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'restrictedarea': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district':       {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
 
+    'restrictedarea':    {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
     'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
@@ -419,9 +429,16 @@ LAND_BBOX_CITIES_ENABLED = True
 LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
+TRAIL_MODEL_ENABLED = True
+TREKKING_TOPOLOGY_ENABLED = True
+TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
+TREK_ICON_SIZE_POI = 18
+TREK_ICON_SIZE_PARKING = 18
+TREK_ICON_SIZE_INFORMATION_DESK = 18
 
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
@@ -429,6 +446,7 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
+
 
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',

@@ -11,7 +11,7 @@ DECLARE
 
     DISTANCE float8;
 BEGIN
-    DISTANCE := 1;
+    DISTANCE := {{PATH_SNAPPING_DISTANCE}};
 
     linestart := ST_StartPoint(NEW.geom);
     lineend := ST_EndPoint(NEW.geom);

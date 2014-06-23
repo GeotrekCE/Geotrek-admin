@@ -31,6 +31,11 @@ class Report(MapEntityMixin, TimeStampedModel):
                                  blank=True,
                                  default=None,
                                  verbose_name=_(u"Category"))
+    status = models.ForeignKey('ReportStatus',
+                               null=True,
+                               blank=True,
+                               default=None,
+                               verbose_name=_(u"Status"))
     geom = gis_models.PointField(null=True,
                                  blank=True,
                                  default=None,
@@ -89,3 +94,16 @@ class ReportCategory(models.Model):
 
     def __unicode__(self):
         return self.category
+
+
+class ReportStatus(models.Model):
+    status = models.CharField(verbose_name=_(u"Status"),
+                              max_length=128)
+
+    class Meta:
+        db_table = 'f_b_status'
+        verbose_name = _(u"Status")
+        verbose_name_plural = _(u"Status")
+
+    def __unicode__(self):
+        return self.status

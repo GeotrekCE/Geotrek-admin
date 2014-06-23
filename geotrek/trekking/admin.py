@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
+from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
 
 from .models import (
@@ -26,7 +27,7 @@ class ThemeAdmin(TranslationAdmin):
 
 
 class TrekNetworkAdmin(TranslationAdmin):
-    list_display = ('network',)
+    list_display = ('network', 'pictogram_img')
     search_fields = ('network',)
 
 
@@ -36,7 +37,7 @@ class UsageAdmin(TranslationAdmin):
 
 
 class RouteAdmin(TranslationAdmin):
-    list_display = ('route',)
+    list_display = ('route', 'pictogram_img')
     search_fields = ('route',)
 
 
@@ -54,9 +55,9 @@ class DifficultyLevelForm(forms.ModelForm):
 
 class DifficultyLevelAdmin(TranslationAdmin):
     form = DifficultyLevelForm
-    list_display = ('id', 'difficulty',)
+    list_display = ('id', 'difficulty', 'pictogram_img')
     search_fields = ('difficulty',)
-    fields = ('id', 'difficulty')
+    fields = ('id', 'difficulty', 'pictogram')
 
     def save_model(self, request, obj, form, change):
         """
@@ -110,8 +111,8 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
-class InformationDeskAdmin(TranslationAdmin):
-    list_display = ('name',)
+class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
+    list_display = ('name', 'website', 'municipality')
     search_fields = ('name',)
 
     formfield_overrides = {

@@ -13,7 +13,7 @@
         </tr>
         <tr>
             <th>{{ report|verbose:"comment" }}</th>
-            <td>{{ report.comment }}</td>
+            <td>{{ report.comment|striptags }}</td>
         </tr>
         <tr>
             <th>{{ report|verbose:"category" }}</th>

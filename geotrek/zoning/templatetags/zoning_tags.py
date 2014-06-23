@@ -1,7 +1,10 @@
+import json
+
 from django import template
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
-from geotrek.zoning.models import District, City, RestrictedArea
+from geotrek.zoning.models import District, City, RestrictedArea, RestrictedAreaType
 
 
 register = template.Library()
@@ -35,3 +38,19 @@ def combobox_bbox_land():
         'bbox_districts': districts,
         'bbox_areas': areas
     }
+
+
+@register.assignment_tag
+def restricted_area_types():
+    all_used_types = RestrictedArea.objects.values_list('area_type', flat=True)
+    used_types = RestrictedAreaType.objects.filter(pk__in=all_used_types)
+    serialized = []
+    for area_type in used_types:
+        area_type_url = reverse('zoning:restrictedarea_type_layer',
+                                kwargs={'type_pk': area_type.pk})
+        serialized.append({
+            'id': 'restrictedarea',
+            'name': area_type.name,
+            'url': area_type_url
+        })
+    return json.dumps(serialized)

@@ -17,14 +17,12 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
 
-    in_maintenance = models.BooleanField(verbose_name=_(u"Recurrent intervention"), default=False,
-                                         db_column='maintenance', help_text=_(u"Recurrent"))
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))
     date = models.DateField(default=datetime.now, verbose_name=_(u"Date"), db_column='date',
                             help_text=_(u"When ?"))
-    comments = models.TextField(blank=True, verbose_name=_(u"Comments"), db_column='commentaire',
-                                help_text=_(u"Remarks and notes"))
+    subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
+                                         db_column='sous_traitance')
 
     ## Technical information ##
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
@@ -51,12 +49,15 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
                              verbose_name=_(u"Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"))
+                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"),
+                                       blank=True)
 
     jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_(u"Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
                                 verbose_name=_(u"Project"), db_column='chantier')
+    description = models.TextField(blank=True, verbose_name=_(u"Description"), db_column='descriptif',
+                                   help_text=_(u"Remarks and notes"))
 
     # Special manager
     objects = Topology.get_manager_cls()()
@@ -189,11 +190,18 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
         return total
 
     @property
-    def total_cost(self):
+    def total_cost_mandays(self):
         total = 0.0
         for md in self.manday_set.all():
             total += md.cost
         return total
+
+    @property
+    def total_cost(self):
+        return self.total_cost_mandays + \
+               self.material_cost + \
+               self.heliport_cost + \
+               self.subcontract_cost
 
     @classproperty
     def geomfield(cls):
@@ -320,8 +328,8 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
     constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes',
                                   help_text=_(u"Specific conditions, ..."))
-    cost = models.FloatField(verbose_name=_(u"Cost"), default=0, db_column='cout',
-                             help_text=_(u"€"))
+    global_cost = models.FloatField(verbose_name=_(u"Global cost"), default=0, db_column='cout_global',
+                                    help_text=_(u"€"))
     comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
                                 help_text=_(u"Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
@@ -423,6 +431,18 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     @classproperty
     def period_verbose_name(cls):
         return _("Period")
+
+    @property
+    def interventions_total_cost(self):
+        total = 0
+        qs = self.interventions.existing()
+        for i in qs.prefetch_related('manday_set', 'manday_set__function'):
+            total += i.total_cost
+        return total
+
+    @classproperty
+    def interventions_total_cost_verbose_name(cls):
+        return _("Interventions total cost")
 
     def __unicode__(self):
         return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)

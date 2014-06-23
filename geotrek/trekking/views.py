@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
+from django.utils import translation
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import BaseDetailView
 from django.contrib.auth.decorators import login_required
@@ -12,9 +13,10 @@ from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, JSONResponseMixin, DocumentConvert)
-from mapentity.serializers import plain_text, GPXSerializer
+from mapentity.serializers import plain_text
 from paperclip.models import Attachment
 
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.zoning.models import District, City, RestrictedArea
@@ -22,6 +24,7 @@ from geotrek.zoning.models import District, City, RestrictedArea
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
+from .serializers import TrekGPXSerializer
 
 
 class FlattenPicturesMixin(object):
@@ -71,8 +74,9 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     queryset = Trek.objects.existing()
     columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
-               'description_teaser'] + AltimetryMixin.COLUMNS + ['published',
-               'networks', 'advice', 'ambiance', 'difficulty', 'information_desk',
+               'description_teaser'] + AltimetryMixin.COLUMNS + ['published', 'published_status',
+               'networks', 'advice', 'ambiance', 'difficulty',
+               'information_desks', 'information_desk',  # singular: retro-compat
                'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
@@ -92,6 +96,11 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         trek = self.get_object()
         ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
+        ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
+        ctx['filelist_url'] = reverse('get_attachments',
+                                      kwargs={'app_label': 'trekking',
+                                              'module_name': 'trek',
+                                              'pk': trek.pk})
         ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
         ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
         ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
@@ -110,7 +119,7 @@ class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
         return super(TrekGPXDetail, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context):
-        gpx_serializer = GPXSerializer()
+        gpx_serializer = TrekGPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
         gpx_serializer.serialize([self.get_object()], stream=response, geom_field='geom')
@@ -153,8 +162,45 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
         return trek.pois.select_related('type')
 
 
+class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
+    model = Trek
+    srid = settings.API_SRID
+    pk_url_kwarg = 'pk'
+
+    properties = ['id', 'name', 'description', 'photo_url', 'phone',
+                  'email', 'website', 'street', 'postal_code', 'municipality',
+                  'latitude', 'longitude']
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(TrekInformationDeskGeoJSON, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            trek_pk = self.kwargs.get(self.pk_url_kwarg)
+            trek = Trek.objects.get(pk=trek_pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.information_desks.all()
+
+
 class TrekDetail(MapEntityDetail):
     queryset = Trek.objects.existing()
+
+    @property
+    def icon_sizes(self):
+        return {
+            'POI': settings.TREK_ICON_SIZE_POI,
+            'parking': settings.TREK_ICON_SIZE_PARKING,
+            'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
+        }
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super(TrekDetail, self).dispatch(*args, **kwargs)
 
 
 class TrekMapImage(MapEntityMapImage):
@@ -192,7 +238,7 @@ class TrekDocumentPublic(TrekDocument):
         except ObjectDoesNotExist:
             pass
         # Prepare altimetric graph
-        trek.prepare_elevation_chart(self.request)
+        trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
@@ -202,17 +248,13 @@ class TrekPrint(DocumentConvert):
     def source_url(self):
         return self.get_object().get_document_public_url()
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekPrint, self).dispatch(*args, **kwargs)
-
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
     context_name = 'relationship_formset'
     formset_class = TrekRelationshipFormSet
 
 
-class TrekCreate(TrekRelationshipFormsetMixin, MapEntityCreate):
+class TrekCreate(TrekRelationshipFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 

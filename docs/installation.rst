@@ -55,7 +55,7 @@ Software update
 All versions are published on `the Github forge <https://github.com/makinacorpus/Geotrek/releases>`_.
 Download and extract the new version in a separate folder (**recommended**).
 
-Before upgrading, **READ CAREFULLY** the release notes, either from the ``CHANGES``
+Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
 files `or online <https://github.com/makinacorpus/Geotrek/releases>`_.
 
 First, copy your old configuration and uploaded files to your new folder.

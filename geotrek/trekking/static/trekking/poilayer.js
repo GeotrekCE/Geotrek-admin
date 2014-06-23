@@ -1,34 +1,28 @@
-var POILayer = L.MarkerClusterGroup.extend({
+var POILayer = L.GeoJSON.extend({
 
-    initialize: function (poisData) {
-        L.MarkerClusterGroup.prototype.initialize.call(this, {
-          showCoverageOnHover: false,
-          disableClusteringAtZoom: 15,
-          maxClusterRadius: 24,
-          iconCreateFunction: function(cluster) {
-              return new L.DivIcon({className: 'poi-marker-icon cluster',
-                                    iconSize: [20, 20],
-                                    iconAnchor: [12, 12],
-                                    html: '<b>' + cluster.getChildCount() + '</b>'});
-          }
-        });
-
-        for (var i=0; i < poisData.features.length; i++) {
-            var featureData = poisData.features[i],
-                marker = this.poisMarker(featureData,
-                                         L.GeoJSON.coordsToLatLng(featureData.geometry.coordinates));
-            this.addLayer(marker);
-        }
+    initialize: function (poisData, options) {
+        options = options || {};
+        options.pointToLayer = this.poisMarker.bind(this);
+        L.GeoJSON.prototype.initialize.call(this, poisData, options);
     },
 
     poisMarker: function(featureData, latlng) {
+        // Label
+        var category = featureData.properties.type.label,
+            name = featureData.properties.name,
+            poiLabel = category + '&nbsp;: ' + name;
+        if (name.indexOf(category) === 0) {  // startswith
+            poiLabel = name;
+        }
+
         var img = L.Util.template('<img src="{SRC}" title="{TITLE}">', {
             SRC: featureData.properties.type.pictogram,
-            TITLE: featureData.properties.type.label
+            TITLE: poiLabel
         });
 
         var poicon = new L.DivIcon({className: 'poi-marker-icon',
-                                    iconAnchor: [12, 12],
+                                    iconSize: [this.options.iconSize, this.options.iconSize],
+                                    iconAnchor: [this.options.iconSize/2, this.options.iconSize/2],
                                     html: img}),
             marker = L.marker(latlng, {icon: poicon});
         marker.properties = featureData.properties;

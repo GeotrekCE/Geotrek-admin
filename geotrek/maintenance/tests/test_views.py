@@ -120,6 +120,13 @@ class InterventionViewsTest(CommonTest):
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
+    def test_disorders_not_mandatory(self):
+        self.login()
+        data = self.get_good_data()
+        data.pop('disorders')
+        response = self.client.post(Intervention.get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+
     def test_update_infrastruture(self):
         self.login()
         intervention = InfrastructureInterventionFactory.create()
@@ -136,7 +143,6 @@ class InterventionViewsTest(CommonTest):
         intervention.reload()
         self.assertFalse(intervention.deleted)
         self.assertEqual(intervention.infrastructure.name, 'modified')
-
 
     def test_form_default_stake(self):
         self.login()
@@ -204,7 +210,7 @@ class ProjectViewsTest(CommonTest):
             'begin_year': '2010',
             'end_year': '2012',
             'constraints': '',
-            'cost': '12',
+            'global_cost': '12',
             'comments': '',
             'contractors':  ContractorFactory.create().pk,
             'project_owner': OrganismFactory.create().pk,

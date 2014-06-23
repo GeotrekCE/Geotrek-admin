@@ -30,6 +30,38 @@ However, it is still possible to write a custom Django setting file.
 * As for any change in settings, re-run ``make env_standalone deploy``.
 
 
+Disable modules and components
+------------------------------
+
+In order to disable a full set of features, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Disable infrastructure and maintenance
+    INSTALLED_APPS.pop('geotrek.infrastructure')
+    INSTALLED_APPS.pop('geotrek.maintenance')
+
+In order to remove notion of trails:
+
+.. code-block :: python
+
+    TRAIL_MODEL_ENABLED = False
+
+In order to remove zoning combo-boxes on list map:
+
+.. code-block :: python
+
+    LAND_BBOX_CITIES_ENABLED = True
+    LAND_BBOX_DISTRICTS_ENABLED = True
+    LAND_BBOX_AREAS_ENABLED = False
+
+:notes:
+
+    By doing so, some software upgrades may not be as smooth as usual.
+    Never forget to mention this customization if you ask for community support.
+
+
 WYSIWYG editor configuration
 ----------------------------
 
@@ -116,6 +148,37 @@ Expected columns in table/view are :
     for more details.
 
 
+Map layers colors and style
+---------------------------
+
+All layers colors can be customized from the settings.
+See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
+layer style.
+
+.. code-block :: python
+
+    MAP_STYLE['path'] = {'color': 'red', 'weight': 5}
+
+Or change just one parameter (the opacity for example) :
+
+.. code-block :: python
+
+    MAP_STYLE['city']['opacity'] = 0.8
+
+
+Regarding colors that depend from database content, such as land layers
+(physical types, work management...) or restricted areas. We use a specific
+setting that receives a list of colors :
+
+.. code-block :: python
+
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
+
+
+See the default values in ``geotrek/settings/base.py`` for the complete list
+of available styles.
+
+
 External map layers
 -------------------
 
@@ -126,7 +189,27 @@ So far, the following formats are supported :
 
 * GeoJSON
 * TIF (*TourInFrance*)
+* SITRA (*SIT Rhone-Alpes*)
 
 From the Administration backoffice, create datasources using a name, an URL, and
 a pictogram. You can choose if this layer should be displayed in the different
 Geotrek modules, or published to the public Website (*Geotrek-rando*).
+
+:notes:
+
+    For SITRA to work with multilang, make sure that the different
+    locales are in the query (``query={"apiKey":"...","locales":["fr","en"]...``)
+
+
+Override public document OpenOffice template
+--------------------------------------------
+
+Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
+``var/media/templates/trekking/trek_public.odt``.
+
+Edit the copy using *OpenOffice*.
+
+.. note ::
+
+    The default template may change in the future versions. You will be
+    in charge of porting the modification to your copy.

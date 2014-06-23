@@ -66,7 +66,8 @@ class JSSettings(BaseJSSettings):
         # Add extra stuff (edition, labelling)
         dictsettings['map'].update(
             snap_distance=settings.SNAP_DISTANCE,
-            colorspool=settings.LAND_COLORS_POOL,
+            paths_line_marker=settings.PATHS_LINE_MARKER,
+            colorspool=settings.COLORS_POOL,
         )
         dictsettings['version'] = __version__
         return dictsettings

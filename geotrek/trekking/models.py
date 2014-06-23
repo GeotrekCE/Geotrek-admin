@@ -1,6 +1,8 @@
 import os
 import logging
 import shutil
+import datetime
+import re
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -14,7 +16,7 @@ from easy_thumbnails.files import get_thumbnailer
 import simplekml
 from PIL import Image
 from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from mapentity.serializers import plain_text, smart_plain_text
 
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import classproperty
@@ -51,12 +53,18 @@ class PicturesMixin(object):
         serialized = []
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            try:
+                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+                thurl = os.path.join(settings.MEDIA_URL, thdetail.name)
+            except InvalidImageFormatError:
+                thurl = None
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                pass
             serialized.append({
                 'author': picture.author,
                 'title': picture.title,
                 'legend': picture.legend,
-                'url': os.path.join(settings.MEDIA_URL, thdetail.name)
+                'url': thurl
             })
         return serialized
 
@@ -114,8 +122,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-    published = models.BooleanField(verbose_name=_(u"Published"),
+    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
                                     help_text=_(u"Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+                                        null=True, blank=True, editable=False,
+                                        db_column='date_publication')
+
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
@@ -126,7 +138,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
-    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, null=True, db_column='duree',
+    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
                                  help_text=_(u"In hours"))
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
@@ -139,22 +151,29 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation',
                               help_text=_(u"Risks, danger, best period, ..."))
     themes = models.ManyToManyField('Theme', related_name="treks",
-                                    db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"))
+                                    db_table="o_r_itineraire_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    help_text=_(u"Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-                                      db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"))
+                                      db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"),
+                                      help_text=_(u"Hiking networks"))
     usages = models.ManyToManyField('Usage', related_name="treks",
-                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"))
+                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"),
+                                    help_text=_(u"Practicability"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
                                    blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-                                       db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"))
+                                       db_table="o_r_itineraire_web", blank=True, null=True, verbose_name=_(u"Web links"),
+                                       help_text=_(u"External resources"))
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_(u"Related treks"), symmetrical=False,
+                                           help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
-    information_desk = models.ForeignKey('InformationDesk', related_name='treks',
-                                         blank=True, null=True, verbose_name=_(u"Information Desk"), db_column='renseignement')
+    information_desks = models.ManyToManyField('InformationDesk',
+                                               db_table="o_r_itineraire_renseignement", blank=True, null=True,
+                                               verbose_name=_(u"Information desks"),
+                                               help_text=_(u"Where to obtain information"))
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -166,6 +185,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.publication_date is None and self.any_published:
+            self.publication_date = datetime.date.today()
+        if self.publication_date is not None and not self.any_published:
+            self.publication_date = None
+        super(Trek, self).save(*args, **kwargs)
 
     @property
     def slug(self):
@@ -181,6 +207,33 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return ('trekking:trek_elevation_area', [str(self.pk)])
 
     @property
+    def any_published(self):
+        """Returns True if the trek is published in at least one of the language
+        """
+        if not settings.TREK_PUBLISHED_BY_LANG:
+            return self.published
+
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if getattr(self, 'published_%s' % l[0], False):
+                return True
+        return False
+
+    @property
+    def published_status(self):
+        status = []
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if settings.TREK_PUBLISHED_BY_LANG:
+                published = getattr(self, 'published_%s' % l[0], None) or False
+            else:
+                published = self.published
+            status.append({
+                'lang': l[0],
+                'language': l[1],
+                'status': published
+            })
+        return status
+
+    @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
@@ -191,9 +244,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def poi_types(self):
-        # Can't use values_list and must add 'ordering' because of bug:
-        # https://code.djangoproject.com/ticket/14930
-        values = self.pois.values('ordering', 'type')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Can't use values_list and must add 'ordering' because of bug:
+            # https://code.djangoproject.com/ticket/14930
+            values = self.pois.values('ordering', 'type')
+        else:
+            values = self.pois.values('type')
         pks = [value['type'] for value in values]
         return POIType.objects.filter(pk__in=set(pks))
 
@@ -262,6 +318,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def serializable_networks(self):
         return [{'id': network.id,
+                 'pictogram': network.serializable_pictogram,
                  'name': network.network} for network in self.networks.all()]
 
     @property
@@ -269,26 +326,19 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.difficulty:
             return None
         return {'id': self.difficulty.pk,
+                'pictogram': self.difficulty.serializable_pictogram,
                 'label': self.difficulty.difficulty}
-
-    @property
-    def serializable_information_desk(self):
-        if not self.information_desk:
-            return None
-        return {'id': self.information_desk.pk,
-                'name': self.information_desk.name,
-                'description': self.information_desk.description}
 
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
-                 'pictogram': os.path.join(settings.MEDIA_URL, t.pictogram.name),
+                 'pictogram': t.serializable_pictogram,
                  'label': t.label} for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
-                 'pictogram': os.path.join(settings.MEDIA_URL, u.pictogram.name),
+                 'pictogram': u.serializable_pictogram,
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -301,6 +351,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.route:
             return None
         return {'id': self.route.pk,
+                'pictogram': self.route.serializable_pictogram,
                 'label': self.route.route}
 
     @property
@@ -309,6 +360,23 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                  'name': w.name,
                  'category': w.serializable_category,
                  'url': w.url} for w in self.web_links.all()]
+
+    @property
+    def information_desk(self):
+        """Retrocompatibily method for Geotrek-rando.
+        """
+        try:
+            return self.information_desks.first()
+        except (ValueError, InformationDesk.DoesNotExist):
+            return None
+
+    @property
+    def serializable_information_desk(self):
+        return self.information_desk.__json__() if self.information_desk else None
+
+    @property
+    def serializable_information_desks(self):
+        return [d.__json__() for d in self.information_desks.all()]
 
     @property
     def serializable_parking_location(self):
@@ -404,7 +472,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_treks(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.filter(geom__intersects=area)
+        return qs
 
 Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)
@@ -446,7 +519,24 @@ class TrekRelationship(models.Model):
         return u"%s <--> %s" % (self.trek_a, self.trek_b)
 
 
-class TrekNetwork(models.Model):
+class PictogramMixin(models.Model):
+    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 db_column='picto', max_length=512, null=True)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def serializable_pictogram(self):
+        return self.pictogram.url if self.pictogram else None
+
+    def pictogram_img(self):
+        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+    pictogram_img.short_description = _("Pictogram")
+    pictogram_img.allow_tags = True
+
+
+class TrekNetwork(PictogramMixin):
 
     network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
 
@@ -460,11 +550,9 @@ class TrekNetwork(models.Model):
         return self.network
 
 
-class Usage(models.Model):
+class Usage(PictogramMixin):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_usage'
@@ -473,13 +561,9 @@ class Usage(models.Model):
     def __unicode__(self):
         return self.usage
 
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
 
-class Route(models.Model):
+class Route(PictogramMixin):
 
     route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
 
@@ -493,7 +577,7 @@ class Route(models.Model):
         return self.route
 
 
-class DifficultyLevel(models.Model):
+class DifficultyLevel(PictogramMixin):
 
     """We use an IntegerField for id, since we want to edit it in Admin.
     This column is used to order difficulty levels, especially in public website
@@ -558,14 +642,12 @@ class WebLink(models.Model):
         if not self.category:
             return None
         return {'label': self.category.label,
-                'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
+                'pictogram': self.category.serializable_pictogram}
 
 
-class WebLinkCategory(models.Model):
+class WebLinkCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_web_category'
@@ -576,17 +658,10 @@ class WebLinkCategory(models.Model):
     def __unicode__(self):
         return u"%s" % self.label
 
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
-
-class Theme(models.Model):
+class Theme(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_theme'
@@ -596,11 +671,6 @@ class Theme(models.Model):
 
     def __unicode__(self):
         return self.label
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
     @property
     def pictogram_off(self):
@@ -630,6 +700,26 @@ class InformationDesk(models.Model):
     name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Brief description"))
+    phone = models.CharField(verbose_name=_(u"Phone"), max_length=32,
+                             blank=True, null=True, db_column='telephone')
+    email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
+                              blank=True, null=True)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
+                              blank=True, null=True)
+    photo = models.FileField(verbose_name=_(u"Photo"), upload_to=settings.UPLOAD_DIR,
+                             db_column='photo', max_length=512, blank=True, null=True)
+
+    street = models.CharField(verbose_name=_(u"Street"), max_length=256,
+                              blank=True, null=True, db_column='rue')
+    postal_code = models.IntegerField(verbose_name=_(u"Postal code"),
+                                      blank=True, null=True, db_column='code')
+    municipality = models.CharField(verbose_name=_(u"Municipality"),
+                                    blank=True, null=True,
+                                    max_length=256, db_column='commune')
+
+    geom = models.PointField(verbose_name=_(u"Emplacement"), db_column='geom',
+                             blank=True, null=True,
+                             srid=settings.SRID, spatial_index=False)
 
     class Meta:
         db_table = 'o_b_renseignement'
@@ -639,6 +729,55 @@ class InformationDesk(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def __json__(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'phone': self.phone,
+            'email': self.email,
+            'website': self.website,
+            'photo_url': self.photo_url,
+            'street': self.street,
+            'postal_code': self.postal_code,
+            'municipality': self.municipality,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+        }
+
+    @property
+    def description_strip(self):
+        nobr = re.compile(r'(\s*<br.*?>)+\s*', re.I)
+        newlines = nobr.sub("\n", self.description)
+        print newlines
+        return smart_plain_text(newlines)
+
+    @property
+    def latitude(self):
+        if self.geom:
+            api_geom = self.geom.transform(settings.API_SRID, clone=True)
+            return api_geom.y
+        return None
+
+    @property
+    def longitude(self):
+        if self.geom:
+            api_geom = self.geom.transform(settings.API_SRID, clone=True)
+            return api_geom.x
+        return None
+
+    @property
+    def photo_url(self):
+        if not self.photo:
+            return None
+        thumbnailer = get_thumbnailer(self.photo)
+        try:
+            thumb_detail = thumbnailer.get_thumbnail(aliases.get('thumbnail'))
+            thumb_url = os.path.join(settings.MEDIA_URL, thumb_detail.name)
+        except InvalidImageFormatError:
+            thumb_url = None
+            logger.error(_("Image %s invalid or missing from disk.") % self.photo)
+        return thumb_url
 
 
 class POIManager(models.GeoManager):
@@ -693,7 +832,12 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_pois(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.filter(geom__intersects=area)
+        return qs
 
 Path.add_property('pois', POI.path_pois)
 Topology.add_property('pois', POI.topology_pois)
@@ -701,26 +845,15 @@ Intervention.add_property('pois', lambda self: self.topology.pois if self.topolo
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
 
 
-class POIType(models.Model):
+class POIType(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
 
     class Meta:
         db_table = 'o_b_poi'
-        verbose_name = _(u"POI")
-        verbose_name_plural = _(u"POI")
+        verbose_name = _(u"POI type")
+        verbose_name_plural = _(u"POI types")
         ordering = ['label']
 
     def __unicode__(self):
         return self.label
-
-    @property
-    def serializable_pictogram(self):
-        return os.path.join(settings.MEDIA_URL, self.pictogram.name)
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True

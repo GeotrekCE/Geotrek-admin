@@ -167,7 +167,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
     # Override default manager
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
-    geom = models.GeometryField(editable=False, srid=settings.SRID, null=True,
+    geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
+                                srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
@@ -271,7 +272,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
         # to DB anyway, it is important to update it before writting
-        if self.pk:
+        if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
             existing = self.__class__.objects.get(pk=self.pk)
             self.length = existing.length
             # In the case of points, the geom can be set by Django. Don't override.
@@ -298,8 +299,8 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         super(Topology, self).save(*args, **kwargs)
         self.reload()
 
-    def serialize(self):
-        return TopologyHelper.serialize(self)
+    def serialize(self, **kwargs):
+        return TopologyHelper.serialize(self, **kwargs)
 
     @classmethod
     def deserialize(cls, serialized):

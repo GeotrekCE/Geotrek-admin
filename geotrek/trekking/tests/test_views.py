@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import json
 from collections import OrderedDict
 
@@ -11,6 +12,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
 from django.db import connection
+from django.template.loader import find_template
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -125,7 +127,7 @@ class TrekViewsTest(CommonTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'information_desk': InformationDeskFactory.create().pk,
+            'information_desks': InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
 
             'trek_relationship_a-TOTAL_FORMS': '2',
@@ -191,25 +193,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
 
-    def test_gpx(self):
-        trek = TrekWithPOIsFactory.create()
-        trek.description_en = 'Nice trek'
-        trek.description_it = 'Bonnito iti'
-        trek.description_fr = 'Jolie rando'
-        trek.save()
-
-        url = reverse('trekking:trek_gpx_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/gpx+xml')
-
-        parsed = BeautifulSoup(response.content)
-        self.assertEqual(len(parsed.findAll('rte')), 1)
-        self.assertEqual(len(parsed.findAll('rtept')), 2)
-        route = parsed.findAll('rte')[0]
-        description = route.find('desc').string
-        self.assertTrue(description.startswith(trek.description_it))
-
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()
         url = reverse('trekking:trek_kml_detail', kwargs={'pk': trek.pk})
@@ -219,20 +202,39 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_json_detail(self):
         trek = TrekFactory.create()
+        self.information_desk = InformationDeskFactory.create()
+        trek.information_desks.add(self.information_desk)
+
         url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         detailjson = json.loads(response.content)
         self.assertDictEqual(detailjson['route'],
                              {"id": trek.route.id,
+                              "pictogram": None,
                               "label": trek.route.route})
         self.assertDictEqual(detailjson['difficulty'],
                              {"id": trek.difficulty.id,
+                              "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
                               "label": trek.difficulty.difficulty})
         self.assertDictEqual(detailjson['information_desk'],
-                             {"id": trek.information_desk.id,
-                              "name": trek.information_desk.name,
-                              "description": trek.information_desk.description})
+                             detailjson['information_desks'][0])
+        self.assertDictEqual(detailjson['information_desks'][0],
+                             {u'description': u'<p>description 0</p>',
+                              u'email': u'email-0@makina-corpus.com',
+                              u'latitude': -5.983593666147552,
+                              u'longitude': -1.3630761286186646,
+                              u'name': u'information desk name 0',
+                              u'phone': u'01 02 03 0',
+                              u'photo_url': self.information_desk.photo_url,
+                              u'postal_code': 28300,
+                              u'street': u'0 baker street',
+                              u'municipality': u"Bailleau L'évêque-0",
+                              u'website': u'http://makina-corpus.com/0'})
+        self.assertEqual(detailjson['information_desk_layer'],
+                         '/api/trek/%s/information_desks.geojson' % trek.pk)
+        self.assertEqual(detailjson['filelist_url'],
+                         '/paperclip/get/trekking/trek/%s/' % trek.pk)
 
     def test_json_detail_has_elevation_area_url(self):
         trek = TrekFactory.create()
@@ -258,6 +260,17 @@ class TrekCustomViewTests(TrekkingManagerTest):
         response = self.client.get(trek.get_document_public_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('django.template.loaders.filesystem.open', create=True)
+    def test_overriden_public_template(self, open_patched):
+        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+        def fake_exists(f, *args):
+            if f == overriden_template:
+                return mock.MagicMock(spec=file)
+            raise IOError
+        open_patched.side_effect = fake_exists
+        find_template('trekking/trek_public.odt')
+        open_patched.assert_called_with(overriden_template, 'rb')
 
     def test_profile_json(self):
         trek = TrekFactory.create()
@@ -286,12 +299,58 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
 
 
+class TrekGPXTest(TrekkingManagerTest):
+
+    def setUp(self):
+        self.login()
+
+        self.trek = TrekWithPOIsFactory.create()
+        self.trek.description_en = 'Nice trek'
+        self.trek.description_it = 'Bonnito iti'
+        self.trek.description_fr = 'Jolie rando'
+        self.trek.save()
+
+        for poi in self.trek.pois.all():
+            poi.description_it = poi.description
+            poi.save()
+
+        url = reverse('trekking:trek_gpx_detail', kwargs={'pk': self.trek.pk})
+        self.response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        self.parsed = BeautifulSoup(self.response.content)
+
+    def test_gpx_is_served_with_content_type(self):
+        self.assertEqual(self.response.status_code, 200)
+        self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
+
+    def test_gpx_trek_as_route_points(self):
+        self.assertEqual(len(self.parsed.findAll('rte')), 1)
+        self.assertEqual(len(self.parsed.findAll('rtept')), 2)
+
+    def test_gpx_translated_using_accept_language(self):
+        route = self.parsed.findAll('rte')[0]
+        description = route.find('desc').string
+        self.assertTrue(description.startswith(self.trek.description_it))
+
+    def test_gpx_contains_pois(self):
+        waypoints = self.parsed.findAll('wpt')
+        pois = self.trek.pois.all()
+        self.assertEqual(len(waypoints), len(pois))
+        waypoint = waypoints[0]
+        name = waypoint.find('name').string
+        description = waypoint.find('desc').string
+        self.assertEqual(name, u"%s: %s" % (pois[0].type, pois[0].name))
+        self.assertEqual(description, pois[0].description)
+
+
 class TrekViewTranslationTest(TrekkingManagerTest):
     def setUp(self):
         self.trek = TrekFactory.build()
         self.trek.name_fr = 'Voie lactee'
         self.trek.name_en = 'Milky way'
         self.trek.name_it = 'Via Lattea'
+
+        self.trek.published_fr = True
+        self.trek.published_it = False
         self.trek.save()
 
     def tearDown(self):
@@ -321,6 +380,18 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
             self.client.logout()  # Django 1.6 keeps language in session
 
+    def test_published_translation(self):
+        url = reverse('trekking:trek_layer')
+
+        for lang, expected in [('fr-FR', self.trek.published_fr),
+                               ('it-IT', self.trek.published_it)]:
+            self.login()
+            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            self.assertEqual(response.status_code, 200)
+            obj = json.loads(response.content)
+            self.assertEqual(obj['features'][0]['properties']['published'], expected)
+            self.client.logout()  # Django 1.6 keeps language in session
+
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
         trek = TrekFactory.create(no_path=True)
@@ -345,6 +416,56 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
             self.client.logout() # Django 1.6 keeps language in session
+
+
+class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
+
+    def setUp(self):
+        self.trek = TrekFactory.create()
+        self.information_desk1 = InformationDeskFactory.create()
+        self.information_desk2 = InformationDeskFactory.create(photo=None)
+        self.information_desk3 = InformationDeskFactory.create()
+        self.trek.information_desks.add(self.information_desk1)
+        self.trek.information_desks.add(self.information_desk2)
+        self.url = reverse('trekking:trek_information_desk_geojson', kwargs={'pk': self.trek.pk})
+
+    def test_trek_layer_is_login_required(self):
+        self.client.logout()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 302)
+
+    def test_information_desks_layer_contains_only_trek_records(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        self.assertEqual(len(dataset['features']), 2)
+
+    def test_information_desk_layer_has_null_if_no_photo(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        second = dataset['features'][1]
+        self.assertEqual(second['properties']['photo_url'], None)
+
+    def test_information_desk_layer_gives_all_model_attributes(self):
+        self.login()
+        resp = self.client.get(self.url)
+        dataset = json.loads(resp.content)
+        first = dataset['features'][0]
+        self.assertEqual(sorted(first['properties'].keys()),
+                         [u'description',
+                          u'email',
+                          u'id',
+                          u'latitude',
+                          u'longitude',
+                          u'model',
+                          u'municipality',
+                          u'name',
+                          u'phone',
+                          u'photo_url',
+                          u'postal_code',
+                          u'street',
+                          u'website'])
 
 
 class TemplateTagsTest(TestCase):

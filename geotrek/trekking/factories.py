@@ -43,6 +43,7 @@ class DifficultyLevelFactory(factory.Factory):
     FACTORY_FOR = models.DifficultyLevel
 
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class WebLinkCategoryFactory(factory.Factory):
@@ -65,6 +66,14 @@ class InformationDeskFactory(factory.Factory):
 
     name = factory.Sequence(lambda n: u"information desk name %s" % n)
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
+    phone = factory.Sequence(lambda n: u"01 02 03 %s" % n)
+    email = factory.Sequence(lambda n: u"email-%s@makina-corpus.com" % n)
+    website = factory.Sequence(lambda n: u"http://makina-corpus.com/%s" % n)
+    photo = dummy_filefield_as_sequence('photo %s')
+    street = factory.Sequence(lambda n: u"%s baker street" % n)
+    postal_code = 28300
+    municipality = factory.Sequence(lambda n: u"Bailleau L'évêque-%s" % n)
+    geom = Point(3.14, 42)
 
 
 class TrekFactory(TopologyFactory):
@@ -99,7 +108,6 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
-    information_desk = factory.SubFactory(InformationDeskFactory)
 
 
 class TrekWithPOIsFactory(TrekFactory):
