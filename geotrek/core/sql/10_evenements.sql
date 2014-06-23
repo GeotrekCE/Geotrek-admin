@@ -160,7 +160,11 @@ BEGIN
     -- and write data.
     -- Since the evenement to be modified is available in NEW, we could improve
     -- performance with some refactoring.
-    PERFORM update_geometry_of_evenement(NEW.id);
+
+    -- If Geotrek-light, don't do anything
+    IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
+        PERFORM update_geometry_of_evenement(NEW.id);
+    END IF;
 
     RETURN NULL;
 END;
@@ -169,3 +173,33 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER e_t_evenement_offset_u_tgr
 AFTER UPDATE OF decallage ON e_t_evenement
 FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_offset_changes();
+
+-------------------------------------------------------------------------------
+-- Update altimetry when geom change (Geotrek-light)
+-------------------------------------------------------------------------------
+
+DROP TRIGGER IF EXISTS e_t_evenement_geom_iu_tgr ON e_t_evenement;
+
+CREATE OR REPLACE FUNCTION evenement_elevation_iu() RETURNS trigger AS $$
+DECLARE
+    elevation elevation_infos;
+BEGIN
+    IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
+        RETURN NEW;
+    END IF;
+    SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
+    -- Update path geometry
+    NEW.geom_3d := elevation.draped;
+    NEW.longueur := ST_3DLength(elevation.draped);
+    NEW.pente := elevation.slope;
+    NEW.altitude_minimum := elevation.min_elevation;
+    NEW.altitude_maximum := elevation.max_elevation;
+    NEW.denivelee_positive := elevation.positive_gain;
+    NEW.denivelee_negative := elevation.negative_gain;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER e_t_evenement_geom_iu_tgr
+BEFORE INSERT OR UPDATE OF geom ON e_t_evenement
+FOR EACH ROW EXECUTE PROCEDURE evenement_elevation_iu();

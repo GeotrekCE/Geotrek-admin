@@ -244,9 +244,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @property
     def poi_types(self):
-        # Can't use values_list and must add 'ordering' because of bug:
-        # https://code.djangoproject.com/ticket/14930
-        values = self.pois.values('ordering', 'type')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Can't use values_list and must add 'ordering' because of bug:
+            # https://code.djangoproject.com/ticket/14930
+            values = self.pois.values('ordering', 'type')
+        else:
+            values = self.pois.values('type')
         pks = [value['type'] for value in values]
         return POIType.objects.filter(pk__in=set(pks))
 
@@ -469,7 +472,12 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_treks(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.filter(geom__intersects=area)
+        return qs
 
 Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)
@@ -824,7 +832,12 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
 
     @classmethod
     def topology_pois(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.filter(geom__intersects=area)
+        return qs
 
 Path.add_property('pois', POI.path_pois)
 Topology.add_property('pois', POI.topology_pois)

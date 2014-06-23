@@ -430,6 +430,8 @@ LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
 TRAIL_MODEL_ENABLED = True
+TREKKING_TOPOLOGY_ENABLED = True
+TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']
@@ -444,6 +446,7 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
+
 
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',

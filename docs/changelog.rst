@@ -80,6 +80,7 @@ CHANGELOG
 **Internal changes**
 
 * Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
+* Added experimental *Geotrek-light* support (ref #1019)
 
 :notes:
 
