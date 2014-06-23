@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.utils import translation
 
 
+from geotrek.common.utils.testdata import get_dummy_uploaded_file
 from geotrek.trekking.models import DifficultyLevel
 
 
@@ -54,6 +55,7 @@ class TraductionTestCase(TestCase):
             difficulty_en=u"difficulty_descr_en",
             difficulty_fr=u"difficulty_descr_fr",
             difficulty_it=u"difficulty_descr_it",
+            pictogram=get_dummy_uploaded_file()
         )
 
     def test_admin_set_trad(self):

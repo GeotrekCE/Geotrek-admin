@@ -211,6 +211,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         detailjson = json.loads(response.content)
         self.assertDictEqual(detailjson['route'],
                              {"id": trek.route.id,
+                              "pictogram": None,
                               "label": trek.route.route})
         self.assertDictEqual(detailjson['difficulty'],
                              {"id": trek.difficulty.id,
