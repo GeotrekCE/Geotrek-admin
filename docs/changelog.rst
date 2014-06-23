@@ -13,6 +13,12 @@ CHANGELOG
 * Pictograms fields were added to trek difficulty, route, network. You can use
   the images provided in the ``trekking/fixtures/upload/`` folder.
 
+:notes:
+
+    Just before upgrading, delete the following folders ::
+
+        rm -rf lib/src/django-modeltranslation
+
 
 **New features**
 
@@ -81,12 +87,6 @@ CHANGELOG
 
 * Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
 * Added experimental *Geotrek-light* support (ref #1019)
-
-:notes:
-
-    * Just before upgrading, delete the following folders  ::
-
-        rm -rf lib/src/django-modeltranslation
 
 
 0.23.5 (2014-06-19)
