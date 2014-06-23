@@ -81,6 +81,12 @@ CHANGELOG
 
 * Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)
 
+:notes:
+
+    * Just before upgrading, delete the following folders  ::
+
+        rm -rf lib/src/django-modeltranslation
+
 
 0.23.5 (2014-06-19)
 -------------------

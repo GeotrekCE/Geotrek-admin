@@ -13,6 +13,9 @@ class TrekTO(TranslationOptions):
               'advised_parking', 'public_transport') + (
               ('published',) if settings.TREK_PUBLISHED_BY_LANG else tuple()
               )
+    fallback_undefined = {
+        'published': None
+    }
 
 
 class POITO(TranslationOptions):

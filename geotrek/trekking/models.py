@@ -122,11 +122,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-
-    # We use a NullBooleanField because django-modeltranslation fails with null=True
-    # See https://github.com/deschler/django-modeltranslation/issues/247
-    published = models.NullBooleanField(verbose_name=_(u"Published"), null=True,
-                                        help_text=_(u"Online"), db_column='public')
+    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
+                                    help_text=_(u"Online"), db_column='public')
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
@@ -190,9 +187,9 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.publication_date is None and self.published:
+        if self.publication_date is None and self.any_published:
             self.publication_date = datetime.date.today()
-        if self.publication_date is not None and not self.published:
+        if self.publication_date is not None and not self.any_published:
             self.publication_date = None
         super(Trek, self).save(*args, **kwargs)
 
@@ -213,11 +210,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def any_published(self):
         """Returns True if the trek is published in at least one of the language
         """
-        if settings.TREK_PUBLISHED_BY_LANG:
-            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                if getattr(self, 'published_%s' % l[0], False):
-                    return True
-        return self.published
+        if not settings.TREK_PUBLISHED_BY_LANG:
+            return self.published
+
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if getattr(self, 'published_%s' % l[0], False):
+                return True
+        return False
 
     @property
     def published_status(self):
