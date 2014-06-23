@@ -32,28 +32,27 @@ class TrekRelationshipForm(forms.ModelForm):
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
 
 
-class TrekGeomForm(CommonForm):
-    geom_field = ('geom',)
+if settings.TREKKING_TOPOLOGY_ENABLED:
 
-    def __init__(self, *args, **kwargs):
-        super(TrekGeomForm, self).__init__(*args, **kwargs)
-        self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+    class BaseTrekForm(TopologyForm):
+        def __init__(self, *args, **kwargs):
+            super(BaseTrekForm, self).__init__(*args, **kwargs)
+            self.fields['topology'].widget = LineTopologyWidget()
 
-    class Meta(CommonForm.Meta):
-        model = Trek
-        fields = CommonForm.Meta.fields + ['geom']
+        class Meta(TopologyForm.Meta):
+            model = Trek
+else:
 
+    class BaseTrekForm(CommonForm):
+        geomfields = ['geom']
 
-class TrekTopologyForm(TopologyForm):
-    def __init__(self, *args, **kwargs):
-        super(TrekTopologyForm, self).__init__(*args, **kwargs)
-        self.fields['topology'].widget = LineTopologyWidget()
+        def __init__(self, *args, **kwargs):
+            super(BaseTrekForm, self).__init__(*args, **kwargs)
+            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
 
-    class Meta(TopologyForm.Meta):
-        model = Trek
-
-
-BaseTrekForm = TrekTopologyForm if settings.TREKKING_TOPOLOGY_ENABLED else TrekGeomForm
+        class Meta(CommonForm.Meta):
+            model = Trek
+            fields = CommonForm.Meta.fields + ['geom']
 
 
 class TrekForm(BaseTrekForm):
@@ -144,17 +143,28 @@ class TrekForm(BaseTrekForm):
              'themes', 'networks', 'usages', 'web_links', 'information_desks']
 
 
-class POIGeomForm(CommonForm):
-    geom_field = ('geom',)
+if settings.TREKKING_TOPOLOGY_ENABLED:
 
+    class BasePOIForm(TopologyForm):
+        def __init__(self, *args, **kwargs):
+            super(BasePOIForm, self).__init__(*args, **kwargs)
+            self.fields['topology'].widget = PointTopologyWidget()
 
-class POITopologyForm(TopologyForm):
-    def __init__(self, *args, **kwargs):
-        super(POITopologyForm, self).__init__(*args, **kwargs)
-        self.fields['topology'].widget = PointTopologyWidget()
+        class Meta(TopologyForm.Meta):
+            model = POI
 
+else:
 
-BasePOIForm = POITopologyForm if settings.TREKKING_TOPOLOGY_ENABLED else POIGeomForm
+    class BasePOIForm(CommonForm):
+        geomfields = ['geom']
+
+        def __init__(self, *args, **kwargs):
+            super(BasePOIForm, self).__init__(*args, **kwargs)
+            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+
+        class Meta(CommonForm.Meta):
+            model = POI
+            fields = CommonForm.Meta.fields + ['geom']
 
 
 class POIForm(BasePOIForm):
@@ -171,7 +181,6 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        model = POI
         fields = BasePOIForm.Meta.fields + ['name', 'description', 'type']
 
 
