@@ -315,30 +315,27 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     @property
     def serializable_networks(self):
         return [{'id': network.id,
-                 'pictogram': network.pictogram.url,
+                 'pictogram': network.serializable_pictogram,
                  'name': network.network} for network in self.networks.all()]
 
     @property
     def serializable_difficulty(self):
         if not self.difficulty:
             return None
-        pictogram = None
-        if self.difficulty.pictogram:
-            pictogram = self.difficulty.pictogram.url
         return {'id': self.difficulty.pk,
-                'pictogram': pictogram,
+                'pictogram': self.difficulty.serializable_pictogram,
                 'label': self.difficulty.difficulty}
 
     @property
     def serializable_themes(self):
         return [{'id': t.pk,
-                 'pictogram': t.pictogram.url,
+                 'pictogram': t.serializable_pictogram,
                  'label': t.label} for t in self.themes.all()]
 
     @property
     def serializable_usages(self):
         return [{'id': u.pk,
-                 'pictogram': u.pictogram.url,
+                 'pictogram': u.serializable_pictogram,
                  'label': u.usage} for u in self.usages.all()]
 
     @property
@@ -351,7 +348,7 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.route:
             return None
         return {'id': self.route.pk,
-                'pictogram': self.route.pictogram.url,
+                'pictogram': self.route.serializable_pictogram,
                 'label': self.route.route}
 
     @property
@@ -637,7 +634,7 @@ class WebLink(models.Model):
         if not self.category:
             return None
         return {'label': self.category.label,
-                'pictogram': os.path.join(settings.MEDIA_URL, self.category.pictogram.name)}
+                'pictogram': self.category.serializable_pictogram}
 
 
 class WebLinkCategory(PictogramMixin):
