@@ -3,7 +3,7 @@
         "pk": 1,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-patrimony.png",
+            "pictogram": "upload/poi-patrimony.svg",
             "label_en": "Small patrimony",
             "label_fr": "Petit patrimoine",
             "label": "Petit patrimoine"
@@ -13,7 +13,7 @@
         "pk": 2,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-flora.png",
+            "pictogram": "upload/poi-flora.svg",
             "label_en": "Flora",
             "label_fr": "Flore",
             "label": "Flore"
@@ -23,7 +23,7 @@
         "pk": 3,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-fauna.png",
+            "pictogram": "upload/poi-fauna.svg",
             "label_en": "Fauna",
             "label_fr": "Faune",
             "label": "Faune"
@@ -33,7 +33,7 @@
         "pk": 4,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-panorama.png",
+            "pictogram": "upload/poi-panorama.svg",
             "label_en": "Panorama",
             "label_fr": "Point de vue",
             "label": "Point de vue"
@@ -43,7 +43,7 @@
         "pk": 5,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-refuge.png",
+            "pictogram": "upload/poi-refuge.svg",
             "label_en": "Refuge",
             "label_fr": "Refuge",
             "label": "Refuge"
@@ -53,7 +53,7 @@
         "pk": 6,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-lake.png",
+            "pictogram": "upload/poi-lake.svg",
             "label_en": "Lake",
             "label_fr": "Lac",
             "label": "Lac"
@@ -63,7 +63,7 @@
         "pk": 7,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-peak.png",
+            "pictogram": "upload/poi-peak.svg",
             "label_en": "Peak",
             "label_fr": "Sommet",
             "label": "Sommet"
@@ -73,7 +73,7 @@
         "pk": 8,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-geology.png",
+            "pictogram": "upload/poi-geology.svg",
             "label_en": "Geology",
             "label_fr": "Géologie",
             "label": "Géologie"
@@ -83,7 +83,7 @@
         "pk": 9,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-archeology.png",
+            "pictogram": "upload/poi-archeology.svg",
             "label_fr": "Arch\u00e9ologie",
             "label": "Arch\u00e9ologie"
         }
@@ -92,7 +92,7 @@
         "pk": 10,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-history.png",
+            "pictogram": "upload/poi-history.svg",
             "label_fr": "Histoire",
             "label": "Histoire"
         }
@@ -101,7 +101,7 @@
         "pk": 11,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-architecture.png",
+            "pictogram": "upload/poi-architecture.svg",
             "label_fr": "Architecture",
             "label": "Architecture"
         }
@@ -110,7 +110,7 @@
         "pk": 12,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-glacier.png",
+            "pictogram": "upload/poi-glacier.svg",
             "label_fr": "Glacier",
             "label": "Glacier"
         }
@@ -119,7 +119,7 @@
         "pk": 13,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-knowhow.png",
+            "pictogram": "upload/poi-knowhow.svg",
             "label_fr": "Savoir-faire",
             "label": "Savoir-faire"
         }
@@ -128,7 +128,7 @@
         "pk": 14,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-pastoral.png",
+            "pictogram": "upload/poi-pastoral.svg",
             "label_fr": "Pastoralisme",
             "label": "Pastoralisme"
         }
@@ -137,7 +137,7 @@
         "pk": 15,
         "model": "trekking.poitype",
         "fields": {
-            "pictogram": "upload/poi-pass.png",
+            "pictogram": "upload/poi-pass.svg",
             "label_fr": "Col",
             "label": "Col"
         }
@@ -257,7 +257,7 @@
         "pk": 1,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-fauna@2x.png",
+            "pictogram": "upload/theme-fauna.svg",
             "label": "Fauna",
             "label_en": "Fauna",
             "label_fr": "Faune"
@@ -267,7 +267,7 @@
         "pk": 2,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-flora@2x.png",
+            "pictogram": "upload/theme-flora.svg",
             "label": "Flora",
             "label_en": "Flora",
             "label_fr": "Flore"
@@ -277,7 +277,7 @@
         "pk": 4,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-panorama@2x.png",
+            "pictogram": "upload/theme-panorama.svg",
             "label_fr": "Point de vue",
             "label": "Point de vue"
         }
@@ -286,7 +286,7 @@
         "pk": 5,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-architecture@2x.png",
+            "pictogram": "upload/theme-architecture.svg",
             "label_fr": "Architecture",
             "label": "Architecture"
         }
@@ -295,7 +295,7 @@
         "pk": 6,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-pastoral@2x.png",
+            "pictogram": "upload/theme-pastoral.svg",
             "label_fr": "Pastoralisme",
             "label": "Pastoralisme"
         }
@@ -304,7 +304,7 @@
         "pk": 7,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-geology@2x.png",
+            "pictogram": "upload/theme-geology.svg",
             "label_fr": "G\u00e9ologie",
             "label": "G\u00e9ologie"
         }
@@ -313,7 +313,7 @@
         "pk": 8,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-lake@2x.png",
+            "pictogram": "upload/theme-lake.svg",
             "label_fr": "Lac et glacier",
             "label": "Lac et glacier"
         }
@@ -322,7 +322,7 @@
         "pk": 9,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-peak@2x.png",
+            "pictogram": "upload/theme-peak.svg",
             "label_fr": "Sommet",
             "label": "Sommet"
         }
@@ -331,7 +331,7 @@
         "pk": 10,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-refugee@2x.png",
+            "pictogram": "upload/theme-refugee.svg",
             "label_fr": "Refuge",
             "label": "Refuge"
         }
@@ -340,7 +340,7 @@
         "pk": 11,
         "model": "trekking.theme",
         "fields": {
-            "pictogram": "upload/theme-history@2x.png",
+            "pictogram": "upload/theme-history.svg",
             "label_fr": "Arch\u00e9ologie et histoire",
             "label": "Arch\u00e9ologie et histoire"
         }
