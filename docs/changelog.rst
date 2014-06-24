@@ -5,7 +5,9 @@ CHANGELOG
 0.24.1 (unreleased)
 -------------------
 
-* Nothing changed yet
+**BUG fixes**
+
+* Fix SVG files for difficulty pictograms
 
 
 0.24.0 (2014-06-23)
