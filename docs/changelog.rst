@@ -8,6 +8,7 @@ CHANGELOG
 **BUG fixes**
 
 * Fix SVG files for difficulty pictograms
+* Fix group fixtures for "Rédacteurs" (fixes #1128)
 
 
 0.24.0 (2014-06-23)
