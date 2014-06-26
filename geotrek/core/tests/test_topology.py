@@ -704,6 +704,19 @@ class TopologySerialization(TestCase):
         self.assertTrue(almostequal(field['lng'], -1.363))
         self.assertEqual(field['kind'],  "TOPOLOGY")
 
+    def test_serialize_two_consecutive_forced(self):
+        path1 = PathFactory.create()
+        path2 = PathFactory.create()
+        path3 = PathFactory.create()
+        topology = TopologyFactory.create(no_path=True)
+        topology.add_path(path1)
+        topology.add_path(path2, start=0.2, end=0.2)
+        topology.add_path(path2, start=0.4, end=0.4)
+        topology.add_path(path3)
+        fieldvalue = topology.serialize()
+        field = json.loads(fieldvalue)
+        self.assertEqual(len(field), 2)
+
 
 class TopologyDerialization(TestCase):
 

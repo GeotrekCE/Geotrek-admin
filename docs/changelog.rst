@@ -12,6 +12,7 @@ CHANGELOG
 * Fix tab "None" in list view (fixes #1127)
 * Fix external datasources icons in Admin (fixes #1132)
 * Fix information desk maps in Admin forms (fixes #1130)
+* Fix topology edition when two forced passages on same path (fixes #1131)
 
 **Minor changes**
 

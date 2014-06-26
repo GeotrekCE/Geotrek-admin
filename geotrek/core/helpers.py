@@ -193,7 +193,8 @@ class TopologyHelper(object):
                     current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
                 ipath = ipath + 1
 
-                if intermediary or last:
+                subtopology_done = 'paths' in current and (intermediary or last)
+                if subtopology_done:
                     objdict.append(current)
                     current = {}
                     ipath = 0
