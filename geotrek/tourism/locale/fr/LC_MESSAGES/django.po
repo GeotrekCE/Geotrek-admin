@@ -30,8 +30,8 @@ msgstr "Titre"
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-msgid "Data source"
-msgstr "Source de données"
+msgid "External data source"
+msgstr "Source de données externes"
 
-msgid "Data sources"
-msgstr "Sources de données"
+msgid "External data sources"
+msgstr "Sources de données externes"
