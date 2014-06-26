@@ -11,6 +11,7 @@ CHANGELOG
 * Fix group fixtures for "Rédacteurs" (fixes #1128)
 * Fix tab "None" in list view (fixes #1127)
 * Fix external datasources icons in Admin (fixes #1132)
+* Fix information desk maps in Admin forms (fixes #1130)
 
 **Minor changes**
 
