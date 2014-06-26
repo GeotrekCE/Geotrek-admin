@@ -54,6 +54,6 @@ class DataSource(models.Model):
 
     class Meta:
         db_table = 't_t_source_donnees'
-        verbose_name = _(u"Data source")
-        verbose_name_plural = _(u"Data sources")
+        verbose_name = _(u"External data source")
+        verbose_name_plural = _(u"External data sources")
         ordering = ['title', 'url']

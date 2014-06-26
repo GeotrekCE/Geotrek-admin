@@ -10,7 +10,12 @@ CHANGELOG
 * Fix SVG files for difficulty pictograms
 * Fix group fixtures for "Rédacteurs" (fixes #1128)
 * Fix tab "None" in list view (fixes #1127)
+
+**Minor changes**
+
 * Ordered log entries by date descending (ref #1123)
+* Renamed "Data sources" by "External data sources" (fixes #1125)
+* Renamed "Foncier" to "Statuts" (fixes #1126)
 
 
 0.24.0 (2014-06-23)
