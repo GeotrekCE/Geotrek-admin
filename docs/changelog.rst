@@ -9,6 +9,8 @@ CHANGELOG
 
 * Fix SVG files for difficulty pictograms
 * Fix group fixtures for "Rédacteurs" (fixes #1128)
+* Fix tab "None" in list view (fixes #1127)
+* Ordered log entries by date descending (ref #1123)
 
 
 0.24.0 (2014-06-23)
