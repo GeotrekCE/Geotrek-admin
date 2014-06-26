@@ -7,6 +7,7 @@ $(window).on('entity:map', function (e, data) {
     function locationMarker(source, feature, latlng) {
         var html = L.Util.template('<img width="16" src="{pictogram_url}"/>',
                                    source);
+
         var icon = L.divIcon({html: html,
                               className: 'tourism-datasource-marker',
                               iconSize: [16, 0]});
@@ -23,21 +24,27 @@ $(window).on('entity:map', function (e, data) {
         return marker;
     }
 
+    function locationMarkerFunc(ds) {
+        return function (feature, latlng) {
+            return locationMarker(ds, feature, latlng);
+        };
+    }
+
     $.getJSON(window.SETTINGS.urls.tourism_datasources, function (datasources) {
         for (var i=0; i<datasources.length; i++) {
-            var dataSource = datasources[i];
+            var dataSource = datasources[i],
+                pointToLayerFunc = locationMarkerFunc(dataSource);
+
             var is_visible = (!dataSource.targets || dataSource.targets.indexOf(data.appname) > -1);
             if (!is_visible)
                 continue;
 
             var layer = new L.ObjectsLayer(null, {
                 indexing: false,
-                pointToLayer: function (feature, latlng) {
-                    return locationMarker(dataSource, feature, latlng);
-                }
+                pointToLayer: pointToLayerFunc
             });
             layer.load(dataSource.geojson_url);
-            var nameHTML = '<img style="background-color: lightgray" width="16" src="' + dataSource.pictogram_url + '"/>&nbsp;' + dataSource.title
+            var nameHTML = '<img style="background-color: lightgray" width="16" src="' + dataSource.pictogram_url + '"/>&nbsp;' + dataSource.title;
             map.layerscontrol.addOverlay(layer, nameHTML, tr('Data sources'));
         }
     });

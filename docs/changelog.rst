@@ -10,6 +10,7 @@ CHANGELOG
 * Fix SVG files for difficulty pictograms
 * Fix group fixtures for "Rédacteurs" (fixes #1128)
 * Fix tab "None" in list view (fixes #1127)
+* Fix external datasources icons in Admin (fixes #1132)
 
 **Minor changes**
 
