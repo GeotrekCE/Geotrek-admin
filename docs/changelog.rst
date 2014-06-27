@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.24.3 (unreleased)
+-------------------
+
+**BUG fixes**
+
+* Fix cursor not removed when terminating topology (fixes #1134)
+
+
 0.24.2 (2014-06-27)
 -------------------
 

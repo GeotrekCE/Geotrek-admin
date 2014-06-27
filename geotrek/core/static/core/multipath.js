@@ -390,14 +390,16 @@ L.Handler.MultiPath = L.Handler.extend({
         // 1. Click - you are adding a new marker
         var marker;
         if (next_step_idx == 0) {
+            L.DomUtil.removeClass(this._container, 'cursor-topo-start');
             L.DomUtil.addClass(this._container, 'cursor-topo-end');
-            marker = this.markersFactory.source(latlng)
+            marker = this.markersFactory.source(latlng);
             marker.on('unsnap', function () {
                 this.showPathGeom(null);
             }, this);
             this.marker_source = marker;
         } else {
-            this._container.style.cursor = '';
+            L.DomUtil.removeClass(this._container, 'cursor-topo-start');
+            L.DomUtil.removeClass(this._container, 'cursor-topo-end');
             marker = this.markersFactory.dest(latlng)
             marker.on('unsnap', function () {
                 this.showPathGeom(null);
