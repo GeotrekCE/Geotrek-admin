@@ -5,7 +5,7 @@ casper.test.begin('Adminsite', function(test) {
     utils.setUp();
 
     casper.start(utils.baseurl + '/admin/', function () {
-        test.assertTextExists('Back to application');
+        test.assertTextExists("Retour à l'application");
     });
 
     casper.run(function done() {
