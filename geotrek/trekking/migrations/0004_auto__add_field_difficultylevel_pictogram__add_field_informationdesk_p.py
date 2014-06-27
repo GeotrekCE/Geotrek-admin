@@ -46,7 +46,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'InformationDesk.geom'
         db.add_column('o_b_renseignement', 'geom',
-                      self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154, null=True, spatial_index=False, db_column='geom', blank=True),
+                      self.gf('django.contrib.gis.db.models.fields.PointField')(srid=settings.SRID, null=True, spatial_index=False, db_column='geom', blank=True),
                       keep_default=False)
 
 

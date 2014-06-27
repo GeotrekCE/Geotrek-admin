@@ -8,6 +8,7 @@ CHANGELOG
 **BUG fixes**
 
 * Fix cursor not removed when terminating topology (fixes #1134)
+* Fix information desk geometry hard-coded SRID
 
 
 0.24.2 (2014-06-27)
