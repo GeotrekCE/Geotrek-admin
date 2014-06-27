@@ -8,6 +8,7 @@ CHANGELOG
 **BUG fixes**
 
 * Fix EPSG:32620 projection file
+* Fix JS error when path layer is not on map
 
 
 0.24.1 (2014-06-26)

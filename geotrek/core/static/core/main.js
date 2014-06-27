@@ -36,6 +36,9 @@ $(window).on('entity:map', function (e, data) {
 
         map.on('layeradd', function (e) {
             if (e.layer === pathsLayer) {
+                if (!e.layer._map) {
+                    return;
+                }
                 if (e.layer.loading) {
                     e.layer.on('loaded', function () {
                         e.layer.bringToBack();
