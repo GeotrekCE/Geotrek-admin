@@ -13,6 +13,7 @@ CHANGELOG
 * Fix groups not shown in Adminsite with external authent (fixes #1118)
 * Use markers as mouse icons for topology creation, use resize cursors as
   fallback only (fixes #1100)
+* Minor changes in trek print template (ref #1120)
 
 
 0.24.1 (2014-06-26)
