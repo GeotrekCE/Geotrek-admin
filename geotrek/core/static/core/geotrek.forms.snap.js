@@ -141,6 +141,22 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
         layer.on('move edit', function (e) {
             this.store.save(this.drawnItems);
         }, this);
+
+        // On edition, show start and end markers as snapped
+        this._map.on('draw:editstart', function (e) {
+            setTimeout(function () {
+                if (!layer.editing) {
+                    console.warn('Layer has no snap editing');
+                    return;  // should never happen ;)
+                }
+                var markers = layer.editing._markers;
+                var first = markers[0],
+                    last = markers[markers.length - 1];
+                first.fire('move');
+                last.fire('move');
+            }, 0);
+        });
+
     },
 
     onCreated: function (e) {

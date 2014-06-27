@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix EPSG:32620 projection file
 * Fix JS error when path layer is not on map
+* Fix start and end markers not shown as snapped on path edition (fixes #1116)
 
 
 0.24.1 (2014-06-26)
