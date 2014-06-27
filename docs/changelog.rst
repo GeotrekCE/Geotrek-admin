@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.24.2 (unreleased)
+-------------------
+
+**BUG fixes**
+
+* Fix EPSG:32620 projection file
+
+
 0.24.1 (2014-06-26)
 -------------------
 
