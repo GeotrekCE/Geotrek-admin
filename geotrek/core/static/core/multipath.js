@@ -357,7 +357,7 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     addHooks: function () {
-        this._container.style.cursor = 'w-resize';
+        L.DomUtil.addClass(this._container, 'cursor-topo-start');
         this._guidesLayer.on('click', this._onClick, this);
 
         this.stepsToggleActivate(true);
@@ -366,7 +366,8 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     removeHooks: function() {
-        this._container.style.cursor = '';
+        L.DomUtil.removeClass(this._container, 'cursor-topo-start');
+        L.DomUtil.removeClass(this._container, 'cursor-topo-end');
         this._guidesLayer.off('click', this._onClick, this);
 
         this.stepsToggleActivate(false);
@@ -389,7 +390,7 @@ L.Handler.MultiPath = L.Handler.extend({
         // 1. Click - you are adding a new marker
         var marker;
         if (next_step_idx == 0) {
-            this._container.style.cursor = 'e-resize';
+            L.DomUtil.addClass(this._container, 'cursor-topo-end');
             marker = this.markersFactory.source(latlng)
             marker.on('unsnap', function () {
                 this.showPathGeom(null);

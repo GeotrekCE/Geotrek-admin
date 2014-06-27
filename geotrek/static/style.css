@@ -23,8 +23,15 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-color: yellow;
 }
 
-/* Point topology */
+.cursor-topo-start {
+    cursor: url('core/images/marker-source-snap.png') 13 40, w-resize;
+}
 
+.cursor-topo-end {
+    cursor: url('core/images/marker-target-snap.png') 13 40, e-resize;
+}
+
+/* Point topology */
 .marker-point {
     padding-left: 25px;
     padding-top: 41px;

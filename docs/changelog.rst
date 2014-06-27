@@ -11,6 +11,8 @@ CHANGELOG
 * Fix JS error when path layer is not on map
 * Fix start and end markers not shown as snapped on path edition (fixes #1116)
 * Fix groups not shown in Adminsite with external authent (fixes #1118)
+* Use markers as mouse icons for topology creation, use resize cursors as
+  fallback only (fixes #1100)
 
 
 0.24.1 (2014-06-26)
