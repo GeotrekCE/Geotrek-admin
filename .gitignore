@@ -21,3 +21,10 @@ lib/
 local/
 *.egg-info/
 /node_modules/
+salt.cfg
+/etc
+/lib
+/var
+bootstrap.py
+/.buildout
+geotrek/settings/custom.py

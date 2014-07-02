@@ -95,13 +95,15 @@ tests: test test_js test_nav
 serve:
 	bin/django runserver_plus --threaded $(listen)
 
-deploy:
+update:
 	bin/develop update -f
 	bin/django collectstatic --clear --noinput --verbosity=0
 	bin/django syncdb --noinput --migrate
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
 	bin/django update_permissions
+
+deploy: update
 	bin/supervisorctl restart all
 
 all_makemessages: install
