@@ -21,7 +21,7 @@ lib/
 local/
 *.egg-info/
 /node_modules/
-salt.cfg
+/salt.cfg
 /etc
 /lib
 /var

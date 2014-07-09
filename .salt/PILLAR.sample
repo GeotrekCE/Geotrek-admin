@@ -1,0 +1,104 @@
+#
+# This file contains default values which are used
+# by the salt states deploying your project.
+# you may copy them to your relevant PILLAR file
+# before editing them.
+# If you need to add variables, this is where to begin.
+# Please keep defaults in there, but real passwords
+# must be putted inside pillar
+#
+# replace project_name in your pillar by
+# the current projectname
+# you can also merge parts of this file
+# with the relevant pillar
+makina-projects.projectname:
+  data:
+    django_settings_source: salt://makina-projects/{name}/files/config.py
+    has_services: true
+    has_geotrek: true
+    domain: "{fqdn}"
+    db_name: geotrek
+    db_host: '127.0.0.1'
+    db_port: 5432
+    db_user: geotrek
+    db_pass: xxx
+    psql_url: "postgres://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+    screamshotter_protocol: http
+    # set this to the real address if on geotrek node
+    screamshotter_host: 0.0.0.0
+    convertit_host: 0.0.0.0
+    #
+    # screamshotter_host: 10.5.0.x
+    # convertit_host: 10.5.0.x
+    screamshotter_port: 8001
+    convertit_protocol: http
+    convertit_port: 6543
+    django_settings_module: geotrek.settings.custom
+    htaccess: "/etc/nginx/{name}-access"
+    users:
+      - root: root
+    buildout:
+      settings:
+        buildout:
+          newest: 'false'
+          unzip: 'true'
+        screamshotter:
+          protocol: "{screamshotter_protocol}"
+          host: "{screamshotter_host}"
+          port: "{screamshotter_port}"
+        convertit:
+          protocol: "{convertit_protocol}"
+          host: "{convertit_host}"
+          port: "{convertit_port}"
+        "nginx-conf":
+          cache: "True"
+          cachetime: "1d"
+          server_name: "{domain}"
+          cachename: "{name}one"
+          level: crit
+          default: False
+          real_ip: 10.5.0.1
+          logformat: custom_combined
+          # endline and indented (putted asis in buildout) separated aliases
+          server_aliases: ""
+        versions:
+          Pillow: 2.5.0
+          pillow: 2.5.0
+        django:
+          settings: settings.custom
+        settings:
+          defaultstructure: PNX
+          language: fr
+          languages: 'en,fr,it,es'
+          dbname: '{db_name}'
+          dbuser: '{db_user}'
+          dbpassword: '{db_pass}'
+          dbhost: '{db_host}'
+          dbport: 5432
+          secret_key: change_this_key_with_a_value_of_your_choice
+          srid: 2154
+          spatial_extent: 924861,6375196,985649,6448688
+          wms_url: 'http://{domain}/pnx/wms?'
+          ortho_layers: ortho
+          ortho_attributions: 'IGN BDOrtho'
+          scan_layers: 'scan100,scan25'
+          scan_attributions: 'IGN Scan'
+          mailadmins: 'webmaster@{domain}'
+          mailmanagers: 'webmaster@{domain}, sysadmin@{domain}'
+          mailfrom: 'webmaster@{domain}'
+          mailhost: '127.0.0.1'
+          mailuser: ''
+          mailpassword: ''
+          mailport: 25
+          mailtls: 'False'
+    has_guillestrois: false
+    gtrois:
+      xml_path: "{data_root}/gtrois"
+      ftp_host: xxx
+      ftp_user: xxx
+      ftp_pass: xxx
+      mail: 'sysadmin@{domain}'
+      periodicity: "* 6 * * *"
+
+
+# vim:set ft=sls:
