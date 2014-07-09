@@ -11,6 +11,12 @@
 # the current projectname
 # you can also merge parts of this file
 # with the relevant pillar
+
+
+# please also add this to the pillar
+# makina-states.services.http.nginx.default_vhost: false
+
+
 makina-projects.projectname:
   data:
     django_settings_source: salt://makina-projects/{name}/files/config.py
