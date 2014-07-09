@@ -51,7 +51,7 @@ makina-projects.projectname:
           host: "{convertit_host}"
           port: "{convertit_port}"
         "nginx-conf":
-          cache: "True"
+          cache: "False"
           cachetime: "1d"
           server_name: "{domain}"
           cachename: "{name}one"
