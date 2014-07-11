@@ -102,6 +102,7 @@ update:
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
 	bin/django update_permissions
+	make compilemessages
 
 deploy: update
 	bin/supervisorctl restart all
@@ -109,10 +110,13 @@ deploy: update
 all_makemessages: install
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
 
-all_compilemessages: install
+
+compilemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
+all_compilemessages: install
+	make compilemessages
 
 
 load_data:
