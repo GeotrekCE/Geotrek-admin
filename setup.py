@@ -25,8 +25,8 @@ setup(
         'pygal',
         'django-extended-choices == 0.3.0',
         'django-multiselectfield == 0.1.1',
-        'tif2geojson == 0.1.3',
         'geojson',
+        'tif2geojson',  # pinned by buildout
         'mapentity',  # pinned by buildout
     ],
     license='BSD, see LICENSE file.',
