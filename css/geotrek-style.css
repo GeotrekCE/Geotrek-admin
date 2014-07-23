@@ -94,6 +94,12 @@ input.error {
     border-color: red !important;
 }
 
+.row.partners section {
+
+    margin: 2em 0;
+
+}
+
 /*********************************************************************************/
 /* Animation with images overlapping                                             */
 /*********************************************************************************/
