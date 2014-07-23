@@ -5,7 +5,7 @@ CHANGELOG
 0.25.0 (unreleased)
 -------------------
 
-* Nothing changed yet.
+* Added projection file EPSG:32622 (fixes #1150)
 
 
 0.24.3 (2014-06-27)
