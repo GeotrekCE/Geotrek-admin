@@ -2,11 +2,11 @@ import os
 {% set cfg = salt['mc_utils.json_load'](data) %}
 {% set ddata = cfg.data %}
 DATABASE = {
-    'NAME': '{{ddata.db_name}}',                 
-    'USER': '{{ddata.db_user}}',                 
-    'PASSWORD': '{{ddata.db_pass}}',       
-    'HOST': '{{ddata.db_host}}}}',                    
-    'PORT': '{{ddata.db_port}}',                   
+    'NAME': '{{ddata.db_name}}',
+    'USER': '{{ddata.db_user}}',
+    'PASSWORD': '{{ddata.db_pass}}',
+    'HOST': '{{ddata.db_host}}}}',
+    'PORT': '{{ddata.db_port}}',
 }
 
 FTP = {
