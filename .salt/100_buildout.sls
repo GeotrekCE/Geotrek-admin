@@ -9,7 +9,7 @@
   file.managed:
     - template: jinja
     - name: {{cfg.project_root}}/geotrek/settings/custom.py
-    - source: salt://makina-projects/{{cfg.name}}/files/config.py
+    - source: {{data.django_settings_source}}
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - mode: 770
