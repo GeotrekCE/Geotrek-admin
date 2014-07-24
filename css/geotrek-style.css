@@ -23,6 +23,10 @@
     font-weight: bold;
 }
 
+#nav a.active {
+    border-bottom: 4px solid #97BB35;
+}
+
 .owl-carousel .item img{
     display: block;
     width: 100%;

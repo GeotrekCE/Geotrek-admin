@@ -147,6 +147,11 @@
         {
             margin-bottom: 0;
         }
+        
+        .row.tech 
+        { 
+            margin-bottom: 6.5em;
+        }
 
     /* Images */
 
