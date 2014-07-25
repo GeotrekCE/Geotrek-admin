@@ -99,16 +99,19 @@ files will be opened in the browser :
 Using Google Maps projection in the Web interface
 -------------------------------------------------
 
-Just add this line in your custom production settings file :
+Your data will still be stored using the SRID you specified in the ``settings.ini``
+file, but the maps in the Web interface will be using the Google Mercator projection (EPSG:3857).
+
+It allows you to use *IGN Geoportail* WMTS or *OpenStreetMap* tiles for example 
+
+Start by adding this line in your custom Django setting file :
 
 .. code-block :: python
 
     LEAFLET_CONFIG['SRID'] = 3857
 
-Your data will still be stored using the SRID you specified in the ``settings.ini``
-file.
 
-Now you can use WMTS or *OpenStreetMap* tiles for example :
+And specify the tiles URLs this way :
 
 .. code-block :: python
 
