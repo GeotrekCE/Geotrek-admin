@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n l10n static trekking_tags field_verbose_name thumbnail %}
+{% load i18n l10n static geojson_tags trekking_tags field_verbose_name thumbnail %}
 
 
 {% block download %}
@@ -255,6 +255,25 @@
                     }
                 }).addTo(map);
             });
+
+            //
+            // Points of reference
+            (function (map) {
+                var data = {{ object.points_reference|geojsonfeature|safe }};
+                L.geoJson(data, {
+                    pointToLayer: (function () {
+                        var counter = 1;
+                        return function (featureData, latlng) {
+                            var icon = L.divIcon({html: counter++,
+                                                  className: 'point-reference'});
+                            return L.marker(latlng, {
+                                clickable: false,
+                                icon: icon
+                            }).addTo(map);
+                        };
+                    })()
+                }).addTo(map);
+            })(map);
 
         });
     </script>

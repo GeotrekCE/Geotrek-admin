@@ -215,3 +215,16 @@ body.screamshot #altitudegraph {
 .poi-marker-icon img {
     max-width: 100% !important;
 }
+
+.leaflet-marker-icon.point-reference {
+    background-color: red;
+    border-radius: 50px;
+    width: 20px !important;
+    height: 20px !important;
+    margin-left: -10px;
+    margin-top: -10px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
