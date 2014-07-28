@@ -387,7 +387,8 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
     'PLUGINS': {
-        'geotrek': {'js': ['core/leaflet.lineextremities.js']},
+        'geotrek': {'js': ['core/leaflet.lineextremities.js',
+                           'trekking/points_reference.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',

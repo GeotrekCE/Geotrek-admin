@@ -6,8 +6,8 @@ import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
-from mapentity.widgets import SelectMultipleWithPop
 from leaflet.forms.widgets import LeafletWidget
+from mapentity.widgets import MapWidget, SelectMultipleWithPop
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -30,6 +30,11 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'DELETE')
 
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
+
+
+class PointsReferenceWidget(MapWidget):
+    geom_type = 'MULTIPOINT'
+    geometry_field_class = 'PointsReferenceField'
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -117,6 +122,7 @@ class TrekForm(BaseTrekForm):
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
+        self.fields['points_reference'].widget = PointsReferenceWidget()
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'usages',
