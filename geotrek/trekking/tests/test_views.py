@@ -319,6 +319,17 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertNotContains(response, 'name="points_reference"')
 
+    def test_points_reference_are_exported_in_json_detail(self):
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        detailjson = json.loads((self.client.get(url)).content)
+        self.assertIsNotNone(detailjson['points_reference'])
+
+    def test_points_reference_are_exported_in_wgs84(self):
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        detailjson = json.loads((self.client.get(url)).content)
+        geojson = detailjson['points_reference']
+        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
+
 
 class TrekGPXTest(TrekkingManagerTest):
 

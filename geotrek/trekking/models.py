@@ -3,6 +3,7 @@ import logging
 import shutil
 import datetime
 import re
+import json
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -385,6 +386,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.parking_location:
             return None
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
+
+    @property
+    def serializable_points_reference(self):
+        if not self.points_reference:
+            return None
+        geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
 
     @property
     def name_display(self):

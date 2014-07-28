@@ -81,7 +81,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
                'cities', 'districts', 'relationships', 'map_image_url',
-               'elevation_area_url']
+               'elevation_area_url', 'points_reference']
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -94,7 +94,9 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                                  getattr(self.object, fname))
 
         trek = self.get_object()
+
         ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
+
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
         ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
         ctx['filelist_url'] = reverse('get_attachments',
