@@ -174,6 +174,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
+    points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
+                                              srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 

@@ -373,6 +373,7 @@ ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/heigh
 ALTIMETRIC_AREA_MARGIN = 0.15
 
 TREK_PUBLISHED_BY_LANG = True
+TREK_POINTS_OF_REFERENCE_ENABLED = True
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
