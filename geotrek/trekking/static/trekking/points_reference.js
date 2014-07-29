@@ -11,6 +11,11 @@ PointsReferenceField = L.GeometryField.extend({
         return options;
     },
 
+    _setView: function () {
+        // Do not affect map view on load (keep trek extent)
+        // Override and do nothing.
+    },
+
     setNumber: function (marker, number) {
         // Helper
         marker.setIcon(L.divIcon({className: 'point-reference', html: number}));
