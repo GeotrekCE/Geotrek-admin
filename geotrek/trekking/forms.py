@@ -32,17 +32,13 @@ class TrekRelationshipForm(forms.ModelForm):
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
 
 
-class PointsReferenceWidget(MapWidget):
-    geom_type = 'MULTIPOINT'
-    geometry_field_class = 'PointsReferenceField'
-
-
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BaseTrekForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['topology'].widget = LineTopologyWidget()
+            self.fields['points_reference'].widget.target_map = 'topology'
 
         class Meta(TopologyForm.Meta):
             model = Trek
@@ -54,6 +50,7 @@ else:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['points_reference'].widget.target_map = 'geom'
 
         class Meta(CommonForm.Meta):
             model = Trek
@@ -122,7 +119,9 @@ class TrekForm(BaseTrekForm):
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
-        self.fields['points_reference'].widget = PointsReferenceWidget()
+
+        # Edit points of reference with custom edition JavaScript class
+        self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'usages',
