@@ -436,7 +436,7 @@ class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin)
     def interventions_total_cost(self):
         total = 0
         qs = self.interventions.existing()
-        for i in qs.prefetch_related('manday_set', 'manday_set__function'):
+        for i in qs.prefetch_related('manday_set', 'manday_set__job'):
             total += i.total_cost
         return total
 

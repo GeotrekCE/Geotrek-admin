@@ -14,6 +14,7 @@ CHANGELOG
 
 * Fix permission check to see attachments (fixes #1147, ref #1146)
 * Fix grouping of interventions in detail pages (fixes #1145)
+* Fix project total intervention cost (fixes #958)
 
 
 0.24.3 (2014-06-27)
