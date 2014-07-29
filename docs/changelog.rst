@@ -6,7 +6,7 @@ CHANGELOG
 -------------------
 
 * Added projection file EPSG:32622 (fixes #1150)
-
+* Added notion of points of reference for treks (fixes #1105)
 
 0.24.3 (2014-06-27)
 -------------------

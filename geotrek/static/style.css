@@ -228,3 +228,9 @@ body.screamshot #altitudegraph {
     font-weight: bold;
     text-align: center;
 }
+
+.leaflet-draw.id_points_reference .leaflet-draw-draw-marker {
+    background-image: url(trekking/point_reference_widget.png);
+    background-position: 0px 0px, center;
+    background-size: cover;
+}
