@@ -38,6 +38,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['topology'].widget = LineTopologyWidget()
+            self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'topology'
 
         class Meta(TopologyForm.Meta):
