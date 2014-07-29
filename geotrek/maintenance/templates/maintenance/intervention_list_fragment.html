@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% regroup interventions by on_infrastructure as interventions_list %}
+{% regroup interventions|dictsort:"on_infrastructure" by on_infrastructure as interventions_list %}
 
 {% for intervention in interventions_list %}
     <ul>
