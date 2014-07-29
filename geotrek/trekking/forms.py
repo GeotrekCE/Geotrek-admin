@@ -120,9 +120,9 @@ class TrekForm(BaseTrekForm):
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
-
-        # Edit points of reference with custom edition JavaScript class
-        self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'usages',
