@@ -5,7 +5,14 @@ CHANGELOG
 0.25.0 (unreleased)
 -------------------
 
+**New features**
+
 * Added projection file EPSG:32622 (fixes #1150)
+* Now log addition and suppression of attachments in history
+
+**BUG fixes**
+
+* Fix permission check to see attachments (fixes #1147, ref #1146)
 
 
 0.24.3 (2014-06-27)
