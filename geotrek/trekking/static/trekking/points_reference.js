@@ -1,7 +1,17 @@
 PointsReferenceField = L.GeometryField.extend({
+    // This field is in charge of incrementing number for each marker
+    // that is drawn or loaded.
 
     initialize: function () {
         L.GeometryField.prototype.initialize.apply(this, arguments);
+    },
+
+    addTo: function (map) {
+        L.GeometryField.prototype.addTo.apply(this, arguments);
+        var $toolbar = $(map.drawControl._container);
+        $toolbar.find('.leaflet-draw-draw-marker').attr('title', tr('Add a point of reference'));
+        $toolbar.find('.leaflet-draw-edit-edit').attr('title', tr('Move points of reference'));
+        $toolbar.find('.leaflet-draw-edit-remove').attr('title', tr('Delete a point of reference'));
     },
 
     _controlDrawOptions: function () {
