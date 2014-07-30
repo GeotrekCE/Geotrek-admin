@@ -23,6 +23,10 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
+        MapEntity.i18n['Add a point of reference'] = "{% trans "Add a point of reference" %}";
+        MapEntity.i18n['Move points of reference'] = "{% trans "Move points of reference" %}";
+        MapEntity.i18n['Delete a point of reference'] = "{% trans "Delete a point of reference" %}";
+
         $(document).ready(function() {
             // TODO: do this with crispyforms !
             $("fieldset.formset").detach().appendTo('#mainform fieldset');

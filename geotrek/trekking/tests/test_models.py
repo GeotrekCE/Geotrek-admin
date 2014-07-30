@@ -1,5 +1,6 @@
 from django.test import TestCase
-from django.contrib.gis.geos import LineString, Polygon, MultiPolygon, MultiLineString
+from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
+                                     MultiLineString)
 
 from bs4 import BeautifulSoup
 

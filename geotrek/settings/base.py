@@ -373,6 +373,7 @@ ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/heigh
 ALTIMETRIC_AREA_MARGIN = 0.15
 
 TREK_PUBLISHED_BY_LANG = True
+TREK_POINTS_OF_REFERENCE_ENABLED = True
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -386,7 +387,8 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
     'NO_GLOBALS': False,
     'PLUGINS': {
-        'geotrek': {'js': ['core/leaflet.lineextremities.js']},
+        'geotrek': {'js': ['core/leaflet.lineextremities.js',
+                           'trekking/points_reference.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',

@@ -3,6 +3,7 @@ import logging
 import shutil
 import datetime
 import re
+import json
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -174,6 +175,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
+    points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
+                                              srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -383,6 +386,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         if not self.parking_location:
             return None
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
+
+    @property
+    def serializable_points_reference(self):
+        if not self.points_reference:
+            return None
+        geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
 
     @property
     def name_display(self):

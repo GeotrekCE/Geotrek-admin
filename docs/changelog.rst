@@ -9,6 +9,8 @@ CHANGELOG
 
 * Added projection file EPSG:32622 (fixes #1150)
 * Now log addition and suppression of attachments in history
+* Added notion of points of reference for treks (fixes #1105).
+  (Can be disabled with ``TREK_POINTS_OF_REFERENCE_ENABLED = False``)
 
 **BUG fixes**
 
