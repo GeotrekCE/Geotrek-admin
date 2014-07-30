@@ -40,6 +40,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields['topology'].widget = LineTopologyWidget()
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'topology'
+            self.fields['parking_location'].label = ''
+            self.fields['parking_location'].widget.target_map = 'topology'
 
         class Meta(TopologyForm.Meta):
             model = Trek
@@ -51,7 +53,10 @@ else:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'geom'
+            self.fields['parking_location'].label = ''
+            self.fields['parking_location'].widget.target_map = 'geom'
 
         class Meta(CommonForm.Meta):
             model = Trek
@@ -123,6 +128,8 @@ class TrekForm(BaseTrekForm):
         else:
             # Edit points of reference with custom edition JavaScript class
             self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
+
+        self.fields['parking_location'].widget.geometry_field_class = 'ParkingLocationField'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'usages',

@@ -11,6 +11,7 @@ CHANGELOG
 * Now log addition and suppression of attachments in history
 * Added notion of points of reference for treks (fixes #1105).
   (Can be disabled with ``TREK_POINTS_OF_REFERENCE_ENABLED = False``)
+* Edit the parking location directly on the trek map (ref #387)
 
 **BUG fixes**
 
