@@ -18,6 +18,8 @@ CHANGELOG
 * Fix grouping of interventions in detail pages (fixes #1145)
 * Fix project total intervention cost (fixes #958)
 * Fix history entries not being saved when using formsets (fixes #1139)
+* Fix postal code being saved as integer (fixes #1138). Existing records
+  will have a leading zero when shorter than 5 charaters.
 
 
 0.24.3 (2014-06-27)

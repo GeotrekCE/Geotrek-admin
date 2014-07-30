@@ -721,8 +721,8 @@ class InformationDesk(models.Model):
 
     street = models.CharField(verbose_name=_(u"Street"), max_length=256,
                               blank=True, null=True, db_column='rue')
-    postal_code = models.IntegerField(verbose_name=_(u"Postal code"),
-                                      blank=True, null=True, db_column='code')
+    postal_code = models.CharField(verbose_name=_(u"Postal code"), max_length=8,
+                                   blank=True, null=True, db_column='code')
     municipality = models.CharField(verbose_name=_(u"Municipality"),
                                     blank=True, null=True,
                                     max_length=256, db_column='commune')
