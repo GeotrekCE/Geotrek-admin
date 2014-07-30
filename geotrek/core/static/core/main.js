@@ -41,6 +41,9 @@ $(window).on('entity:map', function (e, data) {
                 }
                 if (e.layer.loading) {
                     e.layer.on('loaded', function () {
+                        if (!e.layer._map) {
+                            return;
+                        }
                         e.layer.bringToBack();
                     });
                 }
@@ -52,6 +55,9 @@ $(window).on('entity:map', function (e, data) {
                 if (e.layer instanceof L.ObjectsLayer) {
                     if (e.layer.loading) {
                         e.layer.on('loaded', function () {
+                            if (!e.layer._map) {
+                                return;
+                            }
                             e.layer.bringToFront();
                         });
                     }

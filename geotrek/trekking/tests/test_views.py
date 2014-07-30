@@ -228,7 +228,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               u'name': u'information desk name 0',
                               u'phone': u'01 02 03 0',
                               u'photo_url': self.information_desk.photo_url,
-                              u'postal_code': 28300,
+                              u'postal_code': u'28300',
                               u'street': u'0 baker street',
                               u'municipality': u"Bailleau L'évêque-0",
                               u'website': u'http://makina-corpus.com/0'})
