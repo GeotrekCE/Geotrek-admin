@@ -74,8 +74,41 @@ $(window).on('entity:map', function (e, data) {
     }
 });
 
+
 $(window).on('entity:view:list', function () {
     // Move all topology-filters to separate tab
     $('#mainfilter .topology-filter').parent('p')
                                      .detach().appendTo('#mainfilter > .right');
+});
+
+
+$(window).on('detailmap:ready', function (e, data) {
+    var map = data.map,
+        layer = data.layer,
+        DETAIL_STYLE = window.SETTINGS.map.styles.detail;
+
+    // Show start and end
+    layer.eachLayer(function (layer) {
+        if (layer instanceof L.MultiPolyline)
+            return;
+        if (typeof layer.getLatLngs != 'function')  // points
+            return;
+
+        // Show start and end markers (similar to edition)
+        var _iconUrl = window.SETTINGS.urls.static + "core/images/marker-";
+        L.marker(layer.getLatLngs()[0], {
+            clickable: false,
+            icon: new L.Icon.Default({iconUrl: _iconUrl + "source.png"})
+        }).addTo(map);
+        L.marker(layer.getLatLngs().slice(-1)[0], {
+            clickable: false,
+            icon: new L.Icon.Default({iconUrl: _iconUrl + "target.png"})
+        }).addTo(map);
+
+        // Also add line orientation
+        layer.setText('>     ', {repeat: true,
+                                 offset: DETAIL_STYLE.weight,
+                                 attributes: {'fill': DETAIL_STYLE.arrowColor,
+                                              'font-size': DETAIL_STYLE.arrowSize}});
+    });
 });
