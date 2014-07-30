@@ -26,6 +26,9 @@
         MapEntity.i18n['Add a point of reference'] = "{% trans "Add a point of reference" %}";
         MapEntity.i18n['Move points of reference'] = "{% trans "Move points of reference" %}";
         MapEntity.i18n['Delete a point of reference'] = "{% trans "Delete a point of reference" %}";
+        MapEntity.i18n['Set the parking location'] = "{% trans "Set the parking location" %}";
+        MapEntity.i18n['Move the parking location'] = "{% trans "Move the parking location" %}";
+        MapEntity.i18n['Delete the parking location'] = "{% trans "Delete the parking location" %}";
 
         $(document).ready(function() {
             // TODO: do this with crispyforms !
@@ -52,25 +55,8 @@
 
             // Tab changed
             $('.nav-tabs a').on('shown', function (e) {
-
                 // Recompute scrollable panels
                 $(window).trigger('resize');
-
-                // Initialize parking map view based on main map
-                if (e.target.getAttribute('href') == '#advanced') {
-                    var parkingMap = window.maps[0],
-                        topoMap =  window.maps[1];
-                    console.assert(parkingMap._container.getAttribute('id'), 'map_parking_location');
-                    // Force redraw
-                    parkingMap.invalidateSize();
-                    // Synchronize map center of parking from topology
-                    topoMap.on('move', function () {
-                        parkingMap.setView(topoMap.getCenter(), topoMap.getZoom());
-                    });
-                    setTimeout(function() {
-                        topoMap.fire('move');
-                    }, 300);
-                }
             })
         });
     </script>

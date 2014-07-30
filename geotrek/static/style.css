@@ -103,10 +103,6 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
 
 /* Trek form */
 
-#id_parking_location_map {
-    min-height: 400px;
-}
-
 #add_id_web_links {
     margin-top: -20px;
     margin-left: 10px;
@@ -233,4 +229,20 @@ body.screamshot #altitudegraph {
     background-image: url(trekking/point_reference_widget.png);
     background-position: 0px 0px, center;
     background-size: cover;
+}
+
+
+.leaflet-marker-icon.parking-location {
+    background-image: url(trekking/parking.png);
+    background-size: cover;
+    width: 20px !important;
+    height: 20px !important;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+.leaflet-draw.id_parking_location .leaflet-draw-draw-marker {
+    background-image: url(trekking/parking.png);
+    background-position: 5px 5px, center;
+    background-size: 15px;
 }
