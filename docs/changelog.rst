@@ -21,6 +21,7 @@ CHANGELOG
 * Fix history entries not being saved when using formsets (fixes #1139)
 * Fix postal code being saved as integer (fixes #1138). Existing records
   will have a leading zero when shorter than 5 charaters.
+* Fix bug when form of intervention on infrastracture is not valid
 
 
 0.24.3 (2014-06-27)

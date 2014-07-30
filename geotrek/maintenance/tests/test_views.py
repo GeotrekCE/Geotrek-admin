@@ -93,6 +93,25 @@ class InterventionViewsTest(CommonTest):
         response = self.client.post(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk, data)
         self.assertEqual(response.status_code, 302)
 
+    def test_creation_form_on_infrastructure_with_errors(self):
+        self.login()
+
+        infra = InfrastructureFactory.create()
+        infrastr = u"%s" % infra
+
+        response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, infrastr)
+        form = response.context['form']
+        self.assertEqual(form.initial['infrastructure'], infra)
+        data = self.get_good_data()
+        data['infrastructure'] = infra.pk
+
+        # If form invalid, it should not fail
+        data.pop('status')
+        response = self.client.post(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk, data)
+        self.assertEqual(response.status_code, 200)
+
     def test_update_form_on_infrastructure(self):
         self.login()
 
