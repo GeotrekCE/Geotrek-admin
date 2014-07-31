@@ -228,6 +228,14 @@ class TrekDocumentPublic(TrekDocument):
         context['trek'] = trek
         context['mapimage_ratio'] = trek.get_map_image_size()
 
+        if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
+            desks_list = list(trek.information_desks.all())
+            trek, 'information_desks', desks_list[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT])
+
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois_list = list(trek.pois)
+            setattr(trek, 'pois', pois_list[:settings.TREK_EXPORT_POI_LIST_LIMIT])
+
         #
         # POIs enumeration, like shown on the map
         # https://github.com/makinacorpus/Geotrek/issues/871
