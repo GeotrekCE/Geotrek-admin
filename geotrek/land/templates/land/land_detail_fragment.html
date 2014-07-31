@@ -1,4 +1,4 @@
-{% load i18n geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags %}
 
 {% is_topology_model model as is_topology_model %}
 
@@ -13,7 +13,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add land edge" %}</a>
             </p>
             {% endif %}
-            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.land_edges %}
+
+            {% valuelist object.land_edges field='land_type' %}
         </td>
     </tr>
     {% endif %}
@@ -27,7 +28,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add physical edge" %}</a>
             </p>
             {% endif %}
-            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.physical_edges %}
+
+            {% valuelist object.physical_edges field='physical_type' %}
         </td>
     </tr>
     {% endif %}
@@ -41,7 +43,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add competence edge" %}</a>
             </p>
             {% endif %}
-            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.competence_edges %}
+
+            {% valuelist object.competence_edges field='organization' %}
         </td>
     </tr>
     {% endif %}
@@ -55,7 +58,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add work management edge" %}</a>
             </p>
             {% endif %}
-            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.work_edges %}
+
+            {% valuelist object.work_edges field='organization' %}
         </td>
     </tr>
     {% endif %}
@@ -69,7 +73,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add signage management edge" %}</a>
             </p>
             {% endif %}
-            {% include "common/_detail_valuelist_fragment.html" with valuelist=object.signage_edges %}
+
+            {% valuelist object.signage_edges field='organization' %}
         </td>
     </tr>
     {% endif %}

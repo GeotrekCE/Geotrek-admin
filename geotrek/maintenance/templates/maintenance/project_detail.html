@@ -56,7 +56,7 @@
         <tr>
             <th>{{ project|verbose:"contractors" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=project.contractors.all %}
+                {% valuelist project.contractors.all %}
             </td>
         </tr>
         <tr>
