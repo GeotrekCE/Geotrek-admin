@@ -12,6 +12,7 @@ CHANGELOG
 * Added notion of points of reference for treks (fixes #1105).
   (Can be disabled with ``TREK_POINTS_OF_REFERENCE_ENABLED = False``)
 * Edit the parking location directly on the trek map (ref #387)
+* Show enumeration of POIs in trek PDF exports (fixes #871)
 
 **BUG fixes**
 
