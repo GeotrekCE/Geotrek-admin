@@ -316,6 +316,24 @@ msgstr "POIs"
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
+msgid "Add a point of reference"
+msgstr "Ajouter un point de référence"
+
+msgid "Move points of reference"
+msgstr "Déplacer un point de référence"
+
+msgid "Delete a point of reference"
+msgstr "Supprimer un point de référence"
+
+msgid "Set the parking location"
+msgstr "Définir l'emplacement du parking"
+
+msgid "Move the parking location"
+msgstr "Déplacer l'emplacement du parking"
+
+msgid "Delete the parking location"
+msgstr "Supprimer l'emplacement du parking"
+
 #, python-format
 msgid "More than %s days"
 msgstr "Plus de %s jours"

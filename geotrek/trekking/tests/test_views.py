@@ -9,10 +9,11 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.template.loader import find_template
+from django.test.utils import override_settings
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -227,7 +228,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
                               u'name': u'information desk name 0',
                               u'phone': u'01 02 03 0',
                               u'photo_url': self.information_desk.photo_url,
-                              u'postal_code': 28300,
+                              u'postal_code': u'28300',
                               u'street': u'0 baker street',
                               u'municipality': u"Bailleau L'évêque-0",
                               u'website': u'http://makina-corpus.com/0'})
@@ -297,6 +298,37 @@ class TrekCustomViewTests(TrekkingManagerTest):
         url = reverse('trekking:weblink_add')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+
+class TrekPointsReferenceTest(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+
+        self.trek = TrekFactory.create()
+        self.trek.points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
+        self.trek.save()
+
+    def test_points_reference_editable_as_hidden_input(self):
+        url = self.trek.get_update_url()
+        response = self.client.get(url)
+        self.assertContains(response, 'name="points_reference"')
+
+    @override_settings(TREK_POINTS_OF_REFERENCE_ENABLED=False)
+    def test_points_reference_is_marked_as_disabled_when_disabled(self):
+        url = self.trek.get_update_url()
+        response = self.client.get(url)
+        self.assertNotContains(response, 'name="points_reference"')
+
+    def test_points_reference_are_exported_in_json_detail(self):
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        detailjson = json.loads((self.client.get(url)).content)
+        self.assertIsNotNone(detailjson['points_reference'])
+
+    def test_points_reference_are_exported_in_wgs84(self):
+        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        detailjson = json.loads((self.client.get(url)).content)
+        geojson = detailjson['points_reference']
+        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
 
 class TrekGPXTest(TrekkingManagerTest):

@@ -6,8 +6,8 @@ import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
-from mapentity.widgets import SelectMultipleWithPop
 from leaflet.forms.widgets import LeafletWidget
+from mapentity.widgets import MapWidget, SelectMultipleWithPop
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -38,6 +38,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['topology'].widget = LineTopologyWidget()
+            self.fields['points_reference'].label = ''
+            self.fields['points_reference'].widget.target_map = 'topology'
+            self.fields['parking_location'].label = ''
+            self.fields['parking_location'].widget.target_map = 'topology'
 
         class Meta(TopologyForm.Meta):
             model = Trek
@@ -49,6 +53,10 @@ else:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['points_reference'].label = ''
+            self.fields['points_reference'].widget.target_map = 'geom'
+            self.fields['parking_location'].label = ''
+            self.fields['parking_location'].widget.target_map = 'geom'
 
         class Meta(CommonForm.Meta):
             model = Trek
@@ -87,6 +95,7 @@ class TrekForm(BaseTrekForm):
                     css_class="scrollable tab-pane active"
                 ),
                 Div(
+                    'points_reference',
                     'disabled_infrastructure',
                     'advised_parking',
                     'parking_location',
@@ -114,6 +123,14 @@ class TrekForm(BaseTrekForm):
         # Make sure (force) that name is required, in default language only
         self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
 
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop('points_reference')
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
+
+        self.fields['parking_location'].widget.geometry_field_class = 'ParkingLocationField'
+
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'usages',
                   'web_links', 'information_desks']:
@@ -139,7 +156,7 @@ class TrekForm(BaseTrekForm):
         fields = BaseTrekForm.Meta.fields + \
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
-             'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
+             'points_reference', 'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
              'themes', 'networks', 'usages', 'web_links', 'information_desks']
 
 

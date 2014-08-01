@@ -14,6 +14,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, JSONResponseMixin, DocumentConvert)
 from mapentity.serializers import plain_text
+from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 
 from geotrek.core.views import CreateFromTopologyMixin
@@ -81,7 +82,7 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                'web_links', 'is_park_centered', 'disabled_infrastructure',
                'parking_location', 'thumbnail', 'pictures',
                'cities', 'districts', 'relationships', 'map_image_url',
-               'elevation_area_url']
+               'elevation_area_url', 'points_reference']
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -94,7 +95,9 @@ class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
                                  getattr(self.object, fname))
 
         trek = self.get_object()
+
         ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
+
         ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
         ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
         ctx['filelist_url'] = reverse('get_attachments',
@@ -224,6 +227,16 @@ class TrekDocumentPublic(TrekDocument):
         context['object'] = trek
         context['trek'] = trek
         context['mapimage_ratio'] = trek.get_map_image_size()
+
+        #
+        # POIs enumeration, like shown on the map
+        # https://github.com/makinacorpus/Geotrek/issues/871
+        enumeration = {}
+        letters = alphabet_enumeration(len(trek.pois))
+        for i, p in enumerate(trek.pois):
+            enumeration[p.pk] = letters[i]
+        context['enumeration'] = enumeration
+
         return context
 
     def render_to_response(self, context, **response_kwargs):

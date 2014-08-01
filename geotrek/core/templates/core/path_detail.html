@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n static field_verbose_name %}
+{% load i18n static mapentity_tags %}
 
 {% block detailspanel %}
     {% if not path.valid %}
@@ -41,12 +41,12 @@
         <tr>
             <th>{{ path|verbose:"usages" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.usages.all %}
+                {% valuelist object.usages.all %}
             </td>
         </tr><tr>
             <th>{{ path|verbose:"networks" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=object.networks.all %}
+                {% valuelist object.networks.all %}
             </td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}

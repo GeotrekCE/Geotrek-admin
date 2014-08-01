@@ -23,12 +23,12 @@ class FormsetMixin(object):
         formset_form = context[self.context_name]
 
         if formset_form.is_valid():
-            self.object = form.save()
+            response = super(FormsetMixin, self).form_valid(form)
             formset_form.instance = self.object
             formset_form.save()
-            return HttpResponseRedirect(self.get_success_url())
         else:
-            return self.render_to_response(self.get_context_data(form=form))
+            response = self.form_invalid(form)
+        return response
 
     def get_context_data(self, **kwargs):
         context = super(FormsetMixin, self).get_context_data(**kwargs)

@@ -1,4 +1,4 @@
-{% load i18n geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags %}
 
 {% if modelname != "intervention" %}
 
@@ -13,6 +13,7 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
             </p>
             {% endif %}
+
             {% if modelname == "infrastructure" or modelname == "signage" %}
                 {% include "maintenance/intervention_list_fragment.html" with interventions=object.interventions_set.existing %}
             {% elif modelname == "project" %}

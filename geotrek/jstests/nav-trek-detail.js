@@ -14,6 +14,12 @@ casper.test.begin('Trek detail page', function(test) {
 
     casper.then(function () {
         test.pass('POI are shown on the map.');
+
+        casper.waitForSelector(".leaflet-marker-icon.point-reference");
+    });
+
+    casper.then(function () {
+        test.pass('Points of reference are shown on the map.');
     });
 
     casper.run(function done() {

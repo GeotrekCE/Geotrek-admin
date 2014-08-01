@@ -3,13 +3,13 @@ var utils = require('./_nav-utils.js');
 casper.test.begin('Data sources can be added to the map', function(test) {
 
     casper.start(utils.baseurl + '/trek/list/', function(response) {
-        casper.waitForText('OSM - ');
+        casper.waitForText('OSM - Refug');
     });
 
     casper.then(function () {
         test.pass('Data sources are present in layer switcher');
 
-        casper.click('.leaflet-control-layers-overlays label:last-child');
+        casper.click('#leaflet-control-layers-group-4 input.leaflet-control-layers-selector');
 
         casper.waitForSelector('.leaflet-marker-pane .leaflet-marker-icon');
     });

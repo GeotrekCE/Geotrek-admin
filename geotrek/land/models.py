@@ -49,15 +49,15 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
     @property
     def physical_type_display(self):
-        return self.display
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.physical_type
+        )
 
     @property
     def physical_type_csv_display(self):
         return unicode(self.physical_type)
-
-    @property
-    def display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.physical_type)
 
     @classmethod
     def path_physicals(cls, path):
@@ -113,15 +113,15 @@ class LandEdge(MapEntityMixin, Topology):
 
     @property
     def land_type_display(self):
-        return self.display
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.land_type
+        )
 
     @property
     def land_type_csv_display(self):
         return unicode(self.land_type)
-
-    @property
-    def display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.land_type)
 
     @classmethod
     def path_lands(cls, path):
@@ -163,15 +163,15 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return self.display
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.organization
+        )
 
     @property
     def organization_csv_display(self):
         return unicode(self.organization)
-
-    @property
-    def display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
 
     @classmethod
     def path_competences(cls, path):
@@ -213,15 +213,15 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return self.display
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.organization
+        )
 
     @property
     def organization_csv_display(self):
         return unicode(self.organization)
-
-    @property
-    def display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
 
     @classmethod
     def path_works(cls, path):
@@ -263,15 +263,15 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return self.display
+        return u'<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.organization
+        )
 
     @property
     def organization_csv_display(self):
         return unicode(self.organization)
-
-    @property
-    def display(self):
-        return u'<a data-pk="%s" href="%s" >%s</a>' % (self.pk, self.get_detail_url(), self.organization)
 
     @classmethod
     def path_signages(cls, path):

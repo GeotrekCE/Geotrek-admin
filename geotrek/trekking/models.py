@@ -3,6 +3,7 @@ import logging
 import shutil
 import datetime
 import re
+import json
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -174,6 +175,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
+    points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
+                                              srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -385,6 +388,13 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         return self.parking_location.transform(settings.API_SRID, clone=True).coords
 
     @property
+    def serializable_points_reference(self):
+        if not self.points_reference:
+            return None
+        geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
+
+    @property
     def name_display(self):
         s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                               self.get_detail_url(),
@@ -517,6 +527,15 @@ class TrekRelationship(models.Model):
 
     def __unicode__(self):
         return u"%s <--> %s" % (self.trek_a, self.trek_b)
+
+    @property
+    def relation_display(self):
+        return u"%s %s%s%s" % (
+                self.trek_b.name_display,
+                _("Departure") if self.has_common_departure else '',
+                _("Path") if self.has_common_edge else '',
+                _("Circuit") if self.is_circuit_step else ''
+            )
 
 
 class PictogramMixin(models.Model):
@@ -711,8 +730,8 @@ class InformationDesk(models.Model):
 
     street = models.CharField(verbose_name=_(u"Street"), max_length=256,
                               blank=True, null=True, db_column='rue')
-    postal_code = models.IntegerField(verbose_name=_(u"Postal code"),
-                                      blank=True, null=True, db_column='code')
+    postal_code = models.CharField(verbose_name=_(u"Postal code"), max_length=8,
+                                   blank=True, null=True, db_column='code')
     municipality = models.CharField(verbose_name=_(u"Municipality"),
                                     blank=True, null=True,
                                     max_length=256, db_column='commune')

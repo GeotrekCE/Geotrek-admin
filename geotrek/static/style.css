@@ -54,7 +54,7 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('mapentity/images/marker-source.png');
+    background-image: url('core/images/marker-source.png');
 }
 
 .marker-drag {
@@ -77,7 +77,7 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('mapentity/images/marker-target.png');
+    background-image: url('core/images/marker-target.png');
 }
 
 .marker-source.marker-snapped {
@@ -102,10 +102,6 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
 }
 
 /* Trek form */
-
-#id_parking_location_map {
-    min-height: 400px;
-}
 
 #add_id_web_links {
     margin-top: -20px;
@@ -214,4 +210,39 @@ body.screamshot #altitudegraph {
 
 .poi-marker-icon img {
     max-width: 100% !important;
+}
+
+.leaflet-marker-icon.point-reference {
+    background-color: red;
+    border-radius: 50px;
+    width: 20px !important;
+    height: 20px !important;
+    margin-left: -10px;
+    margin-top: -10px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.leaflet-draw.id_points_reference .leaflet-draw-draw-marker {
+    background-image: url(trekking/point_reference_widget.png);
+    background-position: 0px 0px, center;
+    background-size: cover;
+}
+
+
+.leaflet-marker-icon.parking-location {
+    background-image: url(trekking/parking.png);
+    background-size: cover;
+    width: 20px !important;
+    height: 20px !important;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+.leaflet-draw.id_parking_location .leaflet-draw-draw-marker {
+    background-image: url(trekking/parking.png);
+    background-position: 5px 5px, center;
+    background-size: 15px;
 }

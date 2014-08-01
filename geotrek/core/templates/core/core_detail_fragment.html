@@ -1,22 +1,25 @@
-{% load i18n geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags %}
 
 <h3>{% trans "Management" %}</h3>
 <table class="table">
 
-{% if modelname != "path" %}
-    {% if object.topology %}
+  {% if modelname != "path" %}
+  <tr>
+    <th>{% trans "Paths" %}</th>
+    <td class="paths">
+      {% if object.topology %}
         {% include "core/aggregations_list_fragment.html" with object=object.topology %}
-    {% elif object.aggregations %}
+      {% elif object.aggregations %}
         {% include "core/aggregations_list_fragment.html" %}
-    {% elif object.paths %}
-        {% include "core/paths_list_fragment.html" %}
-    {% else %}
+      {% else %}
         <span class="none">{% trans "No information" %}</span>
-    {% endif %}
-{% endif %}
+      {% endif %}
+    </td>
+  </tr>
+  {% endif %}
 
-{% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
-{% if trail_enabled and modelname != "trail" %}
+  {% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
+  {% if trail_enabled and modelname != "trail" %}
     <tr>
         <th>{% trans "Trails" %}</th>
         <td>
@@ -26,15 +29,10 @@
                     <i class="icon-plus icon-white"></i> {% trans "Add a new trail" %}</a>
                 </p>
             {% endif %}
-            {% for t in object.trails %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li><a href="{{ t.get_detail_url }}">{{ t.name_display|safe }}</a></li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+
+            {% valuelist object.trails field='name' %}
         </td>
     </tr>
-{% endif %}
+  {% endif %}
 
 </table>
