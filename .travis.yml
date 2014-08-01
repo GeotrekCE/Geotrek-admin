@@ -25,7 +25,7 @@ before_install:
   # GDAL-fix -- Do not install GDAL from install script
   - sed -i "s/gdal-bin//" install.sh
   - sed -i "s/libgdal-dev//" install.sh
-  - sed -i "s/GDAL==.*/GDAL==1.9.0/" conf/buildout.cfg
+  - sed -i "s/GDAL=.*/GDAL=1.9.0/" conf/buildout.cfg
   # GDAL-fix -- Do not install postgis locally, trick test on host
   - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
   # GDAL-fix -- Use Travis PostGIS, initialize DB
