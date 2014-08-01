@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+0.25.1 (2014-08-01)
+-------------------
+
+**Bug fixes**
+
+* Fix Geotrek CSS not being deployed properly
+* Fix trek relationships causing errors for PDF export
+
+
 0.25.0 (2014-08-01)
 -------------------
 
