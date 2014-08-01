@@ -12,6 +12,7 @@ CHANGELOG
 * Added notion of points of reference for treks (fixes #1105).
   (Can be disabled with ``TREK_POINTS_OF_REFERENCE_ENABLED = False``)
 * Edit the parking location directly on the trek map (ref #387)
+* Show enumeration of POIs in trek PDF exports (fixes #871)
 
 **BUG fixes**
 
@@ -21,6 +22,17 @@ CHANGELOG
 * Fix history entries not being saved when using formsets (fixes #1139)
 * Fix postal code being saved as integer (fixes #1138). Existing records
   will have a leading zero when shorter than 5 charaters.
+* Fix bug when form of intervention on infrastracture is not valid
+* Limit height of layer switcher on small screens (fixes #1136)
+* Get rid of next parameter when redirecting to login when permission missing (fixes #1142)
+* Fix apparence of main menu when permissions are missing to view logbook and admin (ref #1142)
+
+**Internal changes**
+
+* Rework display of lists in detail pages, better factorization
+* Removed links in logbook list for certain models
+* Display messages in login page too (useful for redirections)
+Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 
 0.24.3 (2014-06-27)

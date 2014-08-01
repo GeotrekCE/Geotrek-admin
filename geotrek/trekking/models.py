@@ -528,6 +528,15 @@ class TrekRelationship(models.Model):
     def __unicode__(self):
         return u"%s <--> %s" % (self.trek_a, self.trek_b)
 
+    @property
+    def relation_display(self):
+        return u"%s %s%s%s" % (
+                self.trek_b.name_display,
+                _("Departure") if self.has_common_departure else '',
+                _("Path") if self.has_common_edge else '',
+                _("Circuit") if self.is_circuit_step else ''
+            )
+
 
 class PictogramMixin(models.Model):
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,

@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n l10n static geojson_tags trekking_tags field_verbose_name thumbnail %}
+{% load i18n l10n static geojson_tags trekking_tags mapentity_tags thumbnail %}
 
 
 {% block download %}
@@ -118,53 +118,43 @@
         <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.themes.all %}
+                {% valuelist trek.themes.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"usages" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.usages.all %}
+                {% valuelist trek.usages.all %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.networks.all %}
+                {% valuelist trek.networks.all %}
             </td>
         </tr>
         <tr>
             <th>{% trans "Related treks" %}</th>
             <td>
-                {% for rs in trek.relationships.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>{{ rs.trek_b.name_display|safe }}
-                    {% if rs.has_common_departure %}{% trans "Departure" %}, {% endif %}
-                    {% if rs.has_common_edge %}{% trans "Path" %}, {% endif %}
-                    {% if rs.is_circuit_step %}{% trans "Circuit" %}, {% endif %}
-                    </li>
-                    {% if forloop.last %}</ul>{% endif %}
-                {% empty %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endfor %}
+                {% valuelist trek.relationships.all field='relation' %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"web_links" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.web_links.all %}
+                {% valuelist trek.web_links.all %}
             </td>
         </tr>
         <tr>
             <th>{% trans "POI types" %}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.poi_types %}
+                {% valuelist trek.poi_types %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"information_desks" }}</th>
             <td>
-                {% include "common/_detail_valuelist_fragment.html" with valuelist=trek.information_desks.all %}
+                {% valuelist trek.information_desks.all %}
             </td>
         </tr>
         <tr>
@@ -237,6 +227,8 @@
                 });
                 map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));
                 map.addLayer(pois);
+
+                pois.showEnumeration();
             });
 
             //

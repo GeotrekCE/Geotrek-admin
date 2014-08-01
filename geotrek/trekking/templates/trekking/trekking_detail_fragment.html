@@ -1,4 +1,4 @@
-{% load i18n geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags %}
 <h3>{% trans "Trekking" %}</h3>
 <table class="table">
     {% if modelname != "trek" %}
@@ -11,13 +11,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add a new trek" %}</a>
             </p>
             {% endif %}
-            {% for t in object.treks %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ t.name_display|safe }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+
+            {% valuelist object.treks field='name' %}
         </td>
     </tr>
     {% endif %}
@@ -31,13 +26,13 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add a new POI" %}</a>
             </p>
             {% endif %}
-            {% for p in object.pois %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ p.name_display|safe }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+
+            {% if modelname == "trek" %}
+                {# Because, in trek detail, we show enumeration on POI layer #}
+                {% valuelist object.pois field='name' enumeration=True %}
+            {% else %}
+                {% valuelist object.pois field='name' %}
+            {% endif %}
         </td>
     </tr>
     {% endif %}

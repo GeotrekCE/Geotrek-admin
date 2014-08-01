@@ -388,6 +388,7 @@ LEAFLET_CONFIG = {
     'NO_GLOBALS': False,
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
+                           'core/leaflet.textpath.js',
                            'trekking/points_reference.js',
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',

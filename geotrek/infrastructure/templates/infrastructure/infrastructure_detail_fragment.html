@@ -1,4 +1,4 @@
-{% load i18n geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags %}
 <h3>{% trans "Infrastructure" %}</h3>
 <table class="table">
     {% if modelname != "infrastructure" %}
@@ -11,13 +11,8 @@
                     <i class="icon-plus icon-white"></i> {% trans "Add a new infrastructure" %}</a>
                 </p>
             {% endif %}
-            {% for i in object.infrastructures %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ i.name_display|safe }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+
+            {% valuelist object.infrastructures field='name' %}
         </td>
     </tr>
     {% endif %}
@@ -31,13 +26,8 @@
                 <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
             </p>
             {% endif %}
-            {% for s in object.signages %}
-                {% if forloop.first %}<ul>{% endif %}
-                <li>{{ s.name_display|safe }}</li>
-                {% if forloop.last %}</ul>{% endif %}
-            {% empty %}
-                <span class="none">{% trans "None" %}</span>
-            {% endfor %}
+
+            {% valuelist object.signages field='name' %}
         </td>
     </tr>
     {% endif %}

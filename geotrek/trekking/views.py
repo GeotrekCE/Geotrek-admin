@@ -14,6 +14,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, JSONResponseMixin, DocumentConvert)
 from mapentity.serializers import plain_text
+from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 
 from geotrek.core.views import CreateFromTopologyMixin
@@ -226,6 +227,16 @@ class TrekDocumentPublic(TrekDocument):
         context['object'] = trek
         context['trek'] = trek
         context['mapimage_ratio'] = trek.get_map_image_size()
+
+        #
+        # POIs enumeration, like shown on the map
+        # https://github.com/makinacorpus/Geotrek/issues/871
+        enumeration = {}
+        letters = alphabet_enumeration(len(trek.pois))
+        for i, p in enumerate(trek.pois):
+            enumeration[p.pk] = letters[i]
+        context['enumeration'] = enumeration
+
         return context
 
     def render_to_response(self, context, **response_kwargs):

@@ -54,7 +54,7 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('mapentity/images/marker-source.png');
+    background-image: url('core/images/marker-source.png');
 }
 
 .marker-drag {
@@ -77,7 +77,7 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('mapentity/images/marker-target.png');
+    background-image: url('core/images/marker-target.png');
 }
 
 .marker-source.marker-snapped {

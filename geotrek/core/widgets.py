@@ -99,5 +99,6 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
         topology = value
         if isinstance(topology, (six.string_types, int)):
             topology = self.deserialize(topology)
-        context = {'object': topology.geom, 'mapname': name}
+        geom = topology.geom if topology else None  # if form invalid
+        context = {'object': geom, 'mapname': name}
         return loader.render_to_string(self.template_name, context)
