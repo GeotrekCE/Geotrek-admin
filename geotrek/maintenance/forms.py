@@ -8,7 +8,6 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
-from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.infrastructure.models import BaseInfrastructure
 

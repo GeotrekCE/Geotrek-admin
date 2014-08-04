@@ -306,7 +306,7 @@ class ManDay(models.Model):
 
     nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6, db_column='nb_jours')
     intervention = models.ForeignKey(Intervention, db_column='intervention')
-    job = models.ForeignKey(InterventionJob, db_column='fonction')
+    job = models.ForeignKey(InterventionJob, verbose_name=_(u"Job"), db_column='fonction')
 
     class Meta:
         db_table = 'm_r_intervention_fonction'

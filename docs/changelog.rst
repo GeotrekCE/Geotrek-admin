@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.25.2 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix translation of Job in intervention form (fixes #1090)
+
+
 0.25.1 (2014-08-01)
 -------------------
 
