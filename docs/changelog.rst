@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix translation of Job in intervention form (fixes #1090)
+* Fix form error when no geometry is provided (fixes #1082)
 
 
 0.25.1 (2014-08-01)
