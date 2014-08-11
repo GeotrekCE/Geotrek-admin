@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix translation of Job in intervention form (fixes #1090)
 * Fix form error when no geometry is provided (fixes #1082)
+* Show attachments in adminsite (fixes #1162)
 
 
 0.25.1 (2014-08-01)
