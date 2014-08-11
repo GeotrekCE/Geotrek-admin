@@ -2,7 +2,13 @@
 CHANGELOG
 =========
 
-0.25.2 (unreleased)
+0.26.0 (unreleased)
+-------------------
+
+* Nothing changed yet.
+
+
+0.25.2 (2014-08-11)
 -------------------
 
 **Bug fixes**
