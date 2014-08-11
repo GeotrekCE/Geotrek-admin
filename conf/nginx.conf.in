@@ -1,3 +1,5 @@
+proxy_cache_path ${parts['django'].deployroot}/var/nginxcache/ keys_zone=${options.cachename}:10m;
+
 upstream app_server {
     server ${parts['gunicorn-app-conf'].bind} fail_timeout=0;
 }
@@ -13,12 +15,25 @@ upstream tile_server {
 {% end %}
 
 server {
-    listen ${options.port} default;
-    server_name _;
-    access_log ${options.accesslog};
-    error_log ${options.errorlog};
+    listen ${options.port} {% if options.default in ['True', 'true'] %} default {% end %};
+    server_name ${options.server_name};
+    {% for h in [a for a in options.server_aliases.strip().split() if a.strip()]%ZZ}
+    server_alias ${h};
+    {% end %}
+    server_name_in_redirect on;
+
+
+    {% if options.real_ip.strip() %}
+    set_real_ip_from  ${options.real_ip.strip()};
+    real_ip_header X-Forwarded-For;
+    {% end %}
+
+    access_log ${options.accesslog} ${options.logformat};
+    error_log ${options.errorlog} ${options.level};
 
     client_max_body_size 10M;
+
+    include ${parts['django'].deployroot}/etc/nginx.d/*.conf;
 
     location ${parts['django'].staticurl[:-1]} {
         expires ${options.expiretime};

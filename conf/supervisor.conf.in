@@ -5,7 +5,7 @@ stop on stopping networking
 stop on starting shutdown
 
 setuid ${parts['buildout'].user}
-setgid ${parts['buildout'].user}
+setgid ${parts['buildout'].group}
 
 exec ${parts['buildout'].directory}/bin/supervisord --nodaemon
 

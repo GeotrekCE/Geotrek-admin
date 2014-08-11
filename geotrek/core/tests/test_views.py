@@ -81,6 +81,13 @@ class PathViewsTest(CommonTest):
         self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 
+    def test_path_form_is_not_valid_if_no_geometry_provided(self):
+        self.login()
+        data = self.get_good_data()
+        data['geom'] = ''
+        response = self.client.post(Path.get_add_url(), data)
+        self.assertEqual(response.status_code, 200)
+
     def test_manager_can_delete(self):
         self.login()
         path = PathFactory()

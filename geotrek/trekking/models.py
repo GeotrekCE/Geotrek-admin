@@ -529,13 +529,17 @@ class TrekRelationship(models.Model):
         return u"%s <--> %s" % (self.trek_a, self.trek_b)
 
     @property
-    def relation_display(self):
+    def relation(self):
         return u"%s %s%s%s" % (
                 self.trek_b.name_display,
                 _("Departure") if self.has_common_departure else '',
                 _("Path") if self.has_common_edge else '',
                 _("Circuit") if self.is_circuit_step else ''
             )
+
+    @property
+    def relation_display(self):
+        return self.relation
 
 
 class PictogramMixin(models.Model):

@@ -2,7 +2,26 @@
 CHANGELOG
 =========
 
-0.25.0 (unreleased)
+0.25.2 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix translation of Job in intervention form (fixes #1090)
+* Fix form error when no geometry is provided (fixes #1082)
+* Show attachments in adminsite (fixes #1162)
+
+
+0.25.1 (2014-08-01)
+-------------------
+
+**Bug fixes**
+
+* Fix Geotrek CSS not being deployed properly
+* Fix trek relationships causing errors for PDF export
+
+
+0.25.0 (2014-08-01)
 -------------------
 
 **New features**

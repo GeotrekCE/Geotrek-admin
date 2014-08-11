@@ -19,14 +19,14 @@ setup(
         'psycopg2 == 2.4.1',
         'docutils == 0.11',
         'GDAL',  # pinned and installed by buildout, see include-dirs
-        'Pillow == 1.7.8',
+        'Pillow >= 1.7.8',
         'easy-thumbnails == 1.4',
         'simplekml == 1.2.1',
         'pygal',
         'django-extended-choices == 0.3.0',
         'django-multiselectfield == 0.1.1',
-        'tif2geojson == 0.1.3',
         'geojson',
+        'tif2geojson',  # pinned by buildout
         'mapentity',  # pinned by buildout
     ],
     license='BSD, see LICENSE file.',

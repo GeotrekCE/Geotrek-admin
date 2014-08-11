@@ -35,9 +35,10 @@ class SnappedLineStringWidget(MapWidget):
         return json.dumps(value)
 
     def deserialize(self, value):
-        value = json.loads(value)
-        value = value['geom']
-        value = json.dumps(value)
+        if isinstance(value, six.string_types) and value:
+            value = json.loads(value)
+            value = value['geom']
+            value = json.dumps(value)
         return super(SnappedLineStringWidget, self).deserialize(value)
 
 
