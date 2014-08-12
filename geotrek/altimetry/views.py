@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
+from mapentity.decorators import view_cache_response_content
 from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
 
@@ -47,7 +48,20 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
 class ElevationArea(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     """Extract elevation profile on an area and return it as JSON"""
 
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        obj = self.get_object()
+        return 'altimetry_dem_area_%s' % obj.pk
+
+    def latest_updated(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        obj = self.get_object()
+        return obj.date_update
+
     @method_decorator(login_required)
+    @view_cache_response_content()
     def dispatch(self, *args, **kwargs):
         return super(ElevationArea, self).dispatch(*args, **kwargs)
 
