@@ -204,6 +204,10 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
                self.subcontract_cost
 
     @classproperty
+    def total_cost_verbose_name(cls):
+        return _("Total cost")
+
+    @classproperty
     def geomfield(cls):
         return Topology._meta.get_field('geom')
 
