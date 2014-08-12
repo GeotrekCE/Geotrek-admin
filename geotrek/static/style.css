@@ -217,6 +217,24 @@ body.screamshot #altitudegraph {
     display: inline-block;
 }
 
+.details-panel .spacer {
+    /* Intervention list in detail pages ``maintenance_detail_fragment.html``
+       Give space to "Add intervention button".
+    */
+    float: left;
+    height: 35px;
+}
+
+.details-panel th.infrastructure {
+    width: 30px;
+}
+.details-panel th.stake,
+.details-panel th.date,
+.details-panel th.total_cost {
+    width: 60px;
+}
+
+
 .poi-marker-icon img {
     max-width: 100% !important;
 }
