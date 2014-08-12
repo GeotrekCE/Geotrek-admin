@@ -2,7 +2,7 @@
 
 {% for aggr in object.aggregations.all %}
     {% if forloop.first %}<ul>{% endif %}
-    <li title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
+    <li class="hoverable" data-modelname="path" data-pk="{{ aggr.path.pk }}" title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
       <span class="path">{{ aggr.path.name_display|safe }}</span>
       <span class="aggregation">
         {% if forloop.first and object.offset != 0 %}
