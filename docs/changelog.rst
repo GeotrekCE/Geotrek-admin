@@ -9,6 +9,8 @@ CHANGELOG
 * Number of information desks in now limited to 2 items in trek export (ref #1120).
   See settings ``TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT`` and ``TREK_EXPORT_POI_LIST_LIMIT``
 * Justify texts of POIs in trek export, now converted to plain text.
+* Trek export geometries are now translucid red by default (see ``MAP_STYLES`` setting) (ref #1120)
+
 
 0.25.2 (2014-08-11)
 -------------------

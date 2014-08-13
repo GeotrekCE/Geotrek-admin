@@ -422,6 +422,11 @@ MAP_STYLES = {
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+    'print':  {
+        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                 'arrowColor': 'black', 'arrowSize': 10},
+    }
 }
 
 

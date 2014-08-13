@@ -87,6 +87,11 @@ $(window).on('detailmap:ready', function (e, data) {
         layer = data.layer,
         DETAIL_STYLE = window.SETTINGS.map.styles.detail;
 
+    if (data.context && data.context.print) {
+        var specified = window.SETTINGS.map.styles.print[data.modelname];
+        DETAIL_STYLE = L.Util.extend(DETAIL_STYLE, specified || {});
+    }
+
     // Show start and end
     layer.eachLayer(function (layer) {
         if (layer instanceof L.MultiPolyline)
