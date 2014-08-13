@@ -5,7 +5,9 @@ CHANGELOG
 0.26.0 (unreleased)
 -------------------
 
-* Nothing changed yet.
+* Number of POIs in now limited to 14 items in trek export (ref #1120)
+* Number of information desks in now limited to 2 items in trek export (ref #1120).
+  See settings ``TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT`` and ``TREK_EXPORT_POI_LIST_LIMIT``
 
 
 0.25.2 (2014-08-11)

@@ -313,8 +313,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         view.kwargs = {}
         view.kwargs[view.pk_url_kwarg] = trek.pk
         context = view.get_context_data()
-        trek_context = context['trek']
-        self.assertEqual(len(trek_context.pois), 1)
+        self.assertEqual(len(context['pois']), 1)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

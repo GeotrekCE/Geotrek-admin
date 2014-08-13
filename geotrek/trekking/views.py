@@ -228,13 +228,15 @@ class TrekDocumentPublic(TrekDocument):
         context['trek'] = trek
         context['mapimage_ratio'] = trek.get_map_image_size()
 
+        information_desks = list(trek.information_desks.all())
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
-            desks_list = list(trek.information_desks.all())
-            trek, 'information_desks', desks_list[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT])
+            information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
+        context['information_desks'] = information_desks
 
+        pois = list(trek.pois)
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
-            pois_list = list(trek.pois)
-            setattr(trek, 'pois', pois_list[:settings.TREK_EXPORT_POI_LIST_LIMIT])
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        context['pois'] = pois
 
         #
         # POIs enumeration, like shown on the map
