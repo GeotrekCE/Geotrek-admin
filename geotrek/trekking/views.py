@@ -223,7 +223,8 @@ class TrekDocumentPublic(TrekDocument):
         trek = self.get_object()
         context['object'] = trek
         context['trek'] = trek
-        context['mapimage_ratio'] = trek.get_map_image_size()
+        context['mapimage_ratio'] = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
 
         information_desks = list(trek.information_desks.all())
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:

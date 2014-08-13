@@ -324,6 +324,7 @@ THUMBNAIL_ALIASES = {
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
         'medium': {'size': (500, 500)},
+        # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
 }
@@ -439,6 +440,8 @@ TREK_PUBLISHED_BY_LANG = True
 TREK_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
+TREK_EXPORT_MAP_IMAGE_SIZE = (14.1, 11)
+TREK_EXPORT_HEADER_IMAGE_SIZE = (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
 
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']
