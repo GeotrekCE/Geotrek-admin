@@ -71,6 +71,16 @@ $(window).on('entity:map', function (e, data) {
         var style = pathsLayer.options.style;
         var nameHTML = '<span style="color: '+ style['color'] + ';">&#9473;</span>&nbsp;' + tr('Paths');
         map.layerscontrol.addOverlay(pathsLayer, nameHTML, tr('Objects'));
+
+        //
+        // Print apparence of paths
+        $(window).on('detailmap:ready', function (e, data) {
+            if ((data.modelname != 'path') &&
+                (data.context && data.context.print)) {
+                var specified = window.SETTINGS.map.styles.print.path;
+                pathsLayer.setStyle(L.Util.extend(pathsLayer.options.style, specified));
+            }
+        });
     }
 });
 

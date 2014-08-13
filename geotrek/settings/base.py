@@ -424,6 +424,7 @@ MAP_STYLES = {
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
 
     'print':  {
+        'path': {'weight': 1},
         'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
                  'arrowColor': 'black', 'arrowSize': 10},
     }
