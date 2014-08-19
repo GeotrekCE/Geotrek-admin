@@ -219,14 +219,29 @@ class TrekDocumentPublic(TrekDocument):
 
     def get_context_data(self, **kwargs):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
-        # Replace HTML text with plain text
+
         trek = self.get_object()
+        context['object'] = trek
+        context['trek'] = trek
+        context['mapimage_ratio'] = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
+
+        information_desks = list(trek.information_desks.all())
+        if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
+            information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
+        context['information_desks'] = information_desks
+
+        pois = list(trek.pois)
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        context['pois'] = pois
+
+        # Replace HTML text with plain text
         for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
                      'public_transport', 'advised_parking', 'disabled_infrastructure']:
             setattr(trek, attr, plain_text(getattr(trek, attr)))
-        context['object'] = trek
-        context['trek'] = trek
-        context['mapimage_ratio'] = trek.get_map_image_size()
+        for poi in context['pois']:
+            setattr(poi, 'description', plain_text(getattr(poi, 'description')))
 
         #
         # POIs enumeration, like shown on the map

@@ -382,7 +382,7 @@ msgid "Trek ascent"
 msgstr "Dénivelée"
 
 msgid "Altimetric profile"
-msgstr "Profil altimetrique"
+msgstr "Profil altimétrique"
 
 msgid "Not available"
 msgstr "Indisponible"
