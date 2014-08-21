@@ -21,7 +21,8 @@ $(window).on('entity:map', function (e, data) {
 
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
-    if (!/add|update/.test(data.view) && (data.view == 'detail' || data.modelname != 'path')) {
+    var is_form_view = /add|update/.test(data.view);
+    if (!is_form_view && (data.viewname == 'detail' || data.modelname != 'path')) {
 
         var pathsLayer = MapEntity.pathsLayer({
             indexing: false,

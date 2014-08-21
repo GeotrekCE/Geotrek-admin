@@ -13,6 +13,10 @@ CHANGELOG
 * Paths apparence in trek exports are now controlled by MAP_STYLES setting too.
 * Images attachments are now resized to 800x800 for publication (instead of 500x500)
 
+**Bug fixes**
+
+* Fix paths layer not being shown in detail pages (fixes #1161)
+
 
 0.25.2 (2014-08-11)
 -------------------
