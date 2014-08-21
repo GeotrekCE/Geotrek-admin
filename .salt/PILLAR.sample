@@ -19,7 +19,6 @@
 
 makina-projects.projectname:
   data:
-    django_settings_source: salt://makina-projects/{name}/files/config.py
     has_services: true
     has_geotrek: true
     domain: "{fqdn}"
