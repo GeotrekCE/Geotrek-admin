@@ -16,6 +16,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix paths layer not being shown in detail pages (fixes #1161)
+* Fix position of point topologies when closest path is not perpendicular (fixes #1156)
 
 
 0.25.2 (2014-08-11)

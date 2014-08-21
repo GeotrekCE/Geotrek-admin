@@ -103,6 +103,7 @@ BEGIN
         -- which could be otherwise diffcult to handle.
         SELECT geom, decallage INTO egeom, t_offset FROM e_t_evenement e WHERE e.id = eid;
 
+        -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
             SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
                 INTO egeom

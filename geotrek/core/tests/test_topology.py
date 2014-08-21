@@ -284,6 +284,20 @@ class TopologyPointTest(TestCase):
 
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
 
+    def test_point_at_end_of_path_not_moving_after_mutate(self):
+        PathFactory.create(geom=LineString((400, 400), (410, 400),
+                                           srid=settings.SRID))
+        self.assertEqual(1, len(Path.objects.all()))
+
+        father = Topology.deserialize({'lat': -1, 'lng': -1})
+
+        poi = Point(500, 600, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        son = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        father.mutate(son)
+        self.assertTrue(almostequal(father.geom.x, 500))
+        self.assertTrue(almostequal(father.geom.y, 600))
+
 
 class TopologyLineTest(TestCase):
 

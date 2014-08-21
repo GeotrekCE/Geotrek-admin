@@ -234,11 +234,15 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
         save them into this one. Optionnally deletes the other.
         """
         self.offset = other.offset
-        self.geom = other.geom
-        self.save(update_fields=['offset', 'geom'])
+        self.save(update_fields=['offset'])
         PathAggregation.objects.filter(topo_object=self).delete()
         # The previous operation has put deleted = True (in triggers)
+        # and NULL in geom (see update_geometry_of_evenement:: IF t_count = 0)
         self.deleted = False
+        self.geom = other.geom
+        self.save(update_fields=['deleted', 'geom'])
+
+        # Now copy all agregations from other to self
         aggrs = other.aggregations.all()
         # A point has only one aggregation, except if it is on an intersection.
         # In this case, the trigger will create them, so ignore them here.
@@ -246,9 +250,9 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
             aggrs = aggrs[:1]
         for aggr in aggrs:
             self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
+        self.reload()
         if delete:
             other.delete(force=True)  # Really delete it from database
-        self.save(update_fields=['deleted'])
         return self
 
     def reload(self, fromdb=None):
@@ -347,6 +351,10 @@ class PathAggregation(models.Model):
     def is_full(self):
         return (self.start_position == 0.0 and self.end_position == 1.0 or
                 self.start_position == 1.0 and self.end_position == 0.0)
+
+    @debug_pg_notices
+    def save(self, *args, **kwargs):
+        return super(PathAggregation, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'e_r_evenement_troncon'
