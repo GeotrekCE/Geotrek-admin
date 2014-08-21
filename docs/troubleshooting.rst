@@ -1,3 +1,5 @@
+.. _troubleshooting-section:
+
 ===============
 TROUBLESHOOTING
 ===============
@@ -43,3 +45,23 @@ Error at loading DEM
 
 Check that your extent (``spatial_extent``) is completely contained in your DEM.
 
+
+502 Bad Gateway
+---------------
+
+If the application does not show up (``502 Bad Gateway``), make sure the Geotrek
+services run with the following commands :
+
+::
+
+    bin/supervisorctl status
+
+You may want to force their restart :
+
+::
+
+    bin/supervisorctl restart all
+
+
+If they don't stay alive, check the log files in the ``var/log/`` folder.
+It might come from a configuration problem.
