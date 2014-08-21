@@ -141,6 +141,9 @@ msgstr "Coût"
 msgid "Global cost"
 msgstr "Coût global"
 
+msgid "Mandays cost"
+msgstr "Coût jours-hommes"
+
 msgid "Intervention's job"
 msgstr "Fonction"
 
@@ -223,11 +226,11 @@ msgstr ""
 "                     %(job)s: %(nb_days)s jours\n"
 "                    "
 
-msgid "Total:"
+msgid "Total"
 msgstr ""
 
 msgid "manday"
-msgstr "Jour-Homme"
+msgstr "jour-homme"
 
 msgid "Total cost:"
 msgstr "Coût total:"

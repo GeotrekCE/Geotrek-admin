@@ -54,20 +54,28 @@
             <td>{{ intervention.subcontract_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
-            <th>{% trans "Mandays" %}</th>
+            <th>{% trans "Mandays cost" %}</th>
             <td>
                 {% for md in intervention.manday_set.all %}
-                    {% if forloop.first %}<ul>{% endif %}
-                    <li>
-                    {% blocktrans with md.nb_days as nb_days and md.job as job %}
-                     {{ job }}: {{ nb_days }} days
-                    {% endblocktrans %}
-                    </li>
-                    {% if forloop.last %}</ul>{% endif %}
+                    {% if forloop.first %}
+                    <table>
+                    <thead><th>{% trans "Job" %}</th><th>{% trans "Mandays" %}</th><th>{% trans "Cost" %}</th></thead>
+                    <tbody>
+                    {% endif %}
+                    <tr><td>{{ md.job }}</td><td>{{ md.nb_days|floatformat:1 }}</td><td>{{ md.cost|floatformat:2 }}</td></tr>
+                    {% if forloop.last %}
+                    <tr class="total"><td>{% trans "Total" %}</td><td>{{ intervention.total_manday|floatformat:1 }}</td><td>{{ intervention.total_cost_mandays|floatformat:2 }} &euro;</td></tr>
+                    </tbody>
+                    </table>
+                    {% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
                 {% endfor %}
-                <p>{% trans "Total:" %} {{ intervention.total_manday }} {% trans "manday" %}{{ intervention.total_manday|pluralize }}</p>
-                <p>{% trans "Total cost:" %} {{ intervention.total_cost_mandays|floatformat:2 }} &euro;</p>
             </td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"total_cost" }}</th>
+            <td>{{ intervention.total_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
             <th>{% trans "Related Project" %}</th>
