@@ -210,6 +210,11 @@
                 L.marker(location, {icon: parkingIcon})
                  .bindPopup("{{ object.advised_parking|default:_("None") }}")
                  .addTo(map);
+
+                // Make sure parking icon is visible on the map
+                var bounds = map.getBounds();
+                bounds.extend(location);
+                map.fitBounds(bounds);
             {% endif %}
 
             //
