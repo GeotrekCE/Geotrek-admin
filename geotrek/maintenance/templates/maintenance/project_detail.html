@@ -85,3 +85,42 @@
     </table>
     {{ block.super }}
 {% endblock detailspanel %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(window).on('detailmap:ready', function (e, data) {
+            var map = data.map;
+
+            // Remove project geometry layer (GeometryCollection)
+            map.removeLayer(data.layer);
+
+            //
+            // Load intervention layer filtered on project
+            var layer_url = "{% url 'maintenance:intervention_layer' %}?project={{ object.pk}}";
+            var DETAIL_STYLE = L.Util.extend(window.SETTINGS.map.styles.detail, {clickable: true});
+
+            var layer = new L.ObjectsLayer(layer_url, {
+                style: DETAIL_STYLE,
+                objectUrl: interventionUrl,
+                onEachFeature: showInterventionLabel,
+                modelname: 'intervention',
+            });
+            layer.addTo(map);
+            layer.on('data:load', function (e) {
+                layer.showEnumeration();
+            });
+
+
+            function showInterventionLabel (geojson, layer) {
+                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+            }
+
+            function interventionUrl(properties, layer) {
+                return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), 'intervention')
+                                      .replace('0', properties.pk);
+            };
+        });
+    </script>
+{% endblock extrabody %}

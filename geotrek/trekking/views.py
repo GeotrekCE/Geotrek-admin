@@ -34,7 +34,7 @@ class FlattenPicturesMixin(object):
         template_names lookup.
         https://code.djangoproject.com/ticket/17484
         """
-        opts = self.model._meta
+        opts = self.get_model()._meta
         extra = ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
         return extra + super(FlattenPicturesMixin, self).get_template_names()
 
@@ -42,8 +42,8 @@ class FlattenPicturesMixin(object):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
         """
-        app_label = self.model._meta.app_label
-        model_name = self.model._meta.object_name.lower()
+        app_label = self.get_model()._meta.app_label
+        model_name = self.get_model()._meta.object_name.lower()
         attachments = Attachment.objects.filter(content_type__app_label=app_label,
                                                 content_type__model=model_name)
         pictures = {}

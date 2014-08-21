@@ -232,8 +232,8 @@ msgstr ""
 msgid "manday"
 msgstr "jour-homme"
 
-msgid "Total cost:"
-msgstr "Coût total:"
+msgid "Total cost"
+msgstr "Coût total"
 
 msgid "Interventions total cost"
 msgstr "Coût total des interventions"

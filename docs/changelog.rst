@@ -5,6 +5,12 @@ CHANGELOG
 0.26.0 (unreleased)
 -------------------
 
+**New features**
+
+* Interventions in project detail page is now shown as a simple table (ref #214)
+* A generic system for interaction between objects attributes and details map
+  was developped. It works with project interactions, topologies paths, etc. (ref #214)
+* Show enumeration of interventions in project PDF exports (fixes #960)
 * Number of POIs in now limited to 14 items in trek export (ref #1120)
 * Number of information desks in now limited to 2 items in trek export (ref #1120).
   See settings ``TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT`` and ``TREK_EXPORT_POI_LIST_LIMIT``

@@ -18,6 +18,7 @@ $(window).on('entity:map', function (e, data) {
 
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
+            modelname: managementLayer.id,
             style: L.Util.extend(window.SETTINGS.map.styles[managementLayer.id], {clickable:false}),
             onEachFeature: initLandLayer(managementLayer),
         });
