@@ -11,6 +11,7 @@ CHANGELOG
 * Justify texts of POIs in trek export, now converted to plain text.
 * Trek export geometries are now translucid red by default (see ``MAP_STYLES`` setting) (ref #1120)
 * Paths apparence in trek exports are now controlled by MAP_STYLES setting too.
+* Images attachments are now resized to 800x800 for publication (instead of 500x500)
 
 
 0.25.2 (2014-08-11)

@@ -323,7 +323,7 @@ THUMBNAIL_ALIASES = {
         'thumbnail': {'size': (150, 150)},
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
-        'medium': {'size': (500, 500)},
+        'medium': {'size': (800, 800)},
         # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
