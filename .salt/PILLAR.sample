@@ -36,12 +36,17 @@ makina-projects.projectname:
     #
     # screamshotter_host: 10.5.0.x
     # convertit_host: 10.5.0.x
-    django_settings: "salt://makina-projects/{name}/files/config.py"
     screamshotter_port: 8001
     convertit_protocol: http
     convertit_port: 6543
+    django_settings_source: "salt://makina-projects/{name}/files/config.py"
     django_settings_module: geotrek.settings.custom
     htaccess: "/etc/nginx/{name}-access"
+    # Customizations
+    path_trek_public_template: "{project_root}/geotrek/trekking/templates/trekking/trek_public.odt"
+    path_logo_login: "{project_root}/geotrek/static/images/logo-login.png"
+    path_logo_header: "{project_root}/geotrek/static/images/logo-header.png"
+    path_favicon: "{project_root}/geotrek/static/images/favicon.png"
     users:
       - root: root
     buildout:

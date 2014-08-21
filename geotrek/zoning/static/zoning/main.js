@@ -23,6 +23,7 @@ $(window).on('entity:map', function (e, data) {
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
             style: style,
+            modelname: landLayer.id,
         });
         layer.load(landLayer.url);
 

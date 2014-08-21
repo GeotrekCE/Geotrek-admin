@@ -39,8 +39,10 @@ add the following code:
 .. code-block :: python
 
     # Disable infrastructure and maintenance
-    INSTALLED_APPS.pop('geotrek.infrastructure')
-    INSTALLED_APPS.pop('geotrek.maintenance')
+    _INSTALLED_APPS = list(INSTALLED_APPS)
+    _INSTALLED_APPS.remove('geotrek.infrastructure')
+    _INSTALLED_APPS.remove('geotrek.maintenance')
+    INSTALLED_APPS = _INSTALLED_APPS
 
 In order to remove notion of trails:
 
@@ -102,7 +104,7 @@ Using Google Maps projection in the Web interface
 Your data will still be stored using the SRID you specified in the ``settings.ini``
 file, but the maps in the Web interface will be using the Google Mercator projection (EPSG:3857).
 
-It allows you to use *IGN Geoportail* WMTS or *OpenStreetMap* tiles for example 
+It allows you to use *IGN Geoportail* WMTS or *OpenStreetMap* tiles for example
 
 Start by adding this line in your custom Django setting file :
 
@@ -216,3 +218,35 @@ Edit the copy using *OpenOffice*.
 
     The default template may change in the future versions. You will be
     in charge of porting the modification to your copy.
+
+
+Custom font in public document OpenOffice template
+--------------------------------------------------
+
+In order to use custom fonts in trek PDF, it is necessary to install the
+font files on the server.
+
+*Microsoft* fonts like *Arial* and *Verdana* can be installed via the package
+manager ::
+
+    sudo apt-get install ttf-mscorefonts-installer
+
+For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
+``/usr/local/share/fonts/custom/`` as root, and run the following command ::
+
+    fc-cache
+
+For more information, check out Ubuntu documentation.
+
+
+Custom colors in public document OpenOffice template
+----------------------------------------------------
+
+Trek export geometries are translucid red by default. In order to control the
+apparence of objects in public trek exports, use the following setting :
+
+::
+
+    MAP_STYLES['print']['path'] = {'weight': 3}
+
+See *Leaflet* reference documentation for detail about layers apparence.

@@ -83,16 +83,19 @@ Shutdown previous running version, and run install :
     # Re-run install
     ./install.sh
 
-    # Reload configuration
-    sudo restart geotrek
-
     # Empty cache
     sudo service memcached restart
+
+    # Reload configuration
+    sudo start geotrek
 
 :note:
 
     Shutting down current instance may not be necessary. But this allows us to
     keep a generic software update procedure.
+
+
+Check out the :ref:`troubleshooting page<troubleshooting-section>` for common problems.
 
 
 Tips and Tricks

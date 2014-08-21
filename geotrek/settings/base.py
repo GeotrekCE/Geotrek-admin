@@ -323,7 +323,8 @@ THUMBNAIL_ALIASES = {
         'thumbnail': {'size': (150, 150)},
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
-        'medium': {'size': (500, 500)},
+        'medium': {'size': (800, 800)},
+        # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
 }
@@ -372,8 +373,6 @@ ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
-TREK_PUBLISHED_BY_LANG = True
-TREK_POINTS_OF_REFERENCE_ENABLED = True
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -423,6 +422,12 @@ MAP_STYLES = {
     'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+    'print':  {
+        'path': {'weight': 1},
+        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                 'arrowColor': 'black', 'arrowSize': 10},
+    }
 }
 
 
@@ -436,6 +441,13 @@ LAND_BBOX_AREAS_ENABLED = False
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+
+TREK_PUBLISHED_BY_LANG = True
+TREK_POINTS_OF_REFERENCE_ENABLED = True
+TREK_EXPORT_POI_LIST_LIMIT = 14
+TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
+TREK_EXPORT_MAP_IMAGE_SIZE = (14.1, 11)
+TREK_EXPORT_HEADER_IMAGE_SIZE = (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
 
 TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
                             'description_teaser']

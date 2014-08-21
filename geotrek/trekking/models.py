@@ -280,14 +280,8 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         """ Force trek aspect ratio to fit height and width of
         image in public document.
         """
-        s = self.get_map_image_size()
+        s = settings.TREK_EXPORT_MAP_IMAGE_SIZE
         return float(s[0]) / s[1]
-
-    def get_map_image_size(self):
-        """
-        Map image size in public trek document
-        """
-        return (13, 11)
 
     def get_attachment_print(self):
         """

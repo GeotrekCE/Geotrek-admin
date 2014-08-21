@@ -13,6 +13,7 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.template.loader import find_template
+from django.test import RequestFactory
 from django.test.utils import override_settings
 
 from mapentity.tests import MapEntityLiveTest
@@ -29,6 +30,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
                                         ThemeFactory, InformationDeskFactory)
 from geotrek.trekking.templatetags import trekking_tags
+from geotrek.trekking import views as trekking_views
 
 from .base import TrekkingManagerTest
 
@@ -298,6 +300,20 @@ class TrekCustomViewTests(TrekkingManagerTest):
         url = reverse('trekking:weblink_add')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    @mock.patch('mapentity.models.MapEntityMixin.prepare_map_image')
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_trek_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
+        trek = TrekWithPOIsFactory.create()
+        self.assertEqual(len(trek.pois), 2)
+        view = trekking_views.TrekDocumentPublic()
+        view.object = trek
+        view.request = RequestFactory().get('/')
+        view.kwargs = {}
+        view.kwargs[view.pk_url_kwarg] = trek.pk
+        context = view.get_context_data()
+        self.assertEqual(len(context['pois']), 1)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

@@ -2,6 +2,31 @@
 CHANGELOG
 =========
 
+0.26.0 (unreleased)
+-------------------
+
+**New features**
+
+* Interventions in project detail page is now shown as a simple table (ref #214)
+* A generic system for interaction between objects attributes and details map
+  was developped. It works with project interactions, topologies paths, etc. (ref #214)
+* Show enumeration of interventions in project PDF exports (fixes #960)
+* Number of POIs in now limited to 14 items in trek export (ref #1120)
+* Number of information desks in now limited to 2 items in trek export (ref #1120).
+  See settings ``TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT`` and ``TREK_EXPORT_POI_LIST_LIMIT``
+* Justify texts of POIs in trek export, now converted to plain text.
+* Trek export geometries are now translucid red by default (see ``MAP_STYLES`` setting) (ref #1120)
+* Paths apparence in trek exports are now controlled by MAP_STYLES setting too.
+* Images attachments are now resized to 800x800 for publication (instead of 500x500)
+* Clarify intervention cost by function and mandays (fixes #1169)
+
+**Bug fixes**
+
+* Fix paths layer not being shown in detail pages (fixes #1161)
+* Fix position of point topologies when closest path is not perpendicular (fixes #1156)
+* Prevent parking to be cropped on map exports (fixes #1006)
+
+
 0.25.2 (2014-08-14)
 -------------------
 

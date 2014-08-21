@@ -34,7 +34,7 @@ class FlattenPicturesMixin(object):
         template_names lookup.
         https://code.djangoproject.com/ticket/17484
         """
-        opts = self.model._meta
+        opts = self.get_model()._meta
         extra = ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
         return extra + super(FlattenPicturesMixin, self).get_template_names()
 
@@ -42,8 +42,8 @@ class FlattenPicturesMixin(object):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
         """
-        app_label = self.model._meta.app_label
-        model_name = self.model._meta.object_name.lower()
+        app_label = self.get_model()._meta.app_label
+        model_name = self.get_model()._meta.object_name.lower()
         attachments = Attachment.objects.filter(content_type__app_label=app_label,
                                                 content_type__model=model_name)
         pictures = {}
@@ -219,14 +219,29 @@ class TrekDocumentPublic(TrekDocument):
 
     def get_context_data(self, **kwargs):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
-        # Replace HTML text with plain text
+
         trek = self.get_object()
+        context['object'] = trek
+        context['trek'] = trek
+        context['mapimage_ratio'] = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
+
+        information_desks = list(trek.information_desks.all())
+        if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
+            information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
+        context['information_desks'] = information_desks
+
+        pois = list(trek.pois)
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        context['pois'] = pois
+
+        # Replace HTML text with plain text
         for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
                      'public_transport', 'advised_parking', 'disabled_infrastructure']:
             setattr(trek, attr, plain_text(getattr(trek, attr)))
-        context['object'] = trek
-        context['trek'] = trek
-        context['mapimage_ratio'] = trek.get_map_image_size()
+        for poi in context['pois']:
+            setattr(poi, 'description', plain_text(getattr(poi, 'description')))
 
         #
         # POIs enumeration, like shown on the map
