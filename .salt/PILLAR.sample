@@ -36,10 +36,10 @@ makina-projects.projectname:
     #
     # screamshotter_host: 10.5.0.x
     # convertit_host: 10.5.0.x
-    django_settings: "salt://makina-projects/{name}/files/config.py"
     screamshotter_port: 8001
     convertit_protocol: http
     convertit_port: 6543
+    django_settings_source: "salt://makina-projects/{name}/files/config.py"
     django_settings_module: geotrek.settings.custom
     htaccess: "/etc/nginx/{name}-access"
     users:
