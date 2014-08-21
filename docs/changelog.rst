@@ -2,6 +2,12 @@
 CHANGELOG
 =========
 
+0.26.1 (2014-08-21)
+-------------------
+
+* Upgrade *django-mapentity* for bug fix in ODT export and list of values in
+  detail pages
+
 0.26.0 (2014-08-21)
 -------------------
 
