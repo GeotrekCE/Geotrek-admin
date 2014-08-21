@@ -75,6 +75,11 @@ DECLARE
     tomerge geometry[];
     tomerge_3d geometry[];
 BEGIN
+    -- If Geotrek-light, don't do anything
+    IF NOT {{TREKKING_TOPOLOGY_ENABLED}} THEN
+        RETURN;
+    END IF;
+
     -- See what kind of topology we have
     SELECT bool_and(et.pk_debut != et.pk_fin), bool_and(et.pk_debut = et.pk_fin), count(*)
         INTO lines_only, points_only, t_count
@@ -161,10 +166,7 @@ BEGIN
     -- Since the evenement to be modified is available in NEW, we could improve
     -- performance with some refactoring.
 
-    -- If Geotrek-light, don't do anything
-    IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
-        PERFORM update_geometry_of_evenement(NEW.id);
-    END IF;
+    PERFORM update_geometry_of_evenement(NEW.id);
 
     RETURN NULL;
 END;
