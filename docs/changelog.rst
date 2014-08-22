@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+0.26.2 (2014-08-22)
+-------------------
+
+* Fix search among attached files in Adminsite (fixes #1172)
+
 0.26.1 (2014-08-21)
 -------------------
 
