@@ -18,6 +18,10 @@ FTP = {
 XML_PATH = '{{ddata.gtrois.xml_path}}'
 DOC_PATH = '{{cfg.project_root}}/var/media/upload/paperclip/'
 
+URL_DOC = 'upload/paperclip/'
+
+EMPTY_ICON_PATH = '{{cfg.project_root}}/lib/src/geotrek_import/src/geotrek_import/Guillestrois/'
+
 POI_FILE = 'points_interet.xml'
 POI_DOCS_FILE = 'points_interet_documents.xml'
 ITI_FILE = 'itineraires.xml'
