@@ -5,13 +5,19 @@ CHANGELOG
 0.26.2 (2014-08-22)
 -------------------
 
+**Bug fixes**
+
 * Fix search among attached files in Adminsite (fixes #1172)
+
 
 0.26.1 (2014-08-21)
 -------------------
 
+**Bug fixes**
+
 * Upgrade *django-mapentity* for bug fix in ODT export and list of values in
   detail pages
+
 
 0.26.0 (2014-08-21)
 -------------------
@@ -36,6 +42,14 @@ CHANGELOG
 * Fix paths layer not being shown in detail pages (fixes #1161)
 * Fix position of point topologies when closest path is not perpendicular (fixes #1156)
 * Prevent parking to be cropped on map exports (fixes #1006)
+
+**Upgrades notes**
+
+Since the map export have changed, empty the cache :
+
+::
+
+    rm -rf var/media/maps/*
 
 
 0.25.2 (2014-08-14)
