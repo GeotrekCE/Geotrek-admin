@@ -26,7 +26,7 @@
     - watch:
       - cmd: {{cfg.name}}-create-table-gtrois
     - name: {{cfg.project_root}}/lib/src/geotrek_import/src/geotrek_import/Guillestrois/settings.py
-    - source: salt://makina-projects/{{cfg.name}}/files/gtrois.py
+    - source: salt://makina-projects/{{cfg.name}}/files/gtrois/import.py
     - template: jinja
     - user: {{cfg.user}}
     - defaults:
