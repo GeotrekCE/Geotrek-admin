@@ -69,6 +69,7 @@ prepreqs-{{cfg.name}}:
       - libreoffice
       - unoconv
       - inkscape
+      - ttf-mscorefonts-installer
       {% endif %}
       #
       - libjson0
