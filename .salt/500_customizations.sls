@@ -32,3 +32,16 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+
+{{cfg.name}}-custom-fonts:
+  {% for font in data.custom_fonts %}
+  file.managed:
+    - name: /usr/local/share/fonts/{{font}}
+    - source: "salt://makina-projects/{{cfg.name}}/files/{{font}}"
+  {% endfor %}
+
+{{cfg.name}}-refresh-font-cache:
+  cmd.run:
+    - name: /usr/bin/fc-cache
+    - watch:
+      - cmd: {{cfg.name}}-custom-fonts

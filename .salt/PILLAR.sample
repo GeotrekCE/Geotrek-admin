@@ -48,6 +48,9 @@ makina-projects.projectname:
     path_logo_login: "salt://makina-projects/{name}/files/demo/logo-login.png"
     path_logo_header: "salt://makina-projects/{name}/files/demo/logo-header.png"
     path_favicon: "salt://makina-projects/{name}/files/demo/favicon.png"
+    custom_fonts:
+      - demo/Yanone/YanoneKaffeesatz-Bold.ttf
+      - demo/Yanone/YanoneKaffeesatz-Regular.ttf
     users:
       - root: root
     buildout:
