@@ -41,6 +41,8 @@ makina-projects.projectname:
     django_settings_source: "salt://makina-projects/{name}/files/config.py"
     django_settings_module: geotrek.settings.custom
     htaccess: "/etc/nginx/{name}-access"
+    prepare_map_images_periodicity: 0 2 * * *
+    prepare_elevation_charts_periodicity: 0 3 * * *
     # Customizations
     path_trek_public_template: "{project_root}/geotrek/trekking/templates/trekking/trek_public.odt"
     path_logo_login: "{project_root}/geotrek/static/images/logo-login.png"
