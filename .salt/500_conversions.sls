@@ -1,8 +1,9 @@
+{% set cfg = opts.ms_project %}
+{% set data = cfg.data %}
+
 {% if data.prepare_map_images_periodicity %}
-scron-prepare-map-images:
+{{cfg.name}}-scron-prepare-map-images:
   file.managed:
-    - watch:
-      - cmd: static-{{cfg.name}}
     - name: {{cfg.data_root}}/prepare_map_images.sh
     - mode: 750
     - contents: |
@@ -20,10 +21,9 @@ scron-prepare-map-images:
                   cat "${LOG}"
                 fi
                 exit "${ret}"
-cron-prepare-map-images:
+
+{{cfg.name}}-cron-prepare-map-images:
   file.managed:
-    - watch:
-      - cmd: static-{{cfg.name}}
     - name: /etc/cron.d/geotrek_prepare_map_images
     - mode: 750
     - contents: |
@@ -33,10 +33,8 @@ cron-prepare-map-images:
 
 
 {% if data.prepare_elevation_charts_periodicity %}
-scron-prepare-elevation-charts:
+{{cfg.name}}-scron-prepare-elevation-charts:
   file.managed:
-    - watch:
-      - cmd: static-{{cfg.name}}
     - name: {{cfg.data_root}}/prepare_elevation_charts.sh
     - mode: 750
     - contents: |
@@ -54,10 +52,9 @@ scron-prepare-elevation-charts:
                   cat "${LOG}"
                 fi
                 exit "${ret}"
-cron-prepare-elevation-charts:
+
+{{cfg.name}}-cron-prepare-elevation-charts:
   file.managed:
-    - watch:
-      - cmd: static-{{cfg.name}}
     - name: /etc/cron.d/geotrek_prepare_elevation_charts
     - mode: 750
     - contents: |

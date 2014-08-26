@@ -4,6 +4,10 @@
 {% set sdata = salt['mc_utils.json_dump'](data) %}
 
 
+{% if data.has_geotrek %}
+#
+# Application logo customizations
+#
 {{cfg.name}}-logo-login:
   file.managed:
     - name: {{cfg.data_root}}/var/media/upload/logo-login.png
@@ -11,6 +15,7 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+
 {{cfg.name}}-logo-header:
   file.managed:
     - name: {{cfg.data_root}}/var/media/upload/logo-header.png
@@ -18,6 +23,7 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+
 {{cfg.name}}-favicon:
   file.managed:
     - name: {{cfg.data_root}}/var/media/upload/favicon.png
@@ -25,6 +31,7 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+
 {{cfg.name}}-trek-public-template:
   file.managed:
     - name: {{cfg.data_root}}/var/media/templates/trekking/trek_public.odt
@@ -32,16 +39,24 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+{% endif %}
 
-{{cfg.name}}-custom-fonts:
-  {% for font in data.custom_fonts %}
+
+{% if data.has_services %}
+#
+# Custom fonts are necessary for PDF conversions
+#
+{% for font in data.custom_fonts %}
+{{cfg.name}}-custom-fonts-{{loop.index}}:
   file.managed:
     - name: /usr/local/share/fonts/{{font}}
     - source: "salt://makina-projects/{{cfg.name}}/files/{{font}}"
-  {% endfor %}
+    - makedirs: true
+{% endfor %}
 
 {{cfg.name}}-refresh-font-cache:
   cmd.run:
     - name: /usr/bin/fc-cache
     - watch:
-      - cmd: {{cfg.name}}-custom-fonts
+      - file: {{cfg.name}}-custom-fonts-1
+{% endif %}
