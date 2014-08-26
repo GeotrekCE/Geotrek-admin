@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+0.27.0 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Add missing credit for main picture in trek PDF (fixes #1178)
+
 0.26.2 (2014-08-22)
 -------------------
 
