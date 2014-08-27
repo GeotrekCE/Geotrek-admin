@@ -19,7 +19,9 @@ class TrekTO(TranslationOptions):
 
 
 class POITO(TranslationOptions):
-    fields = ('name', 'description', )
+    fields = ('name', 'description') + (
+              ('published',) if settings.PUBLISHED_BY_LANG else tuple()
+             )
 
 
 class POITypeTO(TranslationOptions):

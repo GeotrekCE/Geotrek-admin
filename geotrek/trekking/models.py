@@ -29,8 +29,6 @@ logger = logging.getLogger(__name__)
 class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
-                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
@@ -124,7 +122,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
             values = self.pois.values('type')
         pks = [value['type'] for value in values]
         return POIType.objects.filter(pk__in=set(pks))
-
 
     @property
     def serializable_relationships(self):
@@ -220,20 +217,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
             return None
         geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
         return json.loads(geojson)
-
-    @property
-    def name_display(self):
-        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.name,
-                                                              self.name)
-        if self.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        return s
-
-    @property
-    def name_csv_display(self):
-        return unicode(self.name)
 
     @property
     def length_kilometer(self):
@@ -606,12 +589,10 @@ class POIManager(models.GeoManager):
         return super(POIManager, self).get_queryset().select_related('type')
 
 
-class POI(PicturesMixin, MapEntityMixin, Topology):
+class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
-                            help_text=_(u"Official name"))
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
@@ -630,17 +611,6 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
     @property
     def type_display(self):
         return unicode(self.type)
-
-    @property
-    def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                                 self.get_detail_url(),
-                                                                 self.name,
-                                                                 self.name)
-
-    @property
-    def name_csv_display(self):
-        return unicode(self.name)
 
     @property
     def serializable_type(self):

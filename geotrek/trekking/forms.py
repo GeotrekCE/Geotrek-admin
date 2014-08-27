@@ -192,13 +192,14 @@ class POIForm(BasePOIForm):
             'type',
             'name',
             'description',
+            'published',
 
             css_class="tab-content"
         )
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

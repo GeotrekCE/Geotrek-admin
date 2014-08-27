@@ -164,6 +164,8 @@ class PublishableMixin(models.Model):
     Initially, it was part of the ``trekking.Trek`` class. But now, all kinds of information
     can be published (c.f. PN Cevennes project).
     """
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
+                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
                                     help_text=_(u"Online"), db_column='public')
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
@@ -175,9 +177,21 @@ class PublishableMixin(models.Model):
 
     @property
     def slug(self):
-        if not hasattr(self, 'name'):
-            return self.id
         return slugify(self.name)
+
+    @property
+    def name_display(self):
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.name,
+                                                              self.name)
+        if self.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        return s
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
 
     @models.permalink
     def get_document_public_url(self):
@@ -194,7 +208,7 @@ class PublishableMixin(models.Model):
         """It should also have a description, etc.
         """
         modelname = self.__class__._meta.object_name.lower()
-        mandatory = settings.COMPLETENESS_FIELDS[modelname]
+        mandatory = settings.COMPLETENESS_FIELDS.get(modelname, [])
         for f in mandatory:
             if not getattr(self, f):
                 return False

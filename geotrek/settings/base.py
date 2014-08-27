@@ -440,7 +440,8 @@ LAND_BBOX_AREAS_ENABLED = False
 
 PUBLISHED_BY_LANG = True
 EXPORT_MAP_IMAGE_SIZE = {
-    'trek': (14.1, 11)
+    'trek': (14.1, 11),
+    'poi':  (14.1, 11),
 }
 COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']

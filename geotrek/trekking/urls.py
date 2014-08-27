@@ -33,5 +33,9 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
     """
     document_public_view = TrekDocumentPublic
 
+
+class POIEntityOptions(PublishableEntityOptions):
+    pass
+
 urlpatterns += registry.register(models.Trek, TrekEntityOptions)
-urlpatterns += registry.register(models.POI)
+urlpatterns += registry.register(models.POI, POIEntityOptions)
