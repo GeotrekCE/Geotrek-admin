@@ -1,14 +1,14 @@
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 
 from mapentity.helpers import api_bbox
-from mapentity.views import JSSettings as BaseJSSettings
+from mapentity import views as mapentity_views
 
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
@@ -42,12 +42,44 @@ class FormsetMixin(object):
         return context
 
 
+
+class DocumentPublicPDF(mapentity_views.DocumentConvert):
+
+    def source_url(self):
+        return self.get_object().get_document_public_url()
+
+
+class DocumentPublic(mapentity_views.MapEntityDocument):
+    template_name_suffix = "_public"
+
+    def get_context_data(self, **kwargs):
+        context = super(DocumentPublic, self).get_context_data(**kwargs)
+        modelname = self.get_model()._meta.object_name.lower()
+        context['object'] = self.get_object()
+        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        obj = self.get_object()
+        # Use attachment that overrides document print, if any.
+        # And return it as response
+        try:
+            overriden = obj.get_attachment_print()
+            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
+            with open(overriden, 'rb') as f:
+                response.write(f.read())
+            return response
+        except ObjectDoesNotExist:
+            pass
+        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+
+
 #
 # Concrete views
 #..............................
 
 
-class JSSettings(BaseJSSettings):
+class JSSettings(mapentity_views.JSSettings):
     """ Override mapentity base settings in order to provide
     Geotrek necessary stuff.
     """

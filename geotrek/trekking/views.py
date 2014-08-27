@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
@@ -12,14 +11,14 @@ from django.contrib.auth.decorators import login_required
 from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin, JSONResponseMixin, DocumentConvert)
+                             LastModifiedMixin, JSONResponseMixin)
 from mapentity.serializers import plain_text
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
-from geotrek.common.views import FormsetMixin
+from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
@@ -207,24 +206,20 @@ class TrekDetail(MapEntityDetail):
 
 
 class TrekMapImage(MapEntityMapImage):
-    model = Trek
+    queryset = Trek.objects.existing()
 
 
 class TrekDocument(MapEntityDocument):
-    model = Trek
+    queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublic(TrekDocument):
-    template_name_suffix = "_public"
+class TrekDocumentPublic(DocumentPublic):
+    queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
-
         trek = self.get_object()
-        context['object'] = trek
         context['trek'] = trek
-        modelname = self.model._meta.object_name.lower()
-        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
 
         information_desks = list(trek.information_desks.all())
@@ -256,26 +251,10 @@ class TrekDocumentPublic(TrekDocument):
         return context
 
     def render_to_response(self, context, **response_kwargs):
-        trek = self.get_object()
-        # Use attachment that overrides document print, if any.
-        try:
-            overriden = trek.get_attachment_print()
-            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
-            with open(overriden, 'rb') as f:
-                response.write(f.read())
-            return response
-        except ObjectDoesNotExist:
-            pass
         # Prepare altimetric graph
+        trek = self.get_object()
         trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
-
-
-class TrekPrint(DocumentConvert):
-    queryset = Trek.objects.existing()
-
-    def source_url(self):
-        return self.get_object().get_document_public_url()
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
