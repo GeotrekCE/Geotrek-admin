@@ -8,6 +8,8 @@ CHANGELOG
 **Breaking changes**
 
 * Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
+* Renamed settings ``TREK_EXPORT_MAP_IMAGE_SIZE`` and ``TREK_COMPLETENESS_FIELDS``,
+  and changed their form to dictionnaries by object type.
 
 **Bug fixes**
 

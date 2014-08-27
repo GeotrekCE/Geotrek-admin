@@ -193,7 +193,8 @@ class PublishableMixin(models.Model):
     def is_complete(self):
         """It should also have a description, etc.
         """
-        mandatory = settings.TREK_COMPLETENESS_FIELDS
+        modelname = self.__class__._meta.object_name.lower()
+        mandatory = settings.COMPLETENESS_FIELDS[modelname]
         for f in mandatory:
             if not getattr(self, f):
                 return False
@@ -237,7 +238,7 @@ class PublishableMixin(models.Model):
     def prepare_map_image(self, rooturl):
         """
         We override the default behaviour of map image preparation :
-        if the trek has a attached picture file with *title* ``mapimage``, we use it
+        if the object has a attached picture file with *title* ``mapimage``, we use it
         as a screenshot.
         TODO: remove this when screenshots are bullet-proof ?
         """
@@ -255,10 +256,11 @@ class PublishableMixin(models.Model):
             shutil.copyfile(src, dst)
 
     def get_geom_aspect_ratio(self):
-        """ Force trek aspect ratio to fit height and width of
+        """ Force object aspect ratio to fit height and width of
         image in public document.
         """
-        s = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        modelname = self.__class__._meta.object_name.lower()
+        s = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return float(s[0]) / s[1]
 
     def get_attachment_print(self):

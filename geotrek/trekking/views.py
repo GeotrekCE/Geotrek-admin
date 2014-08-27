@@ -223,7 +223,8 @@ class TrekDocumentPublic(TrekDocument):
         trek = self.get_object()
         context['object'] = trek
         context['trek'] = trek
-        context['mapimage_ratio'] = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        modelname = self.model._meta.object_name.lower()
+        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
 
         information_desks = list(trek.information_desks.all())
