@@ -278,7 +278,7 @@ class TrekDelete(MapEntityDelete):
 
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
