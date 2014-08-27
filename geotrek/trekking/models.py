@@ -20,7 +20,7 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
 
 from geotrek.core.models import Path, Topology
-from geotrek.common.utils import classproperty
+from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
 from geotrek.maintenance.models import Intervention, Project
 
 from .templatetags import trekking_tags
@@ -534,23 +534,6 @@ class TrekRelationship(models.Model):
     @property
     def relation_display(self):
         return self.relation
-
-
-class PictogramMixin(models.Model):
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512, null=True)
-
-    class Meta:
-        abstract = True
-
-    @property
-    def serializable_pictogram(self):
-        return self.pictogram.url if self.pictogram else None
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
 
 class TrekNetwork(PictogramMixin):

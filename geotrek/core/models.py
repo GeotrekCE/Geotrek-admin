@@ -10,7 +10,7 @@ from django.contrib.gis.geos import fromstr, LineString
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.models import TimeStampedModel, NoDeleteMixin
+from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin
 from geotrek.common.utils import classproperty
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
+class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
@@ -114,7 +114,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
             AltimetryMixin.reload(self, fromdb)
-            TimeStampedModel.reload(self, fromdb)
+            TimeStampedModelMixin.reload(self, fromdb)
         return self
 
     @debug_pg_notices
@@ -159,7 +159,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated):
         return _("None")
 
 
-class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
+class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -267,7 +267,7 @@ class Topology(AltimetryMixin, TimeStampedModel, NoDeleteMixin):
                                          # the django code, reload() will override
                                          # any unsaved value
             AltimetryMixin.reload(self, fromdb)
-            TimeStampedModel.reload(self, fromdb)
+            TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
         return self
 
