@@ -185,6 +185,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         trek = TrekWithPOIsFactory.create()
         self.assertEqual(len(trek.pois), 2)
         poi = trek.pois[0]
+        poi.published = True
+        poi.save()
         AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
         self.assertEqual(len(trek.pois), 2)
@@ -307,6 +309,9 @@ class TrekCustomViewTests(TrekkingManagerTest):
     def test_trek_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
         trek = TrekWithPOIsFactory.create()
         self.assertEqual(len(trek.pois), 2)
+        poi = trek.pois[0]
+        poi.published = True
+        poi.save()
         view = trekking_views.TrekDocumentPublic()
         view.object = trek
         view.request = RequestFactory().get('/')
@@ -448,6 +453,9 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         poi.name_fr = "Chapelle"
         poi.name_en = "Chapel"
         poi.name_it = "Capela"
+        poi.published_fr = True
+        poi.published_en = True
+        poi.published_it = True
         poi.save()
         trek.add_path(p1, start=0.5)
         poi.add_path(p1, start=0.6, end=0.6)

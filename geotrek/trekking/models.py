@@ -553,7 +553,6 @@ class InformationDesk(models.Model):
     def description_strip(self):
         nobr = re.compile(r'(\s*<br.*?>)+\s*', re.I)
         newlines = nobr.sub("\n", self.description)
-        print newlines
         return smart_plain_text(newlines)
 
     @property

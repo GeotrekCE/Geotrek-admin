@@ -160,8 +160,8 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
             trek = Trek.objects.get(pk=trek_pk)
         except Trek.DoesNotExist:
             raise Http404
-        # All POIs of this trek
-        return trek.pois.select_related('type')
+        # All published POIs for this trek
+        return trek.pois.filter(published=True).select_related('type')
 
 
 class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
@@ -227,7 +227,7 @@ class TrekDocumentPublic(DocumentPublic):
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
         context['information_desks'] = information_desks
 
-        pois = list(trek.pois)
+        pois = list(trek.pois.filter(published=True))
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
         context['pois'] = pois
