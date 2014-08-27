@@ -80,7 +80,7 @@ For PDF conversion server, run an instance of Convertit in a separate terminal o
 
 ::
 
-    bin/pserve lib/src/convertit/development.ini
+    bin/convertit lib/src/convertit/development.ini
 
 
 Development data
