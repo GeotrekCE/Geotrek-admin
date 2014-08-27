@@ -5,6 +5,10 @@ CHANGELOG
 0.27.0 (unreleased)
 -------------------
 
+**Breaking changes**
+
+* Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
+
 **Bug fixes**
 
 * Add missing credit for main picture in trek PDF (fixes #1178)

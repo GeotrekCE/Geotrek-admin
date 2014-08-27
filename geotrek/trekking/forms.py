@@ -143,7 +143,7 @@ class TrekForm(BaseTrekForm):
         # boolean fields. We have to set attributes manually otherwise
         # they are not taken into account when value is False.
         # TODO: investiguate :)
-        if settings.TREK_PUBLISHED_BY_LANG:
+        if settings.PUBLISHED_BY_LANG:
             for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
                 field = 'published_%s' % l[0]
                 setattr(trek, field, self.cleaned_data[field])

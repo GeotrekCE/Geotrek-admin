@@ -209,7 +209,7 @@ class PublishableMixin(models.Model):
     def any_published(self):
         """Returns True if the object is published in at least one of the language
         """
-        if not settings.TREK_PUBLISHED_BY_LANG:
+        if not settings.PUBLISHED_BY_LANG:
             return self.published
 
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
@@ -223,7 +223,7 @@ class PublishableMixin(models.Model):
         """
         status = []
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if settings.TREK_PUBLISHED_BY_LANG:
+            if settings.PUBLISHED_BY_LANG:
                 published = getattr(self, 'published_%s' % l[0], None) or False
             else:
                 published = self.published
