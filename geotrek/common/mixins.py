@@ -157,6 +157,121 @@ class PicturesMixin(object):
         return os.path.join(settings.MEDIA_URL, th.name)
 
 
+class PublishableMixin(models.Model):
+    """A mixin that contains all necessary stuff to publish objects
+    (e.g. on Geotrek-rando).
+
+    Initially, it was part of the ``trekking.Trek`` class. But now, all kinds of information
+    can be published (c.f. PN Cevennes project).
+    """
+    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
+                                    help_text=_(u"Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+                                        null=True, blank=True, editable=False,
+                                        db_column='date_publication')
+
+    class Meta:
+        abstract = True
+
+    @property
+    def slug(self):
+        if not hasattr(self, 'name'):
+            return self.id
+        return slugify(self.name)
+
+    @models.permalink
+    def get_document_public_url(self):
+        raise NotImplementedError
+
+    def save(self, *args, **kwargs):
+        if self.publication_date is None and self.any_published:
+            self.publication_date = datetime.date.today()
+        if self.publication_date is not None and not self.any_published:
+            self.publication_date = None
+        super(PublishableMixin, self).save(*args, **kwargs)
+
+    def is_complete(self):
+        """It should also have a description, etc.
+        """
+        mandatory = settings.TREK_COMPLETENESS_FIELDS
+        for f in mandatory:
+            if not getattr(self, f):
+                return False
+        return True
+
+    def is_publishable(self):
+        return self.is_complete() and self.has_geom_valid()
+
+    def has_geom_valid(self):
+        return self.geom is not None
+
+    @property
+    def any_published(self):
+        """Returns True if the object is published in at least one of the language
+        """
+        if not settings.TREK_PUBLISHED_BY_LANG:
+            return self.published
+
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if getattr(self, 'published_%s' % l[0], False):
+                return True
+        return False
+
+    @property
+    def published_status(self):
+        """Returns the publication status by language.
+        """
+        status = []
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if settings.TREK_PUBLISHED_BY_LANG:
+                published = getattr(self, 'published_%s' % l[0], None) or False
+            else:
+                published = self.published
+            status.append({
+                'lang': l[0],
+                'language': l[1],
+                'status': published
+            })
+        return status
+
+    def prepare_map_image(self, rooturl):
+        """
+        We override the default behaviour of map image preparation :
+        if the trek has a attached picture file with *title* ``mapimage``, we use it
+        as a screenshot.
+        TODO: remove this when screenshots are bullet-proof ?
+        """
+        attached = None
+        for picture in [a for a in self.attachments.all() if a.is_image]:
+            if picture.title == 'mapimage':
+                attached = picture.attachment_file
+                break
+        if attached is None:
+            super(PublishableMixin, self).prepare_map_image(rooturl)
+        else:
+            # Copy it along other screenshots
+            src = os.path.join(settings.MEDIA_ROOT, attached.name)
+            dst = self.get_map_image_path()
+            shutil.copyfile(src, dst)
+
+    def get_geom_aspect_ratio(self):
+        """ Force trek aspect ratio to fit height and width of
+        image in public document.
+        """
+        s = settings.TREK_EXPORT_MAP_IMAGE_SIZE
+        return float(s[0]) / s[1]
+
+    def get_attachment_print(self):
+        """
+        Look in attachment if there is document to be used as print version
+        """
+        overriden = self.attachments.filter(title="docprint").get()
+        # Must have OpenOffice document mimetype
+        if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
+            raise overriden.DoesNotExist()
+        return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
+
+
 class PictogramMixin(models.Model):
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
                                  db_column='picto', max_length=512, null=True)

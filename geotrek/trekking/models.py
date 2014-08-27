@@ -1,7 +1,5 @@
 import os
 import logging
-import shutil
-import datetime
 import re
 import json
 
@@ -9,7 +7,6 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
 
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -29,92 +26,7 @@ from .templatetags import trekking_tags
 logger = logging.getLogger(__name__)
 
 
-class PicturesMixin(object):
-    """A common class to share code between Trek and POI regarding
-    attached pictures"""
-
-    @property
-    def pictures(self):
-        """
-        Find first image among attachments.
-        Since we allow screenshot to be overriden by attachments
-        named 'mapimage', filter it from object pictures.
-        """
-        if hasattr(self, '_pictures'):
-            return self._pictures
-        return [a for a in self.attachments.all() if a.is_image
-                and a.title != 'mapimage']
-
-    @pictures.setter
-    def pictures(self, values):
-        self._pictures = values
-
-    @property
-    def serializable_pictures(self):
-        serialized = []
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
-                thurl = os.path.join(settings.MEDIA_URL, thdetail.name)
-            except InvalidImageFormatError:
-                thurl = None
-                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
-                pass
-            serialized.append({
-                'author': picture.author,
-                'title': picture.title,
-                'legend': picture.legend,
-                'url': thurl
-            })
-        return serialized
-
-    @property
-    def picture_print(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                return thumbnailer.get_thumbnail(aliases.get('print'))
-            except InvalidImageFormatError:
-                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
-                pass
-        return None
-
-    @property
-    def thumbnail(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                return thumbnailer.get_thumbnail(aliases.get('small-square'))
-            except InvalidImageFormatError:
-                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
-                pass
-        return None
-
-    @classproperty
-    def thumbnail_verbose_name(cls):
-        return _("Thumbnail")
-
-    @property
-    def thumbnail_display(self):
-        thumbnail = self.thumbnail
-        if thumbnail is None:
-            return _("None")
-        return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
-
-    @property
-    def thumbnail_csv_display(self):
-        return '' if self.thumbnail is None else os.path.join(settings.MEDIA_URL, self.thumbnail.name)
-
-    @property
-    def serializable_thumbnail(self):
-        th = self.thumbnail
-        if not th:
-            return None
-        return os.path.join(settings.MEDIA_URL, th.name)
-
-
-class Trek(PicturesMixin, MapEntityMixin, Topology):
+class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
@@ -123,11 +35,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
-                                    help_text=_(u"Online"), db_column='public')
-    publication_date = models.DateField(verbose_name=_(u"Publication date"),
-                                        null=True, blank=True, editable=False,
-                                        db_column='date_publication')
 
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
@@ -189,52 +96,14 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.publication_date is None and self.any_published:
-            self.publication_date = datetime.date.today()
-        if self.publication_date is not None and not self.any_published:
-            self.publication_date = None
-        super(Trek, self).save(*args, **kwargs)
-
-    @property
-    def slug(self):
-        return slugify(self.name)
-
-    @models.permalink
-    def get_document_public_url(self):
-        return ('trekking:trek_document_public', [str(self.pk)])
-
     @property
     @models.permalink
     def elevation_area_url(self):
         return ('trekking:trek_elevation_area', [str(self.pk)])
 
-    @property
-    def any_published(self):
-        """Returns True if the trek is published in at least one of the language
-        """
-        if not settings.TREK_PUBLISHED_BY_LANG:
-            return self.published
-
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if getattr(self, 'published_%s' % l[0], False):
-                return True
-        return False
-
-    @property
-    def published_status(self):
-        status = []
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if settings.TREK_PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % l[0], None) or False
-            else:
-                published = self.published
-            status.append({
-                'lang': l[0],
-                'language': l[1],
-                'status': published
-            })
-        return status
+    @models.permalink
+    def get_document_public_url(self):
+        return ('trekking:trek_document_public', [str(self.pk)])
 
     @property
     def related(self):
@@ -256,42 +125,6 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
         pks = [value['type'] for value in values]
         return POIType.objects.filter(pk__in=set(pks))
 
-    def prepare_map_image(self, rooturl):
-        """
-        We override the default behaviour of map image preparation :
-        if the trek has a attached picture file with *title* ``mapimage``, we use it
-        as a screenshot.
-        TODO: remove this when screenshots are bullet-proof ?
-        """
-        attached = None
-        for picture in [a for a in self.attachments.all() if a.is_image]:
-            if picture.title == 'mapimage':
-                attached = picture.attachment_file
-                break
-        if attached is None:
-            super(Trek, self).prepare_map_image(rooturl)
-        else:
-            # Copy it along other screenshots
-            src = os.path.join(settings.MEDIA_ROOT, attached.name)
-            dst = self.get_map_image_path()
-            shutil.copyfile(src, dst)
-
-    def get_geom_aspect_ratio(self):
-        """ Force trek aspect ratio to fit height and width of
-        image in public document.
-        """
-        s = settings.TREK_EXPORT_MAP_IMAGE_SIZE
-        return float(s[0]) / s[1]
-
-    def get_attachment_print(self):
-        """
-        Look in attachment if there is document to be used as print version
-        """
-        overriden = self.attachments.filter(title="docprint").get()
-        # Must have OpenOffice document mimetype
-        if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
-            raise overriden.DoesNotExist()
-        return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
 
     @property
     def serializable_relationships(self):
@@ -446,22 +279,10 @@ class Trek(PicturesMixin, MapEntityMixin, Topology):
                          coords=[place.coords])
         return kml._genkml()
 
-    def is_complete(self):
-        """It should also have a description, etc.
-        """
-        mandatory = settings.TREK_COMPLETENESS_FIELDS
-        for f in mandatory:
-            if not getattr(self, f):
-                return False
-        return True
-
     def has_geom_valid(self):
         """A trek should be a LineString, even if it's a loop.
         """
-        return (self.geom is not None and self.geom.geom_type.lower() == 'linestring')
-
-    def is_publishable(self):
-        return self.is_complete() and self.has_geom_valid()
+        return super(Trek, self).has_geom_valid() and self.geom.geom_type.lower() == 'linestring'
 
     @property
     def duration_pretty(self):
