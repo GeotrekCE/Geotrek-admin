@@ -232,3 +232,10 @@ PostgreSQL optimization
 * `Log long queries <http://wiki.postgresql.org/wiki/Logging_Difficult_Queries>`_
 
 * Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for monitoring
+
+
+Access your database securely on your local machine (QGis)
+----------------------------------------------------------
+
+Instead of opening your database to the world (by opening the port 5432 for
+example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
