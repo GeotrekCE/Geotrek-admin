@@ -3,8 +3,9 @@
 from .prod import *
 
 
-# Adjust colors in PDF exports
+# Adjustments PDF exports
 ALTIMETRIC_PROFILE_COLOR = '#33b652'
+ALTIMETRIC_PROFILE_FONT = 'Archer-Book'
 
 # Asked by J.Atche :
 LEAFLET_CONFIG['MAX_ZOOM'] = 20
