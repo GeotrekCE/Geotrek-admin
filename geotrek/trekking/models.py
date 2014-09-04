@@ -104,6 +104,43 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return ('trekking:trek_document_public', [str(self.pk)])
 
     @property
+    @models.permalink
+    def altimetric_profile_url(self):
+        return ('trekking:trek_profile', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def poi_layer_url(self):
+        return ('trekking:trek_poi_geojson', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def information_desk_layer_url(self):
+        return ('trekking:trek_information_desk_geojson', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def gpx_url(self):
+        return ('trekking:trek_gpx_detail', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def kml_url(self):
+        return ('trekking:trek_kml_detail', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def printable_url(self):
+        return ('trekking:trek_printable', [str(self.pk)])
+
+    @property
+    @models.permalink
+    def filelist_url(self):
+        return ('get_attachments', [], {'app_label': 'trekking',
+                                           'module_name': 'trek',
+                                           'pk': self.pk})
+
+    @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
@@ -124,71 +161,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return POIType.objects.filter(pk__in=set(pks))
 
     @property
-    def serializable_relationships(self):
-        return [{
-                'has_common_departure': rel.has_common_departure,
-                'has_common_edge': rel.has_common_edge,
-                'is_circuit_step': rel.is_circuit_step,
-                'trek': {
-                    'pk': rel.trek_b.pk,
-                    'slug': rel.trek_b.slug,
-                    'name': rel.trek_b.name,
-                    'url': reverse('trekking:trek_json_detail', args=(rel.trek_b.pk,)),
-                },
-                'published': rel.trek_b.published} for rel in self.relationships]
-
-    @property
-    def serializable_cities(self):
-        return [{'code': city.code,
-                 'name': city.name} for city in self.cities]
-
-    @property
-    def serializable_networks(self):
-        return [{'id': network.id,
-                 'pictogram': network.serializable_pictogram,
-                 'name': network.network} for network in self.networks.all()]
-
-    @property
-    def serializable_difficulty(self):
-        if not self.difficulty:
-            return None
-        return {'id': self.difficulty.pk,
-                'pictogram': self.difficulty.serializable_pictogram,
-                'label': self.difficulty.difficulty}
-
-    @property
-    def serializable_themes(self):
-        return [{'id': t.pk,
-                 'pictogram': t.serializable_pictogram,
-                 'label': t.label} for t in self.themes.all()]
-
-    @property
-    def serializable_usages(self):
-        return [{'id': u.pk,
-                 'pictogram': u.serializable_pictogram,
-                 'label': u.usage} for u in self.usages.all()]
-
-    @property
-    def serializable_districts(self):
-        return [{'id': d.pk,
-                 'name': d.name} for d in self.districts]
-
-    @property
-    def serializable_route(self):
-        if not self.route:
-            return None
-        return {'id': self.route.pk,
-                'pictogram': self.route.serializable_pictogram,
-                'label': self.route.route}
-
-    @property
-    def serializable_web_links(self):
-        return [{'id': w.pk,
-                 'name': w.name,
-                 'category': w.serializable_category,
-                 'url': w.url} for w in self.web_links.all()]
-
-    @property
     def information_desk(self):
         """Retrocompatibily method for Geotrek-rando.
         """
@@ -196,27 +168,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
             return self.information_desks.first()
         except (ValueError, InformationDesk.DoesNotExist):
             return None
-
-    @property
-    def serializable_information_desk(self):
-        return self.information_desk.__json__() if self.information_desk else None
-
-    @property
-    def serializable_information_desks(self):
-        return [d.__json__() for d in self.information_desks.all()]
-
-    @property
-    def serializable_parking_location(self):
-        if not self.parking_location:
-            return None
-        return self.parking_location.transform(settings.API_SRID, clone=True).coords
-
-    @property
-    def serializable_points_reference(self):
-        if not self.points_reference:
-            return None
-        geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
-        return json.loads(geojson)
 
     @property
     def length_kilometer(self):

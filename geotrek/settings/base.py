@@ -218,6 +218,7 @@ PROJECT_APPS += (
     'shapes',
     'paperclip',
     'mapentity',
+    'rest_framework',
 )
 
 

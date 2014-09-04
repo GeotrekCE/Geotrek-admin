@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
@@ -11,20 +10,20 @@ from django.contrib.auth.decorators import login_required
 from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin, JSONResponseMixin)
+                             LastModifiedMixin)
 from mapentity.serializers import plain_text
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 
 from geotrek.core.views import CreateFromTopologyMixin
-from geotrek.core.models import AltimetryMixin
+
 from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
-from .serializers import TrekGPXSerializer
+from .serializers import TrekGPXSerializer, TrekSerializer
 
 
 class FlattenPicturesMixin(object):
@@ -71,46 +70,11 @@ class TrekJsonList(MapEntityJsonList, TrekList):
     pass
 
 
-class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
-    queryset = Trek.objects.existing()
-    columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
-               'description_teaser'] + AltimetryMixin.COLUMNS + ['published', 'published_status',
-               'networks', 'advice', 'ambiance', 'difficulty',
-               'information_desks', 'information_desk',  # singular: retro-compat
-               'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
-               'web_links', 'is_park_centered', 'disabled_infrastructure',
-               'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships', 'map_image_url',
-               'elevation_area_url', 'points_reference']
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekJsonDetail, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = {}
-        for fname in self.columns:
-            ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
-                                 getattr(self.object, fname))
-
-        trek = self.get_object()
-
-        ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
-
-        ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
-        ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
-        ctx['filelist_url'] = reverse('get_attachments',
-                                      kwargs={'app_label': 'trekking',
-                                              'module_name': 'trek',
-                                              'pk': trek.pk})
-        ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
-        ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
-        ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
-        return ctx
-
-
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = set(TrekList.columns + TrekJsonDetail.columns + ['related', 'pois']) - set(['relationships', 'thumbnail', 'map_image_url', 'slug'])
+    columns = (set(TrekList.columns +
+                   list(TrekSerializer.Meta.fields) +
+                   ['related', 'pois']) -
+               set(['relationships', 'thumbnail', 'map_image_url', 'slug']))
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
