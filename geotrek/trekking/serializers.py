@@ -2,7 +2,6 @@ import gpxpy
 
 from django.db import models as django_db_models
 from rest_framework import serializers as rest_serializers
-from rest_framework_gis import serializers as rest_gis_serializers
 
 from rest_framework import serializers as rest_fields
 from mapentity.serializers import GPXSerializer

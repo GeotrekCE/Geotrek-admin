@@ -205,48 +205,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
-    def test_json_detail(self):
-        trek = TrekFactory.create()
-        self.information_desk = InformationDeskFactory.create()
-        trek.information_desks.add(self.information_desk)
-
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        detailjson = json.loads(response.content)
-        self.assertDictEqual(detailjson['route'],
-                             {"id": trek.route.id,
-                              "pictogram": None,
-                              "label": trek.route.route})
-        self.assertDictEqual(detailjson['difficulty'],
-                             {"id": trek.difficulty.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
-                              "label": trek.difficulty.difficulty})
-        self.assertDictEqual(detailjson['information_desk'],
-                             detailjson['information_desks'][0])
-        self.assertDictEqual(detailjson['information_desks'][0],
-                             {u'description': u'<p>description 0</p>',
-                              u'email': u'email-0@makina-corpus.com',
-                              u'latitude': -5.983593666147552,
-                              u'longitude': -1.3630761286186646,
-                              u'name': u'information desk name 0',
-                              u'phone': u'01 02 03 0',
-                              u'photo_url': self.information_desk.photo_url,
-                              u'postal_code': u'28300',
-                              u'street': u'0 baker street',
-                              u'municipality': u"Bailleau L'évêque-0",
-                              u'website': u'http://makina-corpus.com/0'})
-        self.assertEqual(detailjson['information_desk_layer'],
-                         '/api/trek/%s/information_desks.geojson' % trek.pk)
-        self.assertEqual(detailjson['filelist_url'],
-                         '/paperclip/get/trekking/trek/%s/' % trek.pk)
-
-    def test_json_detail_has_elevation_area_url(self):
-        trek = TrekFactory.create()
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        self.assertEqual(detailjson['elevation_area_url'], '/api/trek/%s/dem.json' % trek.pk)
-
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_overriden_document(self, get_attributes_html):
         trek = TrekFactory.create()
@@ -319,6 +277,87 @@ class TrekCustomViewTests(TrekkingManagerTest):
         view.kwargs[view.pk_url_kwarg] = trek.pk
         context = view.get_context_data()
         self.assertEqual(len(context['pois']), 1)
+
+
+class TrekJSONDetailTest(TrekkingManagerTest):
+    """ Since we migrated some code to Django REST Framework, we should test
+    the migration extensively. Geotrek-rando mainly relies on this view.
+    """
+
+    def setUp(self):
+        self.login()
+
+        self.trek = TrekFactory.create()
+        self.information_desk = InformationDeskFactory.create()
+        self.trek.information_desks.add(self.information_desk)
+
+        self.pk = self.trek.pk
+        url = '/api/treks/%s/' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def test_old_url_redirects_to_api_detail(self):
+        url = '/api/trek/trek-%s.json' % self.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 301)  # permanent
+        self.assertEqual(response.url, 'http://testserver/api/treks/%s/' % self.pk)
+
+    def test_related_urls(self):
+
+        self.assertEqual(self.result['elevation_area_url'],
+                         '/api/trek/%s/dem.json' % self.pk)
+        self.assertEqual(self.result['map_image_url'],
+                         '/image/trek-%s.png' % self.pk)
+        self.assertEqual(self.result['altimetric_profile'],
+                         "/api/trek/%s/profile.json" % self.pk)
+        self.assertEqual(self.result['poi_layer'],
+                         "/api/trek/%s/pois.geojson" % self.pk)
+        self.assertEqual(self.result['information_desk_layer'],
+                         '/api/trek/%s/information_desks.geojson' % self.pk)
+        self.assertEqual(self.result['filelist_url'],
+                         '/paperclip/get/trekking/trek/%s/' % self.pk)
+        self.assertEqual(self.result['gpx'],
+                         '/api/trek/trek-%s.gpx' % self.pk)
+        self.assertEqual(self.result['kml'],
+                         '/api/trek/trek-%s.kml' % self.pk)
+        self.assertEqual(self.result['printable'],
+                         '/api/trek/trek-%s.pdf' % self.pk)
+
+    # relationships
+    # cities
+    # districts
+    # web_links
+    # networks
+    # themes
+    # usages
+    # parking_location
+    # points_reference
+
+    def test_route_not_none(self):
+        self.assertDictEqual(self.result['route'],
+                             {"id": self.trek.route.id,
+                              "pictogram": None,
+                              "label": self.trek.route.route})
+
+    def test_difficulty_not_none(self):
+        self.assertDictEqual(self.result['route'],
+                             {"id": self.trek.difficulty.id,
+                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
+                              "label": self.trek.difficulty.difficulty})
+
+    def test_information_desks(self):
+        self.assertDictEqual(self.result['information_desks'][0],
+                             {u'description': u'<p>description 0</p>',
+                              u'email': u'email-0@makina-corpus.com',
+                              u'latitude': -5.983593666147552,
+                              u'longitude': -1.3630761286186646,
+                              u'name': u'information desk name 0',
+                              u'phone': u'01 02 03 0',
+                              u'photo_url': self.information_desk.photo_url,
+                              u'postal_code': u'28300',
+                              u'street': u'0 baker street',
+                              u'municipality': u"Bailleau L'évêque-0",
+                              u'website': u'http://makina-corpus.com/0'})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

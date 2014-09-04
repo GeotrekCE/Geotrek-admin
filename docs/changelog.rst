@@ -2,6 +2,9 @@
 CHANGELOG
 =========
 
+information-desk singular degagé rando < 1.29
+paths editable in forms
+
 0.27.0 (unreleased)
 -------------------
 
