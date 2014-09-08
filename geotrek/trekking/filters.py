@@ -21,4 +21,4 @@ class POIFilterSet(MapEntityFilterSet):
 
     class Meta:
         model = POI
-        fields = ['type', 'trek']
+        fields = ['published', 'type', 'trek']

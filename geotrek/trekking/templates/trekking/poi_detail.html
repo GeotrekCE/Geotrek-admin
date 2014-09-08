@@ -9,6 +9,9 @@
 
 
 {% block detailspanel %}
+
+    {% include "common/publishable_completeness_fragment.html" %}
+
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ poi|verbose:"type" }}</th>
@@ -29,7 +32,7 @@
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
-
+        {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

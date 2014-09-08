@@ -268,18 +268,6 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
-msgid "Not published"
-msgstr "Non publié"
-
-msgid "Trek is published but"
-msgstr "L'itinéraire est publié mais"
-
-msgid "looks incomplete;"
-msgstr "semble incomplet;"
-
-msgid "has invalid geometry;"
-msgstr "a une géométrie invalide;"
-
 msgid "yes,no"
 msgstr "oui,non"
 

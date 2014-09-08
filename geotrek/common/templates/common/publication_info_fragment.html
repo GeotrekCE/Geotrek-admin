@@ -1,0 +1,19 @@
+{% load static i18n mapentity_tags %}
+<tr>
+    <th>{{ object|verbose:"published" }}</th>
+    <td>
+    {% if object.any_published %}
+        {% for status in object.published_status %}
+            {% if status.status %}
+            <li class="active">
+                <img src="{% static "images/flags/"|add:status.lang|add:".png" %}" alt="{{ status.lang }}">
+                <a href="?lang={{ status.lang }}">{{ status.language }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        ({{ object|verbose:"publication_date" }}: {{ object.publication_date }})
+    {% else %}
+        {% trans "Not published" %}
+    {% endif %}
+    </td>
+</tr>

@@ -5,9 +5,23 @@ CHANGELOG
 0.27.0 (unreleased)
 -------------------
 
+**Breaking changes**
+
+* Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
+* Renamed settings ``TREK_EXPORT_MAP_IMAGE_SIZE`` and ``TREK_COMPLETENESS_FIELDS``,
+  and changed their form to dictionnaries by object type.
+
 **Bug fixes**
 
 * Add missing credit for main picture in trek PDF (fixes #1178)
+* Path are now removed from user interface in *Geotrek-light* mode.
+  (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
+
+**Internal changes**
+
+* Extracted the trek publication to a generic and reusable notion
+* Refactored URLs declaration for altimetry and publishable entities
+
 
 0.26.2 (2014-08-22)
 -------------------

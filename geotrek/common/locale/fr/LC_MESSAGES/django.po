@@ -83,3 +83,15 @@ msgstr "Renseigner le gestionnaire travaux"
 msgid "Add a new signage management edge"
 msgstr "Renseigner le gestionnaire signalétique"
 
+
+msgid "Not published"
+msgstr "Non publié"
+
+msgid "Object is published but"
+msgstr "L'objet est publié mais"
+
+msgid "looks incomplete;"
+msgstr "semble incomplet;"
+
+msgid "has invalid geometry;"
+msgstr "a une géométrie invalide;"
