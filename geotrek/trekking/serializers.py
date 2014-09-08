@@ -1,13 +1,17 @@
-import gpxpy
+import json
 
+import gpxpy
 from django.db import models as django_db_models
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from rest_framework import serializers as rest_serializers
 
 from rest_framework import serializers as rest_fields
 from mapentity.serializers import GPXSerializer
 
 from geotrek.core.models import AltimetryMixin
-from . import models as trekking_models
+from geotrek.trekking import models as trekking_models
+from geotrek.zoning import models as zoning_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -36,121 +40,213 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
         return super(TranslatedModelSerializer, self).get_field(model_field)
 
 
-class TrekSerializer(TranslatedModelSerializer):
+class AltimetrySerializerMixin(rest_serializers.ModelSerializer):
+    elevation_area_url = rest_serializers.SerializerMethodField('get_elevation_area_url')
+    altimetric_profile = rest_serializers.SerializerMethodField('get_altimetric_profile_url')
 
+    class Meta:
+        fields = ('elevation_area_url', 'altimetric_profile') + \
+                 tuple(AltimetryMixin.COLUMNS)
+
+    def get_elevation_area_url(self, obj):
+        return reverse('trekking:trek_elevation_area', kwargs={'pk': obj.pk})
+
+    def get_altimetric_profile_url(self, obj):
+        return reverse('trekking:trek_profile', kwargs={'pk': obj.pk})
+
+
+class PictogramSerializerMixin(rest_serializers.ModelSerializer):
+    pictogram = rest_serializers.SerializerMethodField('get_pictogram')
+
+    def get_pictogram(self, obj):
+        return obj.pictogram.url if obj.pictogram else None
+
+
+class PicturesSerializerMixin(rest_serializers.ModelSerializer):
+    thumbnail = rest_serializers.Field(source='serializable_thumbnail')
+    pictures = rest_serializers.Field(source='serializable_pictures')
+
+    class Meta:
+        fields = ('thumbnail', 'pictures',)
+
+
+class PublishableSerializerMixin(rest_serializers.ModelSerializer):
     slug = rest_serializers.Field(source='slug')
-    duration_pretty = rest_serializers.Field(source='duration_pretty')
     published_status = rest_serializers.Field(source='published_status')
-    thumbnail = rest_serializers.Field(source='thumbnail')
-    pictures = rest_serializers.Field(source='pictures')
-    cities = rest_serializers.Field(source='cities')
-    districts = rest_serializers.Field(source='districts')
-    relationships = rest_serializers.Field(source='relationships')
+
     map_image_url = rest_serializers.Field(source='map_image_url')
-    elevation_area_url = rest_serializers.Field(source='elevation_area_url')
-    altimetric_profile = rest_serializers.Field(source='altimetric_profile_url')
-    poi_layer = rest_serializers.Field(source='poi_layer_url')
-    information_desk_layer = rest_serializers.Field(source='information_desk_layer_url')
-    filelist_url = rest_serializers.Field(source='filelist_url')
-    gpx = rest_serializers.Field(source='gpx_url')
-    kml = rest_serializers.Field(source='kml_url')
-    printable = rest_serializers.Field(source='printable_url')
+    printable = rest_serializers.SerializerMethodField('get_printable_url')
+    filelist_url = rest_serializers.SerializerMethodField('get_filelist_url')
+
+    def get_printable_url(self, obj):
+        return reverse('trekking:trek_printable', kwargs={'pk': obj.pk})
+
+    def get_filelist_url(self, obj):
+        return reverse('get_attachments', kwargs={'app_label': 'trekking',
+                                                  'module_name': 'trek',
+                                                  'pk': obj.pk})
+
+    class Meta:
+        fields = ('name', 'slug', 'published', 'published_status', 'publication_date',
+                  'map_image_url', 'filelist_url', 'printable')
+
+
+class CitySerializer(rest_serializers.ModelSerializer):
+
+    class Meta:
+        model = zoning_models.City
+        fields = ('code', 'name')
+
+
+class DistrictSerializer(rest_serializers.ModelSerializer):
+
+    class Meta:
+        model = zoning_models.District
+        fields = ('id', 'name')
+
+
+class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.Field(source='difficulty')
+
+    class Meta:
+        model = trekking_models.DifficultyLevel
+        fields = ('id', 'pictogram', 'label')
+
+
+class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.Field(source='route')
+
+    class Meta:
+        model = trekking_models.Route
+        fields = ('id', 'pictogram', 'label')
+
+
+class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    name = rest_serializers.Field(source='network')
+
+    class Meta:
+        model = trekking_models.Route
+        fields = ('id', 'pictogram', 'name')
+
+
+class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.Theme
+        fields = ('id', 'pictogram', 'label')
+
+
+class UsageSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.Field(source='usage')
+
+    class Meta:
+        model = trekking_models.Usage
+        fields = ('id', 'pictogram', 'label')
+
+
+class WebLinkCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.WebLinkCategory
+        fields = ('id', 'pictogram', 'label')
+
+
+class WebLinkSerializer(TranslatedModelSerializer):
+    category = WebLinkCategorySerializer()
+
+    class Meta:
+        model = trekking_models.WebLink
+        fields = ('id', 'name', 'category', 'url')
+
+
+class RelatedTrekSerializer(TranslatedModelSerializer):
+    pk = rest_serializers.Field(source='id')
+    slug = rest_serializers.Field(source='slug')
+    url = rest_serializers.Field(source='get_detail_url')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ['id', 'name', 'slug', 'departure', 'arrival', 'duration',
-                  'duration_pretty', 'description', 'description_teaser'] + \
-                 AltimetryMixin.COLUMNS + \
-                 ['published', 'published_status',
+        fields = ('pk', 'slug', 'name', 'url')
+
+
+class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
+    published = rest_serializers.Field(source='trek_b.published')
+    trek = RelatedTrekSerializer(source='trek_b')
+
+    class Meta:
+        model = trekking_models.TrekRelationship
+        fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
+            'trek', 'published')
+
+
+class InformationDeskSerializer(TranslatedModelSerializer):
+    photo_url = rest_serializers.Field(source='photo_url')
+    latitude = rest_serializers.Field(source='latitude')
+    longitude = rest_serializers.Field(source='longitude')
+
+    class Meta:
+        model = trekking_models.InformationDesk
+        fields = ('name', 'description', 'phone', 'email', 'website',
+                  'photo_url', 'street', 'postal_code', 'municipality',
+                  'latitude', 'longitude')
+
+
+class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                     AltimetrySerializerMixin, TranslatedModelSerializer):
+
+    duration_pretty = rest_serializers.Field(source='duration_pretty')
+    difficulty = DifficultyLevelSerializer()
+    route = RouteSerializer()
+    cities = CitySerializer(many=True)
+    districts = DistrictSerializer(many=True)
+    information_desks = InformationDeskSerializer(many=True)
+    networks = NetworkSerializer(many=True)
+    themes = ThemeSerializer(many=True)
+    usages = UsageSerializer(many=True)
+    web_links = WebLinkSerializer(many=True)
+    relationships = TrekRelationshipSerializer(many=True, source='relationships')
+
+    # Idea: use rest-framework-gis
+    parking_location = rest_serializers.SerializerMethodField('get_parking_location')
+    points_reference = rest_serializers.SerializerMethodField('get_points_reference')
+
+    poi_layer = rest_serializers.SerializerMethodField('get_poi_layer_url')
+    information_desk_layer = rest_serializers.SerializerMethodField('get_information_desk_layer_url')
+    gpx = rest_serializers.SerializerMethodField('get_gpx_url')
+    kml = rest_serializers.SerializerMethodField('get_kml_url')
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = ('id', 'departure', 'arrival', 'duration',
+                  'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
                   'information_desks',
                   'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
-                  'parking_location', 'thumbnail', 'pictures',
-                  'cities', 'districts', 'relationships', 'points_reference'] + \
-                 ['map_image_url', 'elevation_area_url',
-                  'altimetric_profile', 'poi_layer', 'information_desk_layer',
-                  'filelist_url', 'gpx', 'kml', 'printable']
+                  'parking_location',
+                  'cities', 'districts', 'relationships', 'points_reference',
+                  'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
+                 AltimetrySerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields
 
+    def get_parking_location(self, obj):
+        if not obj.parking_location:
+            return None
+        return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
-    # @property
-    # def serializable_relationships(self):
-    #     return [{
-    #             'has_common_departure': rel.has_common_departure,
-    #             'has_common_edge': rel.has_common_edge,
-    #             'is_circuit_step': rel.is_circuit_step,
-    #             'trek': {
-    #                 'pk': rel.trek_b.pk,
-    #                 'slug': rel.trek_b.slug,
-    #                 'name': rel.trek_b.name,
-    #                 'url': reverse('trekking:trek_json_detail', args=(rel.trek_b.pk,)),
-    #             },
-    #             'published': rel.trek_b.published} for rel in self.relationships]
+    def get_points_reference(self, obj):
+        if not obj.points_reference:
+            return None
+        geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
 
-    # @property
-    # def serializable_cities(self):
-    #     return [{'code': city.code,
-    #              'name': city.name} for city in self.cities]
+    def get_poi_layer_url(self, obj):
+        return reverse('trekking:trek_poi_geojson', kwargs={'pk': obj.pk})
 
-    # @property
-    # def serializable_networks(self):
-    #     return [{'id': network.id,
-    #              'pictogram': network.serializable_pictogram,
-    #              'name': network.network} for network in self.networks.all()]
+    def get_information_desk_layer_url(self, obj):
+        return reverse('trekking:trek_information_desk_geojson', kwargs={'pk': obj.pk})
 
-    # @property
-    # def serializable_difficulty(self):
-    #     if not self.difficulty:
-    #         return None
-    #     return {'id': self.difficulty.pk,
-    #             'pictogram': self.difficulty.serializable_pictogram,
-    #             'label': self.difficulty.difficulty}
+    def get_gpx_url(self, obj):
+        return reverse('trekking:trek_gpx_detail', kwargs={'pk': obj.pk})
 
-    # @property
-    # def serializable_themes(self):
-    #     return [{'id': t.pk,
-    #              'pictogram': t.serializable_pictogram,
-    #              'label': t.label} for t in self.themes.all()]
-
-    # @property
-    # def serializable_usages(self):
-    #     return [{'id': u.pk,
-    #              'pictogram': u.serializable_pictogram,
-    #              'label': u.usage} for u in self.usages.all()]
-
-    # @property
-    # def serializable_districts(self):
-    #     return [{'id': d.pk,
-    #              'name': d.name} for d in self.districts]
-
-    # @property
-    # def serializable_route(self):
-    #     if not self.route:
-    #         return None
-    #     return {'id': self.route.pk,
-    #             'pictogram': self.route.serializable_pictogram,
-    #             'label': self.route.route}
-
-    # @property
-    # def serializable_web_links(self):
-    #     return [{'id': w.pk,
-    #              'name': w.name,
-    #              'category': w.serializable_category,
-    #              'url': w.url} for w in self.web_links.all()]
-
-    # @property
-    # def serializable_information_desks(self):
-    #     return [d.__json__() for d in self.information_desks.all()]
-
-    # @property
-    # def serializable_parking_location(self):
-    #     if not self.parking_location:
-    #         return None
-    #     return self.parking_location.transform(settings.API_SRID, clone=True).coords
-
-    # @property
-    # def serializable_points_reference(self):
-    #     if not self.points_reference:
-    #         return None
-    #     geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
-    #     return json.loads(geojson)
+    def get_kml_url(self, obj):
+        return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})

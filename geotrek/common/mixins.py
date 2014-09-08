@@ -295,10 +295,6 @@ class PictogramMixin(models.Model):
     class Meta:
         abstract = True
 
-    @property
-    def serializable_pictogram(self):
-        return self.pictogram.url if self.pictogram else None
-
     def pictogram_img(self):
         return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")

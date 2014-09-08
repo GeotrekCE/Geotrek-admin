@@ -1,11 +1,9 @@
 import os
 import logging
 import re
-import json
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from easy_thumbnails.alias import aliases
@@ -94,51 +92,11 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     def __unicode__(self):
         return self.name
 
-    @property
-    @models.permalink
-    def elevation_area_url(self):
-        return ('trekking:trek_elevation_area', [str(self.pk)])
-
     @models.permalink
     def get_document_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
         return ('trekking:trek_document_public', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def altimetric_profile_url(self):
-        return ('trekking:trek_profile', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def poi_layer_url(self):
-        return ('trekking:trek_poi_geojson', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def information_desk_layer_url(self):
-        return ('trekking:trek_information_desk_geojson', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def gpx_url(self):
-        return ('trekking:trek_gpx_detail', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def kml_url(self):
-        return ('trekking:trek_kml_detail', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def printable_url(self):
-        return ('trekking:trek_printable', [str(self.pk)])
-
-    @property
-    @models.permalink
-    def filelist_url(self):
-        return ('get_attachments', [], {'app_label': 'trekking',
-                                           'module_name': 'trek',
-                                           'pk': self.pk})
 
     @property
     def related(self):
@@ -392,13 +350,6 @@ class WebLink(models.Model):
     def get_add_url(cls):
         return ('trekking:weblink_add', )
 
-    @property
-    def serializable_category(self):
-        if not self.category:
-            return None
-        return {'label': self.category.label,
-                'pictogram': self.category.serializable_pictogram}
-
 
 class WebLinkCategory(PictogramMixin):
 
@@ -485,23 +436,10 @@ class InformationDesk(models.Model):
     def __unicode__(self):
         return self.name
 
-    def __json__(self):
-        return {
-            'name': self.name,
-            'description': self.description,
-            'phone': self.phone,
-            'email': self.email,
-            'website': self.website,
-            'photo_url': self.photo_url,
-            'street': self.street,
-            'postal_code': self.postal_code,
-            'municipality': self.municipality,
-            'latitude': self.latitude,
-            'longitude': self.longitude,
-        }
-
     @property
     def description_strip(self):
+        """Used in trek public template.
+        """
         nobr = re.compile(r'(\s*<br.*?>)+\s*', re.I)
         newlines = nobr.sub("\n", self.description)
         return smart_plain_text(newlines)

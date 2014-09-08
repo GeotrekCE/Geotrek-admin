@@ -24,11 +24,11 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory
-from geotrek.zoning.factories import DistrictFactory
+from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
-                                        ThemeFactory, InformationDeskFactory)
+                                        ThemeFactory, InformationDeskFactory, TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
 
@@ -287,9 +287,39 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
-        self.trek = TrekFactory.create()
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon)
+        self.district = DistrictFactory(geom=polygon)
+
+        self.trek = TrekFactory.create(
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+            parking_location=Point(0, 0, srid=settings.SRID)
+        )
+
+        self.attachment = AttachmentFactory.create(obj=self.trek,
+                                                   attachment_file=get_dummy_uploaded_image())
+
         self.information_desk = InformationDeskFactory.create()
         self.trek.information_desks.add(self.information_desk)
+
+        self.usage = UsageFactory.create()
+        self.trek.usages.add(self.usage)
+
+        self.theme = ThemeFactory.create()
+        self.trek.themes.add(self.theme)
+
+        self.network = TrekNetworkFactory.create()
+        self.trek.networks.add(self.network)
+
+        self.weblink = WebLinkFactory.create()
+        self.trek.web_links.add(self.weblink)
+
+        self.trek_b = TrekFactory.create()
+        TrekRelationshipFactory.create(has_common_departure=True,
+                                       has_common_edge=False,
+                                       is_circuit_step=True,
+                                       trek_a=self.trek,
+                                       trek_b=self.trek_b)
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -323,41 +353,103 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['printable'],
                          '/api/trek/trek-%s.pdf' % self.pk)
 
-    # relationships
-    # cities
-    # districts
-    # web_links
-    # networks
-    # themes
-    # usages
-    # parking_location
-    # points_reference
+    def test_thumbnail(self):
+        self.assertEqual(self.result['thumbnail'],
+                         os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+
+    def test_pictures(self):
+        self.assertDictEqual(self.result['pictures'][0],
+                             {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
+                              u'title': self.attachment.title,
+                              u'legend': self.attachment.legend,
+                              u'author': self.attachment.author})
+
+    def test_cities(self):
+        self.assertDictEqual(self.result['cities'][0],
+                             {u"code": self.city.code,
+                              u"name": self.city.name})
+
+    def test_districts(self):
+        self.assertDictEqual(self.result['districts'][0],
+                             {u"id": self.district.id,
+                              u"name": self.district.name})
+
+    def test_networks(self):
+        self.assertDictEqual(self.result['networks'][0],
+                             {u"id": self.network.id,
+                               u"pictogram": None,
+                               u"name": self.network.network})
+
+    def test_usages(self):
+        self.assertDictEqual(self.result['usages'][0],
+                             {u"id": self.usage.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.usage.pictogram.name),
+                              u"label": self.usage.usage})
+
+    def test_themes(self):
+        self.assertDictEqual(self.result['themes'][0],
+                             {u"id": self.theme.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
+                              u"label": self.theme.label})
+
+    def test_weblinks(self):
+        self.assertDictEqual(self.result['web_links'][0],
+                             {u"id": self.weblink.id,
+                              u"url": self.weblink.url,
+                              u"name": self.weblink.name,
+                              u"category": {
+                                  u"id": self.weblink.category.id,
+                                  u"pictogram": os.path.join(settings.MEDIA_URL, self.weblink.category.pictogram.name),
+                                  u"label": self.weblink.category.label}
+                              })
 
     def test_route_not_none(self):
         self.assertDictEqual(self.result['route'],
-                             {"id": self.trek.route.id,
-                              "pictogram": None,
-                              "label": self.trek.route.route})
+                             {u"id": self.trek.route.id,
+                              u"pictogram": None,
+                              u"label": self.trek.route.route})
 
     def test_difficulty_not_none(self):
-        self.assertDictEqual(self.result['route'],
-                             {"id": self.trek.difficulty.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
-                              "label": self.trek.difficulty.difficulty})
+        self.assertDictEqual(self.result['difficulty'],
+                             {u"id": self.trek.difficulty.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
+                              u"label": self.trek.difficulty.difficulty})
+
 
     def test_information_desks(self):
         self.assertDictEqual(self.result['information_desks'][0],
-                             {u'description': u'<p>description 0</p>',
-                              u'email': u'email-0@makina-corpus.com',
-                              u'latitude': -5.983593666147552,
-                              u'longitude': -1.3630761286186646,
-                              u'name': u'information desk name 0',
-                              u'phone': u'01 02 03 0',
+                             {u'description': self.information_desk.description,
+                              u'email': self.information_desk.email,
+                              u'latitude': self.information_desk.latitude,
+                              u'longitude': self.information_desk.longitude,
+                              u'name': self.information_desk.name,
+                              u'phone': self.information_desk.phone,
                               u'photo_url': self.information_desk.photo_url,
-                              u'postal_code': u'28300',
-                              u'street': u'0 baker street',
-                              u'municipality': u"Bailleau L'évêque-0",
-                              u'website': u'http://makina-corpus.com/0'})
+                              u'postal_code': self.information_desk.postal_code,
+                              u'street': self.information_desk.street,
+                              u'municipality': self.information_desk.municipality,
+                              u'website': self.information_desk.website})
+
+    def test_relationships(self):
+        self.assertDictEqual(self.result['relationships'][0],
+                             {u'published': self.trek_b.published,
+                              u'has_common_departure': True,
+                              u'has_common_edge': False,
+                              u'is_circuit_step': True,
+                              u'trek': {u'pk': self.trek_b.pk,
+                                        u'slug': self.trek_b.slug,
+                                        u'name': self.trek_b.name,
+                                        u'url': u'/trek/%s/' % self.trek_b.id}
+                             })
+
+    def test_parking_location_in_wgs84(self):
+        parking_location = self.result['parking_location']
+        self.assertEqual(parking_location[0], -1.3630812101179004)
+
+    def test_points_reference_are_exported_in_wgs84(self):
+        geojson = self.result['points_reference']
+        self.assertEqual(geojson['type'], 'MultiPoint')
+        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -378,17 +470,6 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
         url = self.trek.get_update_url()
         response = self.client.get(url)
         self.assertNotContains(response, 'name="points_reference"')
-
-    def test_points_reference_are_exported_in_json_detail(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        self.assertIsNotNone(detailjson['points_reference'])
-
-    def test_points_reference_are_exported_in_wgs84(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        geojson = detailjson['points_reference']
-        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
 
 class TrekGPXTest(TrekkingManagerTest):

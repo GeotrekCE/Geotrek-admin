@@ -71,7 +71,7 @@ class InformationDeskFactory(factory.Factory):
     website = factory.Sequence(lambda n: u"http://makina-corpus.com/%s" % n)
     photo = dummy_filefield_as_sequence('photo %s')
     street = factory.Sequence(lambda n: u"%s baker street" % n)
-    postal_code = 28300
+    postal_code = '28300'
     municipality = factory.Sequence(lambda n: u"Bailleau L'évêque-%s" % n)
     geom = Point(3.14, 42)
 
