@@ -180,8 +180,8 @@
                     iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
                     iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });
-                var location = [{{ object.serializable_parking_location.1|unlocalize }},
-                                {{ object.serializable_parking_location.0|unlocalize }}];
+                var point = {{object.parking_location|geojsonfeature|safe}};
+                var location = point.geometry.coordinates.reverse();
                 L.marker(location, {icon: parkingIcon})
                  .bindPopup("{{ object.advised_parking|default:_("None") }}")
                  .addTo(map);
