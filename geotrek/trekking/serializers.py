@@ -247,3 +247,21 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     def get_kml_url(self, obj):
         return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
+
+
+class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.POIType
+        fields = ('id', 'pictogram', 'label')
+
+
+class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                     AltimetrySerializerMixin, TranslatedModelSerializer):
+    type = POITypeSerializer()
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = ('id', 'description', 'type') + \
+                 AltimetrySerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields

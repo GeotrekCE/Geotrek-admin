@@ -45,7 +45,8 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
 
 
 class POIEntityOptions(PublishableEntityOptions):
-    pass
+    def get_serializer(self):
+        return trekking_serializers.POISerializer
 
 urlpatterns += registry.register(models.Trek, TrekEntityOptions)
 urlpatterns += registry.register(models.POI, POIEntityOptions)

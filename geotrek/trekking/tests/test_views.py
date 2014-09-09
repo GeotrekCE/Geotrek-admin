@@ -84,6 +84,36 @@ class POIViewsTest(CommonTest):
         settings.DEBUG = False
 
 
+class POIJSONDetailTest(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon)
+        self.district = DistrictFactory(geom=polygon)
+
+        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID))
+
+        self.attachment = AttachmentFactory.create(obj=self.poi,
+                                                   attachment_file=get_dummy_uploaded_image())
+
+        self.pk = self.poi.pk
+        url = '/api/pois/%s/' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def test_name(self):
+        self.assertEqual(self.result['name'],
+                         self.poi.name)
+
+    def test_type(self):
+        self.assertDictEqual(self.result['type'],
+                             {'id': self.poi.type.pk,
+                              'label': self.poi.type.label,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name),
+                              })
+
+
 class TrekViewsTest(CommonTest):
     model = Trek
     modelfactory = TrekFactory
