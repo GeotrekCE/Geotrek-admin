@@ -106,12 +106,42 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['name'],
                          self.poi.name)
 
+    def test_slug(self):
+        self.assertEqual(self.result['slug'],
+                         self.poi.slug)
+
+    def test_published(self):
+        self.assertEqual(self.result['published'], False)
+
+    def test_published_status(self):
+        self.assertDictEqual(self.result['published_status'][0],
+                             {u'lang': u'en', u'status': False, u'language': u'English'})
+
     def test_type(self):
         self.assertDictEqual(self.result['type'],
                              {'id': self.poi.type.pk,
                               'label': self.poi.type.label,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name),
                               })
+
+    def test_altimetry(self):
+        self.assertEqual(self.result['min_elevation'], 0.0)
+
+    def test_cities(self):
+        self.assertDictEqual(self.result['cities'][0],
+                             {u"code": self.city.code,
+                              u"name": self.city.name})
+
+    def test_districts(self):
+        self.assertDictEqual(self.result['districts'][0],
+                             {u"id": self.district.id,
+                              u"name": self.district.name})
+
+    def test_related_urls(self):
+        self.assertEqual(self.result['map_image_url'],
+                         '/image/poi-%s.png' % self.pk)
+        self.assertEqual(self.result['filelist_url'],
+                         '/paperclip/get/trekking/poi/%s/' % self.pk)
 
 
 class TrekViewsTest(CommonTest):
@@ -386,6 +416,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
                          os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+
+    def test_published_status(self):
+        self.assertDictEqual(self.result['published_status'][0],
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],

@@ -1,17 +1,18 @@
 import json
 
 import gpxpy
-from django.db import models as django_db_models
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from rest_framework import serializers as rest_serializers
 
-from rest_framework import serializers as rest_fields
 from mapentity.serializers import GPXSerializer
 
-from geotrek.core.models import AltimetryMixin
+from geotrek.common.serializers import (PictogramSerializerMixin,
+    TranslatedModelSerializer, PicturesSerializerMixin,
+    PublishableSerializerMixin)
+from geotrek.zoning.serializers import (DistrictSerializer, CitySerializer)
+from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
-from geotrek.zoning import models as zoning_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -24,82 +25,6 @@ class TrekGPXSerializer(GPXSerializer):
             wpt.name = u"%s: %s" % (poi.type, poi.name)
             wpt.description = poi.description
             self.gpx.waypoints.append(wpt)
-
-
-class TranslatedModelSerializer(rest_serializers.ModelSerializer):
-    def get_field(self, model_field):
-        kwargs = {}
-        if issubclass(
-                model_field.__class__,
-                      (django_db_models.CharField,
-                       django_db_models.TextField)):
-            if model_field.null:
-                kwargs['allow_none'] = True
-            kwargs['max_length'] = getattr(model_field, 'max_length')
-            return rest_fields.CharField(**kwargs)
-        return super(TranslatedModelSerializer, self).get_field(model_field)
-
-
-class AltimetrySerializerMixin(rest_serializers.ModelSerializer):
-    elevation_area_url = rest_serializers.SerializerMethodField('get_elevation_area_url')
-    altimetric_profile = rest_serializers.SerializerMethodField('get_altimetric_profile_url')
-
-    class Meta:
-        fields = ('elevation_area_url', 'altimetric_profile') + \
-                 tuple(AltimetryMixin.COLUMNS)
-
-    def get_elevation_area_url(self, obj):
-        return reverse('trekking:trek_elevation_area', kwargs={'pk': obj.pk})
-
-    def get_altimetric_profile_url(self, obj):
-        return reverse('trekking:trek_profile', kwargs={'pk': obj.pk})
-
-
-class PictogramSerializerMixin(rest_serializers.ModelSerializer):
-    pictogram = rest_serializers.Field('get_pictogram_url')
-
-
-class PicturesSerializerMixin(rest_serializers.ModelSerializer):
-    thumbnail = rest_serializers.Field(source='serializable_thumbnail')
-    pictures = rest_serializers.Field(source='serializable_pictures')
-
-    class Meta:
-        fields = ('thumbnail', 'pictures',)
-
-
-class PublishableSerializerMixin(rest_serializers.ModelSerializer):
-    slug = rest_serializers.Field(source='slug')
-    published_status = rest_serializers.Field(source='published_status')
-
-    map_image_url = rest_serializers.Field(source='map_image_url')
-    printable = rest_serializers.SerializerMethodField('get_printable_url')
-    filelist_url = rest_serializers.SerializerMethodField('get_filelist_url')
-
-    def get_printable_url(self, obj):
-        return reverse('trekking:trek_printable', kwargs={'pk': obj.pk})
-
-    def get_filelist_url(self, obj):
-        return reverse('get_attachments', kwargs={'app_label': 'trekking',
-                                                  'module_name': 'trek',
-                                                  'pk': obj.pk})
-
-    class Meta:
-        fields = ('name', 'slug', 'published', 'published_status', 'publication_date',
-                  'map_image_url', 'filelist_url', 'printable')
-
-
-class CitySerializer(rest_serializers.ModelSerializer):
-
-    class Meta:
-        model = zoning_models.City
-        fields = ('code', 'name')
-
-
-class DistrictSerializer(rest_serializers.ModelSerializer):
-
-    class Meta:
-        model = zoning_models.District
-        fields = ('id', 'name')
 
 
 class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -189,11 +114,12 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, TranslatedModelSerializer):
 
+    cities = CitySerializer(many=True)
+    districts = DistrictSerializer(many=True)
+
     duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
     information_desks = InformationDeskSerializer(many=True)
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
@@ -257,11 +183,14 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, TranslatedModelSerializer):
+    cities = CitySerializer(many=True)
+    districts = DistrictSerializer(many=True)
+
     type = POITypeSerializer()
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'description', 'type') + \
+        fields = ('id', 'description', 'type', 'cities', 'districts') + \
                  AltimetrySerializerMixin.Meta.fields + \
                  PublishableSerializerMixin.Meta.fields + \
                  PicturesSerializerMixin.Meta.fields
