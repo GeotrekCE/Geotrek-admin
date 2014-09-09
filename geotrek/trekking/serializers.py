@@ -56,10 +56,7 @@ class AltimetrySerializerMixin(rest_serializers.ModelSerializer):
 
 
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):
-    pictogram = rest_serializers.SerializerMethodField('get_pictogram')
-
-    def get_pictogram(self, obj):
-        return obj.pictogram.url if obj.pictogram else None
+    pictogram = rest_serializers.Field('get_pictogram_url')
 
 
 class PicturesSerializerMixin(rest_serializers.ModelSerializer):

@@ -503,7 +503,7 @@ class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     @property
     def serializable_type(self):
         return {'label': self.type.label,
-                'pictogram': self.type.serializable_pictogram}
+                'pictogram': self.type.get_pictogram_url()}
 
     @classmethod
     def path_pois(cls, path):

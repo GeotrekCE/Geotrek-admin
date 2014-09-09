@@ -530,7 +530,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         self.client.logout()
 
     def test_json_translation(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        url = '/api/treks/%s/' % self.trek.pk
 
         for lang, expected in [('fr-FR', self.trek.name_fr),
                                ('it-IT', self.trek.name_it)]:

@@ -74,7 +74,9 @@ class TrekFormatList(MapEntityFormat, TrekList):
     columns = (set(TrekList.columns +
                    list(TrekSerializer.Meta.fields) +
                    ['related', 'pois']) -
-               set(['relationships', 'thumbnail', 'map_image_url', 'slug']))
+               set(['relationships', 'thumbnail', 'map_image_url', 'slug',
+                    'elevation_area_url', 'altimetric_profile', 'poi_layer',
+                    'gpx', 'kml', 'printable', 'filelist_url', 'information_desk_layer']))
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
