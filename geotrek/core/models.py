@@ -160,7 +160,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
 
 
 class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
-    paths = models.ManyToManyField(Path, editable=False, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
+    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
 

@@ -24,11 +24,11 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.core.factories import PathFactory
-from geotrek.zoning.factories import DistrictFactory
+from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
-                                        ThemeFactory, InformationDeskFactory)
+                                        ThemeFactory, InformationDeskFactory, TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
 
@@ -82,6 +82,66 @@ class POIViewsTest(CommonTest):
             self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
 
         settings.DEBUG = False
+
+
+class POIJSONDetailTest(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon)
+        self.district = DistrictFactory(geom=polygon)
+
+        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID))
+
+        self.attachment = AttachmentFactory.create(obj=self.poi,
+                                                   attachment_file=get_dummy_uploaded_image())
+
+        self.pk = self.poi.pk
+        url = '/api/pois/%s/' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def test_name(self):
+        self.assertEqual(self.result['name'],
+                         self.poi.name)
+
+    def test_slug(self):
+        self.assertEqual(self.result['slug'],
+                         self.poi.slug)
+
+    def test_published(self):
+        self.assertEqual(self.result['published'], False)
+
+    def test_published_status(self):
+        self.assertDictEqual(self.result['published_status'][0],
+                             {u'lang': u'en', u'status': False, u'language': u'English'})
+
+    def test_type(self):
+        self.assertDictEqual(self.result['type'],
+                             {'id': self.poi.type.pk,
+                              'label': self.poi.type.label,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name),
+                              })
+
+    def test_altimetry(self):
+        self.assertEqual(self.result['min_elevation'], 0.0)
+
+    def test_cities(self):
+        self.assertDictEqual(self.result['cities'][0],
+                             {u"code": self.city.code,
+                              u"name": self.city.name})
+
+    def test_districts(self):
+        self.assertDictEqual(self.result['districts'][0],
+                             {u"id": self.district.id,
+                              u"name": self.district.name})
+
+    def test_related_urls(self):
+        self.assertEqual(self.result['map_image_url'],
+                         '/image/poi-%s.png' % self.pk)
+        self.assertEqual(self.result['filelist_url'],
+                         '/paperclip/get/trekking/poi/%s/' % self.pk)
 
 
 class TrekViewsTest(CommonTest):
@@ -205,48 +265,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
-    def test_json_detail(self):
-        trek = TrekFactory.create()
-        self.information_desk = InformationDeskFactory.create()
-        trek.information_desks.add(self.information_desk)
-
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        detailjson = json.loads(response.content)
-        self.assertDictEqual(detailjson['route'],
-                             {"id": trek.route.id,
-                              "pictogram": None,
-                              "label": trek.route.route})
-        self.assertDictEqual(detailjson['difficulty'],
-                             {"id": trek.difficulty.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, trek.difficulty.pictogram.name),
-                              "label": trek.difficulty.difficulty})
-        self.assertDictEqual(detailjson['information_desk'],
-                             detailjson['information_desks'][0])
-        self.assertDictEqual(detailjson['information_desks'][0],
-                             {u'description': u'<p>description 0</p>',
-                              u'email': u'email-0@makina-corpus.com',
-                              u'latitude': -5.983593666147552,
-                              u'longitude': -1.3630761286186646,
-                              u'name': u'information desk name 0',
-                              u'phone': u'01 02 03 0',
-                              u'photo_url': self.information_desk.photo_url,
-                              u'postal_code': u'28300',
-                              u'street': u'0 baker street',
-                              u'municipality': u"Bailleau L'évêque-0",
-                              u'website': u'http://makina-corpus.com/0'})
-        self.assertEqual(detailjson['information_desk_layer'],
-                         '/api/trek/%s/information_desks.geojson' % trek.pk)
-        self.assertEqual(detailjson['filelist_url'],
-                         '/paperclip/get/trekking/trek/%s/' % trek.pk)
-
-    def test_json_detail_has_elevation_area_url(self):
-        trek = TrekFactory.create()
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        self.assertEqual(detailjson['elevation_area_url'], '/api/trek/%s/dem.json' % trek.pk)
-
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_overriden_document(self, get_attributes_html):
         trek = TrekFactory.create()
@@ -321,6 +339,183 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(len(context['pois']), 1)
 
 
+class TrekJSONDetailTest(TrekkingManagerTest):
+    """ Since we migrated some code to Django REST Framework, we should test
+    the migration extensively. Geotrek-rando mainly relies on this view.
+    """
+
+    def setUp(self):
+        self.login()
+
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon)
+        self.district = DistrictFactory(geom=polygon)
+
+        self.trek = TrekFactory.create(
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+            parking_location=Point(0, 0, srid=settings.SRID)
+        )
+
+        self.attachment = AttachmentFactory.create(obj=self.trek,
+                                                   attachment_file=get_dummy_uploaded_image())
+
+        self.information_desk = InformationDeskFactory.create()
+        self.trek.information_desks.add(self.information_desk)
+
+        self.usage = UsageFactory.create()
+        self.trek.usages.add(self.usage)
+
+        self.theme = ThemeFactory.create()
+        self.trek.themes.add(self.theme)
+
+        self.network = TrekNetworkFactory.create()
+        self.trek.networks.add(self.network)
+
+        self.weblink = WebLinkFactory.create()
+        self.trek.web_links.add(self.weblink)
+
+        self.trek_b = TrekFactory.create()
+        TrekRelationshipFactory.create(has_common_departure=True,
+                                       has_common_edge=False,
+                                       is_circuit_step=True,
+                                       trek_a=self.trek,
+                                       trek_b=self.trek_b)
+
+        self.pk = self.trek.pk
+        url = '/api/treks/%s/' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def test_old_url_redirects_to_api_detail(self):
+        url = '/api/trek/trek-%s.json' % self.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 301)  # permanent
+        self.assertEqual(response.url, 'http://testserver/api/treks/%s/' % self.pk)
+
+    def test_related_urls(self):
+
+        self.assertEqual(self.result['elevation_area_url'],
+                         '/api/trek/%s/dem.json' % self.pk)
+        self.assertEqual(self.result['map_image_url'],
+                         '/image/trek-%s.png' % self.pk)
+        self.assertEqual(self.result['altimetric_profile'],
+                         "/api/trek/%s/profile.json" % self.pk)
+        self.assertEqual(self.result['poi_layer'],
+                         "/api/trek/%s/pois.geojson" % self.pk)
+        self.assertEqual(self.result['information_desk_layer'],
+                         '/api/trek/%s/information_desks.geojson' % self.pk)
+        self.assertEqual(self.result['filelist_url'],
+                         '/paperclip/get/trekking/trek/%s/' % self.pk)
+        self.assertEqual(self.result['gpx'],
+                         '/api/trek/trek-%s.gpx' % self.pk)
+        self.assertEqual(self.result['kml'],
+                         '/api/trek/trek-%s.kml' % self.pk)
+        self.assertEqual(self.result['printable'],
+                         '/api/trek/trek-%s.pdf' % self.pk)
+
+    def test_thumbnail(self):
+        self.assertEqual(self.result['thumbnail'],
+                         os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+
+    def test_published_status(self):
+        self.assertDictEqual(self.result['published_status'][0],
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
+
+    def test_pictures(self):
+        self.assertDictEqual(self.result['pictures'][0],
+                             {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
+                              u'title': self.attachment.title,
+                              u'legend': self.attachment.legend,
+                              u'author': self.attachment.author})
+
+    def test_cities(self):
+        self.assertDictEqual(self.result['cities'][0],
+                             {u"code": self.city.code,
+                              u"name": self.city.name})
+
+    def test_districts(self):
+        self.assertDictEqual(self.result['districts'][0],
+                             {u"id": self.district.id,
+                              u"name": self.district.name})
+
+    def test_networks(self):
+        self.assertDictEqual(self.result['networks'][0],
+                             {u"id": self.network.id,
+                               u"pictogram": None,
+                               u"name": self.network.network})
+
+    def test_usages(self):
+        self.assertDictEqual(self.result['usages'][0],
+                             {u"id": self.usage.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.usage.pictogram.name),
+                              u"label": self.usage.usage})
+
+    def test_themes(self):
+        self.assertDictEqual(self.result['themes'][0],
+                             {u"id": self.theme.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
+                              u"label": self.theme.label})
+
+    def test_weblinks(self):
+        self.assertDictEqual(self.result['web_links'][0],
+                             {u"id": self.weblink.id,
+                              u"url": self.weblink.url,
+                              u"name": self.weblink.name,
+                              u"category": {
+                                  u"id": self.weblink.category.id,
+                                  u"pictogram": os.path.join(settings.MEDIA_URL, self.weblink.category.pictogram.name),
+                                  u"label": self.weblink.category.label}
+                              })
+
+    def test_route_not_none(self):
+        self.assertDictEqual(self.result['route'],
+                             {u"id": self.trek.route.id,
+                              u"pictogram": None,
+                              u"label": self.trek.route.route})
+
+    def test_difficulty_not_none(self):
+        self.assertDictEqual(self.result['difficulty'],
+                             {u"id": self.trek.difficulty.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
+                              u"label": self.trek.difficulty.difficulty})
+
+
+    def test_information_desks(self):
+        self.assertDictEqual(self.result['information_desks'][0],
+                             {u'description': self.information_desk.description,
+                              u'email': self.information_desk.email,
+                              u'latitude': self.information_desk.latitude,
+                              u'longitude': self.information_desk.longitude,
+                              u'name': self.information_desk.name,
+                              u'phone': self.information_desk.phone,
+                              u'photo_url': self.information_desk.photo_url,
+                              u'postal_code': self.information_desk.postal_code,
+                              u'street': self.information_desk.street,
+                              u'municipality': self.information_desk.municipality,
+                              u'website': self.information_desk.website})
+
+    def test_relationships(self):
+        self.assertDictEqual(self.result['relationships'][0],
+                             {u'published': self.trek_b.published,
+                              u'has_common_departure': True,
+                              u'has_common_edge': False,
+                              u'is_circuit_step': True,
+                              u'trek': {u'pk': self.trek_b.pk,
+                                        u'slug': self.trek_b.slug,
+                                        u'name': self.trek_b.name,
+                                        u'url': u'/trek/%s/' % self.trek_b.id}
+                             })
+
+    def test_parking_location_in_wgs84(self):
+        parking_location = self.result['parking_location']
+        self.assertEqual(parking_location[0], -1.3630812101179004)
+
+    def test_points_reference_are_exported_in_wgs84(self):
+        geojson = self.result['points_reference']
+        self.assertEqual(geojson['type'], 'MultiPoint')
+        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
+
+
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):
         self.login()
@@ -339,17 +534,6 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
         url = self.trek.get_update_url()
         response = self.client.get(url)
         self.assertNotContains(response, 'name="points_reference"')
-
-    def test_points_reference_are_exported_in_json_detail(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        self.assertIsNotNone(detailjson['points_reference'])
-
-    def test_points_reference_are_exported_in_wgs84(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
-        detailjson = json.loads((self.client.get(url)).content)
-        geojson = detailjson['points_reference']
-        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
 
 class TrekGPXTest(TrekkingManagerTest):
@@ -410,7 +594,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         self.client.logout()
 
     def test_json_translation(self):
-        url = reverse('trekking:trek_json_detail', kwargs={'pk': self.trek.pk})
+        url = '/api/treks/%s/' % self.trek.pk
 
         for lang, expected in [('fr-FR', self.trek.name_fr),
                                ('it-IT', self.trek.name_it)]:

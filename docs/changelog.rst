@@ -10,17 +10,23 @@ CHANGELOG
 * Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
 * Renamed settings ``TREK_EXPORT_MAP_IMAGE_SIZE`` and ``TREK_COMPLETENESS_FIELDS``,
   and changed their form to dictionnaries by object type.
+* Attribute for single information desk was removed (was used in **Geotrek-rando** < 1.29)
 
 **Bug fixes**
 
 * Add missing credit for main picture in trek PDF (fixes #1178)
-* Path are now removed from user interface in *Geotrek-light* mode.
+* Paths are now removed from user interface in *Geotrek-light* mode.
   (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
 
 **Internal changes**
 
 * Extracted the trek publication to a generic and reusable notion
+* Complete refactor of Trek JSON API, now taking advantage of Django REST framework
+  instead of custom code
+* Added read/write REST API on all entities
 * Refactored URLs declaration for altimetry and publishable entities
+* Change editable status of topology paths in Django forms, since it was
+  posing problems with Django-rest-framework
 
 
 0.26.2 (2014-08-22)

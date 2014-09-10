@@ -223,12 +223,3 @@ class RelatedObjectsTest(TestCase):
         self.assertEqual(len(trek.attachments), 2)
         self.assertEqual(len(trek.pictures), 1)
         self.assertNotEqual(trek.thumbnail, None)
-
-
-class WebLinkTest(TestCase):
-    def test_category_serializable(self):
-        wl = WebLinkFactory()
-        dictcat = wl.serializable_category
-        self.assertDictEqual(dictcat,
-                             {'pictogram': wl.category.pictogram.url,
-                              'label': wl.category.label})
