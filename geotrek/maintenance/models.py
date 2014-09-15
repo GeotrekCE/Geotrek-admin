@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from datetime import datetime
 
 from django.conf import settings
@@ -106,6 +107,13 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
             topology_kind = self._meta.object_name.upper()
             self.topology.kind = topology_kind
             self.topology.save(update_fields=['kind'])
+
+        # Invalidate project map
+        if self.project:
+            try:
+                os.remove(self.project.get_map_image_path())
+            except OSError:
+                pass
 
         self.reload()
 

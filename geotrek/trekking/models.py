@@ -823,6 +823,15 @@ class POI(PicturesMixin, MapEntityMixin, Topology):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
 
+    def save(self, *args, **kwargs):
+        super(POI, self).save(*args, **kwargs)
+        # Invalidate treks map
+        for trek in self.treks.all():
+            try:
+                os.remove(trek.get_map_image_path())
+            except OSError:
+                pass
+
     @property
     def type_display(self):
         return unicode(self.type)

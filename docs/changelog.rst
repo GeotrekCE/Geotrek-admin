@@ -8,6 +8,8 @@ CHANGELOG
 **Bug fixes**
 
 * Fix pretty trek duration when duration is between 24 and 48H (fixes #1188)
+* Invalidate projet maps captures when interventions change, and treks maps
+  when POIs change (fixes #1181)
 
 
 0.26.2 (2014-08-22)
