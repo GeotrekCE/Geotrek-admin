@@ -4,6 +4,13 @@ python:
 env:
   - ACTION=test
   - ACTION=deploy
+  - ACTION=integration
+
+
+matrix:
+  allow_failures:
+    - ACTION: integration
+
 
 before_install:
 
@@ -41,10 +48,11 @@ before_install:
 install:
   - deactivate
   - if [[ $ACTION == test ]]; then ./install.sh --tests || cat ./install.log; fi
-  - if [[ $ACTION == deploy ]]; then ./install.sh --noinput || cat ./install.log; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || cat ./install.log; fi
 script:
-  - if [[ $ACTION == deploy ]]; then make load_demo; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
+  - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then make env_test test; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
   # Re-run for coverage
