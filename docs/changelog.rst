@@ -7,15 +7,29 @@ CHANGELOG
 
 **Breaking changes**
 
-* Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
-* Renamed settings ``TREK_EXPORT_MAP_IMAGE_SIZE`` and ``TREK_COMPLETENESS_FIELDS``,
-  and changed their form to dictionnaries by object type.
 * Attribute for single information desk was removed (was used in **Geotrek-rando** < 1.29)
+* Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
+* Renamed setting ``TREK_EXPORT_MAP_IMAGE_SIZE`` to ``EXPORT_MAP_IMAGE_SIZE``,
+  ``TREK_EXPORT_HEADER_IMAGE_SIZE`` to ``EXPORT_HEADER_IMAGE_SIZE``
+  and ``TREK_COMPLETENESS_FIELDS`` to ``COMPLETENESS_FIELDS``.
+  They are now a dictionnary by object type (`see example <https://github.com/makinacorpus/Geotrek/blob/v0.27dev0/geotrek/settings/base.py#L443-L449>`_)
+
+**New features**
+
+* POI publication is now controlled like treks
+* POI now have a public PDF too
+
+:notes:
+
+    After upgrading, mark all POIs as published in the languages of your choice ::
+
+        UPDATE o_t_poi SET public_fr = TRUE;
+        UPDATE o_t_poi SET date_publication = now();
 
 **Bug fixes**
 
 * Add missing credit for main picture in trek PDF (fixes #1178)
-* Paths are now removed from user interface in *Geotrek-light* mode.
+* Paths module is now removed from user interface in *Geotrek-light* mode.
   (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
 
 **Internal changes**
