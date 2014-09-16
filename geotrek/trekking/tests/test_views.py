@@ -719,6 +719,7 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"6H", trekking_tags.duration(6))
         self.assertEqual(u"10H", trekking_tags.duration(10))
         self.assertEqual(u"2 days", trekking_tags.duration(11))
+        self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24*8))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24*9))

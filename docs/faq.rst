@@ -31,6 +31,22 @@ A trek is defined by a serie of paths, and some POIs are associated to them.
     list !
 
 
+If ``TREKKING_TOPOLOGY_ENABLED`` is set to ``False``, there are no paths involved.
+POIs are thus related to treks using a basic spatial intersection, with a
+distance set in setting ``TREK_POI_INTERSECTION_MARGIN`` (default to 500 meters).
+
+
+Can I have overlapping districts ?
+----------------------------------
+
+Districts are a generic notion to qualify your territory. They can be valleys,
+mounts, ...
+
+You can imagine using the districts table for all those different notions,
+resulting in overlapping geometries. Geotrek will associate them all to your
+objects.
+
+
 Why Makina Corpus sells Geotrek, released under an Open-Source license ?
 ------------------------------------------------------------------------
 
@@ -90,4 +106,5 @@ the source code is probably the least common action. For example :
 * Fix bugs or improve layout and apparence (*requires Webmaster skills*) ;
 * Fix bugs or improve core modules (*requires python/Django skills*).
 
-Join us on the mailing-list !
+Join us on the mailing-list! Send an email to ``geotrek-fr+subscribe@googlegroups.com``
+and you will receive an invitation automatically :)
