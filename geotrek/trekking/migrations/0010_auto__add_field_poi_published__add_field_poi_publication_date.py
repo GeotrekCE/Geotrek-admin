@@ -22,9 +22,6 @@ class Migration(SchemaMigration):
         # Migrate existing data : all published in every language
         for poi in orm.POI.objects.all():
             poi.published = True
-            if settings.PUBLISHED_BY_LANG:
-                for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                    setattr(poi, 'published_%s' % l[0], True)
             poi.save()
 
     def backwards(self, orm):
