@@ -440,10 +440,16 @@ LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
 PUBLISHED_BY_LANG = True
+
 EXPORT_MAP_IMAGE_SIZE = {
     'trek': (14.1, 11),
     'poi':  (14.1, 11),
 }
+EXPORT_HEADER_IMAGE_SIZE = {
+    'trek': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'poi':  (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
+}
+
 COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
 }
@@ -455,7 +461,6 @@ TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENA
 TREK_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
-TREK_EXPORT_HEADER_IMAGE_SIZE = (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
 
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
 TREK_ICON_SIZE_POI = 18

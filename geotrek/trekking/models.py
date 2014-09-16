@@ -496,6 +496,12 @@ class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
 
+    @models.permalink
+    def get_document_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
+        return ('trekking:poi_document_public', [str(self.pk)])
+
     @property
     def type_display(self):
         return unicode(self.type)

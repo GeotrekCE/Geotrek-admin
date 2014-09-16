@@ -8,7 +8,7 @@ from geotrek.common.urls import PublishableEntityOptions
 
 from . import models
 from .views import (
-    TrekDocumentPublic,
+    TrekDocumentPublic, POIDocumentPublic,
     TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
     TrekInformationDeskGeoJSON, WebLinkCreatePopup
 )
@@ -45,6 +45,8 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
 
 
 class POIEntityOptions(PublishableEntityOptions):
+    document_public_view = POIDocumentPublic
+
     def get_serializer(self):
         return trekking_serializers.POISerializer
 

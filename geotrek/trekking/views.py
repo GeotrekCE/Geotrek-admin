@@ -186,7 +186,7 @@ class TrekDocumentPublic(DocumentPublic):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
         trek = self.get_object()
         context['trek'] = trek
-        context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
 
         information_desks = list(trek.information_desks.all())
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
@@ -296,6 +296,15 @@ class POIDetail(MapEntityDetail):
 
 class POIDocument(MapEntityDocument):
     model = POI
+
+
+class POIDocumentPublic(DocumentPublic):
+    queryset = POI.objects.existing()
+
+    def get_context_data(self, **kwargs):
+        context = super(POIDocumentPublic, self).get_context_data(**kwargs)
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['poi']
+        return context
 
 
 class POICreate(MapEntityCreate):

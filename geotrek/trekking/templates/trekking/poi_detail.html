@@ -1,11 +1,20 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n mapentity_tags %}
+{% load static i18n mapentity_tags %}
 
 
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
 {% endblock attachmentspanel %}
+
+
+{% block download %}
+    {{ block.super }}
+  </div>
+
+  <div class="btn-group pull-right">
+    <a class="btn btn-mini" href="{% url 'trekking:poi_printable' object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+{% endblock download %}
 
 
 {% block detailspanel %}
