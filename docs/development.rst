@@ -164,6 +164,7 @@ Data only:
 Everything:
 
 ::
+
     dbname=geotrekdb
     sudo -n -u postgres -s -- psql -c "DROP DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
 
