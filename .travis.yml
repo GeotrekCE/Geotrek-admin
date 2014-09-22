@@ -9,7 +9,8 @@ env:
 
 matrix:
   allow_failures:
-    - ACTION: integration
+    - python: 2.7
+      env: ACTION=integration
 
 
 before_install:
