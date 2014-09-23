@@ -1,0 +1,14 @@
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}
