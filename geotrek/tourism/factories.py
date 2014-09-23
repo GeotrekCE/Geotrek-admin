@@ -38,3 +38,10 @@ class InformationDeskFactory(factory.Factory):
     postal_code = '28300'
     municipality = factory.Sequence(lambda n: u"Bailleau L'évêque-%s" % n)
     geom = Point(3.14, 42)
+
+
+class TouristicContentFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicContent
+
+    name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
+    geom = 'POINT(0 0)'

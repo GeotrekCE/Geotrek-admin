@@ -5,10 +5,16 @@ import json
 import mock
 from requests.exceptions import ConnectionError
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 
+from geotrek.authent.models import default_structure
+from geotrek.common.tests import CommonTest
 from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.tourism.models import DATA_SOURCE_TYPES
-from geotrek.tourism.factories import DataSourceFactory, InformationDeskFactory
+from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent
+from geotrek.tourism.factories import (DataSourceFactory,
+                                       InformationDeskFactory,
+                                       TouristicContentFactory)
+from mapentity.factories import SuperUserFactory
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -231,3 +237,19 @@ class InformationDeskViewsTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         records = json.loads(response.content)
         self.assertEqual(len(records['features']), 10)
+
+
+class TouristicContentViewsTests(CommonTest):
+    model = TouristicContent
+    modelfactory = TouristicContentFactory
+    userfactory = SuperUserFactory
+
+    def get_bad_data(self):
+        return {'geom': 'doh!'}, _(u'Invalid geometry value.')
+
+    def get_good_data(self):
+        return {
+            'name': 'test',
+            'structure': default_structure().pk,
+            'geom': '{"type": "Point", "coordinates":[0, 0]}',
+        }
