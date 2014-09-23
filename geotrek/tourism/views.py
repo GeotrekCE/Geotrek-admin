@@ -17,6 +17,7 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.tourism.models import DataSource, InformationDesk
 
+from .filters import TouristicContentFilterSet
 from .forms import TouristicContentForm
 from .helpers import post_process
 from .models import TouristicContent
@@ -104,6 +105,7 @@ class TouristicContentLayer(MapEntityLayer):
 
 class TouristicContentList(MapEntityList):
     queryset = TouristicContent.objects.existing()
+    filterform = TouristicContentFilterSet
     columns = ['id', 'name']
 
 
