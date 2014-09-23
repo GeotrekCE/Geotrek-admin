@@ -11,7 +11,12 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from mapentity import registry
+from mapentity.models import MapEntityMixin
 from mapentity.serializers import smart_plain_text
+
+from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin
+
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
 
@@ -163,3 +168,22 @@ class InformationDesk(models.Model):
             thumb_url = None
             logger.error(_("Image %s invalid or missing from disk.") % self.photo)
         return thumb_url
+
+
+class TouristicContent(MapEntityMixin, StructureRelated, TimeStampedModelMixin,
+                       NoDeleteMixin):
+    """ A generic touristic content (accomodation, museum, etc.) in the park
+    """
+    geom = models.GeometryField(srid=settings.SRID)
+    name = models.CharField(db_column="nom", max_length=128,
+                            verbose_name=_("Name"))
+
+    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+
+    class Meta:
+        db_table = 't_t_contenu_touristique'
+        verbose_name = _(u"Touristic content")
+        verbose_name_plural = _(u"Touristic contents")
+
+    def __unicode__(self):
+        return self.name

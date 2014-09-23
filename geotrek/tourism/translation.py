@@ -19,3 +19,9 @@ class InformationDeskTypeTO(TranslationOptions):
     fields = ('label',)
 
 translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
+
+
+class TouristicContentTO(TranslationOptions):
+    fields = ('name',)
+
+translator.register(tourism_models.TouristicContent, TouristicContentTO)
