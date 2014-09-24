@@ -40,8 +40,15 @@ class InformationDeskFactory(factory.Factory):
     geom = Point(3.14, 42)
 
 
+class TouristicContentCategoryFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicContentCategory
+
+    label = factory.Sequence(lambda n: u"TouristicContentCategory %s" % n)
+
+
 class TouristicContentFactory(factory.Factory):
     FACTORY_FOR = models.TouristicContent
 
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
+    category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'

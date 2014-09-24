@@ -25,3 +25,11 @@ class TouristicContentTO(TranslationOptions):
     fields = ('name',)
 
 translator.register(tourism_models.TouristicContent, TouristicContentTO)
+
+
+class TouristicContentCategoryTO(TranslationOptions):
+    fields = ('label',)
+
+
+translator.register(tourism_models.TouristicContentCategory,
+                    TouristicContentCategoryTO)

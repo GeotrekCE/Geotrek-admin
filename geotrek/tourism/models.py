@@ -15,12 +15,10 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import smart_plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin
+from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin, PictogramMixin
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
-
-from geotrek.common.mixins import PictogramMixin
 
 
 logger = logging.getLogger(__name__)
@@ -83,6 +81,20 @@ class InformationDeskType(PictogramMixin):
         db_table = 'o_b_type_renseignement'
         verbose_name = _(u"Information desk type")
         verbose_name_plural = _(u"Information desk types")
+        ordering = ['label']
+
+    def __unicode__(self):
+        return self.label
+
+
+class TouristicContentCategory(PictogramMixin):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 't_b_contenu_touristique'
+        verbose_name = _(u"Touristic Content Category")
+        verbose_name_plural = _(u"Touristic Content Categories")
         ordering = ['label']
 
     def __unicode__(self):
@@ -177,6 +189,8 @@ class TouristicContent(MapEntityMixin, StructureRelated, TimeStampedModelMixin,
     geom = models.GeometryField(srid=settings.SRID)
     name = models.CharField(db_column="nom", max_length=128,
                             verbose_name=_("Name"))
+    category = models.ForeignKey(TouristicContentCategory, related_name='contents',
+                                 verbose_name=_(u"Category"), db_column='categorie')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

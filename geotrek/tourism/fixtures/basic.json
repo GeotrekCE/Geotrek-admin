@@ -24,4 +24,17 @@
         "label_fr": "Office du tourisme",
         "label": "Tourist Office"
     }
-}]
+},
+{
+    "pk": 1, 
+    "model": "tourism.touristiccontentcategory", 
+    "fields": {
+        "label_it": "", 
+        "pictogram": "upload/touristiccontent-accommodation.svg", 
+        "label_es": "", 
+        "label": "H\u00e9bergement", 
+        "label_en": "Accommodation", 
+        "label_fr": "H\u00e9bergement"
+    }
+}
+]

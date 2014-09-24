@@ -106,7 +106,7 @@ class TouristicContentLayer(MapEntityLayer):
 class TouristicContentList(MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    columns = ['id', 'name']
+    columns = ['id', 'name', 'category']
 
 
 class TouristicContentDetail(MapEntityDetail):

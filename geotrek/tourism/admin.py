@@ -31,3 +31,10 @@ class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
     }
 
 admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
+
+
+class TouristicContentCategoryAdmin(TranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label',)
+
+admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
