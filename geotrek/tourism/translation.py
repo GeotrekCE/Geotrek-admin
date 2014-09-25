@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from modeltranslation.translator import translator, TranslationOptions
 
 from geotrek.tourism import models as tourism_models
@@ -22,7 +24,8 @@ translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
 
 
 class TouristicContentTO(TranslationOptions):
-    fields = ('name',)
+    fields = ('name',) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
 
 translator.register(tourism_models.TouristicContent, TouristicContentTO)
 

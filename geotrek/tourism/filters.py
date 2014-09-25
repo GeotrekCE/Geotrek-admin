@@ -6,4 +6,5 @@ from .models import TouristicContent
 class TouristicContentFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
-        fields = StructureRelatedFilterSet.Meta.fields + ['category']
+        fields = StructureRelatedFilterSet.Meta.fields + [
+            'published', 'category']

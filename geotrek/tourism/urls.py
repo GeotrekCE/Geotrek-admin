@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url
 
 from mapentity import registry
 
+from geotrek.common.urls import PublishableEntityOptions
+
 from . import models
 from .views import DataSourceList, DataSourceGeoJSON, InformationDeskGeoJSON
 
@@ -12,5 +14,14 @@ urlpatterns = patterns(
     url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', DataSourceGeoJSON.as_view(), name="datasource_geojson"),
     url(r'^api/informationdesk/informationdesk.geojson$', InformationDeskGeoJSON.as_view(), name="informationdesk_geojson"),
 )
+from . import serializers as tourism_serializers
 
-urlpatterns += registry.register(models.TouristicContent)
+
+class TouristicContentEntityOptions(PublishableEntityOptions):
+    def get_serializer(self):
+        return tourism_serializers.TouristicContentSerializer
+
+    def get_queryset(self):
+        return self.model.objects.existing()
+
+urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)

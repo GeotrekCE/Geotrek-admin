@@ -15,7 +15,8 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import smart_plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import NoDeleteMixin, TimeStampedModelMixin, PictogramMixin
+from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
+                                   PictogramMixin, PublishableMixin)
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -182,13 +183,11 @@ class InformationDesk(models.Model):
         return thumb_url
 
 
-class TouristicContent(MapEntityMixin, StructureRelated, TimeStampedModelMixin,
-                       NoDeleteMixin):
+class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
+                       TimeStampedModelMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     geom = models.GeometryField(srid=settings.SRID)
-    name = models.CharField(db_column="nom", max_length=128,
-                            verbose_name=_("Name"))
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='categorie')
 

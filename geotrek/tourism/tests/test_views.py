@@ -247,9 +247,6 @@ class TouristicContentViewsTests(CommonTest):
 
     def get_bad_data(self):
         return {
-            'name_fr': u'test',
-            'category': TouristicContentCategoryFactory.create().pk,
-            'structure': default_structure().pk,
             'geom': 'doh!'
         }, _(u'Invalid geometry value.')
 

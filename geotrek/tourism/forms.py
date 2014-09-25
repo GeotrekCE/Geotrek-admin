@@ -7,5 +7,5 @@ class TouristicContentForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        fields = ['name', 'category', 'geom']
+        fields = ['name', 'published', 'category', 'geom']
         model = TouristicContent
