@@ -7,7 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 from leaflet.forms.widgets import LeafletWidget
-from mapentity.widgets import MapWidget, SelectMultipleWithPop
+from mapentity.widgets import SelectMultipleWithPop
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -136,22 +136,6 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
-    def save(self, *args, **kwargs):
-        trek = super(TrekForm, self).save(*args, **kwargs)
-
-        # This could be bug in Django model translation with translated
-        # boolean fields. We have to set attributes manually otherwise
-        # they are not taken into account when value is False.
-        # TODO: investiguate :)
-        if settings.PUBLISHED_BY_LANG:
-            for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                field = 'published_%s' % l[0]
-                setattr(trek, field, self.cleaned_data[field])
-            trek.published = getattr(trek, 'published_%s' % settings.LANGUAGE_CODE)
-            trek.save()
-
-        return trek
-
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
@@ -193,8 +177,6 @@ class POIForm(BasePOIForm):
             'name',
             'description',
             'published',
-
-            css_class="tab-content"
         )
     ]
 
