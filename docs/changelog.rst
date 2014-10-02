@@ -31,6 +31,7 @@ CHANGELOG
 * Add missing credit for main picture in trek PDF (fixes #1178)
 * Paths module is now removed from user interface in *Geotrek-light* mode.
   (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
+* Make sure text fields are cleared (fixes #1207)
 
 **Internal changes**
 
