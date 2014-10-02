@@ -32,6 +32,7 @@ CHANGELOG
 * Paths module is now removed from user interface in *Geotrek-light* mode.
   (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
 * Make sure text fields are cleared (fixes #1207)
+* Intervention subcontracting was missing in detail pages (fixes #1201)
 
 **Internal changes**
 
