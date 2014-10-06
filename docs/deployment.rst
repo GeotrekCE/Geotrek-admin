@@ -21,7 +21,7 @@ Spatial extents
 ---------------
 
 In order to check your configuration of spatial extents, a small tool
-is available at *http://server/tools/extent/*.
+is available at *http://server/tools/extents/*.
 
 :notes:
 
