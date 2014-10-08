@@ -46,6 +46,8 @@ CHANGELOG
 * Change editable status of topology paths in Django forms, since it was
   posing problems with Django-rest-framework
 * Add elevation profile SVG URL in trek detail JSON (fixes #1205)
+* Simplified upgrade commands for ``etc/`` and ``var/``, and mention advanced
+  configuration file
 
 
 0.26.3 (2014-09-15)
