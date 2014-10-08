@@ -45,3 +45,6 @@ class EnvIniReader(object):
 
     def getfloats(self, *args, **kwargs):
         return [float(v) for v in self.getstrings(*args, **kwargs)]
+
+    def getbool(self, *args, **kwargs):
+        return self.get(*args, **kwargs).lower() in ("yes", "true", "t", "1")

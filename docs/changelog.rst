@@ -33,6 +33,7 @@ CHANGELOG
   (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
 * Make sure text fields are cleared (fixes #1207)
 * Intervention subcontracting was missing in detail pages (fixes #1201)
+* Make sure TLS is disabled when ``mailtls`` is False in settings
 
 **Internal changes**
 
