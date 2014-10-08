@@ -522,7 +522,7 @@ class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
     @classmethod
     def path_pois(cls, path):
-        return cls.objects.filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_pois(cls, topology):

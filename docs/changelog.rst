@@ -34,6 +34,7 @@ CHANGELOG
 * Make sure text fields are cleared (fixes #1207)
 * Intervention subcontracting was missing in detail pages (fixes #1201)
 * Make sure TLS is disabled when ``mailtls`` is False in settings
+* Fix list of POIs in path detail pages (fixes #1213)
 
 **Internal changes**
 
