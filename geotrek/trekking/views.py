@@ -75,7 +75,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
                    list(TrekSerializer.Meta.fields) +
                    ['related', 'pois']) -
                set(['relationships', 'thumbnail', 'map_image_url', 'slug',
-                    'elevation_area_url', 'altimetric_profile', 'poi_layer',
+                    'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'poi_layer',
                     'gpx', 'kml', 'printable', 'filelist_url', 'information_desk_layer']))
 
 

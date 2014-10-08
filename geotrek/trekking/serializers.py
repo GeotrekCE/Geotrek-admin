@@ -182,15 +182,14 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                     AltimetrySerializerMixin, TranslatedModelSerializer):
+                    TranslatedModelSerializer):
     cities = CitySerializer(many=True)
     districts = DistrictSerializer(many=True)
-
     type = POITypeSerializer()
 
     class Meta:
         model = trekking_models.Trek
         fields = ('id', 'description', 'type', 'cities', 'districts') + \
-                 AltimetrySerializerMixin.Meta.fields + \
+                 ('min_elevation', 'max_elevation') + \
                  PublishableSerializerMixin.Meta.fields + \
                  PicturesSerializerMixin.Meta.fields
