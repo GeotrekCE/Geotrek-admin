@@ -35,6 +35,7 @@ CHANGELOG
 * Intervention subcontracting was missing in detail pages (fixes #1201)
 * Make sure TLS is disabled when ``mailtls`` is False in settings
 * Fix list of POIs in path detail pages (fixes #1213)
+* Fix highlight from map for project list page (fixes #1180)
 
 **Internal changes**
 
