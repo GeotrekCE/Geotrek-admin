@@ -7,7 +7,7 @@ from mapentity.forms import MapEntityForm
 from geotrek.authent.models import (default_structure, StructureRelated,
                                     StructureRelatedQuerySet)
 
-from .models import NoDeleteMixin
+from .mixins import NoDeleteMixin
 
 
 class CommonForm(MapEntityForm):

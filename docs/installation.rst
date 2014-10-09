@@ -63,14 +63,13 @@ First, copy your old configuration and uploaded files to your new folder.
 ::
 
     # Configuration files
-    mkdir -p etc/
-    cp ../previous-version/etc/settings.ini etc/
+    cp -aR ../previous-version/etc/ .
 
     # Uploaded files
-    mkdir -p var/
-    cp -R ../previous-version/var/tiles var/tiles
-    cp -R ../previous-version/var/media var/media
+    cp -aR ../previous-version/var/ .
 
+    # If you have advanced settings
+    cp ../previous-version/geotrek/settings/custom.py geotrek/settings/custom.py
 
 Shutdown previous running version, and run install :
 

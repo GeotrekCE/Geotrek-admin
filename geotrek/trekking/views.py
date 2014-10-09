@@ -1,7 +1,5 @@
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.core.urlresolvers import reverse
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
@@ -12,20 +10,20 @@ from django.contrib.auth.decorators import login_required
 from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin, JSONResponseMixin, DocumentConvert)
+                             LastModifiedMixin)
 from mapentity.serializers import plain_text
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 
 from geotrek.core.views import CreateFromTopologyMixin
-from geotrek.core.models import AltimetryMixin
-from geotrek.common.views import FormsetMixin
+
+from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
-from .serializers import TrekGPXSerializer
+from .serializers import TrekGPXSerializer, TrekSerializer
 
 
 class FlattenPicturesMixin(object):
@@ -72,46 +70,13 @@ class TrekJsonList(MapEntityJsonList, TrekList):
     pass
 
 
-class TrekJsonDetail(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
-    queryset = Trek.objects.existing()
-    columns = ['name', 'slug', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
-               'description_teaser'] + AltimetryMixin.COLUMNS + ['published', 'published_status',
-               'networks', 'advice', 'ambiance', 'difficulty',
-               'information_desks', 'information_desk',  # singular: retro-compat
-               'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
-               'web_links', 'is_park_centered', 'disabled_infrastructure',
-               'parking_location', 'thumbnail', 'pictures',
-               'cities', 'districts', 'relationships', 'map_image_url',
-               'elevation_area_url', 'points_reference']
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekJsonDetail, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = {}
-        for fname in self.columns:
-            ctx[fname] = getattr(self.object, 'serializable_%s' % fname,
-                                 getattr(self.object, fname))
-
-        trek = self.get_object()
-
-        ctx['altimetric_profile'] = reverse('trekking:trek_profile', args=(trek.pk,))
-
-        ctx['poi_layer'] = reverse('trekking:trek_poi_geojson', args=(trek.pk,))
-        ctx['information_desk_layer'] = reverse('trekking:trek_information_desk_geojson', args=(trek.pk,))
-        ctx['filelist_url'] = reverse('get_attachments',
-                                      kwargs={'app_label': 'trekking',
-                                              'module_name': 'trek',
-                                              'pk': trek.pk})
-        ctx['gpx'] = reverse('trekking:trek_gpx_detail', args=(trek.pk,))
-        ctx['kml'] = reverse('trekking:trek_kml_detail', args=(trek.pk,))
-        ctx['printable'] = reverse('trekking:trek_printable', args=(trek.pk,))
-        return ctx
-
-
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = set(TrekList.columns + TrekJsonDetail.columns + ['related', 'pois']) - set(['relationships', 'thumbnail', 'map_image_url', 'slug'])
+    columns = (set(TrekList.columns +
+                   list(TrekSerializer.Meta.fields) +
+                   ['related', 'pois']) -
+               set(['relationships', 'thumbnail', 'map_image_url', 'slug',
+                    'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'poi_layer',
+                    'gpx', 'kml', 'printable', 'filelist_url', 'information_desk_layer']))
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
@@ -161,8 +126,8 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
             trek = Trek.objects.get(pk=trek_pk)
         except Trek.DoesNotExist:
             raise Http404
-        # All POIs of this trek
-        return trek.pois.select_related('type')
+        # All published POIs for this trek
+        return trek.pois.filter(published=True).select_related('type')
 
 
 class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
@@ -207,31 +172,28 @@ class TrekDetail(MapEntityDetail):
 
 
 class TrekMapImage(MapEntityMapImage):
-    model = Trek
+    queryset = Trek.objects.existing()
 
 
 class TrekDocument(MapEntityDocument):
-    model = Trek
+    queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublic(TrekDocument):
-    template_name_suffix = "_public"
+class TrekDocumentPublic(DocumentPublic):
+    queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
-
         trek = self.get_object()
-        context['object'] = trek
         context['trek'] = trek
-        context['mapimage_ratio'] = settings.TREK_EXPORT_MAP_IMAGE_SIZE
-        context['headerimage_ratio'] = settings.TREK_EXPORT_HEADER_IMAGE_SIZE
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
 
         information_desks = list(trek.information_desks.all())
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
         context['information_desks'] = information_desks
 
-        pois = list(trek.pois)
+        pois = list(trek.pois.filter(published=True))
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
         context['pois'] = pois
@@ -255,26 +217,10 @@ class TrekDocumentPublic(TrekDocument):
         return context
 
     def render_to_response(self, context, **response_kwargs):
-        trek = self.get_object()
-        # Use attachment that overrides document print, if any.
-        try:
-            overriden = trek.get_attachment_print()
-            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
-            with open(overriden, 'rb') as f:
-                response.write(f.read())
-            return response
-        except ObjectDoesNotExist:
-            pass
         # Prepare altimetric graph
+        trek = self.get_object()
         trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
-
-
-class TrekPrint(DocumentConvert):
-    queryset = Trek.objects.existing()
-
-    def source_url(self):
-        return self.get_object().get_document_public_url()
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
@@ -298,7 +244,7 @@ class TrekDelete(MapEntityDelete):
 
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
@@ -350,6 +296,15 @@ class POIDetail(MapEntityDetail):
 
 class POIDocument(MapEntityDocument):
     model = POI
+
+
+class POIDocumentPublic(DocumentPublic):
+    queryset = POI.objects.existing()
+
+    def get_context_data(self, **kwargs):
+        context = super(POIDocumentPublic, self).get_context_data(**kwargs)
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['poi']
+        return context
 
 
 class POICreate(MapEntityCreate):

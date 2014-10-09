@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n mapentity_tags %}
+{% load static i18n mapentity_tags %}
 
 
 {% block attachmentspanel %}
@@ -8,7 +8,19 @@
 {% endblock attachmentspanel %}
 
 
+{% block download %}
+    {{ block.super }}
+  </div>
+
+  <div class="btn-group pull-right">
+    <a class="btn btn-mini" href="{% url 'trekking:poi_printable' object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+{% endblock download %}
+
+
 {% block detailspanel %}
+
+    {% include "common/publishable_completeness_fragment.html" %}
+
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ poi|verbose:"type" }}</th>
@@ -29,7 +41,7 @@
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
-
+        {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

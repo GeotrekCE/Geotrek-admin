@@ -164,6 +164,29 @@ Data only:
 Everything:
 
 ::
+
     dbname=geotrekdb
     sudo -n -u postgres -s -- psql -c "DROP DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
 
+
+Mapentity development
+---------------------
+
+To develop mapentity and Geotrek together, add the following lines to ``etc/settings.ini``:
+
+::
+
+    [sources]
+    mapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop
+
+    [buildout]
+    auto-checkout += mapentity
+
+Then run:
+
+::
+
+    make env_dev
+    cd lib/src/mapentity/
+    git submodule init
+    git submodule update

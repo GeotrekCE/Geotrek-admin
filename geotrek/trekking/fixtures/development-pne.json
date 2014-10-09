@@ -58,6 +58,9 @@
         "public_transport": "<p>Public transport 0</p>",
         "disabled_infrastructure_en": "<p>disabled_infrastructure 0</p>",
         "published": true,
+        "published_en": true,
+        "published_fr": true,
+        "published_it": true,
         "advice_fr": null,
         "description_teaser_it": null,
         "web_links": []
@@ -105,6 +108,10 @@
             "description_fr": null,
             "description_en": null,
             "description_it": null,
+            "published": true,
+            "published_en": true,
+            "published_fr": true,
+            "published_it": true,
             "type": 1
         }
     },

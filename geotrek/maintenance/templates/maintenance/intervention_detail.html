@@ -30,6 +30,10 @@
             </td>
         </tr>
         <tr>
+            <th>{{ intervention|verbose:"subcontracting" }}</th>
+            <td>{% if intervention.subcontracting %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ intervention|verbose:"disorders" }}</th>
             <td>
                 {% for disorder in  intervention.disorders.all %}

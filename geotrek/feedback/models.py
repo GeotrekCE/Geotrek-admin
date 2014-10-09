@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from mapentity.models import MapEntityMixin
 
-from geotrek.common.models import TimeStampedModel
+from geotrek.common.mixins import TimeStampedModelMixin
 
 from .helpers import send_report_managers
 
@@ -18,7 +18,7 @@ from .helpers import send_report_managers
 logger = logging.getLogger(__name__)
 
 
-class Report(MapEntityMixin, TimeStampedModel):
+class Report(MapEntityMixin, TimeStampedModelMixin):
     """ User reports, mainly submitted via *Geotrek-rando*.
     """
     name = models.CharField(verbose_name=_(u"Name"), max_length=256)
