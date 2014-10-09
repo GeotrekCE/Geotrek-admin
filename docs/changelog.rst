@@ -18,6 +18,8 @@ CHANGELOG
 
 * POI publication is now controlled like treks
 * POI now have a public PDF too
+* Introduced ``VIEWPORT_MARGIN`` setting to control list page viewport margin
+  around spatial extent from ``settings.ini`` (default: 0.1 degree)
 
 :notes:
 

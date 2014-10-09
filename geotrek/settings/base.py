@@ -360,6 +360,8 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
+VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
+
 PATHS_LINE_MARKER = 'dotL'
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
