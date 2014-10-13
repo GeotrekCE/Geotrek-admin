@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-0.27.0 (unreleased)
+0.27.1 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix problems in forms, prevent Javascript errors
+
+
+0.27.0 (2010-10-09)
 -------------------
 
 **Breaking changes**
