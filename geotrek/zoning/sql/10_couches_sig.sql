@@ -29,7 +29,7 @@ ALTER TABLE l_zonage_reglementaire DROP CONSTRAINT IF EXISTS l_zonage_reglementa
 ALTER TABLE l_zonage_reglementaire ADD CONSTRAINT l_zonage_reglementaire_geom_isvalid CHECK (ST_IsValid(geom));
 
 -------------------------------------------------------------------------------
--- Automatic link between Troncon and Commune/Zonage/Secteur
+-- Delete Commune/Zonage/Secteur when evenements are deleted
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON e_r_evenement_troncon;
@@ -63,8 +63,7 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
 
 
 -------------------------------------------------------------------------------
--- Ensure Evenement is cleared when removing link between Troncon and
--- Commune/Zonage/Secteur
+-- Delete evenements when Commune/Zonage/Secteur are deleted
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON f_t_commune;
@@ -94,7 +93,7 @@ FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 
 
 -------------------------------------------------------------------------------
--- Automatic link between Troncon and Commune/Zonage/Secteur
+-- Sync when Troncon modified
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_couches_sig_iu_tgr ON l_t_troncon;
@@ -151,7 +150,7 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 
 
 -------------------------------------------------------------------------------
--- Automatic link between Troncon and Commune/Zonage/Secteur
+-- Sync when Commune/Zonage/Secteur modified
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS commune_troncons_iu_tgr ON l_commune;

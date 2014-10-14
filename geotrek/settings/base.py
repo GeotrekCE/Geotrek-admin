@@ -218,6 +218,7 @@ PROJECT_APPS += (
     'shapes',
     'paperclip',
     'mapentity',
+    'rest_framework',
 )
 
 
@@ -359,6 +360,8 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
 
+VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
+
 PATHS_LINE_MARKER = 'dotL'
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
@@ -438,19 +441,29 @@ LAND_BBOX_CITIES_ENABLED = True
 LAND_BBOX_DISTRICTS_ENABLED = True
 LAND_BBOX_AREAS_ENABLED = False
 
+PUBLISHED_BY_LANG = True
+
+EXPORT_MAP_IMAGE_SIZE = {
+    'trek': (14.1, 11),
+    'poi':  (14.1, 11),
+}
+EXPORT_HEADER_IMAGE_SIZE = {
+    'trek': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'poi':  (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
+}
+
+COMPLETENESS_FIELDS = {
+    'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
+}
+
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 
-TREK_PUBLISHED_BY_LANG = True
 TREK_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
-TREK_EXPORT_MAP_IMAGE_SIZE = (14.1, 11)
-TREK_EXPORT_HEADER_IMAGE_SIZE = (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
 
-TREK_COMPLETENESS_FIELDS = ['departure', 'duration', 'difficulty',
-                            'description_teaser']
 TREK_DAY_DURATION = 10  # Max duration to be done in one day
 TREK_ICON_SIZE_POI = 18
 TREK_ICON_SIZE_PARKING = 18

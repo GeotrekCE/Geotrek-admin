@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from datetime import datetime
 
 from django.conf import settings
@@ -9,13 +10,15 @@ from django.contrib.gis.geos import GeometryCollection
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology, AltimetryMixin, Path, Trail
-from geotrek.common.models import Organism, TimeStampedModel, NoDeleteMixin
+from geotrek.altimetry.models import AltimetryMixin
+from geotrek.core.models import Topology, Path, Trail
+from geotrek.common.models import Organism
+from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage
 
 
-class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
+class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))
@@ -89,7 +92,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.area = fromdb.area
             AltimetryMixin.reload(self, fromdb)
-            TimeStampedModel.reload(self, fromdb)
+            TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
             if self.topology:
                 self.topology.reload()
@@ -106,6 +109,13 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModel, StructureRe
             topology_kind = self._meta.object_name.upper()
             self.topology.kind = topology_kind
             self.topology.save(update_fields=['kind'])
+
+        # Invalidate project map
+        if self.project:
+            try:
+                os.remove(self.project.get_map_image_path())
+            except OSError:
+                pass
 
         self.reload()
 
@@ -325,7 +335,7 @@ class ManDay(models.Model):
         return self.nb_days
 
 
-class Project(MapEntityMixin, TimeStampedModel, StructureRelated, NoDeleteMixin):
+class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')

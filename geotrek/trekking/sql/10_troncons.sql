@@ -10,7 +10,7 @@ BEGIN
         WHERE et.evenement = i.evenement AND et.troncon = OLD.id;
 
 
-    IF {{TREK_PUBLISHED_BY_LANG}} THEN
+    IF {{PUBLISHED_BY_LANG}} THEN
         UPDATE o_t_itineraire i
             SET public_{{LANGUAGE_CODE}} = FALSE
             FROM e_r_evenement_troncon et

@@ -2,6 +2,75 @@
 CHANGELOG
 =========
 
+0.27.1 (2010-10-13)
+-------------------
+
+**Bug fixes**
+
+* Fix problems in forms, prevent Javascript errors
+
+
+0.27.0 (2010-10-09)
+-------------------
+
+**Breaking changes**
+
+* Attribute for single information desk was removed (was used in **Geotrek-rando** < 1.29)
+* Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``
+* Renamed setting ``TREK_EXPORT_MAP_IMAGE_SIZE`` to ``EXPORT_MAP_IMAGE_SIZE``,
+  ``TREK_EXPORT_HEADER_IMAGE_SIZE`` to ``EXPORT_HEADER_IMAGE_SIZE``
+  and ``TREK_COMPLETENESS_FIELDS`` to ``COMPLETENESS_FIELDS``.
+  They are now a dictionnary by object type (`see example <https://github.com/makinacorpus/Geotrek/blob/v0.27dev0/geotrek/settings/base.py#L443-L449>`_)
+
+**New features**
+
+* POI publication is now controlled like treks
+* POI now have a public PDF too
+* Introduced ``VIEWPORT_MARGIN`` setting to control list page viewport margin
+  around spatial extent from ``settings.ini`` (default: 0.1 degree)
+
+:notes:
+
+    After upgrading, mark all POIs as published in the languages of your choice ::
+
+        UPDATE o_t_poi SET public_fr = TRUE;
+        UPDATE o_t_poi SET date_publication = now();
+
+**Bug fixes**
+
+* Add missing credit for main picture in trek PDF (fixes #1178)
+* Paths module is now removed from user interface in *Geotrek-light* mode.
+  (i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)
+* Make sure text fields are cleared (fixes #1207)
+* Intervention subcontracting was missing in detail pages (fixes #1201)
+* Make sure TLS is disabled when ``mailtls`` is False in settings
+* Fix list of POIs in path detail pages (fixes #1213)
+* Fix highlight from map for project list page (fixes #1180)
+
+**Internal changes**
+
+* Extracted the trek publication to a generic and reusable notion
+* Complete refactor of Trek JSON API, now taking advantage of Django REST framework
+  instead of custom code
+* Added read/write REST API on all entities
+* Refactored URLs declaration for altimetry and publishable entities
+* Change editable status of topology paths in Django forms, since it was
+  posing problems with Django-rest-framework
+* Add elevation profile SVG URL in trek detail JSON (fixes #1205)
+* Simplified upgrade commands for ``etc/`` and ``var/``, and mention advanced
+  configuration file
+
+
+0.26.3 (2014-09-15)
+-------------------
+
+**Bug fixes**
+
+* Fix pretty trek duration when duration is between 24 and 48H (fixes #1188)
+* Invalidate projet maps captures when interventions change, and treks maps
+  when POIs change (fixes #1181)
+
+
 0.26.2 (2014-08-22)
 -------------------
 

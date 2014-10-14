@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{% if not object.any_published %}
+    <div class="alert alert-warning"><strong>{% trans "Not published" %}</strong></div>
+{% else %}
+    {% if not object.is_publishable %}
+        <div class="alert alert-error"><strong>{% trans "Object is published but" %}</strong>
+        {% if not object.is_complete %}{% trans "looks incomplete;" %}{% endif %}
+        {% if not object.has_geom_valid %}{% trans "has invalid geometry;" %}{% endif %}
+        </div>
+    {% endif %}
+{% endif %}

@@ -19,8 +19,10 @@ def duration(value):
         return _("More than %s days") % 8
     if days > 1:
         return _("%s days") % days
-    if days == 0 and duration.hour > settings.TREK_DAY_DURATION:
-        return _("%s days") % 2
+    if days <= 1:
+        hours = (settings.TREK_DAY_DURATION * days) + duration.hour
+        if hours > settings.TREK_DAY_DURATION:
+            return _("%s days") % 2
     if duration.hour > 0:
         return _("%(hour)sH%(min)s") % {'hour': duration.hour,
                                         'min': "%s" % duration.minute if duration.minute > 0 else ""}

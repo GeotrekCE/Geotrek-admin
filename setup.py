@@ -15,19 +15,21 @@ setup(
     long_description=open(os.path.join(here, 'README.rst')).read() + '\n\n' +
                      open(os.path.join(here, 'docs', 'changelog.rst')).read(),
     install_requires=[
-        'South == 0.8.4',
-        'psycopg2 == 2.4.1',
-        'docutils == 0.11',
-        'GDAL',  # pinned and installed by buildout, see include-dirs
-        'Pillow >= 1.7.8',
-        'easy-thumbnails == 1.4',
-        'simplekml == 1.2.1',
+        # pinned by buildout
+        'South',
+        'psycopg2',
+        'docutils',
+        'GDAL',
+        'Pillow',
+        'easy-thumbnails',
+        'simplekml',
         'pygal',
-        'django-extended-choices == 0.3.0',
-        'django-multiselectfield == 0.1.1',
+        'django-extended-choices',
+        'django-multiselectfield',
         'geojson',
-        'tif2geojson',  # pinned by buildout
-        'mapentity',  # pinned by buildout
+        'tif2geojson',
+        'mapentity',
+        'pytz',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

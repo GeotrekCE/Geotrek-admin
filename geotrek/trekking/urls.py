@@ -1,31 +1,54 @@
 from django.conf.urls import patterns, url
+from django.views.generic import RedirectView
 
 from mapentity import registry
 
-from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
-                                     ElevationArea)
+from geotrek.altimetry.urls import AltimetryEntityOptions
+from geotrek.common.urls import PublishableEntityOptions
+
 from . import models
 from .views import (
-    TrekDocumentPublic, TrekPrint,
-    TrekJsonDetail, TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
+    TrekDocumentPublic, POIDocumentPublic,
+    TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
     TrekInformationDeskGeoJSON, WebLinkCreatePopup
 )
+from . import serializers as trekking_serializers
 
 
 urlpatterns = patterns('',
-    url(r'^document/print-trek-(?P<pk>\d+).odt$', TrekDocumentPublic.as_view(), name="trek_document_public"),
-    url(r'^api/trek/trek-(?P<pk>\d+).pdf$', TrekPrint.as_view(), name="trek_printable"),
+    # Retro-compat for Geotrek-rando <= 1.31
+    url(r'^api/trek/trek-(?P<pk>\d+).json$', RedirectView.as_view(url='/api/treks/%(pk)s/')),
 
-    url(r'^api/trek/trek-(?P<pk>\d+).json$', TrekJsonDetail.as_view(), name="trek_json_detail"),
+    # Trek specific
     url(r'^api/trek/trek-(?P<pk>\d+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
     url(r'^api/trek/trek-(?P<pk>\d+).kml$', TrekKMLDetail.as_view(), name="trek_kml_detail"),
-    url(r'^api/trek/(?P<pk>\d+)/profile.json$', ElevationProfile.as_view(model=models.Trek), name="trek_profile"),
-    url(r'^api/trek/(?P<pk>\d+)/dem.json$', ElevationArea.as_view(model=models.Trek), name="trek_elevation_area"),
-    url(r'^api/trek/(?P<pk>\d+)/profile.svg$', ElevationChart.as_view(model=models.Trek), name='trek_profile_svg'),
     url(r'^api/trek/(?P<pk>\d+)/pois.geojson$', TrekPOIGeoJSON.as_view(), name="trek_poi_geojson"),
     url(r'^api/trek/(?P<pk>\d+)/information_desks.geojson$', TrekInformationDeskGeoJSON.as_view(), name="trek_information_desk_geojson"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
 )
 
-urlpatterns += registry.register(models.Trek)
-urlpatterns += registry.register(models.POI)
+class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
+    """
+    Add more urls using mixins:
+    - altimetry views (profile, dem etc.)
+    - public documents views
+    We override trek public view to add more context variables and
+    preprocess attributes.
+    """
+    document_public_view = TrekDocumentPublic
+
+    def get_serializer(self):
+        return trekking_serializers.TrekSerializer
+
+    def get_queryset(self):
+        return self.model.objects.existing()
+
+
+class POIEntityOptions(PublishableEntityOptions):
+    document_public_view = POIDocumentPublic
+
+    def get_serializer(self):
+        return trekking_serializers.POISerializer
+
+urlpatterns += registry.register(models.Trek, TrekEntityOptions)
+urlpatterns += registry.register(models.POI, POIEntityOptions)

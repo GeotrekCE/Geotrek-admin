@@ -75,3 +75,35 @@ License
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
 
+
+Status of sub-projects
+----------------------
+
+* |django-mapentity| `django-mapentity <https://github.com/makinacorpus/django-mapentity>`_
+* |django-leaflet| `django-leaflet <https://github.com/makinacorpus/django-leaflet>`_
+* |django-geojson| `django-geojson <https://github.com/makinacorpus/django-geojson>`_
+* |convertit| `ConvertIt <https://github.com/makinacorpus/convertit>`_
+* |Leaflet.GeometryUtil| `Leaflet.GeometryUtil <https://github.com/makinacorpus/Leaflet.GeometryUtil>`_
+* |Leaflet.FileLayer| `Leaflet.FileLayer <https://github.com/makinacorpus/Leaflet.FileLayer>`_
+* |Leaflet.AlmostOver| `Leaflet.AlmostOver <https://github.com/makinacorpus/Leaflet.AlmostOver>`_
+
+.. |django-mapentity| image:: https://travis-ci.org/makinacorpus/django-mapentity.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/django-mapentity?branch=master
+
+.. |django-leaflet| image:: https://travis-ci.org/makinacorpus/django-leaflet.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/django-leaflet?branch=master
+
+.. |django-geojson| image:: https://travis-ci.org/makinacorpus/django-geojson.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/django-geojson?branch=master
+
+.. |convertit| image:: https://travis-ci.org/makinacorpus/convertit.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/convertit?branch=master
+
+.. |Leaflet.GeometryUtil| image:: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil?branch=master
+
+.. |Leaflet.FileLayer| image:: https://travis-ci.org/makinacorpus/Leaflet.FileLayer.png?branch=gh-pages
+    :target: https://travis-ci.org/makinacorpus/Leaflet.FileLayer?branch=gh-pages
+
+.. |Leaflet.AlmostOver| image:: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/Leaflet.AlmostOver?branch=master
