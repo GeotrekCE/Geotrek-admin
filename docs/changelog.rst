@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.27.2 (unreleased)
+0.27.2 (2010-10-14)
 -------------------
 
 **Bug fixes**
@@ -11,6 +11,7 @@ CHANGELOG
 * Fix list of values for infrastructure and signage types (fixes #1223)
 * Signages can now be lines if setting SIGNAGE_LINE_ENABLED is True (fixes #1141)
 * Fix HTML tags in PDF exports (fixes #1235)
+* Fix regression with Geotrek light
 
 0.27.1 (2010-10-13)
 -------------------
