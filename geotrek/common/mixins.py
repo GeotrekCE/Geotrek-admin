@@ -157,15 +157,11 @@ class PicturesMixin(object):
         return os.path.join(settings.MEDIA_URL, th.name)
 
 
-class PublishableMixin(models.Model):
-    """A mixin that contains all necessary stuff to publish objects
-    (e.g. on Geotrek-rando).
+class BasePublishableMixin(models.Model):
+    """ Basic fields to control publication of objects.
 
-    Initially, it was part of the ``trekking.Trek`` class. But now, all kinds of information
-    can be published (c.f. PN Cevennes project).
+    It is used for flat pages and publishable entities.
     """
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
-                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
                                     help_text=_(u"Online"), db_column='public')
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
@@ -175,50 +171,12 @@ class PublishableMixin(models.Model):
     class Meta:
         abstract = True
 
-    @property
-    def slug(self):
-        return slugify(self.name)
-
-    @property
-    def name_display(self):
-        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.name,
-                                                              self.name)
-        if self.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        return s
-
-    @property
-    def name_csv_display(self):
-        return unicode(self.name)
-
-    @models.permalink
-    def get_document_public_url(self):
-        raise NotImplementedError
-
     def save(self, *args, **kwargs):
         if self.publication_date is None and self.any_published:
             self.publication_date = datetime.date.today()
         if self.publication_date is not None and not self.any_published:
             self.publication_date = None
-        super(PublishableMixin, self).save(*args, **kwargs)
-
-    def is_complete(self):
-        """It should also have a description, etc.
-        """
-        modelname = self.__class__._meta.object_name.lower()
-        mandatory = settings.COMPLETENESS_FIELDS.get(modelname, [])
-        for f in mandatory:
-            if not getattr(self, f):
-                return False
-        return True
-
-    def is_publishable(self):
-        return self.is_complete() and self.has_geom_valid()
-
-    def has_geom_valid(self):
-        return self.geom is not None
+        super(BasePublishableMixin, self).save(*args, **kwargs)
 
     @property
     def any_published(self):
@@ -248,6 +206,60 @@ class PublishableMixin(models.Model):
                 'status': published
             })
         return status
+
+
+class PublishableMixin(BasePublishableMixin):
+    """A mixin that contains all necessary stuff to publish objects
+    (e.g. on Geotrek-rando).
+
+    It will only work with MapEntity models.
+
+    Initially, it was part of the ``trekking.Trek`` class. But now, all kinds of information
+    can be published (c.f. PN Cevennes project).
+    """
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
+                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
+
+    class Meta:
+        abstract = True
+
+    @property
+    def slug(self):
+        return slugify(self.name)
+
+    @property
+    def name_display(self):
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.name,
+                                                              self.name)
+        if self.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        return s
+
+    @property
+    def name_csv_display(self):
+        return unicode(self.name)
+
+    @models.permalink
+    def get_document_public_url(self):
+        raise NotImplementedError
+
+    def is_complete(self):
+        """It should also have a description, etc.
+        """
+        modelname = self.__class__._meta.object_name.lower()
+        mandatory = settings.COMPLETENESS_FIELDS.get(modelname, [])
+        for f in mandatory:
+            if not getattr(self, f):
+                return False
+        return True
+
+    def is_publishable(self):
+        return self.is_complete() and self.has_geom_valid()
+
+    def has_geom_valid(self):
+        return self.geom is not None
 
     def prepare_map_image(self, rooturl):
         """
