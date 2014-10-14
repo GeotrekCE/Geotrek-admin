@@ -185,7 +185,7 @@ class TrekDocumentPublic(DocumentPublic):
     def get_context_data(self, **kwargs):
         context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
         trek = self.get_object()
-        context['trek'] = trek
+
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
 
         information_desks = list(trek.information_desks.all())
@@ -202,6 +202,7 @@ class TrekDocumentPublic(DocumentPublic):
         for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
                      'public_transport', 'advised_parking', 'disabled_infrastructure']:
             setattr(trek, attr, plain_text(getattr(trek, attr)))
+
         for poi in context['pois']:
             setattr(poi, 'description', plain_text(getattr(poi, 'description')))
 
@@ -213,6 +214,8 @@ class TrekDocumentPublic(DocumentPublic):
         for i, p in enumerate(trek.pois):
             enumeration[p.pk] = letters[i]
         context['enumeration'] = enumeration
+
+        context['object'] = context['trek'] = trek
 
         return context
 

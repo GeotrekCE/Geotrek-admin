@@ -2,6 +2,16 @@
 CHANGELOG
 =========
 
+0.27.2 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix elevation info not being computed when intervention is created (ref #1221)
+* Fix list of values for infrastructure and signage types (fixes #1223)
+* Signages can now be lines if setting SIGNAGE_LINE_ENABLED is True (fixes #1141)
+* Fix HTML tags in PDF exports (fixes #1235)
+
 0.27.1 (2010-10-13)
 -------------------
 
