@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+0.27.2 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix elevation info not being computed when intervention is created (ref #1221)
+
 0.27.1 (2010-10-13)
 -------------------
 
