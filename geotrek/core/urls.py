@@ -8,11 +8,11 @@ from geotrek.core.models import Path, Trail
 from geotrek.core.views import get_graph_json
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    urlpatterns = patterns('',
-        url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
-    )
+urlpatterns = patterns('',
+    url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
+)
 
+if settings.TREKKING_TOPOLOGY_ENABLED:
     class PathEntityOptions(AltimetryEntityOptions):
         # Profiles for paths
         pass
