@@ -88,6 +88,8 @@ Copy your old configuration and uploaded files to your new folder.
 
 Deploy the new version :
 
+::
+
     # Re-run install
     ./install.sh
 
