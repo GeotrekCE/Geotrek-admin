@@ -97,7 +97,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER m_t_intervention_altimetry_iu_tgr
-BEFORE UPDATE OF topology_id ON m_t_intervention
+BEFORE INSERT OR UPDATE OF topology_id ON m_t_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
 
 

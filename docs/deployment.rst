@@ -153,9 +153,16 @@ Extras
 Load MNT raster
 ---------------
 
+`In QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
+you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).
+
+Generate a GeoTIFF, and upload both files (``.tif`` + ``.tfw``) on the server.
+And use the Geotrek command to load it into PostGIS :
+
+
 ::
 
-    bin/django loaddem <PATH>/w001001.adf
+    bin/django loaddem <PATH>/dem.tif
 
 
 :note:
