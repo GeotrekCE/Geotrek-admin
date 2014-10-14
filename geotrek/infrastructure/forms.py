@@ -1,8 +1,7 @@
-from django import forms
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import PointTopologyWidget
 
-from .models import Infrastructure, InfrastructureType, Signage
+from .models import Infrastructure, Signage
 
 
 class BaseInfrastructureForm(TopologyForm):
@@ -15,8 +14,8 @@ class BaseInfrastructureForm(TopologyForm):
 class InfrastructureForm(BaseInfrastructureForm):
     def __init__(self, *args, **kwargs):
         super(InfrastructureForm, self).__init__(*args, **kwargs)
-        qs = InfrastructureType.objects.for_infrastructures()
-        self.fields['type'] = forms.ModelChoiceField(queryset=qs)
+        typefield = self.fields['type']
+        typefield.queryset = typefield.queryset.for_infrastructures()
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
@@ -26,8 +25,8 @@ class SignageForm(BaseInfrastructureForm):
     def __init__(self, *args, **kwargs):
         super(SignageForm, self).__init__(*args, **kwargs)
         self.fields['topology'].widget = PointTopologyWidget()
-        qs = InfrastructureType.objects.for_signages()
-        self.fields['type'] = forms.ModelChoiceField(queryset=qs)
+        typefield = self.fields['type']
+        typefield.queryset = typefield.queryset.for_signages()
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
