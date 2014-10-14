@@ -59,7 +59,7 @@ Download and extract the new version in a separate folder (**recommended**).
 
     wget https://github.com/makinacorpus/Geotrek/archive/vX.Y.Z.zip
     unzip vX.Y.Z.zip
-    cd Geotrek-vX.Y.Z/
+    cd Geotrek-X.Y.Z/
 
 Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
 files `or online <https://github.com/makinacorpus/Geotrek/releases>`_.
