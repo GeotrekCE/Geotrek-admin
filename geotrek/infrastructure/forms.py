@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import PointTopologyWidget
 
@@ -24,9 +26,11 @@ class InfrastructureForm(BaseInfrastructureForm):
 class SignageForm(BaseInfrastructureForm):
     def __init__(self, *args, **kwargs):
         super(SignageForm, self).__init__(*args, **kwargs)
-        self.fields['topology'].widget = PointTopologyWidget()
         typefield = self.fields['type']
         typefield.queryset = typefield.queryset.for_signages()
+
+        if not settings.SIGNAGE_LINE_ENABLED:
+            self.fields['topology'].widget = PointTopologyWidget()
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
