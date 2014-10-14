@@ -13,6 +13,7 @@ CHANGELOG
 * Fix HTML tags in PDF exports (fixes #1235)
 * Fix regression with Geotrek light
 
+
 0.27.1 (2010-10-13)
 -------------------
 

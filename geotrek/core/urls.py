@@ -12,10 +12,9 @@ urlpatterns = patterns('',
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
 )
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    class PathEntityOptions(AltimetryEntityOptions):
-        # Profiles for paths
-        pass
+class PathEntityOptions(AltimetryEntityOptions):
+    # Profiles for paths
+    pass
 
-    urlpatterns += registry.register(Path, PathEntityOptions)
-    urlpatterns += registry.register(Trail, menu=settings.TRAIL_MODEL_ENABLED)
+urlpatterns += registry.register(Path, PathEntityOptions, menu=settings.TREKKING_TOPOLOGY_ENABLED)
+urlpatterns += registry.register(Trail, menu=settings.TRAIL_MODEL_ENABLED)
