@@ -29,6 +29,7 @@ setup(
         'geojson',
         'tif2geojson',
         'mapentity',
+        'pytz',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
