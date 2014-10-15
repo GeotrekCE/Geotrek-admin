@@ -1,6 +1,6 @@
 from geotrek.common.filters import StructureRelatedFilterSet
 
-from .models import TouristicContent
+from .models import TouristicContent, TouristicEvent
 
 
 class TouristicContentFilterSet(StructureRelatedFilterSet):
@@ -8,3 +8,10 @@ class TouristicContentFilterSet(StructureRelatedFilterSet):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'category']
+
+
+class TouristicEventFilterSet(StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
+        model = TouristicEvent
+        fields = StructureRelatedFilterSet.Meta.fields + [
+            'published', 'usage']

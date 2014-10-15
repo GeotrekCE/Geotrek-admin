@@ -17,10 +17,10 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.tourism.models import DataSource, InformationDesk
 
-from .filters import TouristicContentFilterSet
-from .forms import TouristicContentForm
+from .filters import TouristicContentFilterSet, TouristicEventFilterSet
+from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
-from .models import TouristicContent
+from .models import TouristicContent, TouristicEvent
 
 
 logger = logging.getLogger(__name__)
@@ -138,3 +138,45 @@ class TouristicContentDelete(MapEntityDelete):
     @same_structure_required('tourism:touristiccontent_detail')
     def dispatch(self, *args, **kwargs):
         return super(TouristicContentDelete, self).dispatch(*args, **kwargs)
+
+
+class TouristicEventLayer(MapEntityLayer):
+    queryset = TouristicEvent.objects.existing()
+    properties = ['name']
+
+
+class TouristicEventList(MapEntityList):
+    queryset = TouristicEvent.objects.existing()
+    filterform = TouristicEventFilterSet
+    columns = ['id', 'name', 'usage']
+
+
+class TouristicEventDetail(MapEntityDetail):
+    queryset = TouristicEvent.objects.existing()
+
+    def context_data(self, *args, **kwargs):
+        context = super(TouristicEventDetail, self).context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class TouristicEventCreate(MapEntityCreate):
+    model = TouristicEvent
+    form_class = TouristicEventForm
+
+
+class TouristicEventUpdate(MapEntityUpdate):
+    queryset = TouristicEvent.objects.existing()
+    form_class = TouristicEventForm
+
+    @same_structure_required('tourism:touristicevent_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TouristicEventUpdate, self).dispatch(*args, **kwargs)
+
+
+class TouristicEventDelete(MapEntityDelete):
+    model = TouristicEvent
+
+    @same_structure_required('tourism:touristicevent_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TouristicEventDelete, self).dispatch(*args, **kwargs)
