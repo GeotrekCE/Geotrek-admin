@@ -52,3 +52,10 @@ class TouristicContentFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
+
+
+class TouristicEventFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicEvent
+
+    name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
+    geom = 'POINT(0 0)'

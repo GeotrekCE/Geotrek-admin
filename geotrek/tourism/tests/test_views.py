@@ -10,11 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 from geotrek.authent.models import default_structure
 from geotrek.common.tests import CommonTest
 from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent
+from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent, TouristicEvent
 from geotrek.tourism.factories import (DataSourceFactory,
                                        InformationDeskFactory,
                                        TouristicContentFactory,
-                                       TouristicContentCategoryFactory)
+                                       TouristicContentCategoryFactory,
+                                       TouristicEventFactory)
 from mapentity.factories import SuperUserFactory
 
 
@@ -254,6 +255,24 @@ class TouristicContentViewsTests(CommonTest):
         return {
             'name_fr': u'test',
             'category': TouristicContentCategoryFactory.create().pk,
+            'structure': default_structure().pk,
+            'geom': '{"type": "Point", "coordinates":[0, 0]}',
+        }
+
+
+class TouristicEventViewsTests(CommonTest):
+    model = TouristicEvent
+    modelfactory = TouristicEventFactory
+    userfactory = SuperUserFactory
+
+    def get_bad_data(self):
+        return {
+            'geom': 'doh!'
+        }, _(u'Invalid geometry value.')
+
+    def get_good_data(self):
+        return {
+            'name_fr': u'test',
             'structure': default_structure().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
