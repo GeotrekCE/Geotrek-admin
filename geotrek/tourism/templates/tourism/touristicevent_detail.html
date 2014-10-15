@@ -1,0 +1,86 @@
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{{ object.description_teaser }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>{% valuelist object.themes.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"begin_date" }}</th>
+            <td>{{ object.begin_date }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"end_date" }}</th>
+            <td>{{ object.end_date }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"duration" }}</th>
+            <td>{{ object.duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"meeting_point" }}</th>
+            <td>{{ object.meeting_point }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"meeting_time" }}</th>
+            <td>{{ object.meeting_time }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"contact" }}</th>
+            <td>{{ object.contact }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"organizer" }}</th>
+            <td>{{ object.organizer }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"speaker" }}</th>
+            <td>{{ object.speaker }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"usage" }}</th>
+            <td>{{ object.usage }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{{ object.accessibility }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"participant_number" }}</th>
+            <td>{{ object.participant_number }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"booking" }}</th>
+            <td>{{ object.booking }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{{ object.practical_info }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}
