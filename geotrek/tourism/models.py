@@ -189,9 +189,18 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
                        TimeStampedModelMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
+    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
+                                          help_text=_(u"A brief summary"), db_column='chapeau')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
+                                   help_text=_(u"Complete description"))
+    themes = models.ManyToManyField(Theme, related_name="touristiccontents",
+                                    db_table="o_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    help_text=_(u"Main theme(s)"))
     geom = models.GeometryField(srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='categorie')
+    contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
+    practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
@@ -240,7 +249,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
                                           help_text=_(u"A brief summary"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
-    themes = models.ManyToManyField(Theme, related_name="events",
+    themes = models.ManyToManyField(Theme, related_name="touristic_events",
                                     db_table="o_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.PointField(srid=settings.SRID)

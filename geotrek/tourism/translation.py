@@ -24,7 +24,8 @@ translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
 
 
 class TouristicContentTO(TranslationOptions):
-    fields = ('name',) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fields = ('name', 'description_teaser', 'description', 'practical_info'
+              ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 translator.register(tourism_models.TouristicContent, TouristicContentTO)
@@ -51,6 +52,7 @@ translator.register(tourism_models.TouristicEventPublic, TouristicEventPublicTO)
 
 class TouristicEventTO(TranslationOptions):
     fields = ('name', 'description_teaser', 'description', 'meeting_point',
-              'accessibility', 'booking', 'practical_info')
+              'accessibility', 'booking', 'practical_info'
+              ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
 
 translator.register(tourism_models.TouristicEvent, TouristicEventTO)

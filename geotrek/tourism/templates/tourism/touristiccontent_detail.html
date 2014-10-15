@@ -7,7 +7,35 @@
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
-
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{{ object.description_teaser }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>{% valuelist object.themes.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"category" }}</th>
+            <td>{{ object.category }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"contact" }}</th>
+            <td>{{ object.contact }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{{ object.practical_info }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}
