@@ -8,7 +8,7 @@ from rest_framework import serializers as rest_serializers
 from mapentity.serializers import GPXSerializer
 
 from geotrek.common.serializers import (
-    PictogramSerializerMixin,
+    PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin
 )
@@ -52,12 +52,6 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = trekking_models.Route
         fields = ('id', 'pictogram', 'name')
-
-
-class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    class Meta:
-        model = trekking_models.Theme
-        fields = ('id', 'pictogram', 'label')
 
 
 class UsageSerializer(PictogramSerializerMixin, TranslatedModelSerializer):

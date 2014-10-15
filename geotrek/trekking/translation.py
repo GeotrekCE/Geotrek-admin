@@ -27,10 +27,6 @@ class POITypeTO(TranslationOptions):
     fields = ('label', )
 
 
-class ThemeTO(TranslationOptions):
-    fields = ('label', )
-
-
 class TrekNetworkTO(TranslationOptions):
     fields = ('network', )
 
@@ -59,7 +55,6 @@ trek_translation_to_register = [
     (trekking_models.Trek, TrekTO),
     (trekking_models.POI, POITO),
     (trekking_models.POIType, POITypeTO),
-    (trekking_models.Theme, ThemeTO),
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Usage, UsageTO),
     (trekking_models.Route, RouteTO),

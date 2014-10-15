@@ -36,5 +36,115 @@
         "label_en": "Accommodation", 
         "label_fr": "H\u00e9bergement"
     }
+},
+{
+    "pk": 1, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Exposition", 
+        "usage_en": "Exposition", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Exposition"
+    }
+},
+{
+    "pk": 2, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Randonn\u00e9e", 
+        "usage_en": "Trek", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Randonn\u00e9e"
+    }
+},
+{
+    "pk": 3, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Atelier", 
+        "usage_en": "Workshop", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Atelier"
+    }
+},
+{
+    "pk": 4, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Visite", 
+        "usage_en": "Visit", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Visite"
+    }
+},
+{
+    "pk": 5, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Conf\u00e9rence", 
+        "usage_en": "Conference", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Conf\u00e9rence"
+    }
+},
+{
+    "pk": 6, 
+    "model": "tourism.touristiceventusage", 
+    "fields": {
+        "usage": "Spectacle", 
+        "usage_en": "Show", 
+        "usage_it": "", 
+        "usage_es": "", 
+        "usage_fr": "Spectacle"
+    }
+},
+{
+    "pk": 1, 
+    "model": "tourism.touristiceventpublic", 
+    "fields": {
+        "public_en": "Adult", 
+        "public_fr": "Adulte", 
+        "public_it": "", 
+        "public": "Adulte", 
+        "public_es": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "tourism.touristiceventpublic", 
+    "fields": {
+        "public_en": "Child", 
+        "public_fr": "Enfant", 
+        "public_it": "", 
+        "public": "Enfant", 
+        "public_es": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "tourism.touristiceventpublic", 
+    "fields": {
+        "public_en": "All audiences", 
+        "public_fr": "Tout public", 
+        "public_it": "", 
+        "public": "Tout public", 
+        "public_es": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "tourism.touristiceventpublic", 
+    "fields": {
+        "public_en": "Impaired audience", 
+        "public_fr": "Public d\u00e9ficient", 
+        "public_it": "", 
+        "public": "Public d\u00e9ficient", 
+        "public_es": ""
+    }
 }
 ]

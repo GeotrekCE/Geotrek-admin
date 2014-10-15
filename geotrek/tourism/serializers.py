@@ -28,3 +28,9 @@ class TouristicContentSerializer(PublishableSerializerMixin, TranslatedModelSeri
     class Meta:
         model = tourism_models.TouristicContent
         fields = ('id', ) + PublishableSerializerMixin.Meta.fields
+
+
+class TouristicEventSerializer(PublishableSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = tourism_models.TouristicEvent
+        fields = ('id', ) + PublishableSerializerMixin.Meta.fields

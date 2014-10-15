@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+from modeltranslation.admin import TranslationAdmin
 from paperclip.models import Attachment
-from .models import FileType, Organism
+from .models import FileType, Organism, Theme
 
 
 class OrganismAdmin(admin.ModelAdmin):
@@ -47,6 +48,12 @@ class AttachmentAdmin(admin.ModelAdmin):
         return False
 
 
+class ThemeAdmin(TranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label',)
+
+
 admin.site.register(Organism, OrganismAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 admin.site.register(FileType, FileTypeAdmin)
+admin.site.register(Theme, ThemeAdmin)

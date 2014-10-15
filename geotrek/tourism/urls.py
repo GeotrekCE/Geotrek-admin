@@ -25,3 +25,13 @@ class TouristicContentEntityOptions(PublishableEntityOptions):
         return self.model.objects.existing()
 
 urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)
+
+
+class TouristicEventEntityOptions(PublishableEntityOptions):
+    def get_serializer(self):
+        return tourism_serializers.TouristicEventSerializer
+
+    def get_queryset(self):
+        return self.model.objects.existing()
+
+urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions)

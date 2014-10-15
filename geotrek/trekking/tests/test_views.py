@@ -19,7 +19,7 @@ from django.test.utils import override_settings
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
-from geotrek.common.factories import AttachmentFactory
+from geotrek.common.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory
@@ -28,7 +28,7 @@ from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
-                                        ThemeFactory, TrekRelationshipFactory)
+                                        TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism.factories import InformationDeskFactory

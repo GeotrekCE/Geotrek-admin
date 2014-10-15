@@ -7,17 +7,12 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
+    POIType, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
     WebLinkCategory, Trek
 )
 
 
 class POITypeAdmin(TranslationAdmin):
-    list_display = ('label', 'pictogram_img')
-    search_fields = ('label',)
-
-
-class ThemeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
@@ -110,7 +105,6 @@ class WebLinkCategoryAdmin(TranslationAdmin):
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
-    (Theme, ThemeAdmin),
     (TrekNetwork, TrekNetworkAdmin),
     (Usage, UsageAdmin),
     (Route, RouteAdmin),

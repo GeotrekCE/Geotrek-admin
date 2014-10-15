@@ -8,13 +8,6 @@ from geotrek.core.factories import TopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 
-class ThemeFactory(factory.Factory):
-    FACTORY_FOR = models.Theme
-
-    label = factory.Sequence(lambda n: u"Theme %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
-
-
 class TrekNetworkFactory(factory.Factory):
     FACTORY_FOR = models.TrekNetwork
 

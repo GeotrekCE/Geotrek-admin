@@ -4,6 +4,8 @@ from django.db import models as django_db_models
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
+from .models import Theme
+
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
     def get_field(self, model_field):
@@ -60,3 +62,9 @@ class PublishableSerializerMixin(BasePublishableSerializerMixin):
     class Meta:
         fields = ('name', 'slug', 'map_image_url', 'filelist_url', 'printable') + \
             BasePublishableSerializerMixin.Meta.fields
+
+
+class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = Theme
+        fields = ('id', 'pictogram', 'label')

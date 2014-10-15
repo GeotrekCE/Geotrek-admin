@@ -38,3 +38,15 @@ class TouristicContentCategoryAdmin(TranslationAdmin):
     search_fields = ('label',)
 
 admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
+
+
+class TouristicEventUsageAdmin(TranslationAdmin):
+    search_fields = ('usage',)
+
+admin.site.register(tourism_models.TouristicEventUsage, TouristicEventUsageAdmin)
+
+
+class TouristicEventPublicAdmin(TranslationAdmin):
+    search_fields = ('public',)
+
+admin.site.register(tourism_models.TouristicEventPublic, TouristicEventPublicAdmin)

@@ -16,7 +16,9 @@ from mapentity.serializers import smart_plain_text
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, PublishableMixin)
+                                   PictogramMixin, PublishableMixin,
+                                   PicturesMixin)
+from geotrek.common.models import Theme
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -197,6 +199,74 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
         db_table = 't_t_contenu_touristique'
         verbose_name = _(u"Touristic content")
         verbose_name_plural = _(u"Touristic contents")
+
+    def __unicode__(self):
+        return self.name
+
+
+class TouristicEventUsage(models.Model):
+
+    usage = models.CharField(verbose_name=_(u"Usage"), max_length=128, db_column='usage')
+
+    class Meta:
+        db_table = 'o_b_evenement_touristique_usage'
+        verbose_name = _(u"Touristic event usage")
+        verbose_name_plural = _(u"Touristic event usages")
+        ordering = ['usage']
+
+    def __unicode__(self):
+        return self.usage
+
+
+class TouristicEventPublic(models.Model):
+
+    public = models.CharField(verbose_name=_(u"Public"), max_length=128, db_column='public')
+
+    class Meta:
+        db_table = 'o_b_evenement_touristique_public'
+        verbose_name = _(u"Touristic event public")
+        verbose_name_plural = _(u"Touristic event publics")
+        ordering = ['public']
+
+    def __unicode__(self):
+        return self.public
+
+
+class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
+                     TimeStampedModelMixin, NoDeleteMixin, PicturesMixin):
+    """ A touristic event (conference, workshop, etc.) in the park
+    """
+    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
+                                          help_text=_(u"A brief summary"), db_column='chapeau')
+    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
+                                   help_text=_(u"Complete description"))
+    themes = models.ManyToManyField(Theme, related_name="events",
+                                    db_table="o_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    help_text=_(u"Main theme(s)"))
+    geom = models.PointField(srid=settings.SRID)
+    begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
+    end_date = models.DateField(blank=True, null=True, verbose_name=_(u"End date"), db_column='date_fin')
+    duration = models.CharField(verbose_name=_(u"Duration"), max_length=64, blank=True, db_column='duree')
+    meeting_point = models.CharField(verbose_name=_(u"Meeting point"), max_length=256, blank=True, db_column='point_rdv')
+    meeting_time = models.CharField(verbose_name=_(u"Meeting time"), max_length=64, blank=True, db_column='heure_rdv')
+    contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
+    organizer = models.CharField(verbose_name=_(u"Organizer"), max_length=256, blank=True, db_column='organisateur')
+    speaker = models.CharField(verbose_name=_(u"Speaker"), max_length=256, blank=True, db_column='intervenant')
+    usage = models.ForeignKey(TouristicEventUsage, verbose_name=_(u"Usage"), blank=True, null=True, db_column='usage')
+    accessibility = models.CharField(verbose_name=_(u"Accessibility"), max_length=256, blank=True, db_column='accessibilite')
+    participant_number = models.CharField(verbose_name=_(u"Number of participants"), max_length=256, blank=True, db_column='nb_places')
+    booking = models.TextField(verbose_name=_(u"Booking"), blank=True, db_column='reservation')
+    public = models.ForeignKey(TouristicEventPublic, verbose_name=_(u"Public"), blank=True, null=True, db_column='public_vise')
+    practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
+                                      help_text=_(u"Recommandations / To plan / Advices"))
+
+    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+
+    class Meta:
+        db_table = 't_t_evenement_touristique'
+        verbose_name = _(u"Touristic event")
+        verbose_name_plural = _(u"Touristic events")
+        ordering = ['-begin_date']
 
     def __unicode__(self):
         return self.name

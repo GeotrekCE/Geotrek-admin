@@ -33,6 +33,24 @@ translator.register(tourism_models.TouristicContent, TouristicContentTO)
 class TouristicContentCategoryTO(TranslationOptions):
     fields = ('label',)
 
-
 translator.register(tourism_models.TouristicContentCategory,
                     TouristicContentCategoryTO)
+
+
+class TouristicEventUsageTO(TranslationOptions):
+    fields = ('usage',)
+
+translator.register(tourism_models.TouristicEventUsage, TouristicEventUsageTO)
+
+
+class TouristicEventPublicTO(TranslationOptions):
+    fields = ('public',)
+
+translator.register(tourism_models.TouristicEventPublic, TouristicEventPublicTO)
+
+
+class TouristicEventTO(TranslationOptions):
+    fields = ('name', 'description_teaser', 'description', 'meeting_point',
+              'accessibility', 'booking', 'practical_info')
+
+translator.register(tourism_models.TouristicEvent, TouristicEventTO)
