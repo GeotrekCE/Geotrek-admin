@@ -1,3 +1,5 @@
+import mimetypes
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
@@ -5,6 +7,7 @@ from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
+from bs4 import BeautifulSoup
 from extended_choices import Choices
 
 from geotrek.common.mixins import TimeStampedModelMixin, BasePublishableMixin
@@ -54,3 +57,25 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
         if self.external_url.strip() and strip_tags(html_content):
             raise ValidationError(_('Choose between external URL and HTML content'))
+
+    def parse_media(self):
+        soup = BeautifulSoup(self.content or '')
+        images = soup.findAll('img')
+        results = []
+        for image in images:
+            url = image.get('src')
+            if url is None:
+                continue
+
+            mt = mimetypes.guess_type(url, strict=True)[0]
+            if mt is None:
+                mt = 'application/octet-stream'
+
+            results.append({
+                'url': url,
+                'title': image.get('title', ''),
+                'alt': image.get('alt', ''),
+                'mimetype': mt.split('/'),
+            })
+
+        return results
