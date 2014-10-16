@@ -12,7 +12,7 @@ from tinymce.widgets import TinyMCE
 
 from .models import (
     POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
-    WebLinkCategory, InformationDesk, Trek
+    WebLinkCategory, InformationDesk, InformationDeskType, Trek
 )
 
 
@@ -111,6 +111,11 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
+class InformationDeskTypeAdmin(TranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label', )
+
+
 class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
     list_display = ('name', 'website', 'municipality')
     search_fields = ('name',)
@@ -131,6 +136,7 @@ trek_admin_to_register = [
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
     (InformationDesk, InformationDeskAdmin),
+    (InformationDeskType, InformationDeskTypeAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

@@ -371,7 +371,7 @@ class Theme(PictogramMixin):
     class Meta:
         db_table = 'o_b_theme'
         verbose_name = _(u"Theme")
-        verbose_name_plural = _(u"Theme")
+        verbose_name_plural = _(u"Themes")
         ordering = ['label']
 
     def __unicode__(self):
@@ -400,9 +400,26 @@ class Theme(PictogramMixin):
         return open(output)
 
 
+class InformationDeskType(PictogramMixin):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='label')
+
+    class Meta:
+        db_table = 'o_b_type_renseignement'
+        verbose_name = _(u"Information desk type")
+        verbose_name_plural = _(u"Information desk types")
+        ordering = ['label']
+
+    def __unicode__(self):
+        return self.label
+
+
 class InformationDesk(models.Model):
 
     name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
+    type = models.ForeignKey(InformationDeskType, verbose_name=_(u"Type"),
+                             related_name='desks', null=True, blank=True,
+                             db_column='type')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Brief description"))
     phone = models.CharField(verbose_name=_(u"Phone"), max_length=32,

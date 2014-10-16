@@ -61,10 +61,17 @@ class WebLinkFactory(factory.Factory):
     category = factory.SubFactory(WebLinkCategoryFactory)
 
 
+class InformationDeskTypeFactory(factory.Factory):
+    FACTORY_FOR = models.InformationDeskType
+
+    label = factory.Sequence(lambda n: u"Type %s" % n)
+
+
 class InformationDeskFactory(factory.Factory):
     FACTORY_FOR = models.InformationDesk
 
     name = factory.Sequence(lambda n: u"information desk name %s" % n)
+    type = factory.SubFactory(InformationDeskTypeFactory)
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
     phone = factory.Sequence(lambda n: u"01 02 03 %s" % n)
     email = factory.Sequence(lambda n: u"email-%s@makina-corpus.com" % n)
