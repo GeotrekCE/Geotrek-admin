@@ -2,6 +2,20 @@
 CHANGELOG
 =========
 
+0.28dev (unreleased)
+-------------------
+
+**Internal changes**
+
+* We introduced models for static pages, allowing edition of public static Web pages
+  from Geotrek adminsite. Note that there are not used yet in *Geotrek-rando*.
+
+:notes:
+
+    Give related permissions to the managers group in order to allow edition
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage`` ...).
+
+
 0.27.2 (2010-10-14)
 -------------------
 

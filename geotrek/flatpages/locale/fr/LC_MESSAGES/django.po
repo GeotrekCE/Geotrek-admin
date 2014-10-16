@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-14 17:05+0200\n"
+"POT-Creation-Date: 2014-10-16 13:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,8 +30,17 @@ msgstr "Cachée"
 msgid "Title"
 msgstr "Titre"
 
+msgid "External URL"
+msgstr "Lien externe"
+
+msgid "Link to external website instead of HTML content"
+msgstr "Lien vers site externe à la place du contenu HTML"
+
 msgid "Content"
 msgstr "Contenu"
+
+msgid "HTML content"
+msgstr "Contenu HTML"
 
 msgid "Target"
 msgstr "Cible"
@@ -41,3 +50,6 @@ msgstr "Page statique"
 
 msgid "Flat pages"
 msgstr "Pages statiques"
+
+msgid "Choose between external URL and HTML content"
+msgstr "Choisir entre lien externe et contenu HTML"

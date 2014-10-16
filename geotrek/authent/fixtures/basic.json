@@ -184,6 +184,9 @@
                 ["change_datasource", "tourism", "datasource"],
                 ["delete_datasource", "tourism", "datasource"],
 
+                ["add_flatpage", "flatpages", "flatpage"],
+                ["change_flatpage", "flatpages", "flatpage"],
+                ["delete_flatpage", "flatpages", "flatpage"],
 
 
                 ["read_attachment", "paperclip", "attachment"],
