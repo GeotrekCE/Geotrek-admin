@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
@@ -27,6 +29,11 @@ class FlatPageModelTest(TestCase):
                              content="<p>Boom!</p>")
         self.assertRaises(ValidationError, fp.clean)
 
+    def test_validation_fails_if_both_url_and_content_are_in_any_language(self):
+        fp = FlatPageFactory(external_url="http://geotrek.fr",
+                             content_it="<p>Boom!</p>")
+        self.assertRaises(ValidationError, fp.clean)
+
     def test_validation_does_not_fail_if_url_and_content_are_falsy(self):
         fp = FlatPageFactory(external_url="  ",
                              content="<p></p>")
@@ -48,3 +55,34 @@ class AdminSiteTest(TestCase):
         self.login()
         response = self.client.get('/admin/flatpages/flatpage/add/')
         self.assertContains(response, 'published_en')
+
+
+class RESTViewsTest(TestCase):
+    def setUp(self):
+        FlatPageFactory.create_batch(10)
+
+    def login(self):
+        user = SuperUserFactory(password='booh')
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+    def test_endpoint_is_protected(self):
+        response = self.client.get('/api/flatpages/')
+        self.assertEquals(response.status_code, 403)
+
+    def test_records_list(self):
+        self.login()
+        response = self.client.get('/api/flatpages/')
+        self.assertEquals(response.status_code, 200)
+        records = json.loads(response.content)
+        self.assertEquals(len(records), 10)
+
+    def test_serialized_attributes(self):
+        self.login()
+        response = self.client.get('/api/flatpages/')
+        records = json.loads(response.content)
+        record = records[0]
+        self.assertEquals(sorted(record.keys()),
+                          [u'content', u'external_url', u'id', u'last_modified',
+                           u'publication_date', u'published', u'published_status',
+                           u'slug', u'target', u'title'])
