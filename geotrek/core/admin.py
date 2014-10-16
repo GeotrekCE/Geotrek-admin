@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from geotrek.core.models import (Datasource, Stake, Usage, Network, Trail,
-                                 Comfort,)
+from geotrek.core.models import (Datasource, Stake, Usage, Network, Comfort)
 
 
 class DatasourceAdmin(admin.ModelAdmin):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
 
 
@@ -14,11 +14,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.files.FileField')(max_length=512, null=True, db_column='picto', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'DifficultyLevel.pictogram'
         db.delete_column('o_b_difficulte', 'picto')
-
 
     models = {
         u'authent.structure': {

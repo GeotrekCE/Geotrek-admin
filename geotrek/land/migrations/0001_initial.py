@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models, connection
+from django.db import connection
 from django.conf import settings
-
 
 
 class Migration(SchemaMigration):
@@ -121,7 +120,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'land', ['DistrictEdge'])
 
-
     def backwards(self, orm):
         # Deleting model 'PhysicalType'
         db.delete_table('f_b_nature')
@@ -164,7 +162,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'DistrictEdge'
         db.delete_table('f_t_secteur')
-
 
     models = {
         u'authent.structure': {

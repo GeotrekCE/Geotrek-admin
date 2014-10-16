@@ -37,7 +37,6 @@ def post_process(source, language, content):
             logger.exception(e)
             raise
 
-
     else:
         raise NotImplementedError
 

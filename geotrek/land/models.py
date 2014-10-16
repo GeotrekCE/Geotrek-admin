@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology, Path, Trail
+from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.maintenance.models import Intervention, Project
 

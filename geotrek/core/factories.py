@@ -37,7 +37,7 @@ class NetworkFactory(factory.Factory):
 class ComfortFactory(factory.Factory):
     FACTORY_FOR = models.Comfort
 
-    comfort =  factory.Sequence(lambda n: u"Comfort %s" % n)
+    comfort = factory.Sequence(lambda n: u"Comfort %s" % n)
 
 
 class PathFactory(StructureRelatedDefaultFactory):
@@ -75,11 +75,11 @@ def getRandomLineStringInBounds(*args, **kwargs):
     assert srid == 2154, "Following code will use math fns that depends on this srid (floor)"
 
     # SRID 2154 use integer values. Substract 1 to maxx and maxy to be sure to be in bounds
-    get_in_bound_x = lambda: math.floor( random.random() * ((maxx - minx) + 1) + minx )
-    get_in_bound_y = lambda: math.floor( random.random() * ((maxy - miny) + 1) + miny )
+    get_in_bound_x = lambda: math.floor(random.random() * ((maxx - minx) + 1) + minx)
+    get_in_bound_y = lambda: math.floor(random.random() * ((maxy - miny) + 1) + miny)
 
     p1_x, p2_x = get_in_bound_x(), get_in_bound_x()
-    p1_y = p2_y = get_in_bound_y() # make a straight line to be easily identified
+    p1_y = p2_y = get_in_bound_y()  # make a straight line to be easily identified
 
     return LineString([Point(p1_x, p1_y), Point(p2_x, p2_y)], srid=srid)
 
@@ -91,9 +91,9 @@ def getExistingLineStringInBounds(*args, **kwargs):
     return models.Path.objects.filter(geom__contained=p)[0].geom
 
 
-## Those two factories return Path whose geom is in bounds
-## (better for testing UI for example that always has a bbox filter)
-## TODO: Well genereting "in bounds" geom should be the default ?!
+# Those two factories return Path whose geom is in bounds
+# (better for testing UI for example that always has a bbox filter)
+# TODO: Well genereting "in bounds" geom should be the default ?!
 
 class PathInBoundsRandomGeomFactory(PathFactory):
     geom = factory.Sequence(getRandomLineStringInBounds)
@@ -150,7 +150,7 @@ class PathAggregationFactory(factory.Factory):
 class TrailFactory(TopologyFactory):
     FACTORY_FOR = models.Trail
 
-    name =  factory.Sequence(lambda n: u"Name %s" % n)
-    departure =  factory.Sequence(lambda n: u"Departure %s" % n)
-    arrival =  factory.Sequence(lambda n: u"Arrival %s" % n)
-    comments =  factory.Sequence(lambda n: u"Comments %s" % n)
+    name = factory.Sequence(lambda n: u"Name %s" % n)
+    departure = factory.Sequence(lambda n: u"Departure %s" % n)
+    arrival = factory.Sequence(lambda n: u"Arrival %s" % n)
+    comments = factory.Sequence(lambda n: u"Comments %s" % n)

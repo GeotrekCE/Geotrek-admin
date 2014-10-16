@@ -8,8 +8,7 @@ from rest_framework import serializers as rest_fields
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
     def get_field(self, model_field):
         kwargs = {}
-        if issubclass(
-                model_field.__class__,
+        if issubclass(model_field.__class__,
                       (django_db_models.CharField,
                        django_db_models.TextField)):
             if model_field.null:

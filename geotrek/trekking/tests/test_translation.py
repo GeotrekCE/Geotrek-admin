@@ -13,25 +13,23 @@ from geotrek.trekking.models import DifficultyLevel
 
 Credential = namedtuple('Credential', ['username', 'password'])
 
+
 def create_superuser_from_cred(cred, email='admin@admin.com'):
     return User.objects.create_superuser(cred.username, email, cred.password)
+
 
 def login_from_cred(client, cred):
     return client.login(**cred._asdict())
 
 
-## Admin related
-
 def admin_add_url_from_model(model):
     info = model._meta.app_label, model._meta.module_name
     return reverse('admin:%s_%s_add' % info)
 
+
 def admin_list_url_from_model(model):
     info = model._meta.app_label, model._meta.module_name
     return reverse('admin:%s_%s_changelist' % info)
-
-# modeladmin = admin.site._registry[DifficultyLevel]
-# form = modeladmin.get_form(response._request)
 
 
 class TraductionTestCase(TestCase):
@@ -97,5 +95,3 @@ class TraductionTestCase(TestCase):
             self.assertEquals(intervention_difficulty.difficulty, translated_difficulty)
 
         restore_language()
-
-

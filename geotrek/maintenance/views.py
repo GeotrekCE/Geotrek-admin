@@ -4,7 +4,7 @@ import logging
 
 from django.utils.translation import ugettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                                MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.common.views import FormsetMixin

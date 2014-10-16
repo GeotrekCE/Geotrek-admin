@@ -112,9 +112,9 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    properties = {'pk':'pk', 'name':'name', 'description':'description',
-                  'max_elevation':'elevation', 'serializable_thumbnail':'thumbnail',
-                  'serializable_type':'type', 'serializable_pictures':'pictures'}
+    properties = {'pk': 'pk', 'name': 'name', 'description': 'description',
+                  'max_elevation': 'elevation', 'serializable_thumbnail': 'thumbnail',
+                  'serializable_type': 'type', 'serializable_pictures': 'pictures'}
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -24,14 +23,12 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'common', ['FileType'])
 
-
     def backwards(self, orm):
         # Deleting model 'Organism'
         db.delete_table('m_b_organisme')
 
         # Deleting model 'FileType'
         db.delete_table('fl_b_fichier')
-
 
     models = {
         u'authent.structure': {

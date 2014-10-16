@@ -11,7 +11,6 @@ from django.db import connection
 from django.db.models.signals import pre_syncdb, post_syncdb
 from django.core.exceptions import ImproperlyConfigured
 
-from mapentity import registry
 from mapentity.helpers import api_bbox
 
 from geotrek.common.utils.postgresql import load_sql_files
@@ -21,6 +20,7 @@ from geotrek.common.utils.postgresql import load_sql_files
     http://djangosnippets.org/snippets/2311/
     Ensure South will update our custom SQL during a call to `migrate`.
 """
+
 
 def run_initial_sql_post_migrate(sender, **kwargs):
     app_label = kwargs.get('app')

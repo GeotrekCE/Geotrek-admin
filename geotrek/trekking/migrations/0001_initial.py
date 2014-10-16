@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
+
 from django.db import models
 from django.conf import settings
-
 
 
 class Migration(SchemaMigration):
@@ -163,7 +162,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'trekking', ['POIType'])
 
-
     def backwards(self, orm):
         # Removing unique constraint on 'TrekRelationship', fields ['trek_a', 'trek_b']
         db.delete_unique('o_r_itineraire_itineraire', ['itineraire_a', 'itineraire_b'])
@@ -215,7 +213,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'POIType'
         db.delete_table('o_b_poi')
-
 
     models = {
         u'authent.structure': {

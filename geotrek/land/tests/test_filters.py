@@ -33,7 +33,7 @@ class LandFiltersTest(TestCase):
         qs = self.filterclass().qs
         self.assertEqual(len(qs), 2)
 
-        data = {key : getvalue(seek_edge)}
+        data = {key: getvalue(seek_edge)}
         qs = self.filterclass(data=data).qs
         self.assertEqual(len(qs), 1)
 

@@ -9,6 +9,7 @@ from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
 class HttpSVGResponse(HttpResponse):
     content_type = 'image/svg+xml'
+
     def __init__(self, content='', **kwargs):
         kwargs['content_type'] = self.content_type
         super(HttpSVGResponse, self).__init__(content, **kwargs)
@@ -68,4 +69,3 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
     def get_context_data(self, **kwargs):
         obj = self.get_object()
         return obj.get_elevation_area()
-

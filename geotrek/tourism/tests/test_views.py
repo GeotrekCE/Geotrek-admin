@@ -202,8 +202,8 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
             geojson = json.loads(response.content)
             feature = geojson['features'][0]
             self.assertDictEqual(feature['geometry'],
-                                 {"type" : "Point",
-                                  "coordinates" : [ 6.144058, 44.826552 ]})
+                                 {"type": "Point",
+                                  "coordinates": [6.144058, 44.826552]})
 
     def test_list_of_pictures(self):
         with mock.patch('requests.get') as mocked:

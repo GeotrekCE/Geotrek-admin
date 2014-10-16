@@ -2,10 +2,10 @@ import os.path
 
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.geos import GEOSGeometry
-from django.conf import settings
 
 from geotrek.core.helpers import TopologyHelper
 from geotrek.trekking.models import POI, POIType
+
 
 class Command(BaseCommand):
     args = '<point_layer>'
@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         try:
-            from osgeo import gdal, ogr, osr
+            from osgeo import gdal, ogr, osr  # NOQA
         except ImportError:
             msg = 'GDAL Python bindings are not available. Can not proceed.'
             raise CommandError(msg)
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 poitype = poitype.decode('utf-8')
             self.create_poi(geometry, name, poitype)
 
-    def create_poi(self, geometry,  name, poitype):
+    def create_poi(self, geometry, name, poitype):
         poitype, created = POIType.objects.get_or_create(label=poitype)
         poi = POI.objects.create(name=name, type=poitype)
         # Use existing topology helpers to transform a Point(x, y)

@@ -80,6 +80,7 @@ class LandEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = LandEdge
     form_class = LandEdgeForm
 
+
 class LandEdgeUpdate(MapEntityUpdate):
     queryset = LandEdge.objects.existing()
     form_class = LandEdgeForm

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -13,14 +12,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.files.FileField')(max_length=512, null=True, db_column='picto'),
                       keep_default=False)
 
-
         # Changing field 'Usage.pictogram'
         db.alter_column('o_b_usage', 'picto', self.gf('django.db.models.fields.files.FileField')(max_length=512, null=True, db_column='picto'))
         # Adding field 'Route.pictogram'
         db.add_column('o_b_parcours', 'pictogram',
                       self.gf('django.db.models.fields.files.FileField')(max_length=512, null=True, db_column='picto'),
                       keep_default=False)
-
 
         # Changing field 'Theme.pictogram'
         db.alter_column('o_b_theme', 'picto', self.gf('django.db.models.fields.files.FileField')(max_length=512, null=True, db_column='picto'))
@@ -35,12 +32,10 @@ class Migration(SchemaMigration):
         # Deleting field 'TrekNetwork.pictogram'
         db.delete_column('o_b_reseau', 'picto')
 
-
         # Changing field 'Usage.pictogram'
         db.alter_column('o_b_usage', 'picto', self.gf('django.db.models.fields.files.FileField')(default=None, max_length=512, db_column='picto'))
         # Deleting field 'Route.pictogram'
         db.delete_column('o_b_parcours', 'picto')
-
 
         # Changing field 'Theme.pictogram'
         db.alter_column('o_b_theme', 'picto', self.gf('django.db.models.fields.files.FileField')(default=None, max_length=512, db_column='picto'))

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
+
 from django.db import models
 from django.conf import settings
 
@@ -27,7 +28,6 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         # Removing M2M table for field information_desks on 'Trek'
         db.delete_table('o_r_itineraire_renseignement')
-
 
     models = {
         u'authent.structure': {

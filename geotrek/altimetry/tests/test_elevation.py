@@ -65,7 +65,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 15)
 
     def test_elevation_topology_point_offset(self):
-        topo = TopologyFactory.create(no_path=True,offset=1)
+        topo = TopologyFactory.create(no_path=True, offset=1)
         topo.add_path(self.path, start=0.5, end=0.5)
         topo.save()
         self.assertEqual(topo.geom_3d.coords[2], 15)

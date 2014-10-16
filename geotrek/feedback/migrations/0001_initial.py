@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
 
 
@@ -31,14 +31,12 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'feedback', ['ReportCategory'])
 
-
     def backwards(self, orm):
         # Deleting model 'Report'
         db.delete_table('f_t_signalement')
 
         # Deleting model 'ReportCategory'
         db.delete_table('f_b_categorie')
-
 
     models = {
         u'contenttypes.contenttype': {

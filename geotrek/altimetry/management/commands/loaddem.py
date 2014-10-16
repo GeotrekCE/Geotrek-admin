@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connection, transaction
+from django.db import connection
 from django.conf import settings
 from optparse import make_option
 import os.path

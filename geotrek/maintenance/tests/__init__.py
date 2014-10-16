@@ -1,6 +1,4 @@
-# pylint: disable=W0401
-
-from .test_views import *
-from .test_intervention import *
-from .test_project import *
-from .test_filters import *
+from .test_views import *  # NOQA
+from .test_intervention import *  # NOQA
+from .test_project import *  # NOQA
+from .test_filters import *  # NOQA

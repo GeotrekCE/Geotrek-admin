@@ -15,7 +15,7 @@ import os
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from . import EnvIniReader
-from .base import *
+from .base import *  # NOQA
 
 
 DEPLOY_ROOT = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_ROOT_PATH))
@@ -28,7 +28,7 @@ envini = EnvIniReader(settingsfile)
 
 #
 #  Main settings
-#..........................
+# ..........................
 
 SECRET_KEY = envini.get('secret_key', SECRET_KEY)
 
@@ -40,11 +40,11 @@ DEPLOY_ROOT = envini.get('deployroot', section="django", default=DEPLOY_ROOT)
 MEDIA_URL_SECURE = envini.get('mediaurl_secure', section="django", default=MEDIA_URL_SECURE)
 STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
 MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
-MEDIA_ROOT =  envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
-STATIC_ROOT =  envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
-CACHE_ROOT =  envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
+MEDIA_ROOT = envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
+STATIC_ROOT = envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
+CACHE_ROOT = envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
 UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
-MAPENTITY_CONFIG['TEMP_DIR'] =  envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
+MAPENTITY_CONFIG['TEMP_DIR'] = envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
 
 
 DATABASES['default']['NAME'] = envini.get('dbname')
@@ -77,8 +77,8 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = _MODELTRANSLATION_LANGUAGES
 EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
 
 #
-#  Deployment settings
-#..........................
+# Deployment settings
+# ..........................
 
 MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
                                                         envini.get('host', section='convertit', default='127.0.0.1'),
@@ -88,19 +88,19 @@ MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', sect
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
 TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
-                               'mapentity', 'templates'),
-                  os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
+                              'mapentity', 'templates'),
+                 os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
 
 
 #
-#  Geotrek settings
-#..........................
+# Geotrek settings
+# ..........................
 
 DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 
 #
-#  GIS settings
-#..........................
+# GIS settings
+# ..........................
 
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))

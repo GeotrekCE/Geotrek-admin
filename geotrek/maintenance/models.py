@@ -27,12 +27,12 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
                                          db_column='sous_traitance')
 
-    ## Technical information ##
+    # Technical information
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
     area = models.FloatField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
 
-    ## Costs ##
+    # Costs
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
@@ -209,9 +209,9 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-               self.material_cost + \
-               self.heliport_cost + \
-               self.subcontract_cost
+            self.material_cost + \
+            self.heliport_cost + \
+            self.subcontract_cost
 
     @classproperty
     def total_cost_verbose_name(cls):
