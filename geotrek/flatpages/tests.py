@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from mapentity.factories import SuperUserFactory
 from geotrek.flatpages.factories import FlatPageFactory
@@ -20,6 +21,16 @@ class FlatPageModelTest(TestCase):
         fp.published = True
         fp.save()
         self.assertIsNotNone(fp.publication_date)
+
+    def test_validation_fails_if_both_url_and_content_are_filled(self):
+        fp = FlatPageFactory(external_url="http://geotrek.fr",
+                             content="<p>Boom!</p>")
+        self.assertRaises(ValidationError, fp.clean)
+
+    def test_validation_does_not_fail_if_url_and_content_are_falsy(self):
+        fp = FlatPageFactory(external_url="  ",
+                             content="<p></p>")
+        fp.clean()
 
 
 class AdminSiteTest(TestCase):
