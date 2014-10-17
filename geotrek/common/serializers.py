@@ -59,4 +59,4 @@ class PublishableSerializerMixin(BasePublishableSerializerMixin):
 
     class Meta:
         fields = ('name', 'slug', 'map_image_url', 'filelist_url', 'printable') + \
-                 BasePublishableSerializerMixin.Meta.fields
+            BasePublishableSerializerMixin.Meta.fields

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -13,11 +11,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.TextField')(default='', db_column='url_externe', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'FlatPage.external_url'
         db.delete_column('p_t_page', 'url_externe')
-
 
     models = {
         u'flatpages.flatpage': {

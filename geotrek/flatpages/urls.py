@@ -11,6 +11,7 @@ without sugar.
 router = DefaultRouter()
 router.register(r'flatpages', FlatPageViewSet)
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^api/', include(router.urls)),
 )
