@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
 
 
@@ -49,7 +49,6 @@ class Migration(SchemaMigration):
                       self.gf('django.contrib.gis.db.models.fields.PointField')(srid=settings.SRID, null=True, spatial_index=False, db_column='geom', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'InformationDesk.phone'
         db.delete_column('o_b_renseignement', 'telephone')
@@ -74,7 +73,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'InformationDesk.geom'
         db.delete_column('o_b_renseignement', 'geom')
-
 
     models = {
         u'authent.structure': {

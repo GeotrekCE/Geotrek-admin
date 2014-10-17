@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
 
 
@@ -30,7 +30,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'POI.publication_date'
         db.delete_column('o_t_poi', 'date_publication')
-
 
     models = {
         u'authent.structure': {

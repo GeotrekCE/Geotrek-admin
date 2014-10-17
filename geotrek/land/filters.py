@@ -19,7 +19,6 @@ from .models import (
 )
 
 
-
 class PhysicalEdgeFilterSet(MapEntityFilterSet):
     class Meta:
         model = PhysicalEdge

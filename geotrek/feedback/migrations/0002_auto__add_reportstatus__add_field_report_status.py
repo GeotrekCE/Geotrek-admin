@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
 
 
@@ -21,14 +21,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['feedback.ReportStatus'], null=True, blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting model 'ReportStatus'
         db.delete_table('f_b_status')
 
         # Deleting field 'Report.status'
         db.delete_column('f_t_signalement', 'status_id')
-
 
     models = {
         u'contenttypes.contenttype': {

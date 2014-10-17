@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
+
 from django.db import models
 from django.conf import settings
-
 
 
 class Migration(SchemaMigration):
@@ -138,7 +138,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'core', ['Trail'])
 
-
     def backwards(self, orm):
         # Deleting model 'Path'
         db.delete_table('l_t_troncon')
@@ -172,7 +171,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Trail'
         db.delete_table('l_t_sentier')
-
 
     models = {
         u'authent.structure': {

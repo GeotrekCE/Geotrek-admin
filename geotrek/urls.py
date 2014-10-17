@@ -11,10 +11,10 @@ handler404 = 'mapentity.views.handler404'
 handler500 = 'mapentity.views.handler500'
 
 
-urlpatterns = patterns('',
-
-    url(r'^$',        'geotrek.core.views.home', name='home'),
-    url(r'^login/$',  'django.contrib.auth.views.login', name='login'),
+urlpatterns = patterns(
+    '',
+    url(r'^$', 'geotrek.core.views.home', name='home'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),

@@ -1,5 +1,3 @@
-from django.test import TestCase
-from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 
 from geotrek.authent.tests import AuthentFixturesTest

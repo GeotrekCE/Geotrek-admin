@@ -11,18 +11,16 @@ from geotrek.core.factories import TopologyFactory
 from . import models
 
 
-
-
-
-# Create 16 cities and 4 districts distinct same-area zone covering the spatial_extent and cycle on it
+# Create 16 cities and 4 districts distinct same-area zone covering the spatial_extent and cycle on it
 geom_city_iter = bbox_split_srid_2154(settings.SPATIAL_EXTENT, by_x=4, by_y=4, cycle=True)
 geom_district_iter = bbox_split_srid_2154(settings.SPATIAL_EXTENT, by_x=2, by_y=2, cycle=True)
 geom_area_iter = bbox_split_srid_2154(settings.SPATIAL_EXTENT, by_x=2, by_y=2, cycle=True)
 
+
 class CityFactory(factory.Factory):
     FACTORY_FOR = models.City
 
-    code = factory.Sequence(lambda n: u"#%s" % n) # id (!) with max_length=6
+    code = factory.Sequence(lambda n: u"#%s" % n)  # id (!) with max_length=6
     name = factory.Sequence(lambda n: u"City name %s" % n)
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_city_iter.next()), srid=settings.SRID))
 

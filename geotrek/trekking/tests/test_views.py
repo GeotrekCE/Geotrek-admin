@@ -151,11 +151,11 @@ class TrekViewsTest(CommonTest):
 
     def get_bad_data(self):
         return OrderedDict([
-                ('name_en', ''),
-                ('trek_relationship_a-TOTAL_FORMS', '0'),
-                ('trek_relationship_a-INITIAL_FORMS', '1'),
-                ('trek_relationship_a-MAX_NUM_FORMS', '0'),
-            ]), u'This field is required.'
+            ('name_en', ''),
+            ('trek_relationship_a-TOTAL_FORMS', '0'),
+            ('trek_relationship_a-INITIAL_FORMS', '1'),
+            ('trek_relationship_a-MAX_NUM_FORMS', '0'),
+        ]), u'This field is required.'
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -287,10 +287,12 @@ class TrekCustomViewTests(TrekkingManagerTest):
     @mock.patch('django.template.loaders.filesystem.open', create=True)
     def test_overriden_public_template(self, open_patched):
         overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+
         def fake_exists(f, *args):
             if f == overriden_template:
                 return mock.MagicMock(spec=file)
             raise IOError
+
         open_patched.side_effect = fake_exists
         find_template('trekking/trek_public.odt')
         open_patched.assert_called_with(overriden_template, 'rb')
@@ -441,8 +443,8 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_networks(self):
         self.assertDictEqual(self.result['networks'][0],
                              {u"id": self.network.id,
-                               u"pictogram": None,
-                               u"name": self.network.network})
+                              u"pictogram": None,
+                              u"name": self.network.network})
 
     def test_usages(self):
         self.assertDictEqual(self.result['usages'][0],
@@ -479,7 +481,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
                               u"label": self.trek.difficulty.difficulty})
 
-
     def test_information_desks(self):
         self.assertDictEqual(self.result['information_desks'][0],
                              {u'description': self.information_desk.description,
@@ -503,8 +504,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u'trek': {u'pk': self.trek_b.pk,
                                         u'slug': self.trek_b.slug,
                                         u'name': self.trek_b.name,
-                                        u'url': u'/trek/%s/' % self.trek_b.id}
-                             })
+                                        u'url': u'/trek/%s/' % self.trek_b.id}})
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
@@ -655,7 +655,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             obj = json.loads(response.content)
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
-            self.client.logout() # Django 1.6 keeps language in session
+            self.client.logout()  # Django 1.6 keeps language in session
 
 
 class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
@@ -721,5 +721,5 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"2 days", trekking_tags.duration(11))
         self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24*8))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24*9))
+        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
+        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))

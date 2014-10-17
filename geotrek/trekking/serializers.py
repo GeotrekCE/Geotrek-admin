@@ -7,9 +7,11 @@ from rest_framework import serializers as rest_serializers
 
 from mapentity.serializers import GPXSerializer
 
-from geotrek.common.serializers import (PictogramSerializerMixin,
+from geotrek.common.serializers import (
+    PictogramSerializerMixin,
     TranslatedModelSerializer, PicturesSerializerMixin,
-    PublishableSerializerMixin)
+    PublishableSerializerMixin
+)
 from geotrek.zoning.serializers import (DistrictSerializer, CitySerializer)
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -96,7 +98,7 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = trekking_models.TrekRelationship
         fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
-            'trek', 'published')
+                  'trek', 'published')
 
 
 class InformationDeskSerializer(TranslatedModelSerializer):
@@ -147,9 +149,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'parking_location',
                   'cities', 'districts', 'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
-                 AltimetrySerializerMixin.Meta.fields + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+            AltimetrySerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
 
     def get_parking_location(self, obj):
         if not obj.parking_location:
@@ -190,6 +192,6 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     class Meta:
         model = trekking_models.Trek
         fields = ('id', 'description', 'type', 'cities', 'districts') + \
-                 ('min_elevation', 'max_elevation') + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+            ('min_elevation', 'max_elevation') + \
+            PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields

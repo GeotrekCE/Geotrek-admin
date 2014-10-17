@@ -238,11 +238,11 @@ class TrekRelationship(models.Model):
     @property
     def relation(self):
         return u"%s %s%s%s" % (
-                self.trek_b.name_display,
-                _("Departure") if self.has_common_departure else '',
-                _("Path") if self.has_common_edge else '',
-                _("Circuit") if self.is_circuit_step else ''
-            )
+            self.trek_b.name_display,
+            _("Departure") if self.has_common_departure else '',
+            _("Path") if self.has_common_edge else '',
+            _("Circuit") if self.is_circuit_step else ''
+        )
 
     @property
     def relation_display(self):
@@ -273,7 +273,6 @@ class Usage(PictogramMixin):
 
     def __unicode__(self):
         return self.usage
-
 
 
 class Route(PictogramMixin):

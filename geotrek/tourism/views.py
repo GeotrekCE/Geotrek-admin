@@ -59,7 +59,6 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
         except (ValueError, AssertionError) as e:
             return default_result
 
-
     @method_decorator(login_required)
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
     def dispatch(self, *args, **kwargs):

@@ -42,7 +42,6 @@ class FormsetMixin(object):
         return context
 
 
-
 class DocumentPublicPDF(mapentity_views.DocumentConvert):
 
     def source_url(self):
@@ -76,7 +75,7 @@ class DocumentPublic(mapentity_views.MapEntityDocument):
 
 #
 # Concrete views
-#..............................
+# ..............................
 
 
 class JSSettings(mapentity_views.JSSettings):

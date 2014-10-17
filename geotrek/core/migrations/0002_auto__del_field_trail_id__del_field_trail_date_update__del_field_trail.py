@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 from django.conf import settings
+
 
 class Migration(SchemaMigration):
 
@@ -20,7 +20,6 @@ class Migration(SchemaMigration):
         # Fields are now in topology model
         db.delete_column('l_t_sentier', 'date_update')
         db.delete_column('l_t_sentier', 'date_insert')
-
 
         # Adding field 'Trail.topo_object'
         db.add_column('l_t_sentier', 'topo_object',
@@ -52,7 +51,6 @@ class Migration(SchemaMigration):
         db.execute('ALTER TABLE l_t_sentier DROP COLUMN IF EXISTS id')
         db.execute('ALTER TABLE l_t_sentier ADD CONSTRAINT l_t_sentier_pkey PRIMARY KEY (evenement)')
 
-
     def backwards(self, orm):
 
         # User chose to not deal with backwards NULL issues for 'Trail.id'
@@ -63,7 +61,6 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.AutoField')(primary_key=True),
                       keep_default=False)
 
-
         # User chose to not deal with backwards NULL issues for 'Trail.date_update'
         raise RuntimeError("Cannot reverse this migration. 'Trail.date_update' and its values cannot be restored.")
 
@@ -71,7 +68,6 @@ class Migration(SchemaMigration):
         db.add_column('l_t_sentier', 'date_update',
                       self.gf('django.db.models.fields.DateTimeField')(auto_now=True, db_column='date_update', blank=True),
                       keep_default=False)
-
 
         # User chose to not deal with backwards NULL issues for 'Trail.date_insert'
         raise RuntimeError("Cannot reverse this migration. 'Trail.date_insert' and its values cannot be restored.")
@@ -88,7 +84,6 @@ class Migration(SchemaMigration):
         db.add_column('l_t_troncon', 'trail',
                       self.gf('django.db.models.fields.related.ForeignKey')(related_name='paths', null=True, to=orm['core.Trail'], db_column='sentier', blank=True),
                       keep_default=False)
-
 
     models = {
         u'authent.structure': {

@@ -1,8 +1,8 @@
-from .default import *
+from .default import *  # NOQA
 
 #
 #  Django Tests
-#..........................
+# ..........................
 
 TEST = True
 

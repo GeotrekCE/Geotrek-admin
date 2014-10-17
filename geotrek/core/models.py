@@ -263,9 +263,10 @@ class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
             # Update computed values
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
-            self.offset = fromdb.offset  # /!\ offset may be set by a trigger OR in
-                                         # the django code, reload() will override
-                                         # any unsaved value
+            # /!\ offset may be set by a trigger OR in
+            # the django code, reload() will override
+            # any unsaved value
+            self.offset = fromdb.offset
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)

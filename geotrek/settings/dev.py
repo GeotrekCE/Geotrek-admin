@@ -1,8 +1,8 @@
-from .default import *
+from .default import *  # NOQA
 
 #
-#  Django Development
-#..........................
+# Django Development
+# ..........................
 
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -10,17 +10,17 @@ TEMPLATE_DEBUG = True
 SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
 
 #
-#  Developper Toolbar
-#..........................
+# Developper Toolbar
+# ..........................
 
 INSTALLED_APPS = (
-    #'debug_toolbar',
+    # 'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
 
 #
 # Use Geotrek preprod tiles (uses default extent)
-#................................................
+# ................................................
 
 LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Scan'), 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),

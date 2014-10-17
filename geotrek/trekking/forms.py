@@ -75,7 +75,8 @@ class TrekForm(BaseTrekForm):
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
-                Div('name',
+                Div(
+                    'name',
                     'published',
                     'is_park_centered',
                     'departure',
@@ -170,7 +171,8 @@ else:
 
 class POIForm(BasePOIForm):
     fieldslayout = [
-        Div('pk',
+        Div(
+            'pk',
             'model',
 
             'type',

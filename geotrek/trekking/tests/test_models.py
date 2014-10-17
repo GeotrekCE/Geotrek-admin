@@ -8,8 +8,7 @@ from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory,
-                                        WebLinkFactory)
+from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory)
 from geotrek.trekking.models import Trek
 
 
@@ -47,11 +46,11 @@ class TrekTest(TestCase):
         t.published_fr = False
         t.published_it = True
         t.save()
-        self.assertEqual(t.published_status,
-            [{'lang': 'en', 'language': 'English', 'status': False},
-             {'lang': 'es', 'language': 'Spanish', 'status': False},
-             {'lang': 'fr', 'language': 'French', 'status': False},
-             {'lang': 'it', 'language': 'Italian', 'status': True}])
+        self.assertEqual(t.published_status, [
+            {'lang': 'en', 'language': 'English', 'status': False},
+            {'lang': 'es', 'language': 'Spanish', 'status': False},
+            {'lang': 'fr', 'language': 'French', 'status': False},
+            {'lang': 'it', 'language': 'Italian', 'status': True}])
 
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()

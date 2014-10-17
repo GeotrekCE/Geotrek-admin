@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models, connection
+from django.db import connection
 from django.conf import settings
 
 
@@ -71,31 +71,29 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'zoning', ['DistrictEdge'])
 
-
     def backwards(self, orm):
         """Models were moved from geotrek.land
         """
-        # # Deleting model 'RestrictedAreaType'
+        # Deleting model 'RestrictedAreaType'
         # db.delete_table('f_b_zonage')
 
-        # # Deleting model 'RestrictedArea'
+        # Deleting model 'RestrictedArea'
         # db.delete_table('l_zonage_reglementaire')
 
-        # # Deleting model 'RestrictedAreaEdge'
+        # Deleting model 'RestrictedAreaEdge'
         # db.delete_table('f_t_zonage')
 
-        # # Deleting model 'City'
+        # Deleting model 'City'
         # db.delete_table('l_commune')
 
-        # # Deleting model 'CityEdge'
+        # Deleting model 'CityEdge'
         # db.delete_table('f_t_commune')
 
-        # # Deleting model 'District'
+        # Deleting model 'District'
         # db.delete_table('l_secteur')
 
-        # # Deleting model 'DistrictEdge'
+        # Deleting model 'DistrictEdge'
         # db.delete_table('f_t_secteur')
-
 
     models = {
         u'authent.structure': {

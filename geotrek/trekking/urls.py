@@ -15,7 +15,8 @@ from .views import (
 from . import serializers as trekking_serializers
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Retro-compat for Geotrek-rando <= 1.31
     url(r'^api/trek/trek-(?P<pk>\d+).json$', RedirectView.as_view(url='/api/treks/%(pk)s/')),
 
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^api/trek/(?P<pk>\d+)/information_desks.geojson$', TrekInformationDeskGeoJSON.as_view(), name="trek_information_desk_geojson"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
 )
+
 
 class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
     """
@@ -49,6 +51,7 @@ class POIEntityOptions(PublishableEntityOptions):
 
     def get_serializer(self):
         return trekking_serializers.POISerializer
+
 
 urlpatterns += registry.register(models.Trek, TrekEntityOptions)
 urlpatterns += registry.register(models.POI, POIEntityOptions)

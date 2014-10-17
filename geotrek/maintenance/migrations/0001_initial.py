@@ -2,9 +2,9 @@
 from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
+
 from django.db import models
 from django.conf import settings
-
 
 
 class Migration(SchemaMigration):
@@ -155,7 +155,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'maintenance', ['Funding'])
 
-
     def backwards(self, orm):
         # Deleting model 'Intervention'
         db.delete_table('m_t_intervention')
@@ -195,7 +194,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Funding'
         db.delete_table('m_r_chantier_financement')
-
 
     models = {
         u'authent.structure': {

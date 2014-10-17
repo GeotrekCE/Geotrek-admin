@@ -9,7 +9,7 @@ from geotrek.maintenance.factories import (InterventionFactory,
                                            InfrastructurePointInterventionFactory,
                                            SignageInterventionFactory,
                                            ProjectFactory, ManDayFactory)
-from geotrek.core.factories import PathFactory, TopologyFactory, TrailFactory, StakeFactory
+from geotrek.core.factories import PathFactory, TopologyFactory, StakeFactory
 
 
 class InterventionTest(TestCase):

@@ -33,11 +33,11 @@ class InterventionViewsTest(CommonTest):
 
     def get_bad_data(self):
         return OrderedDict([
-                ('name', ''),
-                ('manday_set-TOTAL_FORMS', '0'),
-                ('manday_set-INITIAL_FORMS', '1'),
-                ('manday_set-MAX_NUM_FORMS', '0'),
-            ]), u'This field is required.'
+            ('name', ''),
+            ('manday_set-TOTAL_FORMS', '0'),
+            ('manday_set-INITIAL_FORMS', '1'),
+            ('manday_set-MAX_NUM_FORMS', '0'),
+        ]), u'This field is required.'
 
     def get_good_data(self):
         InterventionStatusFactory.create()  # in case not any in db
@@ -213,11 +213,11 @@ class ProjectViewsTest(CommonTest):
 
     def get_bad_data(self):
         return OrderedDict([
-                ('begin_year', ''),
-                ('funding_set-TOTAL_FORMS', '0'),
-                ('funding_set-INITIAL_FORMS', '1'),
-                ('funding_set-MAX_NUM_FORMS', '0'),
-            ]), u'This field is required.'
+            ('begin_year', ''),
+            ('funding_set-TOTAL_FORMS', '0'),
+            ('funding_set-INITIAL_FORMS', '1'),
+            ('funding_set-MAX_NUM_FORMS', '0'),
+        ]), u'This field is required.'
 
     def get_good_data(self):
         return {
@@ -231,7 +231,7 @@ class ProjectViewsTest(CommonTest):
             'constraints': '',
             'global_cost': '12',
             'comments': '',
-            'contractors':  ContractorFactory.create().pk,
+            'contractors': ContractorFactory.create().pk,
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
 
@@ -320,12 +320,12 @@ class ExportTest(TestCase):
         the project and the intervention are correctly referenced in it.
         """
 
-        # Create topology line
+        # Create topology line
         topo_line = TopologyFactory.create(no_path=True)
         line = PathFactory.create(geom=LineString(Point(10, 10), Point(11, 10)))
         PathAggregationFactory.create(topo_object=topo_line, path=line)
 
-        # Create a topology point
+        # Create a topology point
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
@@ -333,10 +333,10 @@ class ExportTest(TestCase):
 
         self.assertEquals(topo_point.paths.get(), closest_path)
 
-        # Create one intervention by geometry (point/linestring)
+        # Create one intervention by geometry (point/linestring)
         it_point = InterventionFactory.create(topology=topo_point)
         it_line = InterventionFactory.create(topology=topo_line)
-        # reload
+        # reload
         it_point = type(it_point).objects.get(pk=it_point.pk)
         it_line = type(it_line).objects.get(pk=it_line.pk)
 
@@ -344,7 +344,7 @@ class ExportTest(TestCase):
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
 
-        # instanciate the class based view 'abnormally' to use create_shape directly
+        # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
         devnull = open(os.devnull, "wb")

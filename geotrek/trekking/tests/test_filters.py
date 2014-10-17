@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from geotrek.land.filters import *
 from geotrek.land.tests.test_filters import LandFiltersTest
 
 from geotrek.trekking.filters import TrekFilterSet
@@ -9,7 +7,6 @@ from geotrek.trekking.factories import TrekFactory
 class TrekFilterLandTest(LandFiltersTest):
 
     filterclass = TrekFilterSet
-
 
     def test_land_filters_are_well_setup(self):
         filterset = TrekFilterSet()
