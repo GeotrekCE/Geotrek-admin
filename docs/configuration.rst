@@ -80,6 +80,30 @@ If you want to allow the users to access the *AdminSite*, give them the *staff*
 status using the dedicated checkbox.
 
 
+Database users
+--------------
+
+It is not safe to use the ``geotrek`` user in QGis, or to give its password to
+many collaborators.
+
+A wise approach, is to create a *read-only* user, or with specific permissions.
+
+With *pgAdmin*, you can create database users like this :
+
+::
+
+
+    CREATE ROLE lecteur LOGIN;
+    ALTER USER lecteur PASSWORD 'passfacile';
+
+    GRANT CONNECT ON DATABASE geotrekdb TO lecteur;
+    GRANT USAGE ON SCHEMA public TO lecteur;
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO lecteur;
+
+
+You can also create groups, etc. See postgresql documentation.
+
+
 Email settings
 --------------
 
