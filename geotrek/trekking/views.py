@@ -19,6 +19,7 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
+from geotrek.tourism.views import InformationDeskGeoJSON
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
@@ -135,9 +136,7 @@ class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
 
-    properties = ['id', 'name', 'description', 'photo_url', 'phone',
-                  'email', 'website', 'street', 'postal_code', 'municipality',
-                  'latitude', 'longitude']
+    properties = InformationDeskGeoJSON.properties
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

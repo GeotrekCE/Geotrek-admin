@@ -459,14 +459,5 @@
             "label_fr": "Information touristique",
             "label": "Information touristique"
         }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-camping.png",
-            "label_fr": "Camping",
-            "label": "Camping"
-        }
     }
 ]
