@@ -27,6 +27,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION set_schema_ft(functionname varchar, schemaname varchar) RETURNS void AS $$
+BEGIN
+    -- If destination exists, delete!
+    EXECUTE 'DROP FUNCTION IF EXISTS ' || schemaname || '.' || functionname || ' CASCADE;';
+    -- If schema is already set, an error is raised.
+    BEGIN
+        EXECUTE 'ALTER FUNCTION '|| functionname ||' SET SCHEMA '|| quote_ident(schemaname) ||';';
+    EXCEPTION
+      WHEN OTHERS THEN
+        RAISE NOTICE 'Function already in schema.';
+    END;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -------------------------------------------------------------------------------
 -- Date trigger functions
 -------------------------------------------------------------------------------
