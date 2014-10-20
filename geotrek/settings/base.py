@@ -233,6 +233,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.land',
     'geotrek.trekking',
     'geotrek.tourism',
+    'geotrek.flatpages',
     'geotrek.feedback',
 )
 
