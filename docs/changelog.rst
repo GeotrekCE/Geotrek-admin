@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+0.28dev (unreleased)
+--------------------
+
+* Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
+
 0.27.2 (2010-10-14)
 -------------------
 
