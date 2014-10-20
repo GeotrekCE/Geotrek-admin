@@ -483,6 +483,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"label": self.trek.difficulty.difficulty})
 
     def test_information_desks(self):
+        desk_type = self.information_desk.type
         self.assertDictEqual(self.result['information_desks'][0],
                              {u'description': self.information_desk.description,
                               u'email': self.information_desk.email,
@@ -494,7 +495,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u'postal_code': self.information_desk.postal_code,
                               u'street': self.information_desk.street,
                               u'municipality': self.information_desk.municipality,
-                              u'website': self.information_desk.website})
+                              u'website': self.information_desk.website,
+                              u'type': {
+                                  u'id': desk_type.id,
+                                  u'pictogram': desk_type.pictogram.url,
+                                  u'label': desk_type.label}})
 
     def test_relationships(self):
         self.assertDictEqual(self.result['relationships'][0],
@@ -706,6 +711,7 @@ class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
                           u'photo_url',
                           u'postal_code',
                           u'street',
+                          u'type',
                           u'website'])
 
 
