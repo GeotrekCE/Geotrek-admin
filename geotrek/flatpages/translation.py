@@ -6,7 +6,7 @@ from geotrek.flatpages import models as flatpages_models
 
 
 class FlatPageTO(TranslationOptions):
-    fields = ('title', 'content') + (
+    fields = ('title', 'content', 'external_url') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()
     )
 

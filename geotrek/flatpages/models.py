@@ -17,6 +17,7 @@ FLATPAGES_TARGETS = Choices(
     ('ALL', 'all', _('All')),
     ('MOBILE', 'mobile', _('Mobile')),
     ('HIDDEN', 'hidden', _('Hidden')),
+    ('WEB', 'web', _('Web')),
 )
 
 
@@ -55,6 +56,8 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             html_content += getattr(self, 'content_%s' % l[0], None) or ''
 
+        # Test if HTML was filled
+        # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
         if self.external_url.strip() and strip_tags(html_content):
             raise ValidationError(_('Choose between external URL and HTML content'))
 
