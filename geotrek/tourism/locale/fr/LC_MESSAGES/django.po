@@ -35,3 +35,15 @@ msgstr "Source de données externes"
 
 msgid "External data sources"
 msgstr "Sources de données externes"
+
+msgid "Information Desk"
+msgstr "Lieu de renseignement"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+msgid "Information desk type"
+msgstr "Type de lieu de renseignement"
+
+msgid "Information desk types"
+msgstr "Types de lieu de renseignement"

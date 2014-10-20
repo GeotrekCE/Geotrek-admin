@@ -176,15 +176,16 @@
                 ["add_weblinkcategory", "trekking", "weblinkcategory"],
                 ["change_weblinkcategory", "trekking", "weblinkcategory"],
                 ["delete_weblinkcategory", "trekking", "weblinkcategory"],
-                ["add_informationdesk", "trekking", "informationdesk"],
-                ["change_informationdesk", "trekking", "informationdesk"],
-                ["delete_informationdesk", "trekking", "informationdesk"],
 
+                ["add_informationdesk", "tourism", "informationdesk"],
+                ["change_informationdesk", "tourism", "informationdesk"],
+                ["delete_informationdesk", "tourism", "informationdesk"],
+                ["add_informationdesktype", "tourism", "informationdesktype"],
+                ["change_informationdesktype", "tourism", "informationdesktype"],
+                ["delete_informationdesktype", "tourism", "informationdesktype"],
                 ["add_datasource", "tourism", "datasource"],
                 ["change_datasource", "tourism", "datasource"],
                 ["delete_datasource", "tourism", "datasource"],
-
-
 
                 ["read_attachment", "paperclip", "attachment"],
                 ["add_attachment", "paperclip", "attachment"],

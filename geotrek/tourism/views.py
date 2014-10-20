@@ -3,6 +3,7 @@ import logging
 import requests
 from requests.exceptions import RequestException
 import geojson
+from djgeojson.views import GeoJSONLayerView
 from django.conf import settings
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -11,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from mapentity.views import JSONResponseMixin
 
-from geotrek.tourism.models import DataSource
+from geotrek.tourism.models import DataSource, InformationDesk
 from .helpers import post_process
 
 logger = logging.getLogger(__name__)
@@ -63,3 +64,27 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
     def dispatch(self, *args, **kwargs):
         return super(DataSourceGeoJSON, self).dispatch(*args, **kwargs)
+
+
+class InformationDeskGeoJSON(GeoJSONLayerView):
+    model = InformationDesk
+    srid = settings.API_SRID
+    properties = {
+        'id': 'id',
+        'name': 'name',
+        'description': 'description',
+        'photo_url': 'photo_url',
+        'phone': 'phone',
+        'email': 'email',
+        'website': 'website',
+        'street': 'street',
+        'postal_code': 'postal_code',
+        'municipality': 'municipality',
+        'latitude': 'latitude',
+        'longitude': 'longitude',
+        'serializable_type': 'type'
+    }
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(InformationDeskGeoJSON, self).dispatch(*args, **kwargs)

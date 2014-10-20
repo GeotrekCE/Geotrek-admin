@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.tourism.models import DATA_SOURCE_TYPES
-from geotrek.tourism.factories import DataSourceFactory
+from geotrek.tourism.factories import DataSourceFactory, InformationDeskFactory
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -215,3 +215,19 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
                                  {u'copyright': u'Christian Martelet',
                                   u'legend': u'Refuges en Valgaudemar',
                                   u'url': u'http://static.sitra-tourisme.com/filestore/objets-touristiques/images/600938.jpg'})
+
+
+class InformationDeskViewsTests(TrekkingManagerTest):
+    def setUp(self):
+        InformationDeskFactory.create_batch(size=10)
+        self.url = reverse('tourism:informationdesk_geojson')
+        self.login()
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_geojson_layer_of_all_information_desks(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        records = json.loads(response.content)
+        self.assertEqual(len(records['features']), 10)
