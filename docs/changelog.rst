@@ -23,6 +23,13 @@ CHANGELOG
     Give related permissions to the managers group in order to allow edition
     (``add_flatpage``, ``change_flatpage``, ``delete_flatpage`` ...).
 
+* All tables and functions are now stored in different schemas. It allows to
+  distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to grant user privileges
+  by schema. It is also easier to browse objects in *pgAdmin* and *QGis*.
+
+  **Caution**: if you created additional users, you may have to change their ``search_path``
+  and/or their ``USAGE`` privilege.
+
 
 0.27.2 (2010-10-14)
 -------------------
