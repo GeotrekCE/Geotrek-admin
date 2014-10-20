@@ -88,8 +88,7 @@ class InformationDesk(models.Model):
 
     name = models.CharField(verbose_name=_(u"Title"), max_length=256, db_column='nom')
     type = models.ForeignKey(InformationDeskType, verbose_name=_(u"Type"),
-                             related_name='desks', null=True, blank=True,
-                             db_column='type')
+                             related_name='desks', db_column='type')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Brief description"))
     phone = models.CharField(verbose_name=_(u"Phone"), max_length=32,

@@ -214,15 +214,13 @@
             //
             // Trek information desks layer
             $.getJSON('{% url 'trekking:trek_information_desk_geojson' object.pk %}', function (data) {
-
-                var infoDeskIcon = L.icon({
-                    iconUrl: "{% static "trekking/information_desk.svg" %}",
-                    iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
-                    iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
-                });
-
                 L.geoJson(data, {
                     pointToLayer: function (feature, latlng) {
+                        var infoDeskIcon = L.icon({
+                            iconUrl: feature.properties.type.pictogram,
+                            iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
+                            iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
+                        });
                         return L.marker(latlng, {icon: infoDeskIcon});
                     }
                 }).addTo(map);
