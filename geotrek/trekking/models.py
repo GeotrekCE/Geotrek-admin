@@ -116,15 +116,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return POIType.objects.filter(pk__in=set(pks))
 
     @property
-    def information_desk(self):
-        """Retrocompatibily method for Geotrek-rando.
-        """
-        try:
-            return self.information_desks.first()
-        except (ValueError, InformationDesk.DoesNotExist):
-            return None
-
-    @property
     def length_kilometer(self):
         return "%.1f" % (self.length / 1000.0)
 
