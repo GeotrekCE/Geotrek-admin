@@ -1,33 +1,22 @@
---
--- Create database schemas.
--- We can't use IF NOT EXISTS until PostgreSQL 9.3.
---
-DO $$
-BEGIN
-    BEGIN
-      CREATE SCHEMA geotrek;
-      CREATE SCHEMA django;
-    EXCEPTION
-      WHEN OTHERS THEN
-        RAISE WARNING '%', SQLERRM;
-    END;
-END$$;
-
+SELECT create_schema_if_not_exist('geotrek');
+SELECT create_schema_if_not_exist('django');
 
 -- Move Django internal tables to its schema
-ALTER TABLE auth_group SET SCHEMA django;
-ALTER TABLE auth_group_permissions SET SCHEMA django;
-ALTER TABLE auth_permission SET SCHEMA django;
-ALTER TABLE auth_user SET SCHEMA django;
-ALTER TABLE auth_user_groups SET SCHEMA django;
-ALTER TABLE auth_user_user_permissions SET SCHEMA django;
-ALTER TABLE django_admin_log SET SCHEMA django;
-ALTER TABLE django_content_type SET SCHEMA django;
-ALTER TABLE django_session SET SCHEMA django;
-ALTER TABLE easy_thumbnails_source SET SCHEMA django;
-ALTER TABLE easy_thumbnails_thumbnail SET SCHEMA django;
-ALTER TABLE south_migrationhistory SET SCHEMA django;
+SELECT set_schema('auth_group', 'django');
+SELECT set_schema('auth_group_permissions', 'django');
+SELECT set_schema('auth_permission', 'django');
+SELECT set_schema('auth_user', 'django');
+SELECT set_schema('auth_user_groups', 'django');
+SELECT set_schema('auth_user_user_permissions', 'django');
+SELECT set_schema('django_admin_log', 'django');
+SELECT set_schema('django_content_type', 'django');
+SELECT set_schema('django_session', 'django');
+SELECT set_schema('easy_thumbnails_source', 'django');
+SELECT set_schema('easy_thumbnails_thumbnail', 'django');
+SELECT set_schema('south_migrationhistory', 'django');
 
 -- Move Geotrek internal tables to their schema
-ALTER TABLE authent_structure SET SCHEMA geotrek;
-ALTER TABLE authent_userprofile SET SCHEMA geotrek;
+SELECT set_schema('authent_structure', 'geotrek');
+SELECT set_schema('authent_userprofile', 'geotrek');
+SELECT set_schema('fl_b_fichier', 'geotrek');
+SELECT set_schema('fl_t_fichier', 'geotrek');

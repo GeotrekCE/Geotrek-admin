@@ -24,7 +24,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {
-            'options': '-c search_path=public,geotrek,django'
+            'options': '-c search_path=public,geotrek,foncier,zonage,rando,gestion,tourisme,django'
         },
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.

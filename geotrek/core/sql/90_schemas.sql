@@ -1,0 +1,12 @@
+SELECT set_schema('e_r_evenement_troncon', 'geotrek');
+SELECT set_schema('e_t_evenement', 'geotrek');
+SELECT set_schema('l_b_confort', 'geotrek');
+SELECT set_schema('l_b_enjeu', 'geotrek');
+SELECT set_schema('l_b_reseau', 'geotrek');
+SELECT set_schema('l_b_source', 'geotrek');
+SELECT set_schema('l_b_usage', 'geotrek');
+SELECT set_schema('l_r_troncon_reseau', 'geotrek');
+SELECT set_schema('l_r_troncon_usage', 'geotrek');
+SELECT set_schema('l_t_sentier', 'geotrek');
+SELECT set_schema('l_v_sentier', 'geotrek');
+SELECT set_schema('l_t_troncon', 'geotrek');
