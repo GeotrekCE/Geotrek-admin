@@ -131,6 +131,14 @@ class InformationDesk(models.Model):
         return smart_plain_text(newlines)
 
     @property
+    def serializable_type(self):
+        return {
+            'id': self.type.id,
+            'label': self.type.label,
+            'pictogram': self.type.pictogram.url,
+        }
+
+    @property
     def latitude(self):
         if self.geom:
             api_geom = self.geom.transform(settings.API_SRID, clone=True)

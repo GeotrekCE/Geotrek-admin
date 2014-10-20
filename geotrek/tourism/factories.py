@@ -21,6 +21,7 @@ class InformationDeskTypeFactory(factory.Factory):
     FACTORY_FOR = models.InformationDeskType
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
+    pictogram = get_dummy_uploaded_image()
 
 
 class InformationDeskFactory(factory.Factory):
