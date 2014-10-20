@@ -206,6 +206,17 @@ Geotrek modules, or published to the public Website (*Geotrek-rando*).
     locales are in the query (``query={"apiKey":"...","locales":["fr","en"]...``)
 
 
+Disable darker map backgrounds
+------------------------------
+
+Since IGN map backgrounds are very dense and colourful, a dark opacity is
+applied. In order to disable, change this MapEntity setting :
+
+.. code-block:: python
+
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
+
+
 Override public document OpenOffice template
 --------------------------------------------
 
@@ -250,3 +261,13 @@ apparence of objects in public trek exports, use the following setting :
     MAP_STYLES['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
+
+
+Custom logos
+------------
+
+You might also need to deploy logo images in the following places :
+
+* ``var/media/upload/favicon.png``
+* ``var/media/upload/logo-login.png``
+* ``var/media/upload/logo-header.png``
