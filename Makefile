@@ -58,23 +58,15 @@ clean: clean_harmless
 
 env_test: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-tests.cfg $(BUILDOUT_ARGS)
-	make all_compilemessages
 
 env_dev: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-dev.cfg $(BUILDOUT_ARGS)
-	make all_compilemessages
-	bin/django syncdb --noinput --migrate
-	bin/django sync_translation_fields --noinput
-	bin/django update_translation_fields
-	bin/django update_permissions
 
 env_prod: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-prod.cfg $(BUILDOUT_ARGS)
-	make all_compilemessages
 
 env_standalone: install clean_harmless
 	$(BUILDOUT) -c conf/buildout-prod-standalone.cfg $(BUILDOUT_ARGS)
-	make all_compilemessages
 
 
 
@@ -106,14 +98,15 @@ update:
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
 	bin/django update_permissions
+	make all_compilemessages
 
 deploy: update
 	bin/supervisorctl restart all
 
-all_makemessages: install
+all_makemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
 
-all_compilemessages: install
+all_compilemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
 
