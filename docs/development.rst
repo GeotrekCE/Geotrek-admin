@@ -47,11 +47,11 @@ Start local instance :
 
 ::
 
-    make env_dev serve
+    make env_dev update serve
 
 .. note::
 
-    Running ``env_dev`` is recommended after a pull of new source code,
+    Running ``env_dev`` and ``update`` is recommended after a pull of new source code,
     but is not mandatory : ``make serve`` is enough most of the time.
 
 
@@ -59,14 +59,14 @@ Run unit tests :
 
 ::
 
-    make env_test tests
+    make env_test update tests
 
 
 Run unit tests in verbose mode, and without migrations :
 
 ::
 
-    make env_dev tests
+    make env_dev update tests
 
 
 For Capture server, run an instance of screamshotter in a separate terminal :
@@ -186,7 +186,7 @@ Then run:
 
 ::
 
-    make env_dev
+    make env_dev update
     cd lib/src/mapentity/
     git submodule init
     git submodule update

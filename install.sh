@@ -444,6 +444,12 @@ function geotrek_setup {
         exit_error 3 "Could not setup python environment !"
     fi
 
+    if $dev ; then
+        echo_step "Initializing data..."
+        make update
+        echo_progress
+    fi
+
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
         bin/django syncdb --noinput
