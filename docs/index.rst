@@ -7,8 +7,10 @@ Contents:
    :maxdepth: 2
 
    installation
-   deployment
+   loading-data
+   configuration
    advanced-configuration
+   maintenance
    troubleshooting
    faq
    user-manual
