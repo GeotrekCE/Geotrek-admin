@@ -459,32 +459,5 @@
             "label_fr": "Information touristique",
             "label": "Information touristique"
         }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.informationdesktype",
-        "fields": {
-            "pictogram": "upload/desktype-info.svg",
-            "label_fr": "Maisons du parc",
-            "label": "Park Center"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.informationdesktype",
-        "fields": {
-            "pictogram": "upload/desktype-info.svg",
-            "label_fr": "Relais d'information",
-            "label": "Information Point"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.informationdesktype",
-        "fields": {
-            "pictogram": "upload/desktype-info.svg",
-            "label_fr": "Office du tourisme",
-            "label": "Tourist Office"
-        }
     }
 ]

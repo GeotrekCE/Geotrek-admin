@@ -28,9 +28,10 @@ from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, UsageFactory, WebLinkFactory,
-                                        ThemeFactory, InformationDeskFactory, TrekRelationshipFactory)
+                                        ThemeFactory, TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
+from geotrek.tourism.factories import InformationDeskFactory
 
 from .base import TrekkingManagerTest
 
