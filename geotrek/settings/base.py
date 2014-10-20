@@ -23,6 +23,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'OPTIONS': {
+            'options': '-c search_path=public,django,geotrek,foncier,zonage,rando,gestion,tourisme'
+        },
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -233,6 +236,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.land',
     'geotrek.trekking',
     'geotrek.tourism',
+    'geotrek.flatpages',
     'geotrek.feedback',
 )
 

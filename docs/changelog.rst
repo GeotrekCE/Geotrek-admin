@@ -2,6 +2,35 @@
 CHANGELOG
 =========
 
+0.28dev (unreleased)
+--------------------
+
+**New features**
+
+* Information desks now have a type (*Maison du parc*, *Tourist office*, ...)
+  with the ability to set dedicated pictograms (fixes #1192).
+
+**Internal changes**
+
+* Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
+* All information desks are now available in GeoJSON (*will be useful to show them
+  all at once on Geotrek-rando*).
+* We introduced models for static pages, allowing edition of public static Web pages
+  from Geotrek adminsite. Note that there are not used yet in *Geotrek-rando*.
+
+:notes:
+
+    Give related permissions to the managers group in order to allow edition
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage`` ...).
+
+* All tables and functions are now stored in different schemas. It allows to
+  distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to grant user privileges
+  by schema. It is also easier to browse objects in *pgAdmin* and *QGis*.
+
+  **Caution**: if you created additional users, you may have to change their ``search_path``
+  and/or their ``USAGE`` privilege.
+
+
 0.27.2 (2010-10-14)
 -------------------
 

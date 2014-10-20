@@ -30,9 +30,15 @@ class PicturesSerializerMixin(rest_serializers.ModelSerializer):
         fields = ('thumbnail', 'pictures',)
 
 
-class PublishableSerializerMixin(rest_serializers.ModelSerializer):
-    slug = rest_serializers.Field(source='slug')
+class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
     published_status = rest_serializers.Field(source='published_status')
+
+    class Meta:
+        fields = ('published', 'published_status', 'publication_date',)
+
+
+class PublishableSerializerMixin(BasePublishableSerializerMixin):
+    slug = rest_serializers.Field(source='slug')
 
     map_image_url = rest_serializers.Field(source='map_image_url')
     printable = rest_serializers.SerializerMethodField('get_printable_url')
@@ -52,5 +58,5 @@ class PublishableSerializerMixin(rest_serializers.ModelSerializer):
                                                   'pk': obj.pk})
 
     class Meta:
-        fields = ('name', 'slug', 'published', 'published_status', 'publication_date',
-                  'map_image_url', 'filelist_url', 'printable')
+        fields = ('name', 'slug', 'map_image_url', 'filelist_url', 'printable') + \
+            BasePublishableSerializerMixin.Meta.fields

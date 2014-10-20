@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-10-16 13:53+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "All"
+msgstr "Tout"
+
+msgid "Mobile"
+msgstr "Mobile"
+
+msgid "Hidden"
+msgstr "Cachée"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "External URL"
+msgstr "Lien externe"
+
+msgid "Link to external website instead of HTML content"
+msgstr "Lien vers site externe à la place du contenu HTML"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "HTML content"
+msgstr "Contenu HTML"
+
+msgid "Target"
+msgstr "Cible"
+
+msgid "Flat page"
+msgstr "Page statique"
+
+msgid "Flat pages"
+msgstr "Pages statiques"
+
+msgid "Choose between external URL and HTML content"
+msgstr "Choisir entre lien externe et contenu HTML"

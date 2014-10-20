@@ -15,6 +15,7 @@ from geotrek.common.serializers import (
 from geotrek.zoning.serializers import (DistrictSerializer, CitySerializer)
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
+from geotrek.tourism.serializers import InformationDeskSerializer
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -99,18 +100,6 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
         model = trekking_models.TrekRelationship
         fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
                   'trek', 'published')
-
-
-class InformationDeskSerializer(TranslatedModelSerializer):
-    photo_url = rest_serializers.Field(source='photo_url')
-    latitude = rest_serializers.Field(source='latitude')
-    longitude = rest_serializers.Field(source='longitude')
-
-    class Meta:
-        model = trekking_models.InformationDesk
-        fields = ('name', 'description', 'phone', 'email', 'website',
-                  'photo_url', 'street', 'postal_code', 'municipality',
-                  'latitude', 'longitude')
 
 
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
