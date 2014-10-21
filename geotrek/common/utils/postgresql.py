@@ -6,6 +6,7 @@ from functools import wraps
 
 from django.db import connection, models
 from django.conf import settings
+from django.db.models import get_app, get_models
 
 
 logger = logging.getLogger(__name__)
@@ -96,3 +97,45 @@ def load_sql_files(app_label):
                             (sql_file, e))
             traceback.print_exc()
             raise
+
+
+def move_models_to_schemas(app_label):
+    """
+    Move models tables to PostgreSQL schemas. It relies on two custom functions
+    ``set_schema()`` and ``create_schema_if_not_exist()`` defined in SQL utilities
+    file.
+    """
+    app = get_app(app_label)
+    default_schema = settings.DATABASE_SCHEMAS.get('default')
+    app_schema = settings.DATABASE_SCHEMAS.get(app_label, default_schema)
+
+    table_schemas = {}
+    for model in get_models(app):
+        model_name = model._meta.module_name
+        table_name = model._meta.db_table
+        model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
+        table_schemas.setdefault(model_schema, []).append(table_name)
+
+        for m2m_field in model._meta.many_to_many:
+            table_name = m2m_field.db_table
+            if table_name:
+                table_schemas[model_schema].append(table_name)
+
+    cursor = connection.cursor()
+
+    for schema_name in table_schemas.keys():
+        try:
+            sql = "CREATE SCHEMA %s;" % model_schema
+            cursor.execute(sql)
+            logger.info("Created schema %s" % model_schema)
+        except Exception:
+            logger.debug("Schema %s already exists." % model_schema)
+
+    for schema_name, tables in table_schemas.items():
+        for table_name in tables:
+            try:
+                sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
+                cursor.execute(sql)
+                logger.info("Moved %s to schema %s" % (table_name, schema_name))
+            except Exception:
+                logger.debug("Table %s already in schema %s" % (table_name, schema_name))

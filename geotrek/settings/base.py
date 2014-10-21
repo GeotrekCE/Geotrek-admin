@@ -23,9 +23,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'OPTIONS': {
-            'options': '-c search_path=public,django,geotrek,foncier,zonage,rando,gestion,tourisme'
-        },
+        'OPTIONS': {},
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -34,6 +32,36 @@ DATABASES = {
     }
 }
 
+#
+# PostgreSQL Schemas for apps and models.
+#
+# Caution: editing this setting might not be enough.
+# Indeed, it won't apply to apps that not managed of South, nor database views and functions.
+# See all sql/*-schemas.sql files in each Geotrek app.
+#
+DATABASE_SCHEMAS = {
+    'default': 'geotrek',
+
+    'auth': 'django',
+    'django': 'django',
+    'easy_thumbnails': 'django',
+    'south': 'django',
+    'feedback': 'gestion',
+    'infrastructure': 'gestion',
+    'maintenance': 'gestion',
+    'tourism': 'tourisme',
+    'trekking': 'rando',
+    'zoning': 'zonage',
+    'land': 'foncier',
+}
+
+DATABASES['default']['OPTIONS'] = {
+    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+}
+
+#
+# Authentication
+#
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
