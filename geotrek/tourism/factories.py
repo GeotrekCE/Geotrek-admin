@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 
 import factory
 
+from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefield_as_sequence
 
 from . import models
@@ -46,7 +47,7 @@ class TouristicContentCategoryFactory(factory.Factory):
     label = factory.Sequence(lambda n: u"TouristicContentCategory %s" % n)
 
 
-class TouristicContentFactory(factory.Factory):
+class TouristicContentFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.TouristicContent
 
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)

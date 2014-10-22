@@ -4,10 +4,13 @@ import json
 
 import mock
 from requests.exceptions import ConnectionError
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.models import default_structure
+from geotrek.authent.factories import StructureFactory, UserProfileFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent, TouristicEvent
@@ -260,6 +263,38 @@ class TouristicContentViewsTests(CommonTest):
         }
 
 
+class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.content1 = TouristicContentFactory.create()
+        structure = StructureFactory.create()
+        self.content2 = TouristicContentFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/touristiccontent/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/touristiccontent/delete/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/touristiccontent/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
+
+
 class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
@@ -276,3 +311,35 @@ class TouristicEventViewsTests(CommonTest):
             'structure': default_structure().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
+
+
+class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.event1 = TouristicEventFactory.create()
+        structure = StructureFactory.create()
+        self.event2 = TouristicEventFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/touristicevent/edit/{pk}/".format(pk=self.event1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/touristicevent/edit/{pk}/".format(pk=self.event2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/touristicevent/delete/{pk}/".format(pk=self.event1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/touristicevent/delete/{pk}/".format(pk=self.event2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
