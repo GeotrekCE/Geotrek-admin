@@ -218,7 +218,28 @@
                 ["read_poi", "trekking", "poi"],
 
                 ["add_report", "feedback", "report"],
-                ["read_report", "feedback", "report"]
+                ["read_report", "feedback", "report"],
+
+                ["add_touristiccontent", "tourism", "touristiccontent"],
+                ["change_touristiccontent", "tourism", "touristiccontent"],
+                ["delete_touristiccontent", "tourism", "touristiccontent"],
+                ["read_touristiccontent", "tourism", "touristiccontent"],
+                ["export_touristiccontent", "tourism", "touristiccontent"],
+                ["add_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+                ["change_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+                ["delete_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+
+                ["add_touristicevent", "tourism", "touristicevent"],
+                ["change_touristicevent", "tourism", "touristicevent"],
+                ["delete_touristicevent", "tourism", "touristicevent"],
+                ["read_touristicevent", "tourism", "touristicevent"],
+                ["export_touristicevent", "tourism", "touristicevent"],
+                ["add_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["change_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["delete_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["add_touristiceventusage", "tourism", "touristiceventusage"],
+                ["change_touristiceventusage", "tourism", "touristiceventusage"],
+                ["delete_touristiceventusage", "tourism", "touristiceventusage"]
             ]
         }
     },
