@@ -9,6 +9,8 @@ CHANGELOG
 
 * Information desks now have a type (*Maison du parc*, *Tourist office*, ...)
   with the ability to set dedicated pictograms (fixes #1192).
+* Ability to control which picture will be used in trek, using clicks on
+  stars in attachments list (fixes #1117)
 
 **Internal changes**
 
@@ -22,6 +24,15 @@ CHANGELOG
 
     Give related permissions to the managers group in order to allow edition
     (``add_flatpage``, ``change_flatpage``, ``delete_flatpage`` ...).
+
+
+**Before upgrade**
+
+* Run this SQL command to add a column for file attachments :
+
+::
+
+    ALTER TABLE fl_t_fichier ADD COLUMN marque boolean DEFAULT false;
 
 
 0.27.2 (2010-10-14)
