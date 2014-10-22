@@ -20,6 +20,8 @@ CHANGELOG
 * Fix position of attachment upload form on small screens
 * Clearer action message in object history table
 * Prevent image ratio warning from disappearing (fixes #1225)
+* Touristic contents
+* Touristic events
 
 **Internal changes**
 

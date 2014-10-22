@@ -7,7 +7,8 @@ class TouristicContentForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        fields = ['name', 'published', 'category', 'geom']
+        fields = ['name', 'published', 'description_teaser', 'description',
+                  'themes', 'category', 'contact', 'practical_info', 'geom']
         model = TouristicContent
 
 
@@ -15,5 +16,9 @@ class TouristicEventForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        #fields = ['name', 'published', 'usage', 'geom']
+        fields = ['name', 'published', 'description_teaser', 'description',
+                  'themes', 'begin_date', 'end_date', 'duration',
+                  'meeting_point', 'meeting_time', 'contact', 'organizer',
+                  'speaker', 'usage', 'accessibility', 'participant_number',
+                  'booking', 'public', 'practical_info', 'geom']
         model = TouristicEvent
