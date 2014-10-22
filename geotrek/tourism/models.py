@@ -200,6 +200,10 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='categorie')
     contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
+    email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
+                              blank=True, null=True)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
+                              blank=True, null=True)
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
@@ -259,6 +263,10 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     meeting_point = models.CharField(verbose_name=_(u"Meeting point"), max_length=256, blank=True, db_column='point_rdv')
     meeting_time = models.CharField(verbose_name=_(u"Meeting time"), max_length=64, blank=True, db_column='heure_rdv')
     contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
+    email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
+                              blank=True, null=True)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
+                              blank=True, null=True)
     organizer = models.CharField(verbose_name=_(u"Organizer"), max_length=256, blank=True, db_column='organisateur')
     speaker = models.CharField(verbose_name=_(u"Speaker"), max_length=256, blank=True, db_column='intervenant')
     usage = models.ForeignKey(TouristicEventUsage, verbose_name=_(u"Usage"), blank=True, null=True, db_column='usage')

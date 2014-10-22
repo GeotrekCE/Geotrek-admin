@@ -8,7 +8,8 @@ class TouristicContentForm(CommonForm):
 
     class Meta:
         fields = ['name', 'published', 'description_teaser', 'description',
-                  'themes', 'category', 'contact', 'practical_info', 'geom']
+                  'themes', 'category', 'contact', 'email', 'website',
+                  'practical_info', 'geom']
         model = TouristicContent
 
 
@@ -18,7 +19,8 @@ class TouristicEventForm(CommonForm):
     class Meta:
         fields = ['name', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration',
-                  'meeting_point', 'meeting_time', 'contact', 'organizer',
-                  'speaker', 'usage', 'accessibility', 'participant_number',
-                  'booking', 'public', 'practical_info', 'geom']
+                  'meeting_point', 'meeting_time', 'contact', 'email',
+                  'website', 'organizer', 'speaker', 'usage', 'accessibility',
+                  'participant_number', 'booking', 'public', 'practical_info',
+                  'geom']
         model = TouristicEvent
