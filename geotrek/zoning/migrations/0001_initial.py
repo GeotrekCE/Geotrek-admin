@@ -2,8 +2,8 @@
 
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import connection
 from django.conf import settings
+from django.db import connection
 
 
 class Migration(SchemaMigration):
@@ -29,7 +29,7 @@ class Migration(SchemaMigration):
         db.create_table('l_zonage_reglementaire', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=250, db_column='zonage')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
             ('area_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['zoning.RestrictedAreaType'], db_column='type')),
         ))
         db.send_create_signal(u'zoning', ['RestrictedArea'])
@@ -45,7 +45,7 @@ class Migration(SchemaMigration):
         db.create_table('l_commune', (
             ('code', self.gf('django.db.models.fields.CharField')(max_length=6, primary_key=True, db_column='insee')),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='commune')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
         ))
         db.send_create_signal(u'zoning', ['City'])
 
@@ -60,7 +60,7 @@ class Migration(SchemaMigration):
         db.create_table('l_secteur', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='secteur')),
-            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=2154, spatial_index=False)),
+            ('geom', self.gf('django.contrib.gis.db.models.fields.MultiPolygonField')(srid=settings.SRID, spatial_index=False)),
         ))
         db.send_create_signal(u'zoning', ['District'])
 

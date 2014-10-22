@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from south.db import db
 from south.v2 import SchemaMigration
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -29,7 +30,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['name']", 'object_name': 'InformationDesk', 'db_table': "'o_b_renseignement'"},
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '256', 'null': 'True', 'db_column': "'email'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '2154', 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'", 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': str(settings.SRID), 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'", 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'municipality': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'db_column': "'commune'", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256', 'db_column': "'nom'"}),
