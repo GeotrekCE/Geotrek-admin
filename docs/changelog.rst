@@ -12,6 +12,7 @@ CHANGELOG
 * Ability to control which picture will be used in trek, using clicks on
   stars in attachments list (fixes #1117)
 * Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
+* Add missing columns in intervention exports (fixes #1167)
 
 **Bug fixes**
 

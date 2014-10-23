@@ -7,6 +7,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.infrastructure.models import Infrastructure, Signage
@@ -35,7 +36,13 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
-    pass
+    columns = InterventionList.columns + \
+        ['disorders', 'total_manday', 'project',
+         'width', 'height', 'length', 'area',
+         'description', 'date_insert', 'date_update',
+         'material_cost', 'heliport_cost', 'subcontract_cost',
+         'total_cost_mandays', 'total_cost'] + \
+        AltimetryMixin.COLUMNS
 
 
 class InterventionDetail(MapEntityDetail):
