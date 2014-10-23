@@ -9,9 +9,17 @@ CHANGELOG
 
 * Information desks now have a type (*Maison du parc*, *Tourist office*, ...)
   with the ability to set dedicated pictograms (fixes #1192).
+* Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
+
+**Bug fixes**
+
+* Fix position of attachment upload form on small screens
+* Clearer action message in object history table
+* Prevent image ratio warning from disappearing (fixes #1225)
 
 **Internal changes**
 
+* Upgraded Chosen library for dropdown form fields
 * Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
 * All information desks are now available in GeoJSON (*will be useful to show them
   all at once on Geotrek-rando*).
