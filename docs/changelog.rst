@@ -9,6 +9,11 @@ CHANGELOG
 
 * Information desks now have a type (*Maison du parc*, *Tourist office*, ...)
   with the ability to set dedicated pictograms (fixes #1192).
+* Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
+
+**Bug fixes**
+
+* Fix position of attachment upload form on small screens
 
 **Internal changes**
 
