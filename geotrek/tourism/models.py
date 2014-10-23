@@ -2,8 +2,8 @@ import os
 import re
 import logging
 
-from django.contrib.gis.db import models
 from django.conf import settings
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
 
@@ -84,20 +84,6 @@ class InformationDeskType(PictogramMixin):
         db_table = 'o_b_type_renseignement'
         verbose_name = _(u"Information desk type")
         verbose_name_plural = _(u"Information desk types")
-        ordering = ['label']
-
-    def __unicode__(self):
-        return self.label
-
-
-class TouristicContentCategory(PictogramMixin):
-
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-
-    class Meta:
-        db_table = 't_b_contenu_touristique'
-        verbose_name = _(u"Touristic Content Category")
-        verbose_name_plural = _(u"Touristic Content Categories")
         ordering = ['label']
 
     def __unicode__(self):
@@ -185,6 +171,37 @@ class InformationDesk(models.Model):
         return thumb_url
 
 
+class TouristicContentCategory(PictogramMixin):
+
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 't_b_contenu_touristique'
+        verbose_name = _(u"Touristic content category")
+        verbose_name_plural = _(u"Touristic content categories")
+        ordering = ['label']
+
+    def __unicode__(self):
+        return self.label
+
+
+class TouristicContentType(models.Model):
+
+    category = models.ForeignKey(TouristicContentCategory, related_name='types',
+                                 verbose_name=_(u"Category"), db_column='categorie')
+    type_nr = models.IntegerField(choices=((1, _(u"Type 1")), (2, _(u"Type 2"))), db_column='no_type')
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 't_b_contenu_touristique_type'
+        verbose_name = _(u"Touristic Content Type")
+        verbose_name_plural = _(u"Touristic Content Type")
+        ordering = ['label']
+
+    def __unicode__(self):
+        return self.label
+
+
 class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
                        TimeStampedModelMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
@@ -205,6 +222,12 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
                               blank=True, null=True)
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
+    type1 = models.ManyToManyField(TouristicContentType, related_name='contents1',
+                                   verbose_name=_(u"Type 1"), db_column='type1',
+                                   blank=True, limit_choices_to={'type_nr': 1})
+    type2 = models.ManyToManyField(TouristicContentType, related_name='contents2',
+                                   verbose_name=_(u"Type 2"), db_column='type2',
+                                   blank=True, limit_choices_to={'type_nr': 2})
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

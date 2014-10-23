@@ -20,7 +20,7 @@ from geotrek.tourism.models import DataSource, InformationDesk
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
-from .models import TouristicContent, TouristicEvent
+from .models import TouristicContent, TouristicEvent, TouristicContentCategory
 
 
 logger = logging.getLogger(__name__)
@@ -121,6 +121,15 @@ class TouristicContentDetail(MapEntityDetail):
 class TouristicContentCreate(MapEntityCreate):
     model = TouristicContent
     form_class = TouristicContentForm
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicContentCreate, self).get_context_data(**kwargs)
+        context['types_by_category'] = {
+            str(category.pk): [str(type.pk) for type in category.types.all()]
+            for category in TouristicContentCategory.objects.all()
+        }
+        print context
+        return context
 
 
 class TouristicContentUpdate(MapEntityUpdate):

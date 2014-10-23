@@ -1,0 +1,27 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n %}
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function update_types() {
+                var category = $('#id_category').val();
+                var types = {{ types_by_category|safe }}[category]
+                $('#id_type1 option, #id_type2 option').each(function() {
+                    var show = $.inArray($(this).val(), types) >= 0;
+                    $(this).toggle(show);
+                });
+            }
+            update_types();
+            $('select[multiple]').chosen({
+                no_results_text: "{% trans "No result" %}",
+                placeholder_text_multiple: "{% trans "Choose value(s)" %}",
+            });
+            $('#id_category').change(function() {
+                update_types();
+                $('#id_type1, #id_type2').val('').trigger('chosen:updated');
+            });
+        });
+    </script>
+{% endblock extrabody %}

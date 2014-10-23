@@ -40,6 +40,16 @@ class TouristicContentCategoryAdmin(TranslationAdmin):
 admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
 
 
+class TouristicContentTypeAdmin(TranslationAdmin):
+    list_display = ('category', 'type_nr', 'label')
+    list_display_links = ('label', )
+    list_filter = ('type_nr', )
+    search_fields = ('label', )
+    ordering = ('category', 'type_nr', 'label')
+
+admin.site.register(tourism_models.TouristicContentType, TouristicContentTypeAdmin)
+
+
 class TouristicEventUsageAdmin(TranslationAdmin):
     search_fields = ('usage',)
 

@@ -38,6 +38,13 @@ translator.register(tourism_models.TouristicContentCategory,
                     TouristicContentCategoryTO)
 
 
+class TouristicContentTypeTO(TranslationOptions):
+    fields = ('label',)
+
+translator.register(tourism_models.TouristicContentType,
+                    TouristicContentTypeTO)
+
+
 class TouristicEventUsageTO(TranslationOptions):
     fields = ('usage',)
 
