@@ -85,7 +85,8 @@ class PicturesMixin(object):
         """
         if hasattr(self, '_pictures'):
             return self._pictures
-        return [a for a in self.attachments.all() if a.is_image
+        all_attachments = self.attachments.order_by('-starred').all()
+        return [a for a in all_attachments if a.is_image
                 and a.title != 'mapimage']
 
     @pictures.setter
