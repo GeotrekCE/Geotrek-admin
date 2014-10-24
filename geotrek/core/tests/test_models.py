@@ -98,6 +98,11 @@ class PathVisibilityTest(TestCase):
     def test_latest_updated_bypass_invisible(self):
         self.assertEqual(Path.latest_updated(), self.path.date_update)
 
+    def test_splitted_paths_do_not_become_visible(self):
+        PathFactory(geom=LineString((10, 0), (12, 0)), visible=False)
+        PathFactory(geom=LineString((11, 1), (11, -1)))
+        self.assertEqual(len(Path.objects.all()), 3)
+
 
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
