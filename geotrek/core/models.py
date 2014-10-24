@@ -21,6 +21,13 @@ from .helpers import PathHelper, TopologyHelper
 logger = logging.getLogger(__name__)
 
 
+class PathManager(models.GeoManager):
+    def get_queryset(self):
+        """Hide all ``Path`` records that are not marked as visible.
+        """
+        return super(PathManager, self).get_queryset().filter(visible=True)
+
+
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
@@ -32,6 +39,8 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
                                            editable=False)
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
                                 help_text=_(u"Approved by manager"))
+    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_(u"Visible"),
+                                  help_text=_(u"Shown in lists and maps"))
     name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"),
                             help_text=_(u"Official name"))
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
@@ -58,8 +67,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
 
-    # Override default manager
-    objects = models.GeoManager()
+    objects = PathManager()
 
     is_reversed = False
 
@@ -110,7 +118,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
 
     def reload(self, fromdb=None):
         # Update object's computed values (reload from database)
-        if self.pk:
+        if self.pk and self.visible:
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
             AltimetryMixin.reload(self, fromdb)
