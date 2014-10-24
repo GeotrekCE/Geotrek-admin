@@ -120,3 +120,12 @@ _others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
+
+#
+# Internal settings
+# ..........................
+
+# Experimental apps and features
+_EXPERIMENTAL_MODE = TEST or envini.getbool('experimental', 'False')
+if _EXPERIMENTAL_MODE:
+    FLATPAGES_ENABLED = True

@@ -26,6 +26,12 @@ CHANGELOG
 * Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
 * All information desks are now available in GeoJSON (*will be useful to show them
   all at once on Geotrek-rando*).
+
+**Experimental features**
+
+In order to enable features under construction, add ``experimental = True`` in
+``etc/settings.ini``.
+
 * We introduced models for static pages, allowing edition of public static Web pages
   from Geotrek adminsite. Note that there are not used yet in *Geotrek-rando*.
 
