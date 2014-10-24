@@ -34,14 +34,14 @@ CHANGELOG
     Give related permissions to the managers group in order to allow edition
     (``add_flatpage``, ``change_flatpage``, ``delete_flatpage`` ...).
 
-
-**Before upgrade**
+**Before running install**
 
 * Run this SQL command to add a column for file attachments :
 
 ::
 
     ALTER TABLE fl_t_fichier ADD COLUMN marque boolean DEFAULT false;
+
 
 
 0.27.2 (2010-10-14)
