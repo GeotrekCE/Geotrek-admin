@@ -13,6 +13,7 @@ CHANGELOG
   stars in attachments list (fixes #1117)
 * Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
 * Add missing columns in intervention exports (fixes #1167)
+* Add ability (for super-admin) to add/change/delete zoning objects in Adminsite (ref #1246)
 
 **Bug fixes**
 
