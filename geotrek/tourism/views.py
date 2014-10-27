@@ -1,3 +1,4 @@
+import json
 import logging
 
 import requests
@@ -10,6 +11,7 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete)
@@ -118,21 +120,40 @@ class TouristicContentDetail(MapEntityDetail):
         return context
 
 
-class TouristicContentCreate(MapEntityCreate):
-    model = TouristicContent
-    form_class = TouristicContentForm
-
+class TouristicContentFormMixin(object):
     def get_context_data(self, **kwargs):
-        context = super(TouristicContentCreate, self).get_context_data(**kwargs)
-        context['types_by_category'] = {
-            str(category.pk): [str(type.pk) for type in category.types.all()]
+        context = super(TouristicContentFormMixin, self).get_context_data(**kwargs)
+        categories = {
+            str(category.pk): {
+                'type1_label': category.type1_label or _(u"Type 1"),
+                'type2_label': category.type2_label or _(u"Type 2"),
+                'type1_values': {
+                    str(type.pk): type.label
+                    for type in category.types.filter(type_nr=1)
+                },
+                'type2_values': {
+                    str(type.pk): type.label
+                    for type in category.types.filter(type_nr=2)
+                },
+            }
             for category in TouristicContentCategory.objects.all()
         }
-        print context
+        categories[''] = {
+            'type1_label': _(u"Type 1"),
+            'type2_label': _(u"Type 2"),
+            'type1_values': {},
+            'type2_values': {},
+        }
+        context['categories'] = json.dumps(categories)
         return context
 
 
-class TouristicContentUpdate(MapEntityUpdate):
+class TouristicContentCreate(TouristicContentFormMixin, MapEntityCreate):
+    model = TouristicContent
+    form_class = TouristicContentForm
+
+
+class TouristicContentUpdate(TouristicContentFormMixin, MapEntityUpdate):
     queryset = TouristicContent.objects.existing()
     form_class = TouristicContentForm
 

@@ -174,6 +174,10 @@ class InformationDesk(models.Model):
 class TouristicContentCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    type1_label = models.CharField(verbose_name=_(u"Label for type1"), max_length=128,
+                                   db_column='label_type1', blank=True)
+    type2_label = models.CharField(verbose_name=_(u"Label for type2"), max_length=128,
+                                   db_column='label_type2', blank=True)
 
     class Meta:
         db_table = 't_b_contenu_touristique'

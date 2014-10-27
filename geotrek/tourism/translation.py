@@ -32,7 +32,7 @@ translator.register(tourism_models.TouristicContent, TouristicContentTO)
 
 
 class TouristicContentCategoryTO(TranslationOptions):
-    fields = ('label',)
+    fields = ('label', 'type1_label', 'type2_label')
 
 translator.register(tourism_models.TouristicContentCategory,
                     TouristicContentCategoryTO)

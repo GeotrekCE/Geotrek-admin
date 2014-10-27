@@ -5,23 +5,36 @@
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function() {
-            function update_types() {
+            function update_types(n) {
+                var categories = JSON.parse('{{ categories|addslashes|safe }}');
                 var category = $('#id_category').val();
-                var types = {{ types_by_category|safe }}[category]
-                $('#id_type1 option, #id_type2 option').each(function() {
-                    var show = $.inArray($(this).val(), types) >= 0;
-                    $(this).toggle(show);
+                var selected = $('#id_type' + n).val();
+                console.log('selected', selected);
+                $('#id_type' + n).empty();
+                $.each(categories[category]['type' + n + '_values'], function(index, value) {
+                    markup = '<option value="' + index + '"'
+                    if ($.inArray(index, selected) >= 0) {
+                        markup += ' selected="selected"';
+                        console.log(index, selected, 'is selected');
+                    } else {
+                        console.log(index, selected, 'is not selected');
+                    }
+                    markup += '>' + value + '</option>';
+                    $('#id_type' + n).append(markup);
                 });
+                $('label[for=id_type' + n + ']').text(categories[category]['type' + n + '_label']);
+                $('#div_id_type' + n).toggle($('#id_type' + n + ' option').length > 0);
+                $('#id_type' + n).trigger('chosen:updated');
             }
-            update_types();
             $('select[multiple]').chosen({
                 no_results_text: "{% trans "No result" %}",
                 placeholder_text_multiple: "{% trans "Choose value(s)" %}",
             });
             $('#id_category').change(function() {
-                update_types();
-                $('#id_type1, #id_type2').val('').trigger('chosen:updated');
+                update_types('1');
+                update_types('2');
             });
+            $('#id_category').trigger('change');
         });
     </script>
 {% endblock extrabody %}

@@ -34,7 +34,7 @@ admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
 
 
 class TouristicContentCategoryAdmin(TranslationAdmin):
-    list_display = ('label', 'pictogram_img')
+    list_display = ('label', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
 
 admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
