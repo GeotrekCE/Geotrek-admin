@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.conf import settings
 
 from modeltranslation.admin import TranslationAdmin
 
@@ -9,4 +10,6 @@ class FlatPagesAdmin(TranslationAdmin):
     list_display = ('title', 'published', 'publication_date', 'target')
     search_fields = ('title', 'content')
 
-admin.site.register(flatpages_models.FlatPage, FlatPagesAdmin)
+
+if settings.FLATPAGES_ENABLED:
+    admin.site.register(flatpages_models.FlatPage, FlatPagesAdmin)
