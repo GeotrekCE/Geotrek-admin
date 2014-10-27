@@ -22,6 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class PathManager(models.GeoManager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
