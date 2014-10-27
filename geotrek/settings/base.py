@@ -460,6 +460,7 @@ COMPLETENESS_FIELDS = {
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = False  # False because still experimental
+TOURISM_ENABLED = False  # False because still experimental
 
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 

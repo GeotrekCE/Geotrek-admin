@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, url
 
 from mapentity import registry
@@ -24,7 +25,8 @@ class TouristicContentEntityOptions(PublishableEntityOptions):
     def get_queryset(self):
         return self.model.objects.existing()
 
-urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)
+if settings.TOURISM_ENABLED:
+    urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)
 
 
 class TouristicEventEntityOptions(PublishableEntityOptions):
@@ -34,4 +36,5 @@ class TouristicEventEntityOptions(PublishableEntityOptions):
     def get_queryset(self):
         return self.model.objects.existing()
 
-urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions)
+if settings.TOURISM_ENABLED:
+    urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions)

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib import admin
 
 from leaflet.admin import LeafletGeoAdmin
@@ -37,7 +38,8 @@ class TouristicContentCategoryAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
 
-admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
+if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
 
 
 class TouristicContentTypeAdmin(TranslationAdmin):
@@ -47,16 +49,19 @@ class TouristicContentTypeAdmin(TranslationAdmin):
     search_fields = ('label', )
     ordering = ('category', 'type_nr', 'label')
 
-admin.site.register(tourism_models.TouristicContentType, TouristicContentTypeAdmin)
+if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.TouristicContentType, TouristicContentTypeAdmin)
 
 
 class TouristicEventUsageAdmin(TranslationAdmin):
     search_fields = ('usage',)
 
-admin.site.register(tourism_models.TouristicEventUsage, TouristicEventUsageAdmin)
+if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.TouristicEventUsage, TouristicEventUsageAdmin)
 
 
 class TouristicEventPublicAdmin(TranslationAdmin):
     search_fields = ('public',)
 
-admin.site.register(tourism_models.TouristicEventPublic, TouristicEventPublicAdmin)
+if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.TouristicEventPublic, TouristicEventPublicAdmin)
