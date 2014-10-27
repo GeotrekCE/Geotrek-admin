@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.conf import settings
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -21,11 +20,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'tourism', ['TouristicContent'])
 
-
     def backwards(self, orm):
         # Deleting model 'TouristicContent'
         db.delete_table('t_t_contenu_touristique')
-
 
     models = {
         u'authent.structure': {

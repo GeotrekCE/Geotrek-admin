@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.conf import settings
@@ -36,7 +36,6 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['touristiccontent_id', 'touristiccontenttype_id'])
 
-
     def backwards(self, orm):
         # Deleting model 'TouristicContentType'
         db.delete_table('t_b_contenu_touristique_type')
@@ -46,7 +45,6 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field type2 on 'TouristicContent'
         db.delete_table(db.shorten_name('t_t_contenu_touristique_type2'))
-
 
     models = {
         u'authent.structure': {

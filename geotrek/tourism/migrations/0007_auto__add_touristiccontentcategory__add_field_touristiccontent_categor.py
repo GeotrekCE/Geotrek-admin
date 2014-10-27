@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.conf import settings
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -22,14 +21,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(default=1, related_name='contents', db_column='categorie', to=orm['tourism.TouristicContentCategory']),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting model 'TouristicContentCategory'
         db.delete_table('t_b_contenu_touristique')
 
         # Deleting field 'TouristicContent.category'
         db.delete_column('t_t_contenu_touristique', 'categorie')
-
 
     models = {
         u'authent.structure': {

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.conf import settings
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -19,14 +18,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.DateField')(null=True, db_column='date_publication', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'TouristicContent.published'
         db.delete_column('t_t_contenu_touristique', 'public')
 
         # Deleting field 'TouristicContent.publication_date'
         db.delete_column('t_t_contenu_touristique', 'date_publication')
-
 
     models = {
         u'authent.structure': {

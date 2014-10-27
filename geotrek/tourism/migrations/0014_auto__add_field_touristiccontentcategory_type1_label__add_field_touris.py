@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.conf import settings
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -19,14 +18,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(default='', max_length=128, db_column='label_type2', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'TouristicContentCategory.type1_label'
         db.delete_column('t_b_contenu_touristique', 'label_type1')
 
         # Deleting field 'TouristicContentCategory.type2_label'
         db.delete_column('t_b_contenu_touristique', 'label_type2')
-
 
     models = {
         u'authent.structure': {
