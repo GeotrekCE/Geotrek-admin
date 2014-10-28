@@ -346,8 +346,18 @@ Shutdown useless services
 Now that your instances point the shared server. You can shutdown the useless
 services on each instance.
 
+Start by stopping everything :
+
+::
+
+    sudo stop geotrek
+
 Before you used to run ``make env_standalone deploy`` on every server.
-Now you will have only one *standalone**, and on the other ones, you will just run :
+Now you will have only one *standalone*, and on the other ones
+the *Geotrek* application only.
+
+To achieve this, you will just have to run the *prod* environment instead
+of *standalone* in the deployment procedure (*or when settings are changed*) :
 
 ::
 
