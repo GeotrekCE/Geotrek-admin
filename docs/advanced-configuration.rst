@@ -289,3 +289,94 @@ You might also need to deploy logo images in the following places :
 * ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
 * ``var/media/upload/logo-header.png``
+
+
+Share services between several Geotrek instances
+------------------------------------------------
+
+As explained :ref:`in the design section <design-section>`, *Geotrek* relies
+on several services. They are generic and reusable, and can thus be shared
+between several instances, in order to save system resources for example.
+
+A simple way to achieve this is to install one instance with everything
+as usual (*standalone*), and plug the other instances on its underlying services.
+
+
+Database
+~~~~~~~~
+
+Sharing your postgreSQL server is highly recommended. Create several databases
+for each of your instances.
+
+Then in ``etc/settings.ini``, adjust the ``host`` and ``dbname`` sections of
+each instance.
+
+
+Capture and conversion
+~~~~~~~~~~~~~~~~~~~~~~
+
+On the standalone server, make sure the services will be available to others.
+Add the following lines in its ``settings.ini`` :
+
+.. code-block:: python
+
+    [convertit]
+    host = 0.0.0.0
+
+    [screamshotter]
+    host = 0.0.0.0
+
+In ``custom.py``, point the tiles URL to the shared services (replace ``SERVER`` by
+the one you installed as standalone) :
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['CONVERSION_SERVER'] = 'http://SERVER:6543'
+    MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
+
+
+Tilecache
+~~~~~~~~~
+
+Only if you use a WMS server, you will have to share the Tilecache tile server.
+
+In ``custom.py``, point the tiles URL towards the shared  :
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('Scan', 'http://SERVER/tiles/scan/{z}/{x}/{y}.png', '&copy; Attributions'),
+        ('Ortho', 'http://SERVER/tiles/ortho/{z}/{x}/{y}.png', '&copy; Attributions'),
+    ]
+
+:notes:
+
+    This is a short tip, it will only work if the spatial extent and projection srid
+    is the same on all instances.
+
+    Otherwise configure Tilecache manually, or simply use external tile services
+    such as *IGN Geoportail WMTS*.
+
+
+Shutdown useless services
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now that your instances point the shared server. You can shutdown the useless
+services on each instance.
+
+Start by stopping everything :
+
+::
+
+    sudo stop geotrek
+
+Before you used to run ``make env_standalone deploy`` on every server.
+Now you will have only one *standalone*, and on the other ones
+the *Geotrek* application only.
+
+To achieve this, you will just have to run the *prod* environment instead
+of *standalone* in the deployment procedure (*or when settings are changed*) :
+
+::
+
+    make env_prod deploy
