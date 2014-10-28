@@ -27,7 +27,7 @@ CHANGELOG
   distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to grant user privileges
   by schema. It is also easier to browse objects in *pgAdmin* and *QGis*.
 
-  **Caution**: if you created additional users, you may have to change their ``search_path``
+  **Caution**: if you created additional database users, you may have to change their ``search_path``
   and/or their ``USAGE`` privilege.
 
 
