@@ -9,6 +9,7 @@ ALTER TABLE l_t_troncon ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE l_t_troncon ALTER COLUMN depart SET DEFAULT '';
 ALTER TABLE l_t_troncon ALTER COLUMN arrivee SET DEFAULT '';
 ALTER TABLE l_t_troncon ALTER COLUMN valide SET DEFAULT false;
+ALTER TABLE l_t_troncon ALTER COLUMN visible SET DEFAULT true;
 
 
 

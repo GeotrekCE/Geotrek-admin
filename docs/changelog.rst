@@ -14,6 +14,8 @@ CHANGELOG
 * Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
 * Add missing columns in intervention exports (fixes #1167)
 * Add ability (for super-admin) to add/change/delete zoning objects in Adminsite (ref #1246)
+* Add ability to have paths records in database that will not appear in Geotrek
+  lists and maps. Just set column ``visible`` to false in ``l_t_troncon`` table.
 
 **Bug fixes**
 
