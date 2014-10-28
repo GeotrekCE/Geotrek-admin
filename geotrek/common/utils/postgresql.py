@@ -101,9 +101,9 @@ def load_sql_files(app_label):
 
 def move_models_to_schemas(app_label):
     """
-    Move models tables to PostgreSQL schemas. It relies on two custom functions
-    ``set_schema()`` and ``create_schema_if_not_exist()`` defined in SQL utilities
-    file.
+    Move models tables to PostgreSQL schemas.
+
+    Views, functions and triggers will be moved in Geotrek app SQL files.
     """
     app = get_app(app_label)
     default_schema = settings.DATABASE_SCHEMAS.get('default')
