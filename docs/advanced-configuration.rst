@@ -183,11 +183,29 @@ setting that receives a list of colors :
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
 
+External raster layers
+----------------------
 
-External map layers
--------------------
+It is possible to add overlay tiles layer on maps. For example, it can be useful to:
 
-In order to display external layers in *Geotrek* and *Geotrek-rando*, it is
+* Get the cadastral parcels on top of satellite images
+* Home made layers (*with Tilemill or QGisMapserver for example*).
+  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
+  that are marked as invisible in the database!
+
+In ``custom.py``, just add the following lines:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+    ]
+
+
+External vectorial layers
+-------------------------
+
+In order to display vectorial layers in *Geotrek* and *Geotrek-rando*, it is
 possible to define external datasources.
 
 So far, the following formats are supported :
