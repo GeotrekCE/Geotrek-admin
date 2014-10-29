@@ -138,12 +138,6 @@ class TouristicContentFormMixin(object):
             }
             for category in TouristicContentCategory.objects.all()
         }
-        categories[''] = {
-            'type1_label': _(u"Type 1"),
-            'type2_label': _(u"Type 2"),
-            'type1_values': {},
-            'type2_values': {},
-        }
         context['categories'] = json.dumps(categories)
         return context
 
