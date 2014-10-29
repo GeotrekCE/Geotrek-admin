@@ -174,9 +174,9 @@ class InformationDesk(models.Model):
 class TouristicContentCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    type1_label = models.CharField(verbose_name=_(u"Label for type1"), max_length=128,
+    type1_label = models.CharField(verbose_name=_(u"Label for type 1"), max_length=128,
                                    db_column='label_type1', blank=True)
-    type2_label = models.CharField(verbose_name=_(u"Label for type2"), max_length=128,
+    type2_label = models.CharField(verbose_name=_(u"Label for type 2"), max_length=128,
                                    db_column='label_type2', blank=True)
 
     class Meta:
@@ -198,8 +198,8 @@ class TouristicContentType(models.Model):
 
     class Meta:
         db_table = 't_b_contenu_touristique_type'
-        verbose_name = _(u"Touristic Content Type")
-        verbose_name_plural = _(u"Touristic Content Type")
+        verbose_name = _(u"Touristic content type")
+        verbose_name_plural = _(u"Touristic content type")
         ordering = ['label']
 
     def __unicode__(self):
