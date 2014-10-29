@@ -245,7 +245,7 @@ class TouristicContentType2(TouristicContentType):
 
 
 class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
-                       TimeStampedModelMixin, NoDeleteMixin):
+                       TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
@@ -311,7 +311,7 @@ class TouristicEventPublic(models.Model):
 
 
 class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
-                     TimeStampedModelMixin, NoDeleteMixin, PicturesMixin):
+                     PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,

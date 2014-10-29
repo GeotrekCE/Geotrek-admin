@@ -288,6 +288,64 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
+from django.conf import settings
+from geotrek.zoning.factories import CityFactory, DistrictFactory
+from geotrek.common.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+
+
+class TouristicContentAPITest(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon)
+        self.district = DistrictFactory(geom=polygon)
+
+        self.content = TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+
+        self.attachment = AttachmentFactory(obj=self.content,
+                                            attachment_file=get_dummy_uploaded_image())
+        self.theme = ThemeFactory()
+        self.content.themes.add(self.theme)
+
+        self.pk = self.content.pk
+        url = '/api/touristiccontents/%s/' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def test_thumbnail(self):
+        self.assertEqual(self.result['thumbnail'],
+                         os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+
+    def test_published_status(self):
+        self.assertDictEqual(self.result['published_status'][0],
+                             {u'lang': u'en', u'status': False, u'language': u'English'})
+
+    def test_pictures(self):
+        self.assertDictEqual(self.result['pictures'][0],
+                             {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
+                              u'title': self.attachment.title,
+                              u'legend': self.attachment.legend,
+                              u'author': self.attachment.author})
+
+    def test_cities(self):
+        self.assertDictEqual(self.result['cities'][0],
+                             {u"code": self.city.code,
+                              u"name": self.city.name})
+
+    def test_districts(self):
+        self.assertDictEqual(self.result['districts'][0],
+                             {u"id": self.district.id,
+                              u"name": self.district.name})
+
+    def test_themes(self):
+        self.assertDictEqual(self.result['themes'][0],
+                             {u"id": self.theme.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
+                              u"label": self.theme.label})
+
+
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',

@@ -1,7 +1,8 @@
 from rest_framework import serializers as rest_serializers
 
-from geotrek.common.serializers import (PublishableSerializerMixin, PictogramSerializerMixin,
-                                        TranslatedModelSerializer)
+from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin, PictogramSerializerMixin,
+                                        PicturesSerializerMixin, TranslatedModelSerializer)
+from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.tourism import models as tourism_models
 
 
@@ -24,13 +25,21 @@ class InformationDeskSerializer(TranslatedModelSerializer):
                   'latitude', 'longitude', 'type')
 
 
-class TouristicContentSerializer(PublishableSerializerMixin, TranslatedModelSerializer):
+class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
+                                 ZoningSerializerMixin, TranslatedModelSerializer):
+    themes = ThemeSerializer(many=True)
+
     class Meta:
         model = tourism_models.TouristicContent
-        fields = ('id', ) + PublishableSerializerMixin.Meta.fields
+        fields = ('id', 'description', 'description_teaser', 'category', 'themes',
+            'contact', 'email', 'website', 'practical_info', 'type1', 'type2') + \
+            ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
 
 
-class TouristicEventSerializer(PublishableSerializerMixin, TranslatedModelSerializer):
+class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
+                               ZoningSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = tourism_models.TouristicEvent
         fields = ('id', ) + PublishableSerializerMixin.Meta.fields

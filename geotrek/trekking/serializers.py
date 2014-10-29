@@ -12,7 +12,7 @@ from geotrek.common.serializers import (
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin
 )
-from geotrek.zoning.serializers import (DistrictSerializer, CitySerializer)
+from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
 from geotrek.tourism.serializers import InformationDeskSerializer
@@ -97,11 +97,8 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
 
 
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                     AltimetrySerializerMixin, TranslatedModelSerializer):
-
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
-
+                     AltimetrySerializerMixin, ZoningSerializerMixin,
+                     TranslatedModelSerializer):
     duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
@@ -130,9 +127,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location',
-                  'cities', 'districts', 'relationships', 'points_reference',
+                  'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
             AltimetrySerializerMixin.Meta.fields + \
+            ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
@@ -167,14 +165,13 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                    TranslatedModelSerializer):
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
+                    ZoningSerializerMixin, TranslatedModelSerializer):
     type = POITypeSerializer()
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'description', 'type', 'cities', 'districts') + \
+        fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation') + \
+            ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
