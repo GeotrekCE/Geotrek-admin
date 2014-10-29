@@ -518,7 +518,7 @@ Read all release notes carefully.
 
     * Before upgrading, backup your trail records and geometries, using pgAdmin ::
 
-        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentiers;
+        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentier;
         CREATE TABLE backup_troncons_sentiers AS (
           SELECT l_t_troncon.id AS troncon, l_t_sentier.id, l_t_sentier.nom
           FROM l_t_troncon, l_t_sentier
@@ -560,7 +560,7 @@ Read all release notes carefully.
       - ``feedback | Report | Can add report``
 
     * After upgrading, compare visually the resulting migrated trails using QGis,
-      by opening both layers ``l_v_sentiers`` and ``backup_sentiers``.
+      by opening both layers ``l_v_sentier`` and ``backup_sentiers``.
 
 
 0.22.6 (2014-04-27)
