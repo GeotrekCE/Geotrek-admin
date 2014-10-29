@@ -297,6 +297,11 @@ Support edition of several fields on the same map, via django-leaflet new featur
 
         rm -rf lib/src/django-modeltranslation
 
+    After upgrading, mark all treks as published in the languages of your choice ::
+
+        UPDATE o_t_itineraire SET public_fr = TRUE;
+        UPDATE o_t_itineraire SET date_publication = now();
+
 
 **New features**
 
