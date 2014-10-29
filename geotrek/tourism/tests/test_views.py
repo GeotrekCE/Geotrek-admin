@@ -6,20 +6,15 @@ import mock
 from requests.exceptions import ConnectionError
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 
-from geotrek.authent.models import default_structure
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.common.tests import CommonTest
 from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.tourism.models import DATA_SOURCE_TYPES, TouristicContent, TouristicEvent
+from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
                                        InformationDeskFactory,
                                        TouristicContentFactory,
-                                       TouristicContentCategoryFactory,
                                        TouristicEventFactory)
-from mapentity.factories import SuperUserFactory
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -244,25 +239,6 @@ class InformationDeskViewsTests(TrekkingManagerTest):
         self.assertEqual(len(records['features']), 10)
 
 
-class TouristicContentViewsTests(CommonTest):
-    model = TouristicContent
-    modelfactory = TouristicContentFactory
-    userfactory = SuperUserFactory
-
-    def get_bad_data(self):
-        return {
-            'geom': 'doh!'
-        }, _(u'Invalid geometry value.')
-
-    def get_good_data(self):
-        return {
-            'name_fr': u'test',
-            'category': TouristicContentCategoryFactory.create().pk,
-            'structure': default_structure().pk,
-            'geom': '{"type": "Point", "coordinates":[0, 0]}',
-        }
-
-
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
@@ -310,24 +286,6 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
         response = self.client.get(url)
         self.assertContains(response, 'Michelin')
-
-
-class TouristicEventViewsTests(CommonTest):
-    model = TouristicEvent
-    modelfactory = TouristicEventFactory
-    userfactory = SuperUserFactory
-
-    def get_bad_data(self):
-        return {
-            'geom': 'doh!'
-        }, _(u'Invalid geometry value.')
-
-    def get_good_data(self):
-        return {
-            'name_fr': u'test',
-            'structure': default_structure().pk,
-            'geom': '{"type": "Point", "coordinates":[0, 0]}',
-        }
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
