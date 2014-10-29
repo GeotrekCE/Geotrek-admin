@@ -6,15 +6,21 @@ import mock
 from requests.exceptions import ConnectionError
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
+from geotrek.zoning.factories import CityFactory, DistrictFactory
+from geotrek.common.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
                                        InformationDeskFactory,
                                        TouristicContentFactory,
-                                       TouristicEventFactory)
+                                       TouristicEventFactory,
+                                       TouristicContentCategoryFactory,
+                                       TouristicContentTypeFactory)
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -288,31 +294,30 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
-from django.conf import settings
-from geotrek.zoning.factories import CityFactory, DistrictFactory
-from geotrek.common.factories import AttachmentFactory, ThemeFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+class BasicJSONAPITest(object):
+    factory = None
 
-
-class TouristicContentAPITest(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
+        self._build_object()
+
+        self.pk = self.content.pk
+        url = '/api/%ss/%s/' % (self.content._meta.module_name, self.pk)
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+    def _build_object(self):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.content = TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
         self.attachment = AttachmentFactory(obj=self.content,
                                             attachment_file=get_dummy_uploaded_image())
         self.theme = ThemeFactory()
         self.content.themes.add(self.theme)
-
-        self.pk = self.content.pk
-        url = '/api/touristiccontents/%s/' % self.pk
-        self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
@@ -344,6 +349,78 @@ class TouristicContentAPITest(TrekkingManagerTest):
                              {u"id": self.theme.id,
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
                               u"label": self.theme.label})
+
+
+class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
+    factory = TouristicContentFactory
+
+    def _build_object(self):
+        super(TouristicContentAPITest, self)._build_object()
+        self.category = TouristicContentCategoryFactory()
+        self.type1 = TouristicContentTypeFactory(category=self.category)
+        self.type2 = TouristicContentTypeFactory(category=self.category)
+        self.content.type1.add(self.type1)
+        self.content.type2.add(self.type2)
+
+    def test_expected_properties(self):
+        self.assertEqual(['areas', 'category', 'cities', 'contact',
+            'description', 'description_teaser', 'districts', 'email',
+            'filelist_url', 'id', 'map_image_url', 'name', 'pictures',
+            'practical_info', 'printable', 'publication_date', 'published',
+            'published_status', 'slug', 'themes', 'thumbnail',
+            'type1', 'type2', 'website'], sorted(self.result.keys()))
+
+    def test_type1(self):
+        self.assertDictEqual(self.result['type1'][0],
+                             {u"id": self.type1.id,
+                              u"name": self.type1.label,
+                              u"in_list": self.type1.in_list})
+
+    def test_type2(self):
+        self.assertDictEqual(self.result['type2'][0],
+                             {u"id": self.type2.id,
+                              u"name": self.type2.label,
+                              u"in_list": self.type2.in_list})
+
+    def test_category(self):
+        self.assertDictEqual(self.result['category'], {
+            u"id": self.category.id,
+            u"types": [
+                {u"id": self.type1.id,
+                 u"name": self.type1.label,
+                 u"in_list": self.type1.in_list},
+                {u"id": self.type1.id,
+                 u"name": self.type1.label,
+                 u"in_list": self.type1.in_list}
+            ],
+            "label": self.category.label,
+            "type1_label": self.category.type1_label,
+            "type2_label": self.category.type2_label,
+            "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
+
+
+class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
+    factory = TouristicEventFactory
+
+    def test_expected_properties(self):
+        self.assertEqual(['accessibility', 'areas', 'begin_date', 'booking',
+            'cities', 'contact', 'description', 'description_teaser',
+            'districts', 'duration', 'email', 'end_date', 'filelist_url',
+            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
+            'organizer', 'participant_number', 'pictures', 'practical_info',
+            'printable', 'public', 'publication_date', 'published', 'published_status',
+            'slug', 'speaker', 'themes', 'thumbnail', 'usage', 'website'],
+            sorted(self.result.keys()))
+
+    def test_usage(self):
+        self.assertDictEqual(self.result['usage'],
+                             {u"id": self.content.usage.id,
+                              u"name": self.content.usage.usage})
+
+    def test_public(self):
+        self.assertDictEqual(self.result['public'],
+                             {u"id": self.content.public.id,
+                              u"name": self.content.public.public})
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
