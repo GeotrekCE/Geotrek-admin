@@ -13,6 +13,7 @@ from easy_thumbnails.files import get_thumbnailer
 from mapentity import registry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import smart_plain_text
+from modeltranslation.manager import MultilingualManager
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
@@ -174,9 +175,9 @@ class InformationDesk(models.Model):
 class TouristicContentCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    type1_label = models.CharField(verbose_name=_(u"Label for type 1"), max_length=128,
+    type1_label = models.CharField(verbose_name=_(u"First list label"), max_length=128,
                                    db_column='label_type1', blank=True)
-    type2_label = models.CharField(verbose_name=_(u"Label for type 2"), max_length=128,
+    type2_label = models.CharField(verbose_name=_(u"Second list label"), max_length=128,
                                    db_column='label_type2', blank=True)
 
     class Meta:
@@ -191,10 +192,11 @@ class TouristicContentCategory(PictogramMixin):
 
 class TouristicContentType(models.Model):
 
+    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     category = models.ForeignKey(TouristicContentCategory, related_name='types',
                                  verbose_name=_(u"Category"), db_column='categorie')
-    type_nr = models.IntegerField(choices=((1, _(u"Type 1")), (2, _(u"Type 2"))), db_column='no_type')
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    # Choose in which list of choices this type will appear
+    in_list = models.IntegerField(choices=((1, _(u"First")), (2, _(u"Second"))), db_column='liste_choix')
 
     class Meta:
         db_table = 't_b_contenu_touristique_type'
@@ -204,6 +206,42 @@ class TouristicContentType(models.Model):
 
     def __unicode__(self):
         return self.label
+
+
+class TouristicContentType1Manager(MultilingualManager):
+    def get_queryset(self):
+        return super(TouristicContentType1Manager, self).get_queryset().filter(in_list=1)
+
+
+class TouristicContentType2Manager(MultilingualManager):
+    def get_queryset(self):
+        return super(TouristicContentType2Manager, self).get_queryset().filter(in_list=2)
+
+
+class TouristicContentType1(TouristicContentType):
+    objects = TouristicContentType1Manager()
+
+    def __init__(self, *args, **kwargs):
+        self._meta.get_field('in_list').default = 1
+        super(TouristicContentType1, self).__init__(*args, **kwargs)
+
+    class Meta:
+        proxy = True
+        verbose_name = _(u"Type")
+        verbose_name_plural = _(u"First list types")
+
+
+class TouristicContentType2(TouristicContentType):
+    objects = TouristicContentType2Manager()
+
+    def __init__(self, *args, **kwargs):
+        self._meta.get_field('in_list').default = 2
+        super(TouristicContentType2, self).__init__(*args, **kwargs)
+
+    class Meta:
+        proxy = True
+        verbose_name = _(u"Type")
+        verbose_name_plural = _(u"Second list types")
 
 
 class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
@@ -228,10 +266,10 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
     type1 = models.ManyToManyField(TouristicContentType, related_name='contents1',
                                    verbose_name=_(u"Type 1"), db_column='type1',
-                                   blank=True, limit_choices_to={'type_nr': 1})
+                                   blank=True)
     type2 = models.ManyToManyField(TouristicContentType, related_name='contents2',
                                    verbose_name=_(u"Type 2"), db_column='type2',
-                                   blank=True, limit_choices_to={'type_nr': 2})
+                                   blank=True)
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

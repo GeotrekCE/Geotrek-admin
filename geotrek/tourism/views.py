@@ -125,15 +125,15 @@ class TouristicContentFormMixin(object):
         context = super(TouristicContentFormMixin, self).get_context_data(**kwargs)
         categories = {
             str(category.pk): {
-                'type1_label': category.type1_label or _(u"Type 1"),
-                'type2_label': category.type2_label or _(u"Type 2"),
+                'type1_label': category.type1_label,
+                'type2_label': category.type2_label,
                 'type1_values': {
                     str(type.pk): type.label
-                    for type in category.types.filter(type_nr=1)
+                    for type in category.types.filter(in_list=1)
                 },
                 'type2_values': {
                     str(type.pk): type.label
-                    for type in category.types.filter(type_nr=2)
+                    for type in category.types.filter(in_list=2)
                 },
             }
             for category in TouristicContentCategory.objects.all()

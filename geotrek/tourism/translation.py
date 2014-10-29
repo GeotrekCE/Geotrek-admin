@@ -43,6 +43,10 @@ class TouristicContentTypeTO(TranslationOptions):
 
 translator.register(tourism_models.TouristicContentType,
                     TouristicContentTypeTO)
+translator.register(tourism_models.TouristicContentType1,
+                    TouristicContentTypeTO)
+translator.register(tourism_models.TouristicContentType2,
+                    TouristicContentTypeTO)
 
 
 class TouristicEventUsageTO(TranslationOptions):

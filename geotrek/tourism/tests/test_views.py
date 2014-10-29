@@ -295,6 +295,23 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
 
 
+class TouristicContentDetailPageTests(TrekkingManagerTest):
+    def setUp(self):
+        self.content = TouristicContentFactory.create()
+        cat = self.content.category
+        cat.type1_label = 'Michelin'
+        cat.save()
+        self.login()
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_type_label_shown_in_detail_page(self):
+        url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
+        response = self.client.get(url)
+        self.assertContains(response, 'Michelin')
+
+
 class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory

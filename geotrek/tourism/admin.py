@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
-from modeltranslation.admin import TranslationAdmin
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 from geotrek.tourism import models as tourism_models
 
@@ -34,23 +34,28 @@ class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
 admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
 
 
+class TouristicContentType1Inline(TranslationTabularInline):
+    model = tourism_models.TouristicContentType1
+    readonly_fields = ('in_list',)
+    extra = 0
+
+
+class TouristicContentType2Inline(TranslationTabularInline):
+    model = tourism_models.TouristicContentType2
+    readonly_fields = ('in_list',)
+    extra = 0
+
+
 class TouristicContentCategoryAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
+    inlines = [
+        TouristicContentType1Inline,
+        TouristicContentType2Inline,
+    ]
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
-
-
-class TouristicContentTypeAdmin(TranslationAdmin):
-    list_display = ('category', 'type_nr', 'label')
-    list_display_links = ('label', )
-    list_filter = ('type_nr', )
-    search_fields = ('label', )
-    ordering = ('category', 'type_nr', 'label')
-
-if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.TouristicContentType, TouristicContentTypeAdmin)
 
 
 class TouristicEventUsageAdmin(TranslationAdmin):
