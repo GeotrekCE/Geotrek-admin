@@ -82,7 +82,7 @@ class InformationDeskType(PictogramMixin):
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='label')
 
     class Meta:
-        db_table = 'o_b_type_renseignement'
+        db_table = 't_b_type_renseignement'
         verbose_name = _(u"Information desk type")
         verbose_name_plural = _(u"Information desk types")
         ordering = ['label']
@@ -120,7 +120,7 @@ class InformationDesk(models.Model):
                              srid=settings.SRID, spatial_index=False)
 
     class Meta:
-        db_table = 'o_b_renseignement'
+        db_table = 't_b_renseignement'
         verbose_name = _(u"Information desk")
         verbose_name_plural = _(u"Information desks")
         ordering = ['name']
@@ -181,7 +181,7 @@ class TouristicContentCategory(PictogramMixin):
                                    db_column='label_type2', blank=True)
 
     class Meta:
-        db_table = 't_b_contenu_touristique'
+        db_table = 't_b_contenu_touristique_categorie'
         verbose_name = _(u"Touristic content category")
         verbose_name_plural = _(u"Touristic content categories")
         ordering = ['label']
@@ -253,7 +253,7 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristiccontents",
-                                    db_table="o_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.GeometryField(srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
@@ -265,10 +265,10 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
                               blank=True, null=True)
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
     type1 = models.ManyToManyField(TouristicContentType, related_name='contents1',
-                                   verbose_name=_(u"Type 1"), db_column='type1',
+                                   verbose_name=_(u"Type 1"), db_table="t_r_contenu_touristique_type1",
                                    blank=True)
     type2 = models.ManyToManyField(TouristicContentType, related_name='contents2',
-                                   verbose_name=_(u"Type 2"), db_column='type2',
+                                   verbose_name=_(u"Type 2"), db_table="t_r_contenu_touristique_type2",
                                    blank=True)
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
@@ -287,7 +287,7 @@ class TouristicEventUsage(models.Model):
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=128, db_column='usage')
 
     class Meta:
-        db_table = 'o_b_evenement_touristique_usage'
+        db_table = 't_b_evenement_touristique_usage'
         verbose_name = _(u"Touristic event usage")
         verbose_name_plural = _(u"Touristic event usages")
         ordering = ['usage']
@@ -301,7 +301,7 @@ class TouristicEventPublic(models.Model):
     public = models.CharField(verbose_name=_(u"Public"), max_length=128, db_column='public')
 
     class Meta:
-        db_table = 'o_b_evenement_touristique_public'
+        db_table = 't_b_evenement_touristique_public'
         verbose_name = _(u"Touristic event public")
         verbose_name_plural = _(u"Touristic event publics")
         ordering = ['public']
@@ -319,7 +319,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristic_events",
-                                    db_table="o_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.PointField(srid=settings.SRID)
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
