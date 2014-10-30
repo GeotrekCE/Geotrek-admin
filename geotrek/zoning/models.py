@@ -10,16 +10,10 @@ from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.common.utils import uniquify
+from geotrek.common.utils import uniquify, intersecting
 from geotrek.core.models import Topology, Path
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-
-
-def intersecting(cls, obj):
-    """ Small helper to filter all model instance by geometry intersection
-    """
-    return cls.objects.filter(geom__intersects=obj.geom)
 
 
 class RestrictedAreaType(models.Model):

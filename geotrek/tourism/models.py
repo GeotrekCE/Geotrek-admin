@@ -16,10 +16,12 @@ from mapentity.serializers import smart_plain_text
 from modeltranslation.manager import MultilingualManager
 
 from geotrek.authent.models import StructureRelated
+from geotrek.core.models import Topology
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PictogramMixin, PublishableMixin,
                                    PicturesMixin)
 from geotrek.common.models import Theme
+from geotrek.common.utils import intersecting
 
 from extended_choices import Choices
 from multiselectfield import MultiSelectField
@@ -281,6 +283,9 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     def __unicode__(self):
         return self.name
 
+Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+
 
 class TouristicEventUsage(models.Model):
 
@@ -352,3 +357,8 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
 
     def __unicode__(self):
         return self.name
+
+TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))

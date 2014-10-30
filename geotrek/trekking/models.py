@@ -10,10 +10,11 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.core.models import Path, Topology
+from geotrek.common.utils import intersecting
 from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
-from geotrek.tourism.models import InformationDesk
+from geotrek.tourism import models as tourism_models
 
 from .templatetags import trekking_tags
 
@@ -71,7 +72,7 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
-    information_desks = models.ManyToManyField(InformationDesk,
+    information_desks = models.ManyToManyField(tourism_models.InformationDesk,
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
@@ -188,6 +189,8 @@ Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)
 Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
+tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -417,6 +420,8 @@ Path.add_property('pois', POI.path_pois)
 Topology.add_property('pois', POI.topology_pois)
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [])
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
+tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 
 
 class POIType(PictogramMixin):
