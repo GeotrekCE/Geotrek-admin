@@ -61,6 +61,13 @@ $(window).on('entity:map', function (e, data) {
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
 
+    // Date picker
+    $('#id_begin_date, #id_end_date').datepicker({
+        autoclose: true,
+        language: window.SETTINGS.languages.default,
+        format: window.SETTINGS.date_format
+    });
+
     // Chosen on themes etc...
     $('select[multiple]').chosen({
         no_results_text: tr("No result"),

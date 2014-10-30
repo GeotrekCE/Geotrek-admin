@@ -260,12 +260,14 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     geom = models.GeometryField(srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='categorie')
-    contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
+    contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact',
+                               help_text=_(u"Address, phone, etc."))
     email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
                               blank=True, null=True)
     website = models.URLField(verbose_name=_(u"Website"), max_length=256, db_column='website',
                               blank=True, null=True)
-    practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques')
+    practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
+                                      help_text=_(u"Anything worth to know"))
     type1 = models.ManyToManyField(TouristicContentType, related_name='contents1',
                                    verbose_name=_(u"Type 1"), db_table="t_r_contenu_touristique_type1",
                                    blank=True)
@@ -329,9 +331,12 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     geom = models.PointField(srid=settings.SRID)
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
     end_date = models.DateField(blank=True, null=True, verbose_name=_(u"End date"), db_column='date_fin')
-    duration = models.CharField(verbose_name=_(u"Duration"), max_length=64, blank=True, db_column='duree')
-    meeting_point = models.CharField(verbose_name=_(u"Meeting point"), max_length=256, blank=True, db_column='point_rdv')
-    meeting_time = models.TimeField(verbose_name=_(u"Meeting time"), blank=True, null=True, db_column='heure_rdv')
+    duration = models.CharField(verbose_name=_(u"Duration"), max_length=64, blank=True, db_column='duree',
+                                help_text=_(u"3 jours, saison, ..."))
+    meeting_point = models.CharField(verbose_name=_(u"Meeting point"), max_length=256, blank=True, db_column='point_rdv',
+                                     help_text=_(u"Where exactly ?"))
+    meeting_time = models.TimeField(verbose_name=_(u"Meeting time"), blank=True, null=True, db_column='heure_rdv',
+                                    help_text=_(u"11:00, 23:30"))
     contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact')
     email = models.EmailField(verbose_name=_(u"Email"), max_length=256, db_column='email',
                               blank=True, null=True)
