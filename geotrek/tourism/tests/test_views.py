@@ -11,8 +11,10 @@ from django.conf import settings
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.zoning.factories import CityFactory, DistrictFactory
-from geotrek.common.factories import AttachmentFactory, ThemeFactory
+from geotrek.core import factories as core_factories
+from geotrek.trekking import factories as trekking_factories
+from geotrek.zoning import factories as zoning_factories
+from geotrek.common import factories as common_factories
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
@@ -309,15 +311,21 @@ class BasicJSONAPITest(object):
 
     def _build_object(self):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
-        self.city = CityFactory(geom=polygon)
-        self.district = DistrictFactory(geom=polygon)
+        self.city = zoning_factories.CityFactory(geom=polygon)
+        self.district = zoning_factories.DistrictFactory(geom=polygon)
 
         self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.attachment = AttachmentFactory(obj=self.content,
-                                            attachment_file=get_dummy_uploaded_image())
-        self.theme = ThemeFactory()
+        self.attachment = common_factories.AttachmentFactory(obj=self.content,
+                                                             attachment_file=get_dummy_uploaded_image())
+        self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
+
+        path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
+        self.trek = trekking_factories.TrekFactory(no_path=True)
+        self.trek.add_path(path)
+        self.poi = trekking_factories.POIFactory(no_path=True)
+        self.poi.add_path(path, start=0.5, end=0.5)
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
@@ -350,6 +358,24 @@ class BasicJSONAPITest(object):
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
                               u"label": self.theme.label})
 
+    def test_treks(self):
+        self.assertDictEqual(self.result['treks'][0], {
+            u'pk': self.trek.pk,
+            u'id': self.trek.id,
+            u'slug': self.trek.slug,
+            u'name': self.trek.name,
+            u'url': u'/trek/%s/' % self.trek.id})
+
+    def test_pois(self):
+        self.assertDictEqual(self.result['pois'][0],{
+            u'id': self.poi.id,
+            u'slug': self.poi.slug,
+            u'name': self.poi.name,
+            u'type': {
+                u'id': self.poi.type.id,
+                u'label': self.poi.type.label,
+                u'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name)}})
+
 
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
@@ -365,9 +391,10 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_expected_properties(self):
         self.assertEqual(['areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
-            'filelist_url', 'id', 'map_image_url', 'name', 'pictures',
+            'filelist_url', 'id', 'map_image_url', 'name', 'pictures', 'pois',
             'practical_info', 'printable', 'publication_date', 'published',
             'published_status', 'slug', 'themes', 'thumbnail',
+            'touristic_contents', 'touristic_events', 'treks',
             'type1', 'type2', 'website'], sorted(self.result.keys()))
 
     def test_type1(self):
@@ -407,9 +434,10 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
-            'organizer', 'participant_number', 'pictures', 'practical_info',
+            'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'public', 'publication_date', 'published', 'published_status',
-            'slug', 'speaker', 'themes', 'thumbnail', 'usage', 'website'],
+            'slug', 'speaker', 'themes', 'thumbnail',
+            'touristic_contents', 'touristic_events', 'treks', 'usage', 'website'],
             sorted(self.result.keys()))
 
     def test_usage(self):
