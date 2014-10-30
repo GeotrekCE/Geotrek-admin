@@ -60,13 +60,15 @@ $(window).on('entity:map', function (e, data) {
 //
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname != 'touristiccontent')
-        return;
 
+    // Chosen on themes etc...
     $('select[multiple]').chosen({
         no_results_text: tr("No result"),
         placeholder_text_multiple: tr("Choose value(s)")
     });
+
+    if (data.modelname != 'touristiccontent')
+        return;
 
     $('#id_category').change(function() {
         update_types('1');
