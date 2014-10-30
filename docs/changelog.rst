@@ -30,6 +30,12 @@ CHANGELOG
 * Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
 * All information desks are now available in GeoJSON (*will be useful to show them
   all at once on Geotrek-rando*).
+* All tables and functions are now stored in different schemas. It allows to
+  distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to grant user privileges
+  by schema. It is also easier to browse objects in *pgAdmin* and *QGis*.
+
+  **Caution**: if you created additional database users, you may have to change their ``search_path``
+  and/or their ``USAGE`` privilege.
 
 **Experimental features**
 
@@ -51,7 +57,6 @@ In order to enable features under construction, add ``experimental = True`` in
 ::
 
     ALTER TABLE fl_t_fichier ADD COLUMN marque boolean DEFAULT false;
-
 
 
 0.27.2 (2010-10-14)
