@@ -367,7 +367,7 @@ class BasicJSONAPITest(object):
             u'url': u'/trek/%s/' % self.trek.id})
 
     def test_pois(self):
-        self.assertDictEqual(self.result['pois'][0],{
+        self.assertDictEqual(self.result['pois'][0], {
             u'id': self.poi.id,
             u'slug': self.poi.slug,
             u'name': self.poi.name,
@@ -389,13 +389,15 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.content.type2.add(self.type2)
 
     def test_expected_properties(self):
-        self.assertEqual(['areas', 'category', 'cities', 'contact',
+        self.assertEqual([
+            'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'id', 'map_image_url', 'name', 'pictures', 'pois',
             'practical_info', 'printable', 'publication_date', 'published',
             'published_status', 'slug', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks',
-            'type1', 'type2', 'website'], sorted(self.result.keys()))
+            'type1', 'type2', 'website'],
+            sorted(self.result.keys()))
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
@@ -430,7 +432,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicEventFactory
 
     def test_expected_properties(self):
-        self.assertEqual(['accessibility', 'areas', 'begin_date', 'booking',
+        self.assertEqual([
+            'accessibility', 'areas', 'begin_date', 'booking',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',

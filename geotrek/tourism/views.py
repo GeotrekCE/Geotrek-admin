@@ -11,7 +11,6 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete)

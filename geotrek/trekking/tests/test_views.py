@@ -147,7 +147,6 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['filelist_url'],
                          '/paperclip/get/trekking/poi/%s/' % self.pk)
 
-
     def test_touristic_contents(self):
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'slug': self.touristic_content.slug,
@@ -552,7 +551,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
             u'name': self.touristic_event.name})
-
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
