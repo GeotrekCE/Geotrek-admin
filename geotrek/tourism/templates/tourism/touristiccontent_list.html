@@ -2,18 +2,12 @@
 {% load i18n %}
 
 {% block mainactions %}
-    {% if can_add %}
-        <a class="btn btn-success" href="{{ model.get_add_url }}{% if view.current_category %}?category={{ view.current_category.pk }}{% endif %}"><i class="icon-plus icon-white"></i> {% if view.current_category %}{{ view.create_label }}{% else %}{{ create_label }}{% endif %}</a>
-    {% else %}
-        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% if view.current_category %}{{ view.create_label }}{% else %}{{ create_label }}{% endif %}</span>
-    {% endif %}
+    {{ block.super }}
 
     <div class="btn-group categories-filter">
-        <a class="btn {% if not view.current_category %}btn-warning{% endif %}" href="?" title="{% trans "All" %}">{% trans "All" %}</a>
+        <a class="btn btn-warning" href="#" title="{% trans "All" %}">{% trans "All" %}</a>
         {% for category in view.categories_list %}
-        <a class="btn {% if view.current_category.pk == category.pk %}btn-warning{% endif %}" href="?category={{ category.pk }}" title="{{ category.label }}">
-            <img src="{{ MEDIA_URL }}{{ category.pictogram }}"/></a>
+        <a class="btn" href="#" data-category="{{ category.pk }}" title="{{ category.label }}"><img src="{{ MEDIA_URL }}{{ category.pictogram }}"/></a>
         {% endfor %}
     </div>
-
 {% endblock mainactions %}
