@@ -59,6 +59,13 @@ $(window).on('entity:map', function (e, data) {
 // Touristic Content
 //
 
+$(window).on('entity:view:list', function (e, data) {
+    if (data.modelname != 'touristiccontent')
+        return;
+    $('.categories-filter a').tooltip();
+});
+
+
 $(window).on('entity:view:add entity:view:update', function (e, data) {
 
     // Date picker

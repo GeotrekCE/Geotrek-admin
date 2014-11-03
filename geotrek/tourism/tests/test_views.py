@@ -296,6 +296,19 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
+class TouristicContentListTest(TrekkingManagerTest):
+    def setUp(self):
+        self.content = TouristicContentFactory.create()
+        self.category2 = TouristicContentCategoryFactory()
+        self.login()
+
+    def test_only_used_categories_are_shown(self):
+        url = "/touristiccontent/list/"
+        response = self.client.get(url)
+        self.assertContains(response, 'href="?category=%s' % self.content.category.pk)
+        self.assertNotContains(response, 'href="?category=%s' % self.category2.pk)
+
+
 class BasicJSONAPITest(object):
     factory = None
 

@@ -11,6 +11,7 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete)
@@ -108,6 +109,27 @@ class TouristicContentList(MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
     columns = ['id', 'name', 'category']
+
+    @property
+    def current_category(self):
+        try:
+            pk = int(self.request.GET.get('category'))
+            return TouristicContentCategory.objects.get(id=pk)
+        except ValueError, TouristicContentCategory.DoesNotExist:
+            return None
+
+    @property
+    def categories_list(self):
+        used = TouristicContent.objects.values_list('category__pk')
+        return TouristicContentCategory.objects.filter(pk__in=used)
+
+    @property
+    def create_label(self):
+        """Mimic ``MapEntityMixin.get_create_label()``
+        """
+        current = self.current_category
+        if current:
+            return u"%s %s" % (_("Add"), current.label.lower())
 
 
 class TouristicContentDetail(MapEntityDetail):
