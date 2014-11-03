@@ -185,7 +185,7 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type = POITypeSerializer()
 
     def __init__(self, *args, **kwargs):
-        super(TrekSerializer, self).__init__(*args, **kwargs)
+        super(POISerializer, self).__init__(*args, **kwargs)
 
         from geotrek.tourism import serializers as tourism_serializers
 
