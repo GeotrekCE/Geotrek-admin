@@ -6,14 +6,15 @@ from mapentity import registry
 from geotrek.common.urls import PublishableEntityOptions
 
 from . import models
-from .views import DataSourceList, DataSourceGeoJSON, InformationDeskGeoJSON
+from . import views as tourism_views
 
 
 urlpatterns = patterns(
     '',
-    url(r'^api/datasource/datasources.json$', DataSourceList.as_view(), name="datasource_list_json"),
-    url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', DataSourceGeoJSON.as_view(), name="datasource_geojson"),
-    url(r'^api/informationdesk/informationdesk.geojson$', InformationDeskGeoJSON.as_view(), name="informationdesk_geojson"),
+    url(r'^api/datasource/datasources.json$', tourism_views.DataSourceList.as_view(), name="datasource_list_json"),
+    url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', tourism_views.DataSourceGeoJSON.as_view(), name="datasource_geojson"),
+    url(r'^api/informationdesk/informationdesk.geojson$', tourism_views.InformationDeskGeoJSON.as_view(), name="informationdesk_geojson"),
+    url(r'^api/touristiccontent/categories/$', tourism_views.TouristicContentCategoryJSONList.as_view(), name="touristiccontentcategories_list_json"),
 )
 from . import serializers as tourism_serializers
 

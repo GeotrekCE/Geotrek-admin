@@ -296,6 +296,20 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
+class TouristicContentCategoryListTest(TrekkingManagerTest):
+    def setUp(self):
+        self.category = TouristicContentCategoryFactory.create()
+        TouristicContentCategoryFactory.create()
+        self.login()
+
+    def test_categories_are_published_in_json(self):
+        url = "/api/touristiccontent/categories/"
+        response = self.client.get(url)
+        results = json.loads(response.content)
+        self.assertEqual(results[0]['label'], self.category.label)
+        self.assertIn('types', results[0])
+
+
 class TouristicContentFormTest(TrekkingManagerTest):
     def setUp(self):
         self.category = TouristicContentCategoryFactory()

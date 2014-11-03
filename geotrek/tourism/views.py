@@ -13,6 +13,8 @@ from django.utils.decorators import method_decorator
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete)
+from rest_framework import generics as rest_generics
+from rest_framework import permissions as rest_permissions
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.tourism.models import DataSource, InformationDesk
@@ -21,6 +23,7 @@ from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
 from .models import TouristicContent, TouristicEvent, TouristicContentCategory
+from .serializers import TouristicContentCategorySerializer
 
 
 logger = logging.getLogger(__name__)
@@ -96,6 +99,12 @@ class InformationDeskGeoJSON(GeoJSONLayerView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(InformationDeskGeoJSON, self).dispatch(*args, **kwargs)
+
+
+class TouristicContentCategoryJSONList(rest_generics.ListAPIView):
+    model = TouristicContentCategory
+    serializer_class = TouristicContentCategorySerializer
+    permission_classes = (rest_permissions.IsAuthenticated,)
 
 
 class TouristicContentLayer(MapEntityLayer):
