@@ -120,8 +120,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         var type_label = category ? categories[category]['type' + n + '_label'] : '';
 
         // Refresh type label
-        if (type_label)
-            $('label[for=id_type' + n + ']').text(type_label);
+        $('label[for=id_type' + n + ']').text(type_label);
 
         // Hide type field if no values for this category
         $('#div_id_type' + n).toggle(Object.keys(types_values).length > 0);

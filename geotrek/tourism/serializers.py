@@ -42,7 +42,7 @@ class RelatedTouristicEventSerializer(TranslatedModelSerializer):
         fields = ('id', 'name', 'slug')
 
 
-class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+class TouristicContentTypeSerializer(TranslatedModelSerializer):
     name = rest_serializers.Field(source='label')
 
     class Meta:
