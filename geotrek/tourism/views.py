@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -124,29 +123,7 @@ class TouristicContentDetail(MapEntityDetail):
         return context
 
 
-class TouristicContentFormMixin(object):
-    def get_context_data(self, **kwargs):
-        context = super(TouristicContentFormMixin, self).get_context_data(**kwargs)
-        categories = {
-            str(category.pk): {
-                'type1_label': category.type1_label,
-                'type2_label': category.type2_label,
-                'type1_values': {
-                    str(type.pk): type.label
-                    for type in category.types.filter(in_list=1)
-                },
-                'type2_values': {
-                    str(type.pk): type.label
-                    for type in category.types.filter(in_list=2)
-                },
-            }
-            for category in TouristicContentCategory.objects.all()
-        }
-        context['categories'] = json.dumps(categories)
-        return context
-
-
-class TouristicContentCreate(TouristicContentFormMixin, MapEntityCreate):
+class TouristicContentCreate(MapEntityCreate):
     model = TouristicContent
     form_class = TouristicContentForm
 
@@ -163,7 +140,7 @@ class TouristicContentCreate(TouristicContentFormMixin, MapEntityCreate):
         return initial
 
 
-class TouristicContentUpdate(TouristicContentFormMixin, MapEntityUpdate):
+class TouristicContentUpdate(MapEntityUpdate):
     queryset = TouristicContent.objects.existing()
     form_class = TouristicContentForm
 

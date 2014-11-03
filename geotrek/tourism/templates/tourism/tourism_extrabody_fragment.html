@@ -1,9 +1,11 @@
-{% load i18n %}
+{% load i18n tourism_tags %}
+
 <script type="leaflet-template" id="tourism-popup-template">
   <span class=title>{% trans "Title" %}</span>: {title}<br/>
   <span class=title>{% trans "Description" %}</span>: {description}<br/>
   <span class=title>{% trans "Website" %}</span>: {website}
 </script>
+
 <script type="text/javascript">
     MapEntity.i18n['Tourism'] = "{% trans "Tourism" %}";
     MapEntity.i18n['Data sources'] = "{% trans "Data sources" %}";
@@ -16,3 +18,10 @@
     window.SETTINGS.urls['touristiccontent_layer'] = "{% url "tourism:touristiccontent_layer" %}";
     window.SETTINGS.urls['touristicevent_layer'] = "{% url "tourism:touristicevent_layer" %}";
 </script>
+
+{% if modelname == "touristiccontent" %}
+    <script type="application/json" id="categories-types">
+        {% touristic_content_categories as categories %}
+        {{ categories|safe }}
+    </script>
+{% endif %}

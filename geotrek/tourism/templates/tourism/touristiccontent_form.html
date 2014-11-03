@@ -1,9 +1,0 @@
-{% extends "mapentity/mapentity_form.html" %}
-{% load i18n %}
-
-{% block extrabody %}
-    {{ block.super }}
-    <script type="application/json" id="categories-types">
-        {{ categories|safe }}
-    </script>
-{% endblock extrabody %}
