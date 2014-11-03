@@ -296,6 +296,22 @@ class TouristicContentDetailPageTests(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
+class TouristicContentFormTest(TrekkingManagerTest):
+    def setUp(self):
+        self.category = TouristicContentCategoryFactory()
+        self.login()
+
+    def test_no_category_selected_by_default(self):
+        url = "/touristiccontent/add/"
+        response = self.client.get(url)
+        self.assertNotContains(response, 'value="%s" selected' % self.category.pk)
+
+    def test_default_category_is_taken_from_url_params(self):
+        url = "/touristiccontent/add/?category=%s" % self.category.pk
+        response = self.client.get(url)
+        self.assertContains(response, 'value="%s" selected' % self.category.pk)
+
+
 class TouristicContentListTest(TrekkingManagerTest):
     def setUp(self):
         self.content = TouristicContentFactory.create()

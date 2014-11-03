@@ -115,7 +115,7 @@ class TouristicContentList(MapEntityList):
         try:
             pk = int(self.request.GET.get('category'))
             return TouristicContentCategory.objects.get(id=pk)
-        except ValueError, TouristicContentCategory.DoesNotExist:
+        except (ValueError, TypeError, TouristicContentCategory.DoesNotExist):
             return None
 
     @property
@@ -166,6 +166,18 @@ class TouristicContentFormMixin(object):
 class TouristicContentCreate(TouristicContentFormMixin, MapEntityCreate):
     model = TouristicContent
     form_class = TouristicContentForm
+
+    def get_initial(self):
+        """
+        Returns the initial data to use for forms on this view.
+        """
+        initial = super(TouristicContentCreate, self).get_initial()
+        try:
+            category = int(self.request.GET.get('category'))
+            initial['category'] = category
+        except (TypeError, ValueError):
+            pass
+        return initial
 
 
 class TouristicContentUpdate(TouristicContentFormMixin, MapEntityUpdate):
