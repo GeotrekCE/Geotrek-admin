@@ -65,9 +65,9 @@
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
         "type1_label_en": "Type of use",
-        "type1_label": "Prestation",
-        "type1_label_fr": "Service",
-        "type1_label_en": "Prestation"
+        "type2_label": "Prestation",
+        "type2_label_fr": "Service",
+        "type2_label_en": "Prestation"
     }
 },
 {
@@ -77,7 +77,10 @@
         "pictogram": "upload/touristiccontent-sites.svg",
         "label": "Sites recommand\u00e9s",
         "label_en": "Recommended sites",
-        "label_fr": "Sites recommand\u00e9s"
+        "label_fr": "Sites recommand\u00e9s",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
     }
 },
 {
@@ -180,9 +183,9 @@
     "pk": 5,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Chambre d'hote",
+        "label": "Chambre d'h\u00f4te",
         "label_en": "Guestroom",
-        "label_fr": "Chambre d'hôte",
+        "label_fr": "Chambre d'h\u00f4te",
         "category": 1,
         "in_list": 1
     }
@@ -202,9 +205,9 @@
     "pk": 7,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Hotel",
+        "label": "H\u00f4tel",
         "label_en": "Hostel",
-        "label_fr": "Hotel",
+        "label_fr": "H\u00f4tel",
         "category": 1,
         "in_list": 1
     }
@@ -213,9 +216,9 @@
     "pk": 8,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Table d'hote",
+        "label": "Table d'h\u00f4te",
         "label_en": "Guesthouse",
-        "label_fr": "Table d'hote",
+        "label_fr": "Table d'h\u00f4te",
         "category": 1,
         "in_list": 1
     }
@@ -301,9 +304,9 @@
     "pk": 16,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Peche a la ligne",
+        "label": "P\u00eache \u00e0 la ligne",
         "label_en": "Fishing",
-        "label_fr": "Peche a la ligne",
+        "label_fr": "P\u00eache \u00e0 la ligne",
         "category": 2,
         "in_list": 1
     }
@@ -353,17 +356,6 @@
     }
 },
 {
-    "pk": 21,
-    "model": "tourism.touristiccontenttype",
-    "fields": {
-        "label": "Cyclotourisme",
-        "label_en": "Biking",
-        "label_fr": "Cyclotourisme",
-        "category": 3,
-        "in_list": 1
-    }
-},
-{
     "pk": 22,
     "model": "tourism.touristiccontenttype",
     "fields": {
@@ -400,9 +392,9 @@
     "pk": 25,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Caleche",
+        "label": "Cal\u00e8che",
         "label_en": "Horse-drawn carriage",
-        "label_fr": "Caleche",
+        "label_fr": "Cal\u00e8che",
         "category": 3,
         "in_list": 1
     }
@@ -455,9 +447,9 @@
     "pk": 30,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Canoe-Kayak",
+        "label": "Cano\u00eb-Kayak",
         "label_en": "Canoe-Kayak",
-        "label_fr": "Canoe-Kayak",
+        "label_fr": "Cano\u00eb-Kayak",
         "category": 3,
         "in_list": 1
     }
@@ -488,9 +480,9 @@
     "pk": 33,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Vol a voile",
+        "label": "Vol \u00e0 voile",
         "label_en": "Gliding",
-        "label_fr": "Vol a voile",
+        "label_fr": "Vol \u00e0 voile",
         "category": 3,
         "in_list": 1
     }
@@ -499,9 +491,9 @@
     "pk": 34,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Activites hivernales",
+        "label": "Activit\u00e9s hivernales",
         "label_en": "Winter activities",
-        "label_fr": "Activites hivernales",
+        "label_fr": "Activit\u00e9s hivernales",
         "category": 3,
         "in_list": 1
     }
@@ -521,9 +513,9 @@
     "pk": 36,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Peche a la ligne",
+        "label": "P\u00eache \u00e0 la ligne",
         "label_en": "Fishing",
-        "label_fr": "Peche a la ligne",
+        "label_fr": "P\u00eache \u00e0 la ligne",
         "category": 3,
         "in_list": 1
     }
@@ -543,9 +535,9 @@
     "pk": 38,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Accompagnee",
+        "label": "Accompagn\u00e9e",
         "label_en": "Guided",
-        "label_fr": "Accompagnee",
+        "label_fr": "Accompagn\u00e9e",
         "category": 3,
         "in_list": 2
     }
@@ -554,9 +546,9 @@
     "pk": 39,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Site bati",
+        "label": "Site b\u00e2ti",
         "label_en": "Man made",
-        "label_fr": "Site bati",
+        "label_fr": "Site b\u00e2ti",
         "category": 4,
         "in_list": 1
     }
@@ -587,9 +579,9 @@
     "pk": 42,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Parc a themes",
+        "label": "Parc \u00e0 th\u00e8mes",
         "label_en": "Thematic park",
-        "label_fr": "Parc a themes",
+        "label_fr": "Parc \u00e0 th\u00e8mes",
         "category": 4,
         "in_list": 1
     }
@@ -664,9 +656,9 @@
     "pk": 49,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Bien etre",
+        "label": "Bien \u00eatre",
         "label_en": "Wellness",
-        "label_fr": "Bien etre",
+        "label_fr": "Bien \u00eatre",
         "category": 7,
         "in_list": 1
     }
@@ -716,17 +708,6 @@
     }
 },
 {
-    "pk": 54,
-    "model": "tourism.touristiccontenttype",
-    "fields": {
-        "label": "Site naturel",
-        "label_en": "Natural site",
-        "label_fr": "Site naturel",
-        "category": 8,
-        "in_list": 1
-    }
-},
-{
     "pk": 55,
     "model": "tourism.touristiccontenttype",
     "fields": {
@@ -741,9 +722,9 @@
     "pk": 56,
     "model": "tourism.touristiccontenttype",
     "fields": {
-        "label": "Site bati",
+        "label": "Site b\u00e2ti",
         "label_en": "Man made",
-        "label_fr": "Site bati",
+        "label_fr": "Site b\u00e2ti",
         "category": 8,
         "in_list": 1
     }
