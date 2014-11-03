@@ -59,7 +59,26 @@ $(window).on('entity:map', function (e, data) {
 // Touristic Content
 //
 
+$(window).on('entity:map', function (e, data) {
+
+    var map = data.map;
+
+    // Show tourism layer in application maps
+    $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
+        var layer = new L.ObjectsLayer(null, {
+            modelname: modelname,
+            style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
+        });
+        var url = window.SETTINGS.urls[modelname + '_layer'];
+        layer.load(url);
+        map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
+    });
+});
+
+
 $(window).on('entity:view:list', function (e, data) {
+
+    // Tooltips on categories in list view
     if (data.modelname != 'touristiccontent')
         return;
     $('.categories-filter a').tooltip();
