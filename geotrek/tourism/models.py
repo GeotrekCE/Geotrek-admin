@@ -257,7 +257,7 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     themes = models.ManyToManyField(Theme, related_name="touristiccontents",
                                     db_table="t_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
-    geom = models.GeometryField(srid=settings.SRID)
+    geom = models.GeometryField(verbose_name=_(u"Location"), srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
                                  verbose_name=_(u"Category"), db_column='categorie')
     contact = models.TextField(verbose_name=_(u"Contact"), blank=True, db_column='contact',
@@ -328,7 +328,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     themes = models.ManyToManyField(Theme, related_name="touristic_events",
                                     db_table="t_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
-    geom = models.PointField(srid=settings.SRID)
+    geom = models.PointField(verbose_name=_(u"Location"), srid=settings.SRID)
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
     end_date = models.DateField(blank=True, null=True, verbose_name=_(u"End date"), db_column='date_fin')
     duration = models.CharField(verbose_name=_(u"Duration"), max_length=64, blank=True, db_column='duree',
