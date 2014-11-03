@@ -138,6 +138,19 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#id_category').change(function() {
         update_touristiccontent_types('1');
         update_touristiccontent_types('2');
+
+        // Hide geometry controls depending on category
+        var categories = JSON.parse($('#categories-types').text());
+        var category = $(this).val();
+        var geometry_type = category ? categories[category]['geometry_type'] : 'any';
+        if (geometry_type == 'any') {
+            $('.leaflet-draw-toolbar a').show();
+        }
+        else {
+            $('.leaflet-draw-toolbar-top a').hide();
+            var controls = {'point': 'marker', 'line': 'polyline', 'polygon': 'polygon'};
+            $('.leaflet-draw-toolbar a.leaflet-draw-draw-' + controls[geometry_type]).show();
+        }
     });
     $('#id_category').trigger('change');
 });

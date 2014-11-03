@@ -24,6 +24,7 @@ def touristic_content_categories():
                 str(type.pk): type.label
                 for type in category.types.filter(in_list=2)
             },
+            'geometry_type': category.geometry_type
         }
         for category in TouristicContentCategory.objects.all()
     }

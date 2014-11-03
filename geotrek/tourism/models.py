@@ -174,9 +174,19 @@ class InformationDesk(models.Model):
         return thumb_url
 
 
+GEOMETRY_TYPES = Choices(
+    ('POINT', 'point', _('Point')),
+    ('LINE', 'line', _('Line')),
+    ('POLYGON', 'polygon', _('Polygon')),
+    ('ANY', 'any', _('Any')),
+)
+
+
 class TouristicContentCategory(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    geometry_type = models.CharField(db_column="type_geometrie", max_length=16,
+                                     choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
     type1_label = models.CharField(verbose_name=_(u"First list label"), max_length=128,
                                    db_column='label_type1', blank=True)
     type2_label = models.CharField(verbose_name=_(u"Second list label"), max_length=128,
