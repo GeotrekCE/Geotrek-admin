@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-30 09:43+0100\n"
+"POT-Creation-Date: 2014-11-04 15:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "dd/mm/yyyy"
+msgstr "jj/mm/aaaa"
+
+msgid "HH:MM"
+msgstr "HH:MM"
 
 msgid "GeoJSON"
 msgstr ""
@@ -208,8 +214,8 @@ msgstr "Date de fin"
 msgid "Duration"
 msgstr "Durée"
 
-msgid "3 jours, saison, ..."
-msgstr ""
+msgid "3 days, season, ..."
+msgstr "3 jours, saison, ..."
 
 msgid "Meeting point"
 msgstr "Lieu de RDV"
@@ -270,6 +276,9 @@ msgstr "Aperçu"
 
 msgid "All"
 msgstr "Tous"
+
+msgid "None"
+msgstr "Aucun"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

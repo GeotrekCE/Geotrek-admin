@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext_lazy as _
+
 from .models import TouristicContent, TouristicEvent
 from geotrek.common.forms import CommonForm
 
@@ -32,9 +34,9 @@ class TouristicEventForm(CommonForm):
 
     def __init__(self, *args, **kwargs):
         super(TouristicEventForm, self).__init__(*args, **kwargs)
-        self.fields['begin_date'].widget.attrs['placeholder'] = 'yyyy-mm-dd'
-        self.fields['end_date'].widget.attrs['placeholder'] = 'yyyy-mm-dd'
-        self.fields['meeting_time'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['begin_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
+        self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
+        self.fields['meeting_time'].widget.attrs['placeholder'] = _('HH:MM')
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes']:
             self.fields[f].help_text = ''

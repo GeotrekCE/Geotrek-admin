@@ -342,7 +342,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
     end_date = models.DateField(blank=True, null=True, verbose_name=_(u"End date"), db_column='date_fin')
     duration = models.CharField(verbose_name=_(u"Duration"), max_length=64, blank=True, db_column='duree',
-                                help_text=_(u"3 jours, saison, ..."))
+                                help_text=_(u"3 days, season, ..."))
     meeting_point = models.CharField(verbose_name=_(u"Meeting point"), max_length=256, blank=True, db_column='point_rdv',
                                      help_text=_(u"Where exactly ?"))
     meeting_time = models.TimeField(verbose_name=_(u"Meeting time"), blank=True, null=True, db_column='heure_rdv',
