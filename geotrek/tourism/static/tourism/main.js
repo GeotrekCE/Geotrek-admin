@@ -83,6 +83,9 @@ $(window).on('entity:view:list', function (e, data) {
         return;
     $('.categories-filter a').tooltip();
 
+    var $addButton = $("#list-panel .btn-toolbar .btn.btn-success").first();
+    var addUrl = $addButton.attr('href');
+
     // Refresh list filter when click on a category button
     $('.categories-filter a').click(function () {
         var $this = $(this);
@@ -96,11 +99,13 @@ $(window).on('entity:view:list', function (e, data) {
             // Category chosen
             $('select#id_category').val(category)
                                    .addClass('filter-set');
+            $addButton.attr('href', addUrl + '?category=' + category);
         }
         else {
             // All chosen.
             $("select#id_category option").prop("selected", false);
             $('select#id_category').removeClass('filter-set');
+            $addButton.attr('href', addUrl);
         }
 
         // Simulate form submission
