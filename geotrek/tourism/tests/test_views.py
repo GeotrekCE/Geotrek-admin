@@ -426,6 +426,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def _build_object(self):
         super(TouristicContentAPITest, self)._build_object()
         self.category = TouristicContentCategoryFactory()
+        self.content.category = self.category
+        self.content.save()
         self.type1 = TouristicContentTypeFactory(category=self.category)
         self.type2 = TouristicContentTypeFactory(category=self.category)
         self.content.type1.add(self.type1)
@@ -461,9 +463,9 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
                 {u"id": self.type1.id,
                  u"name": self.type1.label,
                  u"in_list": self.type1.in_list},
-                {u"id": self.type1.id,
-                 u"name": self.type1.label,
-                 u"in_list": self.type1.in_list}
+                {u"id": self.type2.id,
+                 u"name": self.type2.label,
+                 u"in_list": self.type2.in_list}
             ],
             "label": self.category.label,
             "type1_label": self.category.type1_label,
