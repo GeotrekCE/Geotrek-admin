@@ -8,6 +8,14 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{% if object.category.type1_label %}{{ object.category.type1_label }}{% else %}{{ object|verbose:"type1" }}{% endif %}</th>
+            <td>{% valuelist object.type1.all %}</td>
+        </tr>
+        <tr>
+            <th>{% if object.category.type2_label %}{{ object.category.type2_label }}{% else %}{{ object|verbose:"type2" }}{% endif %}</th>
+            <td>{% valuelist object.type2.all %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
             <td>{{ object.description_teaser }}</td>
         </tr>

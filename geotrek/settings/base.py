@@ -463,6 +463,7 @@ FLATPAGES_ENABLED = False  # False because still experimental
 TOURISM_ENABLED = False  # False because still experimental
 
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 

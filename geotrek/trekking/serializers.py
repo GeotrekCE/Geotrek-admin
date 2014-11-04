@@ -12,10 +12,9 @@ from geotrek.common.serializers import (
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin
 )
-from geotrek.zoning.serializers import (DistrictSerializer, CitySerializer)
+from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
-from geotrek.tourism.serializers import InformationDeskSerializer
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -83,7 +82,7 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('pk', 'slug', 'name', 'url')
+        fields = ('id', 'pk', 'slug', 'name', 'url')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
@@ -97,15 +96,11 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
 
 
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                     AltimetrySerializerMixin, TranslatedModelSerializer):
-
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
-
+                     AltimetrySerializerMixin, ZoningSerializerMixin,
+                     TranslatedModelSerializer):
     duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
-    information_desks = InformationDeskSerializer(many=True)
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
     usages = UsageSerializer(many=True)
@@ -121,6 +116,15 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
 
+    def __init__(self, *args, **kwargs):
+        super(TrekSerializer, self).__init__(*args, **kwargs)
+
+        from geotrek.tourism import serializers as tourism_serializers
+
+        self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
+        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
+        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+
     class Meta:
         model = trekking_models.Trek
         fields = ('id', 'departure', 'arrival', 'duration',
@@ -130,9 +134,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location',
-                  'cities', 'districts', 'relationships', 'points_reference',
+                  'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
             AltimetrySerializerMixin.Meta.fields + \
+            ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
@@ -166,15 +171,31 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'label')
 
 
-class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                    TranslatedModelSerializer):
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
+class RelatedPOISerializer(TranslatedModelSerializer):
+    slug = rest_serializers.Field(source='slug')
     type = POITypeSerializer()
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'description', 'type', 'cities', 'districts') + \
+        fields = ('id', 'slug', 'name', 'type')
+
+
+class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                    ZoningSerializerMixin, TranslatedModelSerializer):
+    type = POITypeSerializer()
+
+    def __init__(self, *args, **kwargs):
+        super(POISerializer, self).__init__(*args, **kwargs)
+
+        from geotrek.tourism import serializers as tourism_serializers
+
+        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
+        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation') + \
+            ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

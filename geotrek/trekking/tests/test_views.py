@@ -31,7 +31,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
-from geotrek.tourism.factories import InformationDeskFactory
+from geotrek.tourism import factories as tourism_factories
 
 from .base import TrekkingManagerTest
 
@@ -98,6 +98,9 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.attachment = AttachmentFactory.create(obj=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+
         self.pk = self.poi.pk
         url = '/api/pois/%s/' % self.pk
         self.response = self.client.get(url)
@@ -143,6 +146,18 @@ class POIJSONDetailTest(TrekkingManagerTest):
                          '/image/poi-%s.png' % self.pk)
         self.assertEqual(self.result['filelist_url'],
                          '/paperclip/get/trekking/poi/%s/' % self.pk)
+
+    def test_touristic_contents(self):
+        self.assertDictEqual(self.result['touristic_contents'][0], {
+            u'slug': self.touristic_content.slug,
+            u'id': self.touristic_content.pk,
+            u'name': self.touristic_content.name})
+
+    def test_touristic_events(self):
+        self.assertDictEqual(self.result['touristic_events'][0], {
+            u'slug': self.touristic_event.slug,
+            u'id': self.touristic_event.pk,
+            u'name': self.touristic_event.name})
 
 
 class TrekViewsTest(CommonTest):
@@ -191,7 +206,7 @@ class TrekViewsTest(CommonTest):
             'networks': TrekNetworkFactory.create().pk,
             'usages': UsageFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
-            'information_desks': InformationDeskFactory.create().pk,
+            'information_desks': tourism_factories.InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
 
             'trek_relationship_a-TOTAL_FORMS': '2',
@@ -362,7 +377,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.attachment = AttachmentFactory.create(obj=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
-        self.information_desk = InformationDeskFactory.create()
+        self.information_desk = tourism_factories.InformationDeskFactory.create()
         self.trek.information_desks.add(self.information_desk)
 
         self.usage = UsageFactory.create()
@@ -383,6 +398,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                                        is_circuit_step=True,
                                        trek_a=self.trek,
                                        trek_b=self.trek_b)
+
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -508,6 +526,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u'has_common_edge': False,
                               u'is_circuit_step': True,
                               u'trek': {u'pk': self.trek_b.pk,
+                                        u'id': self.trek_b.id,
                                         u'slug': self.trek_b.slug,
                                         u'name': self.trek_b.name,
                                         u'url': u'/trek/%s/' % self.trek_b.id}})
@@ -520,6 +539,18 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         geojson = self.result['points_reference']
         self.assertEqual(geojson['type'], 'MultiPoint')
         self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
+
+    def test_touristic_contents(self):
+        self.assertDictEqual(self.result['touristic_contents'][0], {
+            u'slug': self.touristic_content.slug,
+            u'id': self.touristic_content.pk,
+            u'name': self.touristic_content.name})
+
+    def test_touristic_events(self):
+        self.assertDictEqual(self.result['touristic_events'][0], {
+            u'slug': self.touristic_event.slug,
+            u'id': self.touristic_event.pk,
+            u'name': self.touristic_event.name})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -668,9 +699,9 @@ class TrekInformationDeskGeoJSONTest(TrekkingManagerTest):
 
     def setUp(self):
         self.trek = TrekFactory.create()
-        self.information_desk1 = InformationDeskFactory.create()
-        self.information_desk2 = InformationDeskFactory.create(photo=None)
-        self.information_desk3 = InformationDeskFactory.create()
+        self.information_desk1 = tourism_factories.InformationDeskFactory.create()
+        self.information_desk2 = tourism_factories.InformationDeskFactory.create(photo=None)
+        self.information_desk3 = tourism_factories.InformationDeskFactory.create()
         self.trek.information_desks.add(self.information_desk1)
         self.trek.information_desks.add(self.information_desk2)
         self.url = reverse('trekking:trek_information_desk_geojson', kwargs={'pk': self.trek.pk})

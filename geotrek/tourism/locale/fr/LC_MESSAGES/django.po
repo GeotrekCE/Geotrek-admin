@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-26 15:48+0100\n"
+"POT-Creation-Date: 2014-10-30 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,20 @@ msgstr ""
 msgid "TourInFrance"
 msgstr ""
 
+msgid "Sitra"
+msgstr ""
+
+msgid "Public website"
+msgstr ""
+
 msgid "Title"
 msgstr "Titre"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
+
+msgid "Display"
+msgstr "Affichage"
 
 msgid "External data source"
 msgstr "Source de données externes"
@@ -36,14 +45,189 @@ msgstr "Source de données externes"
 msgid "External data sources"
 msgstr "Sources de données externes"
 
-msgid "Information Desk"
-msgstr "Lieu de renseignement"
-
-msgid "Information desks"
-msgstr "Lieux de renseignement"
+msgid "Label"
+msgstr "Label"
 
 msgid "Information desk type"
 msgstr "Type de lieu de renseignement"
 
 msgid "Information desk types"
 msgstr "Types de lieu de renseignement"
+
+msgid "Type"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Brief description"
+msgstr "Brève description"
+
+msgid "Phone"
+msgstr "Téléphone"
+
+msgid "Email"
+msgstr ""
+
+msgid "Website"
+msgstr "Site Web"
+
+msgid "Photo"
+msgstr ""
+
+msgid "Street"
+msgstr "Rue"
+
+msgid "Postal code"
+msgstr "Code postal"
+
+msgid "Municipality"
+msgstr "Ville"
+
+msgid "Emplacement"
+msgstr "Emplacement"
+
+msgid "Information desk"
+msgstr "Lieux de renseignement"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+#, python-format
+msgid "Image %s invalid or missing from disk."
+msgstr ""
+
+msgid "First list label"
+msgstr "Nom de la première liste"
+
+msgid "Second list label"
+msgstr "Nom de la deuxième liste"
+
+msgid "Touristic content category"
+msgstr "Catégorie de contenu touristique"
+
+msgid "Touristic content categories"
+msgstr "Catégories de contenu touristique"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "First"
+msgstr "Première"
+
+msgid "Second"
+msgstr "Deuxième"
+
+msgid "Touristic content type"
+msgstr "Type de contenu touristique"
+
+msgid "First list types"
+msgstr "Types dans la première liste"
+
+msgid "Second list types"
+msgstr "Types dans la deuxième liste"
+
+msgid "Description teaser"
+msgstr "Chapeau"
+
+msgid "A brief summary"
+msgstr "Bref résumé"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Main theme(s)"
+msgstr "Thèmes principaux"
+
+msgid "Contact"
+msgstr ""
+
+msgid "Practical info"
+msgstr "Informations pratiques"
+
+msgid "Type 1"
+msgstr ""
+
+msgid "Type 2"
+msgstr ""
+
+msgid "Touristic content"
+msgstr "Contenu touristique"
+
+msgid "Touristic contents"
+msgstr "Contenus touristiques"
+
+msgid "Usage"
+msgstr ""
+
+msgid "Touristic event usage"
+msgstr "Usage d'évènement touristique"
+
+msgid "Touristic event usages"
+msgstr "Usages d'évènement touristique"
+
+msgid "Public"
+msgstr ""
+
+msgid "Touristic event public"
+msgstr "Public d'évènement touristique"
+
+msgid "Touristic event publics"
+msgstr "Publics d'évènement touristique"
+
+msgid "Begin date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Meeting point"
+msgstr "Lieu de RDV"
+
+msgid "Meeting time"
+msgstr "Heure de RDV"
+
+msgid "Organizer"
+msgstr "Organisateur"
+
+msgid "Speaker"
+msgstr "Intervenant"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
+
+msgid "Number of participants"
+msgstr "Nombre de places"
+
+msgid "Booking"
+msgstr "Réservation"
+
+msgid "Recommandations / To plan / Advices"
+msgstr "Recommandations / À prévoir / Conseils"
+
+msgid "Touristic event"
+msgstr "Évènement touristique"
+
+msgid "Touristic events"
+msgstr "Évènements touristique"
+
+msgid "Data sources"
+msgstr "Sources de données externes"
+
+msgid "No result"
+msgstr "Pas de résultat"
+
+msgid "Choose value(s)"
+msgstr "Choisir valeur(s)"
+
+msgid "Thumbnail"
+msgstr "Aperçu"
+
+msgid "Invalid geometry value."
+msgstr "Valeur de géométrie invalide"

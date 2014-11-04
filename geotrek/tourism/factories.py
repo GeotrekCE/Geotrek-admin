@@ -44,7 +44,18 @@ class InformationDeskFactory(factory.Factory):
 class TouristicContentCategoryFactory(factory.Factory):
     FACTORY_FOR = models.TouristicContentCategory
 
-    label = factory.Sequence(lambda n: u"TouristicContentCategory %s" % n)
+    label = factory.Sequence(lambda n: u"Category %s" % n)
+    type1_label = factory.Sequence(lambda n: u"Type1_label %s" % n)
+    # Keep type2_label with default value
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+
+
+class TouristicContentTypeFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicContentType
+
+    label = factory.Sequence(lambda n: u"Type %s" % n)
+    category = factory.SubFactory(TouristicContentCategoryFactory)
+    in_list = 1
 
 
 class TouristicContentFactory(StructureRelatedDefaultFactory):
@@ -55,8 +66,23 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     geom = 'POINT(0 0)'
 
 
+class TouristicEventUsageFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicEventUsage
+
+    usage = factory.Sequence(lambda n: u"Usage %s" % n)
+
+
+class TouristicEventPublicFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicEventPublic
+
+    public = factory.Sequence(lambda n: u"Public %s" % n)
+
+
 class TouristicEventFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEvent
 
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
+
+    usage = factory.SubFactory(TouristicEventUsageFactory)
+    public = factory.SubFactory(TouristicEventPublicFactory)

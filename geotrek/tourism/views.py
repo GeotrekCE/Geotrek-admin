@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -11,10 +10,11 @@ from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete)
+from rest_framework import generics as rest_generics
+from rest_framework import permissions as rest_permissions
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.tourism.models import DataSource, InformationDesk
@@ -23,6 +23,7 @@ from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
 from .models import TouristicContent, TouristicEvent, TouristicContentCategory
+from .serializers import TouristicContentCategorySerializer
 
 
 logger = logging.getLogger(__name__)
@@ -100,6 +101,12 @@ class InformationDeskGeoJSON(GeoJSONLayerView):
         return super(InformationDeskGeoJSON, self).dispatch(*args, **kwargs)
 
 
+class TouristicContentCategoryJSONList(rest_generics.ListAPIView):
+    model = TouristicContentCategory
+    serializer_class = TouristicContentCategorySerializer
+    permission_classes = (rest_permissions.IsAuthenticated,)
+
+
 class TouristicContentLayer(MapEntityLayer):
     queryset = TouristicContent.objects.existing()
     properties = ['name']
@@ -109,6 +116,11 @@ class TouristicContentList(MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
     columns = ['id', 'name', 'category']
+
+    @property
+    def categories_list(self):
+        used = TouristicContent.objects.values_list('category__pk')
+        return TouristicContentCategory.objects.filter(pk__in=used)
 
 
 class TouristicContentDetail(MapEntityDetail):
@@ -120,40 +132,24 @@ class TouristicContentDetail(MapEntityDetail):
         return context
 
 
-class TouristicContentFormMixin(object):
-    def get_context_data(self, **kwargs):
-        context = super(TouristicContentFormMixin, self).get_context_data(**kwargs)
-        categories = {
-            str(category.pk): {
-                'type1_label': category.type1_label or _(u"Type 1"),
-                'type2_label': category.type2_label or _(u"Type 2"),
-                'type1_values': {
-                    str(type.pk): type.label
-                    for type in category.types.filter(type_nr=1)
-                },
-                'type2_values': {
-                    str(type.pk): type.label
-                    for type in category.types.filter(type_nr=2)
-                },
-            }
-            for category in TouristicContentCategory.objects.all()
-        }
-        categories[''] = {
-            'type1_label': _(u"Type 1"),
-            'type2_label': _(u"Type 2"),
-            'type1_values': {},
-            'type2_values': {},
-        }
-        context['categories'] = json.dumps(categories)
-        return context
-
-
-class TouristicContentCreate(TouristicContentFormMixin, MapEntityCreate):
+class TouristicContentCreate(MapEntityCreate):
     model = TouristicContent
     form_class = TouristicContentForm
 
+    def get_initial(self):
+        """
+        Returns the initial data to use for forms on this view.
+        """
+        initial = super(TouristicContentCreate, self).get_initial()
+        try:
+            category = int(self.request.GET.get('category'))
+            initial['category'] = category
+        except (TypeError, ValueError):
+            pass
+        return initial
 
-class TouristicContentUpdate(TouristicContentFormMixin, MapEntityUpdate):
+
+class TouristicContentUpdate(MapEntityUpdate):
     queryset = TouristicContent.objects.existing()
     form_class = TouristicContentForm
 

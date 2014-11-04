@@ -76,13 +76,6 @@ License
     :target: http://www.makina-corpus.com
 
 
-Credits
--------
-
-* *Information desk* by Alex Berkowitz from The Noun Project
-* *Calendar* by Laurent Patain from The Noun Project
-
-
 Status of sub-projects
 ----------------------
 
