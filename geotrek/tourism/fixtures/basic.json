@@ -24,4 +24,821 @@
         "label_fr": "Office du tourisme",
         "label": "Tourist Office"
     }
-}]
+},
+{
+    "pk": 1,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-accommodation.svg",
+        "label": "H\u00e9bergement",
+        "label_en": "Accommodation",
+        "label_fr": "H\u00e9bergement",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use",
+        "type2_label": "Label",
+        "type2_label_fr": "Label",
+        "type2_label_en": "Label"
+    }
+},
+{
+    "pk": 2,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-outdoor.svg",
+        "label": "Pleine Nature",
+        "label_en": "Outdoor",
+        "label_fr": "Pleine Nature",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
+    }
+},
+{
+    "pk": 3,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-visits.svg",
+        "label": "Sorties",
+        "label_en": "Visits",
+        "label_fr": "Sorties",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use",
+        "type2_label": "Prestation",
+        "type2_label_fr": "Service",
+        "type2_label_en": "Prestation"
+    }
+},
+{
+    "pk": 4,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-sites.svg",
+        "label": "Sites recommand\u00e9s",
+        "label_en": "Recommended sites",
+        "label_fr": "Sites recommand\u00e9s",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
+    }
+},
+{
+    "pk": 5,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-restaurants.svg",
+        "label": "Restaurants",
+        "label_en": "Restaurants",
+        "label_fr": "Restaurants",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
+    }
+},
+{
+    "pk": 6,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-products.svg",
+        "label": "Produits",
+        "label_en": "Products",
+        "label_fr": "Produits",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
+    }
+},
+{
+    "pk": 7,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-destination.svg",
+        "label": "S\u00e9jours",
+        "label_en": "Destinations",
+        "label_fr": "S\u00e9jours",
+        "type1_label": "Th\u00e9matique",
+        "type1_label_fr": "Th\u00e9matique",
+        "type1_label_en": "Theme"
+    }
+},
+{
+    "pk": 8,
+    "model": "tourism.touristiccontentcategory",
+    "fields": {
+        "pictogram": "upload/touristiccontent-museum.svg",
+        "label": "Mus\u00e9e",
+        "label_en": "Museum",
+        "label_fr": "Mus\u00e9e",
+        "type1_label": "Type d'usage",
+        "type1_label_fr": "Type d'usage",
+        "type1_label_en": "Type of use"
+    }
+},
+{
+    "pk": 1,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Camping",
+        "label_en": "Camping",
+        "label_fr": "Camping",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 2,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Panda",
+        "label_en": "Panda",
+        "label_fr": "Panda",
+        "category": 1,
+        "in_list": 2
+    }
+},
+{
+    "pk": 3,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Certifi\u00e9",
+        "label_en": "Certified",
+        "label_fr": "Certifi\u00e9",
+        "category": 1,
+        "in_list": 2
+    }
+},
+{
+    "pk": 4,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Gite d'\u00e9tape",
+        "label_en": "Stopover",
+        "label_fr": "Gite d'\u00e9tape",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 5,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Chambre d'h\u00f4te",
+        "label_en": "Guestroom",
+        "label_fr": "Chambre d'h\u00f4te",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 6,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Village de vacances",
+        "label_en": "Holiday village",
+        "label_fr": "Village de vacances",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 7,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "H\u00f4tel",
+        "label_en": "Hostel",
+        "label_fr": "H\u00f4tel",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 8,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Table d'h\u00f4te",
+        "label_en": "Guesthouse",
+        "label_fr": "Table d'h\u00f4te",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 9,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "H\u00e9bergement insolite",
+        "label_en": "Unsual accomodation",
+        "label_fr": "H\u00e9bergement insolite",
+        "category": 1,
+        "in_list": 1
+    }
+},
+{
+    "pk": 10,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Activit\u00e9s hivernales",
+        "label_en": "Winter activities",
+        "label_fr": "Activit\u00e9s hivernales",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 11,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Escalade",
+        "label_en": "Climbing",
+        "label_fr": "Escalade",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 12,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Acrobranche",
+        "label_en": "Tree climbing",
+        "label_fr": "Acrobranche",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 13,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Via ferrata",
+        "label_en": "Via ferrata",
+        "label_fr": "Via ferrata",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 14,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Canyoning",
+        "label_en": "Canyoning",
+        "label_fr": "Canyoning",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 15,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Vol libre",
+        "label_en": "Free fly",
+        "label_fr": "Vol libre",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 16,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "P\u00eache \u00e0 la ligne",
+        "label_en": "Fishing",
+        "label_fr": "P\u00eache \u00e0 la ligne",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 17,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Course d'orientation",
+        "label_en": "Orienteering",
+        "label_fr": "Course d'orientation",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 18,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Randonn\u00e9e",
+        "label_en": "Trekking",
+        "label_fr": "Randonn\u00e9e",
+        "category": 2,
+        "in_list": 1
+    }
+},
+{
+    "pk": 19,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "P\u00e9destre",
+        "label_en": "Walking",
+        "label_fr": "P\u00e9destre",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 20,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Cyclotourisme",
+        "label_en": "Biking",
+        "label_fr": "Cyclotourisme",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 22,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "VTT",
+        "label_en": "Mountain biking",
+        "label_fr": "VTT",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 23,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Equitation",
+        "label_en": "Horse riding",
+        "label_fr": "Equitation",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 24,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Ane",
+        "label_en": "Donkey",
+        "label_fr": "Ane",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 25,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Cal\u00e8che",
+        "label_en": "Horse-drawn carriage",
+        "label_fr": "Cal\u00e8che",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 26,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Acrobranche",
+        "label_en": "Tree climbing",
+        "label_fr": "Acrobranche",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 27,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Escalade",
+        "label_en": "Climbing",
+        "label_fr": "Escalade",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 28,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Sp\u00e9l\u00e9ologie",
+        "label_en": "Speleology",
+        "label_fr": "Sp\u00e9l\u00e9ologie",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 29,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Canyoning",
+        "label_en": "Canyoning",
+        "label_fr": "Canyoning",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 30,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Cano\u00eb-Kayak",
+        "label_en": "Canoe-Kayak",
+        "label_fr": "Cano\u00eb-Kayak",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 31,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Via ferrata",
+        "label_en": "Via ferrata",
+        "label_fr": "Via ferrata",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 32,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Vol libre",
+        "label_en": "Free fly",
+        "label_fr": "Vol libre",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 33,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Vol \u00e0 voile",
+        "label_en": "Gliding",
+        "label_fr": "Vol \u00e0 voile",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 34,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Activit\u00e9s hivernales",
+        "label_en": "Winter activities",
+        "label_fr": "Activit\u00e9s hivernales",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 35,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Autres",
+        "label_en": "Other",
+        "label_fr": "Autres",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 36,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "P\u00eache \u00e0 la ligne",
+        "label_en": "Fishing",
+        "label_fr": "P\u00eache \u00e0 la ligne",
+        "category": 3,
+        "in_list": 1
+    }
+},
+{
+    "pk": 37,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Libre",
+        "label_en": "Free",
+        "label_fr": "Libre",
+        "category": 3,
+        "in_list": 2
+    }
+},
+{
+    "pk": 38,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Accompagn\u00e9e",
+        "label_en": "Guided",
+        "label_fr": "Accompagn\u00e9e",
+        "category": 3,
+        "in_list": 2
+    }
+},
+{
+    "pk": 39,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Site b\u00e2ti",
+        "label_en": "Man made",
+        "label_fr": "Site b\u00e2ti",
+        "category": 4,
+        "in_list": 1
+    }
+},
+{
+    "pk": 40,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Site naturel",
+        "label_en": "Natural",
+        "label_fr": "Site naturel",
+        "category": 4,
+        "in_list": 1
+    }
+},
+{
+    "pk": 41,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Jardin",
+        "label_en": "Garden",
+        "label_fr": "Jardin",
+        "category": 4,
+        "in_list": 1
+    }
+},
+{
+    "pk": 42,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Parc \u00e0 th\u00e8mes",
+        "label_en": "Thematic park",
+        "label_fr": "Parc \u00e0 th\u00e8mes",
+        "category": 4,
+        "in_list": 1
+    }
+},
+{
+    "pk": 43,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Restaurant",
+        "label_en": "Restaurant",
+        "label_fr": "Restaurant",
+        "category": 5,
+        "in_list": 1
+    }
+},
+{
+    "pk": 44,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Ferme auberge",
+        "label_en": "Guesthouse farm",
+        "label_fr": "Ferme auberge",
+        "category": 5,
+        "in_list": 1
+    }
+},
+{
+    "pk": 45,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Artisanat",
+        "label_en": "Crafts",
+        "label_fr": "Artisanat",
+        "category": 6,
+        "in_list": 1
+    }
+},
+{
+    "pk": 46,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Alimentaire",
+        "label_en": "Food",
+        "label_fr": "Alimentaire",
+        "category": 6,
+        "in_list": 1
+    }
+},
+{
+    "pk": 47,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Autres",
+        "label_en": "Others",
+        "label_fr": "Autres",
+        "category": 6,
+        "in_list": 1
+    }
+},
+{
+    "pk": 48,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Randonn\u00e9e",
+        "label_en": "Trekking",
+        "label_fr": "Randonn\u00e9e",
+        "category": 7,
+        "in_list": 1
+    }
+},
+{
+    "pk": 49,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Bien \u00eatre",
+        "label_en": "Wellness",
+        "label_fr": "Bien \u00eatre",
+        "category": 7,
+        "in_list": 1
+    }
+},
+{
+    "pk": 50,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Nature",
+        "label_en": "Nature",
+        "label_fr": "Nature",
+        "category": 7,
+        "in_list": 1
+    }
+},
+{
+    "pk": 51,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Culturel",
+        "label_en": "Cultural",
+        "label_fr": "Culturel",
+        "category": 7,
+        "in_list": 1
+    }
+},
+{
+    "pk": 52,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Autres",
+        "label_en": "Others",
+        "label_fr": "Autres",
+        "category": 7,
+        "in_list": 1
+    }
+},
+{
+    "pk": 53,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Site naturel",
+        "label_en": "Natural site",
+        "label_fr": "Site naturel",
+        "category": 8,
+        "in_list": 1
+    }
+},
+{
+    "pk": 55,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Sentier d'interpr\u00e9tation",
+        "label_en": "Visit trek",
+        "label_fr": "Sentier d'interpr\u00e9tation",
+        "category": 8,
+        "in_list": 1
+    }
+},
+{
+    "pk": 56,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Site b\u00e2ti",
+        "label_en": "Man made",
+        "label_fr": "Site b\u00e2ti",
+        "category": 8,
+        "in_list": 1
+    }
+},
+{
+    "pk": 57,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Mus\u00e9e",
+        "label_en": "Museum",
+        "label_fr": "Mus\u00e9e",
+        "category": 8,
+        "in_list": 1
+    }
+},
+{
+    "pk": 58,
+    "model": "tourism.touristiccontenttype",
+    "fields": {
+        "label": "Lieu de visite",
+        "label_en": "Visit site",
+        "label_fr": "Lieu de visite",
+        "category": 8,
+        "in_list": 1
+    }
+},
+{
+    "pk": 1,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Exposition",
+        "usage_en": "Exposition",
+        "usage_fr": "Exposition"
+    }
+},
+{
+    "pk": 2,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Randonn\u00e9e",
+        "usage_en": "Trek",
+        "usage_fr": "Randonn\u00e9e"
+    }
+},
+{
+    "pk": 3,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Atelier",
+        "usage_en": "Workshop",
+        "usage_fr": "Atelier"
+    }
+},
+{
+    "pk": 4,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Visite",
+        "usage_en": "Visit",
+        "usage_fr": "Visite"
+    }
+},
+{
+    "pk": 5,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Conf\u00e9rence",
+        "usage_en": "Conference",
+        "usage_fr": "Conf\u00e9rence"
+    }
+},
+{
+    "pk": 6,
+    "model": "tourism.touristiceventusage",
+    "fields": {
+        "usage": "Spectacle",
+        "usage_en": "Show",
+        "usage_fr": "Spectacle"
+    }
+},
+{
+    "pk": 1,
+    "model": "tourism.touristiceventpublic",
+    "fields": {
+        "public_en": "Adult",
+        "public_fr": "Adulte",
+        "public": "Adulte"
+    }
+},
+{
+    "pk": 2,
+    "model": "tourism.touristiceventpublic",
+    "fields": {
+        "public_en": "Child",
+        "public_fr": "Enfant",
+        "public": "Enfant"
+    }
+},
+{
+    "pk": 3,
+    "model": "tourism.touristiceventpublic",
+    "fields": {
+        "public_en": "All audiences",
+        "public_fr": "Tout public",
+        "public": "Tout public"
+    }
+},
+{
+    "pk": 4,
+    "model": "tourism.touristiceventpublic",
+    "fields": {
+        "public_en": "Impaired audience",
+        "public_fr": "Public d\u00e9ficient",
+        "public": "Public d\u00e9ficient"
+    }
+}
+]

@@ -273,3 +273,18 @@ body.screamshot #altitudegraph {
     background-position: 5px 5px, center;
     background-size: 15px;
 }
+
+/* Touristic content */
+
+.categories-filter .btn {
+    height: 20px;
+}
+.categories-filter .btn img {
+    margin-top: -4px;
+    max-height: 28px;
+}
+
+/* Fix a Chosen bug, which sets width to 0px when initialized while hidden */
+#mainfilter .chosen-container-multi {
+    width: 220px !important;
+}
