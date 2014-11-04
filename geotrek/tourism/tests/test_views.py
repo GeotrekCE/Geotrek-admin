@@ -461,9 +461,9 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
                 {u"id": self.type1.id,
                  u"name": self.type1.label,
                  u"in_list": self.type1.in_list},
-                {u"id": self.type1.id,
-                 u"name": self.type1.label,
-                 u"in_list": self.type1.in_list}
+                {u"id": self.type2.id,
+                 u"name": self.type2.label,
+                 u"in_list": self.type2.in_list}
             ],
             "label": self.category.label,
             "type1_label": self.category.type1_label,
