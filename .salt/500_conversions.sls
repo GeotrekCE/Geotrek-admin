@@ -1,7 +1,7 @@
 {% set cfg = opts.ms_project %}
 {% set data = cfg.data %}
 
-{% if data.prepare_map_images_periodicity %}
+{% if data.has_geotrek and data.prepare_map_images_periodicity %}
 {{cfg.name}}-scron-prepare-map-images:
   file.managed:
     - name: {{cfg.data_root}}/prepare_map_images.sh
@@ -32,7 +32,7 @@
 
 
 
-{% if data.prepare_elevation_charts_periodicity %}
+{% if data.has_geotrek and data.prepare_elevation_charts_periodicity %}
 {{cfg.name}}-scron-prepare-elevation-charts:
   file.managed:
     - name: {{cfg.data_root}}/prepare_elevation_charts.sh
