@@ -21,11 +21,11 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
-            <td>{{ object.description_teaser }}</td>
+            <td>{{ object.description_teaser|safe }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{{ object.description }}</td>
+            <td>{{ object.description|safe }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"themes" }}</th>
@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"contact" }}</th>
-            <td>{{ object.contact }}</td>
+            <td>{{ object.contact|safe }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"email" }}</th>
@@ -45,7 +45,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"practical_info" }}</th>
-            <td>{{ object.practical_info }}</td>
+            <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
             <th>{% trans "Thumbnail" %}</th>
