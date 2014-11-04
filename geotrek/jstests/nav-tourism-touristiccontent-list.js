@@ -12,6 +12,9 @@ casper.test.begin('Touristic content categories', function(test) {
 
     casper.then(function () {
         test.pass('Selected category is passed to Add button');
+
+        test.assertExists('#id_category.filter-set',
+            'Category filter is shown as set.');
     });
 
     casper.run(function done() {
