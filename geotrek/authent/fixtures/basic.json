@@ -155,15 +155,16 @@
                 ["delete_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
 
+                ["add_theme", "common", "theme"],
+                ["change_theme", "common", "theme"],
+                ["delete_theme", "common", "theme"],
+
                 ["add_difficultylevel", "trekking", "difficultylevel"],
                 ["change_difficultylevel", "trekking", "difficultylevel"],
                 ["delete_difficultylevel", "trekking", "difficultylevel"],
                 ["add_poitype", "trekking", "poitype"],
                 ["change_poitype", "trekking", "poitype"],
                 ["delete_poitype", "trekking", "poitype"],
-                ["add_theme", "trekking", "theme"],
-                ["change_theme", "trekking", "theme"],
-                ["delete_theme", "trekking", "theme"],
                 ["add_treknetwork", "trekking", "treknetwork"],
                 ["change_treknetwork", "trekking", "treknetwork"],
                 ["delete_treknetwork", "trekking", "treknetwork"],
@@ -176,14 +177,20 @@
                 ["add_weblinkcategory", "trekking", "weblinkcategory"],
                 ["change_weblinkcategory", "trekking", "weblinkcategory"],
                 ["delete_weblinkcategory", "trekking", "weblinkcategory"],
-                ["add_informationdesk", "trekking", "informationdesk"],
-                ["change_informationdesk", "trekking", "informationdesk"],
-                ["delete_informationdesk", "trekking", "informationdesk"],
 
+                ["add_informationdesk", "tourism", "informationdesk"],
+                ["change_informationdesk", "tourism", "informationdesk"],
+                ["delete_informationdesk", "tourism", "informationdesk"],
+                ["add_informationdesktype", "tourism", "informationdesktype"],
+                ["change_informationdesktype", "tourism", "informationdesktype"],
+                ["delete_informationdesktype", "tourism", "informationdesktype"],
                 ["add_datasource", "tourism", "datasource"],
                 ["change_datasource", "tourism", "datasource"],
                 ["delete_datasource", "tourism", "datasource"],
 
+                ["add_flatpage", "flatpages", "flatpage"],
+                ["change_flatpage", "flatpages", "flatpage"],
+                ["delete_flatpage", "flatpages", "flatpage"],
 
 
                 ["read_attachment", "paperclip", "attachment"],
@@ -211,7 +218,28 @@
                 ["read_poi", "trekking", "poi"],
 
                 ["add_report", "feedback", "report"],
-                ["read_report", "feedback", "report"]
+                ["read_report", "feedback", "report"],
+
+                ["add_touristiccontent", "tourism", "touristiccontent"],
+                ["change_touristiccontent", "tourism", "touristiccontent"],
+                ["delete_touristiccontent", "tourism", "touristiccontent"],
+                ["read_touristiccontent", "tourism", "touristiccontent"],
+                ["export_touristiccontent", "tourism", "touristiccontent"],
+                ["add_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+                ["change_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+                ["delete_touristiccontentcategory", "tourism", "touristiccontentcategory"],
+
+                ["add_touristicevent", "tourism", "touristicevent"],
+                ["change_touristicevent", "tourism", "touristicevent"],
+                ["delete_touristicevent", "tourism", "touristicevent"],
+                ["read_touristicevent", "tourism", "touristicevent"],
+                ["export_touristicevent", "tourism", "touristicevent"],
+                ["add_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["change_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["delete_touristiceventpublic", "tourism", "touristiceventpublic"],
+                ["add_touristiceventusage", "tourism", "touristiceventusage"],
+                ["change_touristiceventusage", "tourism", "touristiceventusage"],
+                ["delete_touristiceventusage", "tourism", "touristiceventusage"]
             ]
         }
     },

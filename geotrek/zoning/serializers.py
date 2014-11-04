@@ -23,3 +23,12 @@ class RestrictedAreaSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = zoning_models.RestrictedArea
         fields = ('id', 'name', 'type')
+
+
+class ZoningSerializerMixin(rest_serializers.ModelSerializer):
+    cities = CitySerializer(many=True)
+    districts = DistrictSerializer(many=True)
+    areas = RestrictedAreaSerializer(many=True)
+
+    class Meta:
+        fields = ('cities', 'districts', 'areas')

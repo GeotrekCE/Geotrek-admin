@@ -64,7 +64,7 @@ LANGUAGE_CODE = envini.get('language', LANGUAGE_CODE, env=False)
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
                                if l[0] in envini.getstrings('languages')]
-MODELTRANSLATION_LANGUAGES = tuple([l[0] for l in _MODELTRANSLATION_LANGUAGES])
+MODELTRANSLATION_LANGUAGES = [l[0] for l in _MODELTRANSLATION_LANGUAGES]
 
 TITLE = envini.get('title', MAPENTITY_CONFIG['TITLE'])
 MAPENTITY_CONFIG['TITLE'] = TITLE
@@ -120,3 +120,13 @@ _others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
+
+#
+# Internal settings
+# ..........................
+
+# Experimental apps and features
+_EXPERIMENTAL_MODE = TEST or envini.getbool('experimental', 'False')
+if _EXPERIMENTAL_MODE:
+    FLATPAGES_ENABLED = True
+    TOURISM_ENABLED = True

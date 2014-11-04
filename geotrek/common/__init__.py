@@ -13,7 +13,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from mapentity.helpers import api_bbox
 
-from geotrek.common.utils.postgresql import load_sql_files
+from geotrek.common.utils.postgresql import load_sql_files, move_models_to_schemas
 
 
 """
@@ -25,6 +25,7 @@ from geotrek.common.utils.postgresql import load_sql_files
 def run_initial_sql_post_migrate(sender, **kwargs):
     app_label = kwargs.get('app')
     load_sql_files(app_label)
+    move_models_to_schemas(app_label)
 
 
 def run_initial_sql_post_syncdb(sender, **kwargs):
@@ -32,6 +33,7 @@ def run_initial_sql_post_syncdb(sender, **kwargs):
     models_module = app.__name__
     app_label = models_module.rsplit('.')[-2]
     load_sql_files(app_label)
+    move_models_to_schemas(app_label)
 
 
 def check_srid_has_meter_unit(sender, **kwargs):

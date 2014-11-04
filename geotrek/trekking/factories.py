@@ -5,19 +5,7 @@ from django.contrib.gis.geos import Point
 
 from . import models
 from geotrek.core.factories import TopologyFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-
-
-def dummy_filefield_as_sequence(toformat_name):
-    """Simple helper method to fill a models.FileField"""
-    return factory.Sequence(lambda n: get_dummy_uploaded_image(toformat_name % n))
-
-
-class ThemeFactory(factory.Factory):
-    FACTORY_FOR = models.Theme
-
-    label = factory.Sequence(lambda n: u"Theme %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 
 class TrekNetworkFactory(factory.Factory):
@@ -59,21 +47,6 @@ class WebLinkFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"web link name %s" % n)
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
     category = factory.SubFactory(WebLinkCategoryFactory)
-
-
-class InformationDeskFactory(factory.Factory):
-    FACTORY_FOR = models.InformationDesk
-
-    name = factory.Sequence(lambda n: u"information desk name %s" % n)
-    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
-    phone = factory.Sequence(lambda n: u"01 02 03 %s" % n)
-    email = factory.Sequence(lambda n: u"email-%s@makina-corpus.com" % n)
-    website = factory.Sequence(lambda n: u"http://makina-corpus.com/%s" % n)
-    photo = dummy_filefield_as_sequence('photo %s')
-    street = factory.Sequence(lambda n: u"%s baker street" % n)
-    postal_code = '28300'
-    municipality = factory.Sequence(lambda n: u"Bailleau L'évêque-%s" % n)
-    geom = Point(3.14, 42)
 
 
 class TrekFactory(TopologyFactory):

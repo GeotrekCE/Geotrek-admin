@@ -23,6 +23,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'OPTIONS': {},
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -31,6 +32,36 @@ DATABASES = {
     }
 }
 
+#
+# PostgreSQL Schemas for apps and models.
+#
+# Caution: editing this setting might not be enough.
+# Indeed, it won't apply to apps that not managed of South, nor database views and functions.
+# See all sql/*-schemas.sql files in each Geotrek app.
+#
+DATABASE_SCHEMAS = {
+    'default': 'geotrek',
+
+    'auth': 'django',
+    'django': 'django',
+    'easy_thumbnails': 'django',
+    'south': 'django',
+    'feedback': 'gestion',
+    'infrastructure': 'gestion',
+    'maintenance': 'gestion',
+    'tourism': 'tourisme',
+    'trekking': 'rando',
+    'zoning': 'zonage',
+    'land': 'foncier',
+}
+
+DATABASES['default']['OPTIONS'] = {
+    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+}
+
+#
+# Authentication
+#
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
@@ -233,6 +264,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.land',
     'geotrek.trekking',
     'geotrek.tourism',
+    'geotrek.flatpages',
     'geotrek.feedback',
 )
 
@@ -458,7 +490,11 @@ COMPLETENESS_FIELDS = {
 
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
+FLATPAGES_ENABLED = False  # False because still experimental
+TOURISM_ENABLED = False  # False because still experimental
+
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 

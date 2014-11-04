@@ -2,6 +2,75 @@
 CHANGELOG
 =========
 
+0.28dev (unreleased)
+--------------------
+
+**Breaking changes**
+
+* Before running install, run this SQL command to add a column for file attachments :
+
+::
+
+    ALTER TABLE fl_t_fichier ADD COLUMN marque boolean DEFAULT false;
+
+
+**New features**
+
+* Information desks now have a type (*Maison du parc*, *Tourist office*, ...)
+  with the ability to set dedicated pictograms (fixes #1192).
+* Ability to control which picture will be used in trek, using clicks on
+  stars in attachments list (fixes #1117)
+* Ability to edit attachments from detail pages directly (fixes #177, the 5th oldest issue!)
+* Add missing columns in intervention exports (fixes #1167)
+* Add ability (for super-admin) to add/change/delete zoning objects in Adminsite (ref #1246)
+* Add ability to have paths records in database that will not appear in Geotrek
+  lists and maps. Just set column ``visible`` to false in ``l_t_troncon`` table.
+* Add ability to add external overlay tile layers (fixes #1203)
+
+**Bug fixes**
+
+* Fix position of attachment upload form on small screens
+* Clearer action message in object history table
+* Prevent image ratio warning from disappearing (fixes #1225)
+* Touristic contents
+* Touristic events
+
+**Internal changes**
+
+* Upgraded Chosen library for dropdown form fields
+* Set ``valide`` column default value to false on paths table ``l_t_troncon`` (fixes #1217)
+* All information desks are now available in GeoJSON (*will be useful to show them
+  all at once on Geotrek-rando*).
+* All tables and functions are now stored in different schemas. It allows to
+  distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to grant user privileges
+  by schema. It is also easier to browse objects in *pgAdmin* and *QGis*.
+
+  **Caution**: if you created additional database users, you may have to change their ``search_path``
+  and/or their ``USAGE`` privilege.
+
+**Experimental features**
+
+* We introduced models for touristic contents and events. In order to load
+  example values for categories and types, run the following commands:
+
+::
+
+    bin/django loaddata geotrek/tourism/fixtures/basic.json
+    cp geotrek/tourism/fixtures/upload/* var/media/upload/
+
+* We introduced models for static pages, allowing edition of public static Web pages
+  from Geotrek adminsite.
+
+In order to enable those features under construction, add ``experimental = True`` in
+``etc/settings.ini``. Note that none of them are used in *Geotrek-rando* yet.
+
+:notes:
+
+    Give related permissions to the managers group in order to allow edition
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
+     ``add_touristiccontent`` ...).
+
+
 0.27.2 (2010-10-14)
 -------------------
 
@@ -245,6 +314,11 @@ Support edition of several fields on the same map, via django-leaflet new featur
 
         rm -rf lib/src/django-modeltranslation
 
+    After upgrading, mark all treks as published in the languages of your choice ::
+
+        UPDATE o_t_itineraire SET public_fr = TRUE;
+        UPDATE o_t_itineraire SET date_publication = now();
+
 
 **New features**
 
@@ -466,7 +540,7 @@ Read all release notes carefully.
 
     * Before upgrading, backup your trail records and geometries, using pgAdmin ::
 
-        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentiers;
+        CREATE TABLE backup_sentiers AS SELECT * FROM l_v_sentier;
         CREATE TABLE backup_troncons_sentiers AS (
           SELECT l_t_troncon.id AS troncon, l_t_sentier.id, l_t_sentier.nom
           FROM l_t_troncon, l_t_sentier
@@ -508,7 +582,7 @@ Read all release notes carefully.
       - ``feedback | Report | Can add report``
 
     * After upgrading, compare visually the resulting migrated trails using QGis,
-      by opening both layers ``l_v_sentiers`` and ``backup_sentiers``.
+      by opening both layers ``l_v_sentier`` and ``backup_sentiers``.
 
 
 0.22.6 (2014-04-27)

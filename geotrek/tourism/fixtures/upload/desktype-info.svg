@@ -8,8 +8,8 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    version="1.1"
-   width="164.46974"
-   height="164.48418"
+   width="64"
+   height="64"
    id="svg2">
   <defs
      id="defs4" />
@@ -26,7 +26,7 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(-130.62331,-204.04866)"
+     transform="matrix(0.38910848,0,0,0.38909205,-50.824527,-79.391399)"
      id="layer1">
     <path
        d="m 380,250.93361 a 167.14285,167.14285 0 1 1 -334.285706,0 167.14285,167.14285 0 1 1 334.285706,0 z"
@@ -43,7 +43,7 @@
          style="font-size:200px;font-style:italic;font-weight:bold;font-family:URW Chancery L;-inkscape-font-specification:URW Chancery L Bold Italic" />
     </g>
     <path
-       d="m 93.691648,37.52063 a 15.846768,15.59423 0 1 1 -31.693537,0 15.846768,15.59423 0 1 1 31.693537,0 z"
+       d="m 93.691648,37.52063 a 15.846769,15.59423 0 1 1 -31.693537,0 15.846769,15.59423 0 1 1 31.693537,0 z"
        transform="matrix(0.75209006,0,0,0.75112714,158.42183,210.21984)"
        id="path3753"
        style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:13.30480003;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />

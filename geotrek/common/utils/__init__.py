@@ -3,6 +3,7 @@ from itertools import islice
 
 from django.db import connection
 from django.utils.timezone import utc
+from django.contrib.gis.measure import Distance
 
 
 logger = logging.getLogger(__name__)
@@ -112,3 +113,16 @@ def uniquify(values):
     unique = []
     [unique.append(i) for i in values if i not in unique]
     return unique
+
+
+def intersecting(cls, obj, distance=None):
+    """ Small helper to filter all model instances by geometry intersection
+    """
+    if distance:
+        qs = cls.objects.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+    else:
+        qs = cls.objects.filter(geom__intersects=obj.geom)
+    if obj.__class__ == cls:
+        # Prevent self intersection
+        qs = qs.exclude(pk=obj.pk)
+    return qs

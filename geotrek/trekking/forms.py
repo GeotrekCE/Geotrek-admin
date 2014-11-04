@@ -88,10 +88,6 @@ class TrekForm(BaseTrekForm):
                     'access',
                     'description_teaser',
                     'description',
-
-                    'pk',
-                    'model',
-
                     css_id="main",
                     css_class="scrollable tab-pane active"
                 ),
@@ -172,9 +168,6 @@ else:
 class POIForm(BasePOIForm):
     fieldslayout = [
         Div(
-            'pk',
-            'model',
-
             'type',
             'name',
             'description',

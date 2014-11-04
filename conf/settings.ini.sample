@@ -58,3 +58,10 @@ mailuser =
 mailpassword =
 mailport = 25
 mailtls = False
+
+#
+#  Internal settings
+#..........................
+
+# Enable features marked as experimental
+experimental = False

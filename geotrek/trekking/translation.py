@@ -27,10 +27,6 @@ class POITypeTO(TranslationOptions):
     fields = ('label', )
 
 
-class ThemeTO(TranslationOptions):
-    fields = ('label', )
-
-
 class TrekNetworkTO(TranslationOptions):
     fields = ('network', )
 
@@ -54,24 +50,17 @@ class WebLinkTO(TranslationOptions):
 class WebLinkCategoryTO(TranslationOptions):
     fields = ('label', )
 
-
-class InformationDeskTO(TranslationOptions):
-    fields = ('name', 'description')
-
-
 # Register previously defined translation options
 trek_translation_to_register = [
     (trekking_models.Trek, TrekTO),
     (trekking_models.POI, POITO),
     (trekking_models.POIType, POITypeTO),
-    (trekking_models.Theme, ThemeTO),
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Usage, UsageTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),
     (trekking_models.WebLinkCategory, WebLinkCategoryTO),
-    (trekking_models.InformationDesk, InformationDeskTO),
 ]
 
 for model, model_to in trek_translation_to_register:

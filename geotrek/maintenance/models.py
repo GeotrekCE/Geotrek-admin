@@ -155,7 +155,10 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     @property
     def infrastructure_csv_display(self):
         if self.on_infrastructure:
-            return unicode(self.infrastructure)
+            return u"%s: %s (%s)" % (
+                _(self.topology.kind.capitalize()),
+                self.infrastructure,
+                self.infrastructure.pk)
         return ''
 
     @property
@@ -199,12 +202,20 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
             total += float(md.nb_days)
         return total
 
+    @classproperty
+    def total_manday_verbose_name(cls):
+        return _("Mandays")
+
     @property
     def total_cost_mandays(self):
         total = 0.0
         for md in self.manday_set.all():
             total += md.cost
         return total
+
+    @classproperty
+    def total_cost_mandays_verbose_name(cls):
+        return _("Mandays cost")
 
     @property
     def total_cost(self):
