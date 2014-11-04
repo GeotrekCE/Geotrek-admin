@@ -8,6 +8,10 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"category" }}</th>
+            <td>{{ object.category }}</td>
+        </tr>
+        <tr>
             <th>{% if object.category.type1_label %}{{ object.category.type1_label }}{% else %}{{ object|verbose:"type1" }}{% endif %}</th>
             <td>{% valuelist object.type1.all %}</td>
         </tr>
@@ -28,12 +32,16 @@
             <td>{% valuelist object.themes.all %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"category" }}</th>
-            <td>{{ object.category }}</td>
-        </tr>
-        <tr>
             <th>{{ object|verbose:"contact" }}</th>
             <td>{{ object.contact }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"email" }}</th>
+            <td>{{ object.email }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"website" }}</th>
+            <td>{{ object.website }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"practical_info" }}</th>

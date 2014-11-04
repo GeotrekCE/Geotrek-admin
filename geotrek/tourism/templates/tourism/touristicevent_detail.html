@@ -44,6 +44,14 @@
             <td>{{ object.contact }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"email" }}</th>
+            <td>{{ object.email }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"website" }}</th>
+            <td>{{ object.website }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"organizer" }}</th>
             <td>{{ object.organizer }}</td>
         </tr>
@@ -52,16 +60,16 @@
             <td>{{ object.speaker }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"public" }}</th>
+            <td>{{ object.public }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"usage" }}</th>
             <td>{{ object.usage }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"accessibility" }}</th>
             <td>{{ object.accessibility }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"name" }}</th>
-            <td>{{ object.name }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"participant_number" }}</th>
