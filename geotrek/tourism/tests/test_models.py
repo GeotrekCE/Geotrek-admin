@@ -11,7 +11,9 @@ class TourismRelations(TestCase):
 
     def setUp(self):
         self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
         self.event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(50 50)' % settings.SRID)
+        self.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID)
         path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
         self.trek = trekking_factories.TrekFactory(no_path=True)
         self.trek.add_path(path)
@@ -19,10 +21,14 @@ class TourismRelations(TestCase):
         self.poi.add_path(path, start=0.5, end=0.5)
 
     def test_spatial_link_with_tourism(self):
-        self.assertIn(self.content, self.content.touristic_contents.all())
+        self.assertIn(self.content2, self.content.touristic_contents.all())
         self.assertIn(self.event, self.content.touristic_events.all())
         self.assertIn(self.content, self.event.touristic_contents.all())
-        self.assertIn(self.event, self.event.touristic_events.all())
+        self.assertIn(self.event2, self.event.touristic_events.all())
+
+    def test_spatial_links_do_not_self_intersect(self):
+        self.assertNotIn(self.content, self.content.touristic_contents.all())
+        self.assertNotIn(self.event, self.event.touristic_contents.all())
 
     @override_settings(TOURISM_INTERSECTION_MARGIN=10)
     def test_spatial_link_with_tourism_respects_limit(self):

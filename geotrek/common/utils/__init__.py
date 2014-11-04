@@ -119,5 +119,10 @@ def intersecting(cls, obj, distance=None):
     """ Small helper to filter all model instances by geometry intersection
     """
     if distance:
-        return cls.objects.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
-    return cls.objects.filter(geom__intersects=obj.geom)
+        qs = cls.objects.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+    else:
+        qs = cls.objects.filter(geom__intersects=obj.geom)
+    if obj.__class__ == cls:
+        # Prevent self intersection
+        qs = qs.exclude(pk=obj.pk)
+    return qs
