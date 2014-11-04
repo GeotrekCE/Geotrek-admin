@@ -97,6 +97,18 @@ msgstr "Lieux de renseignement"
 msgid "Image %s invalid or missing from disk."
 msgstr ""
 
+msgid "Point"
+msgstr ""
+
+msgid "Line"
+msgstr "Ligne"
+
+msgid "Polygon"
+msgstr "Polygone"
+
+msgid "Any"
+msgstr "Tout"
+
 msgid "First list label"
 msgstr "Nom de la première liste"
 
@@ -142,11 +154,20 @@ msgstr "Thèmes"
 msgid "Main theme(s)"
 msgstr "Thèmes principaux"
 
+msgid "Location"
+msgstr "Emplacement"
+
 msgid "Contact"
 msgstr ""
 
+msgid "Address, phone, etc."
+msgstr "Adresse, téléphone, etc."
+
 msgid "Practical info"
 msgstr "Informations pratiques"
+
+msgid "Anything worth to know"
+msgstr "Bon à savoir"
 
 msgid "Type 1"
 msgstr ""
@@ -187,11 +208,20 @@ msgstr "Date de fin"
 msgid "Duration"
 msgstr "Durée"
 
+msgid "3 jours, saison, ..."
+msgstr ""
+
 msgid "Meeting point"
 msgstr "Lieu de RDV"
 
+msgid "Where exactly ?"
+msgstr "Où exactement ?"
+
 msgid "Meeting time"
 msgstr "Heure de RDV"
+
+msgid "11:00, 23:30"
+msgstr ""
 
 msgid "Organizer"
 msgstr "Organisateur"
@@ -217,6 +247,15 @@ msgstr "Évènement touristique"
 msgid "Touristic events"
 msgstr "Évènements touristique"
 
+msgid "Tourism"
+msgstr "Tourisme"
+
+msgid "Add a new touristic content"
+msgstr "Ajouter un contenu touristique"
+
+msgid "Add a new touristic event"
+msgstr "Ajouter un évènement touristique"
+
 msgid "Data sources"
 msgstr "Sources de données externes"
 
@@ -228,6 +267,9 @@ msgstr "Choisir valeur(s)"
 
 msgid "Thumbnail"
 msgstr "Aperçu"
+
+msgid "All"
+msgstr "Tous"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
