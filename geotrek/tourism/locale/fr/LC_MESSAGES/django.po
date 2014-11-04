@@ -275,7 +275,7 @@ msgid "Thumbnail"
 msgstr "Aperçu"
 
 msgid "All"
-msgstr "Tous"
+msgstr "Tout"
 
 msgid "None"
 msgstr "Aucun"
