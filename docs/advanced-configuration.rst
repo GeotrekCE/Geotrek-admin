@@ -224,6 +224,19 @@ Geotrek modules, or published to the public Website (*Geotrek-rando*).
     locales are in the query (``query={"apiKey":"...","locales":["fr","en"]...``)
 
 
+Expected properties
+~~~~~~~~~~~~~~~~~~~
+
+For ``GeoJSON`` files, you can provide the following properties :
+
+* ``title``: string
+* ``description``: string
+* ``website``: string
+* ``phone``: string
+* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
+* ``category``: object with ``id`` and ``label`` attributes
+
+
 Disable darker map backgrounds
 ------------------------------
 
