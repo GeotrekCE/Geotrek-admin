@@ -18,6 +18,13 @@ from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage
 
 
+class InterventionManager(models.GeoManager):
+    def all_years(self):
+        all_dates = self.existing().values_list('date', flat=True)
+        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
+        return all_years
+
+
 class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
@@ -62,8 +69,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     description = models.TextField(blank=True, verbose_name=_(u"Description"), db_column='descriptif',
                                    help_text=_(u"Remarks and notes"))
 
-    # Special manager
-    objects = Topology.get_manager_cls()()
+    objects = NoDeleteMixin.get_manager_cls(InterventionManager)()
 
     class Meta:
         db_table = 'm_t_intervention'
@@ -346,6 +352,16 @@ class ManDay(models.Model):
         return self.nb_days
 
 
+class ProjectManager(models.GeoManager):
+    def all_years(self):
+        all_years = []
+        for (begin, end) in self.existing().values_list('begin_year', 'end_year'):
+            all_years.append(begin)
+            all_years.append(end)
+        all_years = list(reversed(sorted(set(all_years))))
+        return all_years
+
+
 class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
@@ -369,7 +385,7 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
                                         verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_(u"Founders"))
 
-    objects = Topology.get_manager_cls()()
+    objects = NoDeleteMixin.get_manager_cls(ProjectManager)()
 
     class Meta:
         db_table = 'm_t_chantier'
