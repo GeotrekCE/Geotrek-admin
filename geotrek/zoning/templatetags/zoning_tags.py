@@ -16,17 +16,20 @@ def get_bbox_cities():
         for city in City.objects.all()
     ]
 
+
 def get_bbox_districts():
     return [
         (unicode(district) or district.pk, district.geom.transform(settings.API_SRID, clone=True).extent)
         for district in District.objects.all()
     ]
 
+
 def get_bbox_areas():
     return [
         (unicode(area) or area.pk, area.geom.transform(settings.API_SRID, clone=True).extent)
         for area in RestrictedArea.objects.all()
     ]
+
 
 @register.inclusion_tag('zoning/_bbox_fragment.html')
 def combobox_bbox_land():

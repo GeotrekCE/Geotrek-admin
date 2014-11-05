@@ -46,7 +46,8 @@ using the default editor.
 To make sure the application runs well after a reboot, try now : ``sudo reboot``.
 And access the application ``http://yourserver/``.
 
-See information below for configuration and loading initial demonstration data.
+You will be prompted for login, jump to :ref:`loading data section <loading data>`,
+to create the admin user and fill the database with your data!
 
 
 Software update

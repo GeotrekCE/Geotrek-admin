@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from paperclip.models import Attachment
 
 from geotrek.authent.factories import UserFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_file
+from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
+                                           get_dummy_uploaded_file)
 
 from . import models
 
@@ -44,3 +45,10 @@ class AttachmentFactory(factory.Factory):
         kwargs['content_type'] = ContentType.objects.get_for_model(obj)
         kwargs['object_id'] = obj.pk
         return super(AttachmentFactory, cls)._prepare(create, **kwargs)
+
+
+class ThemeFactory(factory.Factory):
+    FACTORY_FOR = models.Theme
+
+    label = factory.Sequence(lambda n: u"Theme %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')

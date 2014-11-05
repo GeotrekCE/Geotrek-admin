@@ -12,6 +12,7 @@ from mapentity.tests import MapEntityTest
 from mapentity.factories import UserFactory
 
 from geotrek.settings import EnvIniReader
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.tests import AuthentFixturesTest
 from .utils import almostequal, sampling, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
@@ -113,3 +114,35 @@ class EnvIniTests(TestCase):
 
     def tearDown(self):
         os.remove(self.ini_file)
+
+
+class DefaultPictureTest(TestCase):
+    def setUp(self):
+        from geotrek.trekking.factories import TrekFactory
+        self.trek = TrekFactory.create()
+        self.add_attachment()
+
+    def add_attachment(self, attachment=None):
+        from geotrek.common.factories import AttachmentFactory
+        return AttachmentFactory.create(obj=self.trek, attachment_file=attachment)
+
+    def test_default_thumbnail_is_empty(self):
+        self.assertEqual(len(self.trek.attachments), 1)
+        self.assertEqual(self.trek.thumbnail, None)
+        self.assertEqual(self.trek.pictures, [])
+
+    def test_picture_is_taken_among_attachments(self):
+        self.add_attachment(attachment=get_dummy_uploaded_image())
+        self.assertEqual(len(self.trek.attachments), 2)
+        self.assertEqual(len(self.trek.pictures), 1)
+        self.assertNotEqual(self.trek.thumbnail, None)
+
+    def test_the_starred_picture_is_taken_among_attachments(self):
+        self.add_attachment(attachment=get_dummy_uploaded_image())
+        starred = self.add_attachment(attachment=get_dummy_uploaded_image())
+        self.add_attachment(attachment=get_dummy_uploaded_image())
+        starred.starred = True
+        starred.save()
+        self.assertEqual(len(self.trek.attachments), 4)
+        self.assertEqual(len(self.trek.pictures), 3)
+        self.assertTrue(starred.attachment_file.name in self.trek.thumbnail.name)

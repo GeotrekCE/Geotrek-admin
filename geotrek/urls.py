@@ -11,10 +11,10 @@ handler404 = 'mapentity.views.handler404'
 handler500 = 'mapentity.views.handler500'
 
 
-urlpatterns = patterns('',
-
-    url(r'^$',        'geotrek.core.views.home', name='home'),
-    url(r'^login/$',  'django.contrib.auth.views.login', name='login'),
+urlpatterns = patterns(
+    '',
+    url(r'^$', 'geotrek.core.views.home', name='home'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')),
     url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')),
     url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')),
+    url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),

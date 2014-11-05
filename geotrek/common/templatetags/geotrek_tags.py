@@ -8,6 +8,7 @@ register = template.Library()
 def settings_value(name):
     return getattr(settings, name, "")
 
+
 @register.assignment_tag
 def is_topology_model(model):
     return hasattr(model, 'kind') and hasattr(model, 'offset')

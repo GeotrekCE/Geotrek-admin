@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.utils.translation import ugettext_lazy as _
 
 from mapentity.filters import MapEntityFilterSet
@@ -11,13 +9,12 @@ from geotrek.core.filters import TopologyFilter, PathFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
+from geotrek.zoning.filters import *  # NOQA
 
-from geotrek.zoning.models import City, District
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
     SignageManagementEdge, WorkManagementEdge,
 )
-
 
 
 class PhysicalEdgeFilterSet(MapEntityFilterSet):
@@ -73,20 +70,6 @@ class TopologyFilterLandType(TopologyFilter):
         return value.landedge_set.all()
 
 
-class TopologyFilterCity(TopologyFilter):
-    model = City
-
-    def value_to_edges(self, value):
-        return value.cityedge_set.all()
-
-
-class TopologyFilterDistrict(TopologyFilter):
-    model = District
-
-    def value_to_edges(self, value):
-        return value.districtedge_set.all()
-
-
 class TopologyFilterCompetenceEdge(TopologyFilter):
     model = Organism
 
@@ -110,8 +93,6 @@ class TopologyFilterWorkManagementEdge(TopologyFilter):
 
 def add_edge_filters(filter_set):
     filter_set.add_filters({
-        'city': TopologyFilterCity(label=_('City'), required=False),
-        'district': TopologyFilterDistrict(label=_('District'), required=False),
         'physical_type': TopologyFilterPhysicalType(label=_('Physical type'), required=False),
         'land_type': TopologyFilterLandType(label=_('Land type'), required=False),
         'competence': TopologyFilterCompetenceEdge(label=_('Competence'), required=False),

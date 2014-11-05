@@ -10,8 +10,8 @@ class AltimetrySerializerMixin(rest_serializers.ModelSerializer):
     altimetric_profile = rest_serializers.SerializerMethodField('get_altimetric_profile_url')
 
     class Meta:
-        fields = ('elevation_area_url', 'elevation_svg_url', 'altimetric_profile') + \
-                 tuple(AltimetryMixin.COLUMNS)
+        fields = ('elevation_area_url', 'elevation_svg_url', 'altimetric_profile') + (
+            tuple(AltimetryMixin.COLUMNS))
 
     def get_elevation_area_url(self, obj):
         appname = obj._meta.app_label

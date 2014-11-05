@@ -53,9 +53,11 @@ casper.test.begin('Create a new intervention', function(test) {
 
     casper.then(function () {
         test.pass('Point topology control was disabled.');
+        casper.waitWhileSelector('.leaflet-marker-pane .leaflet-marker-draggable');
+    });
 
-        test.assertNotExists('.leaflet-marker-pane .leaflet-marker-draggable',
-                             'Point marker was removed.');
+    casper.then(function () {
+        test.pass('Point marker was removed.');
     });
 
     casper.run(function done() {

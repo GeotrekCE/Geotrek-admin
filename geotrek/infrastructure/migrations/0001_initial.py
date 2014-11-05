@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
-from django.conf import settings
 
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -29,14 +28,12 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'infrastructure', ['BaseInfrastructure'])
 
-
     def backwards(self, orm):
         # Deleting model 'InfrastructureType'
         db.delete_table('a_b_amenagement')
 
         # Deleting model 'BaseInfrastructure'
         db.delete_table('a_t_amenagement')
-
 
     models = {
         u'authent.structure': {

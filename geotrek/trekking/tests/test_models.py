@@ -5,11 +5,8 @@ from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
 from bs4 import BeautifulSoup
 
 from geotrek.core.factories import PathFactory, PathAggregationFactory
-from geotrek.common.factories import AttachmentFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory,
-                                        WebLinkFactory)
+from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory)
 from geotrek.trekking.models import Trek
 
 
@@ -47,11 +44,11 @@ class TrekTest(TestCase):
         t.published_fr = False
         t.published_it = True
         t.save()
-        self.assertEqual(t.published_status,
-            [{'lang': 'en', 'language': 'English', 'status': False},
-             {'lang': 'es', 'language': 'Spanish', 'status': False},
-             {'lang': 'fr', 'language': 'French', 'status': False},
-             {'lang': 'it', 'language': 'Italian', 'status': True}])
+        self.assertEqual(t.published_status, [
+            {'lang': 'en', 'language': 'English', 'status': False},
+            {'lang': 'es', 'language': 'Spanish', 'status': False},
+            {'lang': 'fr', 'language': 'French', 'status': False},
+            {'lang': 'it', 'language': 'Italian', 'status': True}])
 
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
@@ -211,15 +208,3 @@ class RelatedObjectsTest(TestCase):
                                                               (3, 9), (3, 3)))))
         self.assertEqual(trek.cities, [city1, city2])
         self.assertEqual(trek.city_departure, unicode(city1))
-
-    def test_picture(self):
-        trek = TrekFactory.create()
-        AttachmentFactory.create(obj=trek)
-        self.assertEqual(len(trek.attachments), 1)
-        self.assertEqual(trek.thumbnail, None)
-        self.assertEqual(trek.pictures, [])
-
-        AttachmentFactory.create(obj=trek, attachment_file=get_dummy_uploaded_image())
-        self.assertEqual(len(trek.attachments), 2)
-        self.assertEqual(len(trek.pictures), 1)
-        self.assertNotEqual(trek.thumbnail, None)

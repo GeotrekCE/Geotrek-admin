@@ -1,8 +1,8 @@
-from .default import *
+from .default import *  # NOQA
 
 #
-#  Django Production
-#..........................
+# Django Production
+# ..........................
 
 ALLOWED_HOSTS = tuple(envini.getstrings('host', default='*'))
 
@@ -24,16 +24,20 @@ LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 
-
+#
 # Optimitizations
-#..........................
+# ..........................
 
 DATABASES['default']['CONN_MAX_AGE'] = 600
-
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader',
+     TEMPLATE_LOADERS),
+)
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 #
-#  Email settings
-#..........................
+# Email settings
+# ..........................
 
 admins = envini.getstrings('mailadmins')
 ADMINS = tuple([('Admin %s' % TITLE, admin) for admin in admins])
@@ -50,8 +54,8 @@ EMAIL_HOST_PORT = envini.get('mailport', 25)
 EMAIL_USE_TLS = envini.getbool('mailtls', 'False')
 
 #
-#  External authent
-#..........................
+# External authent
+# ..........................
 
 AUTHENT_DATABASE = envini.get('authent_dbname', 'authentdb')
 AUTHENT_TABLENAME = envini.get('authent_tablename', None)

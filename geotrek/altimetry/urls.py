@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from mapentity.registry import MapEntityOptions
 
 from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
-                                 ElevationArea)
+                                     ElevationArea)
 
 
 class AltimetryEntityOptions(MapEntityOptions):
@@ -14,7 +14,8 @@ class AltimetryEntityOptions(MapEntityOptions):
         """ Adds the URLs of all views provided by ``AltimetryMixin`` models.
         """
         views = super(AltimetryEntityOptions, self).scan_views(*args, **kwargs)
-        altimetry_views = patterns('',
+        altimetry_views = patterns(
+            '',
             url(r'^api/%s/(?P<pk>\d+)/profile.json$' % self.modelname,
                 self.elevation_profile_view.as_view(model=self.model),
                 name="%s_profile" % self.modelname),

@@ -102,12 +102,11 @@ class InfraFilterTestMixin():
         success = self.client.login(username=user.username, password='booh')
         self.assertTrue(success)
 
-
     def test_intervention_filter(self):
         self.login()
 
         model = self.factory._associated_class
-        # We will filter by this year
+        # We will filter by this year
         year_idx, year = self.filterset.declared_filters['intervention_year'].get_choices()[1]
         good_date_year = datetime.datetime(year=year, month=2, day=2)
         bad_date_year = datetime.datetime(year=year + 2, month=2, day=2)
@@ -115,11 +114,11 @@ class InfraFilterTestMixin():
         # Bad topology/infrastructure: No intervention
         self.factory()
 
-        # Bad signage: intervention with wrong year
+        # Bad signage: intervention with wrong year
         bad_topo = self.factory()
         InterventionFactory(topology=bad_topo, date=bad_date_year)
 
-        # Good signage: intervention with the good year
+        # Good signage: intervention with the good year
         good_topo = self.factory()
         InterventionFactory(topology=good_topo, date=good_date_year)
 
@@ -131,7 +130,7 @@ class InfraFilterTestMixin():
         self.assertEqual(response.status_code, 200)
         topo_pk = json.loads(response.content)['map_obj_pk']
 
-        self.assertItemsEqual(topo_pk, [ good_topo.pk ])
+        self.assertItemsEqual(topo_pk, [good_topo.pk])
 
     def test_intervention_filter_has_correct_label(self):
         self.login()

@@ -116,9 +116,9 @@ class TopologyMutateTest(TestCase):
         # are not duplicated (c.f. SQL triggers)
 
         # Create a 3 paths intersection
-        p1 = PathFactory.create(geom=LineString((0, 0), (1, 0)))
+        PathFactory.create(geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(geom=LineString((1, 0), (2, 0)))
-        p3 = PathFactory.create(geom=LineString((1, 0), (1, 1)))
+        PathFactory.create(geom=LineString((1, 0), (1, 1)))
         # Create a topology point at this intersection
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(p2, start=0.0, end=0.0)
@@ -143,7 +143,7 @@ class TopologyPointTest(TestCase):
         +     +
         """
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        p2 = PathFactory.create(geom=LineString((4, 4), (8, 0)))
+        PathFactory.create(geom=LineString((4, 4), (8, 0)))
 
         poi = Point(3, 1, srid=settings.SRID)
         position, distance = Path.interpolate(p1, poi)
@@ -268,7 +268,7 @@ class TopologyPointTest(TestCase):
         self.assertEqual(len(t.paths.all()), 0)
 
         pa = PathAggregationFactory.create(topo_object=t, path=p1,
-                                      start_position=0.0, end_position=0.0)
+                                           start_position=0.0, end_position=0.0)
 
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
 
@@ -604,7 +604,6 @@ class TopologyLoopTests(TestCase):
         self.assertEqual(topo.geom, topod.geom)
         self.assertEqual(len(topod.aggregations.all()), 7)
 
-
     def test_spoon_loop_2(self):
         """
                             =====>====
@@ -713,10 +712,10 @@ class TopologySerialization(TestCase):
         fieldvalue = topology.serialize()
         # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
         field = json.loads(fieldvalue)
-        self.assertEqual(field['pk'],  topology.pk)
+        self.assertEqual(field['pk'], topology.pk)
         self.assertTrue(almostequal(field['lat'], -5.983))
         self.assertTrue(almostequal(field['lng'], -1.363))
-        self.assertEqual(field['kind'],  "TOPOLOGY")
+        self.assertEqual(field['kind'], "TOPOLOGY")
 
     def test_serialize_two_consecutive_forced(self):
         path1 = PathFactory.create()
@@ -737,17 +736,17 @@ class TopologyDerialization(TestCase):
     def test_deserialize_foreignkey(self):
         topology = TopologyFactory.create(offset=1, no_path=True)
         deserialized = Topology.deserialize(topology.pk)
-        self.assertEqual(topology,  deserialized)
+        self.assertEqual(topology, deserialized)
 
     def test_deserialize_unedited_point_topology(self):
         topology = TopologyFactory.create(offset=1, no_path=True)
         deserialized = Topology.deserialize({'pk': topology.pk})
-        self.assertEqual(topology,  deserialized)
+        self.assertEqual(topology, deserialized)
 
     def test_deserialize_unedited_line_topology(self):
         topology = TopologyFactory.create(offset=1, no_path=True)
         deserialized = Topology.deserialize([{'pk': topology.pk}, {}])
-        self.assertEqual(topology,  deserialized)
+        self.assertEqual(topology, deserialized)
 
     def test_deserialize_line(self):
         path = PathFactory.create()
@@ -809,6 +808,7 @@ class TopologyDerialization(TestCase):
         end_after = after.aggregations.all()[0].end_position
         self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
         self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
+
 
 class TopologyOverlappingTest(TestCase):
 

@@ -20,11 +20,11 @@ class AuthentFixturesTest(TestCase):
         available before test `setUp()` methods.
         """
         if not registry.registry.keys():
-            from geotrek.core import urls
-            from geotrek.land import urls
-            from geotrek.maintenance import urls
-            from geotrek.infrastructure import urls
-            from geotrek.trekking import urls
-            from geotrek.tourism import urls
+            from geotrek.core import urls  # NOQA
+            from geotrek.land import urls  # NOQA
+            from geotrek.maintenance import urls  # NOQA
+            from geotrek.infrastructure import urls  # NOQA
+            from geotrek.trekking import urls  # NOQA
+            from geotrek.tourism import urls  # NOQA
 
         return super(AuthentFixturesTest, self)._pre_setup()

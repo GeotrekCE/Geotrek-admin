@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-0.27.2}
+VERSION=${VERSION:-0.28.1}
 dev=false
 tests=false
 prod=false
@@ -442,6 +442,12 @@ function geotrek_setup {
     success=$?
     if [ $success -ne 0 ]; then
         exit_error 3 "Could not setup python environment !"
+    fi
+
+    if $dev ; then
+        echo_step "Initializing data..."
+        make update
+        echo_progress
     fi
 
     if $tests ; then

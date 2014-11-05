@@ -1,27 +1,18 @@
 # -*- coding: utf-8 -*-
-
 from django import forms
-from django.db import models, transaction
+from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
-from leaflet.admin import LeafletGeoAdmin
-from tinymce.widgets import TinyMCE
-
 from .models import (
-    POIType, Theme, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
-    WebLinkCategory, InformationDesk, Trek
+    POIType, TrekNetwork, Usage, Route, DifficultyLevel, WebLink,
+    WebLinkCategory, Trek
 )
 
 
 class POITypeAdmin(TranslationAdmin):
-    list_display = ('label', 'pictogram_img')
-    search_fields = ('label',)
-
-
-class ThemeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label',)
 
@@ -111,26 +102,15 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
-class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
-    list_display = ('name', 'website', 'municipality')
-    search_fields = ('name',)
-
-    formfield_overrides = {
-        models.TextField: {'widget': TinyMCE},
-    }
-
-
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
-    (Theme, ThemeAdmin),
     (TrekNetwork, TrekNetworkAdmin),
     (Usage, UsageAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
-    (InformationDesk, InformationDeskAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

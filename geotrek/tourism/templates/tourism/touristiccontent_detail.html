@@ -1,0 +1,58 @@
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"category" }}</th>
+            <td>{{ object.category }}</td>
+        </tr>
+        <tr>
+            <th>{% if object.category.type1_label %}{{ object.category.type1_label }}{% else %}{{ object|verbose:"type1" }}{% endif %}</th>
+            <td>{% valuelist object.type1.all %}</td>
+        </tr>
+        <tr>
+            <th>{% if object.category.type2_label %}{{ object.category.type2_label }}{% else %}{{ object|verbose:"type2" }}{% endif %}</th>
+            <td>{% valuelist object.type2.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{{ object.description_teaser|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>{% valuelist object.themes.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"contact" }}</th>
+            <td>{{ object.contact|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"email" }}</th>
+            <td>{{ object.email }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"website" }}</th>
+            <td>{{ object.website }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{{ object.practical_info|safe }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -24,14 +23,12 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'authent', ['UserProfile'])
 
-
     def backwards(self, orm):
         # Deleting model 'Structure'
         db.delete_table(u'authent_structure')
 
         # Deleting model 'UserProfile'
         db.delete_table(u'authent_userprofile')
-
 
     models = {
         u'auth.group': {

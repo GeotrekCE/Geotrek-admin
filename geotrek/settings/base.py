@@ -23,6 +23,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'OPTIONS': {},
         'NAME': '',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -31,6 +32,36 @@ DATABASES = {
     }
 }
 
+#
+# PostgreSQL Schemas for apps and models.
+#
+# Caution: editing this setting might not be enough.
+# Indeed, it won't apply to apps that not managed of South, nor database views and functions.
+# See all sql/*-schemas.sql files in each Geotrek app.
+#
+DATABASE_SCHEMAS = {
+    'default': 'geotrek',
+
+    'auth': 'django',
+    'django': 'django',
+    'easy_thumbnails': 'django',
+    'south': 'django',
+    'feedback': 'gestion',
+    'infrastructure': 'gestion',
+    'maintenance': 'gestion',
+    'tourism': 'tourisme',
+    'trekking': 'rando',
+    'zoning': 'zonage',
+    'land': 'foncier',
+}
+
+DATABASES['default']['OPTIONS'] = {
+    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+}
+
+#
+# Authentication
+#
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
@@ -126,7 +157,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'compressor.finders.CompressorFinder',
 )
 
@@ -233,6 +264,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.land',
     'geotrek.trekking',
     'geotrek.tourism',
+    'geotrek.flatpages',
     'geotrek.feedback',
 )
 
@@ -414,19 +446,19 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
 
 MAP_STYLES = {
-    'path':           {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+    'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
 
-    'city':           {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district':       {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+    'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
 
-    'restrictedarea':    {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-    'land':              {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'physical':          {'weight': 6, 'color': 'red', 'opacity': 1.0},
-    'competence':        {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'workmanagement':    {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+    'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+    'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+    'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
 
-    'print':  {
+    'print': {
         'path': {'weight': 1},
         'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
                  'arrowColor': 'black', 'arrowSize': 10},
@@ -445,11 +477,11 @@ PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
     'trek': (14.1, 11),
-    'poi':  (14.1, 11),
+    'poi': (14.1, 11),
 }
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'poi':  (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'poi': (10.7, 5.035)  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {
@@ -458,7 +490,11 @@ COMPLETENESS_FIELDS = {
 
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
+FLATPAGES_ENABLED = False  # False because still experimental
+TOURISM_ENABLED = False  # False because still experimental
+
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 

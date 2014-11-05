@@ -18,6 +18,13 @@ from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage
 
 
+class InterventionManager(models.GeoManager):
+    def all_years(self):
+        all_dates = self.existing().values_list('date', flat=True)
+        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
+        return all_years
+
+
 class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
@@ -27,12 +34,12 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
                                          db_column='sous_traitance')
 
-    ## Technical information ##
+    # Technical information
     width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
     height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
     area = models.FloatField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
 
-    ## Costs ##
+    # Costs
     material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
@@ -62,8 +69,7 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     description = models.TextField(blank=True, verbose_name=_(u"Description"), db_column='descriptif',
                                    help_text=_(u"Remarks and notes"))
 
-    # Special manager
-    objects = Topology.get_manager_cls()()
+    objects = NoDeleteMixin.get_manager_cls(InterventionManager)()
 
     class Meta:
         db_table = 'm_t_intervention'
@@ -155,7 +161,10 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
     @property
     def infrastructure_csv_display(self):
         if self.on_infrastructure:
-            return unicode(self.infrastructure)
+            return u"%s: %s (%s)" % (
+                _(self.topology.kind.capitalize()),
+                self.infrastructure,
+                self.infrastructure.pk)
         return ''
 
     @property
@@ -199,6 +208,10 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
             total += float(md.nb_days)
         return total
 
+    @classproperty
+    def total_manday_verbose_name(cls):
+        return _("Mandays")
+
     @property
     def total_cost_mandays(self):
         total = 0.0
@@ -206,12 +219,16 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
             total += md.cost
         return total
 
+    @classproperty
+    def total_cost_mandays_verbose_name(cls):
+        return _("Mandays cost")
+
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-               self.material_cost + \
-               self.heliport_cost + \
-               self.subcontract_cost
+            self.material_cost + \
+            self.heliport_cost + \
+            self.subcontract_cost
 
     @classproperty
     def total_cost_verbose_name(cls):
@@ -335,6 +352,16 @@ class ManDay(models.Model):
         return self.nb_days
 
 
+class ProjectManager(models.GeoManager):
+    def all_years(self):
+        all_years = []
+        for (begin, end) in self.existing().values_list('begin_year', 'end_year'):
+            all_years.append(begin)
+            all_years.append(end)
+        all_years = list(reversed(sorted(set(all_years))))
+        return all_years
+
+
 class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
@@ -358,7 +385,7 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
                                         verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_(u"Founders"))
 
-    objects = Topology.get_manager_cls()()
+    objects = NoDeleteMixin.get_manager_cls(ProjectManager)()
 
     class Meta:
         db_table = 'm_t_chantier'

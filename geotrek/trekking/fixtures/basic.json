@@ -255,98 +255,6 @@
     },
     {
         "pk": 1,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-fauna@2x.png",
-            "label": "Fauna",
-            "label_en": "Fauna",
-            "label_fr": "Faune"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-flora@2x.png",
-            "label": "Flora",
-            "label_en": "Flora",
-            "label_fr": "Flore"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-panorama@2x.png",
-            "label_fr": "Point de vue",
-            "label": "Point de vue"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-architecture@2x.png",
-            "label_fr": "Architecture",
-            "label": "Architecture"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-pastoral@2x.png",
-            "label_fr": "Pastoralisme",
-            "label": "Pastoralisme"
-        }
-    },
-    {
-        "pk": 7,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-geology@2x.png",
-            "label_fr": "G\u00e9ologie",
-            "label": "G\u00e9ologie"
-        }
-    },
-    {
-        "pk": 8,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-lake@2x.png",
-            "label_fr": "Lac et glacier",
-            "label": "Lac et glacier"
-        }
-    },
-    {
-        "pk": 9,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-peak@2x.png",
-            "label_fr": "Sommet",
-            "label": "Sommet"
-        }
-    },
-    {
-        "pk": 10,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-refugee@2x.png",
-            "label_fr": "Refuge",
-            "label": "Refuge"
-        }
-    },
-    {
-        "pk": 11,
-        "model": "trekking.theme",
-        "fields": {
-            "pictogram": "upload/theme-history@2x.png",
-            "label_fr": "Arch\u00e9ologie et histoire",
-            "label": "Arch\u00e9ologie et histoire"
-        }
-    },
-    {
-        "pk": 1,
         "model": "trekking.route",
         "fields": {
             "pictogram": "upload/route-loop.svg",
@@ -458,15 +366,6 @@
             "pictogram": "upload/weblink-tourism.png",
             "label_fr": "Information touristique",
             "label": "Information touristique"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-camping.png",
-            "label_fr": "Camping",
-            "label": "Camping"
         }
     }
 ]

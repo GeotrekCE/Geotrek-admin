@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -13,11 +12,9 @@ class Migration(SchemaMigration):
                       self.gf('multiselectfield.db.fields.MultiSelectField')(max_length=200, null=True, blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'DataSource.targets'
         db.delete_column('t_t_source_donnees', 'targets')
-
 
     models = {
         u'tourism.datasource': {

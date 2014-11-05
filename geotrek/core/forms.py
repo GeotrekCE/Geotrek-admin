@@ -95,8 +95,8 @@ class PathForm(CommonForm):
 class TrailForm(TopologyForm):
     class Meta(CommonForm.Meta):
         model = Trail
-        fields = CommonForm.Meta.fields + ['structure', 'name',
-        'departure', 'arrival', 'comments']
+        fields = CommonForm.Meta.fields + [
+            'structure', 'name', 'departure', 'arrival', 'comments']
 
     def __init__(self, *args, **kwargs):
         super(TrailForm, self).__init__(*args, **kwargs)

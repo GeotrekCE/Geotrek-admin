@@ -33,7 +33,6 @@ class AltimetryHelper(object):
                 profile.extend(subprofile)
             return profile
 
-
         # Add measure to 2D version of geometry3d
         # Get distance from origin for each vertex
         sql = """
@@ -94,7 +93,7 @@ class AltimetryHelper(object):
         style = LightSolarizedStyle
         style.background = settings.ALTIMETRIC_PROFILE_BACKGROUND
         style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
-        style.font_family=settings.ALTIMETRIC_PROFILE_FONT
+        style.font_family = settings.ALTIMETRIC_PROFILE_FONT
         line_chart = pygal.StackedLine(fill=True, style=style, **config)
         line_chart.x_title = unicode(_("Distance (m)"))
         line_chart.x_labels = [str(i) for i in x_labels]
@@ -235,19 +234,19 @@ class AltimetryHelper(object):
                 'southwest': {'lat': envelop.coords[0][0][1],
                               'lng': envelop.coords[0][0][0],
                               'x': envelop_native.coords[0][0][0],
-                              'y':  envelop_native.coords[0][0][1]},
+                              'y': envelop_native.coords[0][0][1]},
                 'northwest': {'lat': envelop.coords[0][1][1],
                               'lng': envelop.coords[0][1][0],
                               'x': envelop_native.coords[0][1][0],
-                              'y':  envelop_native.coords[0][1][1]},
+                              'y': envelop_native.coords[0][1][1]},
                 'northeast': {'lat': envelop.coords[0][2][1],
                               'lng': envelop.coords[0][2][0],
                               'x': envelop_native.coords[0][2][0],
-                              'y':  envelop_native.coords[0][2][1]},
+                              'y': envelop_native.coords[0][2][1]},
                 'southeast': {'lat': envelop.coords[0][3][1],
                               'lng': envelop.coords[0][3][0],
                               'x': envelop_native.coords[0][3][0],
-                              'y':  envelop_native.coords[0][3][1]}
+                              'y': envelop_native.coords[0][3][1]}
             },
             'altitudes': altitudes
         }

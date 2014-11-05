@@ -60,7 +60,8 @@ class InterventionForm(CommonForm):
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
-                Div('name',
+                Div(
+                    'name',
                     'date',
                     'status',
                     'disorders',

@@ -108,6 +108,8 @@ $(window).on('detailmap:ready', function (e, data) {
     layer.eachLayer(function (layer) {
         if (layer instanceof L.MultiPolyline)
             return;
+        if (layer instanceof L.Polygon)
+            return;
         if (typeof layer.getLatLngs != 'function')  // points
             return;
 

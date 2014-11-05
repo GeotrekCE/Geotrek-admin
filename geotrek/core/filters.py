@@ -83,8 +83,8 @@ class PathFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
-        fields = StructureRelatedFilterSet.Meta.fields + [
-                    'valid', 'length', 'networks']
+        fields = StructureRelatedFilterSet.Meta.fields + \
+            ['valid', 'length', 'networks']
 
 
 class TrailFilterSet(StructureRelatedFilterSet):
@@ -95,8 +95,8 @@ class TrailFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
-        fields = StructureRelatedFilterSet.Meta.fields + [
-                    'name', 'departure', 'arrival', 'comments']
+        fields = StructureRelatedFilterSet.Meta.fields + \
+            ['name', 'departure', 'arrival', 'comments']
 
 
 class TopologyFilterTrail(TopologyFilter):

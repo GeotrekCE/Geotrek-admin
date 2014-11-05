@@ -1,10 +1,11 @@
-from django.forms.widgets import Select
 from django.utils.translation import ugettext_lazy as _
 
-from mapentity.filters import PolygonFilter, PythonPolygonFilter, YearFilter, YearBetweenFilter
+from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.core.models import Topology
-from geotrek.common.filters import StructureRelatedFilterSet
+from geotrek.common.filters import (
+    StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
+from geotrek.common.widgets import YearSelect
 
 from .models import Intervention, Project
 
@@ -18,17 +19,17 @@ class PolygonTopologyFilter(PolygonFilter):
         return qs.filter(**{'%s__in' % self.name: inner_qs})
 
 
-class InterventionYearSelect(Select):
-    def render_options(self, *args, **kwargs):
-        all_dates = Intervention.objects.existing().values_list('date', flat=True)
-        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
-        self.choices = list(enumerate([self.choices[0][1]] + all_years))
-        return super(InterventionYearSelect, self).render_options(*args, **kwargs)
+class InterventionYearSelect(YearSelect):
+    label = _(u"Year")
+    def get_years(self):
+        return Intervention.objects.all_years()
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects')
-    year = YearFilter(name='date', widget=InterventionYearSelect, label=_(u"Year"))
+    year = YearFilter(name='date',
+                      widget=InterventionYearSelect,
+                      label=_(u"Year"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
@@ -37,15 +38,10 @@ class InterventionFilterSet(StructureRelatedFilterSet):
         ]
 
 
-class ProjectYearSelect(Select):
-    def render_options(self, *args, **kwargs):
-        all_years = []
-        for p in Project.objects.existing():
-            all_years.append(p.begin_year)
-            all_years.append(p.end_year)
-        all_years = list(reversed(sorted(set(all_years))))
-        self.choices = list(enumerate([self.choices[0][1]] + all_years))
-        return super(ProjectYearSelect, self).render_options(*args, **kwargs)
+class ProjectYearSelect(YearSelect):
+    label = _(u"Year of activity")
+    def get_years(self):
+        return Project.objects.all_years()
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):

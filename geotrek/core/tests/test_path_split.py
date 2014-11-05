@@ -6,7 +6,7 @@ from django.conf import settings
 from geotrek.common.utils import almostequal
 
 from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
-from geotrek.core.models import Path, Topology, PathAggregation
+from geotrek.core.models import Path, Topology
 
 
 class SplitPathTest(TestCase):
@@ -91,7 +91,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.all()), 1)
         ab.delete()
         self.assertEqual(len(Path.objects.all()), 0)
-        cd = PathFactory.create(name="CD", geom=LineString((2, -2), (2, 2)))
+        PathFactory.create(name="CD", geom=LineString((2, -2), (2, 2)))
         self.assertEqual(len(Path.objects.all()), 1)
 
     def test_split_on_update(self):
@@ -280,7 +280,7 @@ class SplitPathTest(TestCase):
         PathFactory.create(name="EF", geom=LineString((2, -2), (2, 2)))
         PathFactory.create(name="GH", geom=LineString((3, -2), (3, 2)))
         PathFactory.create(name="IJ", geom=LineString((4, -2), (4, 2)))
-        PathFactory.create(name="AB", geom=LineString((0,  0), (5, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (5, 0)))
 
         self.assertEqual(len(Path.objects.filter(name="CD")), 2)
         self.assertEqual(len(Path.objects.filter(name="EF")), 2)
@@ -369,7 +369,7 @@ class SplitPathLineTopologyTest(TestCase):
         topogeom = topology.geom
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         # Topology now covers 2 paths
         self.assertEqual(len(topology.paths.all()), 2)
@@ -400,7 +400,7 @@ class SplitPathLineTopologyTest(TestCase):
         topology.add_path(ab, start=0.75, end=0.25, order=1)
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         # Topology now covers 2 paths
         self.assertEqual(len(topology.paths.all()), 2)
@@ -432,7 +432,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.paths.all()[0], ab)
-        cd = PathFactory.create(geom=LineString((1, 0), (1, 2)))
+        PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
         # CB was just created
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
@@ -462,7 +462,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.paths.all()[0], ab)
-        cd = PathFactory.create(geom=LineString((1, 0), (1, 2)))
+        PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
         # CB was just created
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
@@ -492,7 +492,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.paths.all()[0], ab)
-        cd = PathFactory.create(geom=LineString((3, 0), (3, 2)))
+        PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
         # CB does not have any
@@ -518,12 +518,12 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.45, end=0.15)
-        topogeom = topology.geom
+
         # Topology covers 1 path
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.paths.all()[0], ab)
-        cd = PathFactory.create(geom=LineString((3, 0), (3, 2)))
+        PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
         # CB does not have any
@@ -560,7 +560,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ef.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 3)
         # Create CD
-        cd = PathFactory.create(geom=LineString((3, 0), (3, 2)))
+        PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         # Topology now covers 4 paths
         self.assertEqual(len(topology.paths.all()), 4)
         # AB and EF have still their topology
@@ -601,8 +601,8 @@ class SplitPathLineTopologyTest(TestCase):
         topology.add_path(be, start=1, end=0)
         topology.add_path(ef, start=0.0, end=0.5)
 
-        # Create CD
-        cd = PathFactory.create(name="DC", geom=LineString((3, 0), (3, 2)))
+        # Create DC
+        PathFactory.create(name="DC", geom=LineString((3, 0), (3, 2)))
         # Topology now covers 4 paths
         topology.reload()
         self.assertEqual(len(topology.paths.all()), 4)
@@ -640,8 +640,8 @@ class SplitPathLineTopologyTest(TestCase):
         topology.add_path(ab, start=0.1, end=0.9)
         topogeom = topology.geom
         self.assertEqual(len(topology.paths.all()), 1)
-        cd = PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2),
-                                                           (3, -2), (3, 2)))
+        PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2),
+                                                      (3, -2), (3, 2)))
         self.assertEqual(len(topology.paths.all()), 3)
         self.assertEqual(len(ab.aggregations.all()), 1)
         aggr_ab = ab.aggregations.all()[0]
@@ -673,10 +673,10 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(ab, start=0.9, end=0.1, order=1)
-        topogeom = topology.geom
+
         self.assertEqual(len(topology.paths.all()), 1)
-        cd = PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2),
-                                                           (3, -2), (3, 2)))
+        PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2),
+                                                      (3, -2), (3, 2)))
         self.assertEqual(len(topology.paths.all()), 3)
         self.assertEqual(len(ab.aggregations.all()), 1)
         aggr_ab = ab.aggregations.all()[0]
@@ -704,7 +704,7 @@ class SplitPathLineTopologyTest(TestCase):
                                          ||
         C +-====-+ D              C +--===+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
@@ -730,7 +730,7 @@ class SplitPathLineTopologyTest(TestCase):
                                           :
         C +-==------+ D           C +--===+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
@@ -754,7 +754,7 @@ class SplitPathLineTopologyTest(TestCase):
                                           :
         C +------==-+ D           C +-----+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
@@ -968,7 +968,6 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-
         topology.reload()
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 0)
@@ -1022,7 +1021,7 @@ class SplitPathPointTopologyTest(TestCase):
                                           :
         C +-X-----+ D              C +--X-+
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(cd, start=0.25, end=0.25)
@@ -1045,7 +1044,7 @@ class SplitPathPointTopologyTest(TestCase):
                                           :
         C +-----X-+ D              C +----+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(cd, start=0.75, end=0.75)
@@ -1068,7 +1067,7 @@ class SplitPathPointTopologyTest(TestCase):
                                           :
         C X-------+ D              C X----+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(cd, start=0.0, end=0.0)
@@ -1091,7 +1090,7 @@ class SplitPathPointTopologyTest(TestCase):
                                           :
         C +-------X D              C +----+ D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(no_path=True)
         topology.add_path(cd, start=1.0, end=1.0)

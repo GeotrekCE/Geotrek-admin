@@ -75,7 +75,8 @@ class TrekForm(BaseTrekForm):
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
-                Div('name',
+                Div(
+                    'name',
                     'published',
                     'is_park_centered',
                     'departure',
@@ -87,10 +88,6 @@ class TrekForm(BaseTrekForm):
                     'access',
                     'description_teaser',
                     'description',
-
-                    'pk',
-                    'model',
-
                     css_id="main",
                     css_class="scrollable tab-pane active"
                 ),
@@ -136,6 +133,14 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
+    def clean_duration(self):
+        """For duration, an HTML5 "number" field is used. If the user fills an invalid
+        number (like "2H40"), the browser will submit an empty value (!).
+        Here we default to 0.0
+        """
+        duration = self.cleaned_data.get('duration')
+        return 0.0 if duration is None else duration
+
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
@@ -170,9 +175,7 @@ else:
 
 class POIForm(BasePOIForm):
     fieldslayout = [
-        Div('pk',
-            'model',
-
+        Div(
             'type',
             'name',
             'description',

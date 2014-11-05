@@ -1,6 +1,6 @@
-from django.core.urlresolvers import reverse
-from django.test import TestCase
 import json
+
+from django.core.urlresolvers import reverse
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.factories import PathManagerFactory
@@ -25,7 +25,7 @@ class PathFilterTest(AuthentFixturesTest):
 
         def create_form_params(range_start='', range_end=''):
             """Return range form parameter as used in geotrek.core.filters.PathFilter"""
-            return { 'length_0': range_end, 'length_1': range_start }
+            return {'length_0': range_end, 'length_1': range_start}
 
         def test_response_content(length_range, queryset):
             response = self.client.get(reverse('core:path_json_list'), data=create_form_params(*length_range))
@@ -34,8 +34,8 @@ class PathFilterTest(AuthentFixturesTest):
             jsondict = json.loads(response.content)
             # The JSON should only contain filtered paths
             self.assertListEqual(
-                    sorted(jsondict['map_obj_pk']),
-                    sorted(list(queryset.values_list('pk', flat=True))),
+                sorted(jsondict['map_obj_pk']),
+                sorted(list(queryset.values_list('pk', flat=True))),
             )
 
         # Simulate ajax call to populate the list

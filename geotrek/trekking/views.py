@@ -19,6 +19,7 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
+from geotrek.tourism.views import InformationDeskGeoJSON
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
@@ -112,9 +113,9 @@ class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     model = Trek  # for LastModifiedMixin
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
-    properties = {'pk':'pk', 'name':'name', 'description':'description',
-                  'max_elevation':'elevation', 'serializable_thumbnail':'thumbnail',
-                  'serializable_type':'type', 'serializable_pictures':'pictures'}
+    properties = {'pk': 'pk', 'name': 'name', 'description': 'description',
+                  'max_elevation': 'elevation', 'serializable_thumbnail': 'thumbnail',
+                  'serializable_type': 'type', 'serializable_pictures': 'pictures'}
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -135,9 +136,7 @@ class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
     srid = settings.API_SRID
     pk_url_kwarg = 'pk'
 
-    properties = ['id', 'name', 'description', 'photo_url', 'phone',
-                  'email', 'website', 'street', 'postal_code', 'municipality',
-                  'latitude', 'longitude']
+    properties = InformationDeskGeoJSON.properties
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
