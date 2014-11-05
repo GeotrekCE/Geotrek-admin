@@ -187,14 +187,14 @@ msgstr "Contenu touristique"
 msgid "Touristic contents"
 msgstr "Contenus touristiques"
 
-msgid "Usage"
+msgid "Type"
 msgstr ""
 
-msgid "Touristic event usage"
-msgstr "Usage d'évènement touristique"
+msgid "Touristic event type"
+msgstr "Type d'évènement touristique"
 
-msgid "Touristic event usages"
-msgstr "Usages d'évènement touristique"
+msgid "Touristic event types"
+msgstr "Types d'évènement touristique"
 
 msgid "Public"
 msgstr ""

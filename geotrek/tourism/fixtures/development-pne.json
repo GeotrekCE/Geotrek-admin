@@ -37,7 +37,7 @@
         "date_insert": "2014-11-04T14:29:45.260Z",
         "geom": "POINT (945826.3415584834292531 6416518.4224162353202701)",
         "meeting_point_es": "",
-        "usage": null,
+        "type": null,
         "speaker": "",
         "email": "",
         "website": "",

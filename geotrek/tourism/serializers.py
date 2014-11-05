@@ -81,11 +81,11 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
             PicturesSerializerMixin.Meta.fields
 
 
-class TouristicEventUsageSerializer(TranslatedModelSerializer):
-    name = rest_serializers.Field(source='usage')
+class TouristicEventTypeSerializer(TranslatedModelSerializer):
+    name = rest_serializers.Field(source='Type')
 
     class Meta:
-        model = tourism_models.TouristicEventUsage
+        model = tourism_models.TouristicEventType
         fields = ('id', 'name')
 
 
@@ -100,7 +100,7 @@ class TouristicEventPublicSerializer(TranslatedModelSerializer):
 class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
                                ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
-    usage = TouristicEventUsageSerializer()
+    type = TouristicEventTypeSerializer()
     public = TouristicEventPublicSerializer()
 
     touristic_contents = RelatedTouristicContentSerializer(many=True)
@@ -114,7 +114,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',
-                  'organizer', 'speaker', 'usage', 'accessibility',
+                  'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'public', 'practical_info',
                   'touristic_contents', 'touristic_events', 'treks', 'pois') + \
             ZoningSerializerMixin.Meta.fields + \

@@ -49,10 +49,10 @@ translator.register(tourism_models.TouristicContentType2,
                     TouristicContentTypeTO)
 
 
-class TouristicEventUsageTO(TranslationOptions):
-    fields = ('usage',)
+class TouristicEventTypeTO(TranslationOptions):
+    fields = ('type',)
 
-translator.register(tourism_models.TouristicEventUsage, TouristicEventUsageTO)
+translator.register(tourism_models.TouristicEventType, TouristicEventTypeTO)
 
 
 class TouristicEventPublicTO(TranslationOptions):

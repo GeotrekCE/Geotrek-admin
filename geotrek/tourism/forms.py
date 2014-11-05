@@ -27,7 +27,7 @@ class TouristicEventForm(CommonForm):
         fields = ['name', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration',
                   'meeting_point', 'meeting_time', 'contact', 'email',
-                  'website', 'organizer', 'speaker', 'usage', 'accessibility',
+                  'website', 'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'public', 'practical_info',
                   'geom']
         model = TouristicEvent
