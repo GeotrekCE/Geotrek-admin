@@ -246,8 +246,14 @@ class ProjectYearsFilterTest(TestCase):
         self.assertIn('>1800<', output)
         self.assertIn('>2000<', output)
 
-    def test_new_interventions_appear_dynamically(self):
+    def test_new_projects_appear_dynamically(self):
         ProjectFactory.create(begin_year=1500, end_year=2100)
         output = self.widget.render(name='year', value=None)
         self.assertEqual(output.count('<option'), 6)
         self.assertIn('>2100<', output)
+
+    def test_new_projects_can_be_filtered_on_new_years(self):
+        filter = ProjectFilterSet(data={'in_year': 1250})
+        p = ProjectFactory.create(begin_year=1200, end_year=1300)
+        self.assertIn(p, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
