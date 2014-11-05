@@ -102,8 +102,8 @@ msgstr "Infrastructure à disposition"
 msgid "Duration"
 msgstr "Durée"
 
-msgid "In hours"
-msgstr "En heures"
+msgid "In decimal hours (ex. 1.5 for 1H30)"
+msgstr "En heures décimales (ex: 1.5 pour 1H30)"
 
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"

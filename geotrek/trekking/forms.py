@@ -133,6 +133,14 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
+    def clean_duration(self):
+        """For duration, an HTML5 "number" field is used. If the user fills an invalid
+        number (like "2H40"), the browser will submit an empty value (!).
+        Here we default to 0.0
+        """
+        duration = self.cleaned_data.get('duration')
+        return 0.0 if duration is None else duration
+
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',

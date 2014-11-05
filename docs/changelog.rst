@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix deployment when tourism is not enabled
+* Fix default duration when invalid value is filled (fixes #1279)
 
 
 0.28.0 (2014-11-04)
