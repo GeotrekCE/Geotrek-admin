@@ -107,7 +107,7 @@ class InfraFilterTestMixin():
 
         model = self.factory._associated_class
         # We will filter by this year
-        year_idx, year = self.filterset.declared_filters['intervention_year'].get_choices()[1]
+        year = 2014
         good_date_year = datetime.datetime(year=year, month=2, day=2)
         bad_date_year = datetime.datetime(year=year + 2, month=2, day=2)
 
@@ -123,7 +123,7 @@ class InfraFilterTestMixin():
         InterventionFactory(topology=good_topo, date=good_date_year)
 
         data = {
-            'intervention_year': year_idx
+            'intervention_year': year
         }
         response = self.client.get(model.get_jsonlist_url(), data)
 
@@ -136,9 +136,7 @@ class InfraFilterTestMixin():
         self.login()
         model = self.factory._associated_class
         response = self.client.get(model.get_list_url())
-        intervention_year_label = SignageFilterSet().form.fields['intervention_year'].label
-        self.assertContains(response,
-                            '<option value="0">%s</option>' % unicode(intervention_year_label))
+        self.assertContains(response, '<option value="-1">Intervention year</option>')
 
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
