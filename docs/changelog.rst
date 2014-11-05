@@ -10,6 +10,7 @@ CHANGELOG
 * Fix deployment when tourism is not enabled
 * Fix default duration when invalid value is filled (fixes #1279)
 * Fix year filters for intervention, infrastructure and project (fixes #1287)
+* Fix list filters not being restored (fixes #1236)
 
 
 0.28.0 (2014-11-04)
