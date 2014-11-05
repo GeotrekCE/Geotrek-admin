@@ -9,7 +9,7 @@ casper.test.begin('Data sources can be added to the map', function(test) {
     casper.then(function () {
         test.pass('Data sources are present in layer switcher');
 
-        casper.click('#leaflet-control-layers-group-4 input.leaflet-control-layers-selector');
+        casper.click('#leaflet-control-layers-group-5 input.leaflet-control-layers-selector');
 
         casper.waitForSelector('.leaflet-marker-pane .leaflet-marker-icon');
     });
