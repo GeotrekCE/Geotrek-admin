@@ -2,6 +2,25 @@
 CHANGELOG
 =========
 
+0.28.2 (2014-11-05)
+-------------------
+
+**Bug fixes**
+
+* Fix upgrade of django-leaflet to 0.15.0 (overlay layers)
+* Fix apparence of overlay layers for tourism when experimental features are disabled
+* Fix plural in tourism translation
+* Fix unit tests
+* Run this command to set the default information desk type with the original pictogram
+  (or select a pictogram from the adminsite)
+
+::
+
+    cd Geotrek-0.28.2/
+
+    curl "https://raw.githubusercontent.com/makinacorpus/Geotrek/v0.27.2/geotrek/trekking/static/trekking/information_desk.svg" > var/media/upload/desktype-info.svg
+
+
 0.28.1 (2014-11-05)
 -------------------
 
