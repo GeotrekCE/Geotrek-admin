@@ -21,6 +21,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 class InterventionYearSelect(YearSelect):
     label = _(u"Year")
+
     def get_years(self):
         return Intervention.objects.all_years()
 
@@ -40,6 +41,7 @@ class InterventionFilterSet(StructureRelatedFilterSet):
 
 class ProjectYearSelect(YearSelect):
     label = _(u"Year of activity")
+
     def get_years(self):
         return Project.objects.all_years()
 
