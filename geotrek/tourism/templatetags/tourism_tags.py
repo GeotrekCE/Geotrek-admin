@@ -1,6 +1,7 @@
 import json
 
 from django import template
+from django.conf import settings
 
 from geotrek.tourism.models import TouristicContentCategory
 
@@ -27,3 +28,8 @@ def touristic_content_categories():
         for category in TouristicContentCategory.objects.all()
     }
     return json.dumps(categories)
+
+
+@register.assignment_tag
+def is_tourism_enabled():
+    return settings.TOURISM_ENABLED

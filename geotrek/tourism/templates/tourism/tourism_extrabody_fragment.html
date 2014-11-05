@@ -1,5 +1,8 @@
 {% load i18n tourism_tags %}
 
+{% is_tourism_enabled as enabled %}
+{% if enabled %}
+
 <script type="leaflet-template" id="tourism-popup-template">
   <span class=title>{% trans "Title" %}</span>: {title}<br/>
   <span class=title>{% trans "Description" %}</span>: {description}<br/>
@@ -26,4 +29,6 @@
         {% touristic_content_categories as categories %}
         {{ categories|safe }}
     </script>
+{% endif %}
+
 {% endif %}

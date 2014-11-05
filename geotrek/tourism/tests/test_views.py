@@ -7,6 +7,7 @@ from requests.exceptions import ConnectionError
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.test.utils import override_settings
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -279,16 +280,34 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
 
 
-class TouristicContentDetailPageTests(TrekkingManagerTest):
+class TouristicContentTemplatesTest(TrekkingManagerTest):
     def setUp(self):
         self.content = TouristicContentFactory.create()
         cat = self.content.category
         cat.type1_label = 'Michelin'
         cat.save()
+        self.category2 = TouristicContentCategoryFactory()
         self.login()
 
     def tearDown(self):
         self.client.logout()
+
+    def test_only_used_categories_are_shown(self):
+        url = "/touristiccontent/list/"
+        response = self.client.get(url)
+        self.assertContains(response, 'title="%s"' % self.content.category.label)
+        self.assertNotContains(response, 'title="%s"' % self.category2.label)
+
+    def test_shown_in_details_when_enabled(self):
+        url = "/touristiccontent/%s/" % self.content.pk
+        response = self.client.get(url)
+        self.assertContains(response, 'Tourism')
+
+    @override_settings(TOURISM_ENABLED=False)
+    def test_not_shown_in_details_when_disabled(self):
+        url = "/touristiccontent/%s/" % self.content.pk
+        response = self.client.get(url)
+        self.assertNotContains(response, 'Tourism')
 
     def test_type_label_shown_in_detail_page(self):
         url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
@@ -324,19 +343,6 @@ class TouristicContentFormTest(TrekkingManagerTest):
         url = "/touristiccontent/add/?category=%s" % self.category.pk
         response = self.client.get(url)
         self.assertContains(response, 'value="%s" selected' % self.category.pk)
-
-
-class TouristicContentListTest(TrekkingManagerTest):
-    def setUp(self):
-        self.content = TouristicContentFactory.create()
-        self.category2 = TouristicContentCategoryFactory()
-        self.login()
-
-    def test_only_used_categories_are_shown(self):
-        url = "/touristiccontent/list/"
-        response = self.client.get(url)
-        self.assertContains(response, 'title="%s"' % self.content.category.label)
-        self.assertNotContains(response, 'title="%s"' % self.category2.label)
 
 
 class BasicJSONAPITest(object):

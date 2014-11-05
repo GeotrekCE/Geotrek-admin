@@ -1,4 +1,8 @@
-{% load i18n geotrek_tags mapentity_tags %}
+{% load i18n geotrek_tags mapentity_tags tourism_tags %}
+
+{% is_tourism_enabled as enabled %}
+{% if enabled %}
+
 <h3>{% trans "Tourism" %}</h3>
 <table class="table">
     <tr>
@@ -26,3 +30,5 @@
         </td>
     </tr>
 </table>
+
+{% endif %}

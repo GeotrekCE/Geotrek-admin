@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.28.1 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix deployment when tourism is not enabled
+
+
 0.28.0 (2014-11-04)
 -------------------
 
