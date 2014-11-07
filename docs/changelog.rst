@@ -10,6 +10,7 @@ CHANGELOG
 * Fix upload form author/legend format (fixes #1293)
 * Fixes history list (ref #1276)
 * Prevent email to be sent twice on conversion error. Use info instead.
+* Fix paperclip translations missing (fixes #1294)
 
 
 0.28.2 (2014-11-05)
