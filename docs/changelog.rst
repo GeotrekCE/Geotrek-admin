@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.28.3 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix upload form author/legend format (fixes #1293)
+
+
 0.28.2 (2014-11-05)
 -------------------
 
