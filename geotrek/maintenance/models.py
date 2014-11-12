@@ -490,11 +490,11 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
 
     @classmethod
     def path_projects(cls, path):
-        return cls.objects.filter(interventions__in=path.interventions).distinct()
+        return cls.objects.existing().filter(interventions__in=path.interventions).distinct()
 
     @classmethod
     def topology_projects(cls, topology):
-        return cls.objects.filter(interventions__in=topology.interventions).distinct()
+        return cls.objects.existing().filter(interventions__in=topology.interventions).distinct()
 
     def edges_by_attr(self, interventionattr):
         """ Return related topology objects of project, by aggregating the same attribute

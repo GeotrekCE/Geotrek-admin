@@ -2,6 +2,8 @@
 CHANGELOG
 =========
 
+* Fix path detail page where deleted objects were shown (fixes #1302)
+
 0.28.3 (2014-11-12)
 -------------------
 
