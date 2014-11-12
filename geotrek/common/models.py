@@ -32,6 +32,12 @@ class FileType(StructureRelated, BaseFileType):
     class Meta(BaseFileType.Meta):
         db_table = 'fl_b_fichier'
 
+    @classmethod
+    def objects_for(cls, request):
+        """Override this method to filter form choices depending on structure.
+        """
+        return cls.for_user(request.user)
+
 
 class Theme(PictogramMixin):
 

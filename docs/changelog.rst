@@ -11,6 +11,7 @@ CHANGELOG
 * Fixes history list (ref #1276)
 * Prevent email to be sent twice on conversion error. Use info instead.
 * Fix paperclip translations missing (fixes #1294)
+* Fix filetypes not being filtered by structure (fixes #1292)
 
 
 0.28.2 (2014-11-05)
