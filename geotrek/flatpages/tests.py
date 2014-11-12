@@ -40,6 +40,11 @@ class FlatPageModelTest(TestCase):
                              content="<p></p>")
         fp.clean()
 
+    def test_validation_does_not_fail_if_url_is_none(self):
+        fp = FlatPageFactory(external_url=None,
+                             content="<p></p>")
+        fp.clean()
+
 
 class FlatPageMediaTest(TestCase):
     def test_media_is_empty_if_content_is_none(self):

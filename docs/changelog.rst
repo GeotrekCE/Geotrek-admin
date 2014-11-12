@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+0.28.4 (unrelased)
+------------------
+
+**Bug fixes**
+
+* Fix flatpage creation without external url in adminsite
+
 0.28.3 (2014-11-12)
 -------------------
 
