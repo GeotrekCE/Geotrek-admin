@@ -12,6 +12,7 @@ CHANGELOG
 * Prevent email to be sent twice on conversion error. Use info instead.
 * Fix paperclip translations missing (fixes #1294)
 * Fix filetypes not being filtered by structure (fixes #1292)
+* Fix apparence of multiple-choices in forms (fixes #1295)
 
 
 0.28.2 (2014-11-05)
