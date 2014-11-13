@@ -7,7 +7,7 @@ from .models import INFRASTRUCTURE_TYPES, Infrastructure, Signage
 
 
 class InfrastructureYearSelect(InterventionYearSelect):
-    label=_(u"Intervention year")
+    label = _(u"Intervention year")
 
 
 class InfrastructureFilterSet(StructureRelatedFilterSet):

@@ -285,6 +285,7 @@ body.screamshot #altitudegraph {
 }
 
 /* Fix a Chosen bug, which sets width to 0px when initialized while hidden */
-#mainfilter .chosen-container-multi {
+#mainfilter .chosen-container-multi,
+#mainform .chosen-container-multi {
     width: 220px !important;
 }
