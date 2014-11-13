@@ -2,6 +2,8 @@
 CHANGELOG
 =========
 
+* Fix infrastructure main type filter (fixes #1096)
+
 0.28.3 (2014-11-12)
 -------------------
 
