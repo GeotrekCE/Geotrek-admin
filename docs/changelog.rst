@@ -2,6 +2,8 @@
 CHANGELOG
 =========
 
+* Fix missing filters in trails list (fixes #1297)
+
 0.28.3 (2014-11-12)
 -------------------
 
