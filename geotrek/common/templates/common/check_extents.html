@@ -1,7 +1,10 @@
-{% load leaflet_tags i18n %}
+{% load leaflet_tags i18n static %}
 <html>
 <head>
     {% leaflet_js %}
+    <script src="{% static "leaflet/proj4js.js" %}" type="text/javascript"></script>
+    <script src="{% static "proj4js/" %}{{ SRID }}.js" type="text/javascript"></script>
+
     {% leaflet_css %}
     <style>
         #map {
@@ -58,6 +61,8 @@
             var map = L.map('map');
             map.fitBounds({{ viewport }});
 
+            var mouseMarker = L.marker();
+
             L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
             L.rectangle({{ path_extent }}, {fillOpacity: 0, color: '#009F5F'}).addTo(map);
@@ -67,7 +72,9 @@
                 L.rectangle({{ dem_extent }}, {fillOpacity: 0, color: '#CF00FF'}).addTo(map);
             {% endif %}
 
-            map.on('mousemove', function (e) {
+            map.on('click', function (e) {
+                mouseMarker.setLatLng(L.latLng(e.latlng.lat, e.latlng.lng))
+                           .addTo(map);
                 var source = new Proj4js.Proj('EPSG:{{ API_SRID }}'),
                     dest = new Proj4js.Proj('EPSG:{{ SRID }}'),
                     pos = Proj4js.transform(source,
