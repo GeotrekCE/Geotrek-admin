@@ -69,7 +69,8 @@ class RestrictedAreaEdge(Topology):
 
     @classmethod
     def path_area_edges(cls, path):
-        return cls.objects.select_related('restricted_area')\
+        return cls.objects.existing()\
+                          .select_related('restricted_area')\
                           .select_related('restricted_area__area_type')\
                           .filter(aggregations__path=path).distinct('pk')
 
@@ -133,7 +134,7 @@ class CityEdge(Topology):
 
     @classmethod
     def path_city_edges(cls, path):
-        return cls.objects.select_related('city').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('city').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_city_edges(cls, topology):
@@ -191,7 +192,7 @@ class DistrictEdge(Topology):
 
     @classmethod
     def path_district_edges(cls, path):
-        return cls.objects.select_related('district').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('district').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_district_edges(cls, topology):

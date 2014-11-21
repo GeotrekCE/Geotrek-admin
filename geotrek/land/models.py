@@ -61,7 +61,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_physicals(cls, path):
-        return cls.objects.select_related('physical_type').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('physical_type').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_physicals(cls, topology):
@@ -125,7 +125,7 @@ class LandEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_lands(cls, path):
-        return cls.objects.select_related('land_type').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('land_type').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_lands(cls, topology):
@@ -175,7 +175,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_competences(cls, path):
-        return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_competences(cls, topology):
@@ -225,7 +225,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_works(cls, path):
-        return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_works(cls, topology):
@@ -275,7 +275,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
     @classmethod
     def path_signages(cls, path):
-        return cls.objects.select_related('organization').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('organization').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_signages(cls, topology):

@@ -119,7 +119,7 @@ class Infrastructure(BaseInfrastructure):
 
     @classmethod
     def path_infrastructures(cls, path):
-        return cls.objects.filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_infrastructures(cls, topology):
@@ -153,7 +153,7 @@ class Signage(BaseInfrastructure):
 
     @classmethod
     def path_signages(cls, path):
-        return cls.objects.filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_signages(cls, topology):

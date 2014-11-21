@@ -30,8 +30,8 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     """
     title = models.CharField(verbose_name=_(u'Title'), max_length=200,
                              db_column='titre')
-    external_url = models.URLField(verbose_name=_(u'External URL'), null=True, blank=True,
-                                   db_column='url_externe',
+    external_url = models.URLField(verbose_name=_(u'External URL'), blank=True,
+                                   db_column='url_externe', default='',
                                    help_text=_('Link to external website instead of HTML content'))
     content = models.TextField(verbose_name=_(u'Content'), null=True, blank=True,
                                db_column='contenu',
@@ -58,7 +58,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
         # Test if HTML was filled
         # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
-        if self.external_url.strip() and strip_tags(html_content):
+        if self.external_url and self.external_url.strip() and strip_tags(html_content):
             raise ValidationError(_('Choose between external URL and HTML content'))
 
     def parse_media(self):

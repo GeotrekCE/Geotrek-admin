@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.core.filters import TopologyFilter, PathFilterSet
+from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
@@ -36,6 +36,7 @@ add_edge_filters(ProjectFilterSet)
 add_edge_filters(PathFilterSet)
 add_edge_filters(InfrastructureFilterSet)
 add_edge_filters(SignageFilterSet)
+add_edge_filters(TrailFilterSet)
 
 
 class IntersectionFilter(TopologyFilter):
