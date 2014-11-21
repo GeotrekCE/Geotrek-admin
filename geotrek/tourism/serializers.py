@@ -82,7 +82,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
 
 class TouristicEventTypeSerializer(TranslatedModelSerializer):
-    name = rest_serializers.Field(source='Type')
+    name = rest_serializers.Field(source='type')
 
     class Meta:
         model = tourism_models.TouristicEventType
