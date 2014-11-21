@@ -14,6 +14,7 @@ CHANGELOG
 * Fix path detail page where deleted objects were shown (fixes #1302)
 * Fix position of POIs on trek detail maps (fixes #1209)
 * Fix TinyMCE not preserving colors (fixes #1170)
+* Raise validation error instead of crashing when submitted topology is empty (fixes #1272)
 
 
 0.28.3 (2014-11-12)

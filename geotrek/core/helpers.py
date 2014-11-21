@@ -56,7 +56,7 @@ class TopologyHelper(object):
             except ValueError as e:
                 raise ValueError("Invalid serialization: %s" % e)
 
-        if not isinstance(objdict, (list,)):
+        if objdict and not isinstance(objdict, (list,)):
             lat = objdict.get('lat')
             lng = objdict.get('lng')
             pk = objdict.get('pk')
@@ -73,7 +73,7 @@ class TopologyHelper(object):
             else:
                 objdict = [objdict]
 
-        if len(objdict) == 0:
+        if not objdict:
             raise ValueError("Invalid serialized topology : empty list found")
 
         # If pk is still here, the user did not edit it.
