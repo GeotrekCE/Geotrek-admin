@@ -7,8 +7,8 @@ from django.conf import settings
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-       db.rename_table('t_b_evenement_touristique_usage', 't_b_evenement_touristique_type')
-       db.rename_column('t_t_evenement_touristique', 'usage', 'type')
+        db.rename_table('t_b_evenement_touristique_usage', 't_b_evenement_touristique_type')
+        db.rename_column('t_t_evenement_touristique', 'usage', 'type')
 
     def backwards(self, orm):
         db.rename_table('t_b_evenement_touristique_type', 't_b_evenement_touristique_usage')
