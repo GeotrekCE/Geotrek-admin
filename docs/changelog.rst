@@ -12,6 +12,7 @@ CHANGELOG
 * Fix infrastructure main type filter (fixes #1096)
 * Fix flatpage creation without external url in adminsite
 * Fix path detail page where deleted objects were shown (fixes #1302)
+* Fix position of POIs on trek detail maps (fixes #1209)
 
 
 0.28.3 (2014-11-12)
