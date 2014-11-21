@@ -8,6 +8,11 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
             <td>{{ object.description_teaser|safe }}</td>
         </tr>
@@ -62,11 +67,6 @@
         <tr>
             <th>{{ object|verbose:"public" }}</th>
             <td>{% if object.public %}{{ object.public }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"usage" }}</th>
-            <td>{% if object.usage %}{{ object.usage }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>

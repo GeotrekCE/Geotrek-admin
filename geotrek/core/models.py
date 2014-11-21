@@ -484,7 +484,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
 
     @classmethod
     def path_trails(cls, path):
-        return cls.objects.filter(aggregations__path=path)
+        return cls.objects.existing().filter(aggregations__path=path)
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self))

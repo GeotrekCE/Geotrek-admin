@@ -162,13 +162,13 @@ layer style.
 
 .. code-block :: python
 
-    MAP_STYLE['path'] = {'color': 'red', 'weight': 5}
+    MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
 
 Or change just one parameter (the opacity for example) :
 
 .. code-block :: python
 
-    MAP_STYLE['city']['opacity'] = 0.8
+    MAP_STYLES['city']['opacity'] = 0.8
 
 
 Regarding colors that depend from database content, such as land layers

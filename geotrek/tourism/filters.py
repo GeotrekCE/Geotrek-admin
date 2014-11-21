@@ -14,4 +14,4 @@ class TouristicEventFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'usage', 'themes', 'public']
+            'published', 'type', 'themes', 'public']

@@ -299,18 +299,18 @@ Topology.add_property('touristic_contents', lambda self: intersecting(TouristicC
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 
 
-class TouristicEventUsage(models.Model):
+class TouristicEventType(models.Model):
 
-    usage = models.CharField(verbose_name=_(u"Usage"), max_length=128, db_column='usage')
+    type = models.CharField(verbose_name=_(u"Type"), max_length=128, db_column='type')
 
     class Meta:
-        db_table = 't_b_evenement_touristique_usage'
-        verbose_name = _(u"Touristic event usage")
-        verbose_name_plural = _(u"Touristic event usages")
-        ordering = ['usage']
+        db_table = 't_b_evenement_touristique_type'
+        verbose_name = _(u"Touristic event type")
+        verbose_name_plural = _(u"Touristic event types")
+        ordering = ['type']
 
     def __unicode__(self):
-        return self.usage
+        return self.type
 
 
 class TouristicEventPublic(models.Model):
@@ -354,7 +354,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
                               blank=True, null=True)
     organizer = models.CharField(verbose_name=_(u"Organizer"), max_length=256, blank=True, db_column='organisateur')
     speaker = models.CharField(verbose_name=_(u"Speaker"), max_length=256, blank=True, db_column='intervenant')
-    usage = models.ForeignKey(TouristicEventUsage, verbose_name=_(u"Usage"), blank=True, null=True, db_column='usage')
+    type = models.ForeignKey(TouristicEventType, verbose_name=_(u"Type"), blank=True, null=True, db_column='type')
     accessibility = models.CharField(verbose_name=_(u"Accessibility"), max_length=256, blank=True, db_column='accessibilite')
     participant_number = models.CharField(verbose_name=_(u"Number of participants"), max_length=256, blank=True, db_column='nb_places')
     booking = models.TextField(verbose_name=_(u"Booking"), blank=True, db_column='reservation')

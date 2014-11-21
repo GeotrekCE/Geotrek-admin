@@ -2,6 +2,29 @@
 CHANGELOG
 =========
 
+0.28.4 (2014-11-21)
+-------------------
+
+**Bug fixes**
+
+* Fix mouse position indicator on ``/tools/extents/`` page when map tiles have Google projection
+* Fix missing filters in trails list (fixes #1297)
+* Fix infrastructure main type filter (fixes #1096)
+* Fix flatpage creation without external url in adminsite
+* Fix path detail page where deleted objects were shown (fixes #1302)
+* Fix position of POIs on trek detail maps (fixes #1209)
+* Fix TinyMCE not preserving colors (fixes #1170)
+* Raise validation error instead of crashing when submitted topology is empty (fixes #1272)
+
+**Documentation**
+
+* Fix mention of MAP_STYLES (ref #1226)
+
+**Changes in experimental features**
+
+* Renamed *usage* to *type* in touristic events (fixes #1289)
+
+
 0.28.3 (2014-11-12)
 -------------------
 

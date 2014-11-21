@@ -174,7 +174,7 @@ class TouristicEventLayer(MapEntityLayer):
 class TouristicEventList(MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    columns = ['id', 'name', 'usage']
+    columns = ['id', 'name', 'type']
 
 
 class TouristicEventDetail(MapEntityDetail):

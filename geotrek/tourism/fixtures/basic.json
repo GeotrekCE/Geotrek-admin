@@ -753,56 +753,56 @@
 },
 {
     "pk": 1,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Exposition",
-        "usage_en": "Exposition",
-        "usage_fr": "Exposition"
+        "type": "Exposition",
+        "type_en": "Exposition",
+        "type_fr": "Exposition"
     }
 },
 {
     "pk": 2,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Randonn\u00e9e",
-        "usage_en": "Trek",
-        "usage_fr": "Randonn\u00e9e"
+        "type": "Randonn\u00e9e",
+        "type_en": "Trek",
+        "type_fr": "Randonn\u00e9e"
     }
 },
 {
     "pk": 3,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Atelier",
-        "usage_en": "Workshop",
-        "usage_fr": "Atelier"
+        "type": "Atelier",
+        "type_en": "Workshop",
+        "type_fr": "Atelier"
     }
 },
 {
     "pk": 4,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Visite",
-        "usage_en": "Visit",
-        "usage_fr": "Visite"
+        "type": "Visite",
+        "type_en": "Visit",
+        "type_fr": "Visite"
     }
 },
 {
     "pk": 5,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Conf\u00e9rence",
-        "usage_en": "Conference",
-        "usage_fr": "Conf\u00e9rence"
+        "type": "Conf\u00e9rence",
+        "type_en": "Conference",
+        "type_fr": "Conf\u00e9rence"
     }
 },
 {
     "pk": 6,
-    "model": "tourism.touristiceventusage",
+    "model": "tourism.touristiceventtype",
     "fields": {
-        "usage": "Spectacle",
-        "usage_en": "Show",
-        "usage_fr": "Spectacle"
+        "type": "Spectacle",
+        "type_en": "Show",
+        "type_fr": "Spectacle"
     }
 },
 {
