@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.28.4 (unreleased)
+-------------------
+
+**Bug fixes**
+
+* Fix mouse position indicator on ``/tools/extents/`` page when map tiles have Google projection
+
+
 0.28.3 (2014-11-12)
 -------------------
 
