@@ -10,6 +10,7 @@ CHANGELOG
 * Fix mouse position indicator on ``/tools/extents/`` page when map tiles have Google projection
 * Fix missing filters in trails list (fixes #1297)
 * Fix infrastructure main type filter (fixes #1096)
+* Fix flatpage creation without external url in adminsite
 
 
 0.28.3 (2014-11-12)
