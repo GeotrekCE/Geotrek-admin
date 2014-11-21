@@ -332,6 +332,11 @@
                 ["read_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
 
+                ["read_touristicevent", "tourism", "touristicevent"],
+                ["export_touristicevent", "tourism", "touristicevent"],
+                ["read_touristiccontent", "tourism", "touristiccontent"],
+                ["export_touristiccontent", "tourism", "touristiccontent"],
+
                 ["add_report", "feedback", "report"]
             ]
         }
