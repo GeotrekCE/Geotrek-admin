@@ -16,6 +16,10 @@ CHANGELOG
 * Fix TinyMCE not preserving colors (fixes #1170)
 * Raise validation error instead of crashing when submitted topology is empty (fixes #1272)
 
+**Documentation**
+
+* Fix mention of MAP_STYLES (ref #1226)
+
 
 0.28.3 (2014-11-12)
 -------------------
