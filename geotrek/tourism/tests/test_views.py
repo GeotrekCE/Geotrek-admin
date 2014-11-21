@@ -489,13 +489,13 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'public', 'publication_date', 'published', 'published_status',
             'slug', 'speaker', 'themes', 'thumbnail',
-            'touristic_contents', 'touristic_events', 'treks', 'usage', 'website'],
+            'touristic_contents', 'touristic_events', 'treks', 'type', 'website'],
             sorted(self.result.keys()))
 
-    def test_usage(self):
-        self.assertDictEqual(self.result['usage'],
-                             {u"id": self.content.usage.id,
-                              u"name": self.content.usage.usage})
+    def test_type(self):
+        self.assertDictEqual(self.result['type'],
+                             {u"id": self.content.type.id,
+                              u"name": self.content.type.type})
 
     def test_public(self):
         self.assertDictEqual(self.result['public'],

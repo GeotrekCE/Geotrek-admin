@@ -58,11 +58,11 @@ if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
 
 
-class TouristicEventUsageAdmin(TranslationAdmin):
-    search_fields = ('usage',)
+class TouristicEventTypeAdmin(TranslationAdmin):
+    search_fields = ('type',)
 
 if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.TouristicEventUsage, TouristicEventUsageAdmin)
+    admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
 
 
 class TouristicEventPublicAdmin(TranslationAdmin):

@@ -66,10 +66,10 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     geom = 'POINT(0 0)'
 
 
-class TouristicEventUsageFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicEventUsage
+class TouristicEventTypeFactory(factory.Factory):
+    FACTORY_FOR = models.TouristicEventType
 
-    usage = factory.Sequence(lambda n: u"Usage %s" % n)
+    type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
 class TouristicEventPublicFactory(factory.Factory):
@@ -84,5 +84,5 @@ class TouristicEventFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
 
-    usage = factory.SubFactory(TouristicEventUsageFactory)
+    type = factory.SubFactory(TouristicEventTypeFactory)
     public = factory.SubFactory(TouristicEventPublicFactory)

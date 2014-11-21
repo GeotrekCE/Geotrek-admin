@@ -20,6 +20,10 @@ CHANGELOG
 
 * Fix mention of MAP_STYLES (ref #1226)
 
+**Changes in experimental features**
+
+* Renamed *usage* to *type* in touristic events (fixes #1289)
+
 
 0.28.3 (2014-11-12)
 -------------------
