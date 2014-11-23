@@ -5,7 +5,7 @@ CHANGELOG
 0.28.5 (unreleased)
 -------------------
 
-* Nothing changed yet.
+* Fix DEM optimizations when minimum elevation is zero (fixes #1291)
 
 
 0.28.4 (2014-11-21)
