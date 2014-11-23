@@ -291,15 +291,17 @@ class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
         if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
             existing = self.__class__.objects.get(pk=self.pk)
             self.length = existing.length
+
             # In the case of points, the geom can be set by Django. Don't override.
             point_geom_not_set = self.ispoint() and self.geom is None
             geom_already_in_db = not self.ispoint() and existing.geom is not None
             if (point_geom_not_set or geom_already_in_db):
                 self.geom = existing.geom
+
         else:
             if not self.deleted and self.geom is None:
-                # We cannot have NULL geometry. So we use an empty one,
-                # it will be computed or overwritten by triggers.
+                # We cannot have NULL geometry if not deleted. So we use an empty one,
+                # it will be computed and overwritten by triggers.
                 self.geom = fromstr('POINT (0 0)')
 
         if not self.kind:

@@ -91,32 +91,30 @@ BEGIN
     -- to unexpected results.
     -- January 2013 : It does indeed.
 
-    -- RAISE NOTICE 'update_geometry_of_evenement (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
-
     IF t_count = 0 THEN
         -- No more troncons, close this topology
         UPDATE e_t_evenement SET supprime = true, geom = NULL, longueur = 0 WHERE id = eid;
+
+
     ELSIF (NOT lines_only AND t_count = 1) OR points_only THEN
-        -- Special case: the topology describe a point on the path
-        -- Note: We are faking a M-geometry in order to use LocateAlong.
-        -- This is handy because this function includes an offset parameter
-        -- which could be otherwise diffcult to handle.
+        -- Point topology
         SELECT geom, decallage INTO egeom, t_offset FROM e_t_evenement e WHERE e.id = eid;
 
-        -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
-        IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
-            SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
+        -- Prevent point at end of paths to be recomputed, and thus false.
+        -- TODO: add azymuth column
+        IF ft_IsEmpty(egeom) THEN
+            SELECT ST_Smart_LocateAlong(t.geom, et.pk_debut, e.decallage)
                 INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
         END IF;
 
+        -- Always drape points (if egeom_3d has no Z, it will be draped on DEM)
         egeom_3d := egeom;
+
+
     ELSE
-        -- Regular case: the topology describe a line
-        -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
-        -- points in the line have the same X/Y but a different Z, these
-        -- functions will see only on point. --> No problem in mountain path management.
+        -- Line topology
         FOR t_offset, t_geom, t_geom_3d IN SELECT e.decallage, ST_Smart_Line_Substring(t.geom, et.pk_debut, et.pk_fin),
                                                                ST_Smart_Line_Substring(t.geom_3d, et.pk_debut, et.pk_fin)
                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t

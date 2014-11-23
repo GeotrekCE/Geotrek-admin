@@ -4,6 +4,30 @@
 
 DROP FUNCTION IF EXISTS ft_longueur() CASCADE;
 
+
+CREATE OR REPLACE FUNCTION ft_IsEmpty(geom geometry) RETURNS boolean AS $$
+BEGIN
+    RETURN (geom IS NULL OR ST_IsEmpty(geom) OR (ST_GeometryType(geom) = 'ST_Point' AND ST_X(geom) = 0 AND ST_Y(geom) = 0));
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
+-- Locate along : smart ST_LocateAlong
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ST_Smart_LocateAlong(line geometry, distance float, ofset float) RETURNS geometry AS $$
+BEGIN
+    -- We are faking a M-geometry in order to use LocateAlong.
+    -- This is handy because this function includes an offset parameter
+    -- which could be otherwise diffcult to handle.
+
+    -- TODO: add azymuth parameter
+    RETURN ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force_2D(line), 0, 1), distance, ofset), 1);
+END;
+$$ LANGUAGE plpgsql;
+
+
 -------------------------------------------------------------------------------
 -- Interpolate along : the opposite of ST_LocateAlong
 -------------------------------------------------------------------------------

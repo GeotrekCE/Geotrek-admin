@@ -93,26 +93,39 @@ CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS 
 DECLARE
     eid integer;
     egeom geometry;
+    pk_debut float;
+    pk_fin float;
     linear_offset float;
     side_offset float;
 BEGIN
-    -- Geometry of linear topologies are always updated
-    -- Geometry of point topologies are updated if offset = 0
+
+    -- Geometries of linear topologies that cover 100% of path are updated
     FOR eid IN SELECT DISTINCT e.id
-               FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id AND (et.pk_debut != et.pk_fin OR e.decallage = 0.0)
+               FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
+               WHERE et.troncon = NEW.id
+                 AND (abs(et.pk_fin - et.pk_debut) = 1.0
+                      OR ft_IsEmpty(e.geom))
     LOOP
         PERFORM update_geometry_of_evenement(eid);
     END LOOP;
 
-    -- Special case of point geometries with offset != 0
+
+    -- Point topologies:
+    -- Update pk_debut, pk_fin if not at beginning or end of path
+    -- Change in ``e_r_evenement_troncon`` will trigger ``update_geometry_of_evenement()``
     FOR eid, egeom IN SELECT e.id, e.geom
-               FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id AND et.pk_debut = et.pk_fin AND e.decallage != 0.0
+               FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
+               WHERE et.troncon = NEW.id
+                 AND et.pk_debut = et.pk_fin
+                 AND et.pk_fin > 0.0 AND et.pk_fin < 1.0
+                 AND NOT ft_IsEmpty(e.geom)
     LOOP
-        SELECT * INTO linear_offset, side_offset FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
+        SELECT * INTO linear_offset, side_offset
+        FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
+
+        UPDATE e_r_evenement_troncon SET pk_fin = linear_offset, pk_debut = linear_offset
+            WHERE evenement = eid AND troncon = NEW.id;
         UPDATE e_t_evenement SET decallage = side_offset WHERE id = eid;
-        UPDATE e_r_evenement_troncon SET pk_debut = linear_offset, pk_fin = linear_offset WHERE evenement = eid AND troncon = NEW.id;
     END LOOP;
 
     RETURN NULL;

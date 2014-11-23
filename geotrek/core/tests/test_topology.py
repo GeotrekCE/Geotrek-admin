@@ -132,6 +132,20 @@ class TopologyMutateTest(TestCase):
         topology2.mutate(topology)
         self.assertEqual(len(topology2.paths.all()), 3)
 
+    def test_point_at_end_of_path_not_moving_after_mutate(self):
+        PathFactory.create(geom=LineString((400, 400), (410, 400),
+                                           srid=settings.SRID))
+        self.assertEqual(1, len(Path.objects.all()))
+
+        father = Topology.deserialize({'lat': -1, 'lng': -1})
+
+        poi = Point(500, 600, srid=settings.SRID)
+        poi.transform(settings.API_SRID)
+        son = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        father.mutate(son)
+        self.assertTrue(almostequal(father.geom.x, 500))
+        self.assertTrue(almostequal(father.geom.y, 600))
+
 
 class TopologyPointTest(TestCase):
 
@@ -160,104 +174,6 @@ class TopologyPointTest(TestCase):
         self.assertTrue(almostequal(3, poitopo.geom.x))
         self.assertTrue(almostequal(1, poitopo.geom.y))
 
-    def test_point_geom_not_moving(self):
-        """
-        Modify path, point not moving
-        +                  +
-        |                  |
-         \     X          /        X
-         /                \
-        |                  |
-        +                  +
-        """
-        p1 = PathFactory.create(geom=LineString((0, 0),
-                                                (0, 5),
-                                                (5, 10),
-                                                (0, 15),
-                                                (0, 20)))
-        poi = Point(10, 10, srid=settings.SRID)
-        poi.transform(settings.API_SRID)
-        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertEqual(0.5, poitopo.aggregations.all()[0].start_position)
-        self.assertTrue(almostequal(-5, poitopo.offset))
-        # It should have kept its position !
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
-        # Change path, it should still be in the same position
-        p1.geom = LineString((0, 0),
-                             (0, 5),
-                             (-5, 10),
-                             (0, 15),
-                             (0, 20))
-        p1.save()
-        poitopo.reload()
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
-
-    def test_point_offset_kept(self):
-        """
-        Shorten path, offset kept.
-
-          X                        X
-        +-----------+            +------+
-
-        """
-        p1 = PathFactory.create(geom=LineString((0, 0), (20, 0)))
-        poi = Point(5, 10, srid=settings.SRID)
-        poi.transform(settings.API_SRID)
-        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.25, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(10, poitopo.offset))
-
-        p1.geom = LineString((0, 0), (10, 0))
-        p1.save()
-        poitopo.reload()
-
-        self.assertTrue(almostequal(10, poitopo.offset))
-        # Not moved:
-        self.assertTrue(almostequal(5, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
-
-    def test_point_offset_updated(self):
-        """
-        Shorten path, offset updated.
-
-               X                              X
-        +-----------+            +------+
-
-        """
-        p1 = PathFactory.create(geom=LineString((0, 0), (20, 0)))
-        poi = Point(10, 10, srid=settings.SRID)
-        poi.transform(settings.API_SRID)
-        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(10, poitopo.offset))
-
-        p1.geom = LineString((0, 0), (0, 5))
-        p1.save()
-        poitopo.reload()
-        self.assertTrue(almostequal(11.180339887, poitopo.offset))
-        # Not moved:
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
-
-    def test_point_geom_moving(self):
-        p1 = PathFactory.create(geom=LineString((0, 0),
-                                                (0, 5)))
-        poi = Point(0, 2.5, srid=settings.SRID)
-        poi.transform(settings.API_SRID)
-        poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(0, poitopo.offset))
-        self.assertTrue(almostequal(0, poitopo.geom.x))
-        self.assertTrue(almostequal(2.5, poitopo.geom.y))
-        p1.geom = LineString((10, 0),
-                             (10, 5))
-        p1.save()
-        poitopo.reload()
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(2.5, poitopo.geom.y))
-
     def test_junction_point(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
         p2 = PathFactory.create(geom=LineString((0, 0), (2, 0)))
@@ -283,20 +199,6 @@ class TopologyPointTest(TestCase):
         pa.save()
 
         self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
-
-    def test_point_at_end_of_path_not_moving_after_mutate(self):
-        PathFactory.create(geom=LineString((400, 400), (410, 400),
-                                           srid=settings.SRID))
-        self.assertEqual(1, len(Path.objects.all()))
-
-        father = Topology.deserialize({'lat': -1, 'lng': -1})
-
-        poi = Point(500, 600, srid=settings.SRID)
-        poi.transform(settings.API_SRID)
-        son = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        father.mutate(son)
-        self.assertTrue(almostequal(father.geom.x, 500))
-        self.assertTrue(almostequal(father.geom.y, 600))
 
 
 class TopologyLineTest(TestCase):
@@ -391,52 +293,6 @@ class TopologyLineTest(TestCase):
         PathAggregationFactory.create(topo_object=t2, path=p4)
         t2.save()
         self.assertEqual(t2.geom, t.geom)
-
-    def test_troncon_geom_update(self):
-        # Create a path
-        p = PathFactory.create(geom=LineString((0, 0), (4, 0)))
-
-        # Create a linear topology
-        t1 = TopologyFactory.create(offset=1, no_path=True)
-        t1.add_path(p, start=0.0, end=0.5)
-        t1_agg = t1.aggregations.get()
-
-        # Create a point topology
-        t2 = TopologyFactory.create(offset=-1, no_path=True)
-        t2.add_path(p, start=0.5, end=0.5)
-        t2_agg = t2.aggregations.get()
-
-        # Ensure linear topology is correct before path modification
-        self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 1), (2, 1)))
-        self.assertEqual(t1_agg.start_position, 0.0)
-        self.assertEqual(t1_agg.end_position, 0.5)
-
-        # Ensure point topology is correct before path modification
-        self.assertEqual(t2.offset, -1)
-        self.assertEqual(t2.geom.coords, (2, -1))
-        self.assertEqual(t2_agg.start_position, 0.5)
-        self.assertEqual(t2_agg.end_position, 0.5)
-
-        # Modify path geometry and refresh computed data
-        p.geom = LineString((0, 2), (8, 2))
-        p.save()
-        t1.reload()
-        t1_agg = t1.aggregations.get()
-        t2.reload()
-        t2_agg = t2.aggregations.get()
-
-        # Ensure linear topology is correct after path modification
-        self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 3), (4, 3)))
-        self.assertEqual(t1_agg.start_position, 0.0)
-        self.assertEqual(t1_agg.end_position, 0.5)
-
-        # Ensure point topology is correct before path modification
-        self.assertEqual(t2.offset, -3)
-        self.assertEqual(t2.geom.coords, (2, -1))
-        self.assertEqual(t2_agg.start_position, 0.25)
-        self.assertEqual(t2_agg.end_position, 0.25)
 
 
 class TopologyCornerCases(TestCase):

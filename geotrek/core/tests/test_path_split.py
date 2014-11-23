@@ -728,7 +728,7 @@ class SplitPathLineTopologyTest(TestCase):
                                           :
         A +-----------+ B         A +-----+---+ B
                                           :
-        C +-==------+ D           C +--===+ D
+        C +-==------+ D           C +-==--+ D
         """
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
@@ -749,7 +749,7 @@ class SplitPathLineTopologyTest(TestCase):
     def test_split_on_update_3(self):
         """                               + E
                                           ||
-                                          ||
+                                          :
         A +-----------+ B         A +-----+---+ B
                                           :
         C +------==-+ D           C +-----+ D

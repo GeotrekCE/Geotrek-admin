@@ -2,6 +2,7 @@ from .test_triggers import *  # NOQA
 from .test_views import *  # NOQA
 from .test_factories import *  # NOQA
 from .test_path_filter import *  # NOQA
+from .test_path_update import *  # NOQA
 from .test_topology import *  # NOQA
 from .test_path_split import *  # NOQA
 from .test_filters import *  # NOQA
