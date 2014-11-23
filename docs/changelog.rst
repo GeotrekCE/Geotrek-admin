@@ -5,7 +5,7 @@ CHANGELOG
 0.28.5 (unreleased)
 -------------------
 
-* Nothing changed yet.
+* Fix regression for translations of tourism (fixes #1315)
 
 
 0.28.4 (2014-11-21)

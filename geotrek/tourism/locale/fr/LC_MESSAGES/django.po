@@ -187,9 +187,6 @@ msgstr "Contenu touristique"
 msgid "Touristic contents"
 msgstr "Contenus touristiques"
 
-msgid "Type"
-msgstr ""
-
 msgid "Touristic event type"
 msgstr "Type d'évènement touristique"
 
