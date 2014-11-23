@@ -183,6 +183,9 @@ setting that receives a list of colors :
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
 
+**Restart** the application for changes to take effect.
+
+
 External raster layers
 ----------------------
 
