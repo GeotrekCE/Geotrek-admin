@@ -24,7 +24,7 @@ BEGIN
 
     length := ST_Length(linegeom);
 
-    IF ST_ZMin(linegeom) > 0 THEN
+    IF ST_ZMin(linegeom) < 0 OR ST_ZMax(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
         RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
