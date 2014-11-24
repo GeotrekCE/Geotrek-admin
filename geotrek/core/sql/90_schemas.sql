@@ -20,3 +20,4 @@ SELECT set_schema_ft('troncons_related_objects_d()', 'geotrek');
 SELECT set_schema_ft('troncon_latest_updated_d()', 'geotrek');
 SELECT set_schema_ft('troncons_snap_extremities()', 'geotrek');
 SELECT set_schema_ft('troncons_evenement_intersect_split()', 'geotrek');
+SELECT set_schema_ft('ft_clone_path(l_t_troncon, geometry)', 'geotrek');

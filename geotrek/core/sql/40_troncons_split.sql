@@ -7,9 +7,9 @@ DROP TRIGGER IF EXISTS l_t_troncon_10_split_geom_iu_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
-    troncon record;
-    tid_clone integer;
+    troncon l_t_troncon;
     t_count integer;
+    tid_clone integer;
     existing_et integer[];
     t_geom geometry;
 
@@ -95,35 +95,7 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
-                    IF t_count = 0 THEN
-                        RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure,
-                                                 visible,
-                                                 valide,
-                                                 nom,
-                                                 remarques,
-                                                 source,
-                                                 enjeu,
-                                                 geom_cadastre,
-                                                 depart,
-                                                 arrivee,
-                                                 confort,
-                                                 geom)
-                            VALUES (NEW.structure,
-                                    NEW.visible,
-                                    NEW.valide,
-                                    NEW.nom,
-                                    NEW.remarques,
-                                    NEW.source,
-                                    NEW.enjeu,
-                                    NEW.geom_cadastre,
-                                    NEW.depart,
-                                    NEW.arrivee,
-                                    NEW.confort,
-                                    segment)
-                            RETURNING id INTO tid_clone;
-                    END IF;
+                    PERFORM ft_clone_path(NEW, segment);
                 END IF;
             END LOOP;
 
@@ -166,45 +138,10 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
-                    IF t_count = 0 THEN
-                        RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure,
-                                                 visible,
-                                                 valide,
-                                                 nom,
-                                                 remarques,
-                                                 source,
-                                                 enjeu,
-                                                 geom_cadastre,
-                                                 depart,
-                                                 arrivee,
-                                                 confort,
-                                                 geom)
-                            VALUES (troncon.structure,
-                                    troncon.visible,
-                                    troncon.valide,
-                                    troncon.nom,
-                                    troncon.remarques,
-                                    troncon.source,
-                                    troncon.enjeu,
-                                    troncon.geom_cadastre,
-                                    troncon.depart,
-                                    troncon.arrivee,
-                                    troncon.confort,
-                                    segment)
-                            RETURNING id INTO tid_clone;
+                    -- (if necessary, recursive triggers)
+                    SELECT ft_clone_path(troncon, segment) INTO tid_clone;
 
-                        -- Copy N-N relations
-                        INSERT INTO l_r_troncon_reseau (path_id, network_id)
-                            SELECT tid_clone, tr.network_id
-                            FROM l_r_troncon_reseau tr
-                            WHERE tr.path_id = troncon.id;
-                        INSERT INTO l_r_troncon_usage (path_id, usage_id)
-                            SELECT tid_clone, tr.usage_id
-                            FROM l_r_troncon_usage tr
-                            WHERE tr.path_id = troncon.id;
-
+                    IF tid_clone > 0 THEN
                         -- Copy topologies overlapping start/end
                         INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
                             SELECT
@@ -342,3 +279,58 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();
+
+-------------------------------------------------------------------------------
+-- Clone path record
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ft_clone_path(troncon l_t_troncon, geom geometry) RETURNS integer AS $$
+DECLARE
+    tid_clone integer;
+    t_count integer;
+BEGIN
+    SELECT COUNT(*) INTO t_count FROM l_t_troncon t WHERE nom = troncon.nom AND ST_Equals(troncon.geom, t.geom);
+    IF t_count > 0 THEN
+        RETURN -1;
+    END IF;
+
+    RAISE NOTICE 'Create clone of %-% with geom %', troncon.id, troncon.nom, ST_AsText(geom);
+    INSERT INTO l_t_troncon (structure,
+                             visible,
+                             valide,
+                             nom,
+                             remarques,
+                             source,
+                             enjeu,
+                             geom_cadastre,
+                             depart,
+                             arrivee,
+                             confort,
+                             geom)
+        VALUES (troncon.structure,
+                troncon.visible,
+                troncon.valide,
+                troncon.nom,
+                troncon.remarques,
+                troncon.source,
+                troncon.enjeu,
+                troncon.geom_cadastre,
+                troncon.depart,
+                troncon.arrivee,
+                troncon.confort,
+                geom)
+        RETURNING id INTO tid_clone;
+
+    -- Copy N-N relations
+    INSERT INTO l_r_troncon_reseau (path_id, network_id)
+        SELECT tid_clone, tr.network_id
+        FROM l_r_troncon_reseau tr
+        WHERE tr.path_id = troncon.id;
+    INSERT INTO l_r_troncon_usage (path_id, usage_id)
+        SELECT tid_clone, tr.usage_id
+        FROM l_r_troncon_usage tr
+        WHERE tr.path_id = troncon.id;
+
+    RETURN tid_clone;
+END;
+$$ LANGUAGE plpgsql;

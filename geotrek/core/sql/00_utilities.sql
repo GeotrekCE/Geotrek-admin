@@ -5,6 +5,10 @@
 DROP FUNCTION IF EXISTS ft_longueur() CASCADE;
 
 
+-------------------------------------------------------------------------------
+-- Is empty geometry, as seen in empty topologies
+-------------------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION ft_IsEmpty(geom geometry) RETURNS boolean AS $$
 BEGIN
     RETURN (geom IS NULL OR ST_IsEmpty(geom) OR (ST_GeometryType(geom) = 'ST_Point' AND ST_X(geom) = 0 AND ST_Y(geom) = 0));
