@@ -100,7 +100,7 @@ BEGIN
         -- Point topology
         SELECT geom, decallage INTO egeom, t_offset FROM e_t_evenement e WHERE e.id = eid;
 
-        -- Prevent point at end of paths to be recomputed, and thus false.
+        -- Prevent point at end of paths to be recomputed
         -- TODO: add azymuth column
         IF ft_IsEmpty(egeom) THEN
             SELECT ST_Smart_LocateAlong(t.geom, et.pk_debut, e.decallage)

@@ -270,3 +270,46 @@ class LineTopologiesTest(TestCase):
         p.save()
         t1.reload()
         self.assertEqual(t1.geom.coords, ((2, 0), (2, -2), (6, -2)))
+
+
+class ReversingPathTests(TestCase):
+    def test_reversing_first_path(self):
+        """
+                A  C
+        B +-------+-------+ D
+
+        """
+        ab = PathFactory.create(geom=LineString((5, 0), (0, 0)))
+        cd = PathFactory.create(geom=LineString((5, 0), (10, 0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(ab, start=0.2, end=0)
+        topo.add_path(cd, start=0, end=0.2)
+        topo.save()
+        expected = LineString((4, 0), (5, 0), (6, 0))
+        # Now let's have some fun, reverse BA :)
+        ab.reverse()
+        ab.save()
+        topo.reload()
+        self.assertEqual(topo.geom, expected)
+
+    def test_reversing_middle_path(self):
+        """
+                A            C
+        B +-------+--------+-------+ D
+
+        """
+        ab = PathFactory.create(geom=LineString((5, 0), (0, 0)))
+        ac = PathFactory.create(geom=LineString((5, 0), (10, 0)))
+        cd = PathFactory.create(geom=LineString((10, 0), (15, 0)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(ab, start=0.2, end=0)
+        topo.add_path(ac)
+        topo.add_path(cd, start=0, end=0.2)
+        topo.save()
+        expected = LineString((4, 0), (5, 0), (10, 0), (11, 0))
+        self.assertEqual(topo.geom, expected)
+        # Reverse AC ! OMG this is hell !
+        ac.reverse()
+        ac.save()
+        topo.reload()
+        self.assertEqual(topo.geom, expected)

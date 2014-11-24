@@ -72,8 +72,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
 
     objects = PathManager()
 
-    is_reversed = False
-
     def __unicode__(self):
         return self.name or _('path %d') % self.pk
 
@@ -103,7 +101,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
         """
         reversed_coord = self.geom.coords[-1::-1]
         self.geom = LineString(reversed_coord)
-        self.is_reversed = True
         return self
 
     def interpolate(self, point):
@@ -130,13 +127,6 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
 
     @debug_pg_notices
     def save(self, *args, **kwargs):
-        # If the path was reversed, we have to invert related topologies
-        if self.is_reversed:
-            for aggr in self.aggregations.all():
-                aggr.start_position = 1 - aggr.start_position
-                aggr.end_position = 1 - aggr.end_position
-                aggr.save()
-            self._is_reversed = False
         super(Path, self).save(*args, **kwargs)
         self.reload()
 

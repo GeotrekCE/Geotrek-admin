@@ -90,6 +90,7 @@ DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
+<<fn>>
 DECLARE
     eid integer;
     egeom geometry;
@@ -139,12 +140,19 @@ BEGIN
                  AND abs(et.pk_fin - et.pk_debut) < 1.0
                  AND NOT ft_IsEmpty(e.geom)
     LOOP
+
+        -- If the path was reversed, we have to invert related topologies
+        IF ST_Equals(OLD.geom, NEW.geom) AND NOT ST_OrderingEquals(OLD.geom, NEW.geom) THEN
+            pk_debut := 1 - pk_debut;
+            pk_fin := 1 - pk_fin;
+        END IF;
+
         IF pk_debut < pk_fin THEN
             IF pk_debut > 0 THEN
                 -- Only if does not start at beginning of path
                 SELECT * INTO linear_offset, side_offset
                     FROM ST_InterpolateAlong(NEW.geom, ST_StartPoint(egeom)) AS (position float, distance float);
-                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset
+                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset, pk_fin = fn.pk_fin
                     WHERE evenement = eid AND troncon = NEW.id;
             END IF;
 
@@ -152,7 +160,7 @@ BEGIN
                 -- Only if does not end at end of path
                 SELECT * INTO linear_offset, side_offset
                     FROM ST_InterpolateAlong(NEW.geom, ST_EndPoint(egeom)) AS (position float, distance float);
-                UPDATE e_r_evenement_troncon SET pk_fin = linear_offset
+                UPDATE e_r_evenement_troncon SET pk_debut = fn.pk_debut, pk_fin = linear_offset
                     WHERE evenement = eid AND troncon = NEW.id;
             END IF;
 
@@ -161,7 +169,7 @@ BEGIN
                 -- Only if does not start at end of path
                 SELECT * INTO linear_offset, side_offset
                     FROM ST_InterpolateAlong(NEW.geom, ST_EndPoint(egeom)) AS (position float, distance float);
-                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset
+                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset, pk_fin = fn.pk_fin
                     WHERE evenement = eid AND troncon = NEW.id;
             END IF;
 
@@ -169,7 +177,7 @@ BEGIN
                 -- Only if does not end at beginning of path
                 SELECT * INTO linear_offset, side_offset
                     FROM ST_InterpolateAlong(NEW.geom, ST_StartPoint(egeom)) AS (position float, distance float);
-                UPDATE e_r_evenement_troncon SET pk_fin = linear_offset
+                UPDATE e_r_evenement_troncon SET pk_debut = fn.pk_debut, pk_fin = linear_offset
                     WHERE evenement = eid AND troncon = NEW.id;
             END IF;
 
