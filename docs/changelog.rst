@@ -6,6 +6,7 @@ CHANGELOG
 -------------------
 
 * Fix DEM optimizations when minimum elevation is zero (fixes #1291)
+* Number of workers and request timeout can be now configured in ``settings.ini``
 
 
 0.28.4 (2014-11-21)

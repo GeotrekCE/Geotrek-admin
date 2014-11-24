@@ -393,3 +393,20 @@ of *standalone* in the deployment procedure (*or when settings are changed*) :
 ::
 
     make env_prod deploy
+
+
+Control number of workers and request timeouts
+----------------------------------------------
+
+By default, the application runs on 4 processes, and timeouts after 30 seconds.
+
+To control those values, add a section in ``etc/settings.ini`` for each running service.
+See ``conf/settings-defaults.cfg`` for an exhaustive list:
+
+::
+
+    [gunicorn-app-conf]
+    workers = 4
+    timeout = 30
+
+To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
