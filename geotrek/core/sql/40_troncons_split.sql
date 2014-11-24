@@ -215,26 +215,12 @@ BEGIN
                AND pk_debut = pk_fin;
 
             -- Now handle first path topologies
+            -- Delete topologies outside its shorter geom
+            -- and recompute start/end of overlapping aggregations.
             a := intersections_on_current[1];
             b := intersections_on_current[2];
-            DELETE FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id
-                                                 AND id = ANY(existing_et)
-                                                 AND (least(pk_debut, pk_fin) > b OR greatest(pk_debut, pk_fin) < a);
-            GET DIAGNOSTICS t_count = ROW_COUNT;
-            IF t_count > 0 THEN
-                RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
-            END IF;
+            PERFORM ft_recompute_start_end_aggregations(troncon, a, b, existing_et);
 
-            -- Update topologies overlapping
-            UPDATE e_r_evenement_troncon et SET
-                pk_debut = CASE WHEN pk_debut / (b - a) > 1 THEN 1 ELSE pk_debut / (b - a) END,
-                pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
-                WHERE et.troncon = troncon.id
-                AND least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a;
-            GET DIAGNOSTICS t_count = ROW_COUNT;
-            IF t_count > 0 THEN
-                RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
-            END IF;
         END IF;
 
 
@@ -251,6 +237,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();
+
 
 -------------------------------------------------------------------------------
 -- Clone path record
@@ -342,6 +329,37 @@ BEGIN
          WHERE t.id = et.troncon
            AND et.pk_debut = et.pk_debut
            AND et.id = ANY(existing_et);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
+-- When path is shrinked : delete topologies outside the specified path geometry
+-- that now belong to clones.
+-- And recompute start/end for the overlapping part.
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION ft_recompute_start_end_aggregations(troncon l_t_troncon, a float8, b float8, existing_et integer[]) RETURNS void AS $$
+DECLARE
+    t_count integer;
+BEGIN
+    DELETE FROM e_r_evenement_troncon et WHERE et.troncon = troncon.id
+                                         AND id = ANY(existing_et)
+                                         AND (least(pk_debut, pk_fin) > b OR greatest(pk_debut, pk_fin) < a);
+    GET DIAGNOSTICS t_count = ROW_COUNT;
+    IF t_count > 0 THEN
+        RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
+    END IF;
+
+    -- Update topologies overlapping
+    UPDATE e_r_evenement_troncon et SET
+        pk_debut = CASE WHEN pk_debut / (b - a) > 1 THEN 1 ELSE pk_debut / (b - a) END,
+        pk_fin = CASE WHEN pk_fin / (b - a) > 1 THEN 1 ELSE pk_fin / (b - a) END
+        WHERE et.troncon = troncon.id
+        AND least(pk_debut, pk_fin) <= b AND greatest(pk_debut, pk_fin) >= a;
+    GET DIAGNOSTICS t_count = ROW_COUNT;
+    IF t_count > 0 THEN
+        RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.nom, a, b;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
