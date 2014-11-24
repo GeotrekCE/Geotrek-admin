@@ -158,10 +158,9 @@ BEGIN
                                     (greatest(a, pk_fin) - a) / (b - a)
                                 END,
                                 et.ordre
-                            FROM e_r_evenement_troncon et,
-                                 e_t_evenement e
-                            WHERE et.evenement = e.id
-                                  AND et.troncon = troncon.id
+                            FROM e_r_evenement_troncon et
+                            JOIN e_t_evenement e ON (et.evenement = e.id)
+                            WHERE et.troncon = troncon.id
                                   AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
                                        (pk_debut = pk_fin AND pk_debut = a AND decallage = 0)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
@@ -174,10 +173,9 @@ BEGIN
                             fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT tid_clone, evenement, pk_debut, pk_fin
-                                FROM e_r_evenement_troncon et,
-                                     e_t_evenement e
-                                WHERE et.evenement = e.id AND
-                                      et.troncon = troncon.id AND
+                                FROM e_r_evenement_troncon et
+                                JOIN e_t_evenement e ON (et.evenement = e.id)
+                                WHERE et.troncon = troncon.id AND
                                       pk_debut = pk_fin AND
                                       pk_debut = 1 AND
                                       decallage = 0;
@@ -191,10 +189,9 @@ BEGIN
                             fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
                                 SELECT NEW.id, et.evenement, fraction, fraction, ordre
-                                FROM e_r_evenement_troncon et,
-                                     e_t_evenement e
-                                WHERE et.evenement = e.id
-                                  AND et.troncon = troncon.id
+                                FROM e_r_evenement_troncon et
+                                JOIN e_t_evenement e ON (et.evenement = e.id)
+                                WHERE et.troncon = troncon.id
                                   AND pk_debut = pk_fin AND pk_debut = a
                                   AND decallage = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
@@ -209,32 +206,7 @@ BEGIN
 
             -- For each existing point topology with offset, re-attach it
             -- to the closest path, among those splitted.
-            WITH existing_rec AS (SELECT et.id, e.decallage, e.geom
-                                    FROM e_r_evenement_troncon et,
-                                         e_t_evenement e
-                                   WHERE et.evenement = e.id
-                                     AND et.pk_debut = et.pk_debut
-                                     AND e.decallage > 0
-                                     AND et.troncon = troncon.id
-                                     AND et.id = ANY(existing_et)),
-                 closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
-                                    FROM l_t_troncon t, existing_rec er
-                                   WHERE t.id != troncon.id
-                                     AND ST_Distance(er.geom, t.geom) < er.decallage
-                                ORDER BY ST_Distance(er.geom, t.geom)
-                                   LIMIT 1)
-                UPDATE e_r_evenement_troncon SET troncon = closest_id
-                  FROM closest_path
-                 WHERE id = et_id;
-            GET DIAGNOSTICS t_count = ROW_COUNT;
-            IF t_count > 0 THEN
-                -- Update geom of affected paths to trigger update_evenement_geom_when_troncon_changes()
-                UPDATE l_t_troncon t SET geom = geom
-                  FROM e_r_evenement_troncon et
-                 WHERE t.id = et.troncon
-                   AND et.pk_debut = et.pk_debut
-                   AND et.id = ANY(existing_et);
-            END IF;
+            PERFORM ft_reattach_point_topologies(troncon, existing_et);
 
             -- Update point topologies at intersection
             -- Trigger e_r_evenement_troncon_junction_point_iu_tgr
@@ -332,5 +304,44 @@ BEGIN
         WHERE tr.path_id = troncon.id;
 
     RETURN tid_clone;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
+-- Re-attach point topologies to closest paths
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION ft_reattach_point_topologies(troncon l_t_troncon, existing_et integer[]) RETURNS void AS $$
+DECLARE
+    t_count integer;
+BEGIN
+    -- For each existing point topology with offset, re-attach it
+    -- to the closest path, among those splitted.
+    WITH existing_rec AS (SELECT et.id, e.decallage, e.geom
+                            FROM e_r_evenement_troncon et
+                            JOIN e_t_evenement e ON (et.evenement = e.id)
+                           WHERE et.pk_debut = et.pk_debut
+                             AND e.decallage > 0
+                             AND et.troncon = troncon.id
+                             AND et.id = ANY(existing_et)),
+         closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
+                            FROM l_t_troncon t, existing_rec er
+                           WHERE t.id != troncon.id
+                             AND ST_Distance(er.geom, t.geom) < er.decallage
+                        ORDER BY ST_Distance(er.geom, t.geom)
+                           LIMIT 1)
+        UPDATE e_r_evenement_troncon SET troncon = closest_id
+          FROM closest_path
+         WHERE id = et_id;
+    GET DIAGNOSTICS t_count = ROW_COUNT;
+    IF t_count > 0 THEN
+        -- Update geom of affected paths to trigger update_evenement_geom_when_troncon_changes()
+        UPDATE l_t_troncon t SET geom = geom
+          FROM e_r_evenement_troncon et
+         WHERE t.id = et.troncon
+           AND et.pk_debut = et.pk_debut
+           AND et.id = ANY(existing_et);
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
