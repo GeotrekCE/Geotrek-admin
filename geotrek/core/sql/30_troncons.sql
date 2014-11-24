@@ -128,6 +128,55 @@ BEGIN
         UPDATE e_t_evenement SET decallage = side_offset WHERE id = eid;
     END LOOP;
 
+
+    -- Line topologies:
+    -- Update pk_debut, pk_fin when aggregations don't cover 100% of path
+    -- Change in ``e_r_evenement_troncon`` will trigger ``update_geometry_of_evenement()``
+    FOR eid, egeom, pk_debut, pk_fin IN SELECT e.id, e.geom, et.pk_debut, et.pk_fin
+               FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
+               WHERE et.troncon = NEW.id
+                 AND et.pk_debut != et.pk_fin
+                 AND abs(et.pk_fin - et.pk_debut) < 1.0
+                 AND NOT ft_IsEmpty(e.geom)
+    LOOP
+        IF pk_debut < pk_fin THEN
+            IF pk_debut > 0 THEN
+                -- Only if does not start at beginning of path
+                SELECT * INTO linear_offset, side_offset
+                    FROM ST_InterpolateAlong(NEW.geom, ST_StartPoint(egeom)) AS (position float, distance float);
+                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset
+                    WHERE evenement = eid AND troncon = NEW.id;
+            END IF;
+
+            IF pk_fin < 1.0 THEN
+                -- Only if does not end at end of path
+                SELECT * INTO linear_offset, side_offset
+                    FROM ST_InterpolateAlong(NEW.geom, ST_EndPoint(egeom)) AS (position float, distance float);
+                UPDATE e_r_evenement_troncon SET pk_fin = linear_offset
+                    WHERE evenement = eid AND troncon = NEW.id;
+            END IF;
+
+        ELSE
+            IF pk_debut < 1.0 THEN
+                -- Only if does not start at end of path
+                SELECT * INTO linear_offset, side_offset
+                    FROM ST_InterpolateAlong(NEW.geom, ST_EndPoint(egeom)) AS (position float, distance float);
+                UPDATE e_r_evenement_troncon SET pk_debut = linear_offset
+                    WHERE evenement = eid AND troncon = NEW.id;
+            END IF;
+
+            IF pk_fin > 0.0 THEN
+                -- Only if does not end at beginning of path
+                SELECT * INTO linear_offset, side_offset
+                    FROM ST_InterpolateAlong(NEW.geom, ST_StartPoint(egeom)) AS (position float, distance float);
+                UPDATE e_r_evenement_troncon SET pk_fin = linear_offset
+                    WHERE evenement = eid AND troncon = NEW.id;
+            END IF;
+
+        END IF;
+    END LOOP;
+
+
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
