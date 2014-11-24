@@ -17,11 +17,18 @@
   cmd.run:
     - name: {{cfg.project_root}}/bin/gtrois_geotrek_import.sh
     - cwd: {{cfg.project_root}}
-    - use_vt: true
     - output_loglevel: info
     - use_vt: true
-    - output_loglevel: info
     - user: {{cfg.user}}
     - watch:
       - file: {{cfg.name}}-cron-gtrois
+{{cfg.name}}-cron-gtrois-f:
+  cmd.run:
+    - name: {{cfg.project_dir}}/global-reset-perms.sh
+    - cwd: {{cfg.project_root}}
+    - use_vt: true
+    - output_loglevel: info
+    - user: root
+    - watch:
+      - cmd: {{cfg.name}}-cron-gtrois
 {% endif %}
