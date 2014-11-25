@@ -699,10 +699,10 @@ class SplitPathLineTopologyTest(TestCase):
     def test_split_on_update(self):
         """                               + E
                                           :
-                                         ||
-        A +-----------+ B         A +----++---+ B
-                                         ||
-        C +-====-+ D              C +--===+ D
+                                          :
+        A +-----------+ B         A +-----+---+ B
+                                          :
+        C +-====-+ D              C +-====+ D
         """
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
@@ -711,16 +711,14 @@ class SplitPathLineTopologyTest(TestCase):
         topology.add_path(cd, start=0.3, end=0.9)
         self.assertEqual(len(topology.paths.all()), 1)
 
-        cd.geom = LineString((0, -1), (2, -1), (2, 2))
+        cd.geom = LineString((0, -1), (3, -1), (3, 2))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 2)
+        self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
+        self.assertEqual(len(cd2.aggregations.all()), 0)
         aggr_cd = cd.aggregations.all()[0]
-        aggr_cd2 = cd2.aggregations.all()[0]
-        self.assertEqual((0.5, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
-        self.assertEqual((0.0, 0.75), (aggr_cd2.start_position, aggr_cd2.end_position))
+        self.assertEqual((0.45, 0.75), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_2(self):
         """                               + E
@@ -744,31 +742,34 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 0)
         aggr_cd = cd.aggregations.all()[0]
-        self.assertEqual((0.25, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
+        self.assertEqual((0.25, 0.4), (aggr_cd.start_position, aggr_cd.end_position))
+        self.assertEqual(0, len(cd2.aggregations.all()))
 
     def test_split_on_update_3(self):
         """                               + E
                                           ||
+                                          ||
+        A +-----------+ B         A +-----||---+ B
                                           :
-        A +-----------+ B         A +-----+---+ B
-                                          :
-        C +------==-+ D           C +-----+ D
+        C +----====-+ D           C +-----+ D
         """
-        PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
-        cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (10, 0)))
+        cd = PathFactory.create(name="CD", geom=LineString((0, -1), (10, -1)))
         # Create a topology
         topology = TopologyFactory.create(no_path=True)
-        topology.add_path(cd, start=0.7, end=0.85)
+        topology.add_path(cd, start=0.85, end=0.9)
         self.assertEqual(len(topology.paths.all()), 1)
 
-        cd.geom = LineString((0, -1), (2, -1), (2, 2))
+        cd.geom = LineString((0, -1), (7, -1), (7, 4))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 0)
+        self.assertEqual(len(topology.paths.all()), 2)
+        self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 1)
+        aggr_cd = cd.aggregations.all()[0]
         aggr_cd2 = cd2.aggregations.all()[0]
-        self.assertEqual((0.25, 0.625), (aggr_cd2.start_position, aggr_cd2.end_position))
+        self.assertEqual((1.0, 0.875), (aggr_cd.start_position, aggr_cd.end_position))
+        self.assertEqual((0.55, 0.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_return_topology(self):
         """
@@ -1031,10 +1032,11 @@ class SplitPathPointTopologyTest(TestCase):
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
         self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.all()[0]
-        self.assertEqual((0.5, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
+
+        self.assertEqual(len(cd2.aggregations.all()), 1)
+        self.assertEqual(len(cd.aggregations.all()), 0)
+        aggr_cd2 = cd2.aggregations.all()[0]
+        self.assertEqual((0.5, 0.5), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_3(self):
         """                               + E

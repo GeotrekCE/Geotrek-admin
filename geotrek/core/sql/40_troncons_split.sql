@@ -317,8 +317,7 @@ BEGIN
     WITH existing_rec AS (SELECT et.id, e.decallage, e.geom
                             FROM e_r_evenement_troncon et
                             JOIN e_t_evenement e ON (et.evenement = e.id)
-                           WHERE et.pk_debut = et.pk_debut
-                             AND e.decallage > 0
+                           WHERE et.pk_debut = et.pk_fin
                              AND et.troncon = troncon.id
                              AND et.id = ANY(existing_et)),
          closest_path AS (SELECT er.id AS et_id, t.id AS closest_id

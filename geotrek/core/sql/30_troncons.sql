@@ -88,6 +88,7 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_01_evenements_geom_u_tgr ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
 <<fn>>
@@ -111,7 +112,7 @@ BEGIN
     FOR eid, egeom IN SELECT e.id, e.geom
                FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
                WHERE et.troncon = NEW.id
-                 AND et.pk_debut = et.pk_fin
+                 AND ST_GeometryType(geom) = 'ST_Point'
                  AND et.pk_fin > 0.0 AND et.pk_fin < 1.0
                  AND NOT ft_IsEmpty(e.geom)
     LOOP
@@ -194,7 +195,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
+CREATE TRIGGER l_t_troncon_01_evenements_geom_u_tgr
 AFTER UPDATE OF geom ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
