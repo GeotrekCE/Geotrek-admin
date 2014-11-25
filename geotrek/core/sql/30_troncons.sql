@@ -100,16 +100,10 @@ DECLARE
     side_offset float;
 BEGIN
 
-    -- Geometries of linear topologies that cover 100% of path are updated
-    FOR eid IN SELECT DISTINCT e.id
-               FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
-               WHERE et.troncon = NEW.id
-                 AND (abs(et.pk_fin - et.pk_debut) = 1.0
-                      OR ft_IsEmpty(e.geom))
-    LOOP
-        PERFORM update_geometry_of_evenement(eid);
-    END LOOP;
-
+    -- If currently shrinking path, don't do anything.
+    IF NEW.remarques LIKE '%~' THEN
+        RETURN NULL;
+    END IF;
 
     -- Point topologies:
     -- Update pk_debut, pk_fin if not at beginning or end of path
@@ -131,6 +125,17 @@ BEGIN
 
 
     -- Line topologies:
+
+    -- Geometries of linear topologies that cover 100% of path are updated
+    FOR eid IN SELECT DISTINCT e.id
+               FROM e_r_evenement_troncon et JOIN e_t_evenement e ON (et.evenement = e.id)
+               WHERE et.troncon = NEW.id
+                 AND (abs(et.pk_fin - et.pk_debut) = 1.0
+                      OR ft_IsEmpty(e.geom))
+    LOOP
+        PERFORM update_geometry_of_evenement(eid);
+    END LOOP;
+
     -- Update pk_debut, pk_fin when aggregations don't cover 100% of path
     -- Change in ``e_r_evenement_troncon`` will trigger ``update_geometry_of_evenement()``
     FOR eid, egeom, pk_debut, pk_fin IN SELECT e.id, e.geom, et.pk_debut, et.pk_fin

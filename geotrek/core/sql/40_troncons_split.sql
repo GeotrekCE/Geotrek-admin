@@ -134,7 +134,16 @@ BEGIN
                     SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
                     IF NOT ST_Equals(t_geom, segment) THEN
                         RAISE NOTICE 'Current: Skrink %-% (%) to %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
+
+                        -- Disable e_r_troncon_evenement update while shrinking
+                        -- Since there is no way to set global variables in pl/pgsql
+                        -- we use a trick using the field ``remarques``
+                        UPDATE l_t_troncon SET remarques = remarques || '~' WHERE id = troncon.id;
+                        -- Shrink! Snap, compute, drape, ...
                         UPDATE l_t_troncon SET geom = segment WHERE id = troncon.id;
+                        -- Restore remarques.
+                        UPDATE l_t_troncon SET remarques = trim(leading '~' from remarques) WHERE id = troncon.id;
+
                     END IF;
                 ELSE
                     -- Next ones : create clones !
