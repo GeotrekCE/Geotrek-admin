@@ -10,6 +10,8 @@ CHANGELOG
 * Fix regression for translations of tourism (fixes #1315)
 * Various improvements on trek public template, by Camille Montchicourt
 
+* Set PostgreSQL search_path at database level (fixes #1311)
+
 
 0.28.4 (2014-11-21)
 -------------------
