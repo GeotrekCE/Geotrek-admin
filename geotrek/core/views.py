@@ -171,7 +171,7 @@ class TrailLayer(MapEntityLayer):
 class TrailList(MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    columns = ['id', 'name', 'departure', 'arrival']
+    columns = ['id', 'name', 'departure', 'arrival', 'length']
 
 
 class TrailDetail(MapEntityDetail):
