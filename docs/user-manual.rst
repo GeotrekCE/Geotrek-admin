@@ -14,7 +14,7 @@ Screencasts
 * `Administration <http://youtu.be/P106bQCRZKk>`_
 
 Modules
------------
+-------
 
 Geotrek est composé de différents modules.
 
@@ -58,7 +58,7 @@ C'est aussi depuis un module qu'il est possible d'ajouter de nouveaux objets.
 Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
 
 Fiches détails
------------
+--------------
 
 Edition d'un objet
------------
+------------------
