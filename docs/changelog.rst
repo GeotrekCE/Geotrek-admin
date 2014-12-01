@@ -12,6 +12,8 @@ CHANGELOG
 
 * Set PostgreSQL search_path at database level (fixes #1311)
 * Show 3D and 2D length in detail pages (fixes #1101)
+* Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
+
 
 
 0.28.4 (2014-11-21)
