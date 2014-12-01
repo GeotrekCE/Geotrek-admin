@@ -14,6 +14,7 @@ CHANGELOG
 * Show 3D and 2D length in detail pages (fixes #1101)
 * Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
 * Show trail length in list and exports (fixes #1282)
+* Replace stake by length in path list (fixes #956, fixes #1281)
 
 
 
