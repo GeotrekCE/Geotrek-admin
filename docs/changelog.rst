@@ -15,6 +15,7 @@ CHANGELOG
 * Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
 * Show trail length in list and exports (fixes #1282)
 * Replace stake by length in path list (fixes #956, fixes #1281)
+* Add subcontracting in intervention filter (fixes #1144)
 
 
 

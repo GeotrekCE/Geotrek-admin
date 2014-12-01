@@ -35,7 +35,7 @@ class InterventionFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'status', 'type', 'stake', 'project'
+            'status', 'type', 'stake', 'subcontracting', 'project'
         ]
 
 
