@@ -16,7 +16,7 @@ CHANGELOG
 * Show trail length in list and exports (fixes #1282)
 * Replace stake by length in path list (fixes #956, fixes #1281)
 * Add subcontracting in intervention filter (fixes #1144)
-
+* Add missing fields in project filter (fixes #219, fixes #910)
 
 
 0.28.4 (2014-11-21)

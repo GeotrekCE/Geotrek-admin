@@ -54,4 +54,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
-        fields = StructureRelatedFilterSet.Meta.fields
+        fields = StructureRelatedFilterSet.Meta.fields + [
+            'in_year', 'type', 'domain', 'contractors', 'project_owner',
+            'project_manager', 'founders'
+        ]
