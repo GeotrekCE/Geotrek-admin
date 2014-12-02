@@ -128,7 +128,10 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    pass
+    columns = ProjectList.columns + \
+        ['constraint', 'global_cost', 'interventions', 'interventions_total_cost',
+         'comments', 'contractors', 'project_owner', 'project_manager',
+         'founders']
 
 
 class ProjectDetail(MapEntityDetail):

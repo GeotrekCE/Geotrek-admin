@@ -18,6 +18,7 @@ CHANGELOG
 * Add subcontracting in intervention filter (fixes #1144)
 * Add missing fields in project filter (fixes #219, fixes #910)
 * Show status in interventions table among detail pages (fixes #1193)
+* Add missing field in projects exports (ref #1167)
 
 
 0.28.4 (2014-11-21)
