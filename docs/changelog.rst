@@ -11,6 +11,14 @@ CHANGELOG
 * Various improvements on trek public template, by Camille Montchicourt
 
 * Set PostgreSQL search_path at database level (fixes #1311)
+* Show 3D and 2D length in detail pages (fixes #1101)
+* Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
+* Show trail length in list and exports (fixes #1282)
+* Replace stake by length in path list (fixes #956, fixes #1281)
+* Add subcontracting in intervention filter (fixes #1144)
+* Add missing fields in project filter (fixes #219, fixes #910)
+* Show status in interventions table among detail pages (fixes #1193)
+* Add missing field in projects exports (ref #1167)
 
 
 0.28.4 (2014-11-21)

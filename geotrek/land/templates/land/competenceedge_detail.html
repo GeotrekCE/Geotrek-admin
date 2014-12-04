@@ -7,6 +7,7 @@
             <th>{{ competenceedge|verbose:"organization" }}</th>
             <td>{{ competenceedge.organization }}</td>
         </tr>
+        {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

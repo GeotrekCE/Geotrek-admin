@@ -462,6 +462,10 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
         return unicode(self.name)
 
     @property
+    def interventions_csv_display(self):
+        return [unicode(i) for i in self.interventions.existing()]
+
+    @property
     def period(self):
         return "%s - %s" % (self.begin_year, self.end_year)
 
