@@ -8,7 +8,7 @@ CHANGELOG
 * Fix DEM optimizations when minimum elevation is zero (fixes #1291)
 * Number of workers and request timeout can be now configured in ``settings.ini``
 * Fix regression for translations of tourism (fixes #1315)
-* Various improvements on trek public template, by Camille Montchicourt
+* Various improvements on trek public template, by Camille Monchicourt
 
 * Set PostgreSQL search_path at database level (fixes #1311)
 * Show 3D and 2D length in detail pages (fixes #1101)
