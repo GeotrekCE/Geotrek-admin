@@ -10,7 +10,7 @@ CHANGELOG
 * Fix regression for translations of tourism (fixes #1315)
 * Various improvements on trek public template, by Camille Monchicourt
 
-* Set PostgreSQL search_path at database level (fixes #1311)
+* Set PostgreSQL search_path at user level (fixes #1311)
 * Show 3D and 2D length in detail pages (fixes #1101)
 * Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
 * Show trail length in list and exports (fixes #1282)

@@ -39,7 +39,9 @@ before_install:
   - sudo /etc/init.d/postgresql restart
   - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
-  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek' SUPERUSER;" -U postgres
+  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek';" -U postgres
+  # django tests require to be superuser to create test db with postgis extension
+  - if [[ $ACTION == test ]]; then psql -c "ALTER USER geotrek SUPERUSER;" -U postgres; fi
   - psql -c 'GRANT ALL PRIVILEGES ON DATABASE geotrekdb TO geotrek;' -U postgres
   - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
   # GDAL-fix -- End (remove with Ubuntu 14.04)

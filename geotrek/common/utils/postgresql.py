@@ -145,6 +145,7 @@ def move_models_to_schemas(app_label):
     # set database level (for all users, and for this database only).
     if app_label == 'common':
         dbname = settings.DATABASES['default']['NAME']
+        dbuser = settings.DATABASES['default']['USER']
         search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))
-        sql = "ALTER DATABASE %s SET search_path=%s;" % (dbname, search_path)
+        sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
         cursor.execute(sql)
