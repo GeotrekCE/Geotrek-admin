@@ -5,9 +5,9 @@
 <h3>{% trans "Works" %}</h3>
 <table class="table">
     <tr>
-        <th>{% trans "Interventions" %}</th>
         <td>
-            {% with columns="infrastructure,name,stake,total_cost,date" %}
+        <strong>{% trans "Interventions" %}</strong>
+            {% with columns="infrastructure,name,status,stake,total_cost,date" %}
                 {% if modelname == "infrastructure" or modelname == "signage" %}
                     {% valuetable object.interventions_set.existing|dictsort:"on_infrastructure" columns=columns %}
                 {% elif modelname == "project" %}

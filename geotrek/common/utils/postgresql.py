@@ -139,3 +139,13 @@ def move_models_to_schemas(app_label):
                 logger.info("Moved %s to schema %s" % (table_name, schema_name))
             except Exception:
                 logger.debug("Table %s already in schema %s" % (table_name, schema_name))
+
+    # For Django, search_path is set in connection options.
+    # But when accessing the database using QGis or ETL, search_path must be
+    # set database level (for all users, and for this database only).
+    if app_label == 'common':
+        dbname = settings.DATABASES['default']['NAME']
+        dbuser = settings.DATABASES['default']['USER']
+        search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))
+        sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
+        cursor.execute(sql)

@@ -7,6 +7,7 @@
             <th>{{ signagemanagementedge|verbose:"organization" }}</th>
             <td>{{ signagemanagementedge.organization }}</td>
         </tr>
+        {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

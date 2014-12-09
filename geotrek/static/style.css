@@ -228,6 +228,7 @@ body.screamshot #altitudegraph {
 .details-panel th.infrastructure {
     width: 30px;
 }
+.details-panel th.status,
 .details-panel th.stake,
 .details-panel th.date,
 .details-panel th.total_cost {

@@ -26,7 +26,7 @@ class YearFilter(Filter):
     def do_filter(self, qs, year):
         return qs.filter(**{
             '%s__year' % self.name: year,
-        })
+        }).distinct()
 
     def filter(self, qs, value):
         try:
