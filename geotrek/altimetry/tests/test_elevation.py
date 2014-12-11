@@ -168,3 +168,28 @@ class ElevationAreaTest(TestCase):
         extent = self.area['extent']
         self.assertEqual(extent['altitudes']['max'], 45)
         self.assertEqual(extent['altitudes']['min'], 0)
+
+
+class LengthTest(TestCase):
+
+    def setUp(self):
+        # Create a simple fake DEM
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+        for y in range(0, 5):
+            for x in range(0, 4):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+        self.path = Path.objects.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+
+    def test_2dlength_is_preserved(self):
+        self.assertEqual(self.path.geom_3d.length, self.path.geom.length)
+
+    def test_3dlength(self):
+        # before smoothing: (1 101 0, 21 101 0, 41 101 0, 61 101 3, 81 101 5, 81 99 15)
+        # after smoothing:  (1 101 0, 21 101 0, 41 101 0, 61 101 1, 81 101 3, 81 99  9)
+        # length: 20 + 20 + (20 ** 2 + 1) ** .5 + (20 ** 2 + 2 ** 2) ** .5 + (2 ** 2 + 6 ** 2) ** .5
+        self.assertEqual(round(self.path.length, 9), 86.449290957)
