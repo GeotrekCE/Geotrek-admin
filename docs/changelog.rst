@@ -5,6 +5,10 @@ CHANGELOG
 0.28.6dev (unreleased)
 -------------------
 
+**Bug fixes**
+
+* Fix 3D length shorter than 2D length (run sql command ``UPDATE l_t_troncon SET geom=geom`` to update altimetry informations of existing geometries)
+
 
 0.28.5 (2014-12-09)
 -------------------
