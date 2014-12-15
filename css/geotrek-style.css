@@ -72,9 +72,10 @@
 #news p {
     font-size: 80%;
     line-height: 1.5;
+    margin-top: 10px;
 }
 
-#news p.mention {
+#news p.mention, #hero p.mention {
     font-size: 70%;
     line-height: 1.5;
     font-style: italic;
@@ -107,6 +108,7 @@ input.error {
 .row.partners section {
 
     margin: 2em 0;
+    min-height: 115px;
 
 }
 
