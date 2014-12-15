@@ -193,3 +193,56 @@ class LengthTest(TestCase):
         # after smoothing:  (1 101 0, 21 101 0, 41 101 0, 61 101 1, 81 101 3, 81 99  9)
         # length: 20 + 20 + (20 ** 2 + 1) ** .5 + (20 ** 2 + 2 ** 2) ** .5 + (2 ** 2 + 6 ** 2) ** .5
         self.assertEqual(round(self.path.length, 9), 86.449290957)
+
+
+class SamplingTest(TestCase):
+
+    step = settings.ALTIMETRIC_PROFILE_PRECISION
+
+    def setUp(self):
+        # Create a fake empty DEM to prevent trigger optimisation to skip sampling
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+
+    def test_1(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 2)
+
+    def test_25(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step)))
+        self.assertEqual(len(path.geom_3d.coords), 2)
+
+    def test_26(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_50(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_51(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1)))
+        self.assertEqual(len(path.geom_3d.coords), 4)
+
+    def test_1m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, 1), (1, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_25m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step), (0, self.step * 2)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_26m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1), (0, self.step * 2 + 2)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
+    def test_50m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2), (0, self.step * 4)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
+    def test_51m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
+        self.assertEqual(len(path.geom_3d.coords), 7)
