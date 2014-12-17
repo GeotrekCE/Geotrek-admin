@@ -7,7 +7,11 @@
 {% else %}
 <tr>
     <th>{{ object|verbose:"length" }}</th>
-    <td>{{ object.length|floatformat }}m</td>
+    <td>
+    {# ``length`` attribute comes from AltimetryMixin and triggers #}
+    <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }}m</span>
+    {# ``geom.length`` is 2D and is computed by GEOS #}
+    <span title="{% trans "2D" %}">(&#8594; {{ object.geom.length|floatformat }}m)</span></td>
 </tr>
 <tr>
     <th>{% trans "Slope" %}</th>

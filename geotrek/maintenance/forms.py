@@ -75,9 +75,6 @@ class InterventionForm(CommonForm):
                     'description',
                     'infrastructure',
 
-                    'pk',
-                    'model',
-
                     css_id="main",
                     css_class="tab-pane active"
                 ),
@@ -168,9 +165,6 @@ class ProjectForm(CommonForm):
                     'constraint',
                     'global_cost',
                     'comments',
-
-                    'pk',
-                    'model',
 
                     css_class="span6"),
                 Div('project_owner',

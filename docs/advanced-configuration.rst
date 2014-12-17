@@ -160,6 +160,8 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
+* To apply these style changes, re-run ``bin/supervisorctl restart all``.
+
 .. code-block :: python
 
     MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
@@ -182,6 +184,9 @@ setting that receives a list of colors :
 
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
+
+**Restart** the application for changes to take effect.
+
 
 External raster layers
 ----------------------
@@ -393,3 +398,20 @@ of *standalone* in the deployment procedure (*or when settings are changed*) :
 ::
 
     make env_prod deploy
+
+
+Control number of workers and request timeouts
+----------------------------------------------
+
+By default, the application runs on 4 processes, and timeouts after 30 seconds.
+
+To control those values, add a section in ``etc/settings.ini`` for each running service.
+See ``conf/settings-defaults.cfg`` for an exhaustive list:
+
+::
+
+    [gunicorn-app-conf]
+    workers = 4
+    timeout = 30
+
+To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.

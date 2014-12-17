@@ -2,6 +2,35 @@
 CHANGELOG
 =========
 
+0.28.5 (2014-12-09)
+-------------------
+
+**Bug fixes**
+
+* Fix DEM optimizations when minimum elevation is zero (fixes #1291)
+* Fix regression for translations of tourism (fixes #1315)
+* Fix duplicate entries with year filter (fixes #1324)
+
+**Documentation**
+
+* French user manual first step about general interface
+
+**New features**
+
+* Set PostgreSQL search_path at user level (fixes #1311)
+* Show 3D and 2D length in detail pages (fixes #1101)
+* Show length and elevation infos in trail and all statuts detail pages (fixes #1222)
+* Show trail length in list and exports (fixes #1282)
+* Replace stake by length in path list (fixes #956, fixes #1281)
+* Add subcontracting in intervention filter (fixes #1144)
+* Add missing fields in project filter (fixes #219, fixes #910)
+* Show status in interventions table among detail pages (fixes #1193)
+* Add missing field in projects exports (ref #1167)
+* Add length column to land module lists
+* Number of workers and request timeout can be now configured in ``settings.ini``
+* Various improvements on trek public template, by Camille Monchicourt
+
+
 0.28.4 (2014-11-21)
 -------------------
 
