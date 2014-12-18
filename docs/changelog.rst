@@ -2,13 +2,14 @@
 CHANGELOG
 =========
 
-0.28.6dev (unreleased)
+0.28.6 (2014-12-18)
 -------------------
 
 **Bug fixes**
 
-* Fix 3D length shorter than 2D length (run sql command ``UPDATE l_t_troncon SET geom=geom`` to update altimetry informations of existing geometries)
+* Fix 3D length shorter than 2D length (run sql command ``UPDATE l_t_troncon SET geom=geom;`` after upgrade to update altimetry informations of existing geometries)
 * Fix translation of "Information desks" in public trek PDF
+* Fix prepare_map_images and prepare_elevation_charts commands failing for deleted objects and for objects without geom
 
 
 0.28.5 (2014-12-09)
