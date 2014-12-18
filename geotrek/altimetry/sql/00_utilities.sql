@@ -16,37 +16,34 @@ CREATE TYPE elevation_infos AS (
 DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
 CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
-DECLARE
-    length float;
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
-
-    length := ST_Length(linegeom);
+    -- But make sure to keep original points so 2D geometry and length is preserved
+    -- Step is the maximal distance between two points
 
     IF ST_ZMin(linegeom) < 0 OR ST_ZMax(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
         RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
 
-    ELSIF length < step THEN
-        RETURN QUERY SELECT add_point_elevation((ST_DumpPoints(linegeom)).geom);
-
     ELSE
         RETURN QUERY
-            WITH linemesure AS
-                 -- Add a mesure dimension to extract steps
-                   (SELECT ST_AddMeasure(linegeom, 0, length) as linem,
-                           generate_series(step, length::int, step) as i),
-                 points2d AS
-                   (SELECT 0 as distance, ST_StartPoint(linegeom) as geom
-                    UNION
-                    SELECT i as distance, ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom FROM linemesure
-                    UNION
-                    SELECT length as distance, ST_EndPoint(linegeom) as geom)
-            SELECT add_point_elevation(p.geom)
-            FROM points2d p
-            ORDER BY p.distance;
+            WITH -- Get endings of each segment of the line
+                 r1 AS (SELECT ST_PointN(linegeom, generate_series(1, ST_NPoints(linegeom)-1)) as p1,
+                               ST_PointN(linegeom, generate_series(2, ST_NPoints(linegeom))) as p2,
+                               generate_series(2, ST_NPoints(linegeom)) = ST_NPoints(linegeom) as is_last),
+                 -- Get the new number of points for this segment (with start points, without end point)
+                 r2 AS (SELECT p1, p2, is_last, ceil(ST_Distance(p1, p2) / step)::integer AS n FROM r1),
+                 -- Get positions (in range [0, 1]) of new points along the segment
+                 r3 AS (SELECT p1, p2, generate_series(0, CASE WHEN is_last THEN n ELSE n - 1 END)/n::double precision AS f FROM r2),
+                 -- Create new points
+                 r4 AS (SELECT ST_MakePoint(ST_X(p1) + (ST_X(p2) - ST_X(p1)) * f,
+                                            ST_Y(p1) + (ST_Y(p2) - ST_Y(p1)) * f) as p,
+                               ST_SRID(p1) AS srid FROM r3),
+                 -- Set SRID of new points
+                 r5 AS (SELECT ST_SetSRID(p, srid) as p FROM r4)
+            SELECT add_point_elevation(p) FROM r5;
     END IF;
 END;
 $$ LANGUAGE plpgsql;

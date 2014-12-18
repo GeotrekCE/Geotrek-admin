@@ -2,7 +2,7 @@ import logging
 
 from django.core.urlresolvers import NoReverseMatch
 
-from mapentity.management.commands.prepare_map_images import Command as PrepareImageCommand
+from geotrek.common.management.commands.prepare_map_images import Command as PrepareImageCommand
 
 from geotrek.altimetry.models import AltimetryMixin
 
