@@ -160,6 +160,8 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
+* To apply these style changes, re-run ``bin/supervisorctl restart all``.
+
 .. code-block :: python
 
     MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
