@@ -4,6 +4,6 @@
 
 prepare-map-image-{{cfg.name}}:
   cmd.run:
-    - name: bin/django prepare_map_images --url=http://{{ salt['network.ip_addrs']('eth0')[0] }}
+    - name: bin/django prepare_map_images --url=http://{{ data.domain }}
     - cwd: {{cfg.project_root}}
     - user: {{cfg.user}}
