@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix 3D length shorter than 2D length (run sql command ``UPDATE l_t_troncon SET geom=geom`` to update altimetry informations of existing geometries)
+* Fix translation of "Information desks" in public trek PDF
 
 
 0.28.5 (2014-12-09)
