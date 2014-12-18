@@ -4,6 +4,6 @@
 
 prepare-elevation-charts-{{cfg.name}}:
   cmd.run:
-    - name: bin/django prepare_elevation_charts --url=http://{{ salt['network.ip_addrs']('eth0')[0] }}
+    - name: bin/django prepare_elevation_charts --url=http://{{ data.domain }}
     - cwd: {{cfg.project_root}}
     - user: {{cfg.user}}
