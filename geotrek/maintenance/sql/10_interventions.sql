@@ -1,3 +1,4 @@
+SELECT create_schema_if_not_exist('gestion');
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
@@ -30,7 +31,7 @@ CREATE TRIGGER m_t_chantier_date_update_tgr
 
 DROP TRIGGER IF EXISTS m_t_evenement_interventions_d_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION delete_related_intervention() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION gestion.delete_related_intervention() RETURNS trigger AS $$
 BEGIN
     UPDATE m_t_intervention SET supprime = NEW.supprime WHERE topology_id = NEW.id;
     RETURN NULL;
@@ -55,7 +56,7 @@ ALTER TABLE m_t_intervention ALTER COLUMN denivelee_negative SET DEFAULT 0;
 
 DROP TRIGGER IF EXISTS m_t_evenement_interventions_iu_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION update_altimetry_evenement_intervention() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION gestion.update_altimetry_evenement_intervention() RETURNS trigger AS $$
 BEGIN
     UPDATE m_t_intervention SET
         longueur = CASE WHEN ST_GeometryType(NEW.geom) <> 'ST_Point' THEN NEW.longueur ELSE longueur END,
@@ -76,7 +77,7 @@ FOR EACH ROW EXECUTE PROCEDURE update_altimetry_evenement_intervention();
 
 DROP TRIGGER IF EXISTS m_t_intervention_altimetry_iu_tgr ON m_t_intervention;
 
-CREATE OR REPLACE FUNCTION update_altimetry_intervention() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION gestion.update_altimetry_intervention() RETURNS trigger AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
@@ -108,7 +109,7 @@ FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
 DROP TRIGGER IF EXISTS m_t_evenement_interventions_area_iu_tgr ON m_t_intervention;
 DROP TRIGGER IF EXISTS m_t_intervention_area_iu_tgr ON m_t_intervention;
 
-CREATE OR REPLACE FUNCTION update_area_intervention() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION gestion.update_area_intervention() RETURNS trigger AS $$
 BEGIN
    NEW.surface := NEW.largeur * NEW.longueur;
    RETURN NEW;

@@ -17,28 +17,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_schema(tablename varchar, schemaname varchar) RETURNS void AS $$
 BEGIN
-    -- If schema is already set, an error is raised.
-    BEGIN
+    -- Move only if the right schema is not already set.
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name=tablename AND table_schema!=schemaname) THEN
         EXECUTE 'ALTER TABLE '|| quote_ident(tablename) ||' SET SCHEMA '|| quote_ident(schemaname) ||';';
-    EXCEPTION
-      WHEN OTHERS THEN
-        RAISE NOTICE 'Table already in schema.';
-    END;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION set_schema_ft(functionname varchar, schemaname varchar) RETURNS void AS $$
-BEGIN
-    -- If destination exists, delete!
-    EXECUTE 'DROP FUNCTION IF EXISTS ' || schemaname || '.' || functionname || ' CASCADE;';
-    -- If schema is already set, an error is raised.
-    BEGIN
-        EXECUTE 'ALTER FUNCTION '|| functionname ||' SET SCHEMA '|| quote_ident(schemaname) ||';';
-    EXCEPTION
-      WHEN OTHERS THEN
-        RAISE NOTICE 'Function already in schema.';
-    END;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -47,14 +29,16 @@ $$ LANGUAGE plpgsql;
 -- Date trigger functions
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION ft_date_insert() RETURNS trigger AS $$
+SELECT create_schema_if_not_exist('geotrek');
+
+CREATE OR REPLACE FUNCTION geotrek.ft_date_insert() RETURNS trigger AS $$
 BEGIN
     NEW.date_insert := statement_timestamp() AT TIME ZONE 'UTC';
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION ft_date_update() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_date_update() RETURNS trigger AS $$
 BEGIN
     NEW.date_update := statement_timestamp() AT TIME ZONE 'UTC';
     RETURN NEW;

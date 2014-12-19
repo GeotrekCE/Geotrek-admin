@@ -4,15 +4,7 @@
 -- All apps managed by South are moved by Geotrek on a post-migrate signal.
 -- Here we move the tables of apps that are not managed by South basically.
 --
-SELECT create_schema_if_not_exist('geotrek');
 SELECT create_schema_if_not_exist('django');
-
--- Move utils to Geotrek
-SELECT set_schema_ft('create_schema_if_not_exist(varchar)', 'geotrek');
-SELECT set_schema_ft('set_schema_ft(varchar, varchar)', 'geotrek');
-SELECT set_schema_ft('set_schema(varchar, varchar)', 'geotrek');
-SELECT set_schema_ft('ft_date_insert()', 'geotrek');
-SELECT set_schema_ft('ft_date_update()', 'geotrek');
 
 -- Move Django internal tables to its schema
 SELECT set_schema('auth_group', 'django');
