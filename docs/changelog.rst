@@ -2,8 +2,12 @@
 CHANGELOG
 =========
 
-0.28.7dev (unreleased)
+0.28.7 (2014-12-22)
 -------------------
+
+**Bug fixes**
+
+* Fix altimetry trigger when TREKKING_TOPOLOGY_ENABLED is set to False
 
 
 0.28.6 (2014-12-18)
