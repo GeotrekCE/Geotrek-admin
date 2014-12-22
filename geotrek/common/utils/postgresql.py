@@ -133,12 +133,12 @@ def move_models_to_schemas(app_label):
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:
-            try:
+            sql = "SELECT 1 FROM information_schema.tables WHERE table_name=%s AND table_schema!=%s"
+            cursor.execute(sql, [table_name, schema_name])
+            if cursor.fetchone():
                 sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
                 cursor.execute(sql)
                 logger.info("Moved %s to schema %s" % (table_name, schema_name))
-            except Exception:
-                logger.debug("Table %s already in schema %s" % (table_name, schema_name))
 
     # For Django, search_path is set in connection options.
     # But when accessing the database using QGis or ETL, search_path must be

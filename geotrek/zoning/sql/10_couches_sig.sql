@@ -1,3 +1,5 @@
+SELECT create_schema_if_not_exist('zonage');
+
 -------------------------------------------------------------------------------
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ ALTER TABLE l_zonage_reglementaire ADD CONSTRAINT l_zonage_reglementaire_geom_is
 
 DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON e_r_evenement_troncon;
 
-CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION zonage.lien_auto_troncon_couches_sig_d() RETURNS trigger AS $$
 DECLARE
     tab varchar;
     eid integer;
@@ -70,7 +72,7 @@ DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON f_t_commune;
 DROP TRIGGER IF EXISTS secteur_troncons_d_tgr ON f_t_secteur;
 DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON f_t_zonage;
 
-CREATE OR REPLACE FUNCTION nettoyage_auto_couches_sig_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION zonage.nettoyage_auto_couches_sig_d() RETURNS trigger AS $$
 BEGIN
     DELETE FROM e_r_evenement_troncon WHERE evenement = OLD.evenement;
     DELETE FROM e_t_evenement WHERE id = OLD.evenement;

@@ -39,7 +39,7 @@ CREATE TRIGGER e_t_evenement_date_update_tgr
 
 DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION evenement_latest_updated_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.evenement_latest_updated_d() RETURNS trigger AS $$
 DECLARE
 BEGIN
     -- Touch latest path
@@ -58,7 +58,7 @@ FOR EACH ROW EXECUTE PROCEDURE evenement_latest_updated_d();
 -- Update geometry of an "evenement"
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION update_geometry_of_evenement(eid integer) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION geotrek.update_geometry_of_evenement(eid integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
     egeom_3d geometry;
@@ -159,7 +159,7 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS e_t_evenement_offset_u_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION update_evenement_geom_when_offset_changes() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_offset_changes() RETURNS trigger AS $$
 BEGIN
     -- Note: We are using an "after" trigger here because the function below
     -- takes topology id as an argument and emits its own SQL queries to read
@@ -183,7 +183,7 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_offset_changes();
 
 DROP TRIGGER IF EXISTS e_t_evenement_geom_iu_tgr ON e_t_evenement;
 
-CREATE OR REPLACE FUNCTION evenement_elevation_iu() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.evenement_elevation_iu() RETURNS trigger AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN

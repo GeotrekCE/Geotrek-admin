@@ -1,14 +1,8 @@
 -------------------------------------------------------------------------------
--- Length trigger function
--------------------------------------------------------------------------------
-
-DROP FUNCTION IF EXISTS ft_longueur() CASCADE;
-
--------------------------------------------------------------------------------
 -- Interpolate along : the opposite of ST_LocateAlong
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
+CREATE OR REPLACE FUNCTION geotrek.ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
 DECLARE
     linear_offset float;
     shortest_line geometry;
@@ -39,7 +33,7 @@ $$ LANGUAGE plpgsql;
 -- A smart ST_Line_Substring that supports start > end
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION ST_Smart_Line_Substring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
+CREATE OR REPLACE FUNCTION geotrek.ST_Smart_Line_Substring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
 DECLARE
     egeom geometry;
 BEGIN
@@ -53,14 +47,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
     RETURN ST_Distance(ST_EndPoint(line1), ST_StartPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
     RETURN ST_Distance(ST_StartPoint(line1), ST_EndPoint(line2)) < 1;
 END;
@@ -71,7 +65,7 @@ $$ LANGUAGE plpgsql;
 -- A smart ST_MakeLine that will re-oder linestring before merging them
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
 DECLARE
     result geometry;
     t_line geometry;
