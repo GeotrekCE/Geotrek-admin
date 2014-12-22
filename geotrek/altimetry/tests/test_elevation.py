@@ -25,34 +25,36 @@ class ElevationTest(TestCase):
         self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     def test_elevation_path(self):
-        self.assertEqual(self.path.ascent, 20)
-        self.assertEqual(self.path.descent, -3)
+        self.assertEqual(self.path.ascent, 19)
+        self.assertEqual(self.path.descent, -1)
         self.assertEqual(self.path.min_elevation, 4)
-        self.assertEqual(self.path.max_elevation, 22)
-        self.assertEqual(len(self.path.geom_3d.coords), 6)
+        self.assertEqual(self.path.max_elevation, 23)
+        self.assertEqual(len(self.path.geom_3d.coords), 7)
 
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
-        self.assertEqual(len(profile), 6)
+        self.assertEqual(len(profile), 7)
         self.assertEqual(profile[0][0], 0.0)
         self.assertEqual(profile[-1][0], 125.0)
         self.assertEqual(profile[0][3], 5.0)
-        self.assertEqual(profile[1][3], 7.0)
-        self.assertEqual(profile[2][3], 4.0)
-        self.assertEqual(profile[3][3], 9.0)
-        self.assertEqual(profile[4][3], 14.0)
-        self.assertEqual(profile[5][3], 22.0)
+        self.assertEqual(profile[1][3], 4.0)
+        self.assertEqual(profile[2][3], 7.0)
+        self.assertEqual(profile[3][3], 11.0)
+        self.assertEqual(profile[4][3], 13.0)
+        self.assertEqual(profile[5][3], 16.0)
+        self.assertEqual(profile[6][3], 23.0)
 
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(self.path, start=0.2, end=0.8)
         topo.save()
 
-        self.assertEqual(topo.ascent, 5)
-        self.assertEqual(topo.descent, -2)
+        profile = topo.get_elevation_profile()
+        self.assertEqual(topo.ascent, 7)
+        self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 5)
-        self.assertEqual(topo.max_elevation, 10)
-        self.assertEqual(len(topo.geom_3d.coords), 4)
+        self.assertEqual(topo.max_elevation, 12)
+        self.assertEqual(len(topo.geom_3d.coords), 5)
 
     def test_elevation_topology_point(self):
         topo = TopologyFactory.create(no_path=True)
@@ -207,21 +209,37 @@ class SamplingTest(TestCase):
         cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
 
+    def test_0_first(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_0_last(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, 1), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
     def test_1(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, 1)))
         self.assertEqual(len(path.geom_3d.coords), 2)
 
+    def test_24(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step - 1)))
+        self.assertEqual(len(path.geom_3d.coords), 2)
+
     def test_25(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step)))
-        self.assertEqual(len(path.geom_3d.coords), 2)
+        self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_26(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
+    def test_49(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
     def test_50(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2)))
-        self.assertEqual(len(path.geom_3d.coords), 3)
+        self.assertEqual(len(path.geom_3d.coords), 4)
 
     def test_51(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1)))
@@ -231,17 +249,25 @@ class SamplingTest(TestCase):
         path = Path.objects.create(geom=LineString((0, 0), (0, 1), (1, 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
+    def test_24m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step - 1), (0, self.step * 2 - 2)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
     def test_25m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step), (0, self.step * 2)))
-        self.assertEqual(len(path.geom_3d.coords), 3)
+        self.assertEqual(len(path.geom_3d.coords), 5)
 
     def test_26m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1), (0, self.step * 2 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 5)
 
+    def test_49m(self):
+        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1), (0, self.step * 4 - 2)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
     def test_50m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2), (0, self.step * 4)))
-        self.assertEqual(len(path.geom_3d.coords), 5)
+        self.assertEqual(len(path.geom_3d.coords), 7)
 
     def test_51m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))

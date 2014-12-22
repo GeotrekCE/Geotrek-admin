@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.28.8 (2014-12-22)
+-------------------
+
+**Bug fixes**
+
+* Fix altimetry sampling for segment with 0 length (rel #1337)
+
+
 0.28.7 (2014-12-22)
 -------------------
 

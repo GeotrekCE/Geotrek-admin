@@ -32,9 +32,9 @@ BEGIN
                  r1 AS (SELECT ST_PointN(linegeom, generate_series(1, ST_NPoints(linegeom)-1)) as p1,
                                ST_PointN(linegeom, generate_series(2, ST_NPoints(linegeom))) as p2,
                                generate_series(2, ST_NPoints(linegeom)) = ST_NPoints(linegeom) as is_last),
-                 -- Get the new number of points for this segment (with start points, without end point)
-                 r2 AS (SELECT p1, p2, is_last, ceil(ST_Distance(p1, p2) / step)::integer AS n FROM r1),
-                 -- Get positions (in range [0, 1]) of new points along the segment
+                 -- Get the number of sub-segments
+                 r2 AS (SELECT p1, p2, is_last, trunc(ST_Distance(p1, p2) / step)::integer + 1 AS n FROM r1),
+                 -- Get relative positions of new points along the segment (without last point, except for last segment)
                  r3 AS (SELECT p1, p2, generate_series(0, CASE WHEN is_last THEN n ELSE n - 1 END)/n::double precision AS f FROM r2),
                  -- Create new points
                  r4 AS (SELECT ST_MakePoint(ST_X(p1) + (ST_X(p2) - ST_X(p1)) * f,
@@ -132,7 +132,7 @@ BEGIN
 
     -- Compute slope
     result.slope := 0.0;
-    IF ST_Length2D(result.draped) > 0 THEN
+    IF ST_Length2D(geom) > 0 THEN
         result.slope := (result.max_elevation - result.min_elevation) / ST_Length2D(geom);
     END IF;
 
