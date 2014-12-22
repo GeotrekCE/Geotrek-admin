@@ -77,7 +77,7 @@ class UtilsTest(TestCase):
         def raisenotice():
             cursor = connection.cursor()
             cursor.execute("""
-                CREATE OR REPLACE FUNCTION raisenotice() RETURNS boolean AS $$
+                CREATE OR REPLACE FUNCTION geotrek.raisenotice() RETURNS boolean AS $$
                 BEGIN
                 RAISE NOTICE 'hello'; RETURN FALSE;
                 END; $$ LANGUAGE plpgsql;

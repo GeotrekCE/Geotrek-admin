@@ -1,6 +1,6 @@
 DROP TRIGGER IF EXISTS o_r_create_relationships_iu_tgr ON o_r_itineraire_itineraire;
 
-CREATE OR REPLACE FUNCTION create_relationships_iu() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION rando.create_relationships_iu() RETURNS trigger AS $$
 DECLARE
     t_count integer;
 BEGIN
@@ -26,7 +26,7 @@ FOR EACH ROW EXECUTE PROCEDURE create_relationships_iu();
 
 DROP TRIGGER IF EXISTS o_r_cleanup_relationships_d_tgr ON o_r_itineraire_itineraire;
 
-CREATE OR REPLACE FUNCTION cleanup_relationships_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION rando.cleanup_relationships_d() RETURNS trigger AS $$
 DECLARE
 BEGIN
     DELETE FROM o_r_itineraire_itineraire

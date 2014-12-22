@@ -1,0 +1,22 @@
+-- Cleanup public schema if installed before release 0.28
+DROP VIEW IF EXISTS public.l_v_sentier;
+DROP FUNCTION IF EXISTS public.ST_InterpolateAlong(geometry, geometry) CASCADE;
+DROP FUNCTION IF EXISTS public.ST_Smart_Line_Substring(geometry, float, float) CASCADE;
+DROP FUNCTION IF EXISTS public.ft_IsBefore(geometry, geometry) CASCADE;
+DROP FUNCTION IF EXISTS public.ft_IsAfter(geometry, geometry) CASCADE;
+DROP FUNCTION IF EXISTS public.ft_Smart_MakeLine(geometry[]) CASCADE;
+DROP FUNCTION IF EXISTS public.evenement_latest_updated_d() CASCADE;
+DROP FUNCTION IF EXISTS public.update_geometry_of_evenement(integer) CASCADE;
+DROP FUNCTION IF EXISTS public.update_evenement_geom_when_offset_changes() CASCADE;
+DROP FUNCTION IF EXISTS public.evenement_elevation_iu() CASCADE;
+DROP FUNCTION IF EXISTS public.evenement_elevation_iu() CASCADE;
+DROP FUNCTION IF EXISTS public.ft_troncon_interpolate(integer, geometry) CASCADE;
+DROP FUNCTION IF EXISTS public.ft_evenements_troncons_geometry() CASCADE;
+DROP FUNCTION IF EXISTS public.ft_evenements_troncons_junction_point_iu() CASCADE;
+DROP FUNCTION IF EXISTS public.check_path_not_overlap(integer, geometry) CASCADE;
+DROP FUNCTION IF EXISTS public.update_evenement_geom_when_troncon_changes() CASCADE;
+DROP FUNCTION IF EXISTS public.elevation_troncon_iu() CASCADE;
+DROP FUNCTION IF EXISTS public.troncons_related_objects_d() CASCADE;
+DROP FUNCTION IF EXISTS public.troncon_latest_updated_d() CASCADE;
+DROP FUNCTION IF EXISTS public.troncons_snap_extremities() CASCADE;
+DROP FUNCTION IF EXISTS public.troncons_evenement_intersect_split() CASCADE;

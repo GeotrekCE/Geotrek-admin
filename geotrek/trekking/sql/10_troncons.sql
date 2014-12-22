@@ -1,6 +1,8 @@
+SELECT create_schema_if_not_exist('rando');
+
 DROP TRIGGER IF EXISTS l_t_unpublish_trek_d_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION troncons_unpublish_trek_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION rando.troncons_unpublish_trek_d() RETURNS trigger AS $$
 DECLARE
 BEGIN
     -- Un-published treks because they might be broken

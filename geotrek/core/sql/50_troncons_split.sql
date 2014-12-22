@@ -1,6 +1,6 @@
 DROP TRIGGER IF EXISTS l_t_troncon_00_snap_geom_iu_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION troncons_snap_extremities() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.troncons_snap_extremities() RETURNS trigger AS $$
 DECLARE
     linestart geometry;
     lineend geometry;
@@ -88,7 +88,7 @@ FOR EACH ROW EXECUTE PROCEDURE troncons_snap_extremities();
 DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_10_split_geom_iu_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION troncons_evenement_intersect_split() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.troncons_evenement_intersect_split() RETURNS trigger AS $$
 DECLARE
     troncon record;
     tid_clone integer;

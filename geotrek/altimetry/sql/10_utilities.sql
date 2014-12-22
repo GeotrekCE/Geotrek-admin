@@ -13,8 +13,7 @@ CREATE TYPE elevation_infos AS (
 );
 
 
-DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
-CREATE OR REPLACE FUNCTION ft_drape_line(linegeom geometry, step integer)
+CREATE OR REPLACE FUNCTION geotrek.ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
 BEGIN
     -- Use sampling steps for draping geometry on DEM
@@ -50,7 +49,7 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION add_point_elevation(geom geometry) RETURNS geometry AS $$
+CREATE OR REPLACE FUNCTION geotrek.add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
     ele integer;
     geom3d geometry;
@@ -75,7 +74,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;
