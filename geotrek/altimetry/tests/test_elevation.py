@@ -49,7 +49,7 @@ class ElevationTest(TestCase):
         topo.add_path(self.path, start=0.2, end=0.8)
         topo.save()
 
-        profile = topo.get_elevation_profile()
+        topo.get_elevation_profile()
         self.assertEqual(topo.ascent, 7)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 5)
