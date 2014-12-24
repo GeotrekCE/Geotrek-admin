@@ -2,7 +2,7 @@ from .prod import *  # noqa
 
 
 LEAFLET_CONFIG['TILES'] = [
-    (gettext_noop('Scan'), 'http://{s}.tilestream.makina-corpus.net/v2/osmtopo/{z}/{x}/{y}.png', '&copy; OSM contributors - Topo by Makina Corpus'),
+    #(gettext_noop('Scan'), 'http://{s}.tilestream.makina-corpus.net/v2/osmtopo/{z}/{x}/{y}.png', '&copy; OSM contributors - Topo by Makina Corpus'),
     (gettext_noop('OSM'), 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '&copy; OSM contributors'),
     (gettext_noop('Ortho'), 'https://{s}.tiles.mapbox.com/v3/makina-corpus.i3p1001l/{z}/{x}/{y}.png', '&copy; MapBox Satellite'),
 ]
