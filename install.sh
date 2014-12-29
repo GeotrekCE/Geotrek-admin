@@ -479,6 +479,8 @@ function geotrek_setup {
                 sudo rm -f /etc/init/supervisor.conf
             fi
 
+            sudo cp etc/logrotate.conf /etc/logrotate.d/geotrek
+
             echo_step "Enable Geotrek services and start..."
             sudo cp etc/init/supervisor.conf /etc/init/geotrek.conf
             sudo stop geotrek
