@@ -5,7 +5,9 @@ CHANGELOG
 0.28.9dev (unreleased)
 -------------------
 
-*
+**Bug fixes**
+
+* Fix permissions required to sync static Web pages
 
 
 0.28.8 (2014-12-22)
