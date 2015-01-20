@@ -377,38 +377,38 @@ class BasicJSONAPITest(object):
         self.poi.add_path(path, start=0.5, end=0.5)
 
     def test_thumbnail(self):
-        self.assertEqual(self.result['thumbnail'],
+        self.assertEqual(self.result['properties']['thumbnail'],
                          os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
 
     def test_published_status(self):
-        self.assertDictEqual(self.result['published_status'][0],
+        self.assertDictEqual(self.result['properties']['published_status'][0],
                              {u'lang': u'en', u'status': False, u'language': u'English'})
 
     def test_pictures(self):
-        self.assertDictEqual(self.result['pictures'][0],
+        self.assertDictEqual(self.result['properties']['pictures'][0],
                              {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})
 
     def test_cities(self):
-        self.assertDictEqual(self.result['cities'][0],
+        self.assertDictEqual(self.result['properties']['cities'][0],
                              {u"code": self.city.code,
                               u"name": self.city.name})
 
     def test_districts(self):
-        self.assertDictEqual(self.result['districts'][0],
+        self.assertDictEqual(self.result['properties']['districts'][0],
                              {u"id": self.district.id,
                               u"name": self.district.name})
 
     def test_themes(self):
-        self.assertDictEqual(self.result['themes'][0],
+        self.assertDictEqual(self.result['properties']['themes'][0],
                              {u"id": self.theme.id,
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
                               u"label": self.theme.label})
 
     def test_treks(self):
-        self.assertDictEqual(self.result['treks'][0], {
+        self.assertDictEqual(self.result['properties']['treks'][0], {
             u'pk': self.trek.pk,
             u'id': self.trek.id,
             u'slug': self.trek.slug,
@@ -416,7 +416,7 @@ class BasicJSONAPITest(object):
             u'url': u'/trek/%s/' % self.trek.id})
 
     def test_pois(self):
-        self.assertDictEqual(self.result['pois'][0], {
+        self.assertDictEqual(self.result['properties']['pois'][0], {
             u'id': self.poi.id,
             u'slug': self.poi.slug,
             u'name': self.poi.name,
@@ -439,29 +439,32 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
+            'geometry', 'id', 'properties', 'type'],
+            sorted(self.result.keys()))
+        self.assertEqual([
             'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
-            'filelist_url', 'id', 'map_image_url', 'name', 'pictures', 'pois',
+            'filelist_url', 'map_image_url', 'name', 'pictures', 'pois',
             'practical_info', 'printable', 'publication_date', 'published',
             'published_status', 'slug', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks',
             'type1', 'type2', 'website'],
-            sorted(self.result.keys()))
+            sorted(self.result['properties'].keys()))
 
     def test_type1(self):
-        self.assertDictEqual(self.result['type1'][0],
+        self.assertDictEqual(self.result['properties']['type1'][0],
                              {u"id": self.type1.id,
                               u"name": self.type1.label,
                               u"in_list": self.type1.in_list})
 
     def test_type2(self):
-        self.assertDictEqual(self.result['type2'][0],
+        self.assertDictEqual(self.result['properties']['type2'][0],
                              {u"id": self.type2.id,
                               u"name": self.type2.label,
                               u"in_list": self.type2.in_list})
 
     def test_category(self):
-        self.assertDictEqual(self.result['category'], {
+        self.assertDictEqual(self.result['properties']['category'], {
             u"id": self.category.id,
             u"types": [
                 {u"id": self.type1.id,
@@ -482,23 +485,26 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
+            'geometry', 'id', 'properties', 'type'],
+            sorted(self.result.keys()))
+        self.assertEqual([
             'accessibility', 'areas', 'begin_date', 'booking',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
-            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
+            'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'public', 'publication_date', 'published', 'published_status',
             'slug', 'speaker', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks', 'type', 'website'],
-            sorted(self.result.keys()))
+            sorted(self.result['properties'].keys()))
 
     def test_type(self):
-        self.assertDictEqual(self.result['type'],
+        self.assertDictEqual(self.result['properties']['type'],
                              {u"id": self.content.type.id,
                               u"name": self.content.type.type})
 
     def test_public(self):
-        self.assertDictEqual(self.result['public'],
+        self.assertDictEqual(self.result['properties']['public'],
                              {u"id": self.content.public.id,
                               u"name": self.content.public.public})
 

@@ -1,4 +1,5 @@
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin, PictogramSerializerMixin,
                                         PicturesSerializerMixin, TranslatedModelSerializer)
@@ -59,7 +60,8 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                                 ZoningSerializerMixin, TranslatedModelSerializer):
+                                 ZoningSerializerMixin, TranslatedModelSerializer,
+                                 GeoFeatureModelSerializer):
     themes = ThemeSerializer(many=True)
     category = TouristicContentCategorySerializer()
     type1 = TouristicContentTypeSerializer(many=True)
@@ -73,6 +75,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
     class Meta:
         model = tourism_models.TouristicContent
+        geo_field = 'geom'
         fields = ('id', 'description', 'description_teaser', 'category', 'themes',
                   'contact', 'email', 'website', 'practical_info', 'type1', 'type2',
                   'touristic_contents', 'touristic_events', 'treks', 'pois') + \
@@ -98,7 +101,8 @@ class TouristicEventPublicSerializer(TranslatedModelSerializer):
 
 
 class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                               ZoningSerializerMixin, TranslatedModelSerializer):
+                               ZoningSerializerMixin, TranslatedModelSerializer,
+                               GeoFeatureModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
     public = TouristicEventPublicSerializer()
@@ -111,6 +115,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     class Meta:
         model = tourism_models.TouristicEvent
+        geo_field = 'geom'
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',

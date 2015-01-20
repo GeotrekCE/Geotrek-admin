@@ -4,6 +4,7 @@ import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from mapentity.serializers import GPXSerializer
 
@@ -97,7 +98,7 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
 
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, ZoningSerializerMixin,
-                     TranslatedModelSerializer):
+                     TranslatedModelSerializer, GeoFeatureModelSerializer):
     duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
@@ -127,6 +128,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     class Meta:
         model = trekking_models.Trek
+        geo_field = 'geom'
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = ('id', 'departure', 'arrival', 'duration',
                   'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
@@ -181,7 +184,8 @@ class RelatedPOISerializer(TranslatedModelSerializer):
 
 
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                    ZoningSerializerMixin, TranslatedModelSerializer):
+                    ZoningSerializerMixin, TranslatedModelSerializer,
+                    GeoFeatureModelSerializer):
     type = POITypeSerializer()
 
     def __init__(self, *args, **kwargs):
@@ -194,6 +198,8 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     class Meta:
         model = trekking_models.Trek
+        geo_field = 'geom'
+        id_field = 'id'
         fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation') + \
             ZoningSerializerMixin.Meta.fields + \
