@@ -11,6 +11,10 @@
     background: url('../images/logo_geotrek.png') -3px -2px no-repeat;
 }
 
+#logo2 {
+    background: url('../images/logo_makina_big.png') no-repeat;
+}
+
     #logo span {
         padding-left: 5em;
     }

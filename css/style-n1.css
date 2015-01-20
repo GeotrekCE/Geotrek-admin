@@ -46,11 +46,11 @@
 	{
 		position: absolute;
 		z-index: 1;
-		top: 2em;
+		top: 55px;
 		left: 50%;
 		width: 12em;
-		margin-left: -4.5em;
-		height: 4em;
+		margin-left: -15em;
+		height: 100px;
 	}
 	
 		#logo a
@@ -70,6 +70,23 @@
 			text-align: center;
 			text-transform: uppercase;
 		}
+
+        #logo2
+        {
+                position: absolute;
+                z-index: 1;
+                top: 2em;
+                left: 50%;
+                width: 300px;
+                margin-left: 0em;
+                height: 110px;
+        }
+                #logo2 a
+                {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                }
 
 	/*#nav
 	{
