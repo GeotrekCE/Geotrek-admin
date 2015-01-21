@@ -210,12 +210,12 @@ class TouristicEventDelete(MapEntityDelete):
 
 
 class TouristicContentViewSet(MapEntityViewSet):
-    queryset = TouristicContent.objects.existing()
+    queryset = TouristicContent.objects.existing().transform(settings.API_SRID, field_name='geom')
     serializer_class = TouristicContentSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
 
 class TouristicEventViewSet(MapEntityViewSet):
-    queryset = TouristicEvent.objects.existing()
+    queryset = TouristicEvent.objects.existing().transform(settings.API_SRID, field_name='geom')
     serializer_class = TouristicEventSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]

@@ -340,12 +340,12 @@ class WebLinkCreatePopup(CreateView):
 
 
 class TrekViewSet(MapEntityViewSet):
-    queryset = Trek.objects.existing()
+    queryset = Trek.objects.existing().transform(settings.API_SRID, field_name='geom')
     serializer_class = TrekSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
 
 class POIViewSet(MapEntityViewSet):
-    queryset = POI.objects.existing()
+    queryset = POI.objects.existing().transform(settings.API_SRID, field_name='geom')
     serializer_class = POISerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
