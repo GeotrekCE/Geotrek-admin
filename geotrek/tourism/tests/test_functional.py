@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.common.tests import CommonGeoJsonTest
+from geotrek.common.tests import CommonTest
 from geotrek.authent.models import default_structure
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.factories import (TouristicContentFactory,
@@ -9,7 +9,7 @@ from geotrek.tourism.factories import (TouristicContentFactory,
 from mapentity.factories import SuperUserFactory
 
 
-class TouristicContentViewsTests(CommonGeoJsonTest):
+class TouristicContentViewsTests(CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = SuperUserFactory
@@ -28,7 +28,7 @@ class TouristicContentViewsTests(CommonGeoJsonTest):
         }
 
 
-class TouristicEventViewsTests(CommonGeoJsonTest):
+class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = SuperUserFactory

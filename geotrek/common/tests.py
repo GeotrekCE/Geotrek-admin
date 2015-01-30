@@ -1,5 +1,4 @@
 import os
-import json
 
 import mock
 
@@ -23,20 +22,6 @@ from . import check_srid_has_meter_unit
 class CommonTest(AuthentFixturesTest, MapEntityTest):
     def get_bad_data(self):
         return {'topology': 'doh!'}, _(u'Topology is not valid.')
-
-
-class CommonGeoJsonTest(CommonTest):
-    def test_api_list_for_model(self):
-        if self.model is None:
-            return  # Abstract test should not run
-        self.login()
-
-        obj = self.modelfactory()
-        list_url = '/api/{modelname}s/'.format(modelname=self.model._meta.module_name)
-        response = self.client.get(list_url)
-        self.assertEqual(response.status_code, 200)
-        first_result = json.loads(response.content)['features'][0]
-        self.assertEqual(first_result['id'], obj.pk)
 
 
 class StartupCheckTest(TestCase):

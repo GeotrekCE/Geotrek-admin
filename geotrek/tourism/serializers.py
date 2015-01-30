@@ -1,5 +1,4 @@
 from rest_framework import serializers as rest_serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin, PictogramSerializerMixin,
                                         PicturesSerializerMixin, TranslatedModelSerializer)
@@ -60,8 +59,7 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                                 ZoningSerializerMixin, TranslatedModelSerializer,
-                                 GeoFeatureModelSerializer):
+                                 ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     category = TouristicContentCategorySerializer()
     type1 = TouristicContentTypeSerializer(many=True)
@@ -101,8 +99,7 @@ class TouristicEventPublicSerializer(TranslatedModelSerializer):
 
 
 class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                               ZoningSerializerMixin, TranslatedModelSerializer,
-                               GeoFeatureModelSerializer):
+                               ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
     public = TouristicEventPublicSerializer()
