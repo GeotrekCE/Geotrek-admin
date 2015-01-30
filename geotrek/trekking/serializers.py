@@ -127,6 +127,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     class Meta:
         model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        geo_field = 'geom'
         fields = ('id', 'departure', 'arrival', 'duration',
                   'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
@@ -194,6 +196,8 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     class Meta:
         model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        geo_field = 'geom'
         fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation') + \
             ZoningSerializerMixin.Meta.fields + \

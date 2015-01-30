@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
-                             MapEntityDetail, MapEntityDelete)
+                             MapEntityDetail, MapEntityDelete, MapEntityViewSet)
 from rest_framework import generics as rest_generics
 from rest_framework import permissions as rest_permissions
 
@@ -23,7 +23,8 @@ from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
 from .models import TouristicContent, TouristicEvent, TouristicContentCategory
-from .serializers import TouristicContentCategorySerializer
+from .serializers import (TouristicContentCategorySerializer,
+                          TouristicContentSerializer, TouristicEventSerializer)
 
 
 logger = logging.getLogger(__name__)
@@ -206,3 +207,15 @@ class TouristicEventDelete(MapEntityDelete):
     @same_structure_required('tourism:touristicevent_detail')
     def dispatch(self, *args, **kwargs):
         return super(TouristicEventDelete, self).dispatch(*args, **kwargs)
+
+
+class TouristicContentViewSet(MapEntityViewSet):
+    queryset = TouristicContent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    serializer_class = TouristicContentSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+
+class TouristicEventViewSet(MapEntityViewSet):
+    queryset = TouristicEvent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    serializer_class = TouristicEventSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]

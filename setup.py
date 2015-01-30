@@ -30,6 +30,7 @@ setup(
         'tif2geojson',
         'mapentity',
         'pytz',
+        'djangorestframework-gis',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

@@ -10,10 +10,11 @@ from django.contrib.auth.decorators import login_required
 from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin)
+                             LastModifiedMixin, MapEntityViewSet)
 from mapentity.serializers import plain_text
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
+from rest_framework import permissions as rest_permissions
 
 from geotrek.core.views import CreateFromTopologyMixin
 
@@ -24,7 +25,7 @@ from geotrek.tourism.views import InformationDeskGeoJSON
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
-from .serializers import TrekGPXSerializer, TrekSerializer
+from .serializers import TrekGPXSerializer, TrekSerializer, POISerializer
 
 
 class FlattenPicturesMixin(object):
@@ -336,3 +337,15 @@ class WebLinkCreatePopup(CreateView):
         return HttpResponse("""
             <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
+
+
+class TrekViewSet(MapEntityViewSet):
+    queryset = Trek.objects.existing().transform(settings.API_SRID, field_name='geom')
+    serializer_class = TrekSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+
+class POIViewSet(MapEntityViewSet):
+    queryset = POI.objects.existing().transform(settings.API_SRID, field_name='geom')
+    serializer_class = POISerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
