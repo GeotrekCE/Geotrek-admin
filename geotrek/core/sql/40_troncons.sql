@@ -98,9 +98,11 @@ DECLARE
 BEGIN
     -- Geometry of linear topologies are always updated
     -- Geometry of point topologies are updated if offset = 0
-    FOR eid IN SELECT DISTINCT e.id
+    FOR eid IN SELECT e.id
                FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id AND (et.pk_debut != et.pk_fin OR e.decallage = 0.0)
+               WHERE et.troncon = NEW.id AND et.evenement = e.id
+               GROUP BY e.id
+               HAVING BOOL_OR(et.pk_debut != et.pk_fin) OR e.decallage = 0.0
     LOOP
         PERFORM update_geometry_of_evenement(eid);
     END LOOP;
@@ -108,7 +110,9 @@ BEGIN
     -- Special case of point geometries with offset != 0
     FOR eid, egeom IN SELECT e.id, e.geom
                FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id AND et.pk_debut = et.pk_fin AND e.decallage != 0.0
+               WHERE et.troncon = NEW.id AND et.evenement = e.id
+               GROUP BY e.id
+               HAVING COUNT(et.id) = 1 AND BOOL_OR(et.pk_debut = et.pk_fin) AND e.decallage != 0.0
     LOOP
         SELECT * INTO linear_offset, side_offset FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
         UPDATE e_t_evenement SET decallage = side_offset WHERE id = eid;

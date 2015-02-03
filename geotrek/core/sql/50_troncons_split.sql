@@ -359,7 +359,7 @@ BEGIN
                                     FROM e_r_evenement_troncon et,
                                          e_t_evenement e
                                    WHERE et.evenement = e.id
-                                     AND et.pk_debut = et.pk_debut
+                                     AND et.pk_debut = et.pk_fin
                                      AND e.decallage > 0
                                      AND et.troncon = troncon.id
                                      AND et.id = ANY(existing_et)),
@@ -378,7 +378,7 @@ BEGIN
                 UPDATE l_t_troncon t SET geom = geom
                   FROM e_r_evenement_troncon et
                  WHERE t.id = et.troncon
-                   AND et.pk_debut = et.pk_debut
+                   AND et.pk_debut = et.pk_fin
                    AND et.id = ANY(existing_et);
             END IF;
 
