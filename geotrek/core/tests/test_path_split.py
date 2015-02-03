@@ -818,6 +818,28 @@ class SplitPathLineTopologyTest(TestCase):
                               [(1, 'AB'), (1, 'AB')])
         self.assertTrue(topology.geom.equals(topogeom))
 
+    def test_split_on_topology_with_offset_and_point(self):
+        """
+            A               B
+            +---------------+
+                >=======+
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (5, 0)))
+        topology = TopologyFactory.create(no_path=True, offset=1)
+        topology.add_path(ab, start=0.2, end=0.6, order=1)
+        topology.add_path(ab, start=0.6, end=0.6, order=2)
+        topology.add_path(ab, start=0.6, end=0.8, order=3)
+        self.assertEqual(len(topology.aggregations.all()), 3)
+
+        topogeom = topology.geom
+
+        PathFactory.create(name="split", geom=LineString((2, -2), (2, 2)))
+
+        topology.reload()
+        self.assertItemsEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
+                              [(1, 'AB'), (1, 'AB'), (2, 'AB'), (3, 'AB')])
+        self.assertTrue(topology.geom.equals(topogeom))
+
 
 class SplitPathPointTopologyTest(TestCase):
 
