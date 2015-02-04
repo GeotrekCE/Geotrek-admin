@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix permissions required to sync static Web pages
+* Fix geom computation on line topologies with offset
 
 
 0.28.8 (2014-12-22)
