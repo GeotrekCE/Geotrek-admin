@@ -5,6 +5,10 @@ CHANGELOG
 0.28.9dev (unreleased)
 -------------------
 
+**New features**
+
+* GeoJSON API with all properties for Trek and Tourism
+
 **Bug fixes**
 
 * Fix permissions required to sync static Web pages
