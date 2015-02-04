@@ -48,32 +48,26 @@ Documentation
 License
 -------
 
-    * OpenSource - BSD
-    * Copyright (c) 2012-2014 - Parc National des Écrins - Parc National du Mercantour - Parco delle Alpi Marittime - Makina Corpus
-
-
-.. image:: http://geotrek.fr/images/logo-pne.png
-    :target: http://www.ecrins-parcnational.fr
-
-
-.. image:: http://geotrek.fr/images/logo-pnm.png
-    :target: http://www.mercantour.eu
-
-
-.. image:: http://geotrek.fr/images/logo-pnam.png
-    :target: http://www.parcoalpimarittime.it
-
-
-.. image:: http://geotrek.fr/images/logo-pnrgc.png
-    :target: http://www.parc-grands-causses.fr
-
-
-.. image:: http://geotrek.fr/images/logo-guillestrois.png
-    :target: http://www.guillestrois.com
-
+* OpenSource - BSD
+* Copyright (c) 2012-2015 - Makina Corpus
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
+    :align: right
+
+
+----------
+
+.. image:: http://geotrek.fr/images/parc_ecrins_big.png
+    :target: http://www.ecrins-parcnational.fr
+
+
+.. image:: http://geotrek.fr/images/parc_mercantour_big.png
+    :target: http://www.mercantour.eu
+
+
+.. image:: http://geotrek.fr/images/alpi_maritime_big.png
+    :target: http://www.parcoalpimarittime.it
 
 
 Status of sub-projects

@@ -337,6 +337,8 @@
                 ["read_touristiccontent", "tourism", "touristiccontent"],
                 ["export_touristiccontent", "tourism", "touristiccontent"],
 
+                ["read_flatpage", "flatpages", "flatpage"],
+
                 ["add_report", "feedback", "report"]
             ]
         }

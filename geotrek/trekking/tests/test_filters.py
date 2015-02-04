@@ -1,3 +1,5 @@
+# Make sure land filters are set up when testing
+from geotrek.land.filters import *  # NOQA
 from geotrek.land.tests.test_filters import LandFiltersTest
 
 from geotrek.trekking.filters import TrekFilterSet

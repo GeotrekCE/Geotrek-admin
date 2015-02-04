@@ -355,14 +355,15 @@ BEGIN
 
             -- For each existing point topology with offset, re-attach it
             -- to the closest path, among those splitted.
-            WITH existing_rec AS (SELECT et.id, e.decallage, e.geom
+            WITH existing_rec AS (SELECT MAX(et.id) AS id, e.decallage, e.geom
                                     FROM e_r_evenement_troncon et,
                                          e_t_evenement e
                                    WHERE et.evenement = e.id
-                                     AND et.pk_debut = et.pk_debut
                                      AND e.decallage > 0
                                      AND et.troncon = troncon.id
-                                     AND et.id = ANY(existing_et)),
+                                     AND et.id = ANY(existing_et)
+                                     GROUP BY e.id
+                                     HAVING COUNT(et.id) = 1 AND BOOL_OR(et.pk_debut = et.pk_fin)),
                  closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
                                     FROM l_t_troncon t, existing_rec er
                                    WHERE t.id != troncon.id
@@ -378,7 +379,7 @@ BEGIN
                 UPDATE l_t_troncon t SET geom = geom
                   FROM e_r_evenement_troncon et
                  WHERE t.id = et.troncon
-                   AND et.pk_debut = et.pk_debut
+                   AND et.pk_debut = et.pk_fin
                    AND et.id = ANY(existing_et);
             END IF;
 
