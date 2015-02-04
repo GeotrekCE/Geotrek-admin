@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.28.9dev (unreleased)
+0.29.0 (2015-02-04)
 -------------------
 
 **New features**
