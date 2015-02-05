@@ -5,7 +5,9 @@ CHANGELOG
 0.29.1.dev (unreleased)
 -------------------
 
-*
+**New features**
+
+* Add support of Ubuntu 14.04 to installer
 
 
 0.29.0 (2015-02-04)

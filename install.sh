@@ -202,9 +202,11 @@ function minimum_system_dependencies {
     echo_progress
     sudo apt-get install -y -qq unzip wget python-software-properties
     echo_progress
-    sudo apt-add-repository -y ppa:git-core/ppa
-    sudo apt-add-repository -y ppa:ubuntugis/ppa
-    echo_progress
+    if [ $precise -eq 1 ]; then
+        sudo apt-add-repository -y ppa:git-core/ppa
+        sudo apt-add-repository -y ppa:ubuntugis/ppa
+        echo_progress
+    fi
     sudo apt-get update -qq
     echo_progress
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
@@ -216,7 +218,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1 gdal-bin libgdal-dev
     echo_progress
     # PostgreSQL client and headers
-    sudo apt-get install -y -q --no-upgrade postgresql-client-9.1 postgresql-server-dev-all
+    sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
@@ -274,7 +276,7 @@ function screamshotter_system_dependencies {
 
 function install_postgres_local {
     echo_step "Installing postgresql server locally..."
-    sudo apt-get install -y -q postgresql-9.1 postgresql-9.1-postgis-2.0
+    sudo apt-get install -y -q postgresql-$psql_version postgresql-$psql_version-postgis-$pgis_version
     sudo /etc/init.d/postgresql restart
     echo_progress
 
@@ -495,8 +497,18 @@ function geotrek_setup {
 }
 
 precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
+trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 
-if [ $precise -eq 1 ] ; then
+if [ $precise -eq 1 ]; then
+    psql_version=9.1
+    pgis_version=2.0
+fi
+if [ $trusty -eq 1 ]; then
+    psql_version=9.3
+    pgis_version=2.1
+fi
+
+if [ $precise -eq 1 -o $trusty -eq 1 ] ; then
     geotrek_setup
 else
     exit_error 5 "Unsupported operating system. Aborted."
