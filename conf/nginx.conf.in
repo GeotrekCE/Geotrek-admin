@@ -40,6 +40,11 @@ server {
         alias ${parts['django'].staticroot};
     }
 
+    location ${parts['django'].mediaurl[:-1]}/upload {
+        expires ${options.expiretime};
+        alias ${parts['django'].mediaroot}/upload;
+    }
+
     location ${parts['django'].mediaurl_secure[:-1]} {
         internal;
         expires ${options.expiretime};
