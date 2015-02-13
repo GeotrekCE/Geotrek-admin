@@ -6,7 +6,9 @@ from django.contrib.messages import constants as messages
 from geotrek import __version__
 from . import PROJECT_ROOT_PATH
 
-gettext_noop = lambda s: s
+
+def gettext_noop(s):
+    return s
 
 
 DEBUG = False

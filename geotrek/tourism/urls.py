@@ -7,6 +7,7 @@ from geotrek.common.urls import PublishableEntityOptions
 
 from . import models
 from . import views as tourism_views
+from . import serializers as tourism_serializers
 
 
 urlpatterns = patterns(
@@ -16,7 +17,6 @@ urlpatterns = patterns(
     url(r'^api/informationdesk/informationdesk.geojson$', tourism_views.InformationDeskGeoJSON.as_view(), name="informationdesk_geojson"),
     url(r'^api/touristiccontent/categories/$', tourism_views.TouristicContentCategoryJSONList.as_view(), name="touristiccontentcategories_list_json"),
 )
-from . import serializers as tourism_serializers
 
 
 class TouristicContentEntityOptions(PublishableEntityOptions):

@@ -84,7 +84,6 @@ class TraductionTestCase(TestCase):
         # Given the language set, it returns the appropriate version (fr, it, en)
 
         orig_language = translation.get_language_from_request(response._request)
-        restore_language = lambda: translation.activate(orig_language)
 
         difficulty_trad = self.get_dummy_data_trad()
         intervention_difficulty = iss[0]
@@ -94,4 +93,4 @@ class TraductionTestCase(TestCase):
             translated_difficulty = difficulty_trad['difficulty_%s' % language]
             self.assertEquals(intervention_difficulty.difficulty, translated_difficulty)
 
-        restore_language()
+        translation.activate(orig_language)
