@@ -61,19 +61,19 @@ class AltimetryMixin(models.Model):
         model_name = self._meta.module_name
         return ('%s:%s_profile_svg' % (app_label, model_name), [str(self.pk)])
 
-    def get_elevation_chart_path(self):
+    def get_elevation_chart_path(self, language):
         """Path to the PNG version of elevation chart.
         """
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(basefolder):
             os.mkdir(basefolder)
-        return os.path.join(basefolder, '%s-%s.png' % (self._meta.module_name, self.pk))
+        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.module_name, self.pk, language))
 
-    def prepare_elevation_chart(self, rooturl):
+    def prepare_elevation_chart(self, language, rooturl):
         """Converts SVG elevation URI to PNG on disk.
         """
         from .views import HttpSVGResponse
-        path = self.get_elevation_chart_path()
+        path = self.get_elevation_chart_path(language)
         # Do nothing if image is up-to-date
         if is_file_newer(path, self.date_update):
             return False
@@ -82,5 +82,6 @@ class AltimetryMixin(models.Model):
         convertit_download(source,
                            path,
                            from_type=HttpSVGResponse.content_type,
-                           to_type='image/png')
+                           to_type='image/png',
+                           headers={'Accept-Language': language})
         return True

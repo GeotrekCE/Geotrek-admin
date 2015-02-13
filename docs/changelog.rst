@@ -5,7 +5,15 @@ CHANGELOG
 0.29.1.dev (unreleased)
 -------------------
 
-*
+**New features**
+
+* Allow anonymous access to media related to published items
+
+**Bug fixes**
+
+* Check model read permission to give access to media
+* Fix language of PNG elevation charts
+* Fix logo on login page
 
 
 0.29.0 (2015-02-04)

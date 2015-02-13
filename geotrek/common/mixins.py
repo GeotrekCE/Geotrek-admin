@@ -299,6 +299,9 @@ class PublishableMixin(BasePublishableMixin):
             raise overriden.DoesNotExist()
         return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
 
+    def is_public(self):
+        return self.published
+
 
 class PictogramMixin(models.Model):
     pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,

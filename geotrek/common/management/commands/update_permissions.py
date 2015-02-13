@@ -1,12 +1,17 @@
+import logging
+
 from django.conf import settings
 from django.utils.importlib import import_module
 from django.contrib.auth.management import create_permissions
 from django.core.management.base import BaseCommand
 
-from mapentity import registry, logger
+from mapentity import registry
 from mapentity.registry import create_mapentity_model_permissions
 
 from geotrek.flatpages import models as flatpages_models
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
