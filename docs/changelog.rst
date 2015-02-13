@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Allow anonymous access to media related to published items
+* Add a settings to set up CORS (cross-origin resource sharing)
 
 **Bug fixes**
 

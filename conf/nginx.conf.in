@@ -14,6 +14,10 @@ upstream tile_server {
 }
 {% end %}
 
+{% if options.cors %}
+add_header Access-Control-Allow-Origin ${options.cors};
+{% end %}
+
 server {
     listen ${options.port} {% if options.default in ['True', 'true'] %} default {% end %};
     server_name ${options.server_name};
