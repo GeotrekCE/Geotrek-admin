@@ -19,6 +19,7 @@ CHANGELOG
 * Allow anonymous access to media related to published items
 * Add a settings to set up CORS (cross-origin resource sharing)
 * Split trek usage field into practice and accessibility
+* Allow to get POIs for a specific trek in REST API
 
 **Bug fixes**
 

@@ -350,6 +350,16 @@ class TrekViewSet(MapEntityViewSet):
 
 
 class POIViewSet(MapEntityViewSet):
-    queryset = POI.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = POI
     serializer_class = POISerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        trek_pk = self.request.GET.get('trek')
+        if trek_pk:
+            try:
+                trek = Trek.objects.existing().get(pk=trek_pk)
+            except Trek.DoesNotExist:
+                return POI.objects.none()
+            return trek.pois.transform(settings.API_SRID, field_name='geom')
+        return POI.objects.existing().transform(settings.API_SRID, field_name='geom')
