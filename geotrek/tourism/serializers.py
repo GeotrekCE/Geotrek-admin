@@ -51,11 +51,9 @@ class TouristicContentTypeSerializer(TranslatedModelSerializer):
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    types = TouristicContentTypeSerializer(many=True)
-
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'types', 'label', 'type1_label', 'type2_label', 'pictogram')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,

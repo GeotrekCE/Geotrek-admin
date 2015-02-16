@@ -326,7 +326,6 @@ class TouristicContentCategoryListTest(TrekkingManagerTest):
         response = self.client.get(url)
         results = json.loads(response.content)
         self.assertEqual(results[0]['label'], self.category.label)
-        self.assertIn('types', results[0])
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
@@ -463,18 +462,10 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_category(self):
         self.assertDictEqual(self.result['category'], {
             u"id": self.category.id,
-            u"types": [
-                {u"id": self.type1.id,
-                 u"name": self.type1.label,
-                 u"in_list": self.type1.in_list},
-                {u"id": self.type2.id,
-                 u"name": self.type2.label,
-                 u"in_list": self.type2.in_list}
-            ],
-            "label": self.category.label,
-            "type1_label": self.category.type1_label,
-            "type2_label": self.category.type2_label,
-            "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
+            u"label": self.category.label,
+            u"type1_label": self.category.type1_label,
+            u"type2_label": self.category.type2_label,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
 
 class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
