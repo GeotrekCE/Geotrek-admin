@@ -27,7 +27,7 @@ from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                        TrekNetworkFactory, UsageFactory, WebLinkFactory,
+                                        TrekNetworkFactory, WebLinkFactory,
                                         TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
@@ -204,7 +204,7 @@ class TrekViewsTest(CommonTest):
             'advice_en': '',
             'themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
-            'usages': UsageFactory.create().pk,
+            'practice': '',
             'web_links': WebLinkFactory.create().pk,
             'information_desks': tourism_factories.InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
@@ -380,9 +380,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.information_desk = tourism_factories.InformationDeskFactory.create()
         self.trek.information_desks.add(self.information_desk)
 
-        self.usage = UsageFactory.create()
-        self.trek.usages.add(self.usage)
-
         self.theme = ThemeFactory.create()
         self.trek.themes.add(self.theme)
 
@@ -465,11 +462,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"pictogram": None,
                               u"name": self.network.network})
 
-    def test_usages(self):
-        self.assertDictEqual(self.result['usages'][0],
-                             {u"id": self.usage.id,
-                              u"pictogram": os.path.join(settings.MEDIA_URL, self.usage.pictogram.name),
-                              u"label": self.usage.usage})
+    def test_practice_not_none(self):
+        self.assertDictEqual(self.result['practice'],
+                             {u"id": self.trek.practice.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
+                              u"label": self.trek.practice.usage})
 
     def test_themes(self):
         self.assertDictEqual(self.result['themes'][0],

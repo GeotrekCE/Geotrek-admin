@@ -58,9 +58,8 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
                                       db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"),
                                       help_text=_(u"Hiking networks"))
-    usages = models.ManyToManyField('Usage', related_name="treks",
-                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"),
-                                    help_text=_(u"Practicability"))
+    practice = models.ForeignKey('Usage', related_name="treks",
+                                 blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
@@ -133,10 +132,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return ', '.join([unicode(n) for n in self.themes.all()])
 
     @property
-    def usages_display(self):
-        return ', '.join([unicode(n) for n in self.usages.all()])
-
-    @property
     def city_departure(self):
         cities = self.cities
         return unicode(cities[0]) if len(cities) > 0 else ''
@@ -184,6 +179,10 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.filter(geom__intersects=area)
         return qs
+
+    # Rando v1 compat
+    def get_usages(self):
+        return [self.practice] if self.practice else []
 
 Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)

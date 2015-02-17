@@ -103,7 +103,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
-    usages = UsageSerializer(many=True)
+    usages = UsageSerializer(source='get_usages', many=True)  # Rando v1 compat
+    type1 = UsageSerializer(source='practice')
+    type1_label = rest_serializers.SerializerMethodField('get_type1_label')
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='relationships')
 
@@ -132,10 +134,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         fields = ('id', 'departure', 'arrival', 'duration',
                   'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
-                  'information_desks',
-                  'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
+                  'information_desks', 'themes', 'usages', 'type1', 'access',
+                  'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
-                  'parking_location',
+                  'parking_location', 'type1_label',
                   'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
             AltimetrySerializerMixin.Meta.fields + \
@@ -165,6 +167,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     def get_kml_url(self, obj):
         return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
+
+    def get_type1_label(slef, obj):
+        return obj._meta.get_field('practice').verbose_name
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):

@@ -81,6 +81,7 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
+    practice = factory.SubFactory(UsageFactory)
 
 
 class TrekWithPOIsFactory(TrekFactory):
