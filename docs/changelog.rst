@@ -5,7 +5,9 @@ CHANGELOG
 0.29.1.dev (unreleased)
 -------------------
 
-*
+**Bug fixes**
+
+* Ensure path snapping is done on the closest point
 
 
 0.29.0 (2015-02-04)
