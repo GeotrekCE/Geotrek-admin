@@ -191,7 +191,7 @@
         "pk": 1,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-mountainbike.png",
+            "pictogram": "upload/practice-mountainbike.png",
             "name": "Mountain Bike",
             "name_en": "Mountain Bike",
             "name_fr": "VTT"
@@ -201,7 +201,7 @@
         "pk": 2,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-bike.png",
+            "pictogram": "upload/practice-bike.png",
             "name": "Cycling",
             "name_en": "Cycling",
             "name_fr": "Vélo"
@@ -211,7 +211,7 @@
         "pk": 3,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-horse.png",
+            "pictogram": "upload/practice-horse.png",
             "name": "Horse",
             "name_en": "Horse",
             "name_fr": "Cheval"
@@ -222,34 +222,31 @@
         "model": "trekking.practice",
         "fields": {
             "name": "P\u00e9destre",
-            "pictogram": "upload/usage-foot.png",
+            "pictogram": "upload/practice-foot.png",
             "name_fr": "P\u00e9destre"
         }
     },
     {
-        "pk": 5,
-        "model": "trekking.practice",
+        "pk": 1,
+        "model": "trekking.accessibility",
         "fields": {
             "name": "Fauteuil roulant",
-            "pictogram": "upload/usage-wheelchair.png",
             "name_fr": "Fauteuil roulant"
         }
     },
     {
-        "pk": 6,
-        "model": "trekking.practice",
+        "pk": 2,
+        "model": "trekking.accessibility",
         "fields": {
             "name": "Poussette",
-            "pictogram": "upload/usage-troller.png",
             "name_fr": "Poussette"
         }
     },
     {
-        "pk": 7,
-        "model": "trekking.practice",
+        "pk": 3,
+        "model": "trekking.accessibility",
         "fields": {
             "name": "Joelette",
-            "pictogram": "upload/usage-joelette.png",
             "name_fr": "Joelette"
         }
     },
