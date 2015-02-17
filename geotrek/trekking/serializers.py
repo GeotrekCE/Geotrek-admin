@@ -61,6 +61,14 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'label')
 
 
+class AccessibilitySerializer(TranslatedModelSerializer):
+    label = rest_serializers.Field(source='name')
+
+    class Meta:
+        model = trekking_models.Accessibility
+        fields = ('id', 'label')
+
+
 class WebLinkCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = trekking_models.WebLinkCategory
@@ -105,6 +113,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
     usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
+    accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='relationships')
 
@@ -133,8 +142,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         fields = ('id', 'departure', 'arrival', 'duration',
                   'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
-                  'information_desks', 'themes', 'practice', 'usages', 'access',
-                  'route', 'public_transport', 'advised_parking',
+                  'information_desks', 'themes', 'practice', 'accessibilities',
+                  'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \

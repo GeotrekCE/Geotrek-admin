@@ -7,8 +7,8 @@ from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 
 from .models import (
-    POIType, TrekNetwork, Practice, Route, DifficultyLevel, WebLink,
-    WebLinkCategory, Trek
+    POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
+    WebLink, WebLinkCategory, Trek
 )
 
 
@@ -24,6 +24,11 @@ class TrekNetworkAdmin(TranslationAdmin):
 
 class PracticeAdmin(TranslationAdmin):
     list_display = ('name', 'pictogram_img')
+    search_fields = ('name',)
+
+
+class AccessibilityAdmin(TranslationAdmin):
+    list_display = ('name',)
     search_fields = ('name',)
 
 
@@ -107,6 +112,7 @@ trek_admin_to_register = [
     (POIType, POITypeAdmin),
     (TrekNetwork, TrekNetworkAdmin),
     (Practice, PracticeAdmin),
+    (Accessibility, AccessibilityAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),

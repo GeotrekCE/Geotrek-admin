@@ -60,6 +60,9 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
                                       help_text=_(u"Hiking networks"))
     practice = models.ForeignKey('Practice', related_name="treks",
                                  blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
+    accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
+                                             db_table="o_r_itineraire_accessibilite", blank=True, null=True,
+                                             verbose_name=_(u"Accessibilities"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
@@ -260,6 +263,18 @@ class Practice(PictogramMixin):
 
     class Meta:
         db_table = 'o_b_pratique'
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Accessibility(models.Model):
+
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 'o_b_accessibilite'
         ordering = ['name']
 
     def __unicode__(self):

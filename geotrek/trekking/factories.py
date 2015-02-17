@@ -21,6 +21,12 @@ class PracticeFactory(factory.Factory):
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
+class AccessibilityFactory(factory.Factory):
+    FACTORY_FOR = models.Accessibility
+
+    name = factory.Sequence(lambda n: u"accessibility %s" % n)
+
+
 class RouteFactory(factory.Factory):
     FACTORY_FOR = models.Route
 

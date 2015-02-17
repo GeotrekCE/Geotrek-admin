@@ -27,7 +27,7 @@ from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                        TrekNetworkFactory, WebLinkFactory,
+                                        TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
@@ -205,6 +205,7 @@ class TrekViewsTest(CommonTest):
             'themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
             'practice': '',
+            'accessibilities': AccessibilityFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
             'information_desks': tourism_factories.InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
@@ -383,6 +384,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.theme = ThemeFactory.create()
         self.trek.themes.add(self.theme)
 
+        self.accessibility = AccessibilityFactory.create()
+        self.trek.accessibilities.add(self.accessibility)
+
         self.network = TrekNetworkFactory.create()
         self.trek.networks.add(self.network)
 
@@ -473,6 +477,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                              {u"id": self.trek.practice.id,
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
                               u"label": self.trek.practice.name})
+
+    def test_accessibilities(self):
+        self.assertDictEqual(self.result['accessibilities'][0],
+                             {u"id": self.accessibility.id,
+                              u"label": self.accessibility.name})
 
     def test_themes(self):
         self.assertDictEqual(self.result['themes'][0],

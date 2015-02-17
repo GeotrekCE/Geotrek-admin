@@ -101,6 +101,7 @@ class TrekForm(BaseTrekForm):
                     'themes',
                     'networks',
                     'practice',
+                    'accessibilities',
                     'web_links',
                     'information_desks',
                     Fieldset(_("Related treks"),),
@@ -129,7 +130,7 @@ class TrekForm(BaseTrekForm):
         self.fields['parking_location'].widget.geometry_field_class = 'ParkingLocationField'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
-        for f in ['themes', 'networks',
+        for f in ['themes', 'networks', 'accessibilities',
                   'web_links', 'information_desks']:
             self.fields[f].help_text = ''
 
@@ -146,7 +147,7 @@ class TrekForm(BaseTrekForm):
             ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
              'points_reference', 'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
-             'themes', 'networks', 'practice', 'web_links', 'information_desks']
+             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
