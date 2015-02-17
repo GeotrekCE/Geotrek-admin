@@ -564,6 +564,24 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'id': self.touristic_event.pk,
             u'name': self.touristic_event.name})
 
+    def test_type1(self):
+        self.assertDictEqual(self.result['type1'][0],
+                             {u"id": self.trek.practice.id,
+                              u"name": self.trek.practice.name})
+
+    def test_type2(self):
+        self.assertDictEqual(self.result['type2'][0],
+                             {u"id": self.accessibility.id,
+                              u"name": self.accessibility.name})
+
+    def test_category(self):
+        self.assertDictEqual(self.result['category'],
+                             {u"id": -2,
+                              u"label": u"Trek",
+                              u"type1_label": u"Practice",
+                              u"type2_label": u"Accessibilities",
+                              u"pictogram": u"/static/trekking/trek.svg"})
+
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):

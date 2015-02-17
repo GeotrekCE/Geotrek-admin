@@ -20,6 +20,7 @@ CHANGELOG
 * Add a settings to set up CORS (cross-origin resource sharing)
 * Split trek usage field into practice and accessibility
 * Allow to get POIs for a specific trek in REST API
+* Consistent REST API (type1, type2, category)
 
 **Bug fixes**
 

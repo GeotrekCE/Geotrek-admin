@@ -373,6 +373,14 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     def __unicode__(self):
         return self.name
 
+    @property
+    def type1(self):
+        return [self.type] if self.type else []
+
+    @property
+    def type2(self):
+        return [self.public] if self.public else []
+
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))

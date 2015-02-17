@@ -108,6 +108,11 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     treks = trekking_serializers.RelatedTrekSerializer(many=True)
     pois = trekking_serializers.RelatedPOISerializer(many=True)
 
+    # For consistency with touristic contents
+    type1 = TouristicEventTypeSerializer(many=True)
+    type2 = TouristicEventPublicSerializer(many=True)
+    category = rest_serializers.SerializerMethodField('get_category')
+
     class Meta:
         model = tourism_models.TouristicEvent
         geo_field = 'geom'
@@ -116,7 +121,17 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'meeting_time', 'contact', 'email', 'website',
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'public', 'practical_info',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois') + \
+                  'touristic_contents', 'touristic_events', 'treks', 'pois',
+                  'type1', 'type2', 'category') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+    def get_category(self, obj):
+        return {
+            'id': -1,
+            'label': obj._meta.verbose_name,
+            'type1_label': obj._meta.get_field('type').verbose_name,
+            'type2_label': obj._meta.get_field('public').verbose_name,
+            'pictogram': '/static/tourism/touristicevent.svg',
+        }
