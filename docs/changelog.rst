@@ -16,6 +16,7 @@ CHANGELOG
 * Check model read permission to give access to media
 * Fix language of PNG elevation charts
 * Fix logo on login page
+* Fix logs rotation
 
 
 0.29.0 (2015-02-04)

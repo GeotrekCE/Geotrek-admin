@@ -1,12 +1,13 @@
-rotate 4
-weekly
-create
-compress
-delaycompress
-
 ${parts['buildout'].directory}/var/log/*.log {
+    rotate 4
+    weekly
+    create
+    compress
+    delaycompress
+    sharedscripts
     postrotate
         [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+        [ ! -f ${parts['django'].deployroot}/var/run/supervisord.pid ] || kill -USR2 `cat ${parts['django'].deployroot}/var/run/supervisord.pid`
+        for pidfile in ${parts['django'].deployroot}/var/run/gunicorn-*.pid; do kill -USR1 `cat $$pidfile`; done
     endscript
 }
-
