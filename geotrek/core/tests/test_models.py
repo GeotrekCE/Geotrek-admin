@@ -163,3 +163,17 @@ class PathGeometryTest(TestCase):
         # Snap both
         path_snapped = PathFactory.create(geom=LineString((0, 0), (3.0, 0)))
         self.assertEqual(path_snapped.geom.coords, ((0, 0), (3.0, math.sin(3))))
+
+    def test_snapping_choose_closest_point(self):
+        # Line with several points in less than PATH_SNAPPING_DISTANCE
+        PathFactory.create(geom=LineString((0, 0), (9.8, 0), (9.9, 0), (10, 0)))
+        path_snapped = PathFactory.create(geom=LineString((10, 0.1), (10, 10)))
+        self.assertEqual(path_snapped.geom.coords, ((10, 0), (10, 10)))
+
+    def test_snapping_is_idempotent(self):
+        PathFactory.create(geom=LineString((0, 0), (9.8, 0), (9.9, 0), (10, 0)))
+        path_snapped = PathFactory.create(geom=LineString((10, 0.1), (10, 10)))
+        old_geom = path_snapped.geom
+        path_snapped.geom = old_geom
+        path_snapped.save()
+        self.assertEqual(path_snapped.geom.coords, old_geom.coords)
