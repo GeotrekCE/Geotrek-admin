@@ -17,7 +17,7 @@ class TrekNetworkFactory(factory.Factory):
 class PracticeFactory(factory.Factory):
     FACTORY_FOR = models.Practice
 
-    usage = factory.Sequence(lambda n: u"usage %s" % n)
+    name = factory.Sequence(lambda n: u"usage %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 

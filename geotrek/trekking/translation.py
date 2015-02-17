@@ -32,7 +32,7 @@ class TrekNetworkTO(TranslationOptions):
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('usage', )
+    fields = ('name', )
 
 
 class RouteTO(TranslationOptions):

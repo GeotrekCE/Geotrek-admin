@@ -192,9 +192,9 @@
         "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-mountainbike.png",
-            "usage": "Mountain Bike",
-            "usage_en": "Mountain Bike",
-            "usage_fr": "VTT"
+            "name": "Mountain Bike",
+            "name_en": "Mountain Bike",
+            "name_fr": "VTT"
         }
     },
     {
@@ -202,9 +202,9 @@
         "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-bike.png",
-            "usage": "Cycling",
-            "usage_en": "Cycling",
-            "usage_fr": "Vélo"
+            "name": "Cycling",
+            "name_en": "Cycling",
+            "name_fr": "Vélo"
         }
     },
     {
@@ -212,45 +212,45 @@
         "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-horse.png",
-            "usage": "Horse",
-            "usage_en": "Horse",
-            "usage_fr": "Cheval"
+            "name": "Horse",
+            "name_en": "Horse",
+            "name_fr": "Cheval"
         }
     },
     {
         "pk": 4,
         "model": "trekking.practice",
         "fields": {
-            "usage": "P\u00e9destre",
+            "name": "P\u00e9destre",
             "pictogram": "upload/usage-foot.png",
-            "usage_fr": "P\u00e9destre"
+            "name_fr": "P\u00e9destre"
         }
     },
     {
         "pk": 5,
         "model": "trekking.practice",
         "fields": {
-            "usage": "Fauteuil roulant",
+            "name": "Fauteuil roulant",
             "pictogram": "upload/usage-wheelchair.png",
-            "usage_fr": "Fauteuil roulant"
+            "name_fr": "Fauteuil roulant"
         }
     },
     {
         "pk": 6,
         "model": "trekking.practice",
         "fields": {
-            "usage": "Poussette",
+            "name": "Poussette",
             "pictogram": "upload/usage-troller.png",
-            "usage_fr": "Poussette"
+            "name_fr": "Poussette"
         }
     },
     {
         "pk": 7,
         "model": "trekking.practice",
         "fields": {
-            "usage": "Joelette",
+            "name": "Joelette",
             "pictogram": "upload/usage-joelette.png",
-            "usage_fr": "Joelette"
+            "name_fr": "Joelette"
         }
     },
     {

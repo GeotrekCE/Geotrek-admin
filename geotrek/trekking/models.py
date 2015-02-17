@@ -256,14 +256,14 @@ class TrekNetwork(PictogramMixin):
 
 class Practice(PictogramMixin):
 
-    usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
 
     class Meta:
         db_table = 'o_b_pratique'
-        ordering = ['usage']
+        ordering = ['name']
 
     def __unicode__(self):
-        return self.usage
+        return self.name
 
 
 class Route(PictogramMixin):

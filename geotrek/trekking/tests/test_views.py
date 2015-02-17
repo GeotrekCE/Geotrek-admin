@@ -466,13 +466,13 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertDictEqual(self.result['practice'],
                              {u"id": self.trek.practice.id,
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              u"label": self.trek.practice.usage})
+                              u"label": self.trek.practice.name})
 
     def test_usages(self):  # Rando v1 compat
         self.assertDictEqual(self.result['usages'][0],
                              {u"id": self.trek.practice.id,
                               u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              u"label": self.trek.practice.usage})
+                              u"label": self.trek.practice.name})
 
     def test_themes(self):
         self.assertDictEqual(self.result['themes'][0],

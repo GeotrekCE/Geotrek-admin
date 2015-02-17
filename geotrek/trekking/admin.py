@@ -23,8 +23,8 @@ class TrekNetworkAdmin(TranslationAdmin):
 
 
 class PracticeAdmin(TranslationAdmin):
-    list_display = ('usage', 'pictogram_img')
-    search_fields = ('usage',)
+    list_display = ('name', 'pictogram_img')
+    search_fields = ('name',)
 
 
 class RouteAdmin(TranslationAdmin):

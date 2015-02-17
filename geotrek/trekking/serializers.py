@@ -54,7 +54,7 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='usage')
+    label = rest_serializers.Field(source='name')
 
     class Meta:
         model = trekking_models.Practice
