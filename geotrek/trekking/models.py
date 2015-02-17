@@ -263,6 +263,8 @@ class Practice(PictogramMixin):
 
     class Meta:
         db_table = 'o_b_pratique'
+        verbose_name = _(u"Practice")
+        verbose_name_plural = _(u"Practices")
         ordering = ['name']
 
     def __unicode__(self):
@@ -275,6 +277,8 @@ class Accessibility(models.Model):
 
     class Meta:
         db_table = 'o_b_accessibilite'
+        verbose_name = _(u"Accessibility")
+        verbose_name_plural = _(u"Accessibilities")
         ordering = ['name']
 
     def __unicode__(self):
