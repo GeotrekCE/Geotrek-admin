@@ -1,8 +1,15 @@
+from django.conf import settings
 from django.conf.urls import patterns, url
 from mapentity.registry import MapEntityOptions
 
 from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
-                                     ElevationArea)
+                                     ElevationArea, serve_elevation_chart)
+
+
+urlpatterns = patterns(
+    '',
+    url(r'^%s/profiles/(?P<model_name>.+)-(?P<pk>\d+).png$' % settings.MEDIA_URL.strip('/'), serve_elevation_chart),
+)
 
 
 class AltimetryEntityOptions(MapEntityOptions):

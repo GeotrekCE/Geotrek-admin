@@ -188,7 +188,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware'
 )
 

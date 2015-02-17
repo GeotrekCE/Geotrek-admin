@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, include, url, static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import admin
@@ -19,6 +19,7 @@ urlpatterns = patterns(
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
     url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
+    url(r'', include('geotrek.altimetry.urls', namespace='altimetry', app_name='altimetry')),
     url(r'', include('geotrek.land.urls', namespace='land', app_name='land')),
     url(r'', include('geotrek.zoning.urls', namespace='zoning', app_name='zoning')),
     url(r'', include('geotrek.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')),
@@ -35,3 +36,4 @@ urlpatterns = patterns(
 )
 
 urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

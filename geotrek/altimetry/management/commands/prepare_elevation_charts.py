@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch
 
 from geotrek.common.management.commands.prepare_map_images import Command as PrepareImageCommand
@@ -32,6 +33,7 @@ class Command(PrepareImageCommand):
 
     def handle_instance(self, instance):
         rooturl = self.options.get('url', self.DEFAULT_URL)
-        refreshed = instance.prepare_elevation_chart(rooturl)
-        if not refreshed:
-            logger.info('%s profile up-to-date.' % instance.get_elevation_chart_path())
+        for language, name in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            refreshed = instance.prepare_elevation_chart(language, rooturl)
+            if not refreshed:
+                logger.info('%s profile up-to-date.' % instance.get_elevation_chart_path(language))

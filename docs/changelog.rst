@@ -5,9 +5,17 @@ CHANGELOG
 0.29.1.dev (unreleased)
 -------------------
 
+**New features**
+
+* Allow anonymous access to media related to published items
+* Add a settings to set up CORS (cross-origin resource sharing)
+
 **Bug fixes**
 
 * Ensure path snapping is done on the closest point
+* Check model read permission to give access to media
+* Fix language of PNG elevation charts
+* Fix logo on login page
 
 
 0.29.0 (2015-02-04)

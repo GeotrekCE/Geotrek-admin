@@ -222,7 +222,8 @@ class TrekDocumentPublic(DocumentPublic):
     def render_to_response(self, context, **response_kwargs):
         # Prepare altimetric graph
         trek = self.get_object()
-        trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
+        language = self.request.LANGUAGE_CODE
+        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 

@@ -288,7 +288,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         get_attributes_html.return_value = '<p>mock</p>'
         with open(trek.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
-        with open(trek.get_elevation_chart_path(), 'w') as f:
+        with open(trek.get_elevation_chart_path('fr'), 'w') as f:
             f.write('***' * 1000)
 
         response = self.client.get(trek.get_document_public_url())
