@@ -3,6 +3,13 @@ var utils = require('./_nav-utils.js');
 casper.test.begin('Create a new intervention', function(test) {
 
     casper.start(utils.baseurl + '/intervention/add/', function () {
+        // Workaround a bug if we try to use leaflet draw controls before
+        // graph is loaded
+        casper.waitForResource("graph.json");
+    });
+
+    casper.then(function () {
+        test.pass('Graph is loaded.');
         casper.waitForSelector('a.linetopology-control');
     });
 
