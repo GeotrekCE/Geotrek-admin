@@ -5,10 +5,20 @@ CHANGELOG
 0.29.1.dev (unreleased)
 -------------------
 
+**Breaking changes**
+
+* Trek practice (formerly usage) is no single valued so if a trek has multiple
+  usages only one will be kept after upgrade. Others will be **lost**!
+* After upgrade, run ``make load_data`` to load fixtures for accessibilities or
+  create them by hand. You should clean-up the list of practices by hand.
+* Don't forget to set up permissions for new libraries practices and
+  accessibilities.
+
 **New features**
 
 * Allow anonymous access to media related to published items
 * Add a settings to set up CORS (cross-origin resource sharing)
+* Split trek usage field into practice and accessibility
 
 **Bug fixes**
 
