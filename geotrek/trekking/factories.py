@@ -14,8 +14,8 @@ class TrekNetworkFactory(factory.Factory):
     network = factory.Sequence(lambda n: u"network %s" % n)
 
 
-class UsageFactory(factory.Factory):
-    FACTORY_FOR = models.Usage
+class PracticeFactory(factory.Factory):
+    FACTORY_FOR = models.Practice
 
     usage = factory.Sequence(lambda n: u"usage %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
@@ -81,7 +81,7 @@ class TrekFactory(TopologyFactory):
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
-    practice = factory.SubFactory(UsageFactory)
+    practice = factory.SubFactory(PracticeFactory)
 
 
 class TrekWithPOIsFactory(TrekFactory):

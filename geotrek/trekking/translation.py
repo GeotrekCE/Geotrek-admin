@@ -31,7 +31,7 @@ class TrekNetworkTO(TranslationOptions):
     fields = ('network', )
 
 
-class UsageTO(TranslationOptions):
+class PracticeTO(TranslationOptions):
     fields = ('usage', )
 
 
@@ -56,7 +56,7 @@ trek_translation_to_register = [
     (trekking_models.POI, POITO),
     (trekking_models.POIType, POITypeTO),
     (trekking_models.TrekNetwork, TrekNetworkTO),
-    (trekking_models.Usage, UsageTO),
+    (trekking_models.Practice, PracticeTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),

@@ -73,12 +73,15 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = (set(TrekList.columns +
-                   list(TrekSerializer.Meta.fields) +
-                   ['related', 'pois']) -
-               set(['relationships', 'thumbnail', 'map_image_url', 'slug',
-                    'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'poi_layer',
-                    'gpx', 'kml', 'printable', 'filelist_url', 'information_desk_layer']))
+    columns = (
+        'id', 'name', 'departure', 'arrival', 'duration',
+        'duration_pretty', 'description', 'description_teaser',
+        'networks', 'advice', 'ambiance', 'difficulty',
+        'information_desks', 'themes', 'practice', 'access',
+        'route', 'public_transport', 'advised_parking',
+        'web_links', 'is_park_centered', 'disabled_infrastructure',
+        'parking_location', 'points_reference', 'related', 'pois',
+    )
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):

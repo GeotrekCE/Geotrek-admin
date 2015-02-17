@@ -189,7 +189,7 @@
     },
     {
         "pk": 1,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-mountainbike.png",
             "usage": "Mountain Bike",
@@ -199,7 +199,7 @@
     },
     {
         "pk": 2,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-bike.png",
             "usage": "Cycling",
@@ -209,7 +209,7 @@
     },
     {
         "pk": 3,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "pictogram": "upload/usage-horse.png",
             "usage": "Horse",
@@ -219,7 +219,7 @@
     },
     {
         "pk": 4,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "usage": "P\u00e9destre",
             "pictogram": "upload/usage-foot.png",
@@ -228,7 +228,7 @@
     },
     {
         "pk": 5,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "usage": "Fauteuil roulant",
             "pictogram": "upload/usage-wheelchair.png",
@@ -237,7 +237,7 @@
     },
     {
         "pk": 6,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "usage": "Poussette",
             "pictogram": "upload/usage-troller.png",
@@ -246,7 +246,7 @@
     },
     {
         "pk": 7,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
             "usage": "Joelette",
             "pictogram": "upload/usage-joelette.png",

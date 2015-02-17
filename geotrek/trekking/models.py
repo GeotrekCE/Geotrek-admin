@@ -58,7 +58,7 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
                                       db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"),
                                       help_text=_(u"Hiking networks"))
-    practice = models.ForeignKey('Usage', related_name="treks",
+    practice = models.ForeignKey('Practice', related_name="treks",
                                  blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
@@ -181,7 +181,8 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return qs
 
     # Rando v1 compat
-    def get_usages(self):
+    @property
+    def usages(self):
         return [self.practice] if self.practice else []
 
 Path.add_property('treks', Trek.path_treks)
@@ -253,12 +254,12 @@ class TrekNetwork(PictogramMixin):
         return self.network
 
 
-class Usage(PictogramMixin):
+class Practice(PictogramMixin):
 
     usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
 
     class Meta:
-        db_table = 'o_b_usage'
+        db_table = 'o_b_pratique'
         ordering = ['usage']
 
     def __unicode__(self):
