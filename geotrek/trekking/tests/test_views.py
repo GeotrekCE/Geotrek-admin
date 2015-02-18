@@ -33,6 +33,9 @@ from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism import factories as tourism_factories
 
+# Make sur to register Trek model
+from geotrek.trekking import urls  # NOQA
+
 from .base import TrekkingManagerTest
 
 
