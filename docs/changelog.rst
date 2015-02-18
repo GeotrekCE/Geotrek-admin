@@ -30,6 +30,7 @@ CHANGELOG
 * Fix language of PNG elevation charts
 * Fix logo on login page
 * Fix logs rotation
+* Fix permissions creation
 
 
 0.29.0 (2015-02-04)
