@@ -31,8 +31,8 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
 class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(InfrastructureDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(InfrastructureDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -85,8 +85,8 @@ class SignageFormatList(MapEntityFormat, SignageList):
 class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(SignageDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(SignageDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 

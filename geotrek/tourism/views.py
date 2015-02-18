@@ -127,8 +127,8 @@ class TouristicContentList(MapEntityList):
 class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(TouristicContentDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(TouristicContentDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -181,8 +181,8 @@ class TouristicEventList(MapEntityList):
 class TouristicEventDetail(MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(TouristicEventDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(TouristicEventDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 

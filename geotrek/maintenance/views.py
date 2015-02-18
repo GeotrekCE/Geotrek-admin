@@ -48,8 +48,8 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(InterventionDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(InterventionDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -137,13 +137,9 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
 class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(ProjectDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProjectDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
-        return context
-
-    def get_context_data(self, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(**kwargs)
         context['empty_map_message'] = _("No intervention related.")
         return context
 

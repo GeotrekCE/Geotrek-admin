@@ -102,8 +102,8 @@ class PathFormatList(MapEntityFormat, PathList):
 class PathDetail(MapEntityDetail):
     model = Path
 
-    def context_data(self, *args, **kwargs):
-        context = super(PathDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(PathDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -178,8 +178,8 @@ class TrailList(MapEntityList):
 class TrailDetail(MapEntityDetail):
     queryset = Trail.objects.existing()
 
-    def context_data(self, *args, **kwargs):
-        context = super(TrailDetail, self).context_data(*args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(TrailDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
