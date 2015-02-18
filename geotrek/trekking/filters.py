@@ -9,7 +9,8 @@ class TrekFilterSet(MapEntityFilterSet):
     class Meta:
         model = Trek
         fields = ['published', 'difficulty', 'duration', 'themes', 'networks',
-                  'practice', 'accessibilities', 'route', 'is_park_centered']
+                  'practice', 'accessibilities', 'route', 'is_park_centered',
+                  'structure']
 
 
 class POITrekFilter(TopologyFilter):
@@ -21,4 +22,4 @@ class POIFilterSet(MapEntityFilterSet):
 
     class Meta:
         model = POI
-        fields = ['published', 'type', 'trek']
+        fields = ['published', 'type', 'trek', 'structure']

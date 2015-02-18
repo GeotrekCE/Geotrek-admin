@@ -17,6 +17,7 @@ CHANGELOG
 **New features**
 
 * Split trek usage field into practice and accessibility
+* Treks and POIs are now structure related
 * Allow anonymous access to media related to published items
 * Check model read permission to give access to media
 * Add a settings to set up CORS (cross-origin resource sharing)

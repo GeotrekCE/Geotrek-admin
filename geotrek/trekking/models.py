@@ -9,6 +9,7 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
+from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting
 from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
@@ -22,7 +23,7 @@ from .templatetags import trekking_tags
 logger = logging.getLogger(__name__)
 
 
-class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
@@ -376,10 +377,10 @@ class WebLinkCategory(PictogramMixin):
 
 class POIManager(models.GeoManager):
     def get_queryset(self):
-        return super(POIManager, self).get_queryset().select_related('type')
+        return super(POIManager, self).get_queryset().select_related('type', 'structure')
 
 
-class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')

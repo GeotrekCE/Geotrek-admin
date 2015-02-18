@@ -12,6 +12,7 @@ from geotrek.common.serializers import (
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin
 )
+from geotrek.authent import models as authent_models
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -111,6 +112,12 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
                   'trek', 'published')
 
 
+class StructureSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = authent_models.Structure
+        fields = ('id', 'name')
+
+
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, ZoningSerializerMixin,
                      TranslatedModelSerializer):
@@ -133,6 +140,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     information_desk_layer = rest_serializers.SerializerMethodField('get_information_desk_layer_url')
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
+    structure = StructureSerializer()
 
     # For consistency with touristic contents
     type1 = TypeSerializer(source='usages', many=True)
@@ -160,7 +168,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml',
-                  'type1', 'type2', 'category') + \
+                  'type1', 'type2', 'category', 'structure') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -217,6 +225,7 @@ class RelatedPOISerializer(TranslatedModelSerializer):
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                     ZoningSerializerMixin, TranslatedModelSerializer):
     type = POITypeSerializer()
+    structure = StructureSerializer()
 
     def __init__(self, *args, **kwargs):
         super(POISerializer, self).__init__(*args, **kwargs)
@@ -231,7 +240,7 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
         fields = ('id', 'description', 'type',) + \
-            ('min_elevation', 'max_elevation') + \
+            ('min_elevation', 'max_elevation', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
+from django.contrib.auth.models import Group
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -22,7 +23,8 @@ from mapentity.factories import SuperUserFactory
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
-from geotrek.authent.factories import TrekkingManagerFactory
+from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
@@ -794,3 +796,67 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"2 days", trekking_tags.duration(48))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))
+
+
+class TrekViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.content1 = TrekFactory.create()
+        structure = StructureFactory.create()
+        self.content2 = TrekFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/trek/delete/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+
+
+class POIViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.content1 = POIFactory.create()
+        structure = StructureFactory.create()
+        self.content2 = POIFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/poi/edit/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/poi/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/poi/delete/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/poi/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
