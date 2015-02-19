@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.29.1.dev (unreleased)
+0.30.0 (2015-02-19)
 -------------------
 
 **Breaking changes**
