@@ -18,16 +18,11 @@ def same_structure_required(redirect_to):
         def _wrapped_view(self, request, *args, **kwargs):
             result = view_func(self, request, *args, **kwargs)
 
-            # Superuser is always allowed
-            if request.user.is_superuser:
-                return result
-
             if isinstance(result, HttpResponseRedirect):
                 return result
 
-            can_bypass_structure = request.user.has_perm('can_bypass_structure')
             obj = hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None)
-            if can_bypass_structure or (obj and obj.same_structure(request.user)):
+            if obj.same_structure(request.user):
                 return result
             messages.warning(request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
 

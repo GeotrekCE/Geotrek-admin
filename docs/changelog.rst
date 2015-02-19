@@ -5,6 +5,10 @@ CHANGELOG
 0.30.1.dev0
 -------------------
 
+**Bug fixes**
+
+* Show edit button when having bypass structure permission
+
 
 0.30.0 (2015-02-19)
 -------------------
