@@ -65,9 +65,8 @@
             <td>{{ object.speaker }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"public" }}</th>
-            <td>{% if object.public %}{{ object.public }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object|verbose:"target_audience" }}</th>
+            <td>{{ object.target_audience }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"accessibility" }}</th>

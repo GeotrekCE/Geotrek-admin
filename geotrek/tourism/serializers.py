@@ -88,19 +88,10 @@ class TouristicEventTypeSerializer(TranslatedModelSerializer):
         fields = ('id', 'name')
 
 
-class TouristicEventPublicSerializer(TranslatedModelSerializer):
-    name = rest_serializers.Field(source='public')
-
-    class Meta:
-        model = tourism_models.TouristicEventPublic
-        fields = ('id', 'name')
-
-
 class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
                                ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
-    public = TouristicEventPublicSerializer()
 
     touristic_contents = RelatedTouristicContentSerializer(many=True)
     touristic_events = RelatedTouristicEventSerializer(many=True)
@@ -110,7 +101,6 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
-    type2 = TouristicEventPublicSerializer(many=True)
     category = rest_serializers.SerializerMethodField('get_category')
 
     class Meta:
@@ -120,9 +110,9 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',
                   'organizer', 'speaker', 'type', 'accessibility',
-                  'participant_number', 'booking', 'public', 'practical_info',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois',
-                  'type1', 'type2', 'category') + \
+                  'participant_number', 'booking', 'target_audience',
+                  'practical_info', 'touristic_contents', 'touristic_events',
+                  'treks', 'pois', 'type1', 'category') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -132,6 +122,5 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'id': -1,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
-            'type2_label': obj._meta.get_field('public').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
         }
