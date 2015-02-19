@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
 
-from.base import AuthentFixturesTest
+from .base import AuthentFixturesTest
 from ..models import Structure
 from ..backend import DatabaseBackend
 

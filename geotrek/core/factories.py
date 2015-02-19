@@ -75,8 +75,11 @@ def getRandomLineStringInBounds(*args, **kwargs):
     assert srid == 2154, "Following code will use math fns that depends on this srid (floor)"
 
     # SRID 2154 use integer values. Substract 1 to maxx and maxy to be sure to be in bounds
-    get_in_bound_x = lambda: math.floor(random.random() * ((maxx - minx) + 1) + minx)
-    get_in_bound_y = lambda: math.floor(random.random() * ((maxy - miny) + 1) + miny)
+    def get_in_bound_x():
+        return math.floor(random.random() * ((maxx - minx) + 1) + minx)
+
+    def get_in_bound_y():
+        return math.floor(random.random() * ((maxy - miny) + 1) + miny)
 
     p1_x, p2_x = get_in_bound_x(), get_in_bound_x()
     p1_y = p2_y = get_in_bound_y()  # make a straight line to be easily identified

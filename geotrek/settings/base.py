@@ -6,7 +6,9 @@ from django.contrib.messages import constants as messages
 from geotrek import __version__
 from . import PROJECT_ROOT_PATH
 
-gettext_noop = lambda s: s
+
+def gettext_noop(s):
+    return s
 
 
 DEBUG = False
@@ -186,7 +188,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware'
 )
 
@@ -387,7 +389,8 @@ MAPENTITY_CONFIG = {
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
     'ROOT_URL': ROOT_URL,
     'MAP_BACKGROUND_FOGGED': True,
-    'GEOJSON_LAYERS_CACHE_BACKEND': 'fat'
+    'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
+    'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

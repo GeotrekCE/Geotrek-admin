@@ -189,68 +189,65 @@
     },
     {
         "pk": 1,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-mountainbike.png",
-            "usage": "Mountain Bike",
-            "usage_en": "Mountain Bike",
-            "usage_fr": "VTT"
+            "pictogram": "upload/practice-mountainbike.png",
+            "name": "Mountain Bike",
+            "name_en": "Mountain Bike",
+            "name_fr": "VTT"
         }
     },
     {
         "pk": 2,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-bike.png",
-            "usage": "Cycling",
-            "usage_en": "Cycling",
-            "usage_fr": "Vélo"
+            "pictogram": "upload/practice-bike.png",
+            "name": "Cycling",
+            "name_en": "Cycling",
+            "name_fr": "Vélo"
         }
     },
     {
         "pk": 3,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/usage-horse.png",
-            "usage": "Horse",
-            "usage_en": "Horse",
-            "usage_fr": "Cheval"
+            "pictogram": "upload/practice-horse.png",
+            "name": "Horse",
+            "name_en": "Horse",
+            "name_fr": "Cheval"
         }
     },
     {
         "pk": 4,
-        "model": "trekking.usage",
+        "model": "trekking.practice",
         "fields": {
-            "usage": "P\u00e9destre",
-            "pictogram": "upload/usage-foot.png",
-            "usage_fr": "P\u00e9destre"
+            "name": "P\u00e9destre",
+            "pictogram": "upload/practice-foot.png",
+            "name_fr": "P\u00e9destre"
         }
     },
     {
-        "pk": 5,
-        "model": "trekking.usage",
+        "pk": 1,
+        "model": "trekking.accessibility",
         "fields": {
-            "usage": "Fauteuil roulant",
-            "pictogram": "upload/usage-wheelchair.png",
-            "usage_fr": "Fauteuil roulant"
+            "name": "Fauteuil roulant",
+            "name_fr": "Fauteuil roulant"
         }
     },
     {
-        "pk": 6,
-        "model": "trekking.usage",
+        "pk": 2,
+        "model": "trekking.accessibility",
         "fields": {
-            "usage": "Poussette",
-            "pictogram": "upload/usage-troller.png",
-            "usage_fr": "Poussette"
+            "name": "Poussette",
+            "name_fr": "Poussette"
         }
     },
     {
-        "pk": 7,
-        "model": "trekking.usage",
+        "pk": 3,
+        "model": "trekking.accessibility",
         "fields": {
-            "usage": "Joelette",
-            "pictogram": "upload/usage-joelette.png",
-            "usage_fr": "Joelette"
+            "name": "Joelette",
+            "name_fr": "Joelette"
         }
     },
     {

@@ -1,25 +1,30 @@
+import logging
+
 from django.conf import settings
 from django.utils.importlib import import_module
+from django.db.models import get_apps
 from django.contrib.auth.management import create_permissions
 from django.core.management.base import BaseCommand
 
-from mapentity import registry, logger
+from mapentity import registry
 from mapentity.registry import create_mapentity_model_permissions
 
-from geotrek.flatpages import models as flatpages_models
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
     help = "Create models permissions"
 
     def execute(self, *args, **options):
-        logger.info("Synchronize permissions of FlatPage model")
+        logger.info("Synchronize django permissions")
 
-        create_permissions(flatpages_models, None, int(options.get('verbosity', 1)))
+        for app in get_apps():
+            create_permissions(app, [], int(options.get('verbosity', 1)))
 
         logger.info("Done.")
 
-        logger.info("Synchronize permissions of MapEntity models")
+        logger.info("Synchronize mapentity permissions")
 
         # Make sure apps are registered at this point
         import_module(settings.ROOT_URLCONF)

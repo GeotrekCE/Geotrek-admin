@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-17 18:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +16,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr "Une difficulté avec l'id %s existe déjà"
+
+#, python-format
+msgid "Difficulty id %s was changed to %s successfully."
+msgstr "L'id de la difficulté a été changé de %s à %s avec succès."
 
 msgid "Trek"
 msgstr "Itinéraire"
@@ -36,18 +43,6 @@ msgstr "Annuler"
 msgid "Create"
 msgstr "Créer"
 
-msgid "Thumbnail"
-msgstr "Vignette"
-
-msgid "None"
-msgstr "Aucun"
-
-msgid "Name"
-msgstr "Nom"
-
-msgid "Public name (Change carefully)"
-msgstr "Nom public (attention si changement)"
-
 msgid "Departure"
 msgstr "Départ"
 
@@ -59,15 +54,6 @@ msgstr "Arrivée"
 
 msgid "Arrival description"
 msgstr "Description de l'arrivée"
-
-msgid "Published"
-msgstr "Publié"
-
-msgid "Online"
-msgstr "En-ligne"
-
-msgid "Publication date"
-msgstr "Date de publication"
 
 msgid "Description teaser"
 msgstr "Chapeau"
@@ -135,11 +121,20 @@ msgstr "Risques, danger, meilleure période, ..."
 msgid "Themes"
 msgstr "Thématiques"
 
-msgid "Networks"
-msgstr "Réseaux randonnée"
+msgid "Main theme(s)"
+msgstr "Thème(s) principal(aux)"
 
-msgid "Usages"
-msgstr "Usages"
+msgid "Networks"
+msgstr "Réseaux de randonnée"
+
+msgid "Hiking networks"
+msgstr "Réseaux de randonnée"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Accessibilities"
+msgstr "Accessibilités"
 
 msgid "Route"
 msgstr "Parcours"
@@ -150,8 +145,20 @@ msgstr "Difficulté"
 msgid "Web links"
 msgstr "Liens web"
 
-msgid "Information Desk"
-msgstr "Point de renseignement"
+msgid "External resources"
+msgstr "Ressources externes"
+
+msgid "Connections between treks"
+msgstr "Liens entre les itinéraires"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+msgid "Where to obtain information"
+msgstr "Où obtenir des informations"
+
+msgid "Points of reference"
+msgstr "Point de référence"
 
 msgid "Treks"
 msgstr "Itinéraires"
@@ -171,14 +178,26 @@ msgstr "Réseaux randonnée"
 msgid "Trek relationships"
 msgstr "Liens entre itinéraires"
 
+msgid "Path"
+msgstr "Tronçons"
+
+msgid "Circuit"
+msgstr "Circuit"
+
+msgid "Name"
+msgstr "Nom"
+
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
-msgid "Pictogram"
-msgstr "Pictogramme"
+msgid "Practices"
+msgstr "Pratiques"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Routes"
 msgstr "Parcours"
@@ -193,7 +212,7 @@ msgid "URL"
 msgstr "URL"
 
 msgid "Category"
-msgstr ""
+msgstr "Catégorie"
 
 msgid "Web link"
 msgstr "Lien web"
@@ -207,24 +226,6 @@ msgstr "Lien web"
 msgid "Web link categories"
 msgstr "Catégories liens web"
 
-msgid "Theme"
-msgstr "Thématique"
-
-msgid "Title"
-msgstr "Titre"
-
-msgid "Brief description"
-msgstr "Brève description"
-
-msgid "Information desk"
-msgstr "Lieu de renseignement"
-
-msgid "Information desks"
-msgstr "Lieux de renseignement"
-
-msgid "Official name"
-msgstr "Nom officiel"
-
 msgid "History, details,  ..."
 msgstr "Histoire, details"
 
@@ -234,20 +235,23 @@ msgstr "Type"
 msgid "POI"
 msgstr "POIs"
 
-msgid "Add POI"
-msgstr "Ajouter un POI"
+msgid "POI type"
+msgstr "Type de POI"
 
-msgid "Add a new POI"
-msgstr "Ajouter un POI"
+msgid "POI types"
+msgstr "Types de POI"
 
-msgid "Add a new poi"
-msgstr "Ajouter un POI"
+msgid "Public print"
+msgstr "Impression grand public"
 
-msgid "No result"
-msgstr "Pas de résultat"
+msgid "Print"
+msgstr "Impr."
 
-msgid "Choose value(s)"
-msgstr "Choisir valeur(s)"
+msgid "None"
+msgstr "Aucun"
+
+msgid "Thumbnail"
+msgstr "Vignette"
 
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
@@ -262,47 +266,8 @@ msgstr ""
 msgid "KML"
 msgstr ""
 
-msgid "Public print"
-msgstr "Impression grand public"
-
-msgid "Print"
-msgstr "Impr."
-
 msgid "yes,no"
 msgstr "oui,non"
-
-msgid "Path"
-msgstr "Tronçons"
-
-msgid "Circuit"
-msgstr "Circuit"
-
-msgid "POI type"
-msgstr "Type de POI"
-
-msgid "POI types"
-msgstr "Types de POI"
-
-msgid "Add relation"
-msgstr "Ajouter relation"
-
-msgid "Remove"
-msgstr "Enlever"
-
-msgid "Add trek"
-msgstr "Ajouter un itinéraire"
-
-msgid "Trekking"
-msgstr "Itinéraire"
-
-msgid "Add a new trek"
-msgstr "Ajouter un itinéraire"
-
-msgid "POIs"
-msgstr "POIs"
-
-msgid "Add Web link"
-msgstr "Ajouter un lien web"
 
 msgid "Add a point of reference"
 msgstr "Ajouter un point de référence"
@@ -322,6 +287,33 @@ msgstr "Déplacer l'emplacement du parking"
 msgid "Delete the parking location"
 msgstr "Supprimer l'emplacement du parking"
 
+msgid "Add relation"
+msgstr "Ajouter relation"
+
+msgid "Remove"
+msgstr "Enlever"
+
+msgid "No result"
+msgstr "Pas de résultat"
+
+msgid "Choose value(s)"
+msgstr "Choisir valeur(s)"
+
+msgid "Trekking"
+msgstr "Itinéraire"
+
+msgid "Add a new trek"
+msgstr "Ajouter un itinéraire"
+
+msgid "POIs"
+msgstr "POIs"
+
+msgid "Add a new POI"
+msgstr "Ajouter un POI"
+
+msgid "Add Web link"
+msgstr "Ajouter un lien web"
+
 #, python-format
 msgid "More than %s days"
 msgstr "Plus de %s jours"
@@ -331,65 +323,9 @@ msgid "%s days"
 msgstr "%s jours"
 
 #, python-format
-msgid "%s day"
-msgstr "%s jour"
-
-#, python-format
 msgid "%(hour)sH%(min)s"
 msgstr "%(hour)sH%(min)s"
 
 #, python-format
 msgid "%s min"
 msgstr "%s min"
-
-msgid ""
-"This project is co-financed by the European Union through FEDER Massif Alpin."
-msgstr ""
-"Ce projet est cofinancé par l'Union Européenne dans le cadre du FEDER Massif alpin."
-
-msgid "Powered by http://geotrek.fr"
-msgstr "Propulsé par http://geotrek.fr"
-
-msgid ""
-"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
-msgstr ""
-"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour."
-
-msgid ""
-"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at"
-msgstr ""
-"Afin de vérifier que les sentiers soient praticables et pour en savoir plus sur la découverte du territoire, veuillez-vous renseigner préalablement"
-
-msgid "Edition of"
-msgstr "Édition du"
-
-msgid "Other treks"
-msgstr "Autres itinéraires"
-
-msgid "Trek ascent"
-msgstr "Dénivelée"
-
-msgid "Altimetric profile"
-msgstr "Profil altimétrique"
-
-msgid "Not available"
-msgstr "Indisponible"
-
-msgid "Min elevation"
-msgstr "Altitude min"
-
-msgid "Max elevation"
-msgstr "Altitude max"
-
-msgid "Recommandations"
-msgstr "Recommendations"
-
-msgid "Disabled infrastructures"
-msgstr "Aménagements handicapés"
-
-msgid "On the way..."
-msgstr "Sur le chemin..."
-
-msgid "Attribution"
-msgstr "Crédit photo"
-

@@ -5,6 +5,7 @@ DECLARE
     linestart geometry;
     lineend geometry;
     other geometry;
+    closest geometry;
     result geometry;
     newline geometry[];
     d float8;
@@ -16,8 +17,8 @@ BEGIN
     linestart := ST_StartPoint(NEW.geom);
     lineend := ST_EndPoint(NEW.geom);
 
-    result := NULL;
-    SELECT ST_ClosestPoint(geom, linestart), geom INTO result, other
+    closest := NULL;
+    SELECT ST_ClosestPoint(geom, linestart), geom INTO closest, other
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
         AND id != NEW.id
@@ -25,13 +26,14 @@ BEGIN
       ORDER BY ST_Distance(geom, linestart)
       LIMIT 1;
 
-    IF result IS NULL THEN
+    IF closest IS NULL THEN
         result := linestart;
     ELSE
+        result := closest;
         d := DISTANCE;
         FOR i IN 1..ST_NPoints(other) LOOP
-            IF ST_Distance(result, ST_PointN(other, i)) < DISTANCE AND ST_Distance(result, ST_PointN(other, i)) < d THEN
-                d := ST_Distance(result, ST_PointN(other, i));
+            IF ST_Distance(closest, ST_PointN(other, i)) < DISTANCE AND ST_Distance(closest, ST_PointN(other, i)) < d THEN
+                d := ST_Distance(closest, ST_PointN(other, i));
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;
@@ -45,8 +47,8 @@ BEGIN
         newline := array_append(newline, ST_PointN(NEW.geom, i));
     END LOOP;
 
-    result := NULL;
-    SELECT ST_ClosestPoint(geom, lineend), geom INTO result, other
+    closest := NULL;
+    SELECT ST_ClosestPoint(geom, lineend), geom INTO closest, other
 
       FROM l_t_troncon
       WHERE geom && ST_Buffer(NEW.geom, DISTANCE * 2)
@@ -54,13 +56,14 @@ BEGIN
         AND ST_Distance(geom, lineend) < DISTANCE
       ORDER BY ST_Distance(geom, lineend)
       LIMIT 1;
-    IF result IS NULL THEN
+    IF closest IS NULL THEN
         result := lineend;
     ELSE
+        result := closest;
         d := DISTANCE;
         FOR i IN 1..ST_NPoints(other) LOOP
-            IF ST_Distance(result, ST_PointN(other, i)) < DISTANCE AND ST_Distance(result, ST_PointN(other, i)) < d THEN
-                d := ST_Distance(result, ST_PointN(other, i));
+            IF ST_Distance(closest, ST_PointN(other, i)) < DISTANCE AND ST_Distance(closest, ST_PointN(other, i)) < d THEN
+                d := ST_Distance(closest, ST_PointN(other, i));
                 result := ST_PointN(other, i);
             END IF;
         END LOOP;

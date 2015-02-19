@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
+from django.contrib.auth.models import Group
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -22,16 +23,20 @@ from mapentity.factories import SuperUserFactory
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
-from geotrek.authent.factories import TrekkingManagerFactory
+from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                        TrekNetworkFactory, UsageFactory, WebLinkFactory,
+                                        TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism import factories as tourism_factories
+
+# Make sur to register Trek model
+from geotrek.trekking import urls  # NOQA
 
 from .base import TrekkingManagerTest
 
@@ -204,7 +209,8 @@ class TrekViewsTest(CommonTest):
             'advice_en': '',
             'themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
-            'usages': UsageFactory.create().pk,
+            'practice': '',
+            'accessibilities': AccessibilityFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
             'information_desks': tourism_factories.InformationDeskFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
@@ -288,7 +294,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         get_attributes_html.return_value = '<p>mock</p>'
         with open(trek.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
-        with open(trek.get_elevation_chart_path(), 'w') as f:
+        with open(trek.get_elevation_chart_path('fr'), 'w') as f:
             f.write('***' * 1000)
 
         response = self.client.get(trek.get_document_public_url())
@@ -380,11 +386,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.information_desk = tourism_factories.InformationDeskFactory.create()
         self.trek.information_desks.add(self.information_desk)
 
-        self.usage = UsageFactory.create()
-        self.trek.usages.add(self.usage)
-
         self.theme = ThemeFactory.create()
         self.trek.themes.add(self.theme)
+
+        self.accessibility = AccessibilityFactory.create()
+        self.trek.accessibilities.add(self.accessibility)
 
         self.network = TrekNetworkFactory.create()
         self.trek.networks.add(self.network)
@@ -465,11 +471,22 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"pictogram": None,
                               u"name": self.network.network})
 
-    def test_usages(self):
+    def test_practice_not_none(self):
+        self.assertDictEqual(self.result['practice'],
+                             {u"id": self.trek.practice.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
+                              u"label": self.trek.practice.name})
+
+    def test_usages(self):  # Rando v1 compat
         self.assertDictEqual(self.result['usages'][0],
-                             {u"id": self.usage.id,
-                              u"pictogram": os.path.join(settings.MEDIA_URL, self.usage.pictogram.name),
-                              u"label": self.usage.usage})
+                             {u"id": self.trek.practice.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
+                              u"label": self.trek.practice.name})
+
+    def test_accessibilities(self):
+        self.assertDictEqual(self.result['accessibilities'][0],
+                             {u"id": self.accessibility.id,
+                              u"label": self.accessibility.name})
 
     def test_themes(self):
         self.assertDictEqual(self.result['themes'][0],
@@ -551,6 +568,24 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
             u'name': self.touristic_event.name})
+
+    def test_type1(self):
+        self.assertDictEqual(self.result['type1'][0],
+                             {u"id": self.trek.practice.id,
+                              u"name": self.trek.practice.name})
+
+    def test_type2(self):
+        self.assertDictEqual(self.result['type2'][0],
+                             {u"id": self.accessibility.id,
+                              u"name": self.accessibility.name})
+
+    def test_category(self):
+        self.assertDictEqual(self.result['category'],
+                             {u"id": -2,
+                              u"label": u"Trek",
+                              u"type1_label": u"Practice",
+                              u"type2_label": u"Accessibilities",
+                              u"pictogram": u"/static/trekking/trek.svg"})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -761,3 +796,67 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"2 days", trekking_tags.duration(48))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
         self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))
+
+
+class TrekViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.content1 = TrekFactory.create()
+        structure = StructureFactory.create()
+        self.content2 = TrekFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/trek/delete/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+
+
+class POIViewsSameStructureTests(AuthentFixturesTest):
+    def setUp(self):
+        profile = UserProfileFactory.create(user__username='homer',
+                                            user__password='dooh')
+        user = profile.user
+        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username=user.username, password='dooh')
+        self.content1 = POIFactory.create()
+        structure = StructureFactory.create()
+        self.content2 = POIFactory.create(structure=structure)
+
+    def test_can_edit_same_structure(self):
+        url = "/poi/edit/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_edit_other_structure(self):
+        url = "/poi/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_same_structure(self):
+        url = "/poi/delete/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_delete_other_structure(self):
+        url = "/poi/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))

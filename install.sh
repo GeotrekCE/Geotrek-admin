@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-0.29.0}
+VERSION=${VERSION:-0.30.0}
 dev=false
 tests=false
 prod=false
@@ -478,6 +478,8 @@ function geotrek_setup {
                 sudo stop supervisor
                 sudo rm -f /etc/init/supervisor.conf
             fi
+
+            sudo cp etc/logrotate.conf /etc/logrotate.d/geotrek
 
             echo_step "Enable Geotrek services and start..."
             sudo cp etc/init/supervisor.conf /etc/init/geotrek.conf

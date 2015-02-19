@@ -30,5 +30,6 @@ class TrekRelationshipsTestCase(TestCase):
 
     def test_relationship_fails_if_duplicate(self):
         # This should fail, since it already exists
-        create_dup = lambda: TrekRelationshipFactory(trek_a=self.trek2, trek_b=self.trek1)
+        def create_dup():
+            return TrekRelationshipFactory(trek_a=self.trek2, trek_b=self.trek1)
         self.assertRaises(IntegrityError, create_dup)

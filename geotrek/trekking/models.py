@@ -9,6 +9,7 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
+from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting
 from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
@@ -22,7 +23,7 @@ from .templatetags import trekking_tags
 logger = logging.getLogger(__name__)
 
 
-class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
@@ -58,9 +59,11 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
                                       db_table="o_r_itineraire_reseau", blank=True, null=True, verbose_name=_(u"Networks"),
                                       help_text=_(u"Hiking networks"))
-    usages = models.ManyToManyField('Usage', related_name="treks",
-                                    db_table="o_r_itineraire_usage", blank=True, null=True, verbose_name=_(u"Usages"),
-                                    help_text=_(u"Practicability"))
+    practice = models.ForeignKey('Practice', related_name="treks",
+                                 blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
+    accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
+                                             db_table="o_r_itineraire_accessibilite", blank=True, null=True,
+                                             verbose_name=_(u"Accessibilities"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
@@ -133,10 +136,6 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
         return ', '.join([unicode(n) for n in self.themes.all()])
 
     @property
-    def usages_display(self):
-        return ', '.join([unicode(n) for n in self.usages.all()])
-
-    @property
     def city_departure(self):
         cities = self.cities
         return unicode(cities[0]) if len(cities) > 0 else ''
@@ -184,6 +183,11 @@ class Trek(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.filter(geom__intersects=area)
         return qs
+
+    # Rando v1 compat
+    @property
+    def usages(self):
+        return [self.practice] if self.practice else []
 
 Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)
@@ -254,16 +258,32 @@ class TrekNetwork(PictogramMixin):
         return self.network
 
 
-class Usage(PictogramMixin):
+class Practice(PictogramMixin):
 
-    usage = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='usage')
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
 
     class Meta:
-        db_table = 'o_b_usage'
-        ordering = ['usage']
+        db_table = 'o_b_pratique'
+        verbose_name = _(u"Practice")
+        verbose_name_plural = _(u"Practices")
+        ordering = ['name']
 
     def __unicode__(self):
-        return self.usage
+        return self.name
+
+
+class Accessibility(models.Model):
+
+    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 'o_b_accessibilite'
+        verbose_name = _(u"Accessibility")
+        verbose_name_plural = _(u"Accessibilities")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class Route(PictogramMixin):
@@ -357,10 +377,10 @@ class WebLinkCategory(PictogramMixin):
 
 class POIManager(models.GeoManager):
     def get_queryset(self):
-        return super(POIManager, self).get_queryset().select_related('type')
+        return super(POIManager, self).get_queryset().select_related('type', 'structure')
 
 
-class POI(PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')

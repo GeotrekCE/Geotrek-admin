@@ -113,9 +113,9 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"usages" }}</th>
-            <td>
-                {% valuelist trek.usages.all %}
+            <th>{{ trek|verbose:"practice" }}</th>
+            <td>{% if trek.practice %}{{ trek.practice|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>

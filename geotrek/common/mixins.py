@@ -86,8 +86,7 @@ class PicturesMixin(object):
         if hasattr(self, '_pictures'):
             return self._pictures
         all_attachments = self.attachments.order_by('-starred').all()
-        return [a for a in all_attachments if a.is_image
-                and a.title != 'mapimage']
+        return [a for a in all_attachments if a.is_image and a.title != 'mapimage']
 
     @pictures.setter
     def pictures(self, values):
@@ -299,6 +298,9 @@ class PublishableMixin(BasePublishableMixin):
         if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
             raise overriden.DoesNotExist()
         return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
+
+    def is_public(self):
+        return self.published
 
 
 class PictogramMixin(models.Model):

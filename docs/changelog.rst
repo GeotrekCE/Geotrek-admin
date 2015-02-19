@@ -2,6 +2,38 @@
 CHANGELOG
 =========
 
+0.30.0 (2015-02-19)
+-------------------
+
+**Breaking changes**
+
+* Trek practice (formerly usage) is no single valued so if a trek has multiple
+  usages only one will be kept after upgrade. Others will be **lost**!
+* After upgrade, run ``make load_data`` to load fixtures for accessibilities or
+  create them by hand. You should clean-up the list of practices by hand.
+* Don't forget to set up permissions to administrate practices and
+  accessibilities.
+
+**New features**
+
+* Split trek usage field into practice and accessibility
+* Treks and POIs are now structure related
+* Allow anonymous access to media related to published items
+* Check model read permission to give access to media
+* Add a settings to set up CORS (cross-origin resource sharing)
+* Allow to get POIs for a specific trek in REST API
+* Consistent REST API (type1, type2, category for treks, touristic contents and
+  touristic events)
+
+**Bug fixes**
+
+* Ensure path snapping is done on the closest point and is idempotent
+* Fix language of PNG elevation charts
+* Fix logo on login page
+* Fix logs rotation
+* Fix permissions creation
+
+
 0.29.0 (2015-02-04)
 -------------------
 

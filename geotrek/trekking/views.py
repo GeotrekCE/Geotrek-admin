@@ -18,6 +18,7 @@ from rest_framework import permissions as rest_permissions
 
 from geotrek.core.views import CreateFromTopologyMixin
 
+from geotrek.authent.decorators import same_structure_required
 from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 from geotrek.tourism.views import InformationDeskGeoJSON
@@ -73,12 +74,16 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = (set(TrekList.columns +
-                   list(TrekSerializer.Meta.fields) +
-                   ['related', 'pois']) -
-               set(['relationships', 'thumbnail', 'map_image_url', 'slug',
-                    'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'poi_layer',
-                    'gpx', 'kml', 'printable', 'filelist_url', 'information_desk_layer']))
+    columns = (
+        'id', 'name', 'departure', 'arrival', 'duration',
+        'duration_pretty', 'description', 'description_teaser',
+        'networks', 'advice', 'ambiance', 'difficulty',
+        'information_desks', 'themes', 'practice', 'access',
+        'route', 'public_transport', 'advised_parking',
+        'web_links', 'is_park_centered', 'disabled_infrastructure',
+        'parking_location', 'points_reference', 'related', 'pois',
+        'structure',
+    )
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
@@ -170,6 +175,11 @@ class TrekDetail(MapEntityDetail):
             self.request.LANGUAGE_CODE = lang
         return super(TrekDetail, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(TrekDetail, self).get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
 
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
@@ -222,7 +232,8 @@ class TrekDocumentPublic(DocumentPublic):
     def render_to_response(self, context, **response_kwargs):
         # Prepare altimetric graph
         trek = self.get_object()
-        trek.prepare_elevation_chart(self.request.build_absolute_uri('/'))
+        language = self.request.LANGUAGE_CODE
+        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
         return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
@@ -240,9 +251,17 @@ class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
     queryset = Trek.objects.existing()
     form_class = TrekForm
 
+    @same_structure_required('trekking:trek_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrekUpdate, self).dispatch(*args, **kwargs)
+
 
 class TrekDelete(MapEntityDelete):
     model = Trek
+
+    @same_structure_required('trekking:trek_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
 class POILayer(MapEntityLayer):
@@ -261,7 +280,7 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas'])
+    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super(POIFormatList, self).get_queryset()
@@ -296,6 +315,11 @@ class POIFormatList(MapEntityFormat, POIList):
 class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(POIDetail, self).get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
 
 class POIDocument(MapEntityDocument):
     model = POI
@@ -319,9 +343,17 @@ class POIUpdate(MapEntityUpdate):
     queryset = POI.objects.existing()
     form_class = POIForm
 
+    @same_structure_required('trekking:poi_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(POIUpdate, self).dispatch(*args, **kwargs)
+
 
 class POIDelete(MapEntityDelete):
     model = POI
+
+    @same_structure_required('trekking:poi_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(POIDelete, self).dispatch(*args, **kwargs)
 
 
 class WebLinkCreatePopup(CreateView):
@@ -346,6 +378,16 @@ class TrekViewSet(MapEntityViewSet):
 
 
 class POIViewSet(MapEntityViewSet):
-    queryset = POI.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = POI
     serializer_class = POISerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        trek_pk = self.request.GET.get('trek')
+        if trek_pk:
+            try:
+                trek = Trek.objects.existing().get(pk=trek_pk)
+            except Trek.DoesNotExist:
+                return POI.objects.none()
+            return trek.pois.transform(settings.API_SRID, field_name='geom')
+        return POI.objects.existing().transform(settings.API_SRID, field_name='geom')

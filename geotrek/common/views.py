@@ -127,7 +127,8 @@ def admin_check_extents(request):
     viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
     viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
-    leafletbounds = lambda bbox: [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+    def leafletbounds(bbox):
+        return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
 
     context = dict(
         path_extent=leafletbounds(path_extent),

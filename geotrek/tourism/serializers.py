@@ -51,11 +51,9 @@ class TouristicContentTypeSerializer(TranslatedModelSerializer):
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    types = TouristicContentTypeSerializer(many=True)
-
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'types', 'label', 'type1_label', 'type2_label', 'pictogram')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -110,6 +108,11 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     treks = trekking_serializers.RelatedTrekSerializer(many=True)
     pois = trekking_serializers.RelatedPOISerializer(many=True)
 
+    # For consistency with touristic contents
+    type1 = TouristicEventTypeSerializer(many=True)
+    type2 = TouristicEventPublicSerializer(many=True)
+    category = rest_serializers.SerializerMethodField('get_category')
+
     class Meta:
         model = tourism_models.TouristicEvent
         geo_field = 'geom'
@@ -118,7 +121,17 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'meeting_time', 'contact', 'email', 'website',
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'public', 'practical_info',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois') + \
+                  'touristic_contents', 'touristic_events', 'treks', 'pois',
+                  'type1', 'type2', 'category') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+    def get_category(self, obj):
+        return {
+            'id': -1,
+            'label': obj._meta.verbose_name,
+            'type1_label': obj._meta.get_field('type').verbose_name,
+            'type2_label': obj._meta.get_field('public').verbose_name,
+            'pictogram': '/static/tourism/touristicevent.svg',
+        }

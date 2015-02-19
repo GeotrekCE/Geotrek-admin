@@ -326,7 +326,6 @@ class TouristicContentCategoryListTest(TrekkingManagerTest):
         response = self.client.get(url)
         results = json.loads(response.content)
         self.assertEqual(results[0]['label'], self.category.label)
-        self.assertIn('types', results[0])
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
@@ -463,18 +462,10 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_category(self):
         self.assertDictEqual(self.result['category'], {
             u"id": self.category.id,
-            u"types": [
-                {u"id": self.type1.id,
-                 u"name": self.type1.label,
-                 u"in_list": self.type1.in_list},
-                {u"id": self.type2.id,
-                 u"name": self.type2.label,
-                 u"in_list": self.type2.in_list}
-            ],
-            "label": self.category.label,
-            "type1_label": self.category.type1_label,
-            "type2_label": self.category.type2_label,
-            "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
+            u"label": self.category.label,
+            u"type1_label": self.category.type1_label,
+            u"type2_label": self.category.type2_label,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
 
 class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
@@ -482,14 +473,15 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
-            'accessibility', 'areas', 'begin_date', 'booking',
+            'accessibility', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'public', 'publication_date', 'published', 'published_status',
             'slug', 'speaker', 'themes', 'thumbnail',
-            'touristic_contents', 'touristic_events', 'treks', 'type', 'website'],
+            'touristic_contents', 'touristic_events', 'treks', 'type',
+            'type1', 'type2', 'website'],
             sorted(self.result.keys()))
 
     def test_type(self):
@@ -501,6 +493,24 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['public'],
                              {u"id": self.content.public.id,
                               u"name": self.content.public.public})
+
+    def test_type1(self):
+        self.assertDictEqual(self.result['type1'][0],
+                             {u"id": self.content.type.id,
+                              u"name": self.content.type.type})
+
+    def test_type2(self):
+        self.assertDictEqual(self.result['type2'][0],
+                             {u"id": self.content.public.id,
+                              u"name": self.content.public.public})
+
+    def test_category(self):
+        self.assertDictEqual(self.result['category'],
+                             {u"id": -1,
+                              u"label": u"Touristic event",
+                              u"type1_label": u"Type",
+                              u"type2_label": u"Public",
+                              u"pictogram": u"/static/tourism/touristicevent.svg"})
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):

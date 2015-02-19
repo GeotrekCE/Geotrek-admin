@@ -12,6 +12,7 @@ from geotrek.common.serializers import (
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin
 )
+from geotrek.authent import models as authent_models
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -53,12 +54,28 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'name')
 
 
-class UsageSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='usage')
+class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.Field(source='name')
 
     class Meta:
-        model = trekking_models.Usage
+        model = trekking_models.Practice
         fields = ('id', 'pictogram', 'label')
+
+
+class AccessibilitySerializer(TranslatedModelSerializer):
+    label = rest_serializers.Field(source='name')
+
+    class Meta:
+        model = trekking_models.Accessibility
+        fields = ('id', 'label')
+
+
+class TypeSerializer(TranslatedModelSerializer):
+    name = rest_serializers.Field(source='name')
+
+    class Meta:
+        model = trekking_models.Practice
+        fields = ('id', 'name')
 
 
 class WebLinkCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -95,6 +112,12 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
                   'trek', 'published')
 
 
+class StructureSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = authent_models.Structure
+        fields = ('id', 'name')
+
+
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, ZoningSerializerMixin,
                      TranslatedModelSerializer):
@@ -103,7 +126,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
-    usages = UsageSerializer(many=True)
+    practice = PracticeSerializer()
+    usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
+    accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='relationships')
 
@@ -115,6 +140,12 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     information_desk_layer = rest_serializers.SerializerMethodField('get_information_desk_layer_url')
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
+    structure = StructureSerializer()
+
+    # For consistency with touristic contents
+    type1 = TypeSerializer(source='usages', many=True)
+    type2 = TypeSerializer(source='accessibilities', many=True)
+    category = rest_serializers.SerializerMethodField('get_category')
 
     def __init__(self, *args, **kwargs):
         super(TrekSerializer, self).__init__(*args, **kwargs)
@@ -132,12 +163,12 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         fields = ('id', 'departure', 'arrival', 'duration',
                   'duration_pretty', 'description', 'description_teaser',
                   'networks', 'advice', 'ambiance', 'difficulty',
-                  'information_desks',
-                  'themes', 'usages', 'access', 'route', 'public_transport', 'advised_parking',
+                  'information_desks', 'themes', 'practice', 'accessibilities',
+                  'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
-                  'parking_location',
-                  'relationships', 'points_reference',
-                  'poi_layer', 'information_desk_layer', 'gpx', 'kml') + \
+                  'parking_location', 'relationships', 'points_reference',
+                  'poi_layer', 'information_desk_layer', 'gpx', 'kml',
+                  'type1', 'type2', 'category', 'structure') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -166,6 +197,15 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     def get_kml_url(self, obj):
         return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
 
+    def get_category(self, obj):
+        return {
+            'id': -2,
+            'label': obj._meta.verbose_name,
+            'type1_label': obj._meta.get_field('practice').verbose_name,
+            'type2_label': obj._meta.get_field('accessibilities').verbose_name,
+            'pictogram': '/static/trekking/trek.svg',
+        }
+
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
@@ -185,6 +225,7 @@ class RelatedPOISerializer(TranslatedModelSerializer):
 class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                     ZoningSerializerMixin, TranslatedModelSerializer):
     type = POITypeSerializer()
+    structure = StructureSerializer()
 
     def __init__(self, *args, **kwargs):
         super(POISerializer, self).__init__(*args, **kwargs)
@@ -199,7 +240,7 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
         fields = ('id', 'description', 'type',) + \
-            ('min_elevation', 'max_elevation') + \
+            ('min_elevation', 'max_elevation', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
