@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Show edit button when having bypass structure permission
+* Export missing fields in list exports (fixes #1167)
 
 
 0.30.0 (2015-02-19)

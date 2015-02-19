@@ -12,7 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
-                             MapEntityDetail, MapEntityDelete, MapEntityViewSet)
+                             MapEntityDetail, MapEntityDelete, MapEntityViewSet,
+                             MapEntityFormat)
 from rest_framework import generics as rest_generics
 from rest_framework import permissions as rest_permissions
 
@@ -124,6 +125,16 @@ class TouristicContentList(MapEntityList):
         return TouristicContentCategory.objects.filter(pk__in=used)
 
 
+class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
+    columns = [
+        'id', 'name', 'category', 'type1', 'type2', 'description_teaser',
+        'description', 'themes', 'contact', 'email', 'website', 'practical_info',
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ]
+
+
 class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
@@ -176,6 +187,18 @@ class TouristicEventList(MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
     columns = ['id', 'name', 'type']
+
+
+class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
+    columns = [
+        'id', 'name', 'type', 'description_teaser', 'description', 'themes',
+        'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
+        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
+        'participant_number', 'booking', 'target_audience', 'practical_info',
+        'structure', 'date_insert', 'date_update',
+        'published', 'publication_date',
+        'cities', 'districts', 'areas',
+    ]
 
 
 class TouristicEventDetail(MapEntityDetail):

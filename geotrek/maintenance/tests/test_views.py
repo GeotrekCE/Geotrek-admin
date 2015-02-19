@@ -363,10 +363,11 @@ class ExportTest(TestCase):
         for layer in [layer_point, layer_line]:
             self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
             self.assertItemsEqual(layer.fields, [
-                'domain', 'name', 'type', 'period', 'id',
-                'constraint', 'global_cos', 'interventi', 'interven_1',
-                'comments', 'contractor', 'project_ow', 'project_ma',
-                'founders'
+                u'id', u'name', u'period', u'type', u'domain', u'constraint',
+                u'global_cos', u'interventi', u'interven_1', u'comments',
+                u'contractor', u'project_ow', u'project_ma', u'founders',
+                u'structure', u'date_inser', u'date_updat',
+                u'cities', u'districts', u'areas'
             ])
 
         self.assertEquals(len(layer_point), 1)

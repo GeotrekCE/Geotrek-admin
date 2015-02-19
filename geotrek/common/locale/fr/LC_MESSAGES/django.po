@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-20 13:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+msgid "content type"
+msgstr ""
 
 #, python-format
 msgid "min %s"
@@ -35,54 +37,69 @@ msgstr "Date de mise à jour"
 msgid "Deleted"
 msgstr "Supprimé"
 
+#, python-format
+msgid "Image %s invalid or missing from disk."
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Online"
+msgstr ""
+
+msgid "Publication date"
+msgstr "Date de publication"
+
+msgid "Name"
+msgstr ""
+
+msgid "Public name (Change carefully)"
+msgstr ""
+
+msgid "Pictogram"
+msgstr ""
+
 msgid "Organism"
 msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
 
-msgid "File type"
-msgstr "Type de fichiers"
+msgid "Label"
+msgstr ""
 
-msgid "File types"
-msgstr "Types de fichiers"
+msgid "Theme"
+msgstr ""
 
-msgid "Add a new intervention"
-msgstr "Ajouter une intervention"
+msgid "Themes"
+msgstr ""
 
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
+msgid "Topology is not valid."
+msgstr ""
 
-msgid "Add a project"
-msgstr "Ajouter un chantier"
+msgid "Any year"
+msgstr ""
 
-msgid "Add a new infrastructure"
-msgstr "Ajouter un aménagement"
+msgid "Paths"
+msgstr ""
 
-msgid "Add an infrastructure"
-msgstr "Ajouter un aménagement"
+msgid "Tiles"
+msgstr ""
 
-msgid "Add signage"
-msgstr "Ajouter une signalétique"
+msgid "DEM"
+msgstr ""
 
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"
+msgid "Viewport (WGS84)"
+msgstr ""
 
-msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
-
-msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
-
-msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add a new work management edge"
-msgstr "Renseigner le gestionnaire travaux"
-
-msgid "Add a new signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
-
+msgid "Mouse"
+msgstr ""
 
 msgid "Not published"
 msgstr "Non publié"
@@ -95,3 +112,45 @@ msgstr "semble incomplet;"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
+
+#~ msgid "File type"
+#~ msgstr "Type de fichiers"
+
+#~ msgid "File types"
+#~ msgstr "Types de fichiers"
+
+#~ msgid "Add a new intervention"
+#~ msgstr "Ajouter une intervention"
+
+#~ msgid "Add a new project"
+#~ msgstr "Ajouter un chantier"
+
+#~ msgid "Add a project"
+#~ msgstr "Ajouter un chantier"
+
+#~ msgid "Add a new infrastructure"
+#~ msgstr "Ajouter un aménagement"
+
+#~ msgid "Add an infrastructure"
+#~ msgstr "Ajouter un aménagement"
+
+#~ msgid "Add signage"
+#~ msgstr "Ajouter une signalétique"
+
+#~ msgid "Add a new signage"
+#~ msgstr "Ajouter une signalétique"
+
+#~ msgid "Add a new competence edge"
+#~ msgstr "Renseigner l'organisme compétent"
+
+#~ msgid "Add a new land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add a new physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add a new work management edge"
+#~ msgstr "Renseigner le gestionnaire travaux"
+
+#~ msgid "Add a new signage management edge"
+#~ msgstr "Renseigner le gestionnaire signalétique"

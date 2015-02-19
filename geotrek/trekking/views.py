@@ -16,6 +16,7 @@ from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions
 
+from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.authent.decorators import same_structure_required
@@ -74,16 +75,18 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = (
+    columns = [
         'id', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty',
-        'information_desks', 'themes', 'practice', 'access',
+        'information_desks', 'themes', 'practice', 'accessibilities', 'access',
         'route', 'public_transport', 'advised_parking',
         'web_links', 'is_park_centered', 'disabled_infrastructure',
         'parking_location', 'points_reference', 'related', 'pois',
-        'structure',
-    )
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
@@ -280,7 +283,14 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
+    columns = [
+        'id', 'name', 'type', 'description', 'treks',
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
+
+    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super(POIFormatList, self).get_queryset()

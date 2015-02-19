@@ -36,13 +36,15 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
-    columns = InterventionList.columns + \
-        ['disorders', 'total_manday', 'project',
-         'width', 'height', 'length', 'area',
-         'description', 'date_insert', 'date_update',
-         'material_cost', 'heliport_cost', 'subcontract_cost',
-         'total_cost_mandays', 'total_cost'] + \
-        AltimetryMixin.COLUMNS
+    columns = [
+        'id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake',
+        'disorders', 'total_manday', 'project', 'subcontracting',
+        'width', 'height', 'length', 'area', 'structure',
+        'description', 'date_insert', 'date_update',
+        'material_cost', 'heliport_cost', 'subcontract_cost',
+        'total_cost_mandays', 'total_cost',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class InterventionDetail(MapEntityDetail):
@@ -128,10 +130,13 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    columns = ProjectList.columns + \
-        ['constraint', 'global_cost', 'interventions', 'interventions_total_cost',
-         'comments', 'contractors', 'project_owner', 'project_manager',
-         'founders']
+    columns = [
+        'id', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+        'interventions', 'interventions_total_cost', 'comments', 'contractors',
+        'project_owner', 'project_manager', 'founders',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ]
 
 
 class ProjectDetail(MapEntityDetail):

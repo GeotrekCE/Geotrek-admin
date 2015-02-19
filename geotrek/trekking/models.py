@@ -11,7 +11,7 @@ from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
@@ -103,6 +103,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
+    @classproperty
+    def related_verbose_name(cls):
+        return _("Related treks")
+
     @property
     def relationships(self):
         # Does not matter if a or b
@@ -167,6 +171,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @property
     def duration_pretty(self):
         return trekking_tags.duration(self.duration)
+
+    @classproperty
+    def duration_pretty_verbose_name(cls):
+        return _("Formated duration")
 
     @classmethod
     def path_treks(cls, path):

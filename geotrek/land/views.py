@@ -1,6 +1,7 @@
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
+from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
@@ -24,7 +25,11 @@ class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
-    pass
+    columns = [
+        'id', 'physical_type',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class PhysicalEdgeDetail(MapEntityDetail):
@@ -65,7 +70,11 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
-    pass
+    columns = [
+        'id', 'land_type',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class LandEdgeDetail(MapEntityDetail):
@@ -106,7 +115,11 @@ class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
-    pass
+    columns = [
+        'id', 'organization',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class CompetenceEdgeDetail(MapEntityDetail):
@@ -147,7 +160,11 @@ class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
-    pass
+    columns = [
+        'id', 'organization',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class WorkManagementEdgeDetail(MapEntityDetail):
@@ -188,7 +205,11 @@ class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
-    pass
+    columns = [
+        'id', 'organization',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class SignageManagementEdgeDetail(MapEntityDetail):
