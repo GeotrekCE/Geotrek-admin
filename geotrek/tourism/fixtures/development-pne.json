@@ -73,7 +73,7 @@
         "published_es": true,
         "published_fr": true,
         "structure": 1,
-        "public": 2,
+        "target_audience": "Troisième âge",
         "contact": "Voir avec Jean-Louis",
         "meeting_point": "Devant la cahute",
         "meeting_point_en": "",

@@ -313,20 +313,6 @@ class TouristicEventType(models.Model):
         return self.type
 
 
-class TouristicEventPublic(models.Model):
-
-    public = models.CharField(verbose_name=_(u"Public"), max_length=128, db_column='public')
-
-    class Meta:
-        db_table = 't_b_evenement_touristique_public'
-        verbose_name = _(u"Touristic event public")
-        verbose_name_plural = _(u"Touristic event publics")
-        ordering = ['public']
-
-    def __unicode__(self):
-        return self.public
-
-
 class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
@@ -358,7 +344,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     accessibility = models.CharField(verbose_name=_(u"Accessibility"), max_length=256, blank=True, db_column='accessibilite')
     participant_number = models.CharField(verbose_name=_(u"Number of participants"), max_length=256, blank=True, db_column='nb_places')
     booking = models.TextField(verbose_name=_(u"Booking"), blank=True, db_column='reservation')
-    public = models.ForeignKey(TouristicEventPublic, verbose_name=_(u"Public"), blank=True, null=True, db_column='public_vise')
+    target_audience = models.CharField(verbose_name=_(u"Target audience"), max_length=128, blank=True, null=True, db_column='public_vise')
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
                                       help_text=_(u"Recommandations / To plan / Advices"))
 
@@ -379,7 +365,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
 
     @property
     def type2(self):
-        return [self.public] if self.public else []
+        return []
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
 Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))

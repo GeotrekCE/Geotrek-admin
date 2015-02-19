@@ -804,41 +804,5 @@
         "type_en": "Show",
         "type_fr": "Spectacle"
     }
-},
-{
-    "pk": 1,
-    "model": "tourism.touristiceventpublic",
-    "fields": {
-        "public_en": "Adult",
-        "public_fr": "Adulte",
-        "public": "Adulte"
-    }
-},
-{
-    "pk": 2,
-    "model": "tourism.touristiceventpublic",
-    "fields": {
-        "public_en": "Child",
-        "public_fr": "Enfant",
-        "public": "Enfant"
-    }
-},
-{
-    "pk": 3,
-    "model": "tourism.touristiceventpublic",
-    "fields": {
-        "public_en": "All audiences",
-        "public_fr": "Tout public",
-        "public": "Tout public"
-    }
-},
-{
-    "pk": 4,
-    "model": "tourism.touristiceventpublic",
-    "fields": {
-        "public_en": "Impaired audience",
-        "public_fr": "Public d\u00e9ficient",
-        "public": "Public d\u00e9ficient"
-    }
 }
 ]

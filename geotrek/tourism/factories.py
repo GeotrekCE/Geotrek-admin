@@ -72,12 +72,6 @@ class TouristicEventTypeFactory(factory.Factory):
     type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
-class TouristicEventPublicFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicEventPublic
-
-    public = factory.Sequence(lambda n: u"Public %s" % n)
-
-
 class TouristicEventFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEvent
 
@@ -85,4 +79,3 @@ class TouristicEventFactory(factory.Factory):
     geom = 'POINT(0 0)'
 
     type = factory.SubFactory(TouristicEventTypeFactory)
-    public = factory.SubFactory(TouristicEventPublicFactory)

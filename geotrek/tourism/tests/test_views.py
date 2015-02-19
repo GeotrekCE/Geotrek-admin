@@ -478,10 +478,10 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
-            'printable', 'public', 'publication_date', 'published', 'published_status',
-            'slug', 'speaker', 'themes', 'thumbnail',
+            'printable', 'publication_date', 'published', 'published_status',
+            'slug', 'speaker', 'target_audience', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks', 'type',
-            'type1', 'type2', 'website'],
+            'type1', 'website'],
             sorted(self.result.keys()))
 
     def test_type(self):
@@ -489,27 +489,16 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
                              {u"id": self.content.type.id,
                               u"name": self.content.type.type})
 
-    def test_public(self):
-        self.assertDictEqual(self.result['public'],
-                             {u"id": self.content.public.id,
-                              u"name": self.content.public.public})
-
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.content.type.id,
                               u"name": self.content.type.type})
-
-    def test_type2(self):
-        self.assertDictEqual(self.result['type2'][0],
-                             {u"id": self.content.public.id,
-                              u"name": self.content.public.public})
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {u"id": -1,
                               u"label": u"Touristic event",
                               u"type1_label": u"Type",
-                              u"type2_label": u"Public",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
 
 
