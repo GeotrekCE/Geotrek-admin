@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -801,13 +801,44 @@ class TemplateTagsTest(TestCase):
 class TrekViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name=u"Référents communication"))
-        self.client.login(username=user.username, password='dooh')
+                                            user__password='dooh',
+                                            language='en')
+        self.user = profile.user
+        self.user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username='homer', password='dooh')
         self.content1 = TrekFactory.create()
         structure = StructureFactory.create()
         self.content2 = TrekFactory.create(structure=structure)
+
+    def add_bypass_perm(self):
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+
+    def test_edit_button_same_structure(self):
+        url = "/trek/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<a class="btn btn-primary pull-right" '
+                            'href="/trek/edit/{pk}/">'
+                            '<i class="icon-pencil icon-white"></i> '
+                            'Update</a>'.format(pk=self.content1.pk))
+
+    def test_edit_button_other_structure(self):
+        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<span class="btn disabled pull-right" href="#">'
+                            '<i class="icon-pencil"></i> Update</span>')
+
+    def test_edit_button_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<a class="btn btn-primary pull-right" '
+                            'href="/trek/edit/{pk}/">'
+                            '<i class="icon-pencil icon-white"></i> '
+                            'Update</a>'.format(pk=self.content2.pk))
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
@@ -819,6 +850,12 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
 
+    def test_can_edit_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_can_delete_same_structure(self):
         url = "/trek/delete/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
@@ -828,6 +865,12 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+
+    def test_can_delete_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class POIViewsSameStructureTests(AuthentFixturesTest):
