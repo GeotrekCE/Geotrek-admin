@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-03 17:09+0200\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,15 @@ msgstr "Nom"
 msgid "Comments"
 msgstr "Commentaires"
 
+msgid "Departure"
+msgstr "Départ"
+
+msgid "Arrival"
+msgstr "Arrivée"
+
+msgid "Trail"
+msgstr "Sentier"
+
 msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
@@ -54,35 +63,17 @@ msgstr "La géométrie est non simple"
 msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
 
-msgid "Distance (m)"
-msgstr "Distance (m)"
-
-msgid "Altitude (m)"
-msgstr "Altitude (m)"
-
-msgid "Length"
-msgstr "Longueur"
-
-msgid "Ascent"
-msgstr "Dénivelée positive"
-
-msgid "Descent"
-msgstr "Dénivelée négative"
-
-msgid "Minimum elevation"
-msgstr "Altitude minimum"
-
-msgid "Maximum elevation"
-msgstr "Altitude maximum"
-
-msgid "Slope"
-msgstr "Dénivelé"
-
 msgid "Validity"
 msgstr "Validité"
 
 msgid "Approved by manager"
 msgstr "Approuvé par le référent"
+
+msgid "Visible"
+msgstr "Visible"
+
+msgid "Shown in lists and maps"
+msgstr "Affiché dans les listes et sur les cartes"
 
 msgid "Official name"
 msgstr "Nom officiel"
@@ -90,23 +81,14 @@ msgstr "Nom officiel"
 msgid "Remarks"
 msgstr "Remarques"
 
-msgid "Departure"
-msgstr "Départ"
-
 msgid "Departure place"
 msgstr "Lieu de départ"
-
-msgid "Arrival"
-msgstr "Arrivée"
 
 msgid "Arrival place"
 msgstr "Lieu d'arrivée"
 
 msgid "Comfort"
 msgstr "Confort"
-
-msgid "Trail"
-msgstr "Sentier"
 
 msgid "Datasource"
 msgstr "Source de données"
@@ -130,8 +112,14 @@ msgstr "Tronçon"
 msgid "Paths"
 msgstr "Tronçons"
 
+msgid "Trails"
+msgstr "Sentiers"
+
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Add a new path"
+msgstr "Ajouter un tronçon"
 
 msgid "Offset"
 msgstr "Décalage"
@@ -181,32 +169,14 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
-msgid "Trails"
-msgstr "Sentiers"
-
-msgid "Toggle altimetric profile"
-msgstr "Afficher/cacher le profile altimétrique"
-
-msgid "Altitude profile"
-msgstr "Profil altimétrique"
-
 msgid "Management"
 msgstr "Gestion"
 
 msgid "No information"
 msgstr "Pas d'information"
 
-msgid "Elevation"
-msgstr "Altitude"
+msgid "Add a new trail"
+msgstr "Ajouter un sentier"
 
 msgid "Not validated"
 msgstr "Non validé"
-
-msgid "Add a path"
-msgstr "Ajouter un tronçon"
-
-msgid "Add a new path"
-msgstr "Ajouter un tronçon"
-
-msgid "Add a new trail"
-msgstr "Ajouter un sentier"

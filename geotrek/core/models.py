@@ -169,6 +169,10 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
             return ", ".join([unicode(t) for t in trails])
         return _("None")
 
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new path")
+
 
 class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))

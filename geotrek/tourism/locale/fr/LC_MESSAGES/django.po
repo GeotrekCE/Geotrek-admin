@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-19 16:16+0100\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -272,9 +272,3 @@ msgstr "Aucun"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-#~ msgid "Touristic event public"
-#~ msgstr "Public d'évènement touristique"
-
-#~ msgid "Touristic event publics"
-#~ msgstr "Publics d'évènement touristique"

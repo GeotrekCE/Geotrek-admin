@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-20 13:32+0100\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 msgid "content type"
-msgstr ""
+msgstr "type d'objet"
 
 #, python-format
 msgid "min %s"
@@ -39,31 +39,31 @@ msgstr "Supprimé"
 
 #, python-format
 msgid "Image %s invalid or missing from disk."
-msgstr ""
+msgstr "L'image est invalide ou absente du disque"
 
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniature"
 
 msgid "None"
-msgstr ""
+msgstr "Aucun(e)"
 
 msgid "Published"
 msgstr "Publié"
 
 msgid "Online"
-msgstr ""
+msgstr "Publié"
 
 msgid "Publication date"
 msgstr "Date de publication"
 
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 msgid "Public name (Change carefully)"
-msgstr ""
+msgstr "Nom public (changez prudemment)"
 
 msgid "Pictogram"
-msgstr ""
+msgstr "Pictogramme"
 
 msgid "Organism"
 msgstr "Organisme"
@@ -72,34 +72,34 @@ msgid "Organisms"
 msgstr "Organismes"
 
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 msgid "Theme"
-msgstr ""
+msgstr "Thème"
 
 msgid "Themes"
-msgstr ""
+msgstr "Thèmes"
 
 msgid "Topology is not valid."
-msgstr ""
+msgstr "L'événement n'est pas valide"
 
 msgid "Any year"
-msgstr ""
+msgstr "N'import quelle année"
 
 msgid "Paths"
-msgstr ""
+msgstr "Tronçons"
 
 msgid "Tiles"
-msgstr ""
+msgstr "Tuiles"
 
 msgid "DEM"
-msgstr ""
+msgstr "MNT"
 
 msgid "Viewport (WGS84)"
-msgstr ""
+msgstr "Cadre (WGS84)"
 
 msgid "Mouse"
-msgstr ""
+msgstr "Souris"
 
 msgid "Not published"
 msgstr "Non publié"
@@ -112,45 +112,3 @@ msgstr "semble incomplet;"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
-
-#~ msgid "File type"
-#~ msgstr "Type de fichiers"
-
-#~ msgid "File types"
-#~ msgstr "Types de fichiers"
-
-#~ msgid "Add a new intervention"
-#~ msgstr "Ajouter une intervention"
-
-#~ msgid "Add a new project"
-#~ msgstr "Ajouter un chantier"
-
-#~ msgid "Add a project"
-#~ msgstr "Ajouter un chantier"
-
-#~ msgid "Add a new infrastructure"
-#~ msgstr "Ajouter un aménagement"
-
-#~ msgid "Add an infrastructure"
-#~ msgstr "Ajouter un aménagement"
-
-#~ msgid "Add signage"
-#~ msgstr "Ajouter une signalétique"
-
-#~ msgid "Add a new signage"
-#~ msgstr "Ajouter une signalétique"
-
-#~ msgid "Add a new competence edge"
-#~ msgstr "Renseigner l'organisme compétent"
-
-#~ msgid "Add a new land edge"
-#~ msgstr "Renseigner la nature foncière"
-
-#~ msgid "Add a new physical edge"
-#~ msgstr "Renseigner la nature physique"
-
-#~ msgid "Add a new work management edge"
-#~ msgstr "Renseigner le gestionnaire travaux"
-
-#~ msgid "Add a new signage management edge"
-#~ msgstr "Renseigner le gestionnaire signalétique"

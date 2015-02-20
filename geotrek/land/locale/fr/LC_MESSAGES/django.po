@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
-
-msgid "City"
-msgstr "Commune"
 
 msgid "Physical type"
 msgstr "Type physique"
@@ -81,47 +77,8 @@ msgstr "Tronçon de gestion signalétique"
 msgid "Signage management edges"
 msgstr "Tronçons de gestion signalétique"
 
-msgid "Add competence edge"
-msgstr "Renseigner l'organisme compétent"
-
 msgid "Land"
 msgstr "Foncier"
-
-msgid "Add land edge"
-msgstr "Renseigner la nature foncière"
-
-msgid "Add physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add work management edge"
-msgstr "Renseigner le gestionnaire travaux"
-
-msgid "Add signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
-
-msgid "Competence paths"
-msgstr "Compétence sentiers"
-
-msgid "Add a new intervention"
-msgstr "Ajouter une intervention"
-
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
-
-msgid "Add a project"
-msgstr "Ajouter un chantier"
-
-msgid "Add an infrastructure"
-msgstr "Ajouter un aménagement"
-
-msgid "Add signage"
-msgstr "Ajouter une signalétique"
-
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"
-
-msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
 
 msgid "Add a new land edge"
 msgstr "Renseigner la nature foncière"
@@ -129,8 +86,17 @@ msgstr "Renseigner la nature foncière"
 msgid "Add a new physical edge"
 msgstr "Renseigner la nature physique"
 
+msgid "Add a new competence edge"
+msgstr "Renseigner l'organisme compétent"
+
 msgid "Add a new work management edge"
 msgstr "Renseigner le gestionnaire travaux"
 
 msgid "Add a new signage management edge"
 msgstr "Renseigner le gestionnaire signalétique"
+
+msgid "Competence zones"
+msgstr "Zones de compétence"
+
+msgid "Competence paths"
+msgstr "Compétence sentiers"

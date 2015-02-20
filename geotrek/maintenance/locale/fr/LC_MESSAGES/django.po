@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,12 @@ msgstr "Année"
 
 msgid "Year of activity"
 msgstr "Année d'activité"
+
+msgid "Days"
+msgstr "Jours"
+
+msgid "Length"
+msgstr "Longueur"
 
 msgid "Main"
 msgstr "Basique"
@@ -39,12 +45,6 @@ msgstr "Sur %s"
 msgid "Fundings"
 msgstr "Financements"
 
-msgid "Subcontracting"
-msgstr "Sous-traitance"
-
-msgid "Recurrent"
-msgstr "Récurrent"
-
 msgid "Name"
 msgstr "Nom"
 
@@ -57,11 +57,8 @@ msgstr "Date"
 msgid "When ?"
 msgstr "Quand ?"
 
-msgid "Description"
-msgstr "Descriptif"
-
-msgid "Remarks and notes"
-msgstr "Remarques et notes"
+msgid "Subcontracting"
+msgstr "Sous-traitance"
 
 msgid "Width"
 msgstr "Largeur"
@@ -102,11 +99,27 @@ msgstr "Fonctions"
 msgid "Project"
 msgstr "Chantier"
 
+msgid "Description"
+msgstr "Descriptif"
+
+msgid "Remarks and notes"
+msgstr "Remarques et notes"
+
 msgid "Intervention"
 msgstr "Intervention"
 
 msgid "On"
 msgstr "Sur"
+
+#, fuzzy
+msgid "Path"
+msgstr "Tronçons"
+
+msgid "Mandays cost"
+msgstr "Coût jours-hommes"
+
+msgid "Total cost"
+msgstr "Coût total"
 
 msgid "Intervention's status"
 msgstr "Statut"
@@ -129,20 +142,11 @@ msgstr "Désordre"
 msgid "Intervention's disorders"
 msgstr "Désordres"
 
-msgid "Days"
-msgstr "Jours"
-
 msgid "Job"
 msgstr "Fonction"
 
 msgid "Cost"
 msgstr "Coût"
-
-msgid "Global cost"
-msgstr "Coût global"
-
-msgid "Mandays cost"
-msgstr "Coût jours-hommes"
 
 msgid "Intervention's job"
 msgstr "Fonction"
@@ -165,8 +169,14 @@ msgstr "Contraintes"
 msgid "Specific conditions, ..."
 msgstr "Conditions particulières, ..."
 
+msgid "Global cost"
+msgstr "Coût global"
+
 msgid "€"
 msgstr "€"
+
+msgid "Comments"
+msgstr "Commentaires"
 
 msgid "Domain"
 msgstr "Domaine"
@@ -189,8 +199,11 @@ msgstr "Chantiers"
 msgid "Period"
 msgstr "Période"
 
-msgid "Deleted"
-msgstr "Supprimé"
+msgid "Interventions total cost"
+msgstr "Coût total des interventions"
+
+msgid "Add a new project"
+msgstr "Ajouter un chantier"
 
 msgid "Project type"
 msgstr "Type de chantier"
@@ -210,33 +223,26 @@ msgstr "Prestataire"
 msgid "Amount"
 msgstr "Montant"
 
+msgid "Organism"
+msgstr "Organisme"
+
 msgid "Funding"
 msgstr "Financement"
+
+msgid "No intervention related."
+msgstr "Pas d'intervention liée."
 
 msgid "None"
 msgstr "Aucun(e)"
 
-#, python-format
-msgid ""
-"\n"
-"                     %(job)s: %(nb_days)s days\n"
-"                    "
-msgstr ""
-"\n"
-"                     %(job)s: %(nb_days)s jours\n"
-"                    "
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
 
 msgid "Total"
-msgstr ""
-
-msgid "manday"
-msgstr "jour-homme"
-
-msgid "Total cost"
-msgstr "Coût total"
-
-msgid "Interventions total cost"
-msgstr "Coût total des interventions"
+msgstr "Total"
 
 msgid "Related Project"
 msgstr "Chantier"
@@ -247,30 +253,29 @@ msgstr "Aménagement lié"
 msgid "Related signage"
 msgstr "Signalétique liée"
 
-msgid "Surface"
-msgstr ""
+msgid "Dimensions"
+msgstr "Dimensions"
 
 msgid "H:"
-msgstr ""
+msgstr "h:"
+
+msgid "L:"
+msgstr "L:"
 
 msgid "W:"
-msgstr ""
+msgstr "l:"
 
-msgid "Add manday"
-msgstr "Ajouter des Jours-Hommes"
+msgid "Add"
+msgstr "Ajouter"
 
 msgid "Remove"
 msgstr "Supprimer"
 
-msgid "Add intervention"
-msgstr "Ajouter une intervention"
-
-msgid "Maintenance"
-msgstr "Entretient"
-
 msgid "Works"
 msgstr "Travaux"
 
+msgid "Add a new intervention"
+msgstr "Ajouter une intervention"
 
 #, python-format
 msgid ""
@@ -282,50 +287,5 @@ msgstr ""
 "                    %(amount)s€ de %(organism)s\n"
 "                    "
 
-msgid "No intervention related."
-msgstr "Pas d'intervention liée."
-
 msgid "Add funding"
 msgstr "Ajouter un financement"
-
-msgid "Add project"
-msgstr "Ajouter un chantier"
-
-#~ msgid "Intervention date"
-#~ msgstr "Date de l'intervention"
-
-#~ msgid "Length"
-#~ msgstr "Longueur"
-
-#~ msgid "Slope"
-#~ msgstr "Dénivelé"
-
-#~ msgid "Insertion date"
-#~ msgstr "Date d'insertion"
-
-#~ msgid "Update date"
-#~ msgstr "Date de modification"
-
-#~ msgid "Intervention status"
-#~ msgstr "Statut"
-
-#~ msgid "Intervention type"
-#~ msgstr "Type d'intervention"
-
-#~ msgid "Management"
-#~ msgstr "Gestion"
-
-#~ msgid "on"
-#~ msgstr "sur"
-
-#~ msgid "Infrastructures"
-#~ msgstr "Aménagements"
-
-#~ msgid "Signages"
-#~ msgstr "Signalétiques"
-
-#~ msgid "Paths"
-#~ msgstr "Tronçons"
-
-#~ msgid "Trails"
-#~ msgstr "Sentiers"

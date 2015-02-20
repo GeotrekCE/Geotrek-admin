@@ -518,6 +518,10 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
                     pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)
 
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new project")
+
 Path.add_property('projects', lambda self: Project.path_projects(self))
 Topology.add_property('projects', lambda self: Project.topology_projects(self))
 

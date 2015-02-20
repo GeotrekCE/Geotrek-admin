@@ -197,6 +197,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def usages(self):
         return [self.practice] if self.practice else []
 
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new trek")
+
 Path.add_property('treks', Trek.path_treks)
 Topology.add_property('treks', Trek.topology_treks)
 Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
