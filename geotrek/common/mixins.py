@@ -317,3 +317,12 @@ class PictogramMixin(models.Model):
 
     def get_pictogram_url(self):
         return self.pictogram.url if self.pictogram else None
+
+
+class AddPropertyMixin(object):
+    @classmethod
+    def add_property(cls, name, func, verbose_name):
+        if hasattr(cls, name):
+            raise AttributeError("%s has already an attribute %s" % (cls, name))
+        setattr(cls, name, property(func))
+        setattr(cls, '%s_verbose_name' % name, verbose_name)

@@ -10,7 +10,8 @@ from django.contrib.gis.geos import fromstr, LineString
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin
+from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
+                                   AddPropertyMixin)
 from geotrek.common.utils import classproperty
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
@@ -36,7 +37,8 @@ class PathManager(models.GeoManager):
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
-class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated):
+class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+           TimeStampedModelMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
@@ -174,7 +176,7 @@ class Path(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelat
         return _(u"Add a new path")
 
 
-class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
+class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
     offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
@@ -198,12 +200,6 @@ class Topology(AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
         super(Topology, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
-
-    @classmethod
-    def add_property(cls, name, func):
-        if hasattr(cls, name):
-            raise AttributeError("%s has already an attribute %s" % (cls, name))
-        setattr(cls, name, property(func))
 
     @classproperty
     def KIND(cls):
@@ -491,5 +487,5 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         return cls.objects.existing().filter(aggregations__path=path)
 
 
-Path.add_property('trails', lambda self: Trail.path_trails(self))
-Topology.add_property('trails', lambda self: Trail.overlapping(self))
+Path.add_property('trails', lambda self: Trail.path_trails(self), _(u"Trails"))
+Topology.add_property('trails', lambda self: Trail.overlapping(self), _(u"Trails"))

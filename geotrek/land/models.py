@@ -67,10 +67,10 @@ class PhysicalEdge(MapEntityMixin, Topology):
     def topology_physicals(cls, topology):
         return cls.overlapping(topology).select_related('physical_type')
 
-Path.add_property('physical_edges', PhysicalEdge.path_physicals)
-Topology.add_property('physical_edges', PhysicalEdge.topology_physicals)
-Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [])
-Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'))
+Path.add_property('physical_edges', PhysicalEdge.path_physicals, _(u"Physical edges"))
+Topology.add_property('physical_edges', PhysicalEdge.topology_physicals, _(u"Physical edges"))
+Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [], _(u"Physical edges"))
+Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'), _(u"Physical edges"))
 
 
 class LandType(StructureRelated):
@@ -131,10 +131,10 @@ class LandEdge(MapEntityMixin, Topology):
     def topology_lands(cls, topology):
         return cls.overlapping(topology).select_related('land_type')
 
-Path.add_property('land_edges', LandEdge.path_lands)
-Topology.add_property('land_edges', LandEdge.topology_lands)
-Intervention.add_property('land_edges', lambda self: self.topology.land_edges if self.topology else [])
-Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges'))
+Path.add_property('land_edges', LandEdge.path_lands, _(u"Land edges"))
+Topology.add_property('land_edges', LandEdge.topology_lands, _(u"Land edges"))
+Intervention.add_property('land_edges', lambda self: self.topology.land_edges if self.topology else [], _(u"Land edges"))
+Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges'), _(u"Land edges"))
 
 
 class CompetenceEdge(MapEntityMixin, Topology):
@@ -181,10 +181,10 @@ class CompetenceEdge(MapEntityMixin, Topology):
     def topology_competences(cls, topology):
         return cls.overlapping(Topology.objects.get(pk=topology.pk)).select_related('organization')
 
-Path.add_property('competence_edges', CompetenceEdge.path_competences)
-Topology.add_property('competence_edges', CompetenceEdge.topology_competences)
-Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [])
-Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'))
+Path.add_property('competence_edges', CompetenceEdge.path_competences, _(u"Competence edges"))
+Topology.add_property('competence_edges', CompetenceEdge.topology_competences, _(u"Competence edges"))
+Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [], _(u"Competence edges"))
+Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'), _(u"Competence edges"))
 
 
 class WorkManagementEdge(MapEntityMixin, Topology):
@@ -231,10 +231,10 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     def topology_works(cls, topology):
         return cls.overlapping(topology).select_related('organization')
 
-Path.add_property('work_edges', WorkManagementEdge.path_works)
-Topology.add_property('work_edges', WorkManagementEdge.topology_works)
-Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [])
-Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'))
+Path.add_property('work_edges', WorkManagementEdge.path_works, _(u"Work management edges"))
+Topology.add_property('work_edges', WorkManagementEdge.topology_works, _(u"Work management edges"))
+Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [], _(u"Work management edges"))
+Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'), _(u"Work management edges"))
 
 
 class SignageManagementEdge(MapEntityMixin, Topology):
@@ -281,7 +281,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     def topology_signages(cls, topology):
         return cls.overlapping(topology).select_related('organization')
 
-Path.add_property('signage_edges', SignageManagementEdge.path_signages)
-Topology.add_property('signage_edges', SignageManagementEdge.topology_signages)
-Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [])
-Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'))
+Path.add_property('signage_edges', SignageManagementEdge.path_signages, _(u"Signage management edges"))
+Topology.add_property('signage_edges', SignageManagementEdge.topology_signages, _(u"Signage management edges"))
+Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [], _(u"Signage management edges"))
+Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'), _(u"Signage management edges"))

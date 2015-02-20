@@ -201,12 +201,12 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_create_label(cls):
         return _(u"Add a new trek")
 
-Path.add_property('treks', Trek.path_treks)
-Topology.add_property('treks', Trek.topology_treks)
-Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
-Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+Path.add_property('treks', Trek.path_treks, _(u"Treks"))
+Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
+Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _(u"Treks"))
+Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _(u"Treks"))
+tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
+tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -448,12 +448,12 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             qs = cls.objects.filter(geom__intersects=area)
         return qs
 
-Path.add_property('pois', POI.path_pois)
-Topology.add_property('pois', POI.topology_pois)
-Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [])
-Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+Path.add_property('pois', POI.path_pois, _(u"POIs"))
+Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
+Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
+Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))
+tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
+tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
 
 
 class POIType(PictogramMixin):

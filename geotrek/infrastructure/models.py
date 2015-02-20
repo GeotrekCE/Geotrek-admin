@@ -125,8 +125,8 @@ class Infrastructure(BaseInfrastructure):
     def topology_infrastructures(cls, topology):
         return cls.overlapping(topology)
 
-Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self))
-Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self))
+Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
+Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
 
 
 class SignageGISManager(gismodels.GeoManager):
@@ -159,5 +159,5 @@ class Signage(BaseInfrastructure):
     def topology_signages(cls, topology):
         return cls.overlapping(topology)
 
-Path.add_property('signages', lambda self: Signage.path_signages(self))
-Topology.add_property('signages', lambda self: Signage.topology_signages(self))
+Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
+Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))

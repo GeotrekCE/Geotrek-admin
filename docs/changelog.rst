@@ -9,9 +9,8 @@ CHANGELOG
 
 * Show edit button when having bypass structure permission
 * Export missing fields in list exports (fixes #1167)
-* Fix formating of float and boolean values in CSV/Shapefile exports (fixes
-  #1366, #1380)
-* Fix column headers translation in list exports (fixes #1379)
+* Fix formating of float and boolean values in list exports (fixes #1366, #1380)
+* Fix french translation
 
 
 0.30.0 (2015-02-19)

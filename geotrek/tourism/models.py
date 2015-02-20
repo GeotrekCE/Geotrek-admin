@@ -19,7 +19,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PictogramMixin, PublishableMixin,
-                                   PicturesMixin)
+                                   PicturesMixin, AddPropertyMixin)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 
@@ -256,7 +256,7 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _(u"Second list types")
 
 
-class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
+class TouristicContent(AddPropertyMixin, MapEntityMixin, PublishableMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
@@ -295,8 +295,8 @@ class TouristicContent(MapEntityMixin, PublishableMixin, StructureRelated,
     def __unicode__(self):
         return self.name
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
+TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 
 
 class TouristicEventType(models.Model):
@@ -313,7 +313,7 @@ class TouristicEventType(models.Model):
         return self.type
 
 
-class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
+class TouristicEvent(AddPropertyMixin, MapEntityMixin, PublishableMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """
@@ -367,7 +367,7 @@ class TouristicEvent(MapEntityMixin, PublishableMixin, StructureRelated,
     def type2(self):
         return []
 
-TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
+Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
+TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
+TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
