@@ -17,6 +17,7 @@ CHANGELOG
 * Fix formating of float and boolean values in list exports (fixes #1366, #1380)
 * Fix french translation
 * Allow anonymous access to altimetry API for public objects
+* Don't include deleted items in related objects
 
 
 0.30.0 (2015-02-19)

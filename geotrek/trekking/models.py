@@ -189,7 +189,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.filter(geom__intersects=area)
+            qs = cls.objects.existing().filter(geom__intersects=area)
         return qs
 
     # Rando v1 compat
@@ -445,7 +445,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.filter(geom__intersects=area)
+            qs = cls.objects.existing().filter(geom__intersects=area)
         return qs
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
