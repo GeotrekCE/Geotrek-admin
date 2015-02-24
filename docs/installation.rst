@@ -8,7 +8,8 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
-* Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/)
+* Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/) or
+  Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
 
 
 A first estimation on system resources is :

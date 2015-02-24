@@ -5,6 +5,10 @@ CHANGELOG
 0.30.1.dev0
 -------------------
 
+**New features**
+
+* Add support of Ubuntu 14.04 to installer
+
 **Bug fixes**
 
 * Show edit button when having bypass structure permission
