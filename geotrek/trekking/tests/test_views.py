@@ -414,9 +414,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.district = DistrictFactory(geom=polygon)
 
         self.trek = TrekFactory.create(
+            no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
         )
+        path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
+        self.trek.add_path(path1)
 
         self.attachment = AttachmentFactory.create(obj=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
@@ -436,7 +439,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
-        self.trek_b = TrekFactory.create()
+        self.trek_b = TrekFactory.create(no_path=True,
+                                         geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                         published=True)
+        path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
+        self.trek_b.add_path(path2)
         TrekRelationshipFactory.create(has_common_departure=True,
                                        has_common_edge=False,
                                        is_circuit_step=True,
@@ -451,6 +458,13 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
+        trek2 = TrekFactory(no_path=True, published=False)  # not published
+        trek2.add_path(path2)
+        trek3 = TrekFactory(no_path=True, published=True)  # deleted
+        trek3.add_path(path2)
+        trek3.delete()
+        trek4 = TrekFactory(no_path=True, published=True)  # too far
+        trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -614,6 +628,15 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
             u'name': self.touristic_event.name})
+
+    def test_close_treks(self):
+        self.assertEqual(len(self.result['treks']), 1)
+        self.assertDictEqual(self.result['treks'][0], {
+            u'slug': self.trek_b.slug,
+            u'id': self.trek_b.pk,
+            u'pk': self.trek_b.pk,
+            u'name': self.trek_b.name,
+            u'url': u'/trek/%s/' % self.trek_b.id})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],

@@ -211,7 +211,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
-Topology.add_property('published_treks', Trek.published_topology_treks, _(u"Published treks"))
+Topology.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
 Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _(u"Treks"))
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _(u"Treks"))
 tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))

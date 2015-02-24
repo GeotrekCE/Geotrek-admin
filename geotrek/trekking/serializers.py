@@ -131,6 +131,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
+    treks = RelatedTrekSerializer(many=True, source='published_treks')
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -168,7 +169,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml',
-                  'type1', 'type2', 'category', 'structure') + \
+                  'type1', 'type2', 'category', 'structure', 'treks') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
