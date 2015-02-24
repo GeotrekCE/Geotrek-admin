@@ -18,6 +18,7 @@ CHANGELOG
 * Fix french translation
 * Allow anonymous access to altimetry API for public objects
 * Don't include deleted items in related objects
+* Hide not published items in public REST API
 
 
 0.30.0 (2015-02-19)

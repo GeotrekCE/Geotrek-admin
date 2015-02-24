@@ -382,9 +382,15 @@ class WebLinkCreatePopup(CreateView):
 
 
 class TrekViewSet(MapEntityViewSet):
-    queryset = Trek.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = Trek
     serializer_class = TrekSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        qs = Trek.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs
 
 
 class POIViewSet(MapEntityViewSet):
@@ -396,8 +402,8 @@ class POIViewSet(MapEntityViewSet):
         trek_pk = self.request.GET.get('trek')
         if trek_pk:
             try:
-                trek = Trek.objects.existing().get(pk=trek_pk)
+                trek = Trek.objects.existing().get(pk=trek_pk, published=True)
             except Trek.DoesNotExist:
                 return POI.objects.none()
-            return trek.pois.transform(settings.API_SRID, field_name='geom')
-        return POI.objects.existing().transform(settings.API_SRID, field_name='geom')
+            return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return POI.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')

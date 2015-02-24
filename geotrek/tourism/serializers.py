@@ -63,11 +63,11 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
 
-    touristic_contents = RelatedTouristicContentSerializer(many=True)
-    touristic_events = RelatedTouristicEventSerializer(many=True)
-
-    treks = trekking_serializers.RelatedTrekSerializer(many=True)
-    pois = trekking_serializers.RelatedPOISerializer(many=True)
+    # Nearby
+    touristic_contents = RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
+    touristic_events = RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
+    treks = trekking_serializers.RelatedTrekSerializer(many=True, source='published_treks')
+    pois = trekking_serializers.RelatedPOISerializer(many=True, source='published_pois')
 
     class Meta:
         model = tourism_models.TouristicContent
@@ -93,11 +93,11 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
 
-    touristic_contents = RelatedTouristicContentSerializer(many=True)
-    touristic_events = RelatedTouristicEventSerializer(many=True)
-
-    treks = trekking_serializers.RelatedTrekSerializer(many=True)
-    pois = trekking_serializers.RelatedPOISerializer(many=True)
+    # Nearby
+    touristic_contents = RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
+    touristic_events = RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
+    treks = trekking_serializers.RelatedTrekSerializer(many=True, source='published_treks')
+    pois = trekking_serializers.RelatedPOISerializer(many=True, source='published_pois')
 
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)

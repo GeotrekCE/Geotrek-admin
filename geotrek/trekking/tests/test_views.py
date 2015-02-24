@@ -16,6 +16,7 @@ from django.db import connection
 from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
+from django.utils import translation
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -98,13 +99,19 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID))
+        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID), published=True)
 
         self.attachment = AttachmentFactory.create(obj=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
 
         self.pk = self.poi.pk
         url = '/api/pois/%s/' % self.pk
@@ -120,11 +127,11 @@ class POIJSONDetailTest(TrekkingManagerTest):
                          self.poi.slug)
 
     def test_published(self):
-        self.assertEqual(self.result['published'], False)
+        self.assertEqual(self.result['published'], True)
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': False, u'language': u'English'})
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
 
     def test_type(self):
         self.assertDictEqual(self.result['type'],
@@ -153,12 +160,14 @@ class POIJSONDetailTest(TrekkingManagerTest):
                          '/paperclip/get/trekking/poi/%s/' % self.pk)
 
     def test_touristic_contents(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
             u'name': self.touristic_content.name})
 
     def test_touristic_events(self):
+        self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
@@ -434,8 +443,14 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                                        trek_a=self.trek,
                                        trek_b=self.trek_b)
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -587,12 +602,14 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
     def test_touristic_contents(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
             u'name': self.touristic_content.name})
 
     def test_touristic_events(self):
+        self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
@@ -698,13 +715,14 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         url = '/api/treks/%s/' % self.trek.pk
 
         for lang, expected in [('fr-FR', self.trek.name_fr),
-                               ('it-IT', self.trek.name_it)]:
-            self.login()
+                               ('it-IT', 404)]:
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
-            self.assertEqual(response.status_code, 200)
-            obj = json.loads(response.content)
-            self.assertEqual(obj['name'], expected)
-            self.client.logout()  # Django 1.6 keeps language in session
+            if expected == 404:
+                self.assertEqual(response.status_code, 404)
+            else:
+                self.assertEqual(response.status_code, 200)
+                obj = json.loads(response.content)
+                self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
         url = reverse('trekking:trek_layer')
@@ -912,6 +930,10 @@ class POIViewsSameStructureTests(AuthentFixturesTest):
         self.content1 = POIFactory.create()
         structure = StructureFactory.create()
         self.content2 = POIFactory.create(structure=structure)
+
+    def tearDown(self):
+        self.client.logout()
+        translation.deactivate()
 
     def test_can_edit_same_structure(self):
         url = "/poi/edit/{pk}/".format(pk=self.content1.pk)

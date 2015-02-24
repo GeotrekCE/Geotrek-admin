@@ -59,5 +59,6 @@ class TouristicEventTO(TranslationOptions):
     fields = ('name', 'description_teaser', 'description', 'meeting_point',
               'accessibility', 'booking', 'practical_info', 'target_audience',
               ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
 
 translator.register(tourism_models.TouristicEvent, TouristicEventTO)

@@ -64,6 +64,7 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
+    published = True
 
 
 class TouristicEventTypeFactory(factory.Factory):
@@ -77,5 +78,6 @@ class TouristicEventFactory(factory.Factory):
 
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
+    published = True
 
     type = factory.SubFactory(TouristicEventTypeFactory)

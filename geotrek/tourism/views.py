@@ -279,12 +279,24 @@ class TouristicEventDocumentPublic(DocumentPublic):
 
 
 class TouristicContentViewSet(MapEntityViewSet):
-    queryset = TouristicContent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = TouristicContent
     serializer_class = TouristicContentSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
+    def get_queryset(self):
+        qs = TouristicContent.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs
+
 
 class TouristicEventViewSet(MapEntityViewSet):
-    queryset = TouristicEvent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = TouristicEvent
     serializer_class = TouristicEventSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        qs = TouristicEvent.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs

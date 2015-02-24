@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
+from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -260,6 +261,10 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         structure = StructureFactory.create()
         self.content2 = TouristicContentFactory.create(structure=structure)
 
+    def tearDown(self):
+        self.client.logout()
+        translation.deactivate()
+
     def test_can_edit_same_structure(self):
         url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
@@ -349,8 +354,6 @@ class BasicJSONAPITest(object):
     factory = None
 
     def setUp(self):
-        self.login()
-
         self._build_object()
 
         self.pk = self.content.pk
@@ -382,7 +385,7 @@ class BasicJSONAPITest(object):
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': False, u'language': u'English'})
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],

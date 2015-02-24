@@ -130,7 +130,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
-    relationships = TrekRelationshipSerializer(many=True, source='relationships')
+    relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -153,8 +153,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         from geotrek.tourism import serializers as tourism_serializers
 
         self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
-        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
-        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
+        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
 
     class Meta:
         model = trekking_models.Trek
@@ -232,8 +232,8 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
         from geotrek.tourism import serializers as tourism_serializers
 
-        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
-        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
+        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
 
     class Meta:
         model = trekking_models.Trek
