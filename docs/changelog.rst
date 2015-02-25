@@ -16,6 +16,7 @@ CHANGELOG
 * Export missing fields in list exports (fixes #1167)
 * Fix formating of float and boolean values in list exports (fixes #1366, #1380)
 * Fix french translation
+* Allow anonymous access to altimetry API for public objects
 
 
 0.30.0 (2015-02-19)

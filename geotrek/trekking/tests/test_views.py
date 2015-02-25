@@ -287,15 +287,15 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
-    def test_profile_json(self):
-        trek = TrekFactory.create()
+    def test_not_published_profile_json(self):
+        trek = TrekFactory.create(published=False)
         url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-    def test_elevation_area_json(self):
-        trek = TrekFactory.create()
+    def test_not_published_elevation_area_json(self):
+        trek = TrekFactory.create(published=False)
         url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -364,6 +364,32 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
         open_patched.side_effect = fake_exists
         find_template('trekking/trek_public.odt')
         open_patched.assert_called_with(overriden_template, 'rb')
+
+    def test_profile_json(self):
+        trek = TrekFactory.create(published=True)
+        url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_not_published_profile_json(self):
+        trek = TrekFactory.create(published=False)
+        url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_elevation_area_json(self):
+        trek = TrekFactory.create(published=True)
+        url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_not_published_elevation_area_json(self):
+        trek = TrekFactory.create(published=False)
+        url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
 
 
 class TrekJSONDetailTest(TrekkingManagerTest):
