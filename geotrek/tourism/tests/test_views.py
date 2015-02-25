@@ -16,7 +16,8 @@ from geotrek.core import factories as core_factories
 from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.factories import AttachmentFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
                                        InformationDeskFactory,
@@ -532,3 +533,75 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         url = "/touristicevent/delete/{pk}/".format(pk=self.event2.pk)
         response = self.client.get(url)
         self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
+
+
+class TouristicContentCustomViewTests(TrekkingManagerTest):
+    def test_overriden_document(self):
+        content = TouristicContentFactory.create(published=True)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=content, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_public_document_pdf(self, mocked):
+        content = TouristicContentFactory.create(published=True)
+        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        mocked.return_value.status_code = 200
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_published_document(self):
+        content = TouristicContentFactory.create(published=False)
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_published_document_pdf(self):
+        content = TouristicContentFactory.create(published=False)
+        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+
+class TouristicEventCustomViewTests(TrekkingManagerTest):
+    def test_overriden_document(self):
+        event = TouristicEventFactory.create(published=True)
+
+        with open(event.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
+        response = self.client.get(event.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=event, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(event.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_public_document_pdf(self, mocked):
+        content = TouristicEventFactory.create(published=True)
+        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        mocked.return_value.status_code = 200
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_published_document(self):
+        content = TouristicEventFactory.create(published=False)
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_published_document_pdf(self):
+        content = TouristicEventFactory.create(published=False)
+        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)

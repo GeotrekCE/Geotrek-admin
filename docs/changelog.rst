@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Add support of Ubuntu 14.04 to installer
+* Public PDF for touristic contents/events (fixes #1206)
 
 **Bug fixes**
 

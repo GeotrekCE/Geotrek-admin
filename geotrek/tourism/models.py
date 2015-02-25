@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
+from django.utils.formats import date_format
 
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -256,7 +257,7 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _(u"Second list types")
 
 
-class TouristicContent(AddPropertyMixin, MapEntityMixin, PublishableMixin, StructureRelated,
+class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
@@ -295,6 +296,32 @@ class TouristicContent(AddPropertyMixin, MapEntityMixin, PublishableMixin, Struc
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_document_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
+        return ('tourism:touristiccontent_document_public', [str(self.pk)])
+
+    @property
+    def districts_display(self):
+        return ', '.join([unicode(d) for d in self.districts])
+
+    @property
+    def type1_label(self):
+        return self.category.type1_label
+
+    @property
+    def type2_label(self):
+        return self.category.type2_label
+
+    @property
+    def types1_display(self):
+        return ', '.join([unicode(n) for n in self.type1.all()])
+
+    @property
+    def types2_display(self):
+        return ', '.join([unicode(n) for n in self.type2.all()])
+
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 
@@ -313,7 +340,7 @@ class TouristicEventType(models.Model):
         return self.type
 
 
-class TouristicEvent(AddPropertyMixin, MapEntityMixin, PublishableMixin, StructureRelated,
+class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """
@@ -359,6 +386,12 @@ class TouristicEvent(AddPropertyMixin, MapEntityMixin, PublishableMixin, Structu
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_document_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
+        return ('tourism:touristicevent_document_public', [str(self.pk)])
+
     @property
     def type1(self):
         return [self.type] if self.type else []
@@ -366,6 +399,19 @@ class TouristicEvent(AddPropertyMixin, MapEntityMixin, PublishableMixin, Structu
     @property
     def type2(self):
         return []
+
+    @property
+    def districts_display(self):
+        return ', '.join([unicode(d) for d in self.districts])
+
+    @property
+    def dates_display(self):
+        if self.begin_date == self.end_date:
+            return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
+        else:
+            return _(u"from {begin} to {end}").format(
+                begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'),
+                end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
 Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))

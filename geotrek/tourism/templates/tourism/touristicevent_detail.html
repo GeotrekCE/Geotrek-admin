@@ -1,5 +1,15 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n static mapentity_tags %}
+
+
+{% block download %}
+    {{ block.super }}
+  </div>
+
+  <div class="btn-group pull-right">
+    <a class="btn btn-mini" href="{% url 'tourism:touristicevent_printable' object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+{% endblock download %}
+
 
 {% block detailspanel %}
     <table class="table-striped table-bordered table">

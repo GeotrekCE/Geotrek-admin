@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-20 17:40+0100\n"
+"POT-Creation-Date: 2015-02-23 15:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -243,6 +243,9 @@ msgstr "Évènement touristique"
 msgid "Touristic events"
 msgstr "Évènements touristiques"
 
+msgid "from {begin} to {end}"
+msgstr "du {begin} au {end}"
+
 msgid "Tourism"
 msgstr "Tourisme"
 
@@ -260,6 +263,12 @@ msgstr "Pas de résultat"
 
 msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
+
+msgid "Public print"
+msgstr "Impression grand public"
+
+msgid "Print"
+msgstr "Impr."
 
 msgid "Thumbnail"
 msgstr "Aperçu"
