@@ -53,7 +53,7 @@ class SnappedLineStringFieldTest(TestCase):
         path = PathFactory.create()
         value = '{"geom": "%s", "snap": [null, %s]}' % (self.wktgeom, path.pk)
         self.assertTrue(self.f.clean(value).equals_exact(
-            LineString((100000, 100000), (2, 2),
+            LineString((100000, 100000), (700000, 6600000),
                        srid=settings.SRID), 0.1))
 
 

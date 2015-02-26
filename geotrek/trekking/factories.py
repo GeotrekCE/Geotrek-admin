@@ -4,7 +4,7 @@ import factory
 from django.contrib.gis.geos import Point
 
 from . import models
-from geotrek.core.factories import TopologyFactory
+from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 
@@ -123,10 +123,10 @@ class POITypeFactory(factory.Factory):
     pictogram = dummy_filefield_as_sequence('pictogram %s')
 
 
-class POIFactory(TopologyFactory):
+class POIFactory(PointTopologyFactory):
     FACTORY_FOR = models.POI
 
     name = factory.Sequence(lambda n: u"POI %s" % n)
-    description = factory.Sequence(lambda n: u"<p>description %s</p> % n)")
+    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
     type = factory.SubFactory(POITypeFactory)
     published = True

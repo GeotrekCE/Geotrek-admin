@@ -8,6 +8,10 @@ from django.conf import settings
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("core", "0001_initial"),
+    )
+
     def forwards(self, orm):
         # Adding model 'Trek'
         db.create_table('o_t_itineraire', (

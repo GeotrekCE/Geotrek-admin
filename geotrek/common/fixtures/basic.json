@@ -90,7 +90,8 @@
             "pictogram": "upload/theme-fauna@2x.png",
             "label": "Fauna",
             "label_en": "Fauna",
-            "label_fr": "Faune"
+            "label_fr": "Faune",
+            "cirkwi": 32
         }
     },
     {
@@ -100,7 +101,8 @@
             "pictogram": "upload/theme-flora@2x.png",
             "label": "Flora",
             "label_en": "Flora",
-            "label_fr": "Flore"
+            "label_fr": "Flore",
+            "cirkwi": 32
         }
     },
     {
@@ -108,8 +110,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-panorama@2x.png",
+            "label": "Point de vue",
             "label_fr": "Point de vue",
-            "label": "Point de vue"
+            "cirkwi": null
         }
     },
     {
@@ -117,8 +120,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-architecture@2x.png",
+            "label": "Architecture",
             "label_fr": "Architecture",
-            "label": "Architecture"
+            "cirkwi": null
         }
     },
     {
@@ -126,8 +130,10 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-pastoral@2x.png",
+            "label": "Pastoralisme",
+            "label_en": "Pastoralism",
             "label_fr": "Pastoralisme",
-            "label": "Pastoralisme"
+            "cirkwi": null
         }
     },
     {
@@ -135,8 +141,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-geology@2x.png",
+            "label": "G\u00e9ologie",
             "label_fr": "G\u00e9ologie",
-            "label": "G\u00e9ologie"
+            "cirkwi": null
         }
     },
     {
@@ -144,8 +151,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-lake@2x.png",
+            "label": "Lac et glacier",
             "label_fr": "Lac et glacier",
-            "label": "Lac et glacier"
+            "cirkwi": null
         }
     },
     {
@@ -153,8 +161,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-peak@2x.png",
+            "label": "Sommet",
             "label_fr": "Sommet",
-            "label": "Sommet"
+            "cirkwi": null
         }
     },
     {
@@ -162,8 +171,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-refugee@2x.png",
+            "label": "Refuge",
             "label_fr": "Refuge",
-            "label": "Refuge"
+            "cirkwi": null
         }
     },
     {
@@ -171,8 +181,9 @@
         "model": "common.theme",
         "fields": {
             "pictogram": "upload/theme-history@2x.png",
+            "label": "Arch\u00e9ologie et histoire",
             "label_fr": "Arch\u00e9ologie et histoire",
-            "label": "Arch\u00e9ologie et histoire"
+            "cirkwi": 39
         }
     }
 ]

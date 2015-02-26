@@ -162,7 +162,7 @@ class InterventionTest(TestCase):
         # Line
         interv = InfrastructureInterventionFactory.create(width=10.0)
         interv.reload()
-        self.assertEqual(interv.area, interv.length * 10.0)
+        self.assertAlmostEqual(interv.area, interv.length * 10.0)
 
         # Points
         interv = InfrastructurePointInterventionFactory.create()

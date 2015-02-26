@@ -287,6 +287,7 @@ class TrekNetwork(PictogramMixin):
 class Practice(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    cirkwi = models.ForeignKey('CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_pratique'
@@ -301,6 +302,7 @@ class Practice(PictogramMixin):
 class Accessibility(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    cirkwi = models.ForeignKey('common.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_accessibilite'
@@ -335,6 +337,9 @@ class DifficultyLevel(PictogramMixin):
     id = models.IntegerField(primary_key=True)
     difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
                                   max_length=128, db_column='difficulte')
+    cirkwi_level = models.IntegerField(verbose_name=_(u"Cirkwi level"), blank=True, null=True,
+                                       db_column='niveau_cirkwi', help_text=_(u"Between 1 and 8"))
+    cirkwi = models.ForeignKey('common.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_difficulte'
@@ -480,6 +485,7 @@ tourism_models.TouristicEvent.add_property('published_pois', lambda self: inters
 class POIType(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    cirkwi = models.ForeignKey('CirkwiPOICategory', verbose_name=_(u"Cirkwi POI category"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_poi'
@@ -489,3 +495,31 @@ class POIType(PictogramMixin):
 
     def __unicode__(self):
         return self.label
+
+
+class CirkwiLocomotion(models.Model):
+    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
+    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 'o_b_cirkwi_locomotion'
+        verbose_name = _(u"Cirkwi locomotion")
+        verbose_name_plural = _(u"Cirkwi locomotions")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class CirkwiPOICategory(models.Model):
+    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
+    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
+
+    class Meta:
+        db_table = 'o_b_cirkwi_poi_category'
+        verbose_name = _(u"Cirkwi POI category")
+        verbose_name_plural = _(u"Cirkwi POI categories")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name

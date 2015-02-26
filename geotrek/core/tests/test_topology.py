@@ -713,8 +713,8 @@ class TopologySerialization(TestCase):
         # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
         field = json.loads(fieldvalue)
         self.assertEqual(field['pk'], topology.pk)
-        self.assertTrue(almostequal(field['lat'], -5.983))
-        self.assertTrue(almostequal(field['lng'], -1.363))
+        self.assertAlmostEqual(field['lat'], 46.5004566)
+        self.assertAlmostEqual(field['lng'], 3.0006428)
         self.assertEqual(field['kind'], "TOPOLOGY")
 
     def test_serialize_two_consecutive_forced(self):
@@ -780,14 +780,14 @@ class TopologyDerialization(TestCase):
     def test_deserialize_point(self):
         PathFactory.create()
         # Take a point
-        p = Point(2, 1, 0, srid=settings.SRID)
+        p = Point(700100, 6600000, 0, srid=settings.SRID)
         p.transform(settings.API_SRID)
         closest = Path.closest(p)
         # Check closest path
-        self.assertEqual(closest.geom.coords, ((1.0, 1.0), (2.0, 2.0)))
+        self.assertEqual(closest.geom.coords, ((700000, 6600000), (700100, 6600100)))
         # The point has same x as first point of path, and y to 0 :
         topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertAlmostEqual(topology.offset, -0.7071, 3)
+        self.assertAlmostEqual(topology.offset, -70.7106781)
         self.assertEqual(len(topology.paths.all()), 1)
         pagg = topology.aggregations.get()
         self.assertTrue(almostequal(pagg.start_position, 0.5))

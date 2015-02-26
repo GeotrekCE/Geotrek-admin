@@ -12,6 +12,8 @@ CHANGELOG
 * Add treks close to other treks in REST API
 * Add pictograms for trek accessibilities, touristic content types and
   touristic event type
+* Export to cirkwi/espace loisirs IGN. After upgrade, run
+  `bin/django loaddata cirkwi` to load data cirkwi tags and categories
 
 **Bug fixes**
 

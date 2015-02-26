@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-20 17:55+0100\n"
+"POT-Creation-Date: 2015-03-03 10:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,6 +169,9 @@ msgstr "Durée formatée"
 msgid "Add a new trek"
 msgstr "Ajouter un itinéraire"
 
+msgid "Published treks"
+msgstr "Itinéraires publiés"
+
 msgid "Common departure"
 msgstr "Départ en commun"
 
@@ -199,8 +202,14 @@ msgstr "Réseau d'itinéraire"
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
+msgid "Cirkwi locomotion"
+msgstr "Locomotion Cirkwi"
+
 msgid "Practices"
 msgstr "Pratiques"
+
+msgid "Cirkwi tag"
+msgstr "Tag Cirkwi"
 
 msgid "Accessibility"
 msgstr "Accessibilité"
@@ -210,6 +219,12 @@ msgstr "Parcours"
 
 msgid "Difficulty level"
 msgstr "Niveau de difficulté"
+
+msgid "Cirkwi level"
+msgstr "Niveau Cirkwi"
+
+msgid "Between 1 and 8"
+msgstr "Entre 1 et 8"
 
 msgid "Difficulty levels"
 msgstr "Niveaux de difficulté"
@@ -244,11 +259,29 @@ msgstr "POIs"
 msgid "POIs"
 msgstr "POIs"
 
+msgid "Published POIs"
+msgstr "POIs publiés"
+
+msgid "Cirkwi POI category"
+msgstr "Catégorie de POI Cirkwi"
+
 msgid "POI type"
 msgstr "Type de POI"
 
 msgid "POI types"
 msgstr "Types de POI"
+
+msgid "Cirkwi id"
+msgstr "Id Cirkwi"
+
+msgid "Cirkwi name"
+msgstr "Nom Cirkwi"
+
+msgid "Cirkwi locomotions"
+msgstr "Locomotions Cirkwi"
+
+msgid "Cirkwi POI categories"
+msgstr "Catégories de POI Cirkwi"
 
 msgid "Public print"
 msgstr "Impression grand public"
