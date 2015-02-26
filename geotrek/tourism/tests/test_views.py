@@ -8,7 +8,6 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
-from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -18,6 +17,7 @@ from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
 from geotrek.common.factories import AttachmentFactory
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
@@ -263,7 +263,6 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
 
     def tearDown(self):
         self.client.logout()
-        translation.deactivate()
 
     def test_can_edit_same_structure(self):
         url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
@@ -350,10 +349,11 @@ class TouristicContentFormTest(TrekkingManagerTest):
         self.assertContains(response, 'value="%s" selected' % self.category.pk)
 
 
-class BasicJSONAPITest(object):
+class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
     def setUp(self):
+        super(BasicJSONAPITest, self).setUp()
         self._build_object()
 
         self.pk = self.content.pk

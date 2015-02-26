@@ -16,13 +16,12 @@ from django.db import connection
 from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
-from django.utils import translation
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -936,7 +935,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.assertEqual(response.status_code, 200)
 
 
-class POIViewsSameStructureTests(AuthentFixturesTest):
+class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
@@ -949,7 +948,6 @@ class POIViewsSameStructureTests(AuthentFixturesTest):
 
     def tearDown(self):
         self.client.logout()
-        translation.deactivate()
 
     def test_can_edit_same_structure(self):
         url = "/poi/edit/{pk}/".format(pk=self.content1.pk)
