@@ -26,20 +26,20 @@ class InformationDeskSerializer(TranslatedModelSerializer):
                   'latitude', 'longitude', 'type')
 
 
-class RelatedTouristicContentSerializer(TranslatedModelSerializer):
-    slug = rest_serializers.Field(source='slug')
+class CloseTouristicContentSerializer(TranslatedModelSerializer):
+    category_id = rest_serializers.Field(source='category.id')
 
     class Meta:
         model = tourism_models.TouristicContent
-        fields = ('id', 'name', 'slug')
+        fields = ('id', 'category_id')
 
 
-class RelatedTouristicEventSerializer(TranslatedModelSerializer):
-    slug = rest_serializers.Field(source='slug')
+class CloseTouristicEventSerializer(TranslatedModelSerializer):
+    category_id = rest_serializers.Field(source='category_id')
 
     class Meta:
         model = tourism_models.TouristicEvent
-        fields = ('id', 'name', 'slug')
+        fields = ('id', 'category_id')
 
 
 class TouristicContentTypeSerializer(TranslatedModelSerializer):
@@ -64,10 +64,10 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type2 = TouristicContentTypeSerializer(many=True)
 
     # Nearby
-    touristic_contents = RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
-    touristic_events = RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
-    treks = trekking_serializers.RelatedTrekSerializer(many=True, source='published_treks')
-    pois = trekking_serializers.RelatedPOISerializer(many=True, source='published_pois')
+    touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
+    touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
+    treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
+    pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
     class Meta:
         model = tourism_models.TouristicContent
@@ -94,10 +94,10 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     type = TouristicEventTypeSerializer()
 
     # Nearby
-    touristic_contents = RelatedTouristicContentSerializer(many=True, source='published_touristic_contents')
-    touristic_events = RelatedTouristicEventSerializer(many=True, source='published_touristic_events')
-    treks = trekking_serializers.RelatedTrekSerializer(many=True, source='published_treks')
-    pois = trekking_serializers.RelatedPOISerializer(many=True, source='published_pois')
+    touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
+    touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
+    treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
+    pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
@@ -119,7 +119,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     def get_category(self, obj):
         return {
-            'id': -1,
+            'id': obj.category_id,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',

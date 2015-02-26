@@ -388,6 +388,9 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def __unicode__(self):
         return self.name
 
+    # fake category id to be consistent with touristic contents
+    category_id = -1
+
     @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``

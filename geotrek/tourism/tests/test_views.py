@@ -412,11 +412,8 @@ class BasicJSONAPITest(object):
 
     def test_treks(self):
         self.assertDictEqual(self.result['treks'][0], {
-            u'pk': self.trek.pk,
             u'id': self.trek.id,
-            u'slug': self.trek.slug,
-            u'name': self.trek.name,
-            u'url': u'/trek/%s/' % self.trek.id})
+            u'category_id': self.trek.category_id})
 
     def test_pois(self):
         self.assertDictEqual(self.result['pois'][0], {

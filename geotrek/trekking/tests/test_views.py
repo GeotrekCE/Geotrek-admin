@@ -162,16 +162,14 @@ class POIJSONDetailTest(TrekkingManagerTest):
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
-            u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
-            u'name': self.touristic_content.name})
+            u'category_id': self.touristic_content.category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
-            u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
-            u'name': self.touristic_event.name})
+            u'category_id': self.touristic_event.category_id})
 
 
 class TrekViewsTest(CommonTest):
@@ -618,25 +616,20 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
-            u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
-            u'name': self.touristic_content.name})
+            u'category_id': self.touristic_content.category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
-            u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
-            u'name': self.touristic_event.name})
+            u'category_id': self.touristic_event.category_id})
 
     def test_close_treks(self):
         self.assertEqual(len(self.result['treks']), 1)
         self.assertDictEqual(self.result['treks'][0], {
-            u'slug': self.trek_b.slug,
             u'id': self.trek_b.pk,
-            u'pk': self.trek_b.pk,
-            u'name': self.trek_b.name,
-            u'url': u'/trek/%s/' % self.trek_b.id})
+            u'category_id': self.trek_b.category_id})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
