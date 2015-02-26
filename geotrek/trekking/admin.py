@@ -28,7 +28,7 @@ class PracticeAdmin(TranslationAdmin):
 
 
 class AccessibilityAdmin(TranslationAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'pictogram_img')
     search_fields = ('name',)
 
 

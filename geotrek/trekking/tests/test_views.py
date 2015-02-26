@@ -541,6 +541,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_accessibilities(self):
         self.assertDictEqual(self.result['accessibilities'][0],
                              {u"id": self.accessibility.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               u"label": self.accessibility.name})
 
     def test_themes(self):
@@ -633,11 +634,13 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.trek.practice.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
                               u"name": self.trek.practice.name})
 
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.accessibility.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               u"name": self.accessibility.name})
 
     def test_category(self):

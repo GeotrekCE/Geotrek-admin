@@ -42,12 +42,12 @@ class CloseTouristicEventSerializer(TranslatedModelSerializer):
         fields = ('id', 'category_id')
 
 
-class TouristicContentTypeSerializer(TranslatedModelSerializer):
+class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     name = rest_serializers.Field(source='label')
 
     class Meta:
         model = tourism_models.TouristicContentType
-        fields = ('id', 'name', 'in_list')
+        fields = ('id', 'name', 'pictogram', 'in_list')
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -80,12 +80,12 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
             PicturesSerializerMixin.Meta.fields
 
 
-class TouristicEventTypeSerializer(TranslatedModelSerializer):
+class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     name = rest_serializers.Field(source='type')
 
     class Meta:
         model = tourism_models.TouristicEventType
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'pictogram')
 
 
 class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,

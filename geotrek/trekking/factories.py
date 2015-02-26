@@ -25,6 +25,7 @@ class AccessibilityFactory(factory.Factory):
     FACTORY_FOR = models.Accessibility
 
     name = factory.Sequence(lambda n: u"accessibility %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class RouteFactory(factory.Factory):

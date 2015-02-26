@@ -298,7 +298,7 @@ class Practice(PictogramMixin):
         return self.name
 
 
-class Accessibility(models.Model):
+class Accessibility(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
 

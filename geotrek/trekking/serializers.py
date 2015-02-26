@@ -62,20 +62,20 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'label')
 
 
-class AccessibilitySerializer(TranslatedModelSerializer):
+class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     label = rest_serializers.Field(source='name')
 
     class Meta:
         model = trekking_models.Accessibility
-        fields = ('id', 'label')
+        fields = ('id', 'pictogram', 'label')
 
 
-class TypeSerializer(TranslatedModelSerializer):
+class TypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     name = rest_serializers.Field(source='name')
 
     class Meta:
         model = trekking_models.Practice
-        fields = ('id', 'name')
+        fields = ('id', 'pictogram', 'name')
 
 
 class WebLinkCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):

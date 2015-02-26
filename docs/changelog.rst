@@ -10,6 +10,8 @@ CHANGELOG
 * Add support of Ubuntu 14.04 to installer
 * Public PDF for touristic contents/events (fixes #1206)
 * Add treks close to other treks in REST API
+* Add pictograms for trek accessibilities, touristic content types and
+  touristic event type
 
 **Bug fixes**
 

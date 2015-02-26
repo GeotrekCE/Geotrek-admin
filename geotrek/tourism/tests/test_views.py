@@ -452,12 +452,14 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.type1.id,
                               u"name": self.type1.label,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type1.pictogram.name),
                               u"in_list": self.type1.in_list})
 
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.type2.id,
                               u"name": self.type2.label,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type2.pictogram.name),
                               u"in_list": self.type2.in_list})
 
     def test_category(self):
@@ -488,11 +490,13 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_type(self):
         self.assertDictEqual(self.result['type'],
                              {u"id": self.content.type.id,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
                               u"name": self.content.type.type})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.content.type.id,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
                               u"name": self.content.type.type})
 
     def test_category(self):

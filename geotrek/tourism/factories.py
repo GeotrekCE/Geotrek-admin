@@ -55,6 +55,7 @@ class TouristicContentTypeFactory(factory.Factory):
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
     in_list = 1
 
 
@@ -71,6 +72,7 @@ class TouristicEventTypeFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEventType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class TouristicEventFactory(factory.Factory):

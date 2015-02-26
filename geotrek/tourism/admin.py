@@ -59,6 +59,7 @@ if settings.TOURISM_ENABLED:
 
 
 class TouristicEventTypeAdmin(TranslationAdmin):
+    list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
 
 if settings.TOURISM_ENABLED:
