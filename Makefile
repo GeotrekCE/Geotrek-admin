@@ -91,6 +91,16 @@ tests: test test_js test_nav
 serve:
 	bin/django runserver_plus --threaded $(listen)
 
+services:
+	@echo "Stop convertit"
+	kill `netstat -tlp 2>/dev/null | grep ':6543' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'`; true
+	@echo "Stop screamshotter"
+	kill `netstat -tlp 2>/dev/null | grep ':8001' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'`; true
+	@echo "Start convertit"
+	bin/convertit lib/src/convertit/development.ini &
+	@echo "Start screamshotter"
+	bin/django runserver --settings=screamshotter.settings 8001 &
+
 update:
 	bin/develop update -f
 	bin/django collectstatic --clear --noinput --verbosity=0

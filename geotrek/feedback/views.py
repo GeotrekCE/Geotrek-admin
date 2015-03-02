@@ -16,6 +16,13 @@ class ReportList(mapentity_views.MapEntityList):
     columns = ['id', 'name', 'email', 'category', 'status', 'date_insert']
 
 
+class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
+    columns = [
+        'id', 'name', 'email', 'comment', 'category', 'status',
+        'date_insert', 'date_update',
+    ]
+
+
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory
 

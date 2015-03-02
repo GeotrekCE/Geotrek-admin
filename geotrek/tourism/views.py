@@ -12,11 +12,14 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
-                             MapEntityDetail, MapEntityDelete, MapEntityViewSet)
+                             MapEntityDetail, MapEntityDelete, MapEntityViewSet,
+                             MapEntityFormat, MapEntityDocument)
+from mapentity.serializers import plain_text
 from rest_framework import generics as rest_generics
 from rest_framework import permissions as rest_permissions
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.views import DocumentPublic
 from geotrek.tourism.models import DataSource, InformationDesk
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
@@ -124,6 +127,16 @@ class TouristicContentList(MapEntityList):
         return TouristicContentCategory.objects.filter(pk__in=used)
 
 
+class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
+    columns = [
+        'id', 'name', 'category', 'type1', 'type2', 'description_teaser',
+        'description', 'themes', 'contact', 'email', 'website', 'practical_info',
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ]
+
+
 class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
@@ -167,6 +180,28 @@ class TouristicContentDelete(MapEntityDelete):
         return super(TouristicContentDelete, self).dispatch(*args, **kwargs)
 
 
+class TouristicContentDocument(MapEntityDocument):
+    queryset = TouristicContent.objects.existing()
+
+
+class TouristicContentDocumentPublic(DocumentPublic):
+    queryset = TouristicContent.objects.existing()
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicContentDocumentPublic, self).get_context_data(**kwargs)
+        content = self.get_object()
+
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
+
+        # Replace HTML text with plain text
+        for attr in ['description', 'description_teaser', 'contact', 'practical_info']:
+            setattr(content, attr, plain_text(getattr(content, attr)))
+
+        context['object'] = context['content'] = content
+
+        return context
+
+
 class TouristicEventLayer(MapEntityLayer):
     queryset = TouristicEvent.objects.existing()
     properties = ['name']
@@ -176,6 +211,18 @@ class TouristicEventList(MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
     columns = ['id', 'name', 'type']
+
+
+class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
+    columns = [
+        'id', 'name', 'type', 'description_teaser', 'description', 'themes',
+        'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
+        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
+        'participant_number', 'booking', 'target_audience', 'practical_info',
+        'structure', 'date_insert', 'date_update',
+        'published', 'publication_date',
+        'cities', 'districts', 'areas',
+    ]
 
 
 class TouristicEventDetail(MapEntityDetail):
@@ -209,13 +256,47 @@ class TouristicEventDelete(MapEntityDelete):
         return super(TouristicEventDelete, self).dispatch(*args, **kwargs)
 
 
+class TouristicEventDocument(MapEntityDocument):
+    queryset = TouristicEvent.objects.existing()
+
+
+class TouristicEventDocumentPublic(DocumentPublic):
+    queryset = TouristicEvent.objects.existing()
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicEventDocumentPublic, self).get_context_data(**kwargs)
+        event = self.get_object()
+
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
+
+        # Replace HTML text with plain text
+        for attr in ['description', 'description_teaser', 'contact', 'booking', 'practical_info']:
+            setattr(event, attr, plain_text(getattr(event, attr)))
+
+        context['object'] = context['event'] = event
+
+        return context
+
+
 class TouristicContentViewSet(MapEntityViewSet):
-    queryset = TouristicContent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = TouristicContent
     serializer_class = TouristicContentSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
+    def get_queryset(self):
+        qs = TouristicContent.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs
+
 
 class TouristicEventViewSet(MapEntityViewSet):
-    queryset = TouristicEvent.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = TouristicEvent
     serializer_class = TouristicEventSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        qs = TouristicEvent.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs

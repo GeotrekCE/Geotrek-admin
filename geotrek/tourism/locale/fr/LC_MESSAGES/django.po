@@ -3,12 +3,10 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Verésion: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-04 15:26+0100\n"
+"POT-Creation-Date: 2015-02-23 15:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Verésion: PACKAGE VERSION\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "dd/mm/yyyy"
@@ -25,16 +24,16 @@ msgid "HH:MM"
 msgstr "HH:MM"
 
 msgid "GeoJSON"
-msgstr ""
+msgstr "GeoJSON"
 
 msgid "TourInFrance"
-msgstr ""
+msgstr "TourInFrance"
 
 msgid "Sitra"
-msgstr ""
+msgstr "Sitra"
 
 msgid "Public website"
-msgstr ""
+msgstr "Site web public"
 
 msgid "Title"
 msgstr "Titre"
@@ -61,10 +60,10 @@ msgid "Information desk types"
 msgstr "Types de lieu de renseignement"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Brief description"
 msgstr "Brève description"
@@ -73,13 +72,13 @@ msgid "Phone"
 msgstr "Téléphone"
 
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Website"
 msgstr "Site Web"
 
 msgid "Photo"
-msgstr ""
+msgstr "Photo"
 
 msgid "Street"
 msgstr "Rue"
@@ -101,10 +100,10 @@ msgstr "Lieux de renseignement"
 
 #, python-format
 msgid "Image %s invalid or missing from disk."
-msgstr ""
+msgstr "L'image %s est invalide ou absente sur le disque."
 
 msgid "Point"
-msgstr ""
+msgstr "Point"
 
 msgid "Line"
 msgstr "Ligne"
@@ -164,7 +163,7 @@ msgid "Location"
 msgstr "Emplacement"
 
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 msgid "Address, phone, etc."
 msgstr "Adresse, téléphone, etc."
@@ -176,10 +175,10 @@ msgid "Anything worth to know"
 msgstr "Bon à savoir"
 
 msgid "Type 1"
-msgstr ""
+msgstr "Type 1"
 
 msgid "Type 2"
-msgstr ""
+msgstr "Type 2"
 
 msgid "Touristic content"
 msgstr "Contenu touristique"
@@ -192,15 +191,6 @@ msgstr "Type d'évènement touristique"
 
 msgid "Touristic event types"
 msgstr "Types d'évènement touristique"
-
-msgid "Public"
-msgstr ""
-
-msgid "Touristic event public"
-msgstr "Public d'évènement touristique"
-
-msgid "Touristic event publics"
-msgstr "Publics d'évènement touristique"
 
 msgid "Begin date"
 msgstr "Date de début"
@@ -224,7 +214,7 @@ msgid "Meeting time"
 msgstr "Heure de RDV"
 
 msgid "11:00, 23:30"
-msgstr ""
+msgstr "11:00, 23:30"
 
 msgid "Organizer"
 msgstr "Organisateur"
@@ -241,6 +231,9 @@ msgstr "Nombre de places"
 msgid "Booking"
 msgstr "Réservation"
 
+msgid "Target audience"
+msgstr "Public visé"
+
 msgid "Recommandations / To plan / Advices"
 msgstr "Recommandations / À prévoir / Conseils"
 
@@ -249,6 +242,9 @@ msgstr "Évènement touristique"
 
 msgid "Touristic events"
 msgstr "Évènements touristiques"
+
+msgid "from {begin} to {end}"
+msgstr "du {begin} au {end}"
 
 msgid "Tourism"
 msgstr "Tourisme"
@@ -267,6 +263,12 @@ msgstr "Pas de résultat"
 
 msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
+
+msgid "Public print"
+msgstr "Impression grand public"
+
+msgid "Print"
+msgstr "Impr."
 
 msgid "Thumbnail"
 msgstr "Aperçu"

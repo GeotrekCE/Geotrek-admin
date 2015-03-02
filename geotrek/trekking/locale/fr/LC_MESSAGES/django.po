@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-17 18:46+0100\n"
+"POT-Creation-Date: 2015-02-20 17:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,6 +163,12 @@ msgstr "Point de référence"
 msgid "Treks"
 msgstr "Itinéraires"
 
+msgid "Formated duration"
+msgstr "Durée formatée"
+
+msgid "Add a new trek"
+msgstr "Ajouter un itinéraire"
+
 msgid "Common departure"
 msgstr "Départ en commun"
 
@@ -235,6 +241,9 @@ msgstr "Type"
 msgid "POI"
 msgstr "POIs"
 
+msgid "POIs"
+msgstr "POIs"
+
 msgid "POI type"
 msgstr "Type de POI"
 
@@ -261,10 +270,10 @@ msgstr ""
 "une meilleure integration dans le portail public."
 
 msgid "GPX"
-msgstr ""
+msgstr "GPX"
 
 msgid "KML"
-msgstr ""
+msgstr "KML"
 
 msgid "yes,no"
 msgstr "oui,non"
@@ -302,13 +311,7 @@ msgstr "Choisir valeur(s)"
 msgid "Trekking"
 msgstr "Itinéraire"
 
-msgid "Add a new trek"
-msgstr "Ajouter un itinéraire"
-
-msgid "POIs"
-msgstr "POIs"
-
-msgid "Add a new POI"
+msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
 msgid "Add Web link"

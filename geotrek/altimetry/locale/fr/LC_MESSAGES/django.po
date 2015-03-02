@@ -17,41 +17,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "All"
-msgstr "Tout"
+msgid "Distance (m)"
+msgstr "Distance (m)"
 
-msgid "Mobile"
-msgstr "Mobile"
+msgid "Altitude (m)"
+msgstr "Altitude (m)"
 
-msgid "Hidden"
-msgstr "Cachée"
+msgid "Length"
+msgstr "Longueur"
 
-msgid "Web"
-msgstr "Web"
+msgid "Ascent"
+msgstr "Dénivelée positive"
 
-msgid "Title"
-msgstr "Titre"
+msgid "Descent"
+msgstr "Dénivelée négative"
 
-msgid "External URL"
-msgstr "Lien externe"
+msgid "Minimum elevation"
+msgstr "Altitude minimum"
 
-msgid "Link to external website instead of HTML content"
-msgstr "Lien vers site externe à la place du contenu HTML"
+msgid "Maximum elevation"
+msgstr "Altitude maximum"
 
-msgid "Content"
-msgstr "Contenu"
+msgid "Slope"
+msgstr "Dénivelé"
 
-msgid "HTML content"
-msgstr "Contenu HTML"
+msgid "Toggle altimetric profile"
+msgstr "Afficher/cacher le profile altimétrique"
 
-msgid "Target"
-msgstr "Cible"
+msgid "Altitude profile"
+msgstr "Profil altimétrique"
 
-msgid "Flat page"
-msgstr "Page statique"
+msgid "Elevation"
+msgstr "Altitude"
 
-msgid "Flat pages"
-msgstr "Pages statiques"
+msgid "3D"
+msgstr "3D"
 
-msgid "Choose between external URL and HTML content"
-msgstr "Choisir entre lien externe et contenu HTML"
+msgid "2D"
+msgstr "2D"

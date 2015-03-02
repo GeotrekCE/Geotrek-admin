@@ -13,6 +13,8 @@ from django.views import static
 from mapentity.decorators import view_cache_response_content
 from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
+from geotrek.common.views import PublicOrReadPermMixin
+
 from .models import AltimetryMixin
 
 
@@ -35,27 +37,24 @@ class ElevationChart(LastModifiedMixin, BaseDetailView):
                                **response_kwargs)
 
 
-class ElevationProfile(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
+class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
+                       PublicOrReadPermMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ElevationProfile, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
         Put elevation profile into response context.
         """
-        obj = self.get_object()
         data = {}
         # Formatted as distance, elevation, [lng, lat]
-        for step in obj.get_elevation_profile():
+        for step in self.object.get_elevation_profile():
             formatted = step[0], step[3], step[1:3]
             data.setdefault('profile', []).append(formatted)
         return data
 
 
-class ElevationArea(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
+class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
+                    BaseDetailView):
     """Extract elevation profile on an area and return it as JSON"""
 
     def view_cache_key(self):
@@ -70,14 +69,12 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, BaseDetailView):
         obj = self.get_object()
         return obj.date_update
 
-    @method_decorator(login_required)
     @view_cache_response_content()
     def dispatch(self, *args, **kwargs):
         return super(ElevationArea, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        obj = self.get_object()
-        return obj.get_elevation_area()
+        return self.object.get_elevation_area()
 
 
 def serve_elevation_chart(request, model_name, pk):

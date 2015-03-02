@@ -11,7 +11,7 @@ from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
@@ -93,6 +93,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def __unicode__(self):
         return self.name
 
+    # fake category id to be consistent with touristic contents
+    category_id = -2
+
     @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
@@ -103,10 +106,18 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
 
+    @classproperty
+    def related_verbose_name(cls):
+        return _("Related treks")
+
     @property
     def relationships(self):
         # Does not matter if a or b
         return TrekRelationship.objects.filter(trek_a=self)
+
+    @property
+    def published_relationships(self):
+        return self.relationships.filter(trek_b__published=True)
 
     @property
     def poi_types(self):
@@ -168,6 +179,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def duration_pretty(self):
         return trekking_tags.duration(self.duration)
 
+    @classproperty
+    def duration_pretty_verbose_name(cls):
+        return _("Formated duration")
+
     @classmethod
     def path_treks(cls, path):
         treks = cls.objects.existing().filter(aggregations__path=path)
@@ -181,20 +196,31 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.filter(geom__intersects=area)
+            qs = cls.objects.existing().filter(geom__intersects=area)
         return qs
+
+    @classmethod
+    def published_topology_treks(cls, topology):
+        return cls.topology_treks(topology).filter(published=True)
 
     # Rando v1 compat
     @property
     def usages(self):
         return [self.practice] if self.practice else []
 
-Path.add_property('treks', Trek.path_treks)
-Topology.add_property('treks', Trek.topology_treks)
-Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [])
-Project.add_property('treks', lambda self: self.edges_by_attr('treks'))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new trek")
+
+Path.add_property('treks', Trek.path_treks, _(u"Treks"))
+Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
+Topology.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
+Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _(u"Treks"))
+Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _(u"Treks"))
+tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
+tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
+tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
+tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -272,7 +298,7 @@ class Practice(PictogramMixin):
         return self.name
 
 
-class Accessibility(models.Model):
+class Accessibility(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
 
@@ -433,15 +459,22 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.filter(geom__intersects=area)
+            qs = cls.objects.existing().filter(geom__intersects=area)
         return qs
 
-Path.add_property('pois', POI.path_pois)
-Topology.add_property('pois', POI.topology_pois)
-Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [])
-Project.add_property('pois', lambda self: self.edges_by_attr('pois'))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN))
+    @classmethod
+    def published_topology_pois(cls, topology):
+        return cls.topology_pois(topology).filter(published=True)
+
+Path.add_property('pois', POI.path_pois, _(u"POIs"))
+Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
+Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
+Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
+Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))
+tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
+tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published POIs"))
+tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
+tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published POIs"))
 
 
 class POIType(PictogramMixin):

@@ -59,14 +59,8 @@ if settings.TOURISM_ENABLED:
 
 
 class TouristicEventTypeAdmin(TranslationAdmin):
+    list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
-
-
-class TouristicEventPublicAdmin(TranslationAdmin):
-    search_fields = ('public',)
-
-if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.TouristicEventPublic, TouristicEventPublicAdmin)

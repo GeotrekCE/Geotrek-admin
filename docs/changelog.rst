@@ -2,6 +2,27 @@
 CHANGELOG
 =========
 
+0.31.0 (2015-03-02)
+-------------------
+
+**New features**
+
+* Add support of Ubuntu 14.04 to installer
+* Public PDF for touristic contents/events (fixes #1206)
+* Add treks close to other treks in REST API
+* Add pictograms for trek accessibilities, touristic content types and
+  touristic event types
+
+**Bug fixes**
+
+* Show edit button when having bypass structure permission
+* Export missing fields in list exports (fixes #1167)
+* Fix formating of float and boolean values in list exports (fixes #1366, #1380)
+* Fix french translation
+* Allow anonymous access to altimetry API for public objects
+* Hide not published and deleted items in public REST API
+
+
 0.30.0 (2015-02-19)
 -------------------
 

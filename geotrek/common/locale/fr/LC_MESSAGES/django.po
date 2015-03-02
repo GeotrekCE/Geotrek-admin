@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-23 14:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+msgid "content type"
+msgstr "type d'objet"
 
 #, python-format
 msgid "min %s"
@@ -35,54 +37,76 @@ msgstr "Date de mise à jour"
 msgid "Deleted"
 msgstr "Supprimé"
 
+#, python-format
+msgid "Image %s invalid or missing from disk."
+msgstr "L'image est invalide ou absente du disque"
+
+msgid "Thumbnail"
+msgstr "Miniature"
+
+msgid "None"
+msgstr "Aucun(e)"
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Online"
+msgstr "Publié"
+
+msgid "Publication date"
+msgstr "Date de publication"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Public name (Change carefully)"
+msgstr "Nom public (changez prudemment)"
+
+msgid "Pictogram"
+msgstr "Pictogramme"
+
 msgid "Organism"
 msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
 
-msgid "File type"
-msgstr "Type de fichiers"
+msgid "Label"
+msgstr "Label"
 
-msgid "File types"
-msgstr "Types de fichiers"
+msgid "Theme"
+msgstr "Thème"
 
-msgid "Add a new intervention"
-msgstr "Ajouter une intervention"
+msgid "Themes"
+msgstr "Thèmes"
 
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
+msgid "Topology is not valid."
+msgstr "L'événement n'est pas valide"
 
-msgid "Add a project"
-msgstr "Ajouter un chantier"
+msgid ""
+"This project is co-financed by the European Union through FEDER Massif Alpin."
+msgstr "Ce projet est co-financé par l'Union Européenne au travers du FEDER Massif Alpin"
 
-msgid "Add a new infrastructure"
-msgstr "Ajouter un aménagement"
+msgid "Powered by http://geotrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
 
-msgid "Add an infrastructure"
-msgstr "Ajouter un aménagement"
+msgid "Any year"
+msgstr "N'importe quelle année"
 
-msgid "Add signage"
-msgstr "Ajouter une signalétique"
+msgid "Paths"
+msgstr "Tronçons"
 
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"
+msgid "Tiles"
+msgstr "Tuiles"
 
-msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
+msgid "DEM"
+msgstr "MNT"
 
-msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
+msgid "Viewport (WGS84)"
+msgstr "Cadre (WGS84)"
 
-msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add a new work management edge"
-msgstr "Renseigner le gestionnaire travaux"
-
-msgid "Add a new signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
-
+msgid "Mouse"
+msgstr "Souris"
 
 msgid "Not published"
 msgstr "Non publié"

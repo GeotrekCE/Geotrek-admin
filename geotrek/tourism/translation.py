@@ -55,15 +55,10 @@ class TouristicEventTypeTO(TranslationOptions):
 translator.register(tourism_models.TouristicEventType, TouristicEventTypeTO)
 
 
-class TouristicEventPublicTO(TranslationOptions):
-    fields = ('public',)
-
-translator.register(tourism_models.TouristicEventPublic, TouristicEventPublicTO)
-
-
 class TouristicEventTO(TranslationOptions):
     fields = ('name', 'description_teaser', 'description', 'meeting_point',
-              'accessibility', 'booking', 'practical_info'
+              'accessibility', 'booking', 'practical_info', 'target_audience',
               ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
 
 translator.register(tourism_models.TouristicEvent, TouristicEventTO)

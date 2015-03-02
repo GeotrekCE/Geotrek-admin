@@ -237,9 +237,6 @@
                 ["delete_touristicevent", "tourism", "touristicevent"],
                 ["read_touristicevent", "tourism", "touristicevent"],
                 ["export_touristicevent", "tourism", "touristicevent"],
-                ["add_touristiceventpublic", "tourism", "touristiceventpublic"],
-                ["change_touristiceventpublic", "tourism", "touristiceventpublic"],
-                ["delete_touristiceventpublic", "tourism", "touristiceventpublic"],
                 ["add_touristiceventtype", "tourism", "touristiceventtype"],
                 ["change_touristiceventtype", "tourism", "touristiceventtype"],
                 ["delete_touristiceventtype", "tourism", "touristiceventtype"]

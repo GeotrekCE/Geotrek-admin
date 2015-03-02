@@ -62,20 +62,20 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'label')
 
 
-class AccessibilitySerializer(TranslatedModelSerializer):
+class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     label = rest_serializers.Field(source='name')
 
     class Meta:
         model = trekking_models.Accessibility
-        fields = ('id', 'label')
+        fields = ('id', 'pictogram', 'label')
 
 
-class TypeSerializer(TranslatedModelSerializer):
+class TypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     name = rest_serializers.Field(source='name')
 
     class Meta:
         model = trekking_models.Practice
-        fields = ('id', 'name')
+        fields = ('id', 'pictogram', 'name')
 
 
 class WebLinkCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -90,6 +90,14 @@ class WebLinkSerializer(TranslatedModelSerializer):
     class Meta:
         model = trekking_models.WebLink
         fields = ('id', 'name', 'category', 'url')
+
+
+class CloseTrekSerializer(TranslatedModelSerializer):
+    category_id = rest_serializers.Field(source='category_id')
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = ('id', 'category_id')
 
 
 class RelatedTrekSerializer(TranslatedModelSerializer):
@@ -130,7 +138,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
-    relationships = TrekRelationshipSerializer(many=True, source='relationships')
+    relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
+    treks = CloseTrekSerializer(many=True, source='published_treks')
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -153,8 +162,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         from geotrek.tourism import serializers as tourism_serializers
 
         self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
-        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
-        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+        self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
+        self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
 
     class Meta:
         model = trekking_models.Trek
@@ -168,7 +177,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'poi_layer', 'information_desk_layer', 'gpx', 'kml',
-                  'type1', 'type2', 'category', 'structure') + \
+                  'type1', 'type2', 'category', 'structure', 'treks') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -199,7 +208,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
     def get_category(self, obj):
         return {
-            'id': -2,
+            'id': obj.category_id,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('practice').verbose_name,
             'type2_label': obj._meta.get_field('accessibilities').verbose_name,
@@ -213,7 +222,7 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
         fields = ('id', 'pictogram', 'label')
 
 
-class RelatedPOISerializer(TranslatedModelSerializer):
+class ClosePOISerializer(TranslatedModelSerializer):
     slug = rest_serializers.Field(source='slug')
     type = POITypeSerializer()
 
@@ -232,8 +241,8 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
         from geotrek.tourism import serializers as tourism_serializers
 
-        self.fields['touristic_contents'] = tourism_serializers.RelatedTouristicContentSerializer(many=True)
-        self.fields['touristic_events'] = tourism_serializers.RelatedTouristicEventSerializer(many=True)
+        self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
+        self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
 
     class Meta:
         model = trekking_models.Trek

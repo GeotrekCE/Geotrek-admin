@@ -22,7 +22,7 @@
             {% is_topology_model model as is_topology_model %}
             {% if perms.maintenance.add_intervention %}
             <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% elif is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add intervention" %}</a>
+                <i class="icon-plus icon-white"></i> {% trans "Add a new intervention" %}</a>
             </p>
             {% endif %}
 

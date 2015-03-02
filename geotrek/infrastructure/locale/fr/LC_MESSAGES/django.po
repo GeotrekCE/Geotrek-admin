@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 15:41+0200\n"
+"POT-Creation-Date: 2015-02-20 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +19,9 @@ msgstr ""
 
 msgid "Intervention year"
 msgstr "Année d'intervention"
+
+msgid "Category"
+msgstr "Catégorie"
 
 msgid "Building"
 msgstr "Ouvrage"
@@ -43,7 +45,7 @@ msgid "Name"
 msgstr "Nom"
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Specificites"
 msgstr "Spécificités"
@@ -71,15 +73,3 @@ msgstr "Ajouter un aménagement"
 
 msgid "Add a new signage"
 msgstr "Ajouter une signalétique"
-
-msgid "Add infrastructure"
-msgstr "Ajouter un aménagement"
-
-msgid "Add signage"
-msgstr "Ajouter une signalétique"
-
-msgid "Management"
-msgstr "Gestion"
-
-msgid "Add intervention"
-msgstr "Ajouter une intervention"

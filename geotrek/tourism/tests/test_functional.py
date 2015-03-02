@@ -1,3 +1,4 @@
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.common.tests import CommonTest
@@ -13,6 +14,10 @@ class TouristicContentViewsTests(CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = SuperUserFactory
+
+    def setUp(self):
+        translation.deactivate()
+        super(TouristicContentViewsTests, self).setUp()
 
     def get_bad_data(self):
         return {

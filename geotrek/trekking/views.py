@@ -16,6 +16,7 @@ from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions
 
+from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.authent.decorators import same_structure_required
@@ -74,16 +75,18 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    columns = (
+    columns = [
         'id', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty',
-        'information_desks', 'themes', 'practice', 'access',
+        'information_desks', 'themes', 'practice', 'accessibilities', 'access',
         'route', 'public_transport', 'advised_parking',
         'web_links', 'is_park_centered', 'disabled_infrastructure',
         'parking_location', 'points_reference', 'related', 'pois',
-        'structure',
-    )
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
@@ -280,7 +283,14 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-    columns = set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
+    columns = [
+        'id', 'name', 'type', 'description', 'treks',
+        'published', 'publication_date',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
+
+    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super(POIFormatList, self).get_queryset()
@@ -372,9 +382,15 @@ class WebLinkCreatePopup(CreateView):
 
 
 class TrekViewSet(MapEntityViewSet):
-    queryset = Trek.objects.existing().transform(settings.API_SRID, field_name='geom')
+    model = Trek
     serializer_class = TrekSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        qs = Trek.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs
 
 
 class POIViewSet(MapEntityViewSet):
@@ -386,8 +402,8 @@ class POIViewSet(MapEntityViewSet):
         trek_pk = self.request.GET.get('trek')
         if trek_pk:
             try:
-                trek = Trek.objects.existing().get(pk=trek_pk)
+                trek = Trek.objects.existing().get(pk=trek_pk, published=True)
             except Trek.DoesNotExist:
                 return POI.objects.none()
-            return trek.pois.transform(settings.API_SRID, field_name='geom')
-        return POI.objects.existing().transform(settings.API_SRID, field_name='geom')
+            return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return POI.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')

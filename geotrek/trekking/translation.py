@@ -12,15 +12,14 @@ class TrekTO(TranslationOptions):
               'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice',
               'advised_parking', 'public_transport') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
-    fallback_undefined = {
-        'published': None
-    }
+    fallback_undefined = {'published': None}
 
 
 class POITO(TranslationOptions):
     fields = ('name', 'description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()
     )
+    fallback_undefined = {'published': None}
 
 
 class POITypeTO(TranslationOptions):

@@ -25,6 +25,7 @@ class AccessibilityFactory(factory.Factory):
     FACTORY_FOR = models.Accessibility
 
     name = factory.Sequence(lambda n: u"accessibility %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class RouteFactory(factory.Factory):
@@ -128,3 +129,4 @@ class POIFactory(TopologyFactory):
     name = factory.Sequence(lambda n: u"POI %s" % n)
     description = factory.Sequence(lambda n: u"<p>description %s</p> % n)")
     type = factory.SubFactory(POITypeFactory)
+    published = True

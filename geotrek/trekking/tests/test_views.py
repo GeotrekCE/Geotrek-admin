@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.urlresolvers import reverse
 from django.db import connection
@@ -21,7 +21,7 @@ from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -98,13 +98,19 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID))
+        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID), published=True)
 
         self.attachment = AttachmentFactory.create(obj=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
 
         self.pk = self.poi.pk
         url = '/api/pois/%s/' % self.pk
@@ -120,11 +126,11 @@ class POIJSONDetailTest(TrekkingManagerTest):
                          self.poi.slug)
 
     def test_published(self):
-        self.assertEqual(self.result['published'], False)
+        self.assertEqual(self.result['published'], True)
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': False, u'language': u'English'})
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
 
     def test_type(self):
         self.assertDictEqual(self.result['type'],
@@ -153,16 +159,16 @@ class POIJSONDetailTest(TrekkingManagerTest):
                          '/paperclip/get/trekking/poi/%s/' % self.pk)
 
     def test_touristic_contents(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
-            u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
-            u'name': self.touristic_content.name})
+            u'category_id': self.touristic_content.category_id})
 
     def test_touristic_events(self):
+        self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
-            u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
-            u'name': self.touristic_event.name})
+            u'category_id': self.touristic_event.category_id})
 
 
 class TrekViewsTest(CommonTest):
@@ -287,47 +293,15 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
-    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
-    def test_overriden_document(self, get_attributes_html):
-        trek = TrekFactory.create()
-
-        get_attributes_html.return_value = '<p>mock</p>'
-        with open(trek.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
-        with open(trek.get_elevation_chart_path('fr'), 'w') as f:
-            f.write('***' * 1000)
-
-        response = self.client.get(trek.get_document_public_url())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) > 1000)
-
-        AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        response = self.client.get(trek.get_document_public_url())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) < 1000)
-
-    @mock.patch('django.template.loaders.filesystem.open', create=True)
-    def test_overriden_public_template(self, open_patched):
-        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
-
-        def fake_exists(f, *args):
-            if f == overriden_template:
-                return mock.MagicMock(spec=file)
-            raise IOError
-
-        open_patched.side_effect = fake_exists
-        find_template('trekking/trek_public.odt')
-        open_patched.assert_called_with(overriden_template, 'rb')
-
-    def test_profile_json(self):
-        trek = TrekFactory.create()
+    def test_not_published_profile_json(self):
+        trek = TrekFactory.create(published=False)
         url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-    def test_elevation_area_json(self):
-        trek = TrekFactory.create()
+    def test_not_published_elevation_area_json(self):
+        trek = TrekFactory.create(published=False)
         url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -363,6 +337,67 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(len(context['pois']), 1)
 
 
+class TrekCustomPublicViewTests(TrekkingManagerTest):
+
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_overriden_document(self, get_attributes_html):
+        trek = TrekFactory.create()
+
+        get_attributes_html.return_value = '<p>mock</p>'
+        with open(trek.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+        with open(trek.get_elevation_chart_path('fr'), 'w') as f:
+            f.write('***' * 1000)
+
+        response = self.client.get(trek.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(trek.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('django.template.loaders.filesystem.open', create=True)
+    def test_overriden_public_template(self, open_patched):
+        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+
+        def fake_exists(f, *args):
+            if f == overriden_template:
+                return mock.MagicMock(spec=file)
+            raise IOError
+
+        open_patched.side_effect = fake_exists
+        find_template('trekking/trek_public.odt')
+        open_patched.assert_called_with(overriden_template, 'rb')
+
+    def test_profile_json(self):
+        trek = TrekFactory.create(published=True)
+        url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_not_published_profile_json(self):
+        trek = TrekFactory.create(published=False)
+        url = reverse('trekking:trek_profile', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_elevation_area_json(self):
+        trek = TrekFactory.create(published=True)
+        url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_not_published_elevation_area_json(self):
+        trek = TrekFactory.create(published=False)
+        url = reverse('trekking:trek_elevation_area', kwargs={'pk': trek.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+
 class TrekJSONDetailTest(TrekkingManagerTest):
     """ Since we migrated some code to Django REST Framework, we should test
     the migration extensively. Geotrek-rando mainly relies on this view.
@@ -376,9 +411,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.district = DistrictFactory(geom=polygon)
 
         self.trek = TrekFactory.create(
+            no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
         )
+        path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
+        self.trek.add_path(path1)
 
         self.attachment = AttachmentFactory.create(obj=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
@@ -398,15 +436,32 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
-        self.trek_b = TrekFactory.create()
+        self.trek_b = TrekFactory.create(no_path=True,
+                                         geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                         published=True)
+        path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
+        self.trek_b.add_path(path2)
         TrekRelationshipFactory.create(has_common_departure=True,
                                        has_common_edge=False,
                                        is_circuit_step=True,
                                        trek_a=self.trek,
                                        trek_b=self.trek_b)
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
+        trek2 = TrekFactory(no_path=True, published=False)  # not published
+        trek2.add_path(path2)
+        trek3 = TrekFactory(no_path=True, published=True)  # deleted
+        trek3.add_path(path2)
+        trek3.delete()
+        trek4 = TrekFactory(no_path=True, published=True)  # too far
+        trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -486,6 +541,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_accessibilities(self):
         self.assertDictEqual(self.result['accessibilities'][0],
                              {u"id": self.accessibility.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               u"label": self.accessibility.name})
 
     def test_themes(self):
@@ -558,25 +614,33 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
 
     def test_touristic_contents(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
-            u'slug': self.touristic_content.slug,
             u'id': self.touristic_content.pk,
-            u'name': self.touristic_content.name})
+            u'category_id': self.touristic_content.category_id})
 
     def test_touristic_events(self):
+        self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
-            u'slug': self.touristic_event.slug,
             u'id': self.touristic_event.pk,
-            u'name': self.touristic_event.name})
+            u'category_id': self.touristic_event.category_id})
+
+    def test_close_treks(self):
+        self.assertEqual(len(self.result['treks']), 1)
+        self.assertDictEqual(self.result['treks'][0], {
+            u'id': self.trek_b.pk,
+            u'category_id': self.trek_b.category_id})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.trek.practice.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
                               u"name": self.trek.practice.name})
 
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.accessibility.id,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               u"name": self.accessibility.name})
 
     def test_category(self):
@@ -669,13 +733,14 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         url = '/api/treks/%s/' % self.trek.pk
 
         for lang, expected in [('fr-FR', self.trek.name_fr),
-                               ('it-IT', self.trek.name_it)]:
-            self.login()
+                               ('it-IT', 404)]:
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
-            self.assertEqual(response.status_code, 200)
-            obj = json.loads(response.content)
-            self.assertEqual(obj['name'], expected)
-            self.client.logout()  # Django 1.6 keeps language in session
+            if expected == 404:
+                self.assertEqual(response.status_code, 404)
+            else:
+                self.assertEqual(response.status_code, 200)
+                obj = json.loads(response.content)
+                self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
         url = reverse('trekking:trek_layer')
@@ -801,13 +866,44 @@ class TemplateTagsTest(TestCase):
 class TrekViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name=u"Référents communication"))
-        self.client.login(username=user.username, password='dooh')
+                                            user__password='dooh',
+                                            language='en')
+        self.user = profile.user
+        self.user.groups.add(Group.objects.get(name=u"Référents communication"))
+        self.client.login(username='homer', password='dooh')
         self.content1 = TrekFactory.create()
         structure = StructureFactory.create()
         self.content2 = TrekFactory.create(structure=structure)
+
+    def add_bypass_perm(self):
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+
+    def test_edit_button_same_structure(self):
+        url = "/trek/{pk}/".format(pk=self.content1.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<a class="btn btn-primary pull-right" '
+                            'href="/trek/edit/{pk}/">'
+                            '<i class="icon-pencil icon-white"></i> '
+                            'Update</a>'.format(pk=self.content1.pk))
+
+    def test_edit_button_other_structure(self):
+        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<span class="btn disabled pull-right" href="#">'
+                            '<i class="icon-pencil"></i> Update</span>')
+
+    def test_edit_button_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertContains(response,
+                            '<a class="btn btn-primary pull-right" '
+                            'href="/trek/edit/{pk}/">'
+                            '<i class="icon-pencil icon-white"></i> '
+                            'Update</a>'.format(pk=self.content2.pk))
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
@@ -819,6 +915,12 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
 
+    def test_can_edit_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_can_delete_same_structure(self):
         url = "/trek/delete/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
@@ -829,8 +931,14 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
 
+    def test_can_delete_bypass_structure(self):
+        self.add_bypass_perm()
+        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
-class POIViewsSameStructureTests(AuthentFixturesTest):
+
+class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
@@ -840,6 +948,9 @@ class POIViewsSameStructureTests(AuthentFixturesTest):
         self.content1 = POIFactory.create()
         structure = StructureFactory.create()
         self.content2 = POIFactory.create(structure=structure)
+
+    def tearDown(self):
+        self.client.logout()
 
     def test_can_edit_same_structure(self):
         url = "/poi/edit/{pk}/".format(pk=self.content1.pk)

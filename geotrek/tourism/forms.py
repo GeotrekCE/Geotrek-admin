@@ -28,8 +28,8 @@ class TouristicEventForm(CommonForm):
                   'themes', 'begin_date', 'end_date', 'duration',
                   'meeting_point', 'meeting_time', 'contact', 'email',
                   'website', 'organizer', 'speaker', 'type', 'accessibility',
-                  'participant_number', 'booking', 'public', 'practical_info',
-                  'geom']
+                  'participant_number', 'booking', 'target_audience',
+                  'practical_info', 'geom']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):

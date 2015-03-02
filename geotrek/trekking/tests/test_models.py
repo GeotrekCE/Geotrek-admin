@@ -4,13 +4,14 @@ from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
 
 from bs4 import BeautifulSoup
 
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory)
 from geotrek.trekking.models import Trek
 
 
-class TrekTest(TestCase):
+class TrekTest(TranslationResetMixin, TestCase):
     def test_is_publishable(self):
         t = TrekFactory.create()
         t.geom = LineString((0, 0), (1, 1))
@@ -106,7 +107,7 @@ class TrekTest(TestCase):
                          list(Trek.objects.all().values_list('name', flat=True)))
 
 
-class TrekPublicationDateTest(TestCase):
+class TrekPublicationDateTest(TranslationResetMixin, TestCase):
     def setUp(self):
         self.trek = TrekFactory.create(published=False)
 
@@ -133,7 +134,7 @@ class TrekPublicationDateTest(TestCase):
         self.assertEqual(self.trek.publication_date, old_date)
 
 
-class RelatedObjectsTest(TestCase):
+class RelatedObjectsTest(TranslationResetMixin, TestCase):
     def test_helpers(self):
         trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))

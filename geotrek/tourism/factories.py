@@ -55,6 +55,7 @@ class TouristicContentTypeFactory(factory.Factory):
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
     in_list = 1
 
 
@@ -64,18 +65,14 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
+    published = True
 
 
 class TouristicEventTypeFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEventType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
-
-
-class TouristicEventPublicFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicEventPublic
-
-    public = factory.Sequence(lambda n: u"Public %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class TouristicEventFactory(factory.Factory):
@@ -83,6 +80,6 @@ class TouristicEventFactory(factory.Factory):
 
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
+    published = True
 
     type = factory.SubFactory(TouristicEventTypeFactory)
-    public = factory.SubFactory(TouristicEventPublicFactory)

@@ -231,6 +231,7 @@
         "model": "trekking.accessibility",
         "fields": {
             "name": "Fauteuil roulant",
+            "pictogram": "upload/accessibility-wheelchair.png",
             "name_fr": "Fauteuil roulant"
         }
     },
@@ -239,6 +240,7 @@
         "model": "trekking.accessibility",
         "fields": {
             "name": "Poussette",
+            "pictogram": "upload/accessibility-troller.png",
             "name_fr": "Poussette"
         }
     },
@@ -247,6 +249,7 @@
         "model": "trekking.accessibility",
         "fields": {
             "name": "Joelette",
+            "pictogram": "upload/accessibility-joelette.png",
             "name_fr": "Joelette"
         }
     },

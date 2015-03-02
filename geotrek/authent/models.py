@@ -26,7 +26,7 @@ class Structure(models.Model):
         verbose_name = _(u"Structure")
         verbose_name_plural = _(u"Structures")
         ordering = ['name']
-        permissions = (("can_bypass_structure", _("Can by structure")),)
+        permissions = (("can_bypass_structure", _("Can bypass structure")),)
 
 
 def default_structure():
@@ -69,8 +69,11 @@ class StructureRelated(models.Model):
         return cls.in_structure.for_user(user)
 
     def same_structure(self, user):
-        """ Returns True if the user is in the same structure, False otherwise. """
-        return user.profile.structure == self.structure
+        """ Returns True if the user is in the same structure or has
+            bypass_structure permission, False otherwise. """
+        return (user.profile.structure == self.structure or
+                user.is_superuser or
+                user.has_perm('authent.can_bypass_structure'))
 
     class Meta:
         abstract = True

@@ -15,6 +15,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
+from geotrek.core.models import AltimetryMixin
 
 from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
@@ -96,7 +97,12 @@ class PathJsonList(MapEntityJsonList, PathList):
 
 
 class PathFormatList(MapEntityFormat, PathList):
-    pass
+    columns = [
+        'id', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
+        'comfort', 'datasource', 'stake', 'usages', 'networks',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class PathDetail(MapEntityDetail):
@@ -173,6 +179,18 @@ class TrailList(MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
     columns = ['id', 'name', 'departure', 'arrival', 'length']
+
+
+class TrailJsonList(MapEntityJsonList, TrailList):
+    pass
+
+
+class TrailFormatList(MapEntityFormat, TrailList):
+    columns = [
+        'id', 'name', 'comments', 'departure', 'arrival',
+        'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ] + AltimetryMixin.COLUMNS
 
 
 class TrailDetail(MapEntityDetail):

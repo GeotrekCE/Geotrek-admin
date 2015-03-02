@@ -13,7 +13,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
-from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin
+from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure, Signage
 
@@ -25,7 +25,8 @@ class InterventionManager(models.GeoManager):
         return all_years
 
 
-class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
+class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+                   TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
                             help_text=_(u"Brief summary"))
@@ -272,8 +273,8 @@ class Intervention(MapEntityMixin, AltimetryMixin, TimeStampedModelMixin, Struct
         topos = Topology.overlapping(topology).values_list('pk', flat=True)
         return cls.objects.existing().filter(topology__in=topos).distinct('pk')
 
-Path.add_property('interventions', lambda self: Intervention.path_interventions(self))
-Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self))
+Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _(u"Interventions"))
+Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _(u"Interventions"))
 
 
 class InterventionStatus(StructureRelated):
@@ -362,7 +363,8 @@ class ProjectManager(models.GeoManager):
         return all_years
 
 
-class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
+class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+              StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
@@ -518,8 +520,12 @@ class Project(MapEntityMixin, TimeStampedModelMixin, StructureRelated, NoDeleteM
                     pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)
 
-Path.add_property('projects', lambda self: Project.path_projects(self))
-Topology.add_property('projects', lambda self: Project.topology_projects(self))
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new project")
+
+Path.add_property('projects', lambda self: Project.path_projects(self), _(u"Projects"))
+Topology.add_property('projects', lambda self: Project.topology_projects(self), _(u"Projects"))
 
 
 class ProjectType(StructureRelated):

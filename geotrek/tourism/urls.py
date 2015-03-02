@@ -20,6 +20,8 @@ urlpatterns = patterns(
 
 
 class TouristicContentEntityOptions(PublishableEntityOptions):
+    document_public_view = tourism_views.TouristicContentDocumentPublic
+
     def get_serializer(self):
         return tourism_serializers.TouristicContentSerializer
 
@@ -31,6 +33,8 @@ if settings.TOURISM_ENABLED:
 
 
 class TouristicEventEntityOptions(PublishableEntityOptions):
+    document_public_view = tourism_views.TouristicEventDocumentPublic
+
     def get_serializer(self):
         return tourism_serializers.TouristicEventSerializer
 

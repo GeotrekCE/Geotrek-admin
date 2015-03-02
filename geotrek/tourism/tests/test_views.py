@@ -16,7 +16,9 @@ from geotrek.core import factories as core_factories
 from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.factories import AttachmentFactory
+from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
                                        InformationDeskFactory,
@@ -259,6 +261,9 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         structure = StructureFactory.create()
         self.content2 = TouristicContentFactory.create(structure=structure)
 
+    def tearDown(self):
+        self.client.logout()
+
     def test_can_edit_same_structure(self):
         url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
@@ -344,12 +349,11 @@ class TouristicContentFormTest(TrekkingManagerTest):
         self.assertContains(response, 'value="%s" selected' % self.category.pk)
 
 
-class BasicJSONAPITest(object):
+class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
     def setUp(self):
-        self.login()
-
+        super(BasicJSONAPITest, self).setUp()
         self._build_object()
 
         self.pk = self.content.pk
@@ -381,7 +385,7 @@ class BasicJSONAPITest(object):
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': False, u'language': u'English'})
+                             {u'lang': u'en', u'status': True, u'language': u'English'})
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
@@ -408,11 +412,8 @@ class BasicJSONAPITest(object):
 
     def test_treks(self):
         self.assertDictEqual(self.result['treks'][0], {
-            u'pk': self.trek.pk,
             u'id': self.trek.id,
-            u'slug': self.trek.slug,
-            u'name': self.trek.name,
-            u'url': u'/trek/%s/' % self.trek.id})
+            u'category_id': self.trek.category_id})
 
     def test_pois(self):
         self.assertDictEqual(self.result['pois'][0], {
@@ -451,12 +452,14 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.type1.id,
                               u"name": self.type1.label,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type1.pictogram.name),
                               u"in_list": self.type1.in_list})
 
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.type2.id,
                               u"name": self.type2.label,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type2.pictogram.name),
                               u"in_list": self.type2.in_list})
 
     def test_category(self):
@@ -478,38 +481,29 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'districts', 'duration', 'email', 'end_date', 'filelist_url',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
-            'printable', 'public', 'publication_date', 'published', 'published_status',
-            'slug', 'speaker', 'themes', 'thumbnail',
+            'printable', 'publication_date', 'published', 'published_status',
+            'slug', 'speaker', 'target_audience', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks', 'type',
-            'type1', 'type2', 'website'],
+            'type1', 'website'],
             sorted(self.result.keys()))
 
     def test_type(self):
         self.assertDictEqual(self.result['type'],
                              {u"id": self.content.type.id,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
                               u"name": self.content.type.type})
-
-    def test_public(self):
-        self.assertDictEqual(self.result['public'],
-                             {u"id": self.content.public.id,
-                              u"name": self.content.public.public})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {u"id": self.content.type.id,
+                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
                               u"name": self.content.type.type})
-
-    def test_type2(self):
-        self.assertDictEqual(self.result['type2'][0],
-                             {u"id": self.content.public.id,
-                              u"name": self.content.public.public})
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {u"id": -1,
                               u"label": u"Touristic event",
                               u"type1_label": u"Type",
-                              u"type2_label": u"Public",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
 
 
@@ -543,3 +537,75 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         url = "/touristicevent/delete/{pk}/".format(pk=self.event2.pk)
         response = self.client.get(url)
         self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
+
+
+class TouristicContentCustomViewTests(TrekkingManagerTest):
+    def test_overriden_document(self):
+        content = TouristicContentFactory.create(published=True)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=content, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_public_document_pdf(self, mocked):
+        content = TouristicContentFactory.create(published=True)
+        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        mocked.return_value.status_code = 200
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_published_document(self):
+        content = TouristicContentFactory.create(published=False)
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_published_document_pdf(self):
+        content = TouristicContentFactory.create(published=False)
+        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+
+class TouristicEventCustomViewTests(TrekkingManagerTest):
+    def test_overriden_document(self):
+        event = TouristicEventFactory.create(published=True)
+
+        with open(event.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
+        response = self.client.get(event.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) > 1000)
+
+        AttachmentFactory.create(obj=event, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+        response = self.client.get(event.get_document_public_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content) < 1000)
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_public_document_pdf(self, mocked):
+        content = TouristicEventFactory.create(published=True)
+        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        mocked.return_value.status_code = 200
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_published_document(self):
+        content = TouristicEventFactory.create(published=False)
+        response = self.client.get(content.get_document_public_url())
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_published_document_pdf(self):
+        content = TouristicEventFactory.create(published=False)
+        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)

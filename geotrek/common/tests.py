@@ -6,6 +6,7 @@ from django.db import connection
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from mapentity.tests import MapEntityTest
@@ -19,7 +20,14 @@ from .utils.postgresql import debug_pg_notices
 from . import check_srid_has_meter_unit
 
 
-class CommonTest(AuthentFixturesTest, MapEntityTest):
+class TranslationResetMixin(object):
+    def setUp(self):
+        translation.deactivate()
+        super(TranslationResetMixin, self).setUp()
+
+
+class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
+
     def get_bad_data(self):
         return {'topology': 'doh!'}, _(u'Topology is not valid.')
 
