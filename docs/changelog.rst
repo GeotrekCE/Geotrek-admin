@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-0.30.1.dev0
+0.31.0 (2015-03-02)
 -------------------
 
 **New features**
@@ -11,7 +11,7 @@ CHANGELOG
 * Public PDF for touristic contents/events (fixes #1206)
 * Add treks close to other treks in REST API
 * Add pictograms for trek accessibilities, touristic content types and
-  touristic event type
+  touristic event types
 
 **Bug fixes**
 
@@ -20,8 +20,7 @@ CHANGELOG
 * Fix formating of float and boolean values in list exports (fixes #1366, #1380)
 * Fix french translation
 * Allow anonymous access to altimetry API for public objects
-* Don't include deleted items in related objects
-* Hide not published items in public REST API
+* Hide not published and deleted items in public REST API
 
 
 0.30.0 (2015-02-19)
