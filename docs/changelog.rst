@@ -10,6 +10,10 @@ CHANGELOG
 * Export to cirkwi/espace loisirs IGN. After upgrade, run
   `bin/django loaddata cirkwi` to load data cirkwi tags and categories
 
+**Bug fixes**
+
+* Fix creation of a loop topology with two paths (fixes #1026)
+
 
 0.31.0 (2015-03-02)
 -------------------
