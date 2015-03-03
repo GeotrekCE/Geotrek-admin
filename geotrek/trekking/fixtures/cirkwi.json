@@ -1,0 +1,682 @@
+[
+    {
+        "pk": 1,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 2,
+            "name": "Marche"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 3,
+            "name": "Velo_vtc"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 4,
+            "name": "Vtt"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 5,
+            "name": "Cheval"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 6,
+            "name": "Camping_car"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 7,
+            "name": "Voiture"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 8,
+            "name": "Moto"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 9,
+            "name": "Bus"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 10,
+            "name": "Commun"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 11,
+            "name": "Train"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 12,
+            "name": "Quatre_quatre"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 13,
+            "name": "Bateau"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 15,
+            "name": "Quadricycle"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 16,
+            "name": "Velo_route"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 18,
+            "name": "Parapente"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 19,
+            "name": "Avion"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 20,
+            "name": "Raquette"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 21,
+            "name": "Voilier"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 22,
+            "name": "Nage"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "trekking.cirkwilocomotion",
+        "fields": {
+            "eid": 23,
+            "name": "Bateau_rame"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 1,
+            "name": "Hebergements - G\u00eetes"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 2,
+            "name": "Hebergements - Ch. d h\u00f4tes"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 3,
+            "name": "Hebergements - H\u00f4tels"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 4,
+            "name": "Hebergements - Auberges de jeunesse"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 16,
+            "name": "Hebergements - Camping-car"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 17,
+            "name": "Hebergements - Campings"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 39,
+            "name": "Hebergements - Centres de vacances"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 41,
+            "name": "Hebergements - Refuge"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 99,
+            "name": "Hebergements - Autres"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 5,
+            "name": "Restauration - Restaurants"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 6,
+            "name": "Restauration - caf\u00e9s, bars..."
+        }
+    },
+    {
+        "pk": 12,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 13,
+            "name": "Restauration - Fast-food"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 137,
+            "name": "Restauration - Brasserie"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 141,
+            "name": "Restauration - Table d h\u00f4tes"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 14,
+            "name": "Lieux d int\u00e9r\u00eats - Art et mus\u00e9es"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 15,
+            "name": "Lieux d int\u00e9r\u00eats - Monuments et architecture"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 21,
+            "name": "Lieux d int\u00e9r\u00eats - Ibeaken"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 25,
+            "name": "Lieux d int\u00e9r\u00eats - Lieux historiques"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 26,
+            "name": "Lieux d int\u00e9r\u00eats - Parcs et jardins"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 27,
+            "name": "Lieux d int\u00e9r\u00eats - Ch\u00e2teau, eglise et abbaye"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 28,
+            "name": "Lieux d int\u00e9r\u00eats - Points de vues et panorama"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 29,
+            "name": "Lieux d int\u00e9r\u00eats - Divers"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 42,
+            "name": "Lieux d int\u00e9r\u00eats - Point d int\u00e9r\u00eat naturel"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 67,
+            "name": "Lieux d int\u00e9r\u00eats - Parc d attractions"
+        }
+    },
+    {
+        "pk": 25,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 78,
+            "name": "Lieux d int\u00e9r\u00eats - Non class\u00e9"
+        }
+    },
+    {
+        "pk": 26,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 87,
+            "name": "Lieux d int\u00e9r\u00eats - Lac / etendue d eau"
+        }
+    },
+    {
+        "pk": 27,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 88,
+            "name": "Lieux d int\u00e9r\u00eats - Gorge"
+        }
+    },
+    {
+        "pk": 28,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 89,
+            "name": "Lieux d int\u00e9r\u00eats - Aires de pique-nique"
+        }
+    },
+    {
+        "pk": 29,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 96,
+            "name": "Lieux d int\u00e9r\u00eats - Patrimoine religieux"
+        }
+    },
+    {
+        "pk": 30,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 97,
+            "name": "Lieux d int\u00e9r\u00eats - R\u00e9serve naturelle"
+        }
+    },
+    {
+        "pk": 31,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 98,
+            "name": "Lieux d int\u00e9r\u00eats - Col"
+        }
+    },
+    {
+        "pk": 32,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 127,
+            "name": "Lieux d int\u00e9r\u00eats - Histoires et l\u00e9gendes"
+        }
+    },
+    {
+        "pk": 33,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 128,
+            "name": "Lieux d int\u00e9r\u00eats - Patrimoine industriel"
+        }
+    },
+    {
+        "pk": 34,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 142,
+            "name": "Lieux d int\u00e9r\u00eats - Lieux de m\u00e9moire"
+        }
+    },
+    {
+        "pk": 35,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 19,
+            "name": "Ev\u00e8nements - Autres"
+        }
+    },
+    {
+        "pk": 36,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 146,
+            "name": "Ev\u00e8nements - Ev\u00e8nements sportifs"
+        }
+    },
+    {
+        "pk": 37,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 147,
+            "name": "Ev\u00e8nements - Ev\u00e8nements culturels"
+        }
+    },
+    {
+        "pk": 38,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 149,
+            "name": "Ev\u00e8nements - Ev\u00e8nements familiaux"
+        }
+    },
+    {
+        "pk": 39,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 100,
+            "name": "Activit\u00e9s - Autres"
+        }
+    },
+    {
+        "pk": 40,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 143,
+            "name": "Activit\u00e9s - Activit\u00e9s sportives"
+        }
+    },
+    {
+        "pk": 41,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 144,
+            "name": "Activit\u00e9s - Activit\u00e9s culturelles"
+        }
+    },
+    {
+        "pk": 42,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 145,
+            "name": "Activit\u00e9s - Activit\u00e9s familiales"
+        }
+    },
+    {
+        "pk": 43,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 23,
+            "name": "Informations - Offices de tourisme"
+        }
+    },
+    {
+        "pk": 44,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 79,
+            "name": "Informations - Autres informations"
+        }
+    },
+    {
+        "pk": 45,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 47,
+            "name": "Producteurs et Artisants - Viande et charcuterie"
+        }
+    },
+    {
+        "pk": 46,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 48,
+            "name": "Producteurs et Artisants - Produit de la ferme"
+        }
+    },
+    {
+        "pk": 47,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 60,
+            "name": "Producteurs et Artisants - Artisants"
+        }
+    },
+    {
+        "pk": 48,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 62,
+            "name": "Producteurs et Artisants - Alcool"
+        }
+    },
+    {
+        "pk": 49,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 63,
+            "name": "Producteurs et Artisants - Boulangerie / patisserie"
+        }
+    },
+    {
+        "pk": 50,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 72,
+            "name": "Producteurs et Artisants - Poisson"
+        }
+    },
+    {
+        "pk": 51,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 101,
+            "name": "Producteurs et Artisants - D\u00e9gustation"
+        }
+    },
+    {
+        "pk": 52,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 83,
+            "name": "Fluvial - Pratique"
+        }
+    },
+    {
+        "pk": 53,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 84,
+            "name": "Fluvial - Location de bateau"
+        }
+    },
+    {
+        "pk": 54,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 85,
+            "name": "Fluvial - Patrimoine"
+        }
+    },
+    {
+        "pk": 55,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 86,
+            "name": "Fluvial - Croisi\u00e8re"
+        }
+    },
+    {
+        "pk": 56,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 80,
+            "name": "Services et Commerces - Commerces"
+        }
+    },
+    {
+        "pk": 57,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 81,
+            "name": "Services et Commerces - Transport"
+        }
+    },
+    {
+        "pk": 58,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 82,
+            "name": "Services et Commerces - Banques / distributeurs"
+        }
+    },
+    {
+        "pk": 59,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 151,
+            "name": "Services et Commerces - Parking"
+        }
+    },
+    {
+        "pk": 60,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 152,
+            "name": "Services et Commerces - Boulangerie"
+        }
+    },
+    {
+        "pk": 61,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 153,
+            "name": "Services et Commerces - Supermarch\u00e9 / epicerie"
+        }
+    },
+    {
+        "pk": 62,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 154,
+            "name": "Services et Commerces - Autres commerces"
+        }
+    },
+    {
+        "pk": 63,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 155,
+            "name": "Services et Commerces - Gares, taxis, bus"
+        }
+    },
+    {
+        "pk": 64,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 156,
+            "name": "Services et Commerces - Location"
+        }
+    },
+    {
+        "pk": 65,
+        "model": "trekking.cirkwipoicategory",
+        "fields": {
+            "eid": 157,
+            "name": "Services et Commerces - Garage / r\u00e9paration"
+        }
+    }
+]

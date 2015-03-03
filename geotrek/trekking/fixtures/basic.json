@@ -4,9 +4,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-patrimony.png",
+            "label": "Small patrimony",
             "label_en": "Small patrimony",
             "label_fr": "Petit patrimoine",
-            "label": "Petit patrimoine"
+            "cirkwi": 22
         }
     },
     {
@@ -14,9 +15,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-flora.png",
+            "label": "Flora",
             "label_en": "Flora",
             "label_fr": "Flore",
-            "label": "Flore"
+            "cirkwi": 23
         }
     },
     {
@@ -24,9 +26,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-fauna.png",
+            "label": "Fauna",
             "label_en": "Fauna",
             "label_fr": "Faune",
-            "label": "Faune"
+            "cirkwi": 23
         }
     },
     {
@@ -34,9 +37,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-panorama.png",
+            "label": "Panorama",
             "label_en": "Panorama",
             "label_fr": "Point de vue",
-            "label": "Point de vue"
+            "cirkwi": 21
         }
     },
     {
@@ -44,9 +48,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-refuge.png",
+            "label": "Refuge",
             "label_en": "Refuge",
             "label_fr": "Refuge",
-            "label": "Refuge"
+            "cirkwi": 8
         }
     },
     {
@@ -54,9 +59,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-lake.png",
+            "label": "Lake",
             "label_en": "Lake",
             "label_fr": "Lac",
-            "label": "Lac"
+            "cirkwi": 26
         }
     },
     {
@@ -64,9 +70,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-peak.png",
+            "label": "Peak",
             "label_en": "Peak",
             "label_fr": "Sommet",
-            "label": "Sommet"
+            "cirkwi": 21
         }
     },
     {
@@ -74,9 +81,10 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-geology.png",
+            "label": "Geology",
             "label_en": "Geology",
-            "label_fr": "Géologie",
-            "label": "Géologie"
+            "label_fr": "G\u00e9ologie",
+            "cirkwi": null
         }
     },
     {
@@ -84,8 +92,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-archeology.png",
+            "label": "Arch\u00e9ologie",
             "label_fr": "Arch\u00e9ologie",
-            "label": "Arch\u00e9ologie"
+            "cirkwi": 18
         }
     },
     {
@@ -93,8 +102,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-history.png",
+            "label": "Histoire",
             "label_fr": "Histoire",
-            "label": "Histoire"
+            "cirkwi": 18
         }
     },
     {
@@ -102,8 +112,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-architecture.png",
+            "label": "Architecture",
             "label_fr": "Architecture",
-            "label": "Architecture"
+            "cirkwi": 16
         }
     },
     {
@@ -111,8 +122,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-glacier.png",
+            "label": "Glacier",
             "label_fr": "Glacier",
-            "label": "Glacier"
+            "cirkwi": null
         }
     },
     {
@@ -120,8 +132,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-knowhow.png",
+            "label": "Savoir-faire",
             "label_fr": "Savoir-faire",
-            "label": "Savoir-faire"
+            "cirkwi": null
         }
     },
     {
@@ -129,8 +142,9 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-pastoral.png",
+            "label": "Pastoralisme",
             "label_fr": "Pastoralisme",
-            "label": "Pastoralisme"
+            "cirkwi": null
         }
     },
     {
@@ -138,16 +152,17 @@
         "model": "trekking.poitype",
         "fields": {
             "pictogram": "upload/poi-pass.png",
+            "label": "Col",
             "label_fr": "Col",
-            "label": "Col"
+            "cirkwi": 31
         }
     },
     {
         "pk": 2,
         "model": "trekking.treknetwork",
         "fields": {
-            "pictogram": "upload/network-PR.svg",
             "network": "PR",
+            "pictogram": "upload/network-PR.svg",
             "network_fr": "PR"
         }
     },
@@ -155,8 +170,8 @@
         "pk": 3,
         "model": "trekking.treknetwork",
         "fields": {
-            "pictogram": "upload/network-GRP.svg",
             "network": "GRP",
+            "pictogram": "upload/network-GRP.svg",
             "network_fr": "GRP"
         }
     },
@@ -164,8 +179,8 @@
         "pk": 4,
         "model": "trekking.treknetwork",
         "fields": {
-            "pictogram": "upload/network-VTT.svg",
             "network": "VTT",
+            "pictogram": "upload/network-VTT.svg",
             "network_fr": "VTT"
         }
     },
@@ -173,8 +188,8 @@
         "pk": 5,
         "model": "trekking.treknetwork",
         "fields": {
-            "pictogram": "upload/network-horse.svg",
             "network": "Piste \u00e9questre",
+            "pictogram": "upload/network-horse.svg",
             "network_fr": "Piste \u00e9questre"
         }
     },
@@ -182,8 +197,8 @@
         "pk": 6,
         "model": "trekking.treknetwork",
         "fields": {
-            "pictogram": "upload/network-GR.svg",
             "network": "GR",
+            "pictogram": "upload/network-GR.svg",
             "network_fr": "GR"
         }
     },
@@ -191,66 +206,73 @@
         "pk": 1,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/practice-mountainbike.png",
+            "name_fr": "VTT",
             "name": "Mountain Bike",
-            "name_en": "Mountain Bike",
-            "name_fr": "VTT"
+            "pictogram": "upload/practice-mountainbike.png",
+            "cirkwi": 3,
+            "name_en": "Mountain Bike"
         }
     },
     {
         "pk": 2,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/practice-bike.png",
+            "name_fr": "V\u00e9lo",
             "name": "Cycling",
-            "name_en": "Cycling",
-            "name_fr": "Vélo"
+            "pictogram": "upload/practice-bike.png",
+            "cirkwi": 14,
+            "name_en": "Cycling"
         }
     },
     {
         "pk": 3,
         "model": "trekking.practice",
         "fields": {
-            "pictogram": "upload/practice-horse.png",
+            "name_fr": "Cheval",
             "name": "Horse",
-            "name_en": "Horse",
-            "name_fr": "Cheval"
+            "pictogram": "upload/practice-horse.png",
+            "cirkwi": 4,
+            "name_en": "Horse"
         }
     },
     {
         "pk": 4,
         "model": "trekking.practice",
         "fields": {
+            "name_it": "",
             "name": "P\u00e9destre",
             "pictogram": "upload/practice-foot.png",
-            "name_fr": "P\u00e9destre"
+            "cirkwi": 1
         }
     },
     {
         "pk": 1,
         "model": "trekking.accessibility",
         "fields": {
+            "name_fr": "Fauteuil roulant",
             "name": "Fauteuil roulant",
             "pictogram": "upload/accessibility-wheelchair.png",
-            "name_fr": "Fauteuil roulant"
+            "cirkwi": 9
         }
     },
     {
         "pk": 2,
         "model": "trekking.accessibility",
         "fields": {
+            "name_fr": "Poussette",
             "name": "Poussette",
             "pictogram": "upload/accessibility-troller.png",
-            "name_fr": "Poussette"
+            "cirkwi": 1
         }
     },
     {
         "pk": 3,
         "model": "trekking.accessibility",
         "fields": {
+            "name_fr": "Joelette",
             "name": "Joelette",
             "pictogram": "upload/accessibility-joelette.png",
-            "name_fr": "Joelette"
+            "cirkwi": null
         }
     },
     {
@@ -258,8 +280,8 @@
         "model": "trekking.route",
         "fields": {
             "pictogram": "upload/route-loop.svg",
-            "route": "Boucle",
-            "route_fr": "Boucle"
+            "route_fr": "Boucle",
+            "route": "Boucle"
         }
     },
     {
@@ -267,8 +289,8 @@
         "model": "trekking.route",
         "fields": {
             "pictogram": "upload/route-return.svg",
-            "route": "Aller-retour",
-            "route_fr": "Aller-retour"
+            "route_fr": "Aller-retour",
+            "route": "Aller-retour"
         }
     },
     {
@@ -276,8 +298,8 @@
         "model": "trekking.route",
         "fields": {
             "pictogram": "upload/route-cross.svg",
-            "route": "Travers\u00e9e",
-            "route_fr": "Travers\u00e9e"
+            "route_fr": "Travers\u00e9e",
+            "route": "Travers\u00e9e"
         }
     },
     {
@@ -285,9 +307,11 @@
         "model": "trekking.difficultylevel",
         "fields": {
             "pictogram": "upload/difficulty-easy.svg",
+            "cirkwi_level": 1,
+            "difficulty_en": "Easy",
+            "cirkwi": 5,
             "difficulty": "Easy",
-            "difficulty_fr": "Facile",
-            "difficulty_en": "Easy"
+            "difficulty_fr": "Facile"
         }
     },
     {
@@ -295,9 +319,11 @@
         "model": "trekking.difficultylevel",
         "fields": {
             "pictogram": "upload/difficulty-rookie.svg",
+            "cirkwi_level": 3,
+            "difficulty_en": "Rookie",
+            "cirkwi": 12,
             "difficulty": "Rookie",
-            "difficulty_fr": "Confirmé",
-            "difficulty_en": "Rookie"
+            "difficulty_fr": "Confirm\u00e9"
         }
     },
     {
@@ -305,9 +331,11 @@
         "model": "trekking.difficultylevel",
         "fields": {
             "pictogram": "upload/difficulty-hard.svg",
+            "cirkwi_level": 5,
+            "difficulty_en": "Hard",
+            "cirkwi": 11,
             "difficulty": "Hard",
-            "difficulty_fr": "Difficile",
-            "difficulty_en": "Hard"
+            "difficulty_fr": "Difficile"
         }
     },
     {
@@ -315,39 +343,41 @@
         "model": "trekking.difficultylevel",
         "fields": {
             "pictogram": "upload/difficulty-active.svg",
-            "difficulty": "Actif",
-            "difficulty_fr": "Actif",
-            "difficulty_en": "Active"
+            "cirkwi_level": 7,
+            "difficulty_en": "Active",
+            "cirkwi": 16,
+            "difficulty": "Active",
+            "difficulty_fr": "Actif"
         }
     },
     {
         "pk": 1,
         "model": "trekking.weblinkcategory",
         "fields": {
-            "label": "Refuge",
-            "label_fr": "Refuge",
+            "pictogram": "upload/weblink-refuge.png",
+            "label": "Refugee",
             "label_en": "Refugee",
-            "pictogram": "upload/weblink-refuge.png"
+            "label_fr": "Refuge"
         }
     },
     {
         "pk": 2,
         "model": "trekking.weblinkcategory",
         "fields": {
+            "pictogram": "upload/weblink-map.png",
             "label": "Map",
-            "label_fr": "Carte",
             "label_en": "Map",
-            "pictogram": "upload/weblink-map.png"
+            "label_fr": "Carte"
         }
     },
     {
         "pk": 3,
         "model": "trekking.weblinkcategory",
         "fields": {
+            "pictogram": "upload/weblink-bus.png",
             "label": "Bus",
-            "label_fr": "Bus",
             "label_en": "Bus",
-            "pictogram": "upload/weblink-bus.png"
+            "label_fr": "Bus"
         }
     },
     {
@@ -355,8 +385,8 @@
         "model": "trekking.weblinkcategory",
         "fields": {
             "pictogram": "upload/weblink-book.png",
-            "label_fr": "A lire",
-            "label": "A lire"
+            "label": "A lire",
+            "label_fr": "A lire"
         }
     },
     {
@@ -364,8 +394,8 @@
         "model": "trekking.weblinkcategory",
         "fields": {
             "pictogram": "upload/weblink-tourism.png",
-            "label_fr": "Information touristique",
-            "label": "Information touristique"
+            "label": "Information touristique",
+            "label_fr": "Information touristique"
         }
     }
 ]

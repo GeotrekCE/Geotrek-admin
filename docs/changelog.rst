@@ -5,7 +5,10 @@ CHANGELOG
 0.31.1.dev0
 -------------------
 
-*
+**New features**
+
+* Export to cirkwi/espace loisirs IGN. After upgrade, run
+  `bin/django loaddata cirkwi` to load data cirkwi tags and categories
 
 
 0.31.0 (2015-03-02)

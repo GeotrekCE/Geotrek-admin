@@ -207,6 +207,18 @@ class BasePublishableMixin(models.Model):
             })
         return status
 
+    @property
+    def published_langs(self):
+        """Returns languages in which the object is published.
+        """
+        langs = [l[0] for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        if settings.PUBLISHED_BY_LANG:
+            return [l for l in langs if getattr(self, 'published_%s' % l, None)]
+        elif self.published:
+            return langs
+        else:
+            return []
+
 
 class PublishableMixin(BasePublishableMixin):
     """A mixin that contains all necessary stuff to publish objects

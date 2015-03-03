@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 14:12+0100\n"
+"POT-Creation-Date: 2015-03-03 10:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,6 +71,18 @@ msgstr "Organisme"
 msgid "Organisms"
 msgstr "Organismes"
 
+msgid "Cirkwi id"
+msgstr "Id Cirkwi"
+
+msgid "Cirkwi name"
+msgstr "Nom Cirkwi"
+
+msgid "Cirkwi tag"
+msgstr "Tag Cirkwi"
+
+msgid "Cirkwi tags"
+msgstr "Tags Cirkwi"
+
 msgid "Label"
 msgstr "Label"
 
@@ -85,7 +97,9 @@ msgstr "L'événement n'est pas valide"
 
 msgid ""
 "This project is co-financed by the European Union through FEDER Massif Alpin."
-msgstr "Ce projet est co-financé par l'Union Européenne au travers du FEDER Massif Alpin"
+msgstr ""
+"Ce projet est co-financé par l'Union Européenne au travers du FEDER Massif "
+"Alpin"
 
 msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"

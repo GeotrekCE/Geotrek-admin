@@ -3,7 +3,7 @@ from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
-from django.views.generic.edit import CreateView
+from django.views.generic import CreateView, ListView
 from django.views.generic.detail import BaseDetailView
 from django.contrib.auth.decorators import login_required
 
@@ -27,7 +27,8 @@ from geotrek.tourism.views import InformationDeskGeoJSON
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
-from .serializers import TrekGPXSerializer, TrekSerializer, POISerializer
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
+                          CirkwiTrekSerializer, CirkwiPOISerializer)
 
 
 class FlattenPicturesMixin(object):
@@ -407,3 +408,37 @@ class POIViewSet(MapEntityViewSet):
                 return POI.objects.none()
             return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
         return POI.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class CirkwiTrekView(ListView):
+    model = Trek
+
+    def get_queryset(self):
+        qs = Trek.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(4326, field_name='geom')  # WSG84
+        return qs
+
+    def get(self, request):
+        response = HttpResponse(content_type='application/xml')
+        serializer = CirkwiTrekSerializer(request, response)
+        treks = self.get_queryset()
+        serializer.serialize(treks)
+        return response
+
+
+class CirkwiPOIView(ListView):
+    model = POI
+
+    def get_queryset(self):
+        qs = POI.objects.existing()
+        qs = qs.filter(published=True)
+        qs = qs.transform(4326, field_name='geom')  # WSG84
+        return qs
+
+    def get(self, request):
+        response = HttpResponse(content_type='application/xml')
+        serializer = CirkwiPOISerializer(request, response)
+        pois = self.get_queryset()
+        serializer.serialize(pois)
+        return response

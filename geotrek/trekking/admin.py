@@ -8,12 +8,12 @@ from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek
+    WebLink, WebLinkCategory, Trek, CirkwiLocomotion, CirkwiPOICategory,
 )
 
 
 class POITypeAdmin(TranslationAdmin):
-    list_display = ('label', 'pictogram_img')
+    list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
 
 
@@ -23,12 +23,12 @@ class TrekNetworkAdmin(TranslationAdmin):
 
 
 class PracticeAdmin(TranslationAdmin):
-    list_display = ('name', 'pictogram_img')
+    list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
 
 
 class AccessibilityAdmin(TranslationAdmin):
-    list_display = ('name', 'pictogram_img')
+    list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
 
 
@@ -51,9 +51,9 @@ class DifficultyLevelForm(forms.ModelForm):
 
 class DifficultyLevelAdmin(TranslationAdmin):
     form = DifficultyLevelForm
-    list_display = ('id', 'difficulty', 'pictogram_img')
+    list_display = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram_img')
     search_fields = ('difficulty',)
-    fields = ('id', 'difficulty', 'pictogram')
+    fields = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram')
 
     def save_model(self, request, obj, form, change):
         """
@@ -107,6 +107,11 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
+class CirkwiAdmin(admin.ModelAdmin):
+    list_display = ('name', 'eid')
+    search_fields = ('name', '=eid')
+
+
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
@@ -117,6 +122,8 @@ trek_admin_to_register = [
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
+    (CirkwiLocomotion, CirkwiAdmin),
+    (CirkwiPOICategory, CirkwiAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:
