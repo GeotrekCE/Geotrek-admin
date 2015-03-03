@@ -9,6 +9,7 @@ CHANGELOG
 
 * Export to cirkwi/espace loisirs IGN. After upgrade, run
   `bin/django loaddata cirkwi` to load data cirkwi tags and categories
+* Wysiwyg editor for static web pages
 
 **Bug fixes**
 
