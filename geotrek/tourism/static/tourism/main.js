@@ -78,6 +78,17 @@ $(window).on('entity:map', function (e, data) {
 
 $(window).on('entity:view:list', function (e, data) {
 
+    // Date picker
+    $('#id_before, #id_after').datepicker({
+        autoclose: true,
+        language: window.SETTINGS.languages.default,
+        format: window.SETTINGS.date_format
+    });
+    // prevent click on datepicker to close the filter popover
+    $(document).on('click', '.datepicker, span.month, th.next, th.prev, th.datepicker-switch, span.year, td.day', function (e) {
+        e.stopPropagation();
+    });
+
     // Tooltips on categories in list view
     if (data.modelname != 'touristiccontent')
         return;

@@ -5,6 +5,10 @@ CHANGELOG
 0.32.2.dev0
 -------------------
 
+**New features**
+
+* Add date filters to touristic events list
+
 **Bug fixes**
 
 * Home now redirects to treks list in light version (without topologies)

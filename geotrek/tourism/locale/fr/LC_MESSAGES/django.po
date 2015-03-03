@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-23 15:13+0100\n"
+"POT-Creation-Date: 2015-03-05 15:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "After"
+msgstr "À partir du"
+
+msgid "Before"
+msgstr "Jusqu'au"
 
 msgid "dd/mm/yyyy"
 msgstr "jj/mm/aaaa"
@@ -186,6 +192,9 @@ msgstr "Contenu touristique"
 msgid "Touristic contents"
 msgstr "Contenus touristiques"
 
+msgid "Published touristic contents"
+msgstr "Contenus touristiques publiés"
+
 msgid "Touristic event type"
 msgstr "Type d'évènement touristique"
 
@@ -245,6 +254,9 @@ msgstr "Évènements touristiques"
 
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
+
+msgid "Published touristic events"
+msgstr "Évènements touristiques publiés"
 
 msgid "Tourism"
 msgstr "Tourisme"
