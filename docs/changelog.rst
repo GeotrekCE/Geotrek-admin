@@ -14,6 +14,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix creation of a loop topology with two paths (fixes #1026)
+* Hide not published static pages in public REST API
 
 
 0.31.0 (2015-03-02)

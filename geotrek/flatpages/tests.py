@@ -90,26 +90,16 @@ class AdminSiteTest(TestCase):
 
 class RESTViewsTest(TestCase):
     def setUp(self):
-        FlatPageFactory.create_batch(10)
-
-    def login(self):
-        user = SuperUserFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-
-    def test_endpoint_is_protected(self):
-        response = self.client.get('/api/flatpages/')
-        self.assertEquals(response.status_code, 403)
+        FlatPageFactory.create_batch(10, published=True)
+        FlatPageFactory.create(published=False)
 
     def test_records_list(self):
-        self.login()
         response = self.client.get('/api/flatpages/')
         self.assertEquals(response.status_code, 200)
         records = json.loads(response.content)
         self.assertEquals(len(records), 10)
 
     def test_serialized_attributes(self):
-        self.login()
         response = self.client.get('/api/flatpages/')
         records = json.loads(response.content)
         record = records[0]
