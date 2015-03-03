@@ -306,4 +306,24 @@ describe('Topology helper', function() {
         });
         done();
     });
+
+
+    it('It should work if loop with two paths', function(done) {
+        var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
+                        __inputData(L.latLng([1, 0]), L.latLng([9, 0]), [2, 1, 2]));
+
+        // One sub-topology
+        assert.equal(topo.serialized.length, 1);
+
+        assert.deepEqual(topo.serialized[0], {
+            offset: 0,
+            positions: {
+                "0": [0.10000000000000013, 0],
+                "1": [0, 1],
+                "2": [1, 0.8999999999999987],
+            },
+            paths: [2, 1, 2]
+        });
+        done();
+    });
 });

@@ -10,8 +10,8 @@ Geotrek.TopologyHelper = (function() {
     function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
         var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
-          , single_path = paths.length == 1 || polyline_start == polyline_end
-          , single_path_loop = false
+          , single_path = paths.length == 1
+          , cleanup = true
           , positions = {};
 
         if (!polyline_start || !polyline_end) {
@@ -30,6 +30,8 @@ Geotrek.TopologyHelper = (function() {
                 lls = polyline_start.getLatLngs();
 
             single_path_loop = lls[0].equals(lls[lls.length-1]);
+            if (single_path_loop)
+                cleanup = false;
 
             if (single_path_loop && Math.abs(pk_end - pk_start) > 0.5) {
                 /*
@@ -60,6 +62,27 @@ Geotrek.TopologyHelper = (function() {
                  */
                 paths = $.unique(paths);
                 positions[0] = [pk_start, pk_end];
+            }
+        }
+        else if (paths.length == 3 && polyline_start == polyline_end) {
+            var start_lls = polyline_start.getLatLngs()
+              , end_lls = polyline_end.getLatLngs();
+            cleanup = false;
+            if (pk_start < pk_end) {
+                positions[0] = [pk_start, 0.0];
+                if (start_lls[0].equals(end_lls[0]))
+                    positions[1] = [0.0, 1.0];
+                else
+                    positions[1] = [1.0, 0.0];
+                positions[2] = [1.0, pk_end];
+            }
+            else {
+                positions[0] = [pk_start, 1.0];
+                if (start_lls[0].equals(end_lls[0]))
+                    positions[1] = [1.0, 0.0];
+                else
+                    positions[1] = [0.0, 1.0];
+                positions[2] = [0.0, pk_end];
             }
         }
         else {
@@ -177,7 +200,7 @@ Geotrek.TopologyHelper = (function() {
         // We basically remove all points where position is [x,x]
         // This can happen at extremity points...
 
-        if (!single_path_loop) {
+        if (cleanup) {
             var cleanpaths = [],
                 cleanpositions = {};
             for (var i=0; i < paths.length; i++) {

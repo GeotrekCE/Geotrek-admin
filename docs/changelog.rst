@@ -5,7 +5,9 @@ CHANGELOG
 0.31.1.dev0
 -------------------
 
-*
+**Bug fixes**
+
+* Fix creation of a loop topology with two paths (fixes #1026)
 
 
 0.31.0 (2015-03-02)
