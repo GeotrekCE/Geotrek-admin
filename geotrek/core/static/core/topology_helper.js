@@ -10,8 +10,8 @@ Geotrek.TopologyHelper = (function() {
     function buildSubTopology(paths, polylines, ll_start, ll_end, offset) {
         var polyline_start = polylines[0]
           , polyline_end = polylines[polylines.length - 1]
-          , single_path = paths.length == 1 || polyline_start == polyline_end
-          , single_path_loop = false
+          , single_path = paths.length == 1
+          , cleanup = true
           , positions = {};
 
         if (!polyline_start || !polyline_end) {
@@ -30,6 +30,8 @@ Geotrek.TopologyHelper = (function() {
                 lls = polyline_start.getLatLngs();
 
             single_path_loop = lls[0].equals(lls[lls.length-1]);
+            if (single_path_loop)
+                cleanup = false;
 
             if (single_path_loop && Math.abs(pk_end - pk_start) > 0.5) {
                 /*
@@ -62,6 +64,27 @@ Geotrek.TopologyHelper = (function() {
                 positions[0] = [pk_start, pk_end];
             }
         }
+        else if (paths.length == 3 && polyline_start == polyline_end) {
+            var start_lls = polylines[0].getLatLngs()
+              , mid_lls = polylines[1].getLatLngs();
+            cleanup = false;
+            if (pk_start < pk_end) {
+                positions[0] = [pk_start, 0.0];
+                if (start_lls[0].equals(mid_lls[0]))
+                    positions[1] = [0.0, 1.0];
+                else
+                    positions[1] = [1.0, 0.0];
+                positions[2] = [1.0, pk_end];
+            }
+            else {
+                positions[0] = [pk_start, 1.0];
+                if (start_lls[0].equals(mid_lls[0]))
+                    positions[1] = [1.0, 0.0];
+                else
+                    positions[1] = [0.0, 1.0];
+                positions[2] = [0.0, pk_end];
+            }
+        }
         else {
             /*
              * Add first portion of line
@@ -73,9 +96,11 @@ Geotrek.TopologyHelper = (function() {
             if (L.GeometryUtil.startsAtExtremity(polyline_start, polylines[1])) {
                 var next_lls = polylines[1].getLatLngs(),
                     next_end = next_lls[next_lls.length-1],
-                    share_end = first_end.equals(next_end);
+                    share_end = first_end.equals(next_end),
+                    two_paths_loop = first_end.equals(next_lls[0]);
                 if ((start_on_loop && pk_start > 0.5) ||
-                    (share_end && pk_start > 0.5 && pk_end > 0.5)) {
+                    (share_end && (pk_start + pk_end) >= 1) ||
+                    (two_paths_loop && (pk_start - pk_end) > 0)) {
                     /*
                      *       A
                      *    /--|===+    B
@@ -136,9 +161,11 @@ Geotrek.TopologyHelper = (function() {
             if (L.GeometryUtil.startsAtExtremity(polyline_end, polylines[polylines.length - 2])) {
                 var previous_lls = polylines[polylines.length - 2].getLatLngs(),
                     previous_end = previous_lls[previous_lls.length-1],
-                    share_end = last_end.equals(previous_end);
+                    share_end = last_end.equals(previous_end),
+                    two_paths_loop = last_end.equals(previous_lls[0]);
                 if ((end_on_loop && pk_end > 0.5) ||
-                    (share_end && pk_start > 0.5 && pk_end > 0.5)) {
+                    (share_end && (pk_start + pk_end) >= 1) ||
+                    (two_paths_loop && (pk_start - pk_end) <= 0)) {
                     /*
                      *              B
                      *     A    //==|-+
@@ -177,7 +204,7 @@ Geotrek.TopologyHelper = (function() {
         // We basically remove all points where position is [x,x]
         // This can happen at extremity points...
 
-        if (!single_path_loop) {
+        if (cleanup) {
             var cleanpaths = [],
                 cleanpositions = {};
             for (var i=0; i < paths.length; i++) {

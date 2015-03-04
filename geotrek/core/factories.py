@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import factory
 import random
 import math
@@ -43,7 +45,8 @@ class ComfortFactory(factory.Factory):
 class PathFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.Path
 
-    geom = LineString(Point(1, 1), Point(2, 2), srid=settings.SRID)
+    # (700000, 6600000) = Lambert93 origin (3.0° E, 46.5° N)
+    geom = LineString(Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID)
     geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: u"name %s" % n)
@@ -128,7 +131,6 @@ class TopologyFactory(factory.Factory):
         A topology mixin should be linked to at least one Path (through
         PathAggregation).
         """
-
         no_path = kwargs.pop('no_path', False)
         topo_mixin = super(TopologyFactory, cls)._prepare(create, **kwargs)
 
@@ -137,6 +139,14 @@ class TopologyFactory(factory.Factory):
             # Note that it is not possible to attach a related object before the
             # topo_mixin has an ID.
         return topo_mixin
+
+
+class PointTopologyFactory(TopologyFactory):
+    @classmethod
+    def create_pathaggregation_from_topo(cls, topo_mixin):
+        return PathAggregationFactory.create(topo_object=topo_mixin,
+                                             start_position=0.0,
+                                             end_position=0.0)
 
 
 class PathAggregationFactory(factory.Factory):

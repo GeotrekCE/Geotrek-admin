@@ -291,7 +291,7 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(len(jsonlist('?bbox=POLYGON((1%202%200%2C1%202%200%2C1%202%200%2C1%202%200%2C1%202%200))')), 2)
 
         # Give a bbox that match intervention, and check that all 3 projects are back
-        bbox = '?bbox=POLYGON((-1.3630753338765911%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838497371070440%2C%20-1.3630694576343052%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838431650051289%2C%20-1.3630753338765911%20-5.9838497371070440))'
+        bbox = '?bbox=POLYGON((2.9%2046.4%2C%203.1%2046.4%2C%203.1%2046.6%2C%202.9%2046.6%2C%202.9%2046.4))'
         self.assertEqual(len(jsonlist(bbox)), 3)
 
     def test_deleted_interventions(self):

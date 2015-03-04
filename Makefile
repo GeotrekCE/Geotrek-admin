@@ -125,6 +125,7 @@ all_compilemessages:
 load_data:
 	# /!\ will delete existing data
 	bin/django loaddata minimal
+	bin/django loaddata cirkwi
 	bin/django loaddata basic
 	for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R upload/* $(ROOT_DIR)/var/media/upload/ ; popd > /dev/null; done
 

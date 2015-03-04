@@ -2,6 +2,28 @@
 CHANGELOG
 =========
 
+0.32.1 (2015-03-04)
+-------------------
+
+**Bug fixes**
+
+* Fix creation of a loop topology with two paths (fixes #1026)
+
+
+0.32.0 (2015-03-04)
+-------------------
+
+**New features**
+
+* Export to cirkwi/espace loisirs IGN. After upgrade, run
+  `bin/django loaddata cirkwi` to load data cirkwi tags and categories
+* Wysiwyg editor for static web pages
+
+**Bug fixes**
+
+* Hide not published static pages in public REST API
+
+
 0.31.0 (2015-03-02)
 -------------------
 

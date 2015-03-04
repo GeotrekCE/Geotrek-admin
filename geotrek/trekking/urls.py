@@ -10,7 +10,8 @@ from . import models
 from .views import (
     TrekDocumentPublic, POIDocumentPublic,
     TrekGPXDetail, TrekKMLDetail, TrekPOIGeoJSON,
-    TrekInformationDeskGeoJSON, WebLinkCreatePopup
+    TrekInformationDeskGeoJSON, WebLinkCreatePopup,
+    CirkwiTrekView, CirkwiPOIView
 )
 from . import serializers as trekking_serializers
 
@@ -26,6 +27,8 @@ urlpatterns = patterns(
     url(r'^api/trek/(?P<pk>\d+)/pois.geojson$', TrekPOIGeoJSON.as_view(), name="trek_poi_geojson"),
     url(r'^api/trek/(?P<pk>\d+)/information_desks.geojson$', TrekInformationDeskGeoJSON.as_view(), name="trek_information_desk_geojson"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
+    url(r'^api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
+    url(r'^api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
 )
 
 

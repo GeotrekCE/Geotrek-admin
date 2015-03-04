@@ -1,11 +1,15 @@
+import datetime
 import json
 
 import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils import translation
+from django.utils.timezone import utc, make_aware
+from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
 
-from mapentity.serializers import GPXSerializer
+from mapentity.serializers import GPXSerializer, plain_text
 
 from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
@@ -13,6 +17,7 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin
 )
 from geotrek.authent import models as authent_models
+from geotrek.common.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -253,3 +258,169 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+
+def timestamp(dt):
+    epoch = make_aware(datetime.datetime(1970, 1, 1), utc)
+    return str(int((dt - epoch).total_seconds()))
+
+
+class CirkwiPOISerializer:
+    def __init__(self, request, stream):
+        self.xml = SimplerXMLGenerator(stream, 'utf8')
+        self.request = request
+        self.stream = stream
+
+    def serialize_field(self, name, value, attrs={}):
+        if not value and not attrs:
+            return
+        value = unicode(value)
+        self.xml.startElement(name, attrs)
+        if u'<' in value or u'>' in value or u'&' in value:
+            self.stream.write('<![CDATA[%s]]>' % value)
+        else:
+            self.xml.characters(value)
+        self.xml.endElement(name)
+
+    def serialize_medias(self, request, pictures):
+        if not pictures:
+            return
+        self.xml.startElement('medias', {})
+        self.xml.startElement('images', {})
+        for picture in pictures:
+            self.xml.startElement('image', {})
+            self.serialize_field('legend', picture['legend'])
+            self.serialize_field('url', request.build_absolute_uri(picture['url']))
+            self.serialize_field('credit', picture['author'])
+            self.xml.endElement('image')
+        self.xml.endElement('images')
+        self.xml.endElement('medias')
+
+    def serialize_pois(self, pois):
+        for poi in pois:
+            self.xml.startElement('poi', {
+                'date_creation': timestamp(poi.date_insert),
+                'date_modification': timestamp(poi.date_update),
+                'id_poi': str(poi.pk),
+            })
+            if poi.type.cirkwi:
+                self.xml.startElement('categories', {})
+                self.serialize_field('categorie', str(poi.type.cirkwi.eid), {'nom': poi.type.cirkwi.name})
+                self.xml.endElement('categories')
+            orig_lang = translation.get_language()
+            for lang in poi.published_langs:
+                translation.activate(lang)
+                self.xml.startElement('informations', {'language': lang})
+                self.serialize_field('titre', poi.name)
+                self.serialize_field('description', plain_text(poi.description))
+                self.serialize_medias(self.request, poi.serializable_pictures)
+                self.xml.endElement('informations')
+            translation.activate(orig_lang)
+            self.xml.startElement('adresse', {})
+            self.xml.startElement('position', {})
+            self.serialize_field('lat', poi.geom.coords[1])
+            self.serialize_field('lng', poi.geom.coords[0])
+            self.xml.endElement('position')
+            self.xml.endElement('adresse')
+            self.xml.endElement('poi')
+
+    def serialize(self, pois):
+        self.xml.startDocument()
+        self.xml.startElement('pois', {'version': '2'})
+        self.serialize_pois(pois)
+        self.xml.endElement('pois')
+        self.xml.endDocument()
+
+
+class CirkwiTrekSerializer(CirkwiPOISerializer):
+    def serialize_additionnal_info(self, trek, name):
+        value = getattr(trek, name)
+        if not value:
+            return
+        value = plain_text(value)
+        self.xml.startElement('information_complementaire', {})
+        self.serialize_field('titre', trek._meta.get_field(name).verbose_name)
+        self.serialize_field('description', value)
+        self.xml.endElement('information_complementaire')
+
+    def serialize_trace(self, trek):
+        self.xml.startElement('trace', {})
+        for c in trek.geom.coords:
+            self.xml.startElement('point', {})
+            self.serialize_field('lat', c[1])
+            self.serialize_field('lng', c[0])
+            self.xml.endElement('point')
+        self.xml.endElement('trace')
+
+    def serializable_locomotions(self, trek):
+        attrs = {}
+        if trek.practice and trek.practice.cirkwi:
+            attrs['type'] = trek.practice.cirkwi.name
+            attrs['id_locomotion'] = str(trek.practice.cirkwi.eid)
+        if trek.difficulty and trek.difficulty.cirkwi_level:
+            attrs['difficulte'] = str(trek.difficulty.cirkwi_level)
+        if trek.duration:
+            attrs['duree'] = str(int(trek.duration * 60))
+        if attrs:
+            self.xml.startElement('locomotions', {})
+            self.serialize_field('locomotion', '', attrs)
+            self.xml.endElement('locomotions')
+
+    def serialize_description(self, trek):
+        description = trek.description_teaser
+        if description and trek.description:
+            description += u'\n\n'
+            description += trek.description
+        if description:
+            self.serialize_field('description', plain_text(description))
+
+    def serialize_tags(self, trek):
+        self.xml.startElement('tags_publics', {})
+        tag_ids = list(trek.themes.values_list('cirkwi_id', flat=True))
+        tag_ids += trek.accessibilities.values_list('cirkwi_id', flat=True)
+        if trek.difficulty and trek.difficulty.cirkwi_id:
+            tag_ids.append(trek.difficulty.cirkwi_id)
+        for tag in CirkwiTag.objects.filter(id__in=tag_ids):
+            self.serialize_field('tag_public', '', {'id': str(tag.eid), 'nom': tag.name})
+        self.xml.endElement('tags_publics')
+
+    # TODO: parking location (POI?), points_reference
+    def serialize(self, treks):
+        self.xml.startDocument()
+        self.xml.startElement('circuits', {'version': '2'})
+        for trek in treks:
+            self.xml.startElement('circuit', {
+                'date_creation': timestamp(trek.date_insert),
+                'date_modification': timestamp(trek.date_update),
+                'id_circuit': str(trek.pk),
+            })
+            orig_lang = translation.get_language()
+            for lang in trek.published_langs:
+                translation.activate(lang)
+                self.xml.startElement('informations', {'language': lang})
+                self.serialize_field('titre', trek.name)
+                self.serialize_description(trek)
+                self.serialize_medias(self.request, trek.serializable_pictures)
+                self.xml.startElement('informations_complementaires', {})
+                self.serialize_additionnal_info(trek, 'departure')
+                self.serialize_additionnal_info(trek, 'arrival')
+                self.serialize_additionnal_info(trek, 'ambiance')
+                self.serialize_additionnal_info(trek, 'access')
+                self.serialize_additionnal_info(trek, 'disabled_infrastructure')
+                self.serialize_additionnal_info(trek, 'advised_parking')
+                self.serialize_additionnal_info(trek, 'public_transport')
+                self.serialize_additionnal_info(trek, 'advice')
+                self.xml.endElement('informations_complementaires')
+                self.serialize_tags(trek)
+                self.xml.endElement('informations')
+                self.serialize_field('distance', int(trek.length))
+                self.serializable_locomotions(trek)
+            translation.activate(orig_lang)
+            self.serialize_trace(trek)
+            if trek.published_pois:
+                self.xml.startElement('pois', {})
+                self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
+                self.xml.endElement('pois')
+            self.xml.endElement('circuit')
+        self.xml.endElement('circuits')
+        self.xml.endDocument()

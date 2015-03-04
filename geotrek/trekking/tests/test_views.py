@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import datetime
 from collections import OrderedDict
 
 import mock
@@ -16,6 +17,7 @@ from django.db import connection
 from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
+from django.utils.timezone import utc, make_aware
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -32,6 +34,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory)
 from geotrek.trekking.templatetags import trekking_tags
+from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism import factories as tourism_factories
 
@@ -94,23 +97,23 @@ class POIJSONDetailTest(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
-        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        polygon = 'SRID=%s;MULTIPOLYGON(((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000)))' % settings.SRID
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.poi = POIFactory.create(geom=Point(0, 0, srid=settings.SRID), published=True)
+        self.poi = POIFactory.create(published=True)
 
         self.attachment = AttachmentFactory.create(obj=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(701000 6601000)' % settings.SRID, published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(702000 6602000)' % settings.SRID, published=True)  # too far
 
         self.pk = self.poi.pk
         url = '/api/pois/%s/' % self.pk
@@ -971,3 +974,78 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
         url = "/poi/delete/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
+
+
+class CirkwiTests(TranslationResetMixin, TestCase):
+    def setUp(self):
+        creation = make_aware(datetime.datetime(2014, 1, 1), utc)
+        self.trek = TrekFactory.create(published=True)
+        self.trek.date_insert = creation
+        self.trek.save()
+        self.poi = POIFactory.create(published=True)
+        self.poi.date_insert = creation
+        self.poi.save()
+        TrekFactory.create(published=False)
+        POIFactory.create(published=False)
+
+    def test_export_circuits(self):
+        response = self.client.get('/api/cirkwi/circuits.xml')
+        self.assertEqual(response.status_code, 200)
+        attrs = {
+            'pk': self.trek.pk,
+            'title': self.trek.name,
+            'date_update': timestamp(self.trek.date_update),
+            'n': self.trek.description.replace('<p>description ', '').replace('</p>', ''),
+            'poi_pk': self.poi.pk,
+            'poi_title': self.poi.name,
+            'poi_description': self.poi.description.replace('<p>', '').replace('</p>', ''),
+        }
+        self.assertXMLEqual(
+            response.content,
+            '<?xml version="1.0" encoding="utf8"?>\n'
+            '<circuits version="2">'
+            '<circuit id_circuit="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations language="en">'
+            '<titre>{title}</titre>'
+            '<description>description_teaser {n}\n\ndescription {n}</description>'
+            '<informations_complementaires>'
+            '<information_complementaire><titre>Departure</titre><description>departure {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Arrival</titre><description>arrival {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Ambiance</titre><description>ambiance {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Access</titre><description>access {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Disabled infrastructure</titre><description>disabled_infrastructure {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Advised parking</titre><description>Advised parking {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Public transport</titre><description>Public transport {n}</description></information_complementaire>'
+            '<information_complementaire><titre>Advice</titre><description>Advice {n}</description></information_complementaire></informations_complementaires>'
+            '<tags_publics></tags_publics>'
+            '</informations>'
+            '<distance>141</distance>'
+            '<locomotions><locomotion duree="3600"></locomotion></locomotions>'
+            '<trace><point><lat>46.5</lat><lng>3.0</lng></point><point><lat>46.5009004423</lat><lng>3.00130397672</lng></point></trace>'
+            '<pois>'
+            '<poi id_poi="{poi_pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations language="en"><titre>{poi_title}</titre><description>{poi_description}</description></informations>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '</poi>'
+            '</pois>'
+            '</circuit>'
+            '</circuits>'.format(**attrs))
+
+    def test_export_pois(self):
+        response = self.client.get('/api/cirkwi/pois.xml')
+        self.assertEqual(response.status_code, 200)
+        attrs = {
+            'pk': self.poi.pk,
+            'title': self.poi.name,
+            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
+            'date_update': timestamp(self.poi.date_update),
+        }
+        self.assertXMLEqual(
+            response.content,
+            '<?xml version="1.0" encoding="utf8"?>\n'
+            '<pois version="2">'
+            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations language="en"><titre>{title}</titre><description>{description}</description></informations>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '</poi>'
+            '</pois>'.format(**attrs))
