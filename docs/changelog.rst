@@ -5,6 +5,10 @@ CHANGELOG
 0.32.1.dev0
 -------------------
 
+**Bug fixes**
+
+* Fix creation of a loop topology with two paths (fixes #1026)
+
 
 0.32.0 (2015-03-04)
 -------------------
@@ -17,7 +21,6 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix creation of a loop topology with two paths (fixes #1026)
 * Hide not published static pages in public REST API
 
 
