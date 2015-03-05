@@ -30,7 +30,10 @@ logger = logging.getLogger(__name__)
 def last_list(request):
     last = request.session.get('last_list')  # set in MapEntityList
     if not last:
-        return redirect('core:path_list')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            return redirect('core:path_list')
+        else:
+            return redirect('trekking:trek_list')
     return redirect(last)
 
 home = last_list
