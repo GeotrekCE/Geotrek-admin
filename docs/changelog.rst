@@ -5,6 +5,10 @@ CHANGELOG
 0.32.2.dev0
 -------------------
 
+**Bug fixes**
+
+* Home now redirects to treks list in light version (without topologies)
+
 
 0.32.1 (2015-03-04)
 -------------------
