@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Home now redirects to treks list in light version (without topologies)
+* Fix Cirkwi export in light version
 
 
 0.32.1 (2015-03-04)

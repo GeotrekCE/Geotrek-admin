@@ -416,7 +416,6 @@ class CirkwiTrekView(ListView):
     def get_queryset(self):
         qs = Trek.objects.existing()
         qs = qs.filter(published=True)
-        qs = qs.transform(4326, field_name='geom')  # WSG84
         return qs
 
     def get(self, request):
@@ -433,7 +432,6 @@ class CirkwiPOIView(ListView):
     def get_queryset(self):
         qs = POI.objects.existing()
         qs = qs.filter(published=True)
-        qs = qs.transform(4326, field_name='geom')  # WSG84
         return qs
 
     def get(self, request):
