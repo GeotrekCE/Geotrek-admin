@@ -60,6 +60,7 @@ install:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || cat ./install.log; fi
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --ignore=E501 geotrek; fi
+  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
