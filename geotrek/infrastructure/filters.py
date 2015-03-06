@@ -12,8 +12,7 @@ class InfrastructureYearSelect(InterventionYearSelect):
 
 class InfrastructureFilterSet(StructureRelatedFilterSet):
     intervention_year = YearFilter(name='interventions_set__date',
-                                   widget=InfrastructureYearSelect,
-                                   label=_(u"Intervention year"))
+                                   widget=InfrastructureYearSelect)
 
     def __init__(self, *args, **kwargs):
         super(InfrastructureFilterSet, self).__init__(*args, **kwargs)
@@ -34,6 +33,11 @@ class SignageFilterSet(StructureRelatedFilterSet):
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
+    def __init__(self, *args, **kwargs):
+        super(SignageFilterSet, self).__init__(*args, **kwargs)
+        field = self.form.fields['type']
+        field.queryset = field.queryset.filter(type=INFRASTRUCTURE_TYPES.SIGNAGE)
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields
+        fields = StructureRelatedFilterSet.Meta.fields + ['type']
