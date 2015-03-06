@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-0.32.2.dev0}
+VERSION=${VERSION:-0.32.2}
 dev=false
 tests=false
 prod=false
