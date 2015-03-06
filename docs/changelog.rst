@@ -5,7 +5,15 @@ CHANGELOG
 0.32.3.dev0
 -------------------
 
-*
+**Breaking changes**
+
+* A new permission "Can publish ..." is required to publish treks, pois,
+  touristic contents and touristic events. Grant it to your users and groups if
+  need be.
+
+**New features**
+
+* Publication workflow (fixes #1018)
 
 
 0.32.2 (2015-03-06)

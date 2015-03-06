@@ -13,7 +13,11 @@
         {% endfor %}
         ({{ object|verbose:"publication_date" }}: {{ object.publication_date }})
     {% else %}
-        {% trans "Not published" %}
+        {% if object.review %}
+            {% trans "Waiting for publication" %}
+        {% else %}
+            {% trans "Draft" %}
+        {% endif %}
     {% endif %}
     </td>
 </tr>

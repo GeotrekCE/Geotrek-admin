@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-03 16:18+0100\n"
+"POT-Creation-Date: 2015-03-06 16:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,6 +55,9 @@ msgstr "Publié"
 
 msgid "Publication date"
 msgstr "Date de publication"
+
+msgid "Waiting for publication"
+msgstr "En attente de publication"
 
 msgid "Name"
 msgstr "Nom"
@@ -122,8 +125,8 @@ msgstr "Cadre (WGS84)"
 msgid "Mouse"
 msgstr "Souris"
 
-msgid "Not published"
-msgstr "Non publié"
+msgid "Draft"
+msgstr "Brouillon"
 
 msgid "Object is published but"
 msgstr "L'objet est publié mais"
@@ -133,3 +136,6 @@ msgstr "semble incomplet;"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
+
+#~ msgid "Not published"
+#~ msgstr "Non publié"

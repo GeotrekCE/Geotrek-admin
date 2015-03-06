@@ -2,6 +2,7 @@ import os
 
 from django.test import TestCase
 from django.conf import settings
+from django.core.management import call_command
 
 from mapentity import registry
 
@@ -26,5 +27,7 @@ class AuthentFixturesTest(TestCase):
             from geotrek.infrastructure import urls  # NOQA
             from geotrek.trekking import urls  # NOQA
             from geotrek.tourism import urls  # NOQA
+
+        call_command('update_permissions')
 
         return super(AuthentFixturesTest, self)._pre_setup()

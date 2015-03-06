@@ -1,0 +1,9 @@
+{% extends "mapentity/mapentity_form.html" %}
+
+{% load staticfiles %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "common/main.js" %}"></script>
+{% endblock extrabody %}
