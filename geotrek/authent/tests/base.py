@@ -2,6 +2,7 @@ import os
 
 from django.test import TestCase
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
 from mapentity import registry
@@ -20,6 +21,10 @@ class AuthentFixturesTest(TestCase):
         imported after test setup, importing them here allows permissions to be
         available before test `setUp()` methods.
         """
+
+        # Workaround https://code.djangoproject.com/ticket/10827
+        ContentType.objects.clear_cache()
+
         if not registry.registry.keys():
             from geotrek.core import urls  # NOQA
             from geotrek.land import urls  # NOQA
