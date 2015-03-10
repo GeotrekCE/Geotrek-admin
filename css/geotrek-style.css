@@ -89,6 +89,10 @@
     padding-top: 6em;
 }
 
+.fullh {
+    height: 150px;
+}
+
 input[type="submit"] {
     cursor: pointer;
 }
