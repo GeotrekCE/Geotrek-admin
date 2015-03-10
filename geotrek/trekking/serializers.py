@@ -318,8 +318,9 @@ class CirkwiPOISerializer:
             translation.activate(orig_lang)
             self.xml.startElement('adresse', {})
             self.xml.startElement('position', {})
-            self.serialize_field('lat', poi.geom.coords[1])
-            self.serialize_field('lng', poi.geom.coords[0])
+            coords = poi.geom.transform(4326, clone=True).coords
+            self.serialize_field('lat', coords[1])
+            self.serialize_field('lng', coords[0])
             self.xml.endElement('position')
             self.xml.endElement('adresse')
             self.xml.endElement('poi')
@@ -345,7 +346,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
 
     def serialize_trace(self, trek):
         self.xml.startElement('trace', {})
-        for c in trek.geom.coords:
+        for c in trek.geom.transform(4326, clone=True).coords:
             self.xml.startElement('point', {})
             self.serialize_field('lat', c[1])
             self.serialize_field('lng', c[0])

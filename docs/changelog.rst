@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+0.32.2 (2015-03-06)
+-------------------
+
+**Bug fixes**
+
+* Home now redirects to treks list in light version (without topologies)
+* Fix Cirkwi export in light version
+* Fix SRID in database migrations
+* Add signage type filter again (fixes #1352)
+* Add missing date filters to touristic events list
+
+
 0.32.1 (2015-03-04)
 -------------------
 
