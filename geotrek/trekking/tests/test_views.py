@@ -19,6 +19,7 @@ from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils.timezone import utc, make_aware
+from django.utils.unittest import util as testutil
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -979,6 +980,7 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
 
 class CirkwiTests(TranslationResetMixin, TestCase):
     def setUp(self):
+        testutil._MAX_LENGTH = 10000
         creation = make_aware(datetime.datetime(2014, 1, 1), utc)
         self.trek = TrekFactory.create(published=True)
         self.trek.date_insert = creation
@@ -988,6 +990,9 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.poi.save()
         TrekFactory.create(published=False)
         POIFactory.create(published=False)
+
+    def tearDown(self):
+        testutil._MAX_LENGTH = 80
 
     def test_export_circuits(self):
         response = self.client.get('/api/cirkwi/circuits.xml')
