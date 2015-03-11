@@ -147,10 +147,12 @@
             "permissions": [
 
                 ["add_trek", "trekking", "trek"],
+                ["publish_trek", "trekking", "trek"],
                 ["change_trek", "trekking", "trek"],
                 ["delete_trek", "trekking", "trek"],
                 ["export_trek", "trekking", "trek"],
                 ["add_poi", "trekking", "poi"],
+                ["publish_poi", "trekking", "poi"],
                 ["change_poi", "trekking", "poi"],
                 ["delete_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
@@ -224,6 +226,7 @@
                 ["read_report", "feedback", "report"],
 
                 ["add_touristiccontent", "tourism", "touristiccontent"],
+                ["publish_touristiccontent", "tourism", "touristiccontent"],
                 ["change_touristiccontent", "tourism", "touristiccontent"],
                 ["delete_touristiccontent", "tourism", "touristiccontent"],
                 ["read_touristiccontent", "tourism", "touristiccontent"],
@@ -233,6 +236,7 @@
                 ["delete_touristiccontentcategory", "tourism", "touristiccontentcategory"],
 
                 ["add_touristicevent", "tourism", "touristicevent"],
+                ["publish_touristicevent", "tourism", "touristicevent"],
                 ["change_touristicevent", "tourism", "touristicevent"],
                 ["delete_touristicevent", "tourism", "touristicevent"],
                 ["read_touristicevent", "tourism", "touristicevent"],

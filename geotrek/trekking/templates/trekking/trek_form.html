@@ -1,6 +1,6 @@
 {% extends "mapentity/mapentity_form.html" %}
 
-{% load i18n crispy_forms_tags %}
+{% load i18n crispy_forms_tags staticfiles %}
 
 {% block mainform %}
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
@@ -22,6 +22,7 @@
 
 {% block extrabody %}
     {{ block.super }}
+    <script type="text/javascript" src="{% static "common/main.js" %}"></script>
     <script type="text/javascript">
         MapEntity.i18n['Add a point of reference'] = "{% trans "Add a point of reference" %}";
         MapEntity.i18n['Move points of reference'] = "{% trans "Move points of reference" %}";

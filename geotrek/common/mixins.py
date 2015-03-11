@@ -167,6 +167,8 @@ class BasePublishableMixin(models.Model):
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
+    review = models.BooleanField(verbose_name=_(u"Waiting for publication"),
+                                 default=False, db_column='relecture')
 
     class Meta:
         abstract = True
@@ -247,6 +249,8 @@ class PublishableMixin(BasePublishableMixin):
                                                               self.name)
         if self.published:
             s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        elif self.review:
+            s = u'<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @property
