@@ -998,6 +998,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             'n': self.trek.description.replace('<p>description ', '').replace('</p>', ''),
             'poi_pk': self.poi.pk,
             'poi_title': self.poi.name,
+            'poi_date_update': timestamp(self.poi.date_update),
             'poi_description': self.poi.description.replace('<p>', '').replace('</p>', ''),
         }
         self.assertXMLEqual(
@@ -1023,7 +1024,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<locomotions><locomotion duree="3600"></locomotion></locomotions>'
             '<trace><point><lat>46.5</lat><lng>3.0</lng></point><point><lat>46.5009004423</lat><lng>3.00130397672</lng></point></trace>'
             '<pois>'
-            '<poi id_poi="{poi_pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
             '<informations language="en"><titre>{poi_title}</titre><description>{poi_description}</description></informations>'
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
