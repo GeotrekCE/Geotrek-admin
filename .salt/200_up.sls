@@ -2,6 +2,11 @@
 {% set data = cfg.data %}
 {% set scfg = salt['mc_utils.json_dump'](cfg) %}
 {% set sdata = salt['mc_utils.json_dump'](data) %}
+
+
+include:
+  - makina-projects.{{cfg.name}}.task_djangosettings 
+
 {% if data.has_services and not data.has_geotrek %}
 {{cfg.name}}-global-up:
   cmd.run:
@@ -9,6 +14,8 @@
     - cwd: {{cfg.project_root}}
     - user: {{cfg.user}}
     - use_vt: true
+    - watch:
+      - mc_proxy: {{cfg.name}}-configs-gen
     - output_loglevel: info
 {% endif %}
 
@@ -20,4 +27,6 @@
     - user: {{cfg.user}}
     - use_vt: true
     - output_loglevel: info
+    - watch:
+      - mc_proxy: {{cfg.name}}-configs-gen
 {% endif %}

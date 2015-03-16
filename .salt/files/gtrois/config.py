@@ -1,4 +1,4 @@
-{% set cfg = salt['mc_utils.json_load'](data) %}
+{% set cfg = salt['mc_project.get_configuration'](project) %}
 {% set data = cfg.data %}
 from .prod import *
 ALTIMETRIC_PROFILE_COLOR = '#33b652'
