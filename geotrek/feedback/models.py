@@ -73,6 +73,10 @@ class Report(MapEntityMixin, TimeStampedModelMixin):
     def get_create_label(cls):
         return _(u"Add a new feedback")
 
+    @property
+    def geom_wgs84(self):
+        return self.geom.transform(4326, clone=True)
+
 
 @receiver(post_save, sender=Report, dispatch_uid="on_report_created")
 def on_report_saved(sender, instance, created, **kwargs):

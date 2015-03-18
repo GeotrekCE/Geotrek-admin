@@ -15,6 +15,10 @@ CHANGELOG
 
 * Publication workflow (fixes #1018)
 
+**Bug fixes**
+
+* Fix projection of OSM link in feedback email
+
 
 0.32.2 (2015-03-06)
 -------------------
