@@ -27,9 +27,11 @@ class PictogramSerializerMixin(rest_serializers.ModelSerializer):
 class PicturesSerializerMixin(rest_serializers.ModelSerializer):
     thumbnail = rest_serializers.Field(source='serializable_thumbnail')
     pictures = rest_serializers.Field(source='serializable_pictures')
+    videos = rest_serializers.Field(source='serializable_videos')
+    files = rest_serializers.Field(source='serializable_files')
 
     class Meta:
-        fields = ('thumbnail', 'pictures',)
+        fields = ('thumbnail', 'pictures', 'videos', 'files')
 
 
 class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):

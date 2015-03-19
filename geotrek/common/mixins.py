@@ -12,9 +12,9 @@ from django.template.defaultfilters import slugify
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from embed_video.backends import detect_backend
 
 from geotrek.common.utils import classproperty
-
 
 logger = logging.getLogger(__name__)
 
@@ -155,6 +155,43 @@ class PicturesMixin(object):
         if not th:
             return None
         return os.path.join(settings.MEDIA_URL, th.name)
+
+    @property
+    def videos(self):
+        all_attachments = self.attachments.order_by('-starred')
+        return all_attachments.exclude(attachment_video='')
+
+    @property
+    def serializable_videos(self):
+        serialized = []
+        for att in self.videos:
+            video = detect_backend(att.attachment_video)
+            serialized.append({
+                'author': att.author,
+                'title': att.title,
+                'legend': att.legend,
+                'backend': type(video).__name__.replace('Backend', ''),
+                'code': video.code,
+            })
+        return serialized
+
+    @property
+    def files(self):
+        all_attachments = self.attachments.order_by('-starred')
+        all_attachments = all_attachments.exclude(attachment_file='')
+        return [a for a in all_attachments if not a.is_image]
+
+    @property
+    def serializable_files(self):
+        serialized = []
+        for att in self.files:
+            serialized.append({
+                'author': att.author,
+                'title': att.title,
+                'legend': att.legend,
+                'url': att.attachment_file.url,
+            })
+        return serialized
 
 
 class BasePublishableMixin(models.Model):

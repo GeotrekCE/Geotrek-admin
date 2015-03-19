@@ -368,8 +368,12 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.attachment = common_factories.AttachmentFactory(obj=self.content,
-                                                             attachment_file=get_dummy_uploaded_image())
+        self.picture = common_factories.AttachmentFactory(obj=self.content,
+                                                          attachment_file=get_dummy_uploaded_image())
+        self.document = common_factories.AttachmentFactory(obj=self.content,
+                                                           attachment_file=get_dummy_uploaded_document())
+        self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
+                                                        attachment_video='https://www.youtube.com/watch?v=Jm3anSjly0Y')
         self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
 
@@ -381,7 +385,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
-                         os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+                         os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.120x120_q85_crop.png')
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
@@ -389,10 +393,25 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
-                              u'title': self.attachment.title,
-                              u'legend': self.attachment.legend,
-                              u'author': self.attachment.author})
+                             {u'url': os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.800x800_q85.png',
+                              u'title': self.picture.title,
+                              u'legend': self.picture.legend,
+                              u'author': self.picture.author})
+
+    def test_files(self):
+        self.assertDictEqual(self.result['files'][0],
+                             {u'url': os.path.join(settings.MEDIA_URL, self.document.attachment_file.name),
+                              u'title': self.document.title,
+                              u'legend': self.document.legend,
+                              u'author': self.document.author})
+
+    def test_videos(self):
+        self.assertDictEqual(self.result['videos'][0],
+                             {u'backend': 'Youtube',
+                              u'code': 'Jm3anSjly0Y',
+                              u'title': self.video.title,
+                              u'legend': self.video.legend,
+                              u'author': self.video.author})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
@@ -441,11 +460,11 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertEqual([
             'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
-            'filelist_url', 'id', 'map_image_url', 'name', 'pictures', 'pois',
-            'practical_info', 'printable', 'publication_date', 'published',
-            'published_status', 'slug', 'themes', 'thumbnail',
+            'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
+            'pois', 'practical_info', 'printable', 'publication_date',
+            'published', 'published_status', 'slug', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks',
-            'type1', 'type2', 'website'],
+            'type1', 'type2', 'videos', 'website'],
             sorted(self.result.keys()))
 
     def test_type1(self):
@@ -478,13 +497,13 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertEqual([
             'accessibility', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
-            'districts', 'duration', 'email', 'end_date', 'filelist_url',
+            'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
             'slug', 'speaker', 'target_audience', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks', 'type',
-            'type1', 'website'],
+            'type1', 'videos', 'website'],
             sorted(self.result.keys()))
 
     def test_type(self):

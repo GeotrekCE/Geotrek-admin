@@ -252,6 +252,7 @@ PROJECT_APPS += (
     'paperclip',
     'mapentity',
     'rest_framework',
+    'embed_video',
 )
 
 
@@ -366,6 +367,7 @@ THUMBNAIL_ALIASES = {
 
 
 PAPERCLIP_CONFIG = {
+    'ENABLE_VIDEO': True,
     'FILETYPE_MODEL': 'common.FileType',
     'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
 }

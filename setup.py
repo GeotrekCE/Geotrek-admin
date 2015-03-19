@@ -31,6 +31,7 @@ setup(
         'mapentity',
         'pytz',
         'djangorestframework-gis',
+        'django-embed-video',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
