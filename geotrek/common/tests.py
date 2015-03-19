@@ -9,6 +9,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+# Workaround https://code.djangoproject.com/ticket/22865
+from geotrek.common.models import FileType  # NOQA
 from mapentity.tests import MapEntityTest
 from mapentity.factories import UserFactory
 
