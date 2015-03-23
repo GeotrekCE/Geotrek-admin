@@ -17,6 +17,7 @@ CHANGELOG
 
 * Publication workflow (fixes #1018)
 * Allow to add links to Youtube or Soundcloud media as attachment
+* Make pictograms optional in some places when not required by Geotrek-Rando
 
 **Bug fixes**
 

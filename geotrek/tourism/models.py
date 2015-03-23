@@ -19,8 +19,9 @@ from modeltranslation.manager import MultilingualManager
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, PublishableMixin,
-                                   PicturesMixin, AddPropertyMixin)
+                                   PictogramMixin, OptionalPictogramMixin,
+                                   PublishableMixin, PicturesMixin,
+                                   AddPropertyMixin)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 
@@ -203,7 +204,7 @@ class TouristicContentCategory(PictogramMixin):
         return self.label
 
 
-class TouristicContentType(PictogramMixin):
+class TouristicContentType(OptionalPictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     category = models.ForeignKey(TouristicContentCategory, related_name='types',
@@ -328,7 +329,7 @@ TouristicContent.add_property('touristic_contents', lambda self: intersecting(To
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
 
 
-class TouristicEventType(PictogramMixin):
+class TouristicEventType(OptionalPictogramMixin):
 
     type = models.CharField(verbose_name=_(u"Type"), max_length=128, db_column='type')
 

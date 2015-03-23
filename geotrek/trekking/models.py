@@ -12,7 +12,8 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
+from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
+                                   PictogramMixin, OptionalPictogramMixin)
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
@@ -299,7 +300,7 @@ class Practice(PictogramMixin):
         return self.name
 
 
-class Accessibility(PictogramMixin):
+class Accessibility(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     cirkwi = models.ForeignKey('common.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
@@ -314,7 +315,7 @@ class Accessibility(PictogramMixin):
         return self.name
 
 
-class Route(PictogramMixin):
+class Route(OptionalPictogramMixin):
 
     route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
 
@@ -328,7 +329,7 @@ class Route(PictogramMixin):
         return self.route
 
 
-class DifficultyLevel(PictogramMixin):
+class DifficultyLevel(OptionalPictogramMixin):
 
     """We use an IntegerField for id, since we want to edit it in Admin.
     This column is used to order difficulty levels, especially in public website

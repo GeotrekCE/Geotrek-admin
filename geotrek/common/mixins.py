@@ -372,6 +372,12 @@ class PictogramMixin(models.Model):
         return self.pictogram.url if self.pictogram else None
 
 
+class OptionalPictogramMixin(PictogramMixin):
+    class Meta:
+        abstract = True
+OptionalPictogramMixin._meta.get_field('pictogram').blank = True
+
+
 class AddPropertyMixin(object):
     @classmethod
     def add_property(cls, name, func, verbose_name):

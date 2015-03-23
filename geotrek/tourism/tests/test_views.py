@@ -452,7 +452,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         super(TouristicContentAPITest, self)._build_object()
         self.category = self.content.category
         self.type1 = TouristicContentTypeFactory(category=self.category)
-        self.type2 = TouristicContentTypeFactory(category=self.category)
+        self.type2 = TouristicContentTypeFactory(category=self.category, pictogram=None)
         self.content.type1.add(self.type1)
         self.content.type2.add(self.type2)
 
@@ -478,7 +478,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.type2.id,
                               u"name": self.type2.label,
-                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type2.pictogram.name),
+                              u'pictogram': None,
                               u"in_list": self.type2.in_list})
 
     def test_category(self):
