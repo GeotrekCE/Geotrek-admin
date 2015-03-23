@@ -88,3 +88,19 @@ class Theme(PictogramMixin):
                 image = image.crop((0, 0, w / 2, h))
             image.save(output)
         return open(output)
+
+
+class RecordSource(StructureRelated, PictogramMixin):
+
+    name = models.CharField(verbose_name=_(u"Name"), max_length=50)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
+                              db_column='website', blank=True, null=True)
+
+    class Meta:
+        db_table = 'o_b_source_fiche'
+        verbose_name = _(u"Record source")
+        verbose_name_plural = _(u"Record sources")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name

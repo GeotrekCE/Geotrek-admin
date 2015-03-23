@@ -14,9 +14,9 @@
                 ["delete_trail", "core", "trail"],
                 ["export_trail", "core", "trail"],
 
-                ["add_datasource", "core", "datasource"],
-                ["change_datasource", "core", "datasource"],
-                ["delete_datasource", "core", "datasource"],
+                ["add_pathsource", "core", "pathsource"],
+                ["change_pathsource", "core", "pathsource"],
+                ["delete_pathsource", "core", "pathsource"],
                 ["add_stake", "core", "stake"],
                 ["change_stake", "core", "stake"],
                 ["delete_stake", "core", "stake"],
@@ -145,6 +145,9 @@
         "fields": {
             "name": "R\u00e9f\u00e9rents communication",
             "permissions": [
+                ["add_recordsource", "common", "recordsource"],
+                ["change_recordsource", "common", "recordsource"],
+                ["delete_recordsource", "common", "recordsource"],
 
                 ["add_trek", "trekking", "trek"],
                 ["publish_trek", "trekking", "trek"],

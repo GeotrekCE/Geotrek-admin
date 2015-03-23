@@ -149,6 +149,12 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Source" %}</th>
+            <td>{% if trek.source %}{{ trek.source }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.thumbnail.url }}"></td>
         </tr>

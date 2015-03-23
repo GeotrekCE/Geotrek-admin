@@ -86,7 +86,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'parking_location', 'points_reference', 'related', 'pois',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'source',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -288,7 +288,7 @@ class POIFormatList(MapEntityFormat, POIList):
         'id', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
 
     set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])

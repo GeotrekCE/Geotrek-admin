@@ -5,6 +5,7 @@ from django.contrib.gis.geos import Point
 
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
+from geotrek.common.factories import RecordSourceFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 
@@ -89,6 +90,7 @@ class TrekFactory(TopologyFactory):
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
+    source = factory.SubFactory(RecordSourceFactory)
 
 
 class TrekWithPOIsFactory(TrekFactory):

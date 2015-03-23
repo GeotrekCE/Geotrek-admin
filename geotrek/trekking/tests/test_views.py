@@ -656,6 +656,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"type2_label": u"Accessibilities",
                               u"pictogram": u"/static/trekking/trek.svg"})
 
+    def test_source(self):
+        self.assertDictEqual(self.result['source'], {
+            u'name': self.trek.source.name,
+            u'website': self.trek.source.website,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.source.pictogram.name)})
+
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):

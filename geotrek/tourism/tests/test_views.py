@@ -444,6 +444,12 @@ class BasicJSONAPITest(TranslationResetMixin):
                 u'label': self.poi.type.label,
                 u'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name)}})
 
+    def test_source(self):
+        self.assertDictEqual(self.result['source'], {
+            u'name': self.content.source.name,
+            u'website': self.content.source.website,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.content.source.pictogram.name)})
+
 
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
@@ -462,8 +468,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
-            'published', 'published_status', 'slug', 'themes', 'thumbnail',
-            'touristic_contents', 'touristic_events', 'treks',
+            'published', 'published_status', 'slug', 'source', 'themes',
+            'thumbnail', 'touristic_contents', 'touristic_events', 'treks',
             'type1', 'type2', 'videos', 'website'],
             sorted(self.result.keys()))
 
@@ -501,7 +507,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
-            'slug', 'speaker', 'target_audience', 'themes', 'thumbnail',
+            'slug', 'source', 'speaker', 'target_audience', 'themes', 'thumbnail',
             'touristic_contents', 'touristic_events', 'treks', 'type',
             'type1', 'videos', 'website'],
             sorted(self.result.keys()))

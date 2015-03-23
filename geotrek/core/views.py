@@ -102,7 +102,7 @@ class PathJsonList(MapEntityJsonList, PathList):
 class PathFormatList(MapEntityFormat, PathList):
     columns = [
         'id', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
-        'comfort', 'datasource', 'stake', 'usages', 'networks',
+        'comfort', 'source', 'stake', 'usages', 'networks',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS

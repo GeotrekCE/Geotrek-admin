@@ -19,8 +19,8 @@ class CoreFactoriesTest(TestCase):
     def test_path_aggregation_factory(self):
         factories.PathAggregationFactory()
 
-    def test_datasource_management_factory(self):
-        factories.DatasourceFactory()
+    def test_source_management_factory(self):
+        factories.PathSourceFactory()
 
     def test_challenge_management_factory(self):
         factories.StakeFactory()

@@ -16,7 +16,7 @@ class SplitPathTest(TestCase):
         ab.usages.add(UsageFactory.create())
         PathFactory.create(geom=LineString((2, 0), (2, 2)))
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(ab.datasource, ab_2.datasource)
+        self.assertEqual(ab.source, ab_2.source)
         self.assertEqual(ab.stake, ab_2.stake)
         self.assertListEqual(list(ab.networks.all()), list(ab_2.networks.all()))
         self.assertListEqual(list(ab.usages.all()), list(ab_2.usages.all()))

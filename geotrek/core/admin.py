@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from geotrek.core.models import (Datasource, Stake, Usage, Network, Comfort)
+from geotrek.core.models import (PathSource, Stake, Usage, Network, Comfort)
 
 
-class DatasourceAdmin(admin.ModelAdmin):
+class PathSourceAdmin(admin.ModelAdmin):
     list_display = ('source', 'structure')
     search_fields = ('source', 'structure')
     list_filter = ('structure',)
@@ -33,7 +33,7 @@ class ComfortAdmin(admin.ModelAdmin):
     list_filter = ('structure',)
 
 
-admin.site.register(Datasource, DatasourceAdmin)
+admin.site.register(PathSource, PathSourceAdmin)
 admin.site.register(Stake, StakeAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(Network, NetworkAdmin)

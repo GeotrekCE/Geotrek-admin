@@ -59,9 +59,9 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"), db_column='confort')
-    datasource = models.ForeignKey('Datasource',
-                                   null=True, blank=True, related_name='paths',
-                                   verbose_name=_("Datasource"), db_column='source')
+    source = models.ForeignKey('PathSource',
+                               null=True, blank=True, related_name='paths',
+                               verbose_name=_("Source"), db_column='source')
     stake = models.ForeignKey('Stake',
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"), db_column='enjeu')
@@ -376,14 +376,14 @@ class PathAggregation(models.Model):
         ordering = ['order', ]
 
 
-class Datasource(StructureRelated):
+class PathSource(StructureRelated):
 
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_source'
-        verbose_name = _(u"Datasource")
-        verbose_name_plural = _(u"Datasources")
+        db_table = 'l_b_source_troncon'
+        verbose_name = _(u"Path source")
+        verbose_name_plural = _(u"Path sources")
         ordering = ['source']
 
     def __unicode__(self):

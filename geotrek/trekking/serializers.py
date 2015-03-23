@@ -14,7 +14,7 @@ from mapentity.serializers import GPXSerializer, plain_text
 from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
-    PublishableSerializerMixin
+    PublishableSerializerMixin, RecordSourceSerializer,
 )
 from geotrek.authent import models as authent_models
 from geotrek.common.models import CirkwiTag
@@ -145,6 +145,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
+    source = RecordSourceSerializer()
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -181,7 +182,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
-                  'poi_layer', 'information_desk_layer', 'gpx', 'kml',
+                  'poi_layer', 'information_desk_layer', 'gpx', 'kml', 'source',
                   'type1', 'type2', 'category', 'structure', 'treks') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \

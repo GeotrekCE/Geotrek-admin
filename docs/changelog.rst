@@ -11,13 +11,16 @@ CHANGELOG
   ``ALTER TABLE fl_t_fichier ADD COLUMN attachment_video VARCHAR(200) NOT NULL DEFAULT '';``
 * A new permission "Can publish ..." is required to publish treks, pois,
   touristic contents and touristic events. Grant it to your users and groups if
-  need be.
+  need be
+* DB table ``l_b_source`` is renamed as ``l_b_source_troncon``
 
 **New features**
 
 * Publication workflow (fixes #1018)
 * Allow to add links to Youtube or Soundcloud media as attachment
 * Make pictograms optional in some places when not required by Geotrek-Rando
+* Add source for treks, touristic contents and touristic events (fixes #1354)
+* Add external id field for treks, pois, touristic contents and touristic events
 
 **Bug fixes**
 

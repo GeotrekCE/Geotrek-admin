@@ -105,6 +105,7 @@ class TrekForm(BaseTrekForm):
                     'accessibilities',
                     'web_links',
                     'information_desks',
+                    'source',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
@@ -148,7 +149,7 @@ class TrekForm(BaseTrekForm):
             ['name', 'review', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
              'points_reference', 'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
-             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks']
+             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks', 'source']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

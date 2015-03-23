@@ -4,7 +4,7 @@ from django.db import models as django_db_models
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
-from .models import Theme
+from .models import Theme, RecordSource
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -70,3 +70,9 @@ class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = Theme
         fields = ('id', 'pictogram', 'label')
+
+
+class RecordSourceSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
+    class Meta:
+        model = RecordSource
+        fields = ('name', 'website', 'pictogram')

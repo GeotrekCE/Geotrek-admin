@@ -52,3 +52,11 @@ class ThemeFactory(factory.Factory):
 
     label = factory.Sequence(lambda n: u"Theme %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
+
+
+class RecordSourceFactory(factory.Factory):
+    FACTORY_FOR = models.RecordSource
+
+    name = factory.Sequence(lambda n: u"Record source %s" % n)
+    website = 'http://geotrek.fr'
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')

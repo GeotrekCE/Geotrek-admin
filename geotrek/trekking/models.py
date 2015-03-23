@@ -82,6 +82,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                                help_text=_(u"Where to obtain information"))
     points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
+    source = models.ForeignKey('common.RecordSource',
+                               null=True, blank=True, related_name='treks',
+                               verbose_name=_("Source"), db_column='source')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -419,6 +423,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'

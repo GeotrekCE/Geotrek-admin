@@ -10,7 +10,7 @@ class TouristicContentForm(CommonForm):
     class Meta:
         fields = ['name', 'category', 'type1', 'type2', 'review', 'published',
                   'description_teaser', 'description', 'themes', 'contact',
-                  'email', 'website', 'practical_info', 'geom']
+                  'email', 'website', 'practical_info', 'source', 'geom']
         model = TouristicContent
 
     def __init__(self, *args, **kwargs):
@@ -29,7 +29,7 @@ class TouristicEventForm(CommonForm):
                   'meeting_point', 'meeting_time', 'contact', 'email',
                   'website', 'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
-                  'practical_info', 'geom']
+                  'practical_info', 'source', 'geom']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):
