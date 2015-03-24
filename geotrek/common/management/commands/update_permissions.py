@@ -42,7 +42,8 @@ class Command(BaseCommand):
         logger.info("Synchronize geotrek permissions")
 
         for content_type in ContentType.objects.all():
-            if issubclass(content_type.model_class(), BasePublishableMixin):
+            model = content_type.model_class()
+            if model and issubclass(model, BasePublishableMixin):
                 Permission.objects.get_or_create(
                     codename='publish_%s' % content_type.model,
                     name='Can publish %s' % content_type.name,
