@@ -19,10 +19,12 @@ CHANGELOG
 * Make pictograms optional in some places when not required by Geotrek-Rando
 * Add source for treks, touristic contents and touristic events (fixes #1354)
 * Add external id field for treks, pois, touristic contents and touristic events
+* Group cirkwi matchings in admin site (fixes #1402)
 
 **Bug fixes**
 
 * Fix projection of OSM link in feedback email
+* Fix language in cirkwi exports
 
 
 0.32.2 (2015-03-06)

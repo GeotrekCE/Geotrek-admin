@@ -257,6 +257,7 @@ PROJECT_APPS += (
 
 
 INSTALLED_APPS = PROJECT_APPS + (
+    'geotrek.cirkwi',
     'geotrek.authent',
     'geotrek.common',
     'geotrek.altimetry',

@@ -39,24 +39,10 @@ class FileType(StructureRelated, BaseFileType):
         return cls.for_user(request.user)
 
 
-class CirkwiTag(models.Model):
-    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
-    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
-
-    class Meta:
-        db_table = 'o_b_cirkwi_tag'
-        verbose_name = _(u"Cirkwi tag")
-        verbose_name_plural = _(u"Cirkwi tags")
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
 class Theme(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
-    cirkwi = models.ForeignKey(CirkwiTag, verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_theme'

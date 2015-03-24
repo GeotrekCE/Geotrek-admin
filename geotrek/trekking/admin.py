@@ -8,7 +8,7 @@ from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek, CirkwiLocomotion, CirkwiPOICategory,
+    WebLink, WebLinkCategory, Trek,
 )
 
 
@@ -107,11 +107,6 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
-class CirkwiAdmin(admin.ModelAdmin):
-    list_display = ('name', 'eid')
-    search_fields = ('name', '=eid')
-
-
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
@@ -122,8 +117,6 @@ trek_admin_to_register = [
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
-    (CirkwiLocomotion, CirkwiAdmin),
-    (CirkwiPOICategory, CirkwiAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

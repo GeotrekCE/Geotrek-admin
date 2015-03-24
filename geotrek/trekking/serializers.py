@@ -17,7 +17,7 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin, RecordSourceSerializer,
 )
 from geotrek.authent import models as authent_models
-from geotrek.common.models import CirkwiTag
+from geotrek.cirkwi.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -311,7 +311,7 @@ class CirkwiPOISerializer:
             orig_lang = translation.get_language()
             for lang in poi.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'language': lang})
+                self.xml.startElement('informations', {'langue': lang})
                 self.serialize_field('titre', poi.name)
                 self.serialize_field('description', plain_text(poi.description))
                 self.serialize_medias(self.request, poi.serializable_pictures)
@@ -399,7 +399,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             orig_lang = translation.get_language()
             for lang in trek.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'language': lang})
+                self.xml.startElement('informations', {'langue': lang})
                 self.serialize_field('titre', trek.name)
                 self.serialize_description(trek)
                 self.serialize_medias(self.request, trek.serializable_pictures)
