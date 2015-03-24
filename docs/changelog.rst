@@ -7,8 +7,6 @@ CHANGELOG
 
 **Breaking changes**
 
-* Before running install, run this SQL command to add a column for video attachments:
-  ``ALTER TABLE fl_t_fichier ADD COLUMN attachment_video VARCHAR(200) NOT NULL DEFAULT '';``
 * A new permission "Can publish ..." is required to publish treks, pois,
   touristic contents and touristic events. Grant it to your users and groups if
   need be
