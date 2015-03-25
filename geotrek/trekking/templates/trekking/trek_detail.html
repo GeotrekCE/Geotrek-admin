@@ -150,8 +150,8 @@
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
-            <td>{% if trek.source %}{{ trek.source }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <td>
+                {% valuelist trek.source.all %}
             </td>
         </tr>
         <tr>

@@ -24,7 +24,7 @@ from django.utils.unittest import util as testutil
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
-from geotrek.common.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.factories import AttachmentFactory, ThemeFactory, RecordSourceFactory
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
@@ -441,6 +441,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
+        self.source = RecordSourceFactory.create()
+        self.trek.source.add(self.source)
+
         self.trek_b = TrekFactory.create(no_path=True,
                                          geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                          published=True)
@@ -656,11 +659,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"type2_label": u"Accessibilities",
                               u"pictogram": u"/static/trekking/trek.svg"})
 
-    def test_source(self):
-        self.assertDictEqual(self.result['source'], {
-            u'name': self.trek.source.name,
-            u'website': self.trek.source.website,
-            u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.source.pictogram.name)})
+    def test_sources(self):
+        self.assertDictEqual(self.result['source'][0], {
+            u'name': self.source.name,
+            u'website': self.source.website,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
