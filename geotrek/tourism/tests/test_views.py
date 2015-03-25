@@ -376,6 +376,8 @@ class BasicJSONAPITest(TranslationResetMixin):
                                                         attachment_video='https://www.youtube.com/watch?v=Jm3anSjly0Y')
         self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
+        self.source = common_factories.RecordSourceFactory()
+        self.content.source.add(self.source)
 
         path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
         self.trek = trekking_factories.TrekFactory(no_path=True)
@@ -444,11 +446,11 @@ class BasicJSONAPITest(TranslationResetMixin):
                 u'label': self.poi.type.label,
                 u'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name)}})
 
-    def test_source(self):
-        self.assertDictEqual(self.result['source'], {
-            u'name': self.content.source.name,
-            u'website': self.content.source.website,
-            u"pictogram": os.path.join(settings.MEDIA_URL, self.content.source.pictogram.name)})
+    def test_sources(self):
+        self.assertDictEqual(self.result['source'][0], {
+            u'name': self.source.name,
+            u'website': self.source.website,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
 
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):

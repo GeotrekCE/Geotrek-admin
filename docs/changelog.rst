@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix flat pages crash
+* N to N source field (rel #1354)
 
 
 0.33.0 (2015-03-25)

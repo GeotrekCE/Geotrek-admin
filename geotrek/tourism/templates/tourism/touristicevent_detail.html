@@ -96,8 +96,8 @@
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
-            <td>{% if object.source %}{{ object.source }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <td>
+                {% valuelist object.source.all %}
             </td>
         </tr>
         <tr>
