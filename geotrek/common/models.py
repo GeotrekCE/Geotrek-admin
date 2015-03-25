@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from paperclip.models import FileType as BaseFileType
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import PictogramMixin
+from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 
 class Organism(StructureRelated):
@@ -76,7 +76,7 @@ class Theme(PictogramMixin):
         return open(output)
 
 
-class RecordSource(StructureRelated, PictogramMixin):
+class RecordSource(StructureRelated, OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=50)
     website = models.URLField(verbose_name=_(u"Website"), max_length=256,

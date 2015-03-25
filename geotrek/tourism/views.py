@@ -131,7 +131,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     columns = [
         'id', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
-        'review', 'published', 'publication_date',
+        'review', 'published', 'publication_date', 'source',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ]
@@ -219,7 +219,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',
-        'structure', 'date_insert', 'date_update',
+        'structure', 'date_insert', 'date_update', 'source',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas',
     ]
