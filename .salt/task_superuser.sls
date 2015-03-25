@@ -7,6 +7,17 @@
       - DJANGO_SETTINGS_MODULE: "{{data.DJANGO_SETTINGS_MODULE}}"
 {% endmacro %}
 
+{{cfg.name}}-interpreter:
+  cmd.run:
+    - name: |
+            set -e
+            test -e bin/buildout
+            test -e salt.cfg
+            bin/buildout -c salt.cfg install interpreter
+    - onlyif: test ! -e "{{data.py}}"
+    - user: {{cfg.user}}
+    - cwd: {{cfg.project_root}}
+
 {% if data.get('create_admins', True) %}
 {% for dadmins in data.admins %}
 {% for admin, udata in dadmins.items() %}
@@ -40,6 +51,7 @@ user-{{cfg.name}}-{{admin}}:
     - user: {{cfg.user}}
     - watch:
       - file: "user-{{cfg.name}}-{{admin}}"
+      - cmd: {{cfg.name}}-interpreter
 
 {% set f = data.app_root + '/salt_' + admin + '_password.py' %}
 superuser-{{cfg.name}}-{{admin}}:
@@ -70,6 +82,7 @@ superuser-{{cfg.name}}-{{admin}}:
     - user: {{cfg.user}}
     - watch:
       - cmd: "user-{{cfg.name}}-{{admin}}"
+      - cmd: {{cfg.name}}-interpreter
       - file: "superuser-{{cfg.name}}-{{admin}}"
 {%endfor %}
 {%endfor %}
