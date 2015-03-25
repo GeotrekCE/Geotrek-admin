@@ -53,6 +53,20 @@ makina-projects.projectname:
       - demo/Yanone/YanoneKaffeesatz-Regular.ttf
     users:
       - root: root
+    py: "{project_root}/bin/djangopy"
+    app_root: "{project_root}"
+    admins:
+      {% for i in ['sysadmin'] %}
+      - {{i}}:
+          mail: "{{i}}+{name}@{fqdn}"
+          password: {{salt['mc_utils.generate_stored_password'](
+                             'corpus-django_web_admin'+i)}}
+      {%endfor %}
+    DJANGO_SETTINGS_MODULE: "geotrek.settings.custom"
+    USER_MODULE: django.contrib.auth.models
+    USER_CLASS: User
+    #create_user: "{py} manage.py createsuperuser"
+    create_user: "{py} {project_root}/bin/django createsuperuser"
     buildout:
       settings:
         buildout:
