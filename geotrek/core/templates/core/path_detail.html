@@ -28,8 +28,8 @@
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
-            <th>{{ path|verbose:"datasource" }}</th>
-            <td>{% if path.datasource %}{{ path.datasource }}
+            <th>{{ path|verbose:"source" }}</th>
+            <td>{% if path.source %}{{ path.source }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr><tr>

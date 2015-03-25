@@ -163,3 +163,10 @@ def admin_check_extents(request):
         API_SRID=settings.API_SRID,
     )
     return render(request, 'common/check_extents.html', context)
+
+
+class UserArgMixin(object):
+    def get_form_kwargs(self):
+        kwargs = super(UserArgMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs

@@ -1,6 +1,7 @@
 from rest_framework import serializers as rest_serializers
 
-from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin, PictogramSerializerMixin,
+from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
+                                        PictogramSerializerMixin, RecordSourceSerializer,
                                         PicturesSerializerMixin, TranslatedModelSerializer)
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.trekking import serializers as trekking_serializers
@@ -62,6 +63,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     category = TouristicContentCategorySerializer()
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
+    source = RecordSourceSerializer()
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -74,7 +76,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
         geo_field = 'geom'
         fields = ('id', 'description', 'description_teaser', 'category', 'themes',
                   'contact', 'email', 'website', 'practical_info', 'type1', 'type2',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois') + \
+                  'touristic_contents', 'touristic_events', 'treks', 'pois', 'source') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -92,6 +94,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                                ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
+    source = RecordSourceSerializer()
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -112,7 +115,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
                   'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category') + \
+                  'treks', 'pois', 'type1', 'category', 'source') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

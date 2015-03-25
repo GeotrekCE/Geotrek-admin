@@ -14,10 +14,10 @@ from mapentity.serializers import GPXSerializer, plain_text
 from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
-    PublishableSerializerMixin
+    PublishableSerializerMixin, RecordSourceSerializer,
 )
 from geotrek.authent import models as authent_models
-from geotrek.common.models import CirkwiTag
+from geotrek.cirkwi.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
@@ -145,6 +145,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
+    source = RecordSourceSerializer()
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -181,7 +182,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
-                  'poi_layer', 'information_desk_layer', 'gpx', 'kml',
+                  'poi_layer', 'information_desk_layer', 'gpx', 'kml', 'source',
                   'type1', 'type2', 'category', 'structure', 'treks') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
@@ -310,7 +311,7 @@ class CirkwiPOISerializer:
             orig_lang = translation.get_language()
             for lang in poi.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'language': lang})
+                self.xml.startElement('informations', {'langue': lang})
                 self.serialize_field('titre', poi.name)
                 self.serialize_field('description', plain_text(poi.description))
                 self.serialize_medias(self.request, poi.serializable_pictures)
@@ -398,7 +399,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             orig_lang = translation.get_language()
             for lang in trek.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'language': lang})
+                self.xml.startElement('informations', {'langue': lang})
                 self.serialize_field('titre', trek.name)
                 self.serialize_description(trek)
                 self.serialize_medias(self.request, trek.serializable_pictures)

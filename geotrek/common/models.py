@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from paperclip.models import FileType as BaseFileType
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import PictogramMixin
+from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 
 class Organism(StructureRelated):
@@ -39,24 +39,10 @@ class FileType(StructureRelated, BaseFileType):
         return cls.for_user(request.user)
 
 
-class CirkwiTag(models.Model):
-    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
-    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
-
-    class Meta:
-        db_table = 'o_b_cirkwi_tag'
-        verbose_name = _(u"Cirkwi tag")
-        verbose_name_plural = _(u"Cirkwi tags")
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
 class Theme(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
-    cirkwi = models.ForeignKey(CirkwiTag, verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_theme'
@@ -88,3 +74,19 @@ class Theme(PictogramMixin):
                 image = image.crop((0, 0, w / 2, h))
             image.save(output)
         return open(output)
+
+
+class RecordSource(StructureRelated, OptionalPictogramMixin):
+
+    name = models.CharField(verbose_name=_(u"Name"), max_length=50)
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
+                              db_column='website', blank=True, null=True)
+
+    class Meta:
+        db_table = 'o_b_source_fiche'
+        verbose_name = _(u"Record source")
+        verbose_name_plural = _(u"Record sources")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name

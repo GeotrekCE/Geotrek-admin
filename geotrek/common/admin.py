@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from modeltranslation.admin import TranslationAdmin
 from paperclip.models import Attachment
-from .models import FileType, Organism, Theme, CirkwiTag
+from .models import FileType, Organism, Theme, RecordSource
 
 
 class OrganismAdmin(admin.ModelAdmin):
@@ -48,18 +48,19 @@ class AttachmentAdmin(admin.ModelAdmin):
         return False
 
 
-class CirkwiAdmin(admin.ModelAdmin):
-    list_display = ('name', 'eid')
-    search_fields = ('name', '=eid')
-
-
 class ThemeAdmin(TranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
 
 
+class RecordSourceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'structure', 'pictogram_img')
+    search_fields = ('name', 'structure')
+    list_filter = ('structure',)
+
+
 admin.site.register(Organism, OrganismAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 admin.site.register(FileType, FileTypeAdmin)
-admin.site.register(CirkwiTag, CirkwiAdmin)
 admin.site.register(Theme, ThemeAdmin)
+admin.site.register(RecordSource, RecordSourceAdmin)

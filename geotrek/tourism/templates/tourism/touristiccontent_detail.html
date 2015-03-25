@@ -58,6 +58,12 @@
             <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
+            <th>{% trans "Source" %}</th>
+            <td>{% if object.source %}{{ object.source }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>

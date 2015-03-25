@@ -252,10 +252,12 @@ PROJECT_APPS += (
     'paperclip',
     'mapentity',
     'rest_framework',
+    'embed_video',
 )
 
 
 INSTALLED_APPS = PROJECT_APPS + (
+    'geotrek.cirkwi',
     'geotrek.authent',
     'geotrek.common',
     'geotrek.altimetry',
@@ -366,6 +368,7 @@ THUMBNAIL_ALIASES = {
 
 
 PAPERCLIP_CONFIG = {
+    'ENABLE_VIDEO': True,
     'FILETYPE_MODEL': 'common.FileType',
     'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
 }

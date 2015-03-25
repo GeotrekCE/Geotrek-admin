@@ -77,6 +77,7 @@ class TrekForm(BaseTrekForm):
             Div(
                 Div(
                     'name',
+                    'review',
                     'published',
                     'is_park_centered',
                     'departure',
@@ -104,6 +105,7 @@ class TrekForm(BaseTrekForm):
                     'accessibilities',
                     'web_links',
                     'information_desks',
+                    'source',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
@@ -144,10 +146,10 @@ class TrekForm(BaseTrekForm):
 
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
-            ['name', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
+            ['name', 'review', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
              'route', 'ambiance', 'access', 'description_teaser', 'description',
              'points_reference', 'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
-             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks']
+             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks', 'source']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -177,15 +179,16 @@ else:
 class POIForm(BasePOIForm):
     fieldslayout = [
         Div(
-            'type',
             'name',
-            'description',
+            'review',
             'published',
+            'type',
+            'description',
         )
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

@@ -2,6 +2,31 @@
 CHANGELOG
 =========
 
+0.33.0 (2015-03-25)
+-------------------
+
+**Breaking changes**
+
+* A new permission "Can publish ..." is required to publish treks, pois,
+  touristic contents and touristic events. Grant it to your users and groups if
+  need be
+* DB table ``l_b_source`` is renamed as ``l_b_source_troncon``
+
+**New features**
+
+* Publication workflow (fixes #1018)
+* Allow to add links to Youtube or Soundcloud media as attachment
+* Make pictograms optional in some places when not required by Geotrek-Rando
+* Add source for treks, touristic contents and touristic events (fixes #1354)
+* Add external id field for treks, pois, touristic contents and touristic events
+* Group cirkwi matchings in admin site (fixes #1402)
+
+**Bug fixes**
+
+* Fix projection of OSM link in feedback email
+* Fix language in cirkwi exports
+
+
 0.32.2 (2015-03-06)
 -------------------
 
@@ -28,7 +53,7 @@ CHANGELOG
 **New features**
 
 * Export to cirkwi/espace loisirs IGN. After upgrade, run
-  `bin/django loaddata cirkwi` to load data cirkwi tags and categories
+  ``bin/django loaddata cirkwi`` to load data cirkwi tags and categories
 * Wysiwyg editor for static web pages
 
 **Bug fixes**

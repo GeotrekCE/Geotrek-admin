@@ -19,8 +19,9 @@ from modeltranslation.manager import MultilingualManager
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, PublishableMixin,
-                                   PicturesMixin, AddPropertyMixin)
+                                   PictogramMixin, OptionalPictogramMixin,
+                                   PublishableMixin, PicturesMixin,
+                                   AddPropertyMixin)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 
@@ -203,7 +204,7 @@ class TouristicContentCategory(PictogramMixin):
         return self.label
 
 
-class TouristicContentType(PictogramMixin):
+class TouristicContentType(OptionalPictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
     category = models.ForeignKey(TouristicContentCategory, related_name='types',
@@ -285,6 +286,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     type2 = models.ManyToManyField(TouristicContentType, related_name='contents2',
                                    verbose_name=_(u"Type 2"), db_table="t_r_contenu_touristique_type2",
                                    blank=True)
+    source = models.ForeignKey('common.RecordSource',
+                               null=True, blank=True, related_name='touristiccontents',
+                               verbose_name=_("Source"), db_column='source')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
@@ -328,7 +333,7 @@ TouristicContent.add_property('touristic_contents', lambda self: intersecting(To
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
 
 
-class TouristicEventType(PictogramMixin):
+class TouristicEventType(OptionalPictogramMixin):
 
     type = models.CharField(verbose_name=_(u"Type"), max_length=128, db_column='type')
 
@@ -376,6 +381,10 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     target_audience = models.CharField(verbose_name=_(u"Target audience"), max_length=128, blank=True, null=True, db_column='public_vise')
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
                                       help_text=_(u"Recommandations / To plan / Advices"))
+    source = models.ForeignKey('common.RecordSource',
+                               null=True, blank=True, related_name='touristicevents',
+                               verbose_name=_("Source"), db_column='source')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

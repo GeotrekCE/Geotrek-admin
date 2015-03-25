@@ -24,4 +24,4 @@ class ReportFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"name %s" % n)
     email = factory.Sequence(lambda n: u"email%s@domain.tld" % n)
     comment = factory.Sequence(lambda n: u"comment %s" % n)
-    geom = Point(2.26, 1.13, srid=settings.SRID)
+    geom = Point(700000, 6600000, srid=settings.SRID)

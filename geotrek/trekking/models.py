@@ -12,7 +12,8 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins import PicturesMixin, PublishableMixin, PictogramMixin
+from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
+                                   PictogramMixin, OptionalPictogramMixin)
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
@@ -81,6 +82,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                                help_text=_(u"Where to obtain information"))
     points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
+    source = models.ForeignKey('common.RecordSource',
+                               null=True, blank=True, related_name='treks',
+                               verbose_name=_("Source"), db_column='source')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -287,7 +292,7 @@ class TrekNetwork(PictogramMixin):
 class Practice(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    cirkwi = models.ForeignKey('CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_pratique'
@@ -299,10 +304,10 @@ class Practice(PictogramMixin):
         return self.name
 
 
-class Accessibility(PictogramMixin):
+class Accessibility(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    cirkwi = models.ForeignKey('common.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_accessibilite'
@@ -314,7 +319,7 @@ class Accessibility(PictogramMixin):
         return self.name
 
 
-class Route(PictogramMixin):
+class Route(OptionalPictogramMixin):
 
     route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
 
@@ -328,7 +333,7 @@ class Route(PictogramMixin):
         return self.route
 
 
-class DifficultyLevel(PictogramMixin):
+class DifficultyLevel(OptionalPictogramMixin):
 
     """We use an IntegerField for id, since we want to edit it in Admin.
     This column is used to order difficulty levels, especially in public website
@@ -339,7 +344,7 @@ class DifficultyLevel(PictogramMixin):
                                   max_length=128, db_column='difficulte')
     cirkwi_level = models.IntegerField(verbose_name=_(u"Cirkwi level"), blank=True, null=True,
                                        db_column='niveau_cirkwi', help_text=_(u"Between 1 and 8"))
-    cirkwi = models.ForeignKey('common.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_difficulte'
@@ -418,6 +423,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -485,7 +491,7 @@ tourism_models.TouristicEvent.add_property('published_pois', lambda self: inters
 class POIType(PictogramMixin):
 
     label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    cirkwi = models.ForeignKey('CirkwiPOICategory', verbose_name=_(u"Cirkwi POI category"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_(u"Cirkwi POI category"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_poi'
@@ -495,31 +501,3 @@ class POIType(PictogramMixin):
 
     def __unicode__(self):
         return self.label
-
-
-class CirkwiLocomotion(models.Model):
-    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
-    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
-
-    class Meta:
-        db_table = 'o_b_cirkwi_locomotion'
-        verbose_name = _(u"Cirkwi locomotion")
-        verbose_name_plural = _(u"Cirkwi locomotions")
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CirkwiPOICategory(models.Model):
-    eid = models.IntegerField(verbose_name=_(u"Cirkwi id"), unique=True)
-    name = models.CharField(verbose_name=_(u"Cirkwi name"), max_length=128, db_column='nom')
-
-    class Meta:
-        db_table = 'o_b_cirkwi_poi_category'
-        verbose_name = _(u"Cirkwi POI category")
-        verbose_name_plural = _(u"Cirkwi POI categories")
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name

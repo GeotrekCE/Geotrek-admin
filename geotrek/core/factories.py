@@ -12,10 +12,10 @@ from geotrek.common.utils import dbnow
 from . import models
 
 
-class DatasourceFactory(factory.Factory):
-    FACTORY_FOR = models.Datasource
+class PathSourceFactory(factory.Factory):
+    FACTORY_FOR = models.PathSource
 
-    source = factory.Sequence(lambda n: u"Datasource %s" % n)
+    source = factory.Sequence(lambda n: u"PathSource %s" % n)
 
 
 class StakeFactory(factory.Factory):
@@ -65,7 +65,7 @@ class PathFactory(StructureRelatedDefaultFactory):
 
     # FK that could also be null
     comfort = factory.SubFactory(ComfortFactory)
-    datasource = factory.SubFactory(DatasourceFactory)
+    source = factory.SubFactory(PathSourceFactory)
     stake = factory.SubFactory(StakeFactory)
 
 

@@ -10,14 +10,16 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
+from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils.timezone import utc, make_aware
+from django.utils.unittest import util as testutil
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -654,6 +656,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"type2_label": u"Accessibilities",
                               u"pictogram": u"/static/trekking/trek.svg"})
 
+    def test_source(self):
+        self.assertDictEqual(self.result['source'], {
+            u'name': self.trek.source.name,
+            u'website': self.trek.source.website,
+            u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.source.pictogram.name)})
+
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):
@@ -978,6 +986,7 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
 
 class CirkwiTests(TranslationResetMixin, TestCase):
     def setUp(self):
+        testutil._MAX_LENGTH = 10000
         creation = make_aware(datetime.datetime(2014, 1, 1), utc)
         self.trek = TrekFactory.create(published=True)
         self.trek.date_insert = creation
@@ -987,6 +996,9 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.poi.save()
         TrekFactory.create(published=False)
         POIFactory.create(published=False)
+
+    def tearDown(self):
+        testutil._MAX_LENGTH = 80
 
     def test_export_circuits(self):
         response = self.client.get('/api/cirkwi/circuits.xml')
@@ -998,6 +1010,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             'n': self.trek.description.replace('<p>description ', '').replace('</p>', ''),
             'poi_pk': self.poi.pk,
             'poi_title': self.poi.name,
+            'poi_date_update': timestamp(self.poi.date_update),
             'poi_description': self.poi.description.replace('<p>', '').replace('</p>', ''),
         }
         self.assertXMLEqual(
@@ -1005,7 +1018,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<circuits version="2">'
             '<circuit id_circuit="{pk}" date_modification="{date_update}" date_creation="1388534400">'
-            '<informations language="en">'
+            '<informations langue="en">'
             '<titre>{title}</titre>'
             '<description>description_teaser {n}\n\ndescription {n}</description>'
             '<informations_complementaires>'
@@ -1023,8 +1036,8 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<locomotions><locomotion duree="3600"></locomotion></locomotions>'
             '<trace><point><lat>46.5</lat><lng>3.0</lng></point><point><lat>46.5009004423</lat><lng>3.00130397672</lng></point></trace>'
             '<pois>'
-            '<poi id_poi="{poi_pk}" date_modification="{date_update}" date_creation="1388534400">'
-            '<informations language="en"><titre>{poi_title}</titre><description>{poi_description}</description></informations>'
+            '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
+            '<informations langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></informations>'
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
             '</pois>'
@@ -1045,7 +1058,33 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<pois version="2">'
             '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
-            '<informations language="en"><titre>{title}</titre><description>{description}</description></informations>'
+            '<informations langue="en"><titre>{title}</titre><description>{description}</description></informations>'
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
+
+
+class TrekWorkflowTest(TestCase):
+    def setUp(self):
+        call_command('update_permissions')
+        self.trek = TrekFactory.create(published=False)
+        self.user = User.objects.create_user('omer', password='booh')
+        self.user.user_permissions.add(Permission.objects.get(codename='add_trek'))
+        self.user.user_permissions.add(Permission.objects.get(codename='change_trek'))
+        self.client.login(username='omer', password='booh')
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_cannot_publish(self):
+        response = self.client.get('/trek/add/')
+        self.assertNotContains(response, 'Published')
+        response = self.client.get('/trek/edit/%u/' % self.trek.pk)
+        self.assertNotContains(response, 'Published')
+
+    def test_can_publish(self):
+        self.user.user_permissions.add(Permission.objects.get(codename='publish_trek'))
+        response = self.client.get('/trek/add/')
+        self.assertContains(response, 'Published')
+        response = self.client.get('/trek/edit/%u/' % self.trek.pk)
+        self.assertContains(response, 'Published')

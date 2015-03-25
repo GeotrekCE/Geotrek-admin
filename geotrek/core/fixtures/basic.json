@@ -1,35 +1,35 @@
 [
     {
         "pk": 1,
-        "model": "core.datasource",
+        "model": "core.pathsource",
         "fields": {
             "source": "TopoDB"
         }
     },
     {
         "pk": 2,
-        "model": "core.datasource",
+        "model": "core.pathsource",
         "fields": {
             "source": "Bing"
         }
     },
     {
         "pk": 3,
-        "model": "core.datasource",
+        "model": "core.pathsource",
         "fields": {
             "source": "Cadastre"
         }
     },
     {
         "pk": 4,
-        "model": "core.datasource",
+        "model": "core.pathsource",
         "fields": {
             "source": "GPS"
         }
     },
     {
         "pk": 5,
-        "model": "core.datasource",
+        "model": "core.pathsource",
         "fields": {
             "source": "OSM"
         }

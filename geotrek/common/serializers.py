@@ -4,7 +4,7 @@ from django.db import models as django_db_models
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
-from .models import Theme
+from .models import Theme, RecordSource
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -27,9 +27,11 @@ class PictogramSerializerMixin(rest_serializers.ModelSerializer):
 class PicturesSerializerMixin(rest_serializers.ModelSerializer):
     thumbnail = rest_serializers.Field(source='serializable_thumbnail')
     pictures = rest_serializers.Field(source='serializable_pictures')
+    videos = rest_serializers.Field(source='serializable_videos')
+    files = rest_serializers.Field(source='serializable_files')
 
     class Meta:
-        fields = ('thumbnail', 'pictures',)
+        fields = ('thumbnail', 'pictures', 'videos', 'files')
 
 
 class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
@@ -68,3 +70,9 @@ class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = Theme
         fields = ('id', 'pictogram', 'label')
+
+
+class RecordSourceSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
+    class Meta:
+        model = RecordSource
+        fields = ('name', 'website', 'pictogram')

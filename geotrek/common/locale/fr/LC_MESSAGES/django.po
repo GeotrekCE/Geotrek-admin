@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-03 16:18+0100\n"
+"POT-Creation-Date: 2015-03-23 14:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,6 +56,9 @@ msgstr "Publié"
 msgid "Publication date"
 msgstr "Date de publication"
 
+msgid "Waiting for publication"
+msgstr "En attente de publication"
+
 msgid "Name"
 msgstr "Nom"
 
@@ -92,6 +95,15 @@ msgstr "Thème"
 msgid "Themes"
 msgstr "Thèmes"
 
+msgid "Website"
+msgstr "Site web"
+
+msgid "Record source"
+msgstr "Source des fiches"
+
+msgid "Record sources"
+msgstr "Sources des fiches"
+
 msgid "Topology is not valid."
 msgstr "L'événement n'est pas valide"
 
@@ -122,8 +134,8 @@ msgstr "Cadre (WGS84)"
 msgid "Mouse"
 msgstr "Souris"
 
-msgid "Not published"
-msgstr "Non publié"
+msgid "Draft"
+msgstr "Brouillon"
 
 msgid "Object is published but"
 msgstr "L'objet est publié mais"
@@ -133,3 +145,6 @@ msgstr "semble incomplet;"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
+
+#~ msgid "Not published"
+#~ msgstr "Non publié"
