@@ -204,8 +204,6 @@ class BasePublishableMixin(models.Model):
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
-    review = models.BooleanField(verbose_name=_(u"Waiting for publication"),
-                                 default=False, db_column='relecture')
 
     class Meta:
         abstract = True
@@ -270,6 +268,8 @@ class PublishableMixin(BasePublishableMixin):
     """
     name = models.CharField(verbose_name=_(u"Name"), max_length=128,
                             help_text=_(u"Public name (Change carefully)"), db_column='nom')
+    review = models.BooleanField(verbose_name=_(u"Waiting for publication"),
+                                 default=False, db_column='relecture')
 
     class Meta:
         abstract = True
