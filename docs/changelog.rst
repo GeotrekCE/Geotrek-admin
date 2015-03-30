@@ -5,6 +5,10 @@ CHANGELOG
 0.33.2.dev0
 -------------------
 
+**Bug fixes**
+
+* Remove italian from fixtures
+
 
 0.33.1 (2015-03-25)
 -------------------
