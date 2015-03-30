@@ -239,7 +239,6 @@
         "pk": 4,
         "model": "trekking.practice",
         "fields": {
-            "name_it": "",
             "name": "P\u00e9destre",
             "pictogram": "upload/practice-foot.png",
             "cirkwi": 1
