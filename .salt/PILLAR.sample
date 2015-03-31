@@ -72,6 +72,7 @@ makina-projects.projectname:
         buildout:
           newest: 'false'
           unzip: 'true'
+          rotate: 365
         screamshotter:
           protocol: "{screamshotter_protocol}"
           host: "{screamshotter_host}"
