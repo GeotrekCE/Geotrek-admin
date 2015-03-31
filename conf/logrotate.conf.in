@@ -1,5 +1,5 @@
 ${parts['buildout'].directory}/var/log/*.log {
-    rotate 4
+    rotate ${parts['buildout']['rotate']}
     weekly
     create
     compress
