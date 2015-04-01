@@ -5,6 +5,10 @@ CHANGELOG
 0.33.3.dev0
 -------------------
 
+**Bug fixes**
+
+* Fix systematic crash in PDF conversions
+
 
 0.33.2 (2015-04-01)
 -------------------
