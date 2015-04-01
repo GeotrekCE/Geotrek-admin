@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+0.33.2 (2015-04-01)
+-------------------
+
+**Bug fixes**
+
+* Remove italian from fixtures
+* Fix crash when generating two PDF in parallel
+
+
 0.33.1 (2015-03-25)
 -------------------
 
