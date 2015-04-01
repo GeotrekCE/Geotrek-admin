@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+0.33.3 (2015-04-01)
+-------------------
+
+**Bug fixes**
+
+* Fix systematic crash in PDF conversions
+
+
 0.33.2 (2015-04-01)
 -------------------
 
