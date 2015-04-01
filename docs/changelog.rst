@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Remove italian from fixtures
+* Fix crash when generating two PDF in parallel
 
 
 0.33.1 (2015-03-25)
