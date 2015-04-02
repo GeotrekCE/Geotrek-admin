@@ -5,6 +5,9 @@ CHANGELOG
 0.33.4.dev0
 -------------------
 
+**Bug fixes**
+
+* Ensure trek duration is a positive number
 
 
 0.33.3 (2015-04-01)
