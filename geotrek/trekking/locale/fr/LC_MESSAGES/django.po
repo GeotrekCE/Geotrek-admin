@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-23 14:08+0100\n"
+"POT-Creation-Date: 2015-04-07 14:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,9 +21,8 @@ msgstr ""
 msgid "Difficulty with id '%s' already exists"
 msgstr "Une difficulté avec l'id %s existe déjà"
 
-#, python-format
-msgid "Difficulty id %s was changed to %s successfully."
-msgstr "L'id de la difficulté a été changé de %s à %s avec succès."
+msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
 msgid "Trek"
 msgstr "Itinéraire"
@@ -163,6 +162,9 @@ msgstr "Point de référence"
 msgid "Source"
 msgstr "Source"
 
+msgid "External id"
+msgstr "Id externe"
+
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -274,17 +276,48 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
-msgid "Cirkwi id"
-msgstr "Id Cirkwi"
+msgid "Altimetric profile"
+msgstr "Profil altimétrique"
 
-msgid "Cirkwi name"
-msgstr "Nom Cirkwi"
+msgid "Attribution"
+msgstr "Crédit photo"
 
-msgid "Cirkwi locomotions"
-msgstr "Locomotions Cirkwi"
+msgid "Edition of"
+msgstr "Édition du"
 
-msgid "Cirkwi POI categories"
-msgstr "Catégories de POI Cirkwi"
+msgid "Max elevation"
+msgstr "Altitude max"
+
+msgid "Min elevation"
+msgstr "Altitude min"
+
+msgid "On the way..."
+msgstr "Sur le chemin..."
+
+msgid "Page"
+msgstr "Page"
+
+msgid "Powered by http://geotrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
+
+msgid ""
+"This hike is at the heart of the national park > The national park is an "
+"unrestricted natural area but subjected to regulations which must be known "
+"by all visitors."
+msgstr ""
+"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un "
+"territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il "
+"est utile de connaître pour préparer son séjour"
+
+msgid ""
+"To check the practicability of the hiking paths and to know more about the "
+"National park, please visit us or call us at"
+msgstr ""
+"Afin de vérifier que les sentiers soient praticables et pour en savoir plus "
+"sur la découverte du territoire, veuillez-vous renseigner préalablement"
+
+msgid "Trek ascent"
+msgstr "Dénivelé positif"
 
 msgid "Public print"
 msgstr "Impression grand public"

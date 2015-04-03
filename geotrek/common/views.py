@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -75,8 +74,6 @@ class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
         context = super(DocumentPublic, self).get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
-        context['financed_by'] = _('This project is co-financed by the European Union through FEDER Massif Alpin.')
-        context['powered_by'] = _('Powered by http://geotrek.fr')
         return context
 
     def render_to_response(self, context, **response_kwargs):

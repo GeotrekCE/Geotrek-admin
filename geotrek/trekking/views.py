@@ -11,7 +11,6 @@ from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, MapEntityViewSet)
-from mapentity.serializers import plain_text
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions
@@ -20,6 +19,7 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 from geotrek.tourism.views import InformationDeskGeoJSON
@@ -215,10 +215,10 @@ class TrekDocumentPublic(DocumentPublic):
         # Replace HTML text with plain text
         for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
                      'public_transport', 'advised_parking', 'disabled_infrastructure']:
-            setattr(trek, attr, plain_text(getattr(trek, attr)))
+            setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
 
         for poi in context['pois']:
-            setattr(poi, 'description', plain_text(getattr(poi, 'description')))
+            setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
 
         #
         # POIs enumeration, like shown on the map
@@ -440,3 +440,16 @@ class CirkwiPOIView(ListView):
         pois = self.get_queryset()
         serializer.serialize(pois)
         return response
+
+# Translations for public PDF
+translation.ugettext_noop(u"Altimetric profile")
+translation.ugettext_noop(u"Attribution")
+translation.ugettext_noop(u"Edition of")
+translation.ugettext_noop(u"Max elevation")
+translation.ugettext_noop(u"Min elevation")
+translation.ugettext_noop(u"On the way...")
+translation.ugettext_noop(u"Page")
+translation.ugettext_noop(u"Powered by http://geotrek.fr")
+translation.ugettext_noop(u"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
+translation.ugettext_noop(u"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at")
+translation.ugettext_noop(u"Trek ascent")

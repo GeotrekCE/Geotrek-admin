@@ -1,9 +1,12 @@
 import logging
 from itertools import islice
+import re
 
 from django.db import connection
 from django.utils.timezone import utc
 from django.contrib.gis.measure import Distance
+
+from mapentity.serializers import plain_text
 
 
 logger = logging.getLogger(__name__)
@@ -129,3 +132,14 @@ def intersecting(cls, obj, distance=None):
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
     return qs
+
+
+def plain_text_preserve_linebreaks(value):
+    value = re.sub(ur'\s*<br\s*/?>\s*', u'##~~~~~~##', value)
+    value = re.sub(ur'\s*<p>\s*', u'##~~~~~~####~~~~~~##', value)
+    value = re.sub(ur'\s*</p>\s*', u'', value)
+    value = plain_text(value)
+    value = re.sub(ur'\s+', ' ', value)
+    value = re.sub(u'##~~~~~~##', u'\n', value)
+    value = value.strip()
+    return value
