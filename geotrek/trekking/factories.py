@@ -75,8 +75,7 @@ class TrekFactory(TopologyFactory):
     ambiance = factory.Sequence(lambda n: u"<p>ambiance %s</p>" % n)
     access = factory.Sequence(lambda n: u"<p>access %s</p>" % n)
     disabled_infrastructure = factory.Sequence(lambda n: u"<p>disabled_infrastructure %s</p>" % n)
-    # 60 minutes (1 hour)
-    duration = 60
+    duration = 1.5  # hour
 
     is_park_centered = False
 

@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Ensure trek duration is a positive number
+* Fix cirkwi exports (second try)
 
 
 0.33.3 (2015-04-01)
