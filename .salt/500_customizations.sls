@@ -32,6 +32,7 @@
     - group: {{cfg.group}}
     - makedirs: true
 
+{% if data.path_trek_public_template %}
 {{cfg.name}}-trek-public-template:
   file.managed:
     - name: {{cfg.data_root}}/var/media/templates/trekking/trek_public.odt
@@ -39,6 +40,27 @@
     - user: {{cfg.user}}
     - group: {{cfg.group}}
     - makedirs: true
+{% endif %}
+
+{% if data.path_touristiccontent_public_template %}
+{{cfg.name}}-touristiccontent-public-template:
+  file.managed:
+    - name: {{cfg.data_root}}/var/media/templates/tourism/touristiccontent_public.odt
+    - source: {{data.path_touristiccontent_public_template}}
+    - user: {{cfg.user}}
+    - group: {{cfg.group}}
+    - makedirs: true
+{% endif %}
+
+{% if data.path_touristicevent_public_template %}
+{{cfg.name}}-touristicevent-public-template:
+  file.managed:
+    - name: {{cfg.data_root}}/var/media/templates/tourism/touristicevent_public.odt
+    - source: {{data.path_touristicevent_public_template}}
+    - user: {{cfg.user}}
+    - group: {{cfg.group}}
+    - makedirs: true
+{% endif %}
 {% endif %}
 
 
