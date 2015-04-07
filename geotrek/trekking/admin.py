@@ -90,8 +90,8 @@ class DifficultyLevelAdmin(TranslationAdmin):
         Otherwise, behave as usual.
         """
         if self.oldid is not None:
-            msg = _('Difficulty id %s was changed to %s successfully.') % (
-                self.oldid, obj.pk)
+            msg = _('Difficulty id {old} was changed to {new} successfully.').format(
+                old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
         return super(DifficultyLevelAdmin, self).response_change(request, obj)

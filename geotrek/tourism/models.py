@@ -420,7 +420,15 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     @property
     def dates_display(self):
-        if self.begin_date == self.end_date:
+        if not self.begin_date and not self.end_date:
+            return u""
+        elif not self.end_date:
+            return _(u"starting from {begin}").format(
+                begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'))
+        elif not self.begin_date:
+            return _(u"up to {end}").format(
+                end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
+        elif self.begin_date == self.end_date:
             return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
         else:
             return _(u"from {begin} to {end}").format(

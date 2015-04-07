@@ -130,6 +130,7 @@ class TrekForm(BaseTrekForm):
             self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
         self.fields['parking_location'].widget.geometry_field_class = 'ParkingLocationField'
+        self.fields['duration'].widget.attrs['min'] = '0'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'accessibilities',

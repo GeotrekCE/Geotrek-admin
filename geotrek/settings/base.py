@@ -488,10 +488,10 @@ EXPORT_MAP_IMAGE_SIZE = {
     'touristicevent': (14.1, 11),
 }
 EXPORT_HEADER_IMAGE_SIZE = {
-    'trek': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'poi': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'touristiccontent': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'touristicevent': (10.7, 5.035),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {

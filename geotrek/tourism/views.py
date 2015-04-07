@@ -14,11 +14,11 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
-from mapentity.serializers import plain_text
 from rest_framework import generics as rest_generics
 from rest_framework import permissions as rest_permissions
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.models import DataSource, InformationDesk
 
@@ -195,7 +195,7 @@ class TouristicContentDocumentPublic(DocumentPublic):
 
         # Replace HTML text with plain text
         for attr in ['description', 'description_teaser', 'contact', 'practical_info']:
-            setattr(content, attr, plain_text(getattr(content, attr)))
+            setattr(content, attr, plain_text_preserve_linebreaks(getattr(content, attr)))
 
         context['object'] = context['content'] = content
 
@@ -267,11 +267,11 @@ class TouristicEventDocumentPublic(DocumentPublic):
         context = super(TouristicEventDocumentPublic, self).get_context_data(**kwargs)
         event = self.get_object()
 
-        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
 
         # Replace HTML text with plain text
         for attr in ['description', 'description_teaser', 'contact', 'booking', 'practical_info']:
-            setattr(event, attr, plain_text(getattr(event, attr)))
+            setattr(event, attr, plain_text_preserve_linebreaks(getattr(event, attr)))
 
         context['object'] = context['event'] = event
 

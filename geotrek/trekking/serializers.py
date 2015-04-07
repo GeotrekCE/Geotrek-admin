@@ -290,7 +290,7 @@ class CirkwiPOISerializer:
         self.xml.startElement('images', {})
         for picture in pictures:
             self.xml.startElement('image', {})
-            self.serialize_field('legend', picture['legend'])
+            self.serialize_field('legende', picture['legend'])
             self.serialize_field('url', request.build_absolute_uri(picture['url']))
             self.serialize_field('credit', picture['author'])
             self.xml.endElement('image')
@@ -309,14 +309,16 @@ class CirkwiPOISerializer:
                 self.serialize_field('categorie', str(poi.type.cirkwi.eid), {'nom': poi.type.cirkwi.name})
                 self.xml.endElement('categories')
             orig_lang = translation.get_language()
+            self.xml.startElement('informations', {})
             for lang in poi.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'langue': lang})
+                self.xml.startElement('information', {'langue': lang})
                 self.serialize_field('titre', poi.name)
                 self.serialize_field('description', plain_text(poi.description))
                 self.serialize_medias(self.request, poi.serializable_pictures)
-                self.xml.endElement('informations')
+                self.xml.endElement('information')
             translation.activate(orig_lang)
+            self.xml.endElement('informations')
             self.xml.startElement('adresse', {})
             self.xml.startElement('position', {})
             coords = poi.geom.transform(4326, clone=True).coords
@@ -354,7 +356,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.xml.endElement('point')
         self.xml.endElement('trace')
 
-    def serializable_locomotions(self, trek):
+    def serialize_locomotions(self, trek):
         attrs = {}
         if trek.practice and trek.practice.cirkwi:
             attrs['type'] = trek.practice.cirkwi.name
@@ -362,7 +364,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
         if trek.difficulty and trek.difficulty.cirkwi_level:
             attrs['difficulte'] = str(trek.difficulty.cirkwi_level)
         if trek.duration:
-            attrs['duree'] = str(int(trek.duration * 60))
+            attrs['duree'] = str(int(trek.duration * 3600))
         if attrs:
             self.xml.startElement('locomotions', {})
             self.serialize_field('locomotion', '', attrs)
@@ -397,9 +399,10 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 'id_circuit': str(trek.pk),
             })
             orig_lang = translation.get_language()
+            self.xml.startElement('informations', {})
             for lang in trek.published_langs:
                 translation.activate(lang)
-                self.xml.startElement('informations', {'langue': lang})
+                self.xml.startElement('information', {'langue': lang})
                 self.serialize_field('titre', trek.name)
                 self.serialize_description(trek)
                 self.serialize_medias(self.request, trek.serializable_pictures)
@@ -414,10 +417,11 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 self.serialize_additionnal_info(trek, 'advice')
                 self.xml.endElement('informations_complementaires')
                 self.serialize_tags(trek)
-                self.xml.endElement('informations')
-                self.serialize_field('distance', int(trek.length))
-                self.serializable_locomotions(trek)
+                self.xml.endElement('information')
             translation.activate(orig_lang)
+            self.xml.endElement('informations')
+            self.serialize_field('distance', int(trek.length))
+            self.serialize_locomotions(trek)
             self.serialize_trace(trek)
             if trek.published_pois:
                 self.xml.startElement('pois', {})

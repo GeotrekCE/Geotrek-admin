@@ -2,6 +2,16 @@
 CHANGELOG
 =========
 
+0.33.4 (2015-04-07)
+-------------------
+
+**Bug fixes**
+
+* Ensure trek duration is a positive number
+* Fix cirkwi exports (second try)
+* Fix public PDF templates
+
+
 0.33.3 (2015-04-01)
 -------------------
 

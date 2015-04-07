@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.core.validators import MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
 import simplekml
@@ -43,7 +44,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In decimal hours (ex. 1.5 for 1H30)"))
+                                 help_text=_(u"In decimal hours (ex. 1.5 for 1H30)"),
+                                 validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',
