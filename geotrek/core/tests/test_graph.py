@@ -52,7 +52,7 @@ class SimpleGraph(TestCase):
             }
         }
 
-        computed_graph = graph_edges_nodes_of_qs(Path.objects.all())
+        computed_graph = graph_edges_nodes_of_qs(Path.objects.order_by('id'))
         self.assertDictEqual(computed_graph, graph)
 
     def test_json_graph_empty(self):
