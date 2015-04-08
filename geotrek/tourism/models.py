@@ -193,12 +193,14 @@ class TouristicContentCategory(PictogramMixin):
                                    db_column='label_type1', blank=True)
     type2_label = models.CharField(verbose_name=_(u"Second list label"), max_length=128,
                                    db_column='label_type2', blank=True)
+    order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
+                                help_text=_(u"Alphabetical order if blank"))
 
     class Meta:
         db_table = 't_b_contenu_touristique_categorie'
         verbose_name = _(u"Touristic content category")
         verbose_name_plural = _(u"Touristic content categories")
-        ordering = ['label']
+        ordering = ['order', 'label']
 
     def __unicode__(self):
         return self.label

@@ -215,6 +215,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     def get_category(self, obj):
         return {
             'id': obj.category_id,
+            'order': settings.TREK_CATEGORY_ORDER,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('practice').verbose_name,
             'type2_label': obj._meta.get_field('accessibilities').verbose_name,

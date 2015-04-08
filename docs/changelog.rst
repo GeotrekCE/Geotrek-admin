@@ -5,6 +5,9 @@ CHANGELOG
 0.33.5.dev0
 -------------------
 
+**New features**
+
+* Allow to choose ordering of categories for Geotrek-Rando
 
 
 0.33.4 (2015-04-07)

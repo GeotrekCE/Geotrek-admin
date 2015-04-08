@@ -1,5 +1,7 @@
 from rest_framework import serializers as rest_serializers
 
+from django.conf import settings
+
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
                                         PicturesSerializerMixin, TranslatedModelSerializer)
@@ -54,7 +56,7 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -123,6 +125,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     def get_category(self, obj):
         return {
             'id': obj.category_id,
+            'order': settings.TOURISTIC_EVENT_CATEGORY_ORDER,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
