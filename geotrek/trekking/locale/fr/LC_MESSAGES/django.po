@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-07 14:01+0200\n"
+"POT-Creation-Date: 2015-04-13 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,6 +150,9 @@ msgstr "Ressources externes"
 msgid "Connections between treks"
 msgstr "Liens entre les itinéraires"
 
+msgid "Parent"
+msgstr "Parent"
+
 msgid "Information desks"
 msgstr "Lieux de renseignement"
 
@@ -173,6 +176,12 @@ msgstr "Durée formatée"
 
 msgid "Add a new trek"
 msgstr "Ajouter un itinéraire"
+
+msgid "Cannot use itself as parent trek."
+msgstr "Impossible d'utiliser soi-même comme itinéraire parent"
+
+msgid "Cannot use a a child trek as parent trek."
+msgstr "Impossible d'utiliser un enfant comme itinéraire parent"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
@@ -347,6 +356,22 @@ msgstr "KML"
 msgid "yes,no"
 msgstr "oui,non"
 
+msgid "Itinerancy"
+msgstr "Itinérance"
+
+#, python-format
+msgid ""
+"\n"
+"                        Child of %(name)s\n"
+"                    "
+msgstr ""
+"\n"
+"                        Enfant de %(name)s\n"
+"                    "
+
+msgid "Parent of:"
+msgstr "Parent de :"
+
 msgid "Add a point of reference"
 msgstr "Ajouter un point de référence"
 
@@ -401,3 +426,6 @@ msgstr "%(hour)sH%(min)s"
 #, python-format
 msgid "%s min"
 msgstr "%s min"
+
+#~ msgid "Stay"
+#~ msgstr "Séjour"
