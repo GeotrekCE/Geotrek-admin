@@ -13,3 +13,6 @@ LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Cadastre'), 'http://gpp3-wxs.ign.fr/umqnjdh17bgyur76yo0zoo6k/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
      '&copy; IGN - GeoPortail'),
 ]
+
+TREK_CATEGORY_ORDER = 1
+TOURISTIC_EVENT_CATEGORY_ORDER = 2
