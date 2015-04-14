@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-13 18:18+0200\n"
+"POT-Creation-Date: 2015-04-14 16:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,8 +87,8 @@ msgstr "Infrastructure à disposition"
 msgid "Duration"
 msgstr "Durée"
 
-msgid "In decimal hours (ex. 1.5 for 1H30)"
-msgstr "En heures décimales (ex: 1.5 pour 1H30)"
+msgid "In decimal hours (ex. 1.5 for 1 h 30)"
+msgstr "En heures décimales (ex: 1.5 pour 1 h 30)"
 
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
@@ -420,8 +420,8 @@ msgid "%s days"
 msgstr "%s jours"
 
 #, python-format
-msgid "%(hour)sH%(min)s"
-msgstr "%(hour)sH%(min)s"
+msgid "%(hour)s h %(min)s"
+msgstr "%(hour)s h %(min)s"
 
 #, python-format
 msgid "%s min"

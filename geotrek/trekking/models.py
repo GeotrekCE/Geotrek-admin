@@ -45,7 +45,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In decimal hours (ex. 1.5 for 1H30)"),
+                                 help_text=_(u"In decimal hours (ex. 1.5 for 1 h 30)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
