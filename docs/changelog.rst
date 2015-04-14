@@ -5,6 +5,9 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
+**New features**
+
+* Import framework
 
 
 0.34.0 (2015-05-20)
