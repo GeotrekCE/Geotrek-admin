@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -78,6 +79,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
+    parent = models.ForeignKey('self', verbose_name=_(u"Parent"), db_column='parent', blank=True, null=True,
+                               related_name='children')
     information_desks = models.ManyToManyField(tourism_models.InformationDesk,
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
@@ -218,6 +221,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new trek")
+
+    @property
+    def published_children_id(self):
+        return self.children.filter(published=True).values_list('id', flat=True)
+
+    def clean(self):
+        if self.parent and self.parent == self:
+            raise ValidationError(_(u"Cannot use itself as parent trek."))
+        if self.parent and self.parent.parent:
+            raise ValidationError(_(u"Cannot use a a child trek as parent trek."))
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))

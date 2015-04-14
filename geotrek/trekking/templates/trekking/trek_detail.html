@@ -131,6 +131,20 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Itinerancy" %}</th>
+            <td>
+                {% if trek.parent %}
+                    {% blocktrans with name=trek.parent.name_display|safe %}
+                        Child of {{ name }}
+                    {% endblocktrans %}
+                {% endif %}
+                {% if trek.children.all %}
+                    {% trans "Parent of:" %}<br/>
+                    {% valuelist trek.children.all field='name_display' %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"web_links" }}</th>
             <td>
                 {% valuelist trek.web_links.all %}

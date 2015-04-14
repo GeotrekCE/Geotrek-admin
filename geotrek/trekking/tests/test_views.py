@@ -415,7 +415,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
+        self.parent = TrekFactory.create(published=True)
+
         self.trek = TrekFactory.create(
+            parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
@@ -470,6 +473,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         trek3.delete()
         trek4 = TrekFactory(no_path=True, published=True)  # too far
         trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
+
+        self.child1 = TrekFactory.create(published=False, parent=self.trek)
+        self.child2 = TrekFactory.create(published=True, parent=self.trek)
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -665,6 +671,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'name': self.source.name,
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
+
+    def test_parent(self):
+        self.assertEqual(self.result['parent'], self.parent.pk)
+
+    def test_children(self):
+        self.assertEqual(self.result['children'], [self.child2.pk])
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
