@@ -11,6 +11,10 @@ CHANGELOG
 * Allow to choose ordering of categories for Geotrek-Rando
 * Bootstrap grid editor for flatpages
 
+**Bug fixes**
+
+* Fix duration notation
+
 
 0.33.4 (2015-04-07)
 -------------------

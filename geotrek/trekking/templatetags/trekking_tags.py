@@ -23,7 +23,9 @@ def duration(value):
         hours = (settings.TREK_DAY_DURATION * days) + duration.hour
         if hours > settings.TREK_DAY_DURATION:
             return _("%s days") % 2
+    if duration.hour > 0 and duration.minute > 0:
+        return _("%(hour)s h %(min)s") % {'hour': duration.hour,
+                                          'min': duration.minute}
     if duration.hour > 0:
-        return _("%(hour)sH%(min)s") % {'hour': duration.hour,
-                                        'min': "%s" % duration.minute if duration.minute > 0 else ""}
+        return _("%(hour)s h") % {'hour': duration.hour}
     return _("%s min") % duration.minute
