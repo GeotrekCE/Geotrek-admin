@@ -17,7 +17,7 @@ from mapentity.factories import UserFactory
 from geotrek.settings import EnvIniReader
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.tests import AuthentFixturesTest
-from .utils import almostequal, sampling, sql_extent, uniquify
+from .utils import almostequal, sql_extent, uniquify
 from .utils.postgresql import debug_pg_notices
 from . import check_srid_has_meter_unit
 
@@ -70,11 +70,6 @@ class UtilsTest(TestCase):
         self.assertFalse(almostequal(1, 2, precision=0))
         self.assertFalse(almostequal(-1, 1))
         self.assertFalse(almostequal(1, -1))
-
-    def test_sampling(self):
-        self.assertEqual([0, 2, 4, 6, 8], sampling(range(10), 5))
-        self.assertEqual([0, 3, 6, 9], sampling(range(10), 3))
-        self.assertEqual(['a', 'd', 'g', 'j'], sampling('abcdefghijkl', 4))
 
     def test_sqlextent(self):
         ext = sql_extent("SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")

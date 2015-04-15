@@ -1,5 +1,4 @@
 import logging
-from itertools import islice
 import re
 
 from django.db import connection
@@ -95,18 +94,6 @@ def sqlfunction(function, *args):
 
 def almostequal(v1, v2, precision=2):
     return abs(v1 - v2) < 10 ** -precision
-
-
-def sampling(values, total):
-    """
-    Return N items from values.
-    >>> sampling(range(10), 5)
-    [0, 2, 4, 6, 8]
-    >>> sampling('abcdefghijkl', 4)
-    ['a', 'd', 'g', 'j']
-    """
-    step = max(1, int(len(values) / total))
-    return list(islice(values, 0, len(values), step))
 
 
 def uniquify(values):
