@@ -23,6 +23,10 @@ CHANGELOG
 * Fix duration notation
 * Flatten altimetry profiles
 
+**Bug fixes**
+
+* Show accessibility in trek detail page (fixes #1399)
+
 
 0.33.4 (2015-04-07)
 -------------------

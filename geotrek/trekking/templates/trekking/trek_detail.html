@@ -119,6 +119,12 @@
             </td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"accessibilities" }}</th>
+            <td>
+                {% valuelist trek.accessibilities.all %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
                 {% valuelist trek.networks.all %}
