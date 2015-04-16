@@ -11,3 +11,11 @@ LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Ortho'), 'http://gpp3-wxs.ign.fr/ub5kow30uwtmj08xhez4a3ue/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
      '&copy; IGN - GeoPortail'),
 ]
+
+TREKKING_TOPOLOGY_ENABLED = False
+TRAIL_MODEL_ENABLED = False
+
+INSTALLED_APPS = list(INSTALLED_APPS)
+INSTALLED_APPS.remove('geotrek.land')
+INSTALLED_APPS.remove('geotrek.maintenance')
+INSTALLED_APPS.remove('geotrek.infrastructure')
