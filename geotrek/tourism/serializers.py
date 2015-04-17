@@ -76,9 +76,10 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     class Meta:
         model = tourism_models.TouristicContent
         geo_field = 'geom'
-        fields = ('id', 'description', 'description_teaser', 'category', 'themes',
-                  'contact', 'email', 'website', 'practical_info', 'type1', 'type2',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois', 'source') + \
+        fields = ('id', 'description', 'description_teaser', 'category',
+                  'themes', 'contact', 'email', 'website', 'practical_info',
+                  'type1', 'type2', 'touristic_contents', 'touristic_events',
+                  'treks', 'pois', 'source', 'approved') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -117,7 +118,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
                   'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category', 'source') + \
+                  'treks', 'pois', 'type1', 'category', 'source', 'approved') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

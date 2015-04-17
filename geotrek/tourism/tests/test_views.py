@@ -452,6 +452,9 @@ class BasicJSONAPITest(TranslationResetMixin):
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
+    def test_approved(self):
+        self.assertFalse(self.result['approved'])
+
 
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
@@ -466,7 +469,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
-            'areas', 'category', 'cities', 'contact',
+            'approved', 'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
@@ -504,7 +507,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
-            'accessibility', 'areas', 'begin_date', 'booking', 'category',
+            'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',

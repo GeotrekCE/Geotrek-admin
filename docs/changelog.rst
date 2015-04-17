@@ -10,6 +10,7 @@ CHANGELOG
 * Itinerancy (parent/children treks)
 * Allow to choose ordering of categories for Geotrek-Rando
 * Bootstrap grid editor for flatpages
+* Approved touristic contents and events
 
 **Bug fixes**
 

@@ -95,6 +95,10 @@
             <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"approved" }}</th>
+            <td>{{ object.approved|yesno:_("yes,no") }}</td>
+        </tr>
+        <tr>
             <th>{% trans "Source" %}</th>
             <td>
                 {% valuelist object.source.all %}
