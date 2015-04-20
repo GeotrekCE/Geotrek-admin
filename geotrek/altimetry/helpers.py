@@ -58,8 +58,10 @@ class AltimetryHelper(object):
         elevations = [int(v[3]) for v in profile]
         min_elevation = int(min(elevations))
         floor_elevation = round(min_elevation, 100) - 100
-        max_elevation = max(min_elevation + 900, int(max(elevations)))
+        max_elevation = int(max(elevations))
         ceil_elevation = round(max_elevation, 100) + 100
+        if ceil_elevation < floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE:
+            ceil_elevation = floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE
 
         config = dict(show_legend=False,
                       print_values=False,
