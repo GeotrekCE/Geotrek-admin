@@ -19,3 +19,6 @@ INSTALLED_APPS = list(INSTALLED_APPS)
 INSTALLED_APPS.remove('geotrek.land')
 INSTALLED_APPS.remove('geotrek.maintenance')
 INSTALLED_APPS.remove('geotrek.infrastructure')
+
+SPLIT_TREKS_CATEGORIES_BY_PRACTICE = True
+SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = True
