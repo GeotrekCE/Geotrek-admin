@@ -330,6 +330,8 @@ class Accessibility(OptionalPictogramMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
+    id_prefix = 'A'
+
     class Meta:
         db_table = 'o_b_accessibilite'
         verbose_name = _(u"Accessibility")
@@ -338,6 +340,10 @@ class Accessibility(OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class Route(OptionalPictogramMixin):

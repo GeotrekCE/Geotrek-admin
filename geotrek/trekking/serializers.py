@@ -1,3 +1,4 @@
+import copy
 import datetime
 import json
 
@@ -169,13 +170,26 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type2 = TypeSerializer(source='accessibilities', many=True)
     category = rest_serializers.SerializerMethodField('get_category')
 
-    def __init__(self, *args, **kwargs):
-        super(TrekSerializer, self).__init__(*args, **kwargs)
+    def __init__(self, instance=None, *args, **kwargs):
+        # duplicate each trek for each one of its accessibilities
+        if instance and hasattr(instance, '__iter__') and settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
+            treks = []
+            for trek in instance:
+                treks.append(trek)
+                for accessibility in trek.accessibilities.all():
+                    clone = copy.copy(trek)
+                    clone.accessibility = accessibility
+                    treks.append(clone)
+            instance = treks
+
+        super(TrekSerializer, self).__init__(instance, *args, **kwargs)
 
         from geotrek.tourism import serializers as tourism_serializers
 
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             del self.fields['type1']
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
+            del self.fields['type2']
 
         self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
         self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -224,23 +238,31 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
 
     def get_category(self, obj):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
-            return {
+        accessibility = getattr(obj, 'accessibility', None)
+        if accessibility:
+            data = {
+                'id': accessibility.prefixed_id,
+                'label': accessibility.name,
+                'pictogram': accessibility.get_pictogram_url(),
+            }
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+            data = {
                 'id': obj.prefixed_category_id,
-                'order': settings.TREK_CATEGORY_ORDER,
                 'label': obj.practice.name,
-                'type2_label': obj._meta.get_field('accessibilities').verbose_name,
                 'pictogram': obj.practice.get_pictogram_url(),
             }
         else:
-            return {
+            data = {
                 'id': obj.category_id_prefix,
-                'order': settings.TREK_CATEGORY_ORDER,
                 'label': obj._meta.verbose_name,
-                'type1_label': obj._meta.get_field('practice').verbose_name,
-                'type2_label': obj._meta.get_field('accessibilities').verbose_name,
                 'pictogram': '/static/trekking/trek.svg',
             }
+        data['order'] = settings.TREK_CATEGORY_ORDER
+        if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+            data['type1_label'] = obj._meta.get_field('practice').verbose_name
+        if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
+            data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
+        return data
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
