@@ -434,7 +434,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_treks(self):
         self.assertDictEqual(self.result['treks'][0], {
             u'id': self.trek.id,
-            u'category_id': self.trek.category_id})
+            u'category_id': 'T'})
 
     def test_pois(self):
         self.assertDictEqual(self.result['pois'][0], {
@@ -494,7 +494,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'], {
-            u"id": self.category.id,
+            u"id": self.category.prefixed_id,
             u"order": None,
             u"label": self.category.label,
             u"type1_label": self.category.type1_label,
@@ -532,7 +532,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
-                             {u"id": -1,
+                             {u"id": 'E',
                               u"order": None,
                               u"label": u"Touristic event",
                               u"type1_label": u"Type",

@@ -98,7 +98,7 @@ class WebLinkSerializer(TranslatedModelSerializer):
 
 
 class CloseTrekSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='category_id')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
 
     class Meta:
         model = trekking_models.Trek
@@ -174,6 +174,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
         from geotrek.tourism import serializers as tourism_serializers
 
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+            del self.fields['type1']
+
         self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
         self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
         self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
@@ -221,14 +224,23 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
 
     def get_category(self, obj):
-        return {
-            'id': obj.category_id,
-            'order': settings.TREK_CATEGORY_ORDER,
-            'label': obj._meta.verbose_name,
-            'type1_label': obj._meta.get_field('practice').verbose_name,
-            'type2_label': obj._meta.get_field('accessibilities').verbose_name,
-            'pictogram': '/static/trekking/trek.svg',
-        }
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+            return {
+                'id': obj.prefixed_category_id,
+                'order': settings.TREK_CATEGORY_ORDER,
+                'label': obj.practice.name,
+                'type2_label': obj._meta.get_field('accessibilities').verbose_name,
+                'pictogram': obj.practice.get_pictogram_url(),
+            }
+        else:
+            return {
+                'id': obj.category_id_prefix,
+                'order': settings.TREK_CATEGORY_ORDER,
+                'label': obj._meta.verbose_name,
+                'type1_label': obj._meta.get_field('practice').verbose_name,
+                'type2_label': obj._meta.get_field('accessibilities').verbose_name,
+                'pictogram': '/static/trekking/trek.svg',
+            }
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):

@@ -167,13 +167,13 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'id': self.touristic_content.pk,
-            u'category_id': self.touristic_content.category_id})
+            u'category_id': self.touristic_content.prefixed_category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'id': self.touristic_event.pk,
-            u'category_id': self.touristic_event.category_id})
+            u'category_id': 'E'})
 
 
 class TrekViewsTest(CommonTest):
@@ -631,19 +631,19 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'id': self.touristic_content.pk,
-            u'category_id': self.touristic_content.category_id})
+            u'category_id': self.touristic_content.prefixed_category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'id': self.touristic_event.pk,
-            u'category_id': self.touristic_event.category_id})
+            u'category_id': self.touristic_event.prefixed_category_id})
 
     def test_close_treks(self):
         self.assertEqual(len(self.result['treks']), 1)
         self.assertDictEqual(self.result['treks'][0], {
             u'id': self.trek_b.pk,
-            u'category_id': self.trek_b.category_id})
+            u'category_id': self.trek_b.prefixed_category_id})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
@@ -659,7 +659,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
-                             {u"id": -2,
+                             {u"id": 'T',
                               u"order": None,
                               u"label": u"Trek",
                               u"type1_label": u"Practice",
