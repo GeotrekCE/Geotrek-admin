@@ -85,3 +85,15 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
             })
 
         return results
+
+    @models.permalink
+    def get_add_url(self):
+        return ('admin:flatpages_flatpage_add', )
+
+    @models.permalink
+    def get_update_url(self):
+        return ('admin:flatpages_flatpage_change', [self.pk])
+
+    @models.permalink
+    def get_delete_url(self):
+        return ('admin:flatpages_flatpage_delete', [self.pk])

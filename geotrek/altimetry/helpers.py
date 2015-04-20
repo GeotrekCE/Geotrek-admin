@@ -1,15 +1,13 @@
 import logging
 
 from django.contrib.gis.geos import GEOSGeometry
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.contrib.gis.geos import LineString
 from django.conf import settings
 from django.db import connection
 
 import pygal
 from pygal.style import LightSolarizedStyle
-
-from geotrek.common.utils import sampling
 
 
 logger = logging.getLogger(__name__)
@@ -57,30 +55,18 @@ class AltimetryHelper(object):
         Most of the job done here is dedicated to preparing
         nice labels scales.
         """
-        distances = [int(v[0]) for v in profile]
         elevations = [int(v[3]) for v in profile]
         min_elevation = int(min(elevations))
-        floor_elevation = min_elevation - min_elevation % 10
+        floor_elevation = round(min_elevation, 100) - 100
         max_elevation = int(max(elevations))
-        ceil_elevation = max_elevation + 10 - max_elevation % 10
-
-        x_labels = distances
-        y_labels = [min_elevation] + sampling(range(floor_elevation + 20, ceil_elevation - 10, 10), 3) + [max_elevation]
-
-        # Prevent Y labels to overlap
-        if len(y_labels) > 2:
-            if y_labels[1] - y_labels[0] < 25:
-                y_labels.pop(1)
-        if len(y_labels) > 2:
-            if y_labels[-1] - y_labels[-2] < 25:
-                y_labels.pop(-2)
+        ceil_elevation = round(max_elevation, 100) + 100
+        if ceil_elevation < floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE:
+            ceil_elevation = floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE
 
         config = dict(show_legend=False,
                       print_values=False,
                       show_dots=False,
-                      x_labels_major_count=3,
-                      show_minor_x_labels=False,
-                      truncate_label=50,
+                      zero=floor_elevation,
                       value_formatter=lambda v: '%d' % v,
                       margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
                       width=settings.ALTIMETRIC_PROFILE_WIDTH,
@@ -94,13 +80,16 @@ class AltimetryHelper(object):
         style.background = settings.ALTIMETRIC_PROFILE_BACKGROUND
         style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
         style.font_family = settings.ALTIMETRIC_PROFILE_FONT
-        line_chart = pygal.StackedLine(fill=True, style=style, **config)
-        line_chart.x_title = unicode(_("Distance (m)"))
-        line_chart.x_labels = [str(i) for i in x_labels]
-        line_chart.y_title = unicode(_("Altitude (m)"))
-        line_chart.y_labels = y_labels
-        line_chart.range = [floor_elevation, max_elevation]
-        line_chart.add('', elevations)
+        line_chart = pygal.XY(fill=True, style=style, **config)
+        line_chart.x_title = _("Distance (m)")
+        line_chart.y_title = _("Altitude (m)")
+        line_chart.show_minor_x_labels = False
+        line_chart.x_labels_major_count = 5
+        line_chart.show_minor_y_labels = False
+        line_chart.truncate_label = 50
+        line_chart.range = [floor_elevation, ceil_elevation]
+        line_chart.no_data_text = _(u"Altimetry data not available")
+        line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
         return line_chart.render()
 
     @classmethod

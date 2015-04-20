@@ -167,13 +167,13 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'id': self.touristic_content.pk,
-            u'category_id': self.touristic_content.category_id})
+            u'category_id': self.touristic_content.prefixed_category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'id': self.touristic_event.pk,
-            u'category_id': self.touristic_event.category_id})
+            u'category_id': 'E'})
 
 
 class TrekViewsTest(CommonTest):
@@ -415,7 +415,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
+        self.parent = TrekFactory.create(published=True)
+
         self.trek = TrekFactory.create(
+            parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
@@ -470,6 +473,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         trek3.delete()
         trek4 = TrekFactory(no_path=True, published=True)  # too far
         trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
+
+        self.child1 = TrekFactory.create(published=False, parent=self.trek)
+        self.child2 = TrekFactory.create(published=True, parent=self.trek)
 
         self.pk = self.trek.pk
         url = '/api/treks/%s/' % self.pk
@@ -625,19 +631,19 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'id': self.touristic_content.pk,
-            u'category_id': self.touristic_content.category_id})
+            u'category_id': self.touristic_content.prefixed_category_id})
 
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
             u'id': self.touristic_event.pk,
-            u'category_id': self.touristic_event.category_id})
+            u'category_id': self.touristic_event.prefixed_category_id})
 
     def test_close_treks(self):
         self.assertEqual(len(self.result['treks']), 1)
         self.assertDictEqual(self.result['treks'][0], {
             u'id': self.trek_b.pk,
-            u'category_id': self.trek_b.category_id})
+            u'category_id': self.trek_b.prefixed_category_id})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
@@ -653,7 +659,8 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
-                             {u"id": -2,
+                             {u"id": 'T',
+                              u"order": None,
                               u"label": u"Trek",
                               u"type1_label": u"Practice",
                               u"type2_label": u"Accessibilities",
@@ -664,6 +671,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'name': self.source.name,
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
+
+    def test_parent(self):
+        self.assertEqual(self.result['parent'], self.parent.pk)
+
+    def test_children(self):
+        self.assertEqual(self.result['children'], [self.child2.pk])
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -864,12 +877,12 @@ class TemplateTagsTest(TestCase):
     def test_duration(self):
         self.assertEqual(u"15 min", trekking_tags.duration(0.25))
         self.assertEqual(u"30 min", trekking_tags.duration(0.5))
-        self.assertEqual(u"1H", trekking_tags.duration(1))
-        self.assertEqual(u"1H45", trekking_tags.duration(1.75))
-        self.assertEqual(u"3H30", trekking_tags.duration(3.5))
-        self.assertEqual(u"4H", trekking_tags.duration(4))
-        self.assertEqual(u"6H", trekking_tags.duration(6))
-        self.assertEqual(u"10H", trekking_tags.duration(10))
+        self.assertEqual(u"1 h", trekking_tags.duration(1))
+        self.assertEqual(u"1 h 45", trekking_tags.duration(1.75))
+        self.assertEqual(u"3 h 30", trekking_tags.duration(3.5))
+        self.assertEqual(u"4 h", trekking_tags.duration(4))
+        self.assertEqual(u"6 h", trekking_tags.duration(6))
+        self.assertEqual(u"10 h", trekking_tags.duration(10))
         self.assertEqual(u"2 days", trekking_tags.duration(11))
         self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))

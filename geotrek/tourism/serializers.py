@@ -1,5 +1,7 @@
 from rest_framework import serializers as rest_serializers
 
+from django.conf import settings
+
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
                                         PicturesSerializerMixin, TranslatedModelSerializer)
@@ -28,7 +30,7 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicContentSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='category.id')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicContent
@@ -36,7 +38,7 @@ class CloseTouristicContentSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicEventSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='category_id')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicEvent
@@ -52,9 +54,11 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    id = rest_serializers.Field(source='prefixed_id')
+
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -74,9 +78,10 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     class Meta:
         model = tourism_models.TouristicContent
         geo_field = 'geom'
-        fields = ('id', 'description', 'description_teaser', 'category', 'themes',
-                  'contact', 'email', 'website', 'practical_info', 'type1', 'type2',
-                  'touristic_contents', 'touristic_events', 'treks', 'pois', 'source') + \
+        fields = ('id', 'description', 'description_teaser', 'category',
+                  'themes', 'contact', 'email', 'website', 'practical_info',
+                  'type1', 'type2', 'touristic_contents', 'touristic_events',
+                  'treks', 'pois', 'source', 'approved') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -115,14 +120,15 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
                   'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category', 'source') + \
+                  'treks', 'pois', 'type1', 'category', 'source', 'approved') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
     def get_category(self, obj):
         return {
-            'id': obj.category_id,
+            'id': obj.category_id_prefix,
+            'order': settings.TOURISTIC_EVENT_CATEGORY_ORDER,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',

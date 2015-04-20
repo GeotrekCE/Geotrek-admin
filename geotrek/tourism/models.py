@@ -193,15 +193,23 @@ class TouristicContentCategory(PictogramMixin):
                                    db_column='label_type1', blank=True)
     type2_label = models.CharField(verbose_name=_(u"Second list label"), max_length=128,
                                    db_column='label_type2', blank=True)
+    order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
+                                help_text=_(u"Alphabetical order if blank"))
+
+    id_prefix = 'C'
 
     class Meta:
         db_table = 't_b_contenu_touristique_categorie'
         verbose_name = _(u"Touristic content category")
         verbose_name_plural = _(u"Touristic content categories")
-        ordering = ['label']
+        ordering = ['order', 'label']
 
     def __unicode__(self):
         return self.label
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class TouristicContentType(OptionalPictogramMixin):
@@ -290,6 +298,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                     null=True, blank=True, related_name='touristiccontents',
                                     verbose_name=_("Source"), db_table='t_r_contenu_touristique_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
@@ -326,6 +335,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     @property
     def types2_display(self):
         return ', '.join([unicode(n) for n in self.type2.all()])
+
+    @property
+    def prefixed_category_id(self):
+        return self.category.prefixed_id
 
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
@@ -385,8 +398,11 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
                                     null=True, blank=True, related_name='touristicevents',
                                     verbose_name=_("Source"), db_table='t_r_evenement_touristique_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+
+    category_id_prefix = 'E'
 
     class Meta:
         db_table = 't_t_evenement_touristique'
@@ -396,9 +412,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def __unicode__(self):
         return self.name
-
-    # fake category id to be consistent with touristic contents
-    category_id = -1
 
     @models.permalink
     def get_document_public_url(self):
@@ -434,6 +447,10 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
             return _(u"from {begin} to {end}").format(
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'),
                 end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
+
+    @property
+    def prefixed_category_id(self):
+        return self.category_id_prefix
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))

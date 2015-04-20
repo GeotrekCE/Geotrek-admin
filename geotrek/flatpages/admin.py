@@ -1,20 +1,19 @@
 from django.contrib import admin
 from django.conf import settings
 
-from modeltranslation.admin import TranslationAdmin
-from tinymce.widgets import TinyMCE
-
 from geotrek.flatpages import models as flatpages_models
+from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate
 
 
-class FlatPagesAdmin(TranslationAdmin):
+class FlatPagesAdmin(admin.ModelAdmin):
     list_display = ('title', 'published', 'publication_date', 'target')
     search_fields = ('title', 'content')
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        if db_field.name[:7] == 'content':
-            return db_field.formfield(widget=TinyMCE)
-        return super(FlatPagesAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+    def add_view(self, request, form_url='', extra_context=None):
+        return FlatPageCreate.as_view()(request)
+
+    def change_view(self, request, pk, form_url='', extra_context=None):
+        return FlatPageUpdate.as_view()(request, pk=pk)
 
 
 if settings.FLATPAGES_ENABLED:

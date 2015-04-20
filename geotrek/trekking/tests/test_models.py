@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
                                      MultiLineString)
+from django.core.exceptions import ValidationError
 
 from bs4 import BeautifulSoup
 
@@ -105,6 +106,21 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='B')
         self.assertEqual([u'A', u'B', u'Ca', u'Cb'],
                          list(Trek.objects.all().values_list('name', flat=True)))
+
+    def test_trek_itself_as_parent(self):
+        a = TrekFactory.create(name='A')
+        a.parent = a
+        self.assertRaisesMessage(ValidationError,
+                                 u"Cannot use itself as parent trek.",
+                                 a.full_clean)
+
+    def test_trek_child_as_parent(self):
+        a = TrekFactory.create(name='A')
+        b = TrekFactory.create(name='B', parent=a)
+        c = TrekFactory.create(name='C', parent=b)
+        self.assertRaisesMessage(ValidationError,
+                                 u"Cannot use a a child trek as parent trek.",
+                                 c.full_clean)
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):

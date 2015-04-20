@@ -209,8 +209,8 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return u"%s (%s)" % (_(u"Topology"), self.pk)
 
     def ispoint(self):
-        if not self.pk and self.geom and self.geom.geom_type == 'Point':
-            return True
+        if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
+            return self.geom and self.geom.geom_type == 'Point'
         return all([a.start_position == a.end_position for a in self.aggregations.all()])
 
     def add_path(self, path, start=0.0, end=1.0, order=0, reload=True):

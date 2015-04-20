@@ -13,6 +13,10 @@ Load basic data :
 
     make load_data
 
+:note:
+
+    This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``etc/settings.ini``
+
 
 If you do not load data, you'll have to at least create a super user :
 

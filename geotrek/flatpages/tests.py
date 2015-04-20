@@ -87,6 +87,12 @@ class AdminSiteTest(TestCase):
         response = self.client.get('/admin/flatpages/flatpage/add/')
         self.assertContains(response, 'published_en')
 
+    def test_flatpages_are_updatable(self):
+        self.login()
+        page = FlatPageFactory(content="One looove")
+        response = self.client.get('/admin/flatpages/flatpage/{0}/'.format(page.pk))
+        self.assertContains(response, "One looove")
+
 
 class RESTViewsTest(TestCase):
     def setUp(self):

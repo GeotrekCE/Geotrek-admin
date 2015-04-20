@@ -434,7 +434,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_treks(self):
         self.assertDictEqual(self.result['treks'][0], {
             u'id': self.trek.id,
-            u'category_id': self.trek.category_id})
+            u'category_id': 'T'})
 
     def test_pois(self):
         self.assertDictEqual(self.result['pois'][0], {
@@ -452,6 +452,9 @@ class BasicJSONAPITest(TranslationResetMixin):
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
+    def test_approved(self):
+        self.assertFalse(self.result['approved'])
+
 
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
@@ -466,7 +469,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
-            'areas', 'category', 'cities', 'contact',
+            'approved', 'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
@@ -491,7 +494,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'], {
-            u"id": self.category.id,
+            u"id": self.category.prefixed_id,
+            u"order": None,
             u"label": self.category.label,
             u"type1_label": self.category.type1_label,
             u"type2_label": self.category.type2_label,
@@ -503,7 +507,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual([
-            'accessibility', 'areas', 'begin_date', 'booking', 'category',
+            'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
@@ -528,7 +532,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
-                             {u"id": -1,
+                             {u"id": 'E',
+                              u"order": None,
                               u"label": u"Touristic event",
                               u"type1_label": u"Type",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})

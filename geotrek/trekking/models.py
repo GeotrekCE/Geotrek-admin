@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,7 +45,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In decimal hours (ex. 1.5 for 1H30)"),
+                                 help_text=_(u"In decimal hours (ex. 1.5 for 1 h 30)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
@@ -78,6 +79,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
+    parent = models.ForeignKey('self', verbose_name=_(u"Parent"), db_column='parent', blank=True, null=True,
+                               related_name='children')
     information_desks = models.ManyToManyField(tourism_models.InformationDesk,
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
@@ -91,6 +94,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
+    category_id_prefix = 'T'
+
     class Meta:
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
@@ -99,9 +104,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     def __unicode__(self):
         return self.name
-
-    # fake category id to be consistent with touristic contents
-    category_id = -2
 
     @models.permalink
     def get_document_public_url(self):
@@ -219,6 +221,23 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_create_label(cls):
         return _(u"Add a new trek")
 
+    @property
+    def published_children_id(self):
+        return self.children.filter(published=True).values_list('id', flat=True)
+
+    def clean(self):
+        if self.parent and self.parent == self:
+            raise ValidationError(_(u"Cannot use itself as parent trek."))
+        if self.parent and self.parent.parent:
+            raise ValidationError(_(u"Cannot use a a child trek as parent trek."))
+
+    @property
+    def prefixed_category_id(self):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
+            return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
+        else:
+            return self.category_id_prefix
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
 Topology.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
@@ -311,6 +330,8 @@ class Accessibility(OptionalPictogramMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
+    id_prefix = 'A'
+
     class Meta:
         db_table = 'o_b_accessibilite'
         verbose_name = _(u"Accessibility")
@@ -319,6 +340,10 @@ class Accessibility(OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class Route(OptionalPictogramMixin):

@@ -2,6 +2,23 @@
 CHANGELOG
 =========
 
+0.34.0 (2015-05-20)
+-------------------
+
+**New features**
+
+* Itinerancy (parent/children treks)
+* Allow to choose ordering of categories for Geotrek-Rando
+* Bootstrap grid editor for flatpages
+* Approved touristic contents and events
+* Option to split trek category by practice or accessibility
+
+**Bug fixes**
+
+* Fix duration notation
+* Flatten altimetry profiles
+
+
 0.33.4 (2015-04-07)
 -------------------
 
