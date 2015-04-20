@@ -15,6 +15,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix duration notation
+* Flatten altimetry profiles
 
 
 0.33.4 (2015-04-07)
