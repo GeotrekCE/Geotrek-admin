@@ -30,7 +30,7 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicContentSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='category.id')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicContent
@@ -38,7 +38,7 @@ class CloseTouristicContentSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicEventSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='category_id')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicEvent
@@ -54,6 +54,8 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    id = rest_serializers.Field(source='prefixed_id')
+
     class Meta:
         model = tourism_models.TouristicContentCategory
         fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order')
@@ -125,7 +127,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     def get_category(self, obj):
         return {
-            'id': obj.category_id,
+            'id': obj.category_id_prefix,
             'order': settings.TOURISTIC_EVENT_CATEGORY_ORDER,
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,

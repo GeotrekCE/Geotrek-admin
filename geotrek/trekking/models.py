@@ -94,6 +94,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
+    category_id_prefix = 'T'
+
     class Meta:
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
@@ -102,9 +104,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     def __unicode__(self):
         return self.name
-
-    # fake category id to be consistent with touristic contents
-    category_id = -2
 
     @models.permalink
     def get_document_public_url(self):
@@ -232,6 +231,13 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         if self.parent and self.parent.parent:
             raise ValidationError(_(u"Cannot use a a child trek as parent trek."))
 
+    @property
+    def prefixed_category_id(self):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
+            return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
+        else:
+            return self.category_id_prefix
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
 Topology.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
@@ -324,6 +330,8 @@ class Accessibility(OptionalPictogramMixin):
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
 
+    id_prefix = 'A'
+
     class Meta:
         db_table = 'o_b_accessibilite'
         verbose_name = _(u"Accessibility")
@@ -332,6 +340,10 @@ class Accessibility(OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class Route(OptionalPictogramMixin):

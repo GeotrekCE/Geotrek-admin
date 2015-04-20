@@ -11,6 +11,7 @@ CHANGELOG
 * Allow to choose ordering of categories for Geotrek-Rando
 * Bootstrap grid editor for flatpages
 * Approved touristic contents and events
+* Option to split trek category by practice or accessibility
 
 **Bug fixes**
 

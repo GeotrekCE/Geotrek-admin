@@ -196,6 +196,8 @@ class TouristicContentCategory(PictogramMixin):
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
 
+    id_prefix = 'C'
+
     class Meta:
         db_table = 't_b_contenu_touristique_categorie'
         verbose_name = _(u"Touristic content category")
@@ -204,6 +206,10 @@ class TouristicContentCategory(PictogramMixin):
 
     def __unicode__(self):
         return self.label
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class TouristicContentType(OptionalPictogramMixin):
@@ -330,6 +336,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def types2_display(self):
         return ', '.join([unicode(n) for n in self.type2.all()])
 
+    @property
+    def prefixed_category_id(self):
+        return self.category.prefixed_id
+
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
@@ -392,6 +402,8 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
+    category_id_prefix = 'E'
+
     class Meta:
         db_table = 't_t_evenement_touristique'
         verbose_name = _(u"Touristic event")
@@ -400,9 +412,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def __unicode__(self):
         return self.name
-
-    # fake category id to be consistent with touristic contents
-    category_id = -1
 
     @models.permalink
     def get_document_public_url(self):
@@ -438,6 +447,10 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
             return _(u"from {begin} to {end}").format(
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'),
                 end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
+
+    @property
+    def prefixed_category_id(self):
+        return self.category_id_prefix
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
