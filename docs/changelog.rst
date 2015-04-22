@@ -12,6 +12,7 @@ CHANGELOG
 **New features**
 
 * Import framework
+* Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
 
 **Bug fixes**
 

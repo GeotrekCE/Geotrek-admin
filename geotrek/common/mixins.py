@@ -95,22 +95,26 @@ class PicturesMixin(object):
     @property
     def serializable_pictures(self):
         serialized = []
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
-                thurl = os.path.join(settings.MEDIA_URL, thdetail.name)
-            except InvalidImageFormatError:
-                thurl = None
-                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
-                pass
+        for picture, thdetail in self.resized_pictures:
             serialized.append({
                 'author': picture.author,
                 'title': picture.title,
                 'legend': picture.legend,
-                'url': thurl
+                'url': os.path.join(settings.MEDIA_URL, thdetail.name),
             })
         return serialized
+
+    @property
+    def resized_pictures(self):
+        resized = []
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            try:
+                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            except InvalidImageFormatError:
+                logger.error(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+            resized.append((picture, thdetail))
+        return resized
 
     @property
     def picture_print(self):
@@ -353,7 +357,7 @@ class PublishableMixin(BasePublishableMixin):
         return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
 
     def is_public(self):
-        return self.published
+        return self.any_published
 
 
 class PictogramMixin(models.Model):
