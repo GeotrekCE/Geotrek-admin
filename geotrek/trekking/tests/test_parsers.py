@@ -2,6 +2,7 @@
 
 import os
 
+from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -10,7 +11,7 @@ from geotrek.trekking.models import Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import TrekParser
 
 
-class TrekParserDurationTests(TestCase):
+class TrekParserFilterDurationTests(TestCase):
     def setUp(self):
         self.parser = TrekParser()
 
@@ -64,6 +65,30 @@ class TrekParserDurationTests(TestCase):
 
     def test_min_gte_60(self):
         self.assertEqual(self.parser.filter_duration('duration', '9 h 60'), None)
+        self.assertTrue(self.parser.warnings)
+
+
+class TrekParserFilterGeomTests(TestCase):
+    def setUp(self):
+        self.parser = TrekParser()
+
+    def test_empty_geom(self):
+        self.assertEqual(self.parser.filter_geom('geom', None), None)
+        self.assertFalse(self.parser.warnings)
+
+    def test_point(self):
+        geom = Point(0, 0)
+        self.assertEqual(self.parser.filter_geom('geom', geom), None)
+        self.assertTrue(self.parser.warnings)
+
+    def test_linestring(self):
+        geom = LineString((0, 0), (0, 1), (1, 1), (1, 0))
+        self.assertEqual(self.parser.filter_geom('geom', geom), geom)
+        self.assertFalse(self.parser.warnings)
+
+    def test_multilinestring(self):
+        geom = MultiLineString(LineString((0, 0), (0, 1), (1, 1), (1, 0)))
+        self.assertEqual(self.parser.filter_geom('geom', geom), geom)
         self.assertTrue(self.parser.warnings)
 
 

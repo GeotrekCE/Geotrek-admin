@@ -46,9 +46,6 @@ class TrekParser(AttachmentParserMixin, ShapeParser):
     def filter_geom(self, src, val):
         if val is None:
             return None
-        if not val.valid:
-            self.add_warning(_(u"Invalid geometry for field '{src}'").format(src=src))
-            return None
         if val.geom_type == 'MultiLineString':
             self.add_warning(_(u"Geometry for field '{src}' should be LineString, not MultiLineString. Unable to compute altimetry information").format(src=src))
         elif val.geom_type != 'LineString':
