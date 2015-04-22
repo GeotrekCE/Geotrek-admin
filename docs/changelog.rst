@@ -5,6 +5,9 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
+**New features**
+
+* Import framework
 
 
 0.34.0 (2015-05-20)
@@ -22,6 +25,10 @@ CHANGELOG
 
 * Fix duration notation
 * Flatten altimetry profiles
+
+**Bug fixes**
+
+* Show accessibility in trek detail page (fixes #1399)
 
 
 0.33.4 (2015-04-07)
