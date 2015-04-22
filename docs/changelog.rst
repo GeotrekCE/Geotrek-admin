@@ -9,6 +9,10 @@ CHANGELOG
 
 * Import framework
 
+**Bug fixes**
+
+* Remove HTTP calls to SoundCloud API at serialization
+
 
 0.34.0 (2015-05-20)
 -------------------

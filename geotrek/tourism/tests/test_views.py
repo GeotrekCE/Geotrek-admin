@@ -410,7 +410,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_videos(self):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
-                              u'code': 'Jm3anSjly0Y',
+                              u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
                               u'author': self.video.author})
