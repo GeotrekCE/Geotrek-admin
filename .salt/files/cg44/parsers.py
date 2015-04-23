@@ -114,7 +114,7 @@ class CG44PedestreTrekParser(TrekParser):
         val = val.split(self.separator, 1)[1]
         return self.filter_m2m(src, val, Accessibility, 'name')
 
-    def filter_related_treks(self, src, val):
+    def save_related_treks(self, src, val):
         if not val:
             return
         val = val.split(self.separator)
@@ -176,7 +176,7 @@ class CG44AVeloTrekParser(TrekParser):
             val_priorite = []
         return val_theme + val_priorite
 
-    def filter_related_treks(self, src, val):
+    def save_related_treks(self, src, val):
         iti, etap = val
         if not iti or etap == 0:
             return
