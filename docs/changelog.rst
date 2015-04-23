@@ -2,6 +2,23 @@
 CHANGELOG
 =========
 
+0.34.1.dev0
+-------------------
+
+**Breaking changes**
+
+* Rework API URL schemas
+
+**New features**
+
+* Import framework
+* Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
+
+**Bug fixes**
+
+* Remove HTTP calls to SoundCloud API at serialization
+
+
 0.34.0 (2015-05-20)
 -------------------
 
@@ -17,6 +34,10 @@ CHANGELOG
 
 * Fix duration notation
 * Flatten altimetry profiles
+
+**Bug fixes**
+
+* Show accessibility in trek detail page (fixes #1399)
 
 
 0.33.4 (2015-04-07)

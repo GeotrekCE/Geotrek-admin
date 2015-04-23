@@ -81,7 +81,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            related_name='related_treks+')  # Hide reverse attribute
     parent = models.ForeignKey('self', verbose_name=_(u"Parent"), db_column='parent', blank=True, null=True,
                                related_name='children')
-    information_desks = models.ManyToManyField(tourism_models.InformationDesk,
+    information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
@@ -91,6 +91,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     null=True, blank=True, related_name='treks',
                                     verbose_name=_("Source"), db_table='o_r_itineraire_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, db_column='id_externe2')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -109,7 +110,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:trek_document_public', [str(self.pk)])
+        return ('trekking:trek_document_public', [], {'pk': self.pk, 'slug': self.slug})
 
     @property
     def related(self):
@@ -467,7 +468,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:poi_document_public', [str(self.pk)])
+        return ('trekking:poi_document_public', [], {'pk': self.pk, 'slug': self.slug})
 
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)

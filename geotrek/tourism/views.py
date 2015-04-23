@@ -3,8 +3,8 @@ import logging
 import requests
 from requests.exceptions import RequestException
 import geojson
-from djgeojson.views import GeoJSONLayerView
 from django.conf import settings
+from django.http import Http404
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_page
@@ -14,20 +14,21 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
-from rest_framework import generics as rest_generics
-from rest_framework import permissions as rest_permissions
+from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.models import DataSource, InformationDesk
+from geotrek.trekking.models import Trek
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
 from .models import TouristicContent, TouristicEvent, TouristicContentCategory
-from .serializers import (TouristicContentCategorySerializer,
-                          TouristicContentSerializer, TouristicEventSerializer)
+from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
+                          InformationDeskSerializer)
 
 
 logger = logging.getLogger(__name__)
@@ -79,36 +80,6 @@ class DataSourceGeoJSON(JSONResponseMixin, DetailView):
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
     def dispatch(self, *args, **kwargs):
         return super(DataSourceGeoJSON, self).dispatch(*args, **kwargs)
-
-
-class InformationDeskGeoJSON(GeoJSONLayerView):
-    model = InformationDesk
-    srid = settings.API_SRID
-    properties = {
-        'id': 'id',
-        'name': 'name',
-        'description': 'description',
-        'photo_url': 'photo_url',
-        'phone': 'phone',
-        'email': 'email',
-        'website': 'website',
-        'street': 'street',
-        'postal_code': 'postal_code',
-        'municipality': 'municipality',
-        'latitude': 'latitude',
-        'longitude': 'longitude',
-        'serializable_type': 'type'
-    }
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(InformationDeskGeoJSON, self).dispatch(*args, **kwargs)
-
-
-class TouristicContentCategoryJSONList(rest_generics.ListAPIView):
-    model = TouristicContentCategory
-    serializer_class = TouristicContentCategorySerializer
-    permission_classes = (rest_permissions.IsAuthenticated,)
 
 
 class TouristicContentLayer(MapEntityLayer):
@@ -300,3 +271,21 @@ class TouristicEventViewSet(MapEntityViewSet):
         qs = qs.filter(published=True)
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
+
+
+class TrekInformationDeskViewSet(viewsets.ModelViewSet):
+    model = InformationDesk
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk, published=True)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')

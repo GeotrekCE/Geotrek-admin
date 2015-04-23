@@ -21,10 +21,10 @@ class PublishableEntityOptions(MapEntityOptions):
         views = super(PublishableEntityOptions, self).scan_views(*args, **kwargs)
         publishable_views = patterns(
             '',
-            url(r'^document/print-%s-(?P<pk>\d+).odt$' % self.modelname,
+            url(r'^api/{name}s/(?P<pk>\d+)/(?P<slug>[-_\w]+).odt$'.format(name=self.modelname),
                 self.document_public_view.as_view(model=self.model),
                 name="%s_document_public" % self.modelname),
-            url(r'^api/{name}/{name}-(?P<pk>\d+).pdf$'.format(name=self.modelname),
+            url(r'^api/{name}s/(?P<pk>\d+)/(?P<slug>[-_\w]+).pdf$'.format(name=self.modelname),
                 self.document_public_pdf_view.as_view(model=self.model),
                 name="%s_printable" % self.modelname),
         )
