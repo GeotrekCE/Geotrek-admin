@@ -24,6 +24,7 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 
     class Meta:
         model = tourism_models.InformationDesk
+        geo_field = 'geom'
         fields = ('name', 'description', 'phone', 'email', 'website',
                   'photo_url', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude', 'type')
