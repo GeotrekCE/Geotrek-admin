@@ -20,7 +20,7 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
-from geotrek.common.views import FormsetMixin, DocumentPublic
+from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 from geotrek.tourism.views import InformationDeskGeoJSON
 
@@ -90,12 +90,8 @@ class TrekFormatList(MapEntityFormat, TrekList):
     ] + AltimetryMixin.COLUMNS
 
 
-class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
+class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     queryset = Trek.objects.existing()
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekGPXDetail, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context):
         gpx_serializer = TrekGPXSerializer()
@@ -105,12 +101,8 @@ class TrekGPXDetail(LastModifiedMixin, BaseDetailView):
         return response
 
 
-class TrekKMLDetail(LastModifiedMixin, BaseDetailView):
+class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     queryset = Trek.objects.existing()
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekKMLDetail, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context):
         trek = self.get_object()
