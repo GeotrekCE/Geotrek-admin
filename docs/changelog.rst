@@ -5,6 +5,10 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
+**Breaking changes**
+
+* Rework API URL schemas
+
 **New features**
 
 * Import framework

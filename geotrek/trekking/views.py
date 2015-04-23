@@ -7,13 +7,13 @@ from django.views.generic import CreateView, ListView
 from django.views.generic.detail import BaseDetailView
 from django.contrib.auth.decorators import login_required
 
-from djgeojson.views import GeoJSONLayerView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, MapEntityViewSet)
 from mapentity.helpers import alphabet_enumeration
 from paperclip.models import Attachment
-from rest_framework import permissions as rest_permissions
+from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -22,7 +22,6 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
-from geotrek.tourism.views import InformationDeskGeoJSON
 
 from .models import Trek, POI, WebLink
 from .filters import TrekFilterSet, POIFilterSet
@@ -96,7 +95,7 @@ class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     def render_to_response(self, context):
         gpx_serializer = TrekGPXSerializer()
         response = HttpResponse(mimetype='application/gpx+xml')
-        response['Content-Disposition'] = 'attachment; filename=trek-%s.gpx' % self.get_object().pk
+        response['Content-Disposition'] = 'attachment; filename=%s.gpx' % self.get_object().slug
         gpx_serializer.serialize([self.get_object()], stream=response, geom_field='geom')
         return response
 
@@ -109,48 +108,6 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         response = HttpResponse(trek.kml(),
                                 content_type='application/vnd.google-earth.kml+xml')
         return response
-
-
-class TrekPOIGeoJSON(LastModifiedMixin, GeoJSONLayerView):
-    model = Trek  # for LastModifiedMixin
-    srid = settings.API_SRID
-    pk_url_kwarg = 'pk'
-    properties = {'pk': 'pk', 'name': 'name', 'description': 'description',
-                  'max_elevation': 'elevation', 'serializable_thumbnail': 'thumbnail',
-                  'serializable_type': 'type', 'serializable_pictures': 'pictures'}
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekPOIGeoJSON, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        try:
-            trek_pk = self.kwargs.get(self.pk_url_kwarg)
-            trek = Trek.objects.get(pk=trek_pk)
-        except Trek.DoesNotExist:
-            raise Http404
-        # All published POIs for this trek
-        return trek.pois.filter(published=True).select_related('type')
-
-
-class TrekInformationDeskGeoJSON(LastModifiedMixin, GeoJSONLayerView):
-    model = Trek
-    srid = settings.API_SRID
-    pk_url_kwarg = 'pk'
-
-    properties = InformationDeskGeoJSON.properties
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(TrekInformationDeskGeoJSON, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        try:
-            trek_pk = self.kwargs.get(self.pk_url_kwarg)
-            trek = Trek.objects.get(pk=trek_pk)
-        except Trek.DoesNotExist:
-            raise Http404
-        return trek.information_desks.all()
 
 
 class TrekDetail(MapEntityDetail):
@@ -392,14 +349,25 @@ class POIViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        trek_pk = self.request.GET.get('trek')
-        if trek_pk:
-            try:
-                trek = Trek.objects.existing().get(pk=trek_pk, published=True)
-            except Trek.DoesNotExist:
-                return POI.objects.none()
-            return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
         return POI.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekPOIViewSet(viewsets.ModelViewSet):
+    model = POI
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(POISerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk, published=True)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class CirkwiTrekView(ListView):
