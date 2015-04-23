@@ -276,7 +276,7 @@ class PublishableMixin(BasePublishableMixin):
 
     @property
     def slug(self):
-        return slugify(self.name)
+        return slugify(self.name) or str(self.pk)
 
     @property
     def name_display(self):
