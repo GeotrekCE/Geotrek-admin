@@ -5,9 +5,14 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
+**Breaking changes**
+
+* Rework API URL schemas
+
 **New features**
 
 * Import framework
+* Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
 
 **Bug fixes**
 

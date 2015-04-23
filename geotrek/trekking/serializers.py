@@ -109,11 +109,10 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 class RelatedTrekSerializer(TranslatedModelSerializer):
     pk = rest_serializers.Field(source='id')
     slug = rest_serializers.Field(source='slug')
-    url = rest_serializers.Field(source='get_detail_url')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'pk', 'slug', 'name', 'url')
+        fields = ('id', 'pk', 'slug', 'name')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
@@ -159,8 +158,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
     points_reference = rest_serializers.SerializerMethodField('get_points_reference')
 
-    poi_layer = rest_serializers.SerializerMethodField('get_poi_layer_url')
-    information_desk_layer = rest_serializers.SerializerMethodField('get_information_desk_layer_url')
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
     structure = StructureSerializer()
@@ -206,9 +203,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
-                  'poi_layer', 'information_desk_layer', 'gpx', 'kml', 'source',
-                  'type1', 'type2', 'category', 'structure', 'treks',
-                  'parent', 'children') + \
+                  'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
+                  'treks', 'parent', 'children') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -225,17 +221,11 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
         return json.loads(geojson)
 
-    def get_poi_layer_url(self, obj):
-        return reverse('trekking:trek_poi_geojson', kwargs={'pk': obj.pk})
-
-    def get_information_desk_layer_url(self, obj):
-        return reverse('trekking:trek_information_desk_geojson', kwargs={'pk': obj.pk})
-
     def get_gpx_url(self, obj):
-        return reverse('trekking:trek_gpx_detail', kwargs={'pk': obj.pk})
+        return reverse('trekking:trek_gpx_detail', kwargs={'pk': obj.pk, 'slug': obj.slug})
 
     def get_kml_url(self, obj):
-        return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
+        return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk, 'slug': obj.slug})
 
     def get_category(self, obj):
         accessibility = getattr(obj, 'accessibility', None)

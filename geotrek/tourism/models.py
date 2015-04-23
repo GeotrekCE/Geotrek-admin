@@ -123,6 +123,8 @@ class InformationDesk(models.Model):
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
 
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 't_b_renseignement'
         verbose_name = _(u"Information desk")
@@ -314,7 +316,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristiccontent_document_public', [str(self.pk)])
+        return ('tourism:touristiccontent_document_public', [], {'pk': self.pk, 'slug': self.slug})
 
     @property
     def districts_display(self):
@@ -417,7 +419,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristicevent_document_public', [str(self.pk)])
+        return ('tourism:touristicevent_document_public', [], {'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):
