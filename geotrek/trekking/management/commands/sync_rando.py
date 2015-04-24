@@ -181,7 +181,7 @@ class Command(BaseCommand):
             raise CommandError('url parameter should start with http://')
         self.rooturl = options['url'][7:]
         self.factory = RequestFactory()
-        self.languages = [lang for lang, name in settings.LANGUAGES]
+        self.languages = settings.MODELTRANSLATION_LANGUAGES
         self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(dst_root))
 
         self.sync()
