@@ -1,6 +1,7 @@
 from optparse import make_option
 import os
 import shutil
+import tempfile
 
 from django.db.models import Q
 from django.conf import settings
@@ -33,7 +34,7 @@ class Command(BaseCommand):
             os.makedirs(dirname)
 
     def sync_view(self, lang, view, name, **kwargs):
-        fullname = os.path.join(self.dst_root, name)
+        fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
         request = self.factory.get('', HTTP_HOST=self.rooturl)
         translation.activate(lang)
@@ -47,47 +48,66 @@ class Command(BaseCommand):
         f = open(fullname, 'w')
         f.write(response.content)
         f.close()
-        self.stdout.write(fullname)
+        if self.verbosity == '2':
+            self.stdout.write(fullname)
 
     def sync_geojson(self, lang, viewset, name):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} {name} GeoJSON".format(lang=lang, name=name))
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
         self.sync_view(lang, view, name)
 
     def sync_pois(self, lang):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} POI".format(lang=lang))
         view = POIViewSet.as_view({'get': 'list'})
         for trek in trekking_models.Trek.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
             self.sync_view(lang, view, name, pk=trek.pk)
 
-    def sync_exports(self, lang, model, view, ext):
+    def sync_object_view(self, lang, model, view, basename_fmt):
         for obj in model.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
             modelname = model._meta.model_name
-            name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), '{slug}.{ext}'.format(slug=obj.slug, ext=ext))
+            name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
             self.sync_view(lang, view, name, pk=obj.pk)
 
     def sync_pdfs(self, lang, model):
-        self.sync_exports(lang, model, DocumentPublicPDF.as_view(model=model), 'pdf')
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} PDF".format(lang=lang))
+        view = DocumentPublicPDF.as_view(model=model)
+        self.sync_object_view(lang, model, view, '{obj.slug}.pdf')
 
-    def sync_profiles(self, treks):
+    def sync_profiles(self, lang, model):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} altimetry profile".format(lang=lang))
         view = ElevationProfile.as_view(model=trekking_models.Trek)
-        for trek in treks:
-            name = os.path.join('api', 'treks', str(trek.pk), 'profile.json')
-            self.sync_view('en', view, name, pk=trek.pk)
+        self.sync_object_view(lang, model, view, 'profile.json')
 
-    def sync_dems(self, treks):
+    def sync_dems(self, lang, model):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} DEM".format(lang=lang))
         view = ElevationArea.as_view(model=trekking_models.Trek)
-        for trek in treks:
-            name = os.path.join('api', 'treks', str(trek.pk), 'dem.json')
-            self.sync_view('en', view, name, pk=trek.pk)
+        self.sync_object_view(lang, model, view, 'dem.json')
+
+    def sync_trek_gpx(self, lang):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} GPX".format(lang=lang))
+        self.sync_object_view(lang, trekking_models.Trek, TrekGPXDetail.as_view(), '{obj.slug}.gpx')
+
+    def sync_trek_kml(self, lang):
+        if self.verbosity >= '1':
+            self.stdout.write("Sync {lang} KML".format(lang=lang))
+        self.sync_object_view(lang, trekking_models.Trek, TrekKMLDetail.as_view(), '{obj.slug}.kml')
 
     def sync_file(self, name, src_root, url):
         url = url.strip('/')
         src = os.path.join(src_root, name)
-        dst = os.path.join(self.dst_root, url, name)
+        dst = os.path.join(self.tmp_root, url, name)
         self.mkdirs(dst)
         shutil.copyfile(src, dst)
-        self.stdout.write(dst)
+        if self.verbosity == '2':
+            self.stdout.write(dst)
 
     def sync_static_file(self, name):
         self.sync_file(name, settings.STATIC_ROOT, settings.STATIC_URL)
@@ -117,31 +137,21 @@ class Command(BaseCommand):
             for attachment in obj.files:
                 self.sync_media_file(attachment.attachment_file)
 
-    def handle(self, *args, **options):
-        if len(args) < 1:
-            raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = args[0]
-        if(options['url'][:7] != 'http://'):
-            raise CommandError('url parameter should start with http://')
-        self.rooturl = options['url'][7:]
-
-        self.factory = RequestFactory()
-        self.languages = [lang for lang, name in settings.LANGUAGES]
-
+    def sync(self):
         for lang in self.languages:
             self.sync_geojson(lang, TrekViewSet, 'treks')
             self.sync_geojson(lang, FlatPageViewSet, 'flatpages')
             self.sync_pois(lang)
-            self.sync_exports(lang, trekking_models.Trek, TrekGPXDetail.as_view(), 'gpx')
-            self.sync_exports(lang, trekking_models.Trek, TrekKMLDetail.as_view(), 'kml')
+            self.sync_trek_gpx(lang)
+            self.sync_trek_kml(lang)
             self.sync_pdfs(lang, trekking_models.Trek)
+            self.sync_profiles(lang, trekking_models.Trek)
+            self.sync_dems(lang, trekking_models.Trek)
 
-        treks = trekking_models.Trek.objects.filter(self.any_published_q())
-        self.sync_profiles(treks)
-        self.sync_dems(treks)
+        if self.verbosity >= '1':
+            self.stdout.write("Sync trekking pictograms")
 
         self.sync_static_file('trekking/trek.svg')
-
         self.sync_pictograms(common_models.Theme)
         self.sync_pictograms(trekking_models.TrekNetwork)
         self.sync_pictograms(trekking_models.Practice)
@@ -151,5 +161,38 @@ class Command(BaseCommand):
         self.sync_pictograms(trekking_models.WebLinkCategory)
         self.sync_pictograms(trekking_models.POIType)
 
+        if self.verbosity >= '1':
+            self.stdout.write("Sync trekking attachments")
+
         self.sync_attachments(trekking_models.Trek)
         self.sync_attachments(trekking_models.POI)
+
+    def handle(self, *args, **options):
+        self.verbosity = options.get('verbosity', '1')
+        if len(args) < 1:
+            raise CommandError(u"Missing parameter destination directory")
+        dst_root = args[0]
+        if os.path.exists(dst_root):
+            existing = set([os.path.basename(p) for p in os.listdir(dst_root)])
+            remaining = existing - set(('api', 'media', 'static'))
+            if remaining:
+                raise CommandError(u"Destination directory contains extra data")
+        if(options['url'][:7] != 'http://'):
+            raise CommandError('url parameter should start with http://')
+        self.rooturl = options['url'][7:]
+        self.factory = RequestFactory()
+        self.languages = [lang for lang, name in settings.LANGUAGES]
+        self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(dst_root))
+
+        self.sync()
+
+        if os.path.exists(dst_root):
+            tmp_root2 = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(dst_root))
+            os.rename(dst_root, os.path.join(tmp_root2, 'to_delete'))
+            os.rename(self.tmp_root, dst_root)
+            shutil.rmtree(tmp_root2)
+        else:
+            os.rename(self.tmp_root, dst_root)
+
+        if self.verbosity >= '1':
+            self.stdout.write('Done')
