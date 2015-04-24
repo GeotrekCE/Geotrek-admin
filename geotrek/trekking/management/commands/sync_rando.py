@@ -140,6 +140,7 @@ class Command(BaseCommand):
     def sync(self):
         for lang in self.languages:
             self.sync_geojson(lang, TrekViewSet, 'treks')
+            self.sync_geojson(lang, POIViewSet, 'pois')
             self.sync_geojson(lang, FlatPageViewSet, 'flatpages')
             self.sync_pois(lang)
             self.sync_trek_gpx(lang)
