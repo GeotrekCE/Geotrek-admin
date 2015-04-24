@@ -4,8 +4,8 @@ from geotrek.trekking.management.commands.sync_rando import Command as BaseComma
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
-        super(Command, self).handle(*args, **options)
+    def sync(self):
+        super(Command, self).sync()
 
         for lang in self.languages:
             self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
@@ -13,8 +13,10 @@ class Command(BaseCommand):
             self.sync_pdfs(lang, tourism_models.TouristicContent)
             self.sync_pdfs(lang, tourism_models.TouristicEvent)
 
-        self.sync_static_file('tourism/touristicevent.svg')
+        if self.verbosity >= '1':
+            self.stdout.write("Sync tourism pictograms")
 
+        self.sync_static_file('tourism/touristicevent.svg')
         self.sync_pictograms(tourism_models.InformationDeskType)
         self.sync_pictograms(tourism_models.TouristicContentCategory)
         self.sync_pictograms(tourism_models.TouristicContentType)
