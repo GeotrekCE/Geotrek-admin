@@ -60,26 +60,23 @@ class Command(BaseCommand):
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
             self.sync_view(lang, view, name, pk=trek.pk)
 
-    def sync_exports(self, lang, model, view, ext):
+    def sync_object_view(self, lang, model, view, basename_fmt):
         for obj in model.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
             modelname = model._meta.model_name
-            name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), '{slug}.{ext}'.format(slug=obj.slug, ext=ext))
+            name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
             self.sync_view(lang, view, name, pk=obj.pk)
 
     def sync_pdfs(self, lang, model):
-        self.sync_exports(lang, model, DocumentPublicPDF.as_view(model=model), 'pdf')
+        view = DocumentPublicPDF.as_view(model=model)
+        self.sync_object_view(lang, model, view, '{obj.slug}.pdf')
 
-    def sync_profiles(self, treks):
+    def sync_profiles(self, lang, model):
         view = ElevationProfile.as_view(model=trekking_models.Trek)
-        for trek in treks:
-            name = os.path.join('api', 'treks', str(trek.pk), 'profile.json')
-            self.sync_view('en', view, name, pk=trek.pk)
+        self.sync_object_view(lang, model, view, 'profile.json')
 
-    def sync_dems(self, treks):
+    def sync_dems(self, lang, model):
         view = ElevationArea.as_view(model=trekking_models.Trek)
-        for trek in treks:
-            name = os.path.join('api', 'treks', str(trek.pk), 'dem.json')
-            self.sync_view('en', view, name, pk=trek.pk)
+        self.sync_object_view(lang, model, view, 'dem.json')
 
     def sync_file(self, name, src_root, url):
         url = url.strip('/')
@@ -132,13 +129,11 @@ class Command(BaseCommand):
             self.sync_geojson(lang, TrekViewSet, 'treks')
             self.sync_geojson(lang, FlatPageViewSet, 'flatpages')
             self.sync_pois(lang)
-            self.sync_exports(lang, trekking_models.Trek, TrekGPXDetail.as_view(), 'gpx')
-            self.sync_exports(lang, trekking_models.Trek, TrekKMLDetail.as_view(), 'kml')
+            self.sync_object_view(lang, trekking_models.Trek, TrekGPXDetail.as_view(), '{obj.slug}.gpx')
+            self.sync_object_view(lang, trekking_models.Trek, TrekKMLDetail.as_view(), '{obj.slug}.kml')
             self.sync_pdfs(lang, trekking_models.Trek)
-
-        treks = trekking_models.Trek.objects.filter(self.any_published_q())
-        self.sync_profiles(treks)
-        self.sync_dems(treks)
+            self.sync_profiles(lang, trekking_models.Trek)
+            self.sync_dems(lang, trekking_models.Trek)
 
         self.sync_static_file('trekking/trek.svg')
 
