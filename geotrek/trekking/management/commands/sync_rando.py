@@ -33,10 +33,10 @@ class Command(BaseCommand):
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-    def sync_view(self, lang, view, name, **kwargs):
+    def sync_view(self, lang, view, name, url='/', **kwargs):
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
-        request = self.factory.get('', HTTP_HOST=self.rooturl)
+        request = self.factory.get(url, HTTP_HOST=self.rooturl)
         translation.activate(lang)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             self.stdout.write("Sync {lang} {name} GeoJSON".format(lang=lang, name=name))
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
-        self.sync_view(lang, view, name)
+        self.sync_view(lang, view, name, url='/?format=geojson')
 
     def sync_pois(self, lang):
         if self.verbosity >= '1':
