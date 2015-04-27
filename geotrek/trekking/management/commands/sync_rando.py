@@ -62,12 +62,12 @@ class Command(BaseCommand):
         if self.verbosity >= '1':
             self.stdout.write("Sync {lang} POI".format(lang=lang))
         view = POIViewSet.as_view({'get': 'list'})
-        for trek in trekking_models.Trek.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
+        for trek in trekking_models.Trek.objects.existing().filter(**{'published_{lang}'.format(lang=lang): True}):
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
             self.sync_view(lang, view, name, url='/?format=geojson', pk=trek.pk)
 
     def sync_object_view(self, lang, model, view, basename_fmt):
-        for obj in model.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
+        for obj in model.objects.existing().filter(**{'published_{lang}'.format(lang=lang): True}):
             modelname = model._meta.model_name
             name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
             self.sync_view(lang, view, name, pk=obj.pk)
