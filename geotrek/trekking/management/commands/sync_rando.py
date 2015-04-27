@@ -64,7 +64,7 @@ class Command(BaseCommand):
         view = POIViewSet.as_view({'get': 'list'})
         for trek in trekking_models.Trek.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, pk=trek.pk)
+            self.sync_view(lang, view, name, url='/?format=geojson', pk=trek.pk)
 
     def sync_object_view(self, lang, model, view, basename_fmt):
         for obj in model.objects.filter(**{'published_{lang}'.format(lang=lang): True}):
