@@ -113,7 +113,8 @@ class Command(BaseCommand):
         self.sync_file(name, settings.STATIC_ROOT, settings.STATIC_URL)
 
     def sync_media_file(self, field):
-        self.sync_file(field.name, settings.MEDIA_ROOT, settings.MEDIA_URL)
+        if field.name:
+            self.sync_file(field.name, settings.MEDIA_ROOT, settings.MEDIA_URL)
 
     def sync_pictograms(self, model):
         for obj in model.objects.exclude(pictogram=''):
