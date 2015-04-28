@@ -4,7 +4,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.functional import lazy
 from django.utils.formats import date_format
 
@@ -316,7 +316,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristiccontent_document_public', [], {'pk': self.pk, 'slug': self.slug})
+        return ('tourism:touristiccontent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def districts_display(self):
@@ -419,7 +419,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristicevent_document_public', [], {'pk': self.pk, 'slug': self.slug})
+        return ('tourism:touristicevent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):

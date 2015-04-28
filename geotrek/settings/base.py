@@ -183,6 +183,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'geotrek.authent.middleware.LocaleForcedMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'geotrek.common.middleware.APILocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -394,6 +395,7 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
+    'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

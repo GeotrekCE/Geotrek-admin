@@ -23,13 +23,13 @@ class AltimetryEntityOptions(MapEntityOptions):
         views = super(AltimetryEntityOptions, self).scan_views(*args, **kwargs)
         altimetry_views = patterns(
             '',
-            url(r'^api/{modelname}s/(?P<pk>\d+)/profile.json$'.format(modelname=self.modelname),
+            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/profile.json$'.format(modelname=self.modelname),
                 self.elevation_profile_view.as_view(model=self.model),
                 name="%s_profile" % self.modelname),
-            url(r'^api/{modelname}s/(?P<pk>\d+)/dem.json$'.format(modelname=self.modelname),
+            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/dem.json$'.format(modelname=self.modelname),
                 self.elevation_area_view.as_view(model=self.model),
                 name="%s_elevation_area" % self.modelname),
-            url(r'^api/{modelname}s/(?P<pk>\d+)/profile.svg$'.format(modelname=self.modelname),
+            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/profile.svg$'.format(modelname=self.modelname),
                 self.elevation_chart_view.as_view(model=self.model),
                 name='%s_profile_svg' % self.modelname),
         )

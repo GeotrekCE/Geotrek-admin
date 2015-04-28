@@ -8,13 +8,13 @@ casper.test.begin('Path exports files', function(test) {
                          'Detail page is HTML');
     });
 
-    casper.thenOpen(utils.baseurl + '/api/path/1/profile.svg', function(response) {
+    casper.thenOpen(utils.baseurl + '/api/en/path/1/profile.svg', function(response) {
         test.assertEqual(200, response.status, 'Image profile export works');
         test.assertEqual('image/svg+xml', response.contentType,
                          'Profile is SVG');
     });
 
-    casper.thenOpen(utils.baseurl + '/convert/?url=/api/path/1/profile.svg&from=image/svg%2Bxml&to=image/png', function(response) {
+    casper.thenOpen(utils.baseurl + '/convert/?url=/api/en/path/1/profile.svg&from=image/svg%2Bxml&to=image/png', function(response) {
         test.assertEqual(200, response.status, 'Image profile conversion works');
         test.assertMatch(response.contentType, /^image\/png/,
                          'Profile can be converted to PNG');

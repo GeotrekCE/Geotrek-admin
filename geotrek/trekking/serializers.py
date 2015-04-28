@@ -6,6 +6,7 @@ import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import translation
+from django.utils.translation import get_language
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
@@ -222,10 +223,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return json.loads(geojson)
 
     def get_gpx_url(self, obj):
-        return reverse('trekking:trek_gpx_detail', kwargs={'pk': obj.pk, 'slug': obj.slug})
+        return reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_kml_url(self, obj):
-        return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk, 'slug': obj.slug})
+        return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_category(self, obj):
         accessibility = getattr(obj, 'accessibility', None)
