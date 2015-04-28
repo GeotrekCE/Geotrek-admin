@@ -16,9 +16,9 @@ from . import serializers as trekking_serializers
 
 urlpatterns = patterns(
     '',
-    url(r'^api/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
-    url(r'^api/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
-    url(r'^api/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).kml$', TrekKMLDetail.as_view(), name="trek_kml_detail"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).kml$', TrekKMLDetail.as_view(), name="trek_kml_detail"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
     url(r'^api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
     url(r'^api/cirkwi/pois.xml', CirkwiPOIView.as_view()),

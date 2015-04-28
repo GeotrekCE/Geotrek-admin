@@ -18,6 +18,7 @@ class TranslationResetMixin(object):
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
+    api_prefix = '/api/en/'
 
     def get_bad_data(self):
         return {'topology': 'doh!'}, _(u'Topology is not valid.')

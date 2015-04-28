@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models as django_db_models
+from django.utils.translation import get_language
 
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
@@ -52,7 +53,7 @@ class PublishableSerializerMixin(BasePublishableSerializerMixin):
         appname = obj._meta.app_label
         modelname = obj._meta.module_name
         return reverse('%s:%s_printable' % (appname, modelname),
-                       kwargs={'pk': obj.pk, 'slug': obj.slug})
+                       kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_filelist_url(self, obj):
         appname = obj._meta.app_label

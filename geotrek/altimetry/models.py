@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.template.defaultfilters import floatformat
 
 from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
@@ -59,7 +59,7 @@ class AltimetryMixin(models.Model):
         """
         app_label = self._meta.app_label
         model_name = self._meta.module_name
-        return ('%s:%s_profile_svg' % (app_label, model_name), [str(self.pk)])
+        return ('%s:%s_profile_svg' % (app_label, model_name), [], {'lang': get_language(), 'pk': self.pk})
 
     def get_elevation_chart_path(self, language):
         """Path to the PNG version of elevation chart.
