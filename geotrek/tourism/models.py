@@ -165,17 +165,22 @@ class InformationDesk(models.Model):
         return None
 
     @property
-    def photo_url(self):
+    def thumbnail(self):
         if not self.photo:
             return None
         thumbnailer = get_thumbnailer(self.photo)
         try:
-            thumb_detail = thumbnailer.get_thumbnail(aliases.get('thumbnail'))
-            thumb_url = os.path.join(settings.MEDIA_URL, thumb_detail.name)
+            return thumbnailer.get_thumbnail(aliases.get('thumbnail'))
         except InvalidImageFormatError:
-            thumb_url = None
             logger.error(_("Image %s invalid or missing from disk.") % self.photo)
-        return thumb_url
+            return None
+
+    @property
+    def photo_url(self):
+        thumbnail = self.thumbnail
+        if not thumbnail:
+            return None
+        return os.path.join(settings.MEDIA_URL, thumbnail.name)
 
 
 GEOMETRY_TYPES = Choices(

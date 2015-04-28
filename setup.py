@@ -33,6 +33,7 @@ setup(
         'djangorestframework-gis',
         'django-embed-video',
         'xlrd',
+        'landez',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
