@@ -331,7 +331,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         self._build_object()
 
         self.pk = self.content.pk
-        url = '/api/{model}s/{pk}.json'.format(model=self.content._meta.module_name, pk=self.pk)
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.module_name, pk=self.pk)
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
@@ -552,13 +552,13 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         with open(content.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
 
-        url = '/api/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
 
         AttachmentFactory.create(obj=content, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        url = '/api/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
@@ -566,20 +566,20 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_not_published_document(self):
         content = TouristicContentFactory.create(published=False)
-        url = '/api/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)
-        url = '/api/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -591,13 +591,13 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         with open(event.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
 
-        url = '/api/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
 
         AttachmentFactory.create(obj=event, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        url = '/api/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
@@ -605,19 +605,19 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = '/api/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_not_published_document_odt(self):
         content = TouristicEventFactory.create(published=False)
-        url = '/api/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicEventFactory.create(published=False)
-        url = '/api/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)

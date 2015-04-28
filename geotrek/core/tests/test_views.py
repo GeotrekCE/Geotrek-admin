@@ -99,7 +99,7 @@ class PathViewsTest(CommonTest):
     def test_elevation_area_json(self):
         self.login()
         path = self.modelfactory.create()
-        url = reverse('core:path_elevation_area', kwargs={'pk': path.pk})
+        url = '/api/en/paths/{pk}/dem.json'.format(pk=path.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')

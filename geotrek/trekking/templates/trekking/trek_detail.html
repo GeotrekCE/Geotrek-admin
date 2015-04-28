@@ -7,10 +7,10 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-mini" href="{% url 'trekking:trek_gpx_detail' object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-mini" href="{% url 'trekking:trek_kml_detail' object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
 
-    <a class="btn btn-mini" href="{% url 'trekking:trek_printable' object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
 {% endblock download %}
 
 
@@ -220,7 +220,7 @@
 
             //
             // Trek POIs layer
-            $.getJSON('{% url 'trekking:trek_poi_geojson' object.pk %}', function (data) {
+            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var pois = new POILayer(data, {
                     iconSize: {{ view.icon_sizes.POI }}
                 });

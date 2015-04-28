@@ -119,7 +119,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(702000 6602000)' % settings.SRID, published=True)  # too far
 
         self.pk = self.poi.pk
-        url = '/api/pois/%s.json' % self.pk
+        url = '/api/en/pois/%s.json' % self.pk
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
@@ -285,7 +285,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertNotEqual(poi.thumbnail, None)
         self.assertEqual(len(trek.pois), 2)
 
-        url = '/api/treks/{pk}/pois.geojson'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         poislayer = json.loads(response.content)
@@ -294,28 +294,28 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()
-        url = '/api/treks/{pk}/slug.kml'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/slug.kml'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)
-        url = '/api/treks/{pk}/profile.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_elevation_area_json(self):
         trek = TrekFactory.create(published=False)
-        url = '/api/treks/{pk}/dem.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_profile_svg(self):
         trek = TrekFactory.create()
-        url = '/api/treks/{pk}/profile.svg'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/profile.svg'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
@@ -379,27 +379,27 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
 
     def test_profile_json(self):
         trek = TrekFactory.create(published=True)
-        url = '/api/treks/{pk}/profile.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)
-        url = '/api/treks/{pk}/profile.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_elevation_area_json(self):
         trek = TrekFactory.create(published=True)
-        url = '/api/treks/{pk}/dem.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_elevation_area_json(self):
         trek = TrekFactory.create(published=False)
-        url = '/api/treks/{pk}/dem.json'.format(pk=trek.pk)
+        url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -479,26 +479,26 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.child2 = TrekFactory.create(published=True, parent=self.trek)
 
         self.pk = self.trek.pk
-        url = '/api/treks/{pk}.json'.format(pk=self.pk)
+        url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
     def test_related_urls(self):
 
         self.assertEqual(self.result['elevation_area_url'],
-                         '/api/treks/{pk}/dem.json'.format(pk=self.pk))
+                         '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
         self.assertEqual(self.result['map_image_url'],
                          '/image/trek-%s.png' % self.pk)
         self.assertEqual(self.result['altimetric_profile'],
-                         '/api/treks/{pk}/profile.json'.format(pk=self.pk))
+                         '/api/en/treks/{pk}/profile.json'.format(pk=self.pk))
         self.assertEqual(self.result['filelist_url'],
                          '/paperclip/get/trekking/trek/%s/' % self.pk)
         self.assertEqual(self.result['gpx'],
-                         '/api/treks/{pk}/{slug}.gpx'.format(pk=self.pk, slug=self.trek.slug))
+                         '/api/en/treks/{pk}/{slug}.gpx'.format(pk=self.pk, slug=self.trek.slug))
         self.assertEqual(self.result['kml'],
-                         '/api/treks/{pk}/{slug}.kml'.format(pk=self.pk, slug=self.trek.slug))
+                         '/api/en/treks/{pk}/{slug}.kml'.format(pk=self.pk, slug=self.trek.slug))
         self.assertEqual(self.result['printable'],
-                         '/api/treks/{pk}/{slug}.pdf'.format(pk=self.pk, slug=self.trek.slug))
+                         '/api/en/treks/{pk}/{slug}.pdf'.format(pk=self.pk, slug=self.trek.slug))
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
@@ -704,8 +704,8 @@ class TrekGPXTest(TrekkingManagerTest):
             poi.description_it = poi.description
             poi.save()
 
-        url = '/api/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
-        self.response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='it-IT')
+        url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
+        self.response = self.client.get(url)
         self.parsed = BeautifulSoup(self.response.content)
 
     def tearDown(self):
@@ -719,7 +719,7 @@ class TrekGPXTest(TrekkingManagerTest):
         self.assertEqual(len(self.parsed.findAll('rte')), 1)
         self.assertEqual(len(self.parsed.findAll('rtept')), 2)
 
-    def test_gpx_translated_using_accept_language(self):
+    def test_gpx_translated_using_another_language(self):
         route = self.parsed.findAll('rte')[0]
         description = route.find('desc').string
         self.assertTrue(description.startswith(self.trek.description_it))
@@ -751,11 +751,10 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         self.client.logout()
 
     def test_json_translation(self):
-        url = '/api/treks/{pk}.json'.format(pk=self.trek.pk)
-
-        for lang, expected in [('fr-FR', self.trek.name_fr),
-                               ('it-IT', 404)]:
-            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+        for lang, expected in [('fr', self.trek.name_fr),
+                               ('it', 404)]:
+            url = '/api/{lang}/treks/{pk}.json'.format(lang=lang, pk=self.trek.pk)
+            response = self.client.get(url)
             if expected == 404:
                 self.assertEqual(response.status_code, 404)
             else:
@@ -764,10 +763,10 @@ class TrekViewTranslationTest(TrekkingManagerTest):
                 self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
-        url = reverse('trekking:trek_layer')
+        url = '/api/trek/trek.geojson'
 
-        for lang, expected in [('fr-FR', self.trek.name_fr),
-                               ('it-IT', self.trek.name_it)]:
+        for lang, expected in [('fr', self.trek.name_fr),
+                               ('it', self.trek.name_it)]:
             self.login()
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
@@ -776,10 +775,10 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.client.logout()  # Django 1.6 keeps language in session
 
     def test_published_translation(self):
-        url = reverse('trekking:trek_layer')
+        url = '/api/trek/trek.geojson'
 
-        for lang, expected in [('fr-FR', self.trek.published_fr),
-                               ('it-IT', self.trek.published_it)]:
+        for lang, expected in [('fr', self.trek.published_fr),
+                               ('it', self.trek.published_it)]:
             self.login()
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
@@ -804,11 +803,11 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         # Check that it applies to GeoJSON also :
         self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
-        for lang, expected in [('fr-FR', poi.name_fr),
-                               ('it-IT', poi.name_it)]:
-            url = '/api/treks/{pk}/pois.geojson'.format(pk=trek.pk)
+        for lang, expected in [('fr', poi.name_fr),
+                               ('it', poi.name_it)]:
+            url = '/api/{lang}/treks/{pk}/pois.geojson'.format(lang=lang, pk=trek.pk)
             self.login()
-            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             obj = json.loads(response.content)
             jsonpoi = obj.get('features', [])[0]

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 
 import simplekml
 from mapentity.models import MapEntityMixin
@@ -110,7 +110,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:trek_document_public', [], {'pk': self.pk, 'slug': self.slug})
+        return ('trekking:trek_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def related(self):
@@ -468,7 +468,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:poi_document_public', [], {'pk': self.pk, 'slug': self.slug})
+        return ('trekking:poi_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)
