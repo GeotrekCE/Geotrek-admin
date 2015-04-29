@@ -82,6 +82,10 @@ class Command(BaseCommand):
     def sync_global_tiles(self):
         """ Creates a tiles file on the global extent.
         """
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mzip/tiles.zip\x1b[0m ...", ending="")
+            self.stdout.flush()
+
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
         logger.info("Global extent is %s" % unicode(global_extent))
@@ -97,12 +101,17 @@ class Command(BaseCommand):
         tiles.add_coverage(bbox=global_extent,
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
-        logger.info('%s done.' % global_file)
+
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[3Dzipped")
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
-        logger.info("Build tiles file for trek '%s'..." % trek.name)
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mzip/tiles-{pk}.zip\x1b[0m ...".format(pk=trek.pk), ending="")
+            self.stdout.flush()
+
         trek_file = os.path.join(self.tmp_root, 'zip', 'tiles-%s.zip' % trek.id)
 
         def _radius2bbox(lng, lat, radius):
@@ -128,9 +137,14 @@ class Command(BaseCommand):
             tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
 
         tiles.run()
-        logger.info('%s done.' % trek_file)
+
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[3Dzipped")
 
     def sync_view(self, lang, view, name, url='/', zipfile=None, **kwargs):
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
+            self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
         request = self.factory.get(url, HTTP_HOST=self.host)
@@ -148,11 +162,9 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(fullname, name)
         if self.verbosity == '2':
-            self.stdout.write(fullname)
+            self.stdout.write(u"\x1b[3Dgenerated")
 
     def sync_geojson(self, lang, viewset, name, zipfile=None):
-        if self.verbosity >= '1':
-            self.stdout.write("Sync {lang} {name} GeoJSON".format(lang=lang, name=name))
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
         self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile)
@@ -192,7 +204,7 @@ class Command(BaseCommand):
     def sync_kml(self, lang, obj):
         self.sync_object_view(lang, obj, TrekKMLDetail.as_view(), '{obj.slug}.kml')
 
-    def sync_file(self, name, src_root, url, zipfile=None):
+    def sync_file(self, lang, name, src_root, url, zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
         dst = os.path.join(self.tmp_root, url, name)
@@ -201,18 +213,18 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == '2':
-            self.stdout.write(dst)
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m copied".format(lang=lang, name=name))
 
-    def sync_static_file(self, name):
-        self.sync_file(name, settings.STATIC_ROOT, settings.STATIC_URL)
+    def sync_static_file(self, lang, name):
+        self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
 
-    def sync_media_file(self, field, zipfile=None):
+    def sync_media_file(self, lang, field, zipfile=None):
         if field and field.name:
-            self.sync_file(field.name, settings.MEDIA_ROOT, settings.MEDIA_URL, zipfile=zipfile)
+            self.sync_file(lang, field.name, settings.MEDIA_ROOT, settings.MEDIA_URL, zipfile=zipfile)
 
-    def sync_pictograms(self, model, zipfile=None):
+    def sync_pictograms(self, lang, model, zipfile=None):
         for obj in model.objects.exclude(pictogram=''):
-            self.sync_media_file(obj.pictogram, zipfile=zipfile)
+            self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
     def sync_trek(self, lang, trek):
         zipname = os.path.join('zip', lang, 'trek-%s.zip' % trek.pk)
@@ -228,16 +240,19 @@ class Command(BaseCommand):
         self.sync_profile_png(lang, trek, zipfile=self.zipfile)
         self.sync_dem(lang, trek)
         for desk in trek.information_desks.all():
-            self.sync_media_file(desk.thumbnail, zipfile=self.trek_zipfile)
+            self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
-            if poi.pictures:
-                self.sync_media_file(poi.pictures[0].attachment_file, zipfile=self.trek_zipfile)
-            for picture in poi.pictures[1:]:
-                self.sync_media_file(picture.attachment_file)
-        for picture in trek.pictures:
-            self.sync_media_file(picture.attachment_file, zipfile=self.trek_zipfile)
+            if poi.resized_pictures:
+                self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
+            for picture, resized in poi.resized_pictures[1:]:
+                self.sync_media_file(lang, resized)
+        for picture, resized in trek.resized_pictures:
+            self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
 
         self.close_zip(self.trek_zipfile, zipname)
+
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m zipped".format(lang=lang, name=zipname))
 
     def close_zip(self, zipfile, name):
         oldzipfilename = os.path.join(self.dst_root, name)
@@ -269,15 +284,15 @@ class Command(BaseCommand):
         self.sync_geojson(lang, TrekViewSet, 'treks', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois')
         self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
-        self.sync_static_file('trekking/trek.svg')
-        self.sync_pictograms(common_models.Theme, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.TrekNetwork, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.Practice, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.Accessibility, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.DifficultyLevel, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.POIType, zipfile=self.zipfile)
-        self.sync_pictograms(trekking_models.Route)
-        self.sync_pictograms(trekking_models.WebLinkCategory)
+        self.sync_static_file(lang, 'trekking/trek.svg')
+        self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.DifficultyLevel, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.Route)
+        self.sync_pictograms(lang, trekking_models.WebLinkCategory)
 
         treks = trekking_models.Trek.objects.existing()
         treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
@@ -287,12 +302,19 @@ class Command(BaseCommand):
 
         self.close_zip(self.zipfile, zipname)
 
-    def sync(self):
-        # FIXME: date of last modification for zip files
+        if self.verbosity == '2':
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m zipped".format(lang=lang, name=zipname))
+
+    def sync_tiles(self):
+        if self.skip_tiles:
+            return
         self.sync_global_tiles()
-        for trek in trekking_models.Trek.objects.existing():
+        for trek in trekking_models.Trek.objects.existing().order_by('pk'):
             if trek.any_published:
                 self.sync_trek_tiles(trek)
+
+    def sync(self):
+        self.sync_tiles()
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             self.sync_trekking(lang)
@@ -314,6 +336,7 @@ class Command(BaseCommand):
         self.factory = RequestFactory()
         self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
         self.skip_pdf = options['skip_pdf']
+        self.skip_tiles = options['skip_tiles']
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},
