@@ -213,7 +213,7 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m copied".format(lang=lang, name=name))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m copied".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
