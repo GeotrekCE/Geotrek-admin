@@ -4,6 +4,7 @@ import os
 import re
 import requests
 import xlrd
+import xml.etree.ElementTree as ET
 
 from django.db import models
 from django.conf import settings
@@ -22,11 +23,19 @@ from paperclip.models import Attachment, attachment_upload
 from geotrek.common.models import FileType
 
 
-class FatalImportError(Exception):
+class ImportError(Exception):
     pass
 
 
-class ImportWarning(Exception):
+class GlobalImportError(ImportError):
+    pass
+
+
+class RowImportError(ImportError):
+    pass
+
+
+class ValueImportError(ImportError):
     pass
 
 
@@ -38,7 +47,7 @@ class Parser(object):
     separator = '+'
     eid = None
     fields = None
-    m2m_fields = None
+    m2m_fields = {}
     constant_fields = {}
     non_fields = {}
     natural_keys = {}
@@ -66,8 +75,6 @@ class Parser(object):
                 for f in self.model._meta.fields
                 if not isinstance(f, TranslationField)
             }
-
-        if self.m2m_fields is None:
             self.m2m_fields = {
                 f.name: force_text(f.verbose_name)
                 for f in self.model._meta.many_to_many
@@ -96,17 +103,19 @@ class Parser(object):
                 try:
                     val.append(row[subsrc])
                 except KeyError:
-                    raise ImportWarning(_(u"Missing field '{src}'").format(src=subsrc))
+                    raise ValueImportError(_(u"Missing field '{src}'").format(src=subsrc))
         else:
             try:
                 val = row[src]
             except KeyError:
-                raise ImportWarning(_(u"Missing field '{src}'").format(src=src))
+                raise ValueImportError(_(u"Missing field '{src}'").format(src=src))
         return val
 
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field_by_name(dst)[0]
-        if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)) and dst in self.natural_keys:
+        if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
+            if dst not in self.natural_keys:
+                raise ValueImportError(_(u"Destination field '{dst}' not in natural keys configuration").format(dst=dst))
             to = field.rel.to
             natural_key = self.natural_keys[dst]
             kwargs = self.field_options.get(dst, {})
@@ -127,26 +136,34 @@ class Parser(object):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
             val = self.apply_filter(dst, src, val)
-        if dst in self.m2m_fields:
-            old = set(getattr(self.obj, dst).all())
-            val = set(val)
+        if hasattr(self.obj, dst):
+            if dst in self.m2m_fields:
+                old = set(getattr(self.obj, dst).all())
+                val = set(val)
+            else:
+                old = getattr(self.obj, dst)
+            if old != val:
+                setattr(self.obj, dst, val)
+                return True
+            else:
+                return False
         else:
-            old = getattr(self.obj, dst)
-        if old != val:
             setattr(self.obj, dst, val)
             return True
-        return False
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
-            src = self.normalize_src(src)
-            try:
-                val = self.get_val(row, src)
-            except ImportWarning as warning:
-                if self.warn_on_missing_fields:
-                    self.add_warning(unicode(warning))
-                continue
+            if dst in self.constant_fields:
+                val = src
+            else:
+                src = self.normalize_src(src)
+                try:
+                    val = self.get_val(row, src)
+                except ValueImportError as warning:
+                    if self.warn_on_missing_fields:
+                        self.add_warning(unicode(warning))
+                    continue
             if non_field:
                 modified = self.parse_non_field(dst, src, val)
             else:
@@ -159,9 +176,12 @@ class Parser(object):
         return updated
 
     def parse_obj(self, row, operation):
-        for dst, val in self.constant_fields.items():
-            setattr(self.obj, dst, val)
-        update_fields = self.parse_fields(row, self.fields)
+        try:
+            update_fields = self.parse_fields(row, self.fields)
+            update_fields += self.parse_fields(row, self.constant_fields)
+        except RowImportError as e:
+            self.add_warning(e)
+            return
         if operation == u"created":
             self.obj.save()
         else:
@@ -179,12 +199,12 @@ class Parser(object):
         try:
             eid_src = self.fields[self.eid]
         except KeyError:
-            raise FatalImportError(_(u"Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
+            raise GlobalImportError(_(u"Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
         eid_src = self.normalize_field_name(eid_src)
         try:
             eid_val = row[eid_src]
         except KeyError:
-            raise FatalImportError(_(u"Missing id field '{eid_src}'").format(eid_src=eid_src))
+            raise GlobalImportError(_(u"Missing id field '{eid_src}'").format(eid_src=eid_src))
         if hasattr(self, 'filter_{0}'.format(self.eid)):
             eid_val = getattr(self, 'filter_{0}'.format(self.eid))(eid_src, eid_val)
         self.eid_src = eid_src
@@ -212,7 +232,7 @@ class Parser(object):
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
-        self.nb_success += 1
+        self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb)
 
@@ -246,17 +266,22 @@ class Parser(object):
                 val = mapping[val]
         return val
 
-    def filter_fk(self, src, val, model, field, mapping=None, partial=False):
+    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False):
         val = self.get_mapping(src, val, mapping, partial)
         if val is None:
             return None
+        if create:
+            val, created = model.objects.get_or_create(**{field: val})
+            if created:
+                self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=val))
+            return val
         try:
             return model.objects.get(**{field: val})
         except model.DoesNotExist:
             self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
-    def filter_m2m(self, src, val, model, field, mapping=None, partial=False):
+    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
         if not val:
             return []
         val = val.split(self.separator)
@@ -265,6 +290,12 @@ class Parser(object):
             subval = subval.strip()
             subval = self.get_mapping(src, subval, mapping, partial)
             if subval is None:
+                continue
+            if create:
+                subval, created = model.objects.get_or_create(**{field: subval})
+                if created:
+                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=subval))
+                dst.append(subval)
                 continue
             try:
                 dst.append(model.objects.get(**{field: subval}))
@@ -280,10 +311,12 @@ class Parser(object):
         pass
 
     def parse(self, filename):
-        if not os.path.exists(filename):
-            raise FatalImportError(_(u"File does not exists at: {filename}").format(filename=filename))
+        if filename:
+            self.filename = filename
+        if not self.filename.startswith('http://') and not os.path.exists(self.filename):
+            raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
-        for row in self.next_row(filename):
+        for row in self.next_row():
             try:
                 self.parse_row(row)
             except Exception as e:
@@ -294,8 +327,8 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
-    def next_row(self, filename):
-        datasource = DataSource(filename)
+    def next_row(self):
+        datasource = DataSource(self.filename)
         layer = datasource[0]
         self.nb = len(layer)
         for feature in layer:
@@ -315,8 +348,8 @@ class ShapeParser(Parser):
 
 
 class ExcelParser(Parser):
-    def next_row(self, filename):
-        workbook = xlrd.open_workbook(filename)
+    def next_row(self):
+        workbook = xlrd.open_workbook(self.filename)
         sheet = workbook.sheet_by_index(0)
         header = [self.normalize_field_name(cell.value) for cell in sheet.row(0)]
         self.nb = sheet.nrows - 1
@@ -324,6 +357,53 @@ class ExcelParser(Parser):
             values = [cell.value for cell in sheet.row(i)]
             row = dict(zip(header, values))
             yield row
+
+
+class AtomParser(Parser):
+    ns = {
+        'Atom': 'http://www.w3.org/2005/Atom',
+        'georss': 'http://www.georss.org/georss',
+    }
+
+    def flatten_fields(self, fields):
+        return reduce(lambda x, y: x + (list(y) if hasattr(y, '__iter__') else [y]), fields.values(), [])
+
+    def next_row(self):
+        srcs = self.flatten_fields(self.fields)
+        srcs += self.flatten_fields(self.m2m_fields)
+        srcs += self.flatten_fields(self.non_fields)
+        tree = ET.parse(self.filename)
+        entries = tree.getroot().findall('Atom:entry', self.ns)
+        self.nb = len(entries)
+        for entry in entries:
+            row = {self.normalize_field_name(src): entry.find(src, self.ns).text for src in srcs}
+            yield row
+
+
+class TourInSoftParser(Parser):
+    @property
+    def items(self):
+        return self.root['value']
+
+    def next_row(self):
+        skip = 0
+        while True:
+            params = {
+                '$format': 'json',
+                '$inlinecount': 'allpages',
+                '$top': 1000,
+                '$skip': skip,
+            }
+            response = requests.get(self.filename, params=params)
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {filename}. HTTP status code {status_code}").format(filename=self.filename, status_code=response.status_code))
+            self.root = response.json()
+            self.nb = int(self.root['odata.count'])
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+            skip += 1000
+            if skip >= self.nb:
+                return
 
 
 class AttachmentParserMixin(object):
@@ -337,7 +417,7 @@ class AttachmentParserMixin(object):
         try:
             self.filetype = FileType.objects.get(type=self.filetype_name)
         except FileType.DoesNotExist:
-            raise FatalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
+            raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
     def save_attachments(self, src, val):
