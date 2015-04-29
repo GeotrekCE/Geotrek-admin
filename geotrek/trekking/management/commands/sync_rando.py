@@ -213,7 +213,7 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m copied".format(lang=lang, name=name))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m copied".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
@@ -223,7 +223,7 @@ class Command(BaseCommand):
             self.sync_file(lang, field.name, settings.MEDIA_ROOT, settings.MEDIA_URL, zipfile=zipfile)
 
     def sync_pictograms(self, lang, model, zipfile=None):
-        for obj in model.objects.exclude(pictogram=''):
+        for obj in model.objects.all():
             self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
     def sync_trek(self, lang, trek):
@@ -294,7 +294,7 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.Route)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
 
-        treks = trekking_models.Trek.objects.existing()
+        treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
 
         for trek in treks:
