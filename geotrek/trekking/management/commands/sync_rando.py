@@ -223,7 +223,7 @@ class Command(BaseCommand):
             self.sync_file(lang, field.name, settings.MEDIA_ROOT, settings.MEDIA_URL, zipfile=zipfile)
 
     def sync_pictograms(self, lang, model, zipfile=None):
-        for obj in model.objects.exclude(pictogram=''):
+        for obj in model.objects.all():
             self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
     def sync_trek(self, lang, trek):
@@ -294,7 +294,7 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.Route)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
 
-        treks = trekking_models.Trek.objects.existing()
+        treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
 
         for trek in treks:
