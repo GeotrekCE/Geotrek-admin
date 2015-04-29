@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {% set cfg = salt['mc_project.get_configuration'](project) %}
 {% set data = cfg.data %}
 from .prod import *
