@@ -1,11 +1,116 @@
 # -*- encoding: utf-8 -*-
 
+from django.conf import settings
+from django.contrib.gis.geos import Point
+from django.utils.translation import ugettext as _
+
 from geotrek.common.models import Theme
-from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, FatalImportError
-from geotrek.tourism.models import InformationDesk, InformationDeskType
-from geotrek.trekking.models import (Trek, Practice, Accessibility, TrekRelationship)
+from geotrek.common.parsers import (ExcelParser, AttachmentParserMixin,
+                                    TourInSoftParser, GlobalImportError, RowImportError)
+from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent, TouristicContentType
+from geotrek.trekking.models import Trek, Practice, Accessibility, TrekRelationship
 from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
+
+
+class CG44SITParser(TourInSoftParser):
+    model = TouristicContent
+    eid = 'eid'
+    fields = {
+        'eid': 'SyndicObjectID',
+        'name': 'SyndicObjectName',
+        'description_teaser': 'DescriptifSynthetique',
+        'description': 'Descriptif',
+        'contact': ('NomGest', 'Adresse1Gest', 'Adresse1SuiteGest', 'Adresse2Gest', 'Adresse3Gest', 'CodePostalGest', 'CommuneGest', 'CedexGest'),
+        'geom': ('GmapLatitude', 'GmapLongitude'),
+    }
+    natural_keys = {
+        'category': 'label',
+        'type1': 'label',
+        'type2': 'label',
+    }
+
+    def filter_description(self, src, val):
+        return val or ""  # transform null to blank
+
+    def filter_description_teaser(self, src, val):
+        return val or ""  # transform null to blank
+
+    def filter_contact(self, src, val):
+        (NomGest, Adresse1Gest, Adresse1SuiteGest, Adresse2Gest, Adresse3Gest, CodePostalGest, CommuneGest, CedexGest) = val
+        lines = [line for line in [
+            NomGest,
+            ' '.join([part for part in [Adresse1Gest, Adresse1SuiteGest] if part]),
+            Adresse2Gest,
+            Adresse3Gest,
+            ' '.join([part for part in [CodePostalGest, CommuneGest, CedexGest] if part]),
+        ] if line]
+        return '<br>'.join(lines)
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        if lng == '' or lat == '':
+            raise RowImportError(u"Required value for fields 'GmapLatitude' and 'GmapLongitude'.")
+        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        geom.transform(settings.SRID)
+        return geom
+
+
+class CG44HebergementParser(CG44SITParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/339eeb87-a547-4338-b204-7f3d640de8da/Objects'
+    constant_fields = {
+        'category': u"Hébergement",
+        'published': True,
+    }
+    m2m_fields = {
+        'type1': 'ObjectTypeName',
+    }
+
+
+class CG44RestaurationParser(CG44SITParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/2828ac57-6d61-426a-abdd-287523941485/Objects'
+    constant_fields = {
+        'category': u"Restauration",
+        'published': True,
+    }
+    m2m_fields = {
+        'type1': 'Type',
+        'type2': 'Categorie',
+    }
+
+    def filter_type(self, n, src, val):
+        val = val['ThesLibelle']
+        if not val:
+            return []
+        val, created = TouristicContentType.objects.get_or_create(label=val, category=self.obj.category, in_list=n)
+        if created:
+            self.add_warning(_(u"Touristic Content Type '{val}' did not exist in Geotrek-Admin and was automatically created").format(val=val))
+        return [val]
+
+    def filter_type1(self, src, val):
+        return self.filter_type(1, src, val)
+
+    def filter_type2(self, src, val):
+        return self.filter_type(2, src, val)
+
+
+class CG44AVoirParser(CG44SITParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/83f723ab-86c7-464e-a36e-55c3e399a61e/Objects'
+    constant_fields = {
+        'category': u"A voir",
+        'published': True,
+    }
+    m2m_fields = {
+        'type1': 'ObjectTypeName',
+    }
+
+
+class CG44AFaireParser(CG44SITParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/69b70d72-e6a2-4899-9e15-3d994e6a30ef/Objects'
+    constant_fields = {
+        'category': u"A faire",
+        'published': True,
+    }
 
 
 class CG44ExcelTrekParser(AttachmentParserMixin, ExcelParser):
@@ -32,7 +137,7 @@ class CG44ExcelTrekParser(AttachmentParserMixin, ExcelParser):
         try:
             self.information_desk_type = InformationDeskType.objects.get(label=self.information_desk_type_name)
         except InformationDeskType.DoesNotExist:
-            raise FatalImportError(u"Information desk type '{name}' does not exists in Geotrek-Admin. Please add it.".format(name=self.information_desk_type_name))
+            raise GlobalImportError(u"Information desk type '{name}' does not exists in Geotrek-Admin. Please add it.".format(name=self.information_desk_type_name))
 
     def filter_information_desks(self, src, val):
         tel, contact, mail = val
@@ -104,8 +209,7 @@ class CG44PedestreTrekParser(TrekParser):
         val = val.split(self.separator)[0]
         val = val.strip()
         if val != u"Pédestre":
-            self.add_warning(u"Bad first value '{val}' for field {src} (separated by '{separator}'). Should be 'Pédestre'.".format(val=val, src=src, separator=self.separator))
-            return None
+            raise RowImportError(u"Bad first value '{val}' for field {src} (separated by '{separator}'). Should be 'Pédestre'.".format(val=val, src=src, separator=self.separator))
         return self.filter_fk(src, val, Practice, 'name')
 
     def filter_accessibilities(self, src, val):
