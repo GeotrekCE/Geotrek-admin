@@ -322,6 +322,10 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     def deserialize(cls, serialized):
         return TopologyHelper.deserialize(serialized)
 
+    def distance(self, to_cls):
+        """Distance to associate this topology to another topology class"""
+        return None
+
 
 class PathAggregationManager(models.GeoManager):
     def get_queryset(self):
