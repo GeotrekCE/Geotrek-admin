@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils import translation
 
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism.views import TouristicContentViewSet, TouristicEventViewSet
@@ -45,4 +46,5 @@ class Command(BaseCommand):
         self.sync_pictograms('**', tourism_models.TouristicEventType)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
+            translation.activate(lang)
             self.sync_tourism(lang)
