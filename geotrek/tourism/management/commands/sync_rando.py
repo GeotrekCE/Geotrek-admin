@@ -14,13 +14,13 @@ class Command(BaseCommand):
         self.sync_pdf(lang, content)
 
         for picture, resized in content.resized_pictures:
-            self.sync_media_file(resized)
+            self.sync_media_file(lang, resized)
 
     def sync_event(self, lang, event):
         self.sync_pdf(lang, event)
 
         for picture, resized in event.resized_pictures:
-            self.sync_media_file(resized)
+            self.sync_media_file(lang, resized)
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
