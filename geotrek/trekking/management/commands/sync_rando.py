@@ -14,15 +14,15 @@ from django.core.management.base import BaseCommand, CommandError
 from django.test.client import RequestFactory
 from django.utils import translation
 
-# Workaround https://code.djangoproject.com/ticket/22865
-from geotrek.common.models import FileType  # NOQA
-
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 from geotrek.common.views import DocumentPublicPDF
 from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.flatpages.views import FlatPageViewSet
+
+# Register mapentity models
+from geotrek.trekking import urls  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -82,20 +82,22 @@ class Command(BaseCommand):
     def sync_global_tiles(self):
         """ Creates a tiles file on the global extent.
         """
+        zipname = os.path.join('zip', 'tiles', 'global.zip')
+
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mzip/tiles.zip\x1b[0m ...", ending="")
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
         logger.info("Global extent is %s" % unicode(global_extent))
-        global_file = os.path.join(self.tmp_root, 'zip', 'tiles.zip')
+        global_file = os.path.join(self.tmp_root, zipname)
 
         logger.info("Build global tiles file...")
         self.mkdirs(global_file)
 
         def close_zip(zipfile):
-            return self.close_zip(zipfile, 'zip/tiles.zip')
+            return self.close_zip(zipfile, zipname)
 
         tiles = ZipTilesBuilder(global_file, close_zip, **self.builder_args)
         tiles.add_coverage(bbox=global_extent,
@@ -103,16 +105,18 @@ class Command(BaseCommand):
         tiles.run()
 
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[3Dzipped")
+            self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
+        zipname = os.path.join('zip', 'tiles', '{pk}.zip'.format(pk=trek.pk))
+
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mzip/tiles-{pk}.zip\x1b[0m ...".format(pk=trek.pk), ending="")
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
-        trek_file = os.path.join(self.tmp_root, 'zip', 'tiles-%s.zip' % trek.id)
+        trek_file = os.path.join(self.tmp_root, zipname)
 
         def _radius2bbox(lng, lat, radius):
             return (lng - radius, lat - radius,
@@ -121,7 +125,7 @@ class Command(BaseCommand):
         self.mkdirs(trek_file)
 
         def close_zip(zipfile):
-            return self.close_zip(zipfile, 'zip/tiles-%s.zip' % trek.id)
+            return self.close_zip(zipfile, zipname)
 
         tiles = ZipTilesBuilder(trek_file, close_zip, **self.builder_args)
 
@@ -139,7 +143,7 @@ class Command(BaseCommand):
         tiles.run()
 
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[3Dzipped")
+            self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_view(self, lang, view, name, url='/', zipfile=None, **kwargs):
         if self.verbosity == '2':
@@ -148,21 +152,21 @@ class Command(BaseCommand):
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
         request = self.factory.get(url, HTTP_HOST=self.host)
-        translation.activate(lang)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
         response = view(request, **kwargs)
         if hasattr(response, 'render'):
             response.render()
         if response.status_code != 200:
-            raise CommandError('Failed to get {name} (status {code})'.format(name=name, code=response.status_code))
+            self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+            return
         f = open(fullname, 'w')
         f.write(response.content)
         f.close()
         if zipfile:
             zipfile.write(fullname, name)
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[3Dgenerated")
+            self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_geojson(self, lang, viewset, name, zipfile=None):
         view = viewset.as_view({'get': 'list'})
@@ -213,7 +217,7 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m copied".format(lang=lang, url=url, name=name))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
@@ -227,7 +231,7 @@ class Command(BaseCommand):
             self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
     def sync_trek(self, lang, trek):
-        zipname = os.path.join('zip', lang, 'trek-%s.zip' % trek.pk)
+        zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
         zipfullname = os.path.join(self.tmp_root, zipname)
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
@@ -241,8 +245,12 @@ class Command(BaseCommand):
         self.sync_dem(lang, trek)
         for desk in trek.information_desks.all():
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
+        print 'trek', trek, trek.published_pois
+        print 'trek', trek, trek.pois
         for poi in trek.published_pois:
+            print 'poi', poi, poi.resized_pictures
             if poi.resized_pictures:
+                print 'poi picture', poi.resized_pictures[0][1]
                 self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
             for picture, resized in poi.resized_pictures[1:]:
                 self.sync_media_file(lang, resized)
@@ -252,7 +260,7 @@ class Command(BaseCommand):
         self.close_zip(self.trek_zipfile, zipname)
 
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m zipped".format(lang=lang, name=zipname))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m \x1b[32mzipped\x1b[0m".format(lang=lang, name=zipname))
 
     def close_zip(self, zipfile, name):
         oldzipfilename = os.path.join(self.dst_root, name)
@@ -276,7 +284,7 @@ class Command(BaseCommand):
             logger.info('%s was NOT up to date.' % zipfilename)
 
     def sync_trekking(self, lang):
-        zipname = os.path.join('zip', lang, 'treks.zip')
+        zipname = os.path.join('zip', 'treks', lang, 'global.zip')
         zipfullname = os.path.join(self.tmp_root, zipname)
         self.mkdirs(zipfullname)
         self.zipfile = ZipFile(zipfullname, 'w')
@@ -303,7 +311,7 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile, zipname)
 
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m zipped".format(lang=lang, name=zipname))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m \x1b[32mzipped\x1b[0m".format(lang=lang, name=zipname))
 
     def sync_tiles(self):
         if self.skip_tiles:
@@ -317,6 +325,7 @@ class Command(BaseCommand):
         self.sync_tiles()
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
+            translation.activate(lang)
             self.sync_trekking(lang)
 
     def handle(self, *args, **options):
