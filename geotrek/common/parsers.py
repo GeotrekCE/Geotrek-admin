@@ -142,6 +142,9 @@ class Parser(object):
                 val = set(val)
             else:
                 old = getattr(self.obj, dst)
+            if isinstance(old, float) and isinstance(val, float):
+                old = round(old, 10)
+                val = round(val, 10)
             if old != val:
                 setattr(self.obj, dst, val)
                 return True
