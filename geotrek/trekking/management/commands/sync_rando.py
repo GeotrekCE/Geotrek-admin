@@ -18,7 +18,7 @@ from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_eleva
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 from geotrek.common.views import DocumentPublicPDF
-from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekGPXDetail, TrekKMLDetail
+from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.flatpages.views import FlatPageViewSet
 
 # Register mapentity models
@@ -174,7 +174,7 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
-        view = POIViewSet.as_view({'get': 'list'})
+        view = TrekPOIViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
 
@@ -250,6 +250,7 @@ class Command(BaseCommand):
                 self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
             for picture, resized in poi.resized_pictures[1:]:
                 self.sync_media_file(lang, resized)
+        self.sync_media_file(lang, trek.thumbnail, zipfile=self.zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
 
