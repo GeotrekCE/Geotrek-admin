@@ -14,6 +14,7 @@ CHANGELOG
 * Import framework
 * Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
 * Build zip files for mobile application
+* Trek / Touristic content association distance depending on trek practice
 
 **Bug fixes**
 
