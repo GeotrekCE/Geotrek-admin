@@ -18,7 +18,7 @@ from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_eleva
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 from geotrek.common.views import DocumentPublicPDF
-from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekGPXDetail, TrekKMLDetail
+from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.flatpages.views import FlatPageViewSet
 
 # Register mapentity models
@@ -174,7 +174,7 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
-        view = POIViewSet.as_view({'get': 'list'})
+        view = TrekPOIViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
 
