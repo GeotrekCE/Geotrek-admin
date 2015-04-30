@@ -347,10 +347,13 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def prefixed_category_id(self):
         return self.category.prefixed_id
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
+Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
+TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
 
 
 class TouristicEventType(OptionalPictogramMixin):
@@ -459,11 +462,14 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def prefixed_category_id(self):
         return self.category_id_prefix
 
-TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
-TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
-TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
+TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
+Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))
+TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))
+TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))

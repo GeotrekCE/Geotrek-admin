@@ -245,12 +245,8 @@ class Command(BaseCommand):
         self.sync_dem(lang, trek)
         for desk in trek.information_desks.all():
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
-        print 'trek', trek, trek.published_pois
-        print 'trek', trek, trek.pois
         for poi in trek.published_pois:
-            print 'poi', poi, poi.resized_pictures
             if poi.resized_pictures:
-                print 'poi picture', poi.resized_pictures[0][1]
                 self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
             for picture, resized in poi.resized_pictures[1:]:
                 self.sync_media_file(lang, resized)
