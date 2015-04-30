@@ -105,12 +105,13 @@ def uniquify(values):
     return unique
 
 
-def intersecting(cls, obj, distance=None):
+def intersecting(cls, obj):
     """ Small helper to filter all model instances by geometry intersection
     """
     qs = cls.objects
     if hasattr(qs, 'existing'):
         qs = qs.existing()
+    distance = obj.distance(cls)
     if distance:
         qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
     else:
