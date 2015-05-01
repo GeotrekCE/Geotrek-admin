@@ -8,12 +8,12 @@ from geotrek.common.models import Theme
 from geotrek.common.parsers import (ExcelParser, AttachmentParserMixin,
                                     TourInSoftParser, GlobalImportError, RowImportError)
 from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent, TouristicContentType
-from geotrek.trekking.models import Trek, Practice, Accessibility, TrekRelationship
+from geotrek.trekking.models import Trek, Practice, Accessibility, TrekRelationship, POI, POIType
 from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
 
-class CG44SITParser(TourInSoftParser):
+class CG44TouristicContentParser(TourInSoftParser):
     model = TouristicContent
     eid = 'eid'
     fields = {
@@ -56,7 +56,43 @@ class CG44SITParser(TourInSoftParser):
         return geom
 
 
-class CG44HebergementParser(CG44SITParser):
+class CG44POIParser(TourInSoftParser):
+    model = POI
+    eid = 'eid'
+    fields = {
+        'eid': 'SyndicObjectID',
+        'name': 'SyndicObjectName',
+        'description': ('DescriptifSynthetique', 'Descriptif', 'NomGest', 'Adresse1Gest', 'Adresse1SuiteGest', 'Adresse2Gest', 'Adresse3Gest', 'CodePostalGest', 'CommuneGest', 'CedexGest'),
+        'geom': ('GmapLatitude', 'GmapLongitude'),
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+
+    def filter_description(self, src, val):
+        (DescriptifSynthetique, Descriptif, NomGest, Adresse1Gest, Adresse1SuiteGest, Adresse2Gest, Adresse3Gest, CodePostalGest, CommuneGest, CedexGest) = val
+        lines = [line for line in [
+            DescriptifSynthetique,
+            Descriptif,
+            _(u"Contact :"),
+            NomGest,
+            ' '.join([part for part in [Adresse1Gest, Adresse1SuiteGest] if part]),
+            Adresse2Gest,
+            Adresse3Gest,
+            ' '.join([part for part in [CodePostalGest, CommuneGest, CedexGest] if part]),
+        ] if line]
+        return '<br>'.join(lines)
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        if lng == '' or lat == '':
+            raise RowImportError(u"Required value for fields 'GmapLatitude' and 'GmapLongitude'.")
+        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        geom.transform(settings.SRID)
+        return geom
+
+
+class CG44HebergementTouristicContentParser(CG44TouristicContentParser):
     filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/339eeb87-a547-4338-b204-7f3d640de8da/Objects'
     constant_fields = {
         'category': u"Hébergement",
@@ -67,7 +103,15 @@ class CG44HebergementParser(CG44SITParser):
     }
 
 
-class CG44RestaurationParser(CG44SITParser):
+class CG44HebergementPOIParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/339eeb87-a547-4338-b204-7f3d640de8da/Objects'
+    constant_fields = {
+        'type': u"Hébergement",
+        'published': True,
+    }
+
+
+class CG44RestaurationTouristicContentParser(CG44TouristicContentParser):
     filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/2828ac57-6d61-426a-abdd-287523941485/Objects'
     constant_fields = {
         'category': u"Restauration",
@@ -94,7 +138,15 @@ class CG44RestaurationParser(CG44SITParser):
         return self.filter_type(2, src, val)
 
 
-class CG44AVoirParser(CG44SITParser):
+class CG44RestaurationPOIParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/2828ac57-6d61-426a-abdd-287523941485/Objects'
+    constant_fields = {
+        'type': u"Restauration",
+        'published': True,
+    }
+
+
+class CG44AVoirTouristicContentParser(CG44TouristicContentParser):
     filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/83f723ab-86c7-464e-a36e-55c3e399a61e/Objects'
     constant_fields = {
         'category': u"A voir",
@@ -105,10 +157,26 @@ class CG44AVoirParser(CG44SITParser):
     }
 
 
-class CG44AFaireParser(CG44SITParser):
+class CG44AVoirPOIParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/83f723ab-86c7-464e-a36e-55c3e399a61e/Objects'
+    constant_fields = {
+        'type': u"A voir",
+        'published': True,
+    }
+
+
+class CG44AFaireTouristicContentParser(CG44TouristicContentParser):
     filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/69b70d72-e6a2-4899-9e15-3d994e6a30ef/Objects'
     constant_fields = {
         'category': u"A faire",
+        'published': True,
+    }
+
+
+class CG44AFairePOIParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/69b70d72-e6a2-4899-9e15-3d994e6a30ef/Objects'
+    constant_fields = {
+        'type': u"A faire",
         'published': True,
     }
 

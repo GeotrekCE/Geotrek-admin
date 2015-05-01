@@ -1,0 +1,13 @@
+* Load fixtures
+./bin/django loaddata .salt/files/cg44/fixtures.json
+cp .salt/files/cg44/upload/* var/media/upload/
+
+* Import content
+ln -s .salt/files/cg44/parsers.py .
+./bin/django import parsers.CG44AFairePOIParser
+./bin/django import parsers.CG44AVoirPOIParser
+./bin/django import parsers.CG44RestaurationPOIParser
+./bin/django import parsers.CG44HebergementPOIParser
+./bin/django import parsers.CG44PedestreTrekParser CG44-ITI-44-PED-EQ-VTT.shp
+./bin/django import parsers.CG44AVeloTrekParser G44-ITI-44-VELO.shp
+./bin/django import parsers.CG44ExcelTrekParser LAD-ITI-44.xls 

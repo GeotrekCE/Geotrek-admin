@@ -1,0 +1,222 @@
+[
+{
+    "pk": 1, 
+    "model": "common.filetype", 
+    "fields": {
+        "type": "Photographie", 
+        "structure": 1
+    }
+},
+{
+    "pk": 12, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Vignoble", 
+        "label_fr": "Vignoble", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-vignoble.svg"
+    }
+},
+{
+    "pk": 13, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Fleuve et rivi\u00e8re", 
+        "label_fr": "Fleuve et rivi\u00e8re", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-rivieres.svg"
+    }
+},
+{
+    "pk": 14, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Incontournables", 
+        "label_fr": "Incontournables", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-incontournables.svg"
+    }
+},
+{
+    "pk": 15, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Campagne", 
+        "label_fr": "Campagne", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-campagne.svg"
+    }
+},
+{
+    "pk": 16, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Littoral", 
+        "label_fr": "Littoral", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-littoral.svg"
+    }
+},
+{
+    "pk": 17, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Patrimoine", 
+        "label_fr": "Patrimoine", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-patrimoine.svg"
+    }
+},
+{
+    "pk": 18, 
+    "model": "common.theme", 
+    "fields": {
+        "label": "Marais", 
+        "label_fr": "Marais", 
+        "cirkwi": null, 
+        "pictogram": "upload/theme-marais.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.practice", 
+    "fields": {
+        "distance": 2000, 
+        "name_fr": "P\u00e9destre", 
+        "name": "P\u00e9destre", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-pedestre.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "trekking.practice", 
+    "fields": {
+        "distance": 5000, 
+        "name_fr": "A v\u00e9lo", 
+        "name": "A v\u00e9lo", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-velo.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.accessibility", 
+    "fields": {
+        "name_fr": "VTT", 
+        "name": "VTT", 
+        "cirkwi": null, 
+        "pictogram": "upload/accessibility-vtt.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "trekking.accessibility", 
+    "fields": {
+        "name_fr": "Equestre", 
+        "name": "Equestre", 
+        "cirkwi": null, 
+        "pictogram": "upload/accessibility-equestre.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.route", 
+    "fields": {
+        "route": "Boucle", 
+        "route_fr": "Boucle", 
+        "pictogram": "upload/route-loop.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "trekking.route", 
+    "fields": {
+        "route": "Itin\u00e9rance", 
+        "route_fr": "Itin\u00e9rance", 
+        "pictogram": "upload/route-cross.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.difficultylevel", 
+    "fields": {
+        "difficulty": "Facile", 
+        "cirkwi_level": null, 
+        "difficulty_fr": "Facile", 
+        "cirkwi": null, 
+        "pictogram": "upload/difficulty-easy.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "trekking.difficultylevel", 
+    "fields": {
+        "difficulty": "Moyen", 
+        "cirkwi_level": null, 
+        "difficulty_fr": "Moyen", 
+        "cirkwi": null, 
+        "pictogram": "upload/difficulty-rookie.svg"
+    }
+},
+{
+    "pk": 3, 
+    "model": "trekking.difficultylevel", 
+    "fields": {
+        "difficulty": "Difficile", 
+        "cirkwi_level": null, 
+        "difficulty_fr": "Difficile", 
+        "cirkwi": null, 
+        "pictogram": "upload/difficulty-hard.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.poitype", 
+    "fields": {
+        "label": "A faire", 
+        "label_fr": "A faire", 
+        "cirkwi": null, 
+        "pictogram": "upload/category-afaire.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "trekking.poitype", 
+    "fields": {
+        "label": "A voir", 
+        "label_fr": "A voir", 
+        "cirkwi": null, 
+        "pictogram": "upload/category-avoir.svg"
+    }
+},
+{
+    "pk": 3, 
+    "model": "trekking.poitype", 
+    "fields": {
+        "label": "H\u00e9bergement", 
+        "label_fr": "H\u00e9bergement", 
+        "cirkwi": null, 
+        "pictogram": "upload/category-hebergement.svg"
+    }
+},
+{
+    "pk": 4, 
+    "model": "trekking.poitype", 
+    "fields": {
+        "label": "Restauration", 
+        "label_fr": "Restauration", 
+        "cirkwi": null, 
+        "pictogram": "upload/category-restauration.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "tourism.informationdesktype", 
+    "fields": {
+        "label": "Office du tourisme", 
+        "label_fr": "Office du tourisme", 
+        "pictogram": "upload/desktype-info.svg"
+    }
+}
+]
