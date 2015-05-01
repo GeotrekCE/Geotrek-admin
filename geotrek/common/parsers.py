@@ -130,6 +130,14 @@ class Parser(object):
         if hasattr(self, 'save_{0}'.format(dst)):
             return getattr(self, 'save_{0}'.format(dst))(src, val)
 
+    def set_value(self, dst, src, val):
+        field = self.model._meta.get_field_by_name(dst)[0]
+        if val is None and not field.null:
+            raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
+        if val == u"" and not field.blank:
+            raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
+        setattr(self.obj, dst, val)
+
     def parse_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self, 'filter_{0}'.format(dst)):
@@ -146,12 +154,12 @@ class Parser(object):
                 old = round(old, 10)
                 val = round(val, 10)
             if old != val:
-                setattr(self.obj, dst, val)
+                self.set_value(dst, src, val)
                 return True
             else:
                 return False
         else:
-            setattr(self.obj, dst, val)
+            self.set_value(dst, src, val)
             return True
 
     def parse_fields(self, row, fields, non_field=False):
@@ -182,8 +190,8 @@ class Parser(object):
         try:
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
-        except RowImportError as e:
-            self.add_warning(e)
+        except RowImportError as warnings:
+            self.add_warning(unicode(warnings))
             return
         if operation == u"created":
             self.obj.save()
