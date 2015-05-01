@@ -347,7 +347,7 @@ class Command(BaseCommand):
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.CACHE_ROOT, 'tiles'),
+            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
 
         try:
