@@ -104,9 +104,6 @@ class Command(BaseCommand):
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
 
-        if self.verbosity == '2':
-            self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
-
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
@@ -141,9 +138,6 @@ class Command(BaseCommand):
             tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
 
         tiles.run()
-
-        if self.verbosity == '2':
-            self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_view(self, lang, view, name, url='/', zipfile=None, **kwargs):
         if self.verbosity == '2':
@@ -254,10 +248,10 @@ class Command(BaseCommand):
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
 
-        self.close_zip(self.trek_zipfile, zipname)
-
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m \x1b[32mzipped\x1b[0m".format(lang=lang, name=zipname))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
+
+        self.close_zip(self.trek_zipfile, zipname)
 
     def close_zip(self, zipfile, name):
         oldzipfilename = os.path.join(self.dst_root, name)
@@ -276,9 +270,12 @@ class Command(BaseCommand):
         if uptodate:
             stat = os.stat(oldzipfilename)
             os.utime(zipfilename, (stat.st_atime, stat.st_mtime))
-            logger.info('%s was up to date.' % zipfilename)
-        else:
-            logger.info('%s was NOT up to date.' % zipfilename)
+
+        if self.verbosity == '2':
+            if uptodate:
+                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+            else:
+                self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_trekking(self, lang):
         zipname = os.path.join('zip', 'treks', lang, 'global.zip')
@@ -305,10 +302,10 @@ class Command(BaseCommand):
         for trek in treks:
             self.sync_trek(lang, trek)
 
-        self.close_zip(self.zipfile, zipname)
-
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m \x1b[32mzipped\x1b[0m".format(lang=lang, name=zipname))
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
+
+        self.close_zip(self.zipfile, zipname)
 
     def sync_tiles(self):
         if self.skip_tiles:
