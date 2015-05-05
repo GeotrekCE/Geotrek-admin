@@ -221,6 +221,48 @@ class CG44ExcelTrekParser(AttachmentParserMixin, ExcelParser):
         return [information_desk]
 
 
+class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
+    base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
+    model = Trek
+    update_only = True
+    warn_on_missing_fields = True
+    eid = 'eid2'
+    duplicate_eid_allowed = True
+    information_desk_type_name = u"Office du tourisme"
+    fields = {
+        'eid2': 'SyndicObjectID',
+        'description_teaser': 'DescriptifSynthetique',
+        'description': 'Descriptif',
+    }
+    m2m_fields = {
+        #'information_desks': ('Tel', 'Contact', 'Mail'),
+    }
+    non_fields = {
+        'attachments': 'Photos',
+    }
+
+    def start(self):
+        super(CG44LADTrekParser, self).start()
+        try:
+            self.information_desk_type = InformationDeskType.objects.get(label=self.information_desk_type_name)
+        except InformationDeskType.DoesNotExist:
+            raise GlobalImportError(u"Information desk type '{name}' does not exists in Geotrek-Admin. Please add it.".format(name=self.information_desk_type_name))
+
+    def filter_information_desks(self, src, val):
+        tel, contact, mail = val
+        if not contact:
+            return []
+        information_desk = self.obj.information_desks.first()
+        if not information_desk:
+            information_desk = InformationDesk(type=self.information_desk_type)
+        information_desk.phone = tel
+        information_desk.name = contact
+        information_desk.email = mail
+        information_desk.save()
+        return [information_desk]
+
+
 class CG44PedestreTrekParser(TrekParser):
     warn_on_missing_fields = True
     eid = 'eid'
