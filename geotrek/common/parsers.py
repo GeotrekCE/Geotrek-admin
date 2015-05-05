@@ -272,7 +272,7 @@ class Parser(object):
         else:
             if mapping is not None:
                 if val not in mapping.keys():
-                    self.add_warning(_(u"Bad value '{val}' for field {src}. Should be {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys)))
+                    self.add_warning(_(u"Bad value '{val}' for field {src}. Should be {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
                     return None
                 val = mapping[val]
         return val
@@ -394,7 +394,7 @@ class AtomParser(Parser):
 class TourInSoftParser(Parser):
     @property
     def items(self):
-        return self.root['value']
+        return self.root['d']['results']
 
     def next_row(self):
         skip = 0
@@ -409,15 +409,21 @@ class TourInSoftParser(Parser):
             if response.status_code != 200:
                 raise GlobalImportError(_(u"Failed to download {filename}. HTTP status code {status_code}").format(filename=self.filename, status_code=response.status_code))
             self.root = response.json()
-            self.nb = int(self.root['odata.count'])
+            self.nb = int(self.root['d']['__count'])
             for row in self.items:
                 yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
             skip += 1000
             if skip >= self.nb:
                 return
 
+    def filter_attachments(self, src, val):
+        if not val:
+            return []
+        return [subval.split('||') for subval in val.split('##')]
+
 
 class AttachmentParserMixin(object):
+    base_url = ''
     filetype_name = u"Photographie"
     non_fields = {
         'attachments': _(u"Attachments"),
@@ -433,9 +439,9 @@ class AttachmentParserMixin(object):
 
     def save_attachments(self, src, val):
         updated = False
-        val = val.split()
         to_delete = set(Attachment.objects.attachments_for_object(self.obj))
-        for url in val:
+        for url, name, author in self.filter_attachments(src, val):
+            url = self.base_url + url
             name = os.path.basename(url)
             found = False
             for attachment in to_delete:
