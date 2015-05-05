@@ -40,6 +40,8 @@ class ValueImportError(ImportError):
 
 
 class Parser(object):
+    filename = None
+    url = None
     simplify_tolerance = 0  # meters
     update_only = False
     duplicate_eid_allowed = False
@@ -321,10 +323,12 @@ class Parser(object):
     def end(self):
         pass
 
-    def parse(self, filename):
+    def parse(self, filename=None):
         if filename:
             self.filename = filename
-        if not self.filename.startswith('http://') and not os.path.exists(self.filename):
+        if not self.url and not self.filename:
+            raise GlobalImportError(_(u"Filename is required"))
+        if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
         for row in self.next_row():
@@ -405,9 +409,9 @@ class TourInSoftParser(Parser):
                 '$top': 1000,
                 '$skip': skip,
             }
-            response = requests.get(self.filename, params=params)
+            response = requests.get(self.url, params=params)
             if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {filename}. HTTP status code {status_code}").format(filename=self.filename, status_code=response.status_code))
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = int(self.root['d']['__count'])
             for row in self.items:
