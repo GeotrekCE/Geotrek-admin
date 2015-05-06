@@ -454,6 +454,11 @@ class AttachmentParserMixin(object):
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
+    def filter_attachments(self, src, val):
+        if not val:
+            return []
+        return [(subval.strip(), '', '') for subval in val.split(self.separator)]
+
     def save_attachments(self, src, val):
         updated = False
         to_delete = set(Attachment.objects.attachments_for_object(self.obj))
