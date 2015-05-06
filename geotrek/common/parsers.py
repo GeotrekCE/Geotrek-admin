@@ -323,7 +323,7 @@ class Parser(object):
     def end(self):
         pass
 
-    def parse(self, filename=None):
+    def parse(self, filename=None, limit=None):
         if filename:
             self.filename = filename
         if not self.url and not self.filename:
@@ -331,7 +331,9 @@ class Parser(object):
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
-        for row in self.next_row():
+        for i, row in enumerate(self.next_row()):
+            if limit and i >= limit:
+                break;
             try:
                 self.parse_row(row)
             except Exception as e:
