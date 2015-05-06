@@ -6,14 +6,19 @@ from django.utils.translation import ugettext as _
 
 from geotrek.common.models import Theme
 from geotrek.common.parsers import (ExcelParser, AttachmentParserMixin,
-                                    TourInSoftParser, GlobalImportError, RowImportError)
+                                    TourInSoftParser, GlobalImportError,
+                                    RowImportError, ValueImportError)
 from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent, TouristicContentType
-from geotrek.trekking.models import Trek, Practice, Accessibility, TrekRelationship, POI, POIType
+from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI, POIType
 from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
 
-class CG44TouristicContentParser(TourInSoftParser):
+class CG44TourInSoftParser(AttachmentParserMixin, TourInSoftParser):
+    base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
+
+
+class CG44TouristicContentParser(CG44TourInSoftParser):
     model = TouristicContent
     eid = 'eid'
     fields = {
@@ -21,7 +26,9 @@ class CG44TouristicContentParser(TourInSoftParser):
         'name': 'SyndicObjectName',
         'description_teaser': 'DescriptifSynthetique',
         'description': 'Descriptif',
-        'contact': ('NomGest', 'Adresse1Gest', 'Adresse1SuiteGest', 'Adresse2Gest', 'Adresse3Gest', 'CodePostalGest', 'CommuneGest', 'CedexGest'),
+        'contact': ('Adresse1', 'Adresse1Suite', 'Adresse2', 'Adresse3', 'CodePostal', 'Commune', 'Cedex'),
+        'email': 'CommMail',
+        'website': 'CommWeb',
         'geom': ('GmapLatitude', 'GmapLongitude'),
     }
     natural_keys = {
@@ -37,13 +44,12 @@ class CG44TouristicContentParser(TourInSoftParser):
         return val or ""  # transform null to blank
 
     def filter_contact(self, src, val):
-        (NomGest, Adresse1Gest, Adresse1SuiteGest, Adresse2Gest, Adresse3Gest, CodePostalGest, CommuneGest, CedexGest) = val
+        (Adresse1, Adresse1Suite, Adresse2, Adresse3, CodePostal, Commune, Cedex) = val
         lines = [line for line in [
-            NomGest,
-            ' '.join([part for part in [Adresse1Gest, Adresse1SuiteGest] if part]),
-            Adresse2Gest,
-            Adresse3Gest,
-            ' '.join([part for part in [CodePostalGest, CommuneGest, CedexGest] if part]),
+            ' '.join([part for part in [Adresse1, Adresse1Suite] if part]),
+            Adresse2,
+            Adresse3,
+            ' '.join([part for part in [CodePostal, Commune, Cedex] if part]),
         ] if line]
         return '<br>'.join(lines)
 
@@ -56,13 +62,13 @@ class CG44TouristicContentParser(TourInSoftParser):
         return geom
 
 
-class CG44POIParser(TourInSoftParser):
+class CG44POIParser(CG44TourInSoftParser):
     model = POI
     eid = 'eid'
     fields = {
         'eid': 'SyndicObjectID',
         'name': 'SyndicObjectName',
-        'description': ('DescriptifSynthetique', 'Descriptif', 'NomGest', 'Adresse1Gest', 'Adresse1SuiteGest', 'Adresse2Gest', 'Adresse3Gest', 'CodePostalGest', 'CommuneGest', 'CedexGest'),
+        'description': ('Adresse1', 'Adresse1Suite', 'Adresse2', 'Adresse3', 'CodePostal', 'Commune', 'Cedex', 'CommMail', 'CommWeb'),
         'geom': ('GmapLatitude', 'GmapLongitude'),
     }
     natural_keys = {
@@ -70,16 +76,14 @@ class CG44POIParser(TourInSoftParser):
     }
 
     def filter_description(self, src, val):
-        (DescriptifSynthetique, Descriptif, NomGest, Adresse1Gest, Adresse1SuiteGest, Adresse2Gest, Adresse3Gest, CodePostalGest, CommuneGest, CedexGest) = val
+        (Adresse1, Adresse1Suite, Adresse2, Adresse3, CodePostal, Commune, Cedex, CommMail, CommWeb) = val
         lines = [line for line in [
-            DescriptifSynthetique,
-            Descriptif,
-            _(u"Contact :"),
-            NomGest,
-            ' '.join([part for part in [Adresse1Gest, Adresse1SuiteGest] if part]),
-            Adresse2Gest,
-            Adresse3Gest,
-            ' '.join([part for part in [CodePostalGest, CommuneGest, CedexGest] if part]),
+            ' '.join([part for part in [Adresse1, Adresse1Suite] if part]),
+            Adresse2,
+            Adresse3,
+            ' '.join([part for part in [CodePostal, Commune, Cedex] if part]),
+            u'<a href="mailto:{email}">{email}</a>'.format(email=CommMail) if CommMail else '',
+            u'<a href="{url}">{url}</a>'.format(url=CommWeb) if CommWeb else '',
         ] if line]
         return '<br>'.join(lines)
 
@@ -92,137 +96,55 @@ class CG44POIParser(TourInSoftParser):
         return geom
 
 
-class CG44HebergementTouristicContentParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/339eeb87-a547-4338-b204-7f3d640de8da/Objects'
-    constant_fields = {
-        'category': u"Hébergement",
-        'published': True,
-    }
-    m2m_fields = {
-        'type1': 'ObjectTypeName',
-    }
-
-
-class CG44HebergementPOIParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/339eeb87-a547-4338-b204-7f3d640de8da/Objects'
+class CG44HebergementParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/b94de37c-b0b1-414f-9559-53510be235dc/Objects'
     constant_fields = {
         'type': u"Hébergement",
         'published': True,
-    }
-
-
-class CG44RestaurationTouristicContentParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/2828ac57-6d61-426a-abdd-287523941485/Objects'
-    constant_fields = {
-        'category': u"Restauration",
-        'published': True,
-    }
-    m2m_fields = {
-        'type1': 'Type',
-        'type2': 'Categorie',
-    }
-
-    def filter_type(self, n, src, val):
-        val = val['ThesLibelle']
-        if not val:
-            return []
-        val, created = TouristicContentType.objects.get_or_create(label=val, category=self.obj.category, in_list=n)
-        if created:
-            self.add_warning(_(u"Touristic Content Type '{val}' did not exist in Geotrek-Admin and was automatically created").format(val=val))
-        return [val]
-
-    def filter_type1(self, src, val):
-        return self.filter_type(1, src, val)
-
-    def filter_type2(self, src, val):
-        return self.filter_type(2, src, val)
-
-
-class CG44RestaurationPOIParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/2828ac57-6d61-426a-abdd-287523941485/Objects'
-    constant_fields = {
-        'type': u"Restauration",
-        'published': True,
-    }
-
-
-class CG44AVoirTouristicContentParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/83f723ab-86c7-464e-a36e-55c3e399a61e/Objects'
-    constant_fields = {
-        'category': u"A voir",
-        'published': True,
-    }
-    m2m_fields = {
-        'type1': 'ObjectTypeName',
-    }
-
-
-class CG44AVoirPOIParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/83f723ab-86c7-464e-a36e-55c3e399a61e/Objects'
-    constant_fields = {
-        'type': u"A voir",
-        'published': True,
-    }
-
-
-class CG44AFaireTouristicContentParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/69b70d72-e6a2-4899-9e15-3d994e6a30ef/Objects'
-    constant_fields = {
-        'category': u"A faire",
-        'published': True,
-    }
-
-
-class CG44AFairePOIParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/3.0/cdt44/69b70d72-e6a2-4899-9e15-3d994e6a30ef/Objects'
-    constant_fields = {
-        'type': u"A faire",
-        'published': True,
-    }
-
-
-class CG44ExcelTrekParser(AttachmentParserMixin, ExcelParser):
-    model = Trek
-    update_only = True
-    warn_on_missing_fields = True
-    eid = 'eid2'
-    duplicate_eid_allowed = True
-    information_desk_type_name = u"Office du tourisme"
-    fields = {
-        'eid2': 'Identifiant',
-        'description_teaser': 'DescriptifCourt',
-        'description': 'DescriptifLong',
-    }
-    m2m_fields = {
-        'information_desks': ('Tel', 'Contact', 'Mail'),
     }
     non_fields = {
         'attachments': 'Photos',
     }
 
-    def start(self):
-        super(CG44ExcelTrekParser, self).start()
-        try:
-            self.information_desk_type = InformationDeskType.objects.get(label=self.information_desk_type_name)
-        except InformationDeskType.DoesNotExist:
-            raise GlobalImportError(u"Information desk type '{name}' does not exists in Geotrek-Admin. Please add it.".format(name=self.information_desk_type_name))
 
-    def filter_information_desks(self, src, val):
-        tel, contact, mail = val
-        if not contact:
-            return []
-        information_desk = self.obj.information_desks.first()
-        if not information_desk:
-            information_desk = InformationDesk(type=self.information_desk_type)
-        information_desk.phone = tel
-        information_desk.name = contact
-        information_desk.email = mail
-        information_desk.save()
-        return [information_desk]
+class CG44RestaurationParser(CG44POIParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/e079fe27-11ad-4389-ac67-34bda49cc324/Objects'
+    constant_fields = {
+        'type': u"Restauration",
+        'published': True,
+    }
+    non_fields = {
+        'attachments': 'Photos',
+    }
+
+
+class CG44AVoirParser(CG44TouristicContentParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/99c93523-4194-428c-97f4-56bd3f774982/Objects'
+    constant_fields = {
+        'category': u"A voir",
+        'published': True,
+    }
+    #m2m_fields = {
+        #'type1': 'ObjectTypeName',
+    #}
+    non_fields = {
+        'attachments': 'Photos',
+    }
+
+
+class CG44AFaireParser(CG44TouristicContentParser):
+    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/7b171134-26bf-485f-b1e1-65f9f4187c6f/Objects'
+    constant_fields = {
+        'category': u"A faire",
+        'published': True,
+    }
+    non_fields = {
+        'attachments': 'Photos',
+    }
 
 
 class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
-    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
+    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
     model = Trek
     update_only = True
@@ -263,13 +185,13 @@ class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
         return [information_desk]
 
 
-class CG44PedestreTrekParser(TrekParser):
+class CG44TrekParser(TrekParser):
     warn_on_missing_fields = True
     eid = 'eid'
     fields = {
         'eid': 'NUM_OBJ',
         'name': 'FIRST_ALIA',
-        'duration': 'FIRST_PARC',
+        'duration': ('FIRST_PARC', 'FIRST_USAG'),
         'difficulty': 'FIRST_DIFF',
         'eid2': 'FIRST_GENC',
         'route': 'FIRST_CARA',
@@ -277,7 +199,6 @@ class CG44PedestreTrekParser(TrekParser):
         'geom': 'geom',
     }
     m2m_fields = {
-        'accessibilities': 'FIRST_USAG',
         'themes': 'FIRST_AVIS',
     }
     non_fields = {
@@ -302,37 +223,56 @@ class CG44PedestreTrekParser(TrekParser):
                 trek_b=Trek.objects.get(pk=pk_b),
                 is_circuit_step=True
             )
-        super(CG44PedestreTrekParser, self).end()
+        super(CG44TrekParser, self).end()
 
     def parse_row(self, row):
-        super(CG44PedestreTrekParser, self).parse_row(row)
+        super(CG44TrekParser, self).parse_row(row)
         if self.obj:
             self.FIRST_ALIA_to_pk[row['FIRST_ALIA']] = self.obj.pk
-
-    def filter_eid(self, src, val):
-        return 'P' + str(val)
 
     def filter_name(self, src, val):
         return val.split(':', 1)[1].strip()
 
     def filter_practice(self, src, val):
-        val = val.split(self.separator)[0]
-        val = val.strip()
-        if val != u"Pédestre":
-            raise RowImportError(u"Bad first value '{val}' for field {src} (separated by '{separator}'). Should be 'Pédestre'.".format(val=val, src=src, separator=self.separator))
-        return self.filter_fk(src, val, Practice, 'name')
+        val = [subval.strip() for subval in val.split(self.separator)]
+        if not self.practice in val:
+            raise RowImportError(u"Bad value '{val}' for field {src} (separated by '{separator}'). Should contain '{practice}'.".format(val=val, src=src, separator=self.separator, practice=self.practice))
+        return self.filter_fk(src, self.practice, Practice, 'name')
 
-    def filter_accessibilities(self, src, val):
-        if not val or self.separator not in val:
-            return []
-        val = val.split(self.separator, 1)[1]
-        return self.filter_m2m(src, val, Accessibility, 'name')
+    def filter_duration(self, src, val):
+        duration, usages = val
+        first_usage = usages.split(self.separator)[0].strip()
+        if first_usage == self.practice:
+            return super(CG44TrekParser, self).filter_duration(src, duration)
+        else:
+            raise ValueImportError(u"Ignore duration since it does not correspond to practice")
 
     def save_related_treks(self, src, val):
         if not val:
             return
         val = val.split(self.separator)
         self.relationships += [(self.obj.pk, name.strip()) for name in val]
+
+
+class CG44PedestreTrekParser(CG44TrekParser):
+    practice = u"Pédestre"
+
+    def filter_eid(self, src, val):
+        return 'P-' + str(val)
+
+
+class CG44VTTTrekParser(CG44TrekParser):
+    practice = u"VTT"
+
+    def filter_eid(self, src, val):
+        return 'V-' + str(val)
+
+
+class CG44EquestreTrekParser(CG44TrekParser):
+    practice = u"Equestre"
+
+    def filter_eid(self, src, val):
+        return 'E-' + str(val)
 
 
 class CG44AVeloTrekParser(TrekParser):
@@ -374,7 +314,7 @@ class CG44AVeloTrekParser(TrekParser):
         super(CG44AVeloTrekParser, self).end()
 
     def filter_eid(self, src, val):
-        return 'V' + str(val)
+        return 'C-' + str(val)
 
     def filter_themes(self, src, val):
         val_theme, val_priorite = val
