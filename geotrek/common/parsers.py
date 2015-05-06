@@ -135,7 +135,10 @@ class Parser(object):
     def set_value(self, dst, src, val):
         field = self.model._meta.get_field_by_name(dst)[0]
         if val is None and not field.null:
-            raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
+            if field.blank and (isinstance(field, models.CharField) or isinstance(field, models.TextField)):
+                val = u""
+            else:
+                raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
         if val == u"" and not field.blank:
             raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
         setattr(self.obj, dst, val)
