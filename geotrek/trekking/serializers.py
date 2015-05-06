@@ -248,7 +248,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'label': obj._meta.verbose_name,
                 'pictogram': '/static/trekking/trek.svg',
             }
-        data['order'] = settings.TREK_CATEGORY_ORDER
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+            data['order'] = obj.practice.id
+        else:
+            data['order'] = settings.TREK_CATEGORY_ORDER
         if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['type1_label'] = obj._meta.get_field('practice').verbose_name
         if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
