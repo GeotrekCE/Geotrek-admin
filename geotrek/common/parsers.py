@@ -344,7 +344,7 @@ class Parser(object):
         self.start()
         for i, row in enumerate(self.next_row()):
             if limit and i >= limit:
-                break;
+                break
             try:
                 self.parse_row(row)
             except Exception as e:

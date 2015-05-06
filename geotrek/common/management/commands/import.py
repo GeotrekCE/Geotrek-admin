@@ -13,8 +13,8 @@ class Command(BaseCommand):
     args = '<parser> <shapefile>'
     option_list = BaseCommand.option_list + (
         make_option('-l', dest='limit', type='int',
-            help='Limit number of lines to import'),
-        )
+                    help='Limit number of lines to import'),
+    )
 
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
