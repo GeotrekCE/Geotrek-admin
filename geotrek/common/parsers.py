@@ -146,9 +146,17 @@ class Parser(object):
     def parse_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+            try:
+                val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+            except ValueImportError as warning:
+                self.add_warning(unicode(warning))
+                return False
         else:
-            val = self.apply_filter(dst, src, val)
+            try:
+                val = self.apply_filter(dst, src, val)
+            except ValueImportError as warning:
+                self.add_warning(unicode(warning))
+                return False
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields:
                 old = set(getattr(self.obj, dst).all())
