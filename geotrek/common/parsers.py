@@ -40,6 +40,8 @@ class ValueImportError(ImportError):
 
 
 class Parser(object):
+    filename = None
+    url = None
     simplify_tolerance = 0  # meters
     update_only = False
     duplicate_eid_allowed = False
@@ -133,7 +135,10 @@ class Parser(object):
     def set_value(self, dst, src, val):
         field = self.model._meta.get_field_by_name(dst)[0]
         if val is None and not field.null:
-            raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
+            if field.blank and (isinstance(field, models.CharField) or isinstance(field, models.TextField)):
+                val = u""
+            else:
+                raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
         if val == u"" and not field.blank:
             raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
         setattr(self.obj, dst, val)
@@ -141,9 +146,17 @@ class Parser(object):
     def parse_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+            try:
+                val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+            except ValueImportError as warning:
+                self.add_warning(unicode(warning))
+                return False
         else:
-            val = self.apply_filter(dst, src, val)
+            try:
+                val = self.apply_filter(dst, src, val)
+            except ValueImportError as warning:
+                self.add_warning(unicode(warning))
+                return False
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields:
                 old = set(getattr(self.obj, dst).all())
@@ -321,13 +334,17 @@ class Parser(object):
     def end(self):
         pass
 
-    def parse(self, filename):
+    def parse(self, filename=None, limit=None):
         if filename:
             self.filename = filename
-        if not self.filename.startswith('http://') and not os.path.exists(self.filename):
+        if not self.url and not self.filename:
+            raise GlobalImportError(_(u"Filename is required"))
+        if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
-        for row in self.next_row():
+        for i, row in enumerate(self.next_row()):
+            if limit and i >= limit:
+                break;
             try:
                 self.parse_row(row)
             except Exception as e:
@@ -405,9 +422,9 @@ class TourInSoftParser(Parser):
                 '$top': 1000,
                 '$skip': skip,
             }
-            response = requests.get(self.filename, params=params)
+            response = requests.get(self.url, params=params)
             if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {filename}. HTTP status code {status_code}").format(filename=self.filename, status_code=response.status_code))
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = int(self.root['d']['__count'])
             for row in self.items:
@@ -436,6 +453,11 @@ class AttachmentParserMixin(object):
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+
+    def filter_attachments(self, src, val):
+        if not val:
+            return []
+        return [(subval.strip(), '', '') for subval in val.split(self.separator)]
 
     def save_attachments(self, src, val):
         updated = False
