@@ -70,8 +70,8 @@ class Command(BaseCommand):
                     default=False, help='Skip generation of PDF files'),
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
                     default=False, help='Skip generation of zip tiles files'),
-        make_option('--skip-zip', '-z', action='store_true', dest='skip_zip',
-                    default=False, help='Skip generation of zip files for mobile app'),
+        make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
+                    default=False, help='Skip generation of DEM files for mobile app'),
     )
 
     def mkdirs(self, name):
@@ -193,6 +193,8 @@ class Command(BaseCommand):
         self.sync_object_view(lang, obj, view, 'profile.png', zipfile=zipfile, model_name=model_name)
 
     def sync_dem(self, lang, obj):
+        if self.skip_dem:
+            return
         view = ElevationArea.as_view(model=type(obj))
         self.sync_object_view(lang, obj, view, 'dem.json')
 
@@ -340,6 +342,7 @@ class Command(BaseCommand):
         self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
+        self.skip_dem = options['skip_dem']
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},
