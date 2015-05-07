@@ -7,7 +7,7 @@ from geotrek.common.models import Theme
 from geotrek.common.parsers import (TourInSoftParser, GlobalImportError,
                                     RowImportError, ValueImportError)
 from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent
-from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI
+from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI, Accessibility
 from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
@@ -198,6 +198,7 @@ class CG44TrekParser(TrekParser):
     }
     m2m_fields = {
         'themes': 'FIRST_AVIS',
+        'accessibilities': 'FIRST_USAG',
     }
     non_fields = {
         'related_treks': 'FIRST_LIAI',
@@ -236,6 +237,10 @@ class CG44TrekParser(TrekParser):
         if self.practice not in val:
             raise RowImportError(u"Bad value '{val}' for field {src} (separated by '{separator}'). Should contain '{practice}'.".format(val=val, src=src, separator=self.separator, practice=self.practice))
         return self.filter_fk(src, self.practice, Practice, 'name')
+
+    def filter_accessibilities(self, src, val):
+        val = [subval.strip() for subval in val.split(self.separator) if subval.strip() != self.practice]
+        return self.filter_m2m(src, ' + '.join(val), Accessibility, 'name')
 
     def filter_duration(self, src, val):
         duration, usages = val
