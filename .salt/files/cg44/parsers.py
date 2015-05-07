@@ -2,14 +2,13 @@
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.utils.translation import ugettext as _
 
 from geotrek.common.models import Theme
-from geotrek.common.parsers import (ExcelParser, AttachmentParserMixin,
+from geotrek.common.parsers import (AttachmentParserMixin,
                                     TourInSoftParser, GlobalImportError,
                                     RowImportError, ValueImportError)
-from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent, TouristicContentType
-from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI, POIType
+from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent
+from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI
 from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
@@ -97,7 +96,7 @@ class CG44POIParser(CG44TourInSoftParser):
 
 
 class CG44HebergementParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/b94de37c-b0b1-414f-9559-53510be235dc/Objects'
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/b94de37c-b0b1-414f-9559-53510be235dc/Objects'
     constant_fields = {
         'type': u"Hébergement",
         'published': True,
@@ -108,7 +107,7 @@ class CG44HebergementParser(CG44POIParser):
 
 
 class CG44RestaurationParser(CG44POIParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/e079fe27-11ad-4389-ac67-34bda49cc324/Objects'
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/e079fe27-11ad-4389-ac67-34bda49cc324/Objects'
     constant_fields = {
         'type': u"Restauration",
         'published': True,
@@ -119,21 +118,21 @@ class CG44RestaurationParser(CG44POIParser):
 
 
 class CG44AVoirParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/99c93523-4194-428c-97f4-56bd3f774982/Objects'
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/99c93523-4194-428c-97f4-56bd3f774982/Objects'
     constant_fields = {
         'category': u"A voir",
         'published': True,
     }
-    #m2m_fields = {
-        #'type1': 'ObjectTypeName',
-    #}
+    # m2m_fields = {
+    #     'type1': 'ObjectTypeName',
+    # }
     non_fields = {
         'attachments': 'Photos',
     }
 
 
 class CG44AFaireParser(CG44TouristicContentParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/7b171134-26bf-485f-b1e1-65f9f4187c6f/Objects'
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/7b171134-26bf-485f-b1e1-65f9f4187c6f/Objects'
     constant_fields = {
         'category': u"A faire",
         'published': True,
@@ -144,7 +143,7 @@ class CG44AFaireParser(CG44TouristicContentParser):
 
 
 class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
-    filename = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
+    url = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
     model = Trek
     update_only = True
@@ -158,7 +157,7 @@ class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
         'description': 'Descriptif',
     }
     m2m_fields = {
-        #'information_desks': ('Tel', 'Contact', 'Mail'),
+        # 'information_desks': ('Tel', 'Contact', 'Mail'),
     }
     non_fields = {
         'attachments': 'Photos',
@@ -235,7 +234,7 @@ class CG44TrekParser(TrekParser):
 
     def filter_practice(self, src, val):
         val = [subval.strip() for subval in val.split(self.separator)]
-        if not self.practice in val:
+        if self.practice not in val:
             raise RowImportError(u"Bad value '{val}' for field {src} (separated by '{separator}'). Should contain '{practice}'.".format(val=val, src=src, separator=self.separator, practice=self.practice))
         return self.filter_fk(src, self.practice, Practice, 'name')
 
