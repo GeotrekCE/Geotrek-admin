@@ -4,8 +4,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from geotrek.common.models import Theme
-from geotrek.common.parsers import (AttachmentParserMixin,
-                                    TourInSoftParser, GlobalImportError,
+from geotrek.common.parsers import (TourInSoftParser, GlobalImportError,
                                     RowImportError, ValueImportError)
 from geotrek.tourism.models import InformationDesk, InformationDeskType, TouristicContent
 from geotrek.trekking.models import Trek, Practice, TrekRelationship, POI
@@ -13,7 +12,7 @@ from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
 
-class CG44TourInSoftParser(AttachmentParserMixin, TourInSoftParser):
+class CG44TourInSoftParser(TourInSoftParser):
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
 
 
@@ -142,7 +141,7 @@ class CG44AFaireParser(CG44TouristicContentParser):
     }
 
 
-class CG44LADTrekParser(AttachmentParserMixin, TourInSoftParser):
+class CG44LADTrekParser(TourInSoftParser):
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
     model = Trek
