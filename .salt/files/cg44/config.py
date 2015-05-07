@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .prod import *
+from .prod import *  # NOQA
 
 
 # Necessary block of config when maps are not from Geotrek Tilecache :
@@ -28,4 +28,4 @@ INSTALLED_APPS.remove('geotrek.maintenance')
 INSTALLED_APPS.remove('geotrek.infrastructure')
 
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = True
-SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = True
