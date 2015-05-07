@@ -408,37 +408,6 @@ class AtomParser(Parser):
             yield row
 
 
-class TourInSoftParser(Parser):
-    @property
-    def items(self):
-        return self.root['d']['results']
-
-    def next_row(self):
-        skip = 0
-        while True:
-            params = {
-                '$format': 'json',
-                '$inlinecount': 'allpages',
-                '$top': 1000,
-                '$skip': skip,
-            }
-            response = requests.get(self.url, params=params)
-            if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
-            self.root = response.json()
-            self.nb = int(self.root['d']['__count'])
-            for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
-            skip += 1000
-            if skip >= self.nb:
-                return
-
-    def filter_attachments(self, src, val):
-        if not val:
-            return []
-        return [subval.split('||') for subval in val.split('##')]
-
-
 class AttachmentParserMixin(object):
     base_url = ''
     filetype_name = u"Photographie"
@@ -469,7 +438,7 @@ class AttachmentParserMixin(object):
             for attachment in to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
-                if re.search(r'^{name}(_\d+)?{ext}$'.format(name=upload_name, ext=ext), existing_name):
+                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
                     found = True
                     to_delete.remove(attachment)
                     break
@@ -491,3 +460,34 @@ class AttachmentParserMixin(object):
             Attachment.objects.filter(pk__in=[a.pk for a in to_delete]).delete()
             updated = True
         return updated
+
+
+class TourInSoftParser(AttachmentParserMixin, Parser):
+    @property
+    def items(self):
+        return self.root['d']['results']
+
+    def next_row(self):
+        skip = 0
+        while True:
+            params = {
+                '$format': 'json',
+                '$inlinecount': 'allpages',
+                '$top': 1000,
+                '$skip': skip,
+            }
+            response = requests.get(self.url, params=params)
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            self.root = response.json()
+            self.nb = int(self.root['d']['__count'])
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+            skip += 1000
+            if skip >= self.nb:
+                return
+
+    def filter_attachments(self, src, val):
+        if not val:
+            return []
+        return [subval.split('||') for subval in val.split('##')]
