@@ -13,8 +13,8 @@ class Command(BaseCommand):
     args = '<parser> <shapefile>'
     option_list = BaseCommand.option_list + (
         make_option('-l', dest='limit', type='int',
-            help='Limit number of lines to import'),
-        )
+                    help='Limit number of lines to import'),
+    )
 
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
@@ -33,7 +33,7 @@ class Command(BaseCommand):
         except:
             raise CommandError("Failed to import parser class '{0}'".format(args[0]))
 
-        if not hasattr(Parser, 'filename') and len(args) < 2:
+        if not Parser.filename and not Parser.url and len(args) < 2:
             raise CommandError("File path missing")
 
         def progress_cb(progress):
