@@ -15,6 +15,7 @@ CHANGELOG
 * Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
 * Build zip files for mobile application
 * Trek / Touristic content association distance depending on trek practice
+* Option to hide published treks nearby topologies
 
 **Bug fixes**
 
