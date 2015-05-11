@@ -6,7 +6,7 @@ import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import translation
-from django.utils.translation import get_language
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
@@ -153,7 +153,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer()
-    children = rest_serializers.Field(source='published_children_id')
+    children = rest_serializers.Field(source='children_id')
+    previous = rest_serializers.Field(source='previous_id')
+    next = rest_serializers.Field(source='next_id')
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
@@ -205,7 +207,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
-                  'treks', 'parent', 'children') + \
+                  'treks', 'parent', 'children', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -235,18 +237,22 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'id': accessibility.prefixed_id,
                 'label': accessibility.name,
                 'pictogram': accessibility.get_pictogram_url(),
+                'slug': accessibility.slug,
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
                 'id': obj.prefixed_category_id,
                 'label': obj.practice.name,
                 'pictogram': obj.practice.get_pictogram_url(),
+                'slug': obj.practice.slug,
             }
         else:
             data = {
                 'id': obj.category_id_prefix,
                 'label': obj._meta.verbose_name,
                 'pictogram': '/static/trekking/trek.svg',
+                # Translators: This is a slug (without space, accent or special char)
+                'slug': _('trek'),
             }
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['order'] = obj.practice.id

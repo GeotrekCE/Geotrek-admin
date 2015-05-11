@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, ugettext_lazy as _
 
 import simplekml
@@ -223,8 +224,28 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return _(u"Add a new trek")
 
     @property
-    def published_children_id(self):
-        return self.children.filter(published=True).values_list('id', flat=True)
+    def children_id(self):
+        return list(self.children.order_by('name').values_list('id', flat=True))
+
+    @property
+    def previous_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) - 1]
+        except IndexError:
+            return None
+
+    @property
+    def next_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) + 1]
+        except IndexError:
+            return None
 
     def clean(self):
         if self.parent and self.parent == self:
@@ -336,6 +357,10 @@ class Practice(PictogramMixin):
     def __unicode__(self):
         return self.name
 
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
+
 
 class Accessibility(OptionalPictogramMixin):
 
@@ -356,6 +381,10 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def prefixed_id(self):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
 
 
 class Route(OptionalPictogramMixin):
