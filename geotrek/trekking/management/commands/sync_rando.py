@@ -295,7 +295,7 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.DifficultyLevel, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile)
-        self.sync_pictograms(lang, trekking_models.Route)
+        self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
