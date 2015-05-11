@@ -16,6 +16,7 @@ CHANGELOG
 * Build zip files for mobile application
 * Trek / Touristic content association distance depending on trek practice
 * Option to hide published treks nearby topologies
+* Add previous/next treks in API
 
 **Bug fixes**
 

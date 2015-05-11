@@ -416,9 +416,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.parent = TrekFactory.create(published=True)
+        self.parent = TrekFactory.create(published=True, name='Parent')
 
         self.trek = TrekFactory.create(
+            name='Step 2',
             parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
@@ -475,8 +476,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         trek4 = TrekFactory(no_path=True, published=True)  # too far
         trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
-        self.child1 = TrekFactory.create(published=False, parent=self.trek)
-        self.child2 = TrekFactory.create(published=True, parent=self.trek)
+        self.child1 = TrekFactory.create(published=False, parent=self.trek, name='Child 1')
+        self.child2 = TrekFactory.create(published=True, parent=self.trek, name='Child 2')
+        self.previous = TrekFactory.create(published=False, parent=self.parent, name='Step 1')
+        self.next = TrekFactory.create(published=False, parent=self.parent, name='Step 3')
 
         self.pk = self.trek.pk
         url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
@@ -505,6 +508,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                          os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
 
     def test_published_status(self):
+        print 'lang:', translation.get_language()
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
@@ -666,7 +670,13 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['parent'], self.parent.pk)
 
     def test_children(self):
-        self.assertEqual(self.result['children'], [self.child2.pk])
+        self.assertEqual(self.result['children'], [self.child1.pk, self.child2.pk])
+
+    def test_previous(self):
+        self.assertEqual(self.result['previous'], self.previous.pk)
+
+    def test_next(self):
+        self.assertEqual(self.result['next'], self.next.pk)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

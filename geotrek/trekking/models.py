@@ -223,8 +223,28 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return _(u"Add a new trek")
 
     @property
-    def published_children_id(self):
-        return self.children.filter(published=True).values_list('id', flat=True)
+    def children_id(self):
+        return list(self.children.order_by('name').values_list('id', flat=True))
+
+    @property
+    def previous_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) - 1]
+        except IndexError:
+            return None
+
+    @property
+    def next_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) + 1]
+        except IndexError:
+            return None
 
     def clean(self):
         if self.parent and self.parent == self:
