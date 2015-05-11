@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-14 16:23+0200\n"
+"POT-Creation-Date: 2015-05-11 18:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,6 +168,9 @@ msgstr "Source"
 msgid "External id"
 msgstr "Id externe"
 
+msgid "Second external id"
+msgstr "Deuxième id externe"
+
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -215,6 +218,15 @@ msgstr "Réseau d'itinéraire"
 
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
+
+msgid "Distance"
+msgstr "Distance"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"Les contenus et événements touristiques seront associés selon cette distance "
+"(mètres)"
 
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
@@ -284,6 +296,24 @@ msgstr "Type de POI"
 
 msgid "POI types"
 msgstr "Types de POI"
+
+msgid ""
+"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+msgstr ""
+
+msgid ""
+"Geometry for field '{src}' should be LineString, not MultiLineString. Unable "
+"to compute altimetry information"
+msgstr ""
+
+msgid ""
+"Invalid geometry type for field '{src}'. Should be LineString, not "
+"{geom_type}"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr "itineraire"
 
 msgid "Altimetric profile"
 msgstr "Profil altimétrique"
@@ -424,8 +454,9 @@ msgid "%(hour)s h %(min)s"
 msgstr "%(hour)s h %(min)s"
 
 #, python-format
+msgid "%(hour)s h"
+msgstr "%(hour)s h"
+
+#, python-format
 msgid "%s min"
 msgstr "%s min"
-
-#~ msgid "Stay"
-#~ msgstr "Séjour"

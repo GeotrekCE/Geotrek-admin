@@ -6,7 +6,7 @@ import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import translation
-from django.utils.translation import get_language
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
@@ -237,18 +237,22 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'id': accessibility.prefixed_id,
                 'label': accessibility.name,
                 'pictogram': accessibility.get_pictogram_url(),
+                'slug': accessibility.slug,
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
                 'id': obj.prefixed_category_id,
                 'label': obj.practice.name,
                 'pictogram': obj.practice.get_pictogram_url(),
+                'slug': obj.practice.slug,
             }
         else:
             data = {
                 'id': obj.category_id_prefix,
                 'label': obj._meta.verbose_name,
                 'pictogram': '/static/trekking/trek.svg',
+                # Translators: This is a slug (without space, accent or special char)
+                'slug': _('trek'),
             }
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['order'] = obj.practice.id

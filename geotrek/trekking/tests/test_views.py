@@ -655,6 +655,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                              {u"id": 'T',
                               u"order": None,
                               u"label": u"Trek",
+                              u"slug": u"trek",
                               u"type1_label": u"Practice",
                               u"type2_label": u"Accessibilities",
                               u"pictogram": u"/static/trekking/trek.svg"})

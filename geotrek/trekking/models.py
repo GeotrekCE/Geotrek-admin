@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, ugettext_lazy as _
 
 import simplekml
@@ -356,6 +357,10 @@ class Practice(PictogramMixin):
     def __unicode__(self):
         return self.name
 
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
+
 
 class Accessibility(OptionalPictogramMixin):
 
@@ -376,6 +381,10 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def prefixed_id(self):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
 
 
 class Route(OptionalPictogramMixin):
