@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -338,7 +339,7 @@ class TrekViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         qs = Trek.objects.existing()
-        qs = qs.filter(published=True)
+        qs = qs.filter(Q(published=True) | Q(parent__published=True))
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 
