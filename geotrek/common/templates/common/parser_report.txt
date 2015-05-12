@@ -3,5 +3,6 @@
 {% endif %}{% if nb_updated %}{% blocktrans count n=nb_updated %}{{ n }} record updated.{% plural %}{{ n }} records updated.{% endblocktrans %}
 {% endif %}{% if nb_unmodified %}{% blocktrans count n=nb_unmodified %}{{ n }} record unmodified.{% plural %}{{ n }} records unmodified.{% endblocktrans %}
 {% endif %}{% if warnings %}{% blocktrans count n=warnings|length %}{{ n }} warning:{% plural %}{{ n }} warnings:{% endblocktrans %}
-{% for msg, ranges in warnings.iteritems %}- {{ msg|safe }} (line {% for range in ranges %}{% if range.0 == range.1 %}{{ range.0 }}{% else %}{{ range.0 }}-{{ range.1 }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %})
-{% endfor %}{% endif %}
+{% for id, msgs in warnings.iteritems %}# {{ id }}:
+{% for msg in msgs %}- {{ msg|safe }},
+{% endfor %}{% endfor %}{% endif %}
