@@ -92,11 +92,9 @@ class Parser(object):
             return self.normalize_field_name(src)
 
     def add_warning(self, msg):
-        ranges = self.warnings.setdefault(msg, [])
-        if ranges and ranges[-1][1] in (self.line, self.line - 1):
-            ranges[-1] = (ranges[-1][0], self.line)
-        else:
-            ranges.append((self.line, self.line))
+        key = _(u"Id {eid}".format(eid=self.eid_val)) or _(u"Line {line}".format(line=self.line))
+        warnings = self.warnings.setdefault(key, [])
+        warnings.append(msg)
 
     def get_val(self, row, src):
         if hasattr(src, '__iter__'):
