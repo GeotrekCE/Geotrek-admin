@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from django.contrib.gis.geos import Point, MultiLineString
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
@@ -47,7 +48,13 @@ class TrekParser(AttachmentParserMixin, ShapeParser):
         if val is None:
             return None
         if val.geom_type == 'MultiLineString':
-            self.add_warning(_(u"Geometry for field '{src}' should be LineString, not MultiLineString. Unable to compute altimetry information").format(src=src))
+            points = val[0]
+            for i, path in enumerate(val[1:]):
+                distance = Point(points[-1]).distance(Point(path[0]))
+                if distance > 5:
+                    self.add_warning(_(u"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'").format(i=i + 2, p1=points[-1], p2=path[0], distance=int(distance), src=src))
+                points += path
+            return MultiLineString(points)
         elif val.geom_type != 'LineString':
             self.add_warning(_(u"Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
             return None

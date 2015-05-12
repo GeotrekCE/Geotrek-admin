@@ -236,6 +236,7 @@ class Parser(object):
         return {self.eid: eid_val}
 
     def parse_row(self, row):
+        self.eid_val = None
         self.line += 1
         if self.eid is None:
             eid_kwargs = {}
@@ -359,12 +360,18 @@ class ShapeParser(Parser):
         datasource = DataSource(self.filename)
         layer = datasource[0]
         self.nb = len(layer)
-        for feature in layer:
+        for i, feature in enumerate(layer):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
-            ogrgeom = feature.geom
-            ogrgeom.coord_dim = 2  # Flatten to 2D
-            geom = ogrgeom.geos
-            if self.simplify_tolerance:
+            try:
+                ogrgeom = feature.geom
+            except:
+                raise
+                print _(u"Invalid geometry pointer"), i
+                geom = None
+            else:
+                ogrgeom.coord_dim = 2  # Flatten to 2D
+                geom = ogrgeom.geos
+            if self.simplify_tolerance and geom is not None:
                 geom = geom.simplify(self.simplify_tolerance)
             row[self.normalize_field_name('geom')] = geom
             yield row
