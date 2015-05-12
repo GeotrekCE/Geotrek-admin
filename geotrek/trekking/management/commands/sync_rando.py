@@ -328,7 +328,7 @@ class Command(BaseCommand):
         self.verbosity = options.get('verbosity', '1')
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = args[0]
+        self.dst_root = args[0].rstrip('/')
         if os.path.exists(self.dst_root):
             existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
             remaining = existing - set(('api', 'media', 'static', 'zip'))
