@@ -363,7 +363,6 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except:
-                raise
                 print _(u"Invalid geometry pointer"), i
                 geom = None
             else:

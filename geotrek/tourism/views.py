@@ -1,4 +1,5 @@
 import logging
+from itertools import chain
 
 import requests
 from requests.exceptions import RequestException
@@ -22,6 +23,7 @@ from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.models import DataSource, InformationDesk
 from geotrek.trekking.models import Trek
+from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
@@ -289,3 +291,23 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
         return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')
+
+
+class TrekTouristicContentAndPOIViewSet(viewsets.ModelViewSet):
+    model = TouristicContent
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(POISerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk, published=True)
+        except Trek.DoesNotExist:
+            raise Http404
+        qs1 = trek.touristic_contents.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        qs2 = trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return chain(qs1, qs2)

@@ -18,6 +18,7 @@ CHANGELOG
 * Option to hide published treks nearby topologies
 * Add previous/next treks in API
 * Add external id in trekking/tourism detail pages and exports
+* Zip touristic contents as POI for mobile app v1
 
 **Bug fixes**
 

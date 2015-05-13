@@ -255,7 +255,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'slug': _('trek'),
             }
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            data['order'] = obj.practice.id
+            data['order'] = obj.practice and obj.practice.id
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
         if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:

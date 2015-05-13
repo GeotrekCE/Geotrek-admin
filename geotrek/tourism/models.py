@@ -350,6 +350,19 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+    @property
+    def type(self):
+        """Fake type to simulate POI for mobile app v1"""
+        return self.category
+
+    @property
+    def min_elevation(self):
+        return 0
+
+    @property
+    def max_elevation(self):
+        return 0
+
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
