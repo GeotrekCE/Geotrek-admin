@@ -81,7 +81,7 @@
     "pk": 1, 
     "model": "trekking.practice", 
     "fields": {
-        "distance": 2000, 
+        "distance": null,
         "name_fr": "P\u00e9destre", 
         "name": "P\u00e9destre", 
         "cirkwi": null, 
@@ -92,7 +92,7 @@
     "pk": 2, 
     "model": "trekking.practice", 
     "fields": {
-        "distance": 5000, 
+        "distance": null, 
         "name_fr": "A v\u00e9lo", 
         "name": "A v\u00e9lo", 
         "cirkwi": null, 
@@ -100,23 +100,65 @@
     }
 },
 {
-    "pk": 1, 
-    "model": "trekking.accessibility", 
+    "pk": 3, 
+    "model": "trekking.practice", 
     "fields": {
+        "distance": null, 
         "name_fr": "VTT", 
         "name": "VTT", 
         "cirkwi": null, 
-        "pictogram": "upload/accessibility-vtt.svg"
+        "pictogram": "upload/practice-vtt.svg"
+    }
+},
+{
+    "pk": 4, 
+    "model": "trekking.practice", 
+    "fields": {
+        "distance": null, 
+        "name_fr": "Equestre", 
+        "name": "Equestre", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-equestre.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.accessibility", 
+    "fields": {
+        "name_fr": "P\u00e9destre", 
+        "name": "P\u00e9destre", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-pedestre.svg"
     }
 },
 {
     "pk": 2, 
     "model": "trekking.accessibility", 
     "fields": {
+        "name_fr": "A v\u00e9lo", 
+        "name": "A v\u00e9lo", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-velo.svg"
+    }
+},
+{
+    "pk": 3, 
+    "model": "trekking.accessibility", 
+    "fields": {
+        "name_fr": "VTT", 
+        "name": "VTT", 
+        "cirkwi": null, 
+        "pictogram": "upload/practice-vtt.svg"
+    }
+},
+{
+    "pk": 4, 
+    "model": "trekking.accessibility", 
+    "fields": {
         "name_fr": "Equestre", 
         "name": "Equestre", 
         "cirkwi": null, 
-        "pictogram": "upload/accessibility-equestre.svg"
+        "pictogram": "upload/practice-equestre.svg"
     }
 },
 {
