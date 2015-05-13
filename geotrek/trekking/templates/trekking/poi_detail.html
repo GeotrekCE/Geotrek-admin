@@ -39,6 +39,10 @@
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ poi.thumbnail.url }}"></td>
         </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{{ poi.eid }}</td>
+        </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}

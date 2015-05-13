@@ -17,6 +17,7 @@ CHANGELOG
 * Trek / Touristic content association distance depending on trek practice
 * Option to hide published treks nearby topologies
 * Add previous/next treks in API
+* Add external id in trekking/tourism detail pages and exports
 
 **Bug fixes**
 
