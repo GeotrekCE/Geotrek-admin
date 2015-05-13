@@ -508,6 +508,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                          os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
 
     def test_published_status(self):
+        print 'lang:', translation.get_language()
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
