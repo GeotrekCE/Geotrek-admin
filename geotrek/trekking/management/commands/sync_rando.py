@@ -17,6 +17,7 @@ from django.utils import translation
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
+from geotrek.tourism import models as tourism_models
 from geotrek.common.views import DocumentPublicPDF
 from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
@@ -305,6 +306,8 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
+        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
+            self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
