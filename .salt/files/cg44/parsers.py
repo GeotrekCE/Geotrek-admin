@@ -188,32 +188,32 @@ class CG44TrekParser(TrekParser):
     eid = 'eid'
     fields = {
         'eid': 'NUM_OBJ',
-        'name': 'FIRST_ALIA',
-        'duration': ('FIRST_PARC', 'FIRST_USAG'),
-        'difficulty': 'FIRST_DIFF',
-        'eid2': 'FIRST_GENC',
-        'route': 'FIRST_CARA',
-        'practice': 'FIRST_USAG',
+        'name': 'ALIAS',
+        'duration': ('PARCOURS', 'USAGES'),
+        'difficulty': 'DIFFICULTE',
+        'eid2': 'GENCOMM',
+        'route': 'CARAC',
+        'practice': 'USAGES',
         'geom': 'geom',
     }
     m2m_fields = {
-        'themes': 'FIRST_AVIS',
-        'accessibilities': 'FIRST_USAG',
+        'themes': 'AVIS',
+        'accessibilities': 'USAGES',
     }
     non_fields = {
-        'related_treks': 'FIRST_LIAI',
+        'related_treks': 'LIAISONS',
     }
     field_options = {
         'route': {'mapping': {u"Boucle": u"Boucle", u"Itinerance": u"Itinérance"}, 'partial': True},
         'themes': {'mapping': {u"VIGNOBLE": u"Vignoble", u"LITTORAL": u"Littoral", u"FLEUVE ET RIVIERE": u"Fleuve et rivière", u"CAMPAGNE": u"Campagne", u"MARAIS": u"Marais", u"PATRIMOINE": u"Patrimoine", u"INCONTOURNABLE": u"Incontournables"}},
     }
-    FIRST_ALIA_to_pk = {}
+    ALIAS_to_pk = {}
     relationships = []
 
     def end(self):
         for pk_a, name_b in self.relationships:
             try:
-                pk_b = self.FIRST_ALIA_to_pk[name_b]
+                pk_b = self.ALIAS_to_pk[name_b]
             except KeyError:
                 self.add_warning(u"Bad value '{name}' for field FIRST_LIAI (separated by {separator}). No trek with this name in data to import.".format(name=name_b, separator=self.separator))
                 continue
@@ -227,7 +227,7 @@ class CG44TrekParser(TrekParser):
     def parse_row(self, row):
         super(CG44TrekParser, self).parse_row(row)
         if self.obj:
-            self.FIRST_ALIA_to_pk[row['FIRST_ALIA']] = self.obj.pk
+            self.ALIAS_to_pk[row['ALIAS']] = self.obj.pk
 
     def filter_name(self, src, val):
         return val.split(':', 1)[1].strip()
@@ -255,6 +255,34 @@ class CG44TrekParser(TrekParser):
             return
         val = val.split(self.separator)
         self.relationships += [(self.obj.pk, name.strip()) for name in val]
+
+    def next_row(self):
+        rows = list(super(CG44TrekParser, self).next_row())
+        rows.sort(key=lambda row: (row['NUM_OBJ'], row['NUM_ORDRE']))
+        self.nb = len(set([row['NUM_OBJ'] for row in rows]))
+        prev = None
+
+        def concat(a, b):
+            if a is None and b is None:
+                return None
+            elif a is None:
+                return b
+            elif b is None:
+                return a
+            else:
+                return a + b
+
+        for row in rows:
+            if prev is None:
+                prev = row
+                line = row['GEOM']
+            elif prev['NUM_OBJ'] == row['NUM_OBJ']:
+                line = concat(line, row['GEOM'])
+            else:
+                prev['GEOM'] = line
+                yield prev
+                prev = row
+                line = row['GEOM']
 
 
 class CG44PedestreTrekParser(CG44TrekParser):
