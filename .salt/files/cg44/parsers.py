@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.utils.translation import ugettext as _
 
 from geotrek.common.models import Theme
 from geotrek.common.parsers import (TourInSoftParser, GlobalImportError,
@@ -256,33 +257,61 @@ class CG44TrekParser(TrekParser):
         val = val.split(self.separator)
         self.relationships += [(self.obj.pk, name.strip()) for name in val]
 
+    def concat(self, a, b, second=False):
+        """Concatenate two linestrings trying to find the right direction for the
+        second one (and for the first one too if second is true"""
+        if a is None and b is None:
+            return None
+        elif a is None:
+            return b
+        elif b is None:
+            return a
+        if second:
+            start_a = Point(a[0])
+            end_a = Point(a[-1])
+            start_b = Point(b[0])
+            end_b = Point(b[-1])
+            reverse = {
+                start_a.distance(start_b): True,
+                start_a.distance(end_b): True,
+                end_a.distance(start_b): False,
+                end_a.distance(end_b): False,
+            }
+            if reverse[min(reverse.keys())]:
+                a.reverse()
+        end_a = Point(a[-1])
+        start_b = Point(b[0])
+        end_b = Point(b[-1])
+        d1 = end_a.distance(start_b)
+        d2 = end_a.distance(end_b)
+        if d2 < d1:
+            b.reverse()
+        if min(d1, d2) > 5:
+            self.add_warning(_(u"Not contiguous segment ({distance} m)").format(distance=int(min(d1, d2))))
+        return a + b
+
     def next_row(self):
         rows = list(super(CG44TrekParser, self).next_row())
+        rows = [row for row in rows if row['GEOM'] is not None]
         rows.sort(key=lambda row: (row['NUM_OBJ'], row['NUM_ORDRE']))
         self.nb = len(set([row['NUM_OBJ'] for row in rows]))
         prev = None
-
-        def concat(a, b):
-            if a is None and b is None:
-                return None
-            elif a is None:
-                return b
-            elif b is None:
-                return a
-            else:
-                return a + b
+        second = False
 
         for row in rows:
             if prev is None:
                 prev = row
                 line = row['GEOM']
+                second = True
             elif prev['NUM_OBJ'] == row['NUM_OBJ']:
-                line = concat(line, row['GEOM'])
+                line = self.concat(line, row['GEOM'], second)
+                second = False
             else:
                 prev['GEOM'] = line
                 yield prev
                 prev = row
                 line = row['GEOM']
+                second = True
 
 
 class CG44PedestreTrekParser(CG44TrekParser):
