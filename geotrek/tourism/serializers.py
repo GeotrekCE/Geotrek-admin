@@ -1,6 +1,7 @@
 from rest_framework import serializers as rest_serializers
 
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
@@ -56,10 +57,14 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     id = rest_serializers.Field(source='prefixed_id')
+    slug = rest_serializers.SerializerMethodField('get_slug')
 
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order', 'slug')
+
+    def get_slug(self, obj):
+        return _(u'touristic-content')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -133,4 +138,5 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
+            'slug': _(u'touristic-event'),
         }

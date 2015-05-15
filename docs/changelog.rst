@@ -16,7 +16,7 @@ CHANGELOG
 * Build zip files for mobile application
 * Trek / Touristic content association distance depending on trek practice
 * Option to hide published treks nearby topologies
-* Add previous/next treks in API
+* Add previous/next treks and category slugs to geojson API
 * Add external id in trekking/tourism detail pages and exports
 * Zip touristic contents as POI for mobile app v1
 
