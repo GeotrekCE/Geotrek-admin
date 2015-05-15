@@ -92,7 +92,7 @@ class Parser(object):
             return self.normalize_field_name(src)
 
     def add_warning(self, msg):
-        key = _(u"Id {eid}".format(eid=self.eid_val)) or _(u"Line {line}".format(line=self.line))
+        key = _(u"Line {line}".format(line=self.line))
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 

@@ -89,6 +89,12 @@ class TrekParserFilterGeomTests(TestCase):
     def test_multilinestring(self):
         geom = MultiLineString(LineString((0, 0), (0, 1), (1, 1), (1, 0)))
         self.assertEqual(self.parser.filter_geom('geom', geom), geom)
+        self.assertFalse(self.parser.warnings)
+
+    def test_multilinestring_with_hole(self):
+        geom = MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101)))
+        self.assertEqual(self.parser.filter_geom('geom', geom),
+                         MultiLineString(LineString((0, 0), (0, 1), (100, 100), (100, 101))))
         self.assertTrue(self.parser.warnings)
 
 
