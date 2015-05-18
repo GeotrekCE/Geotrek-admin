@@ -172,10 +172,8 @@ class CG44LADTrekParser(TourInSoftParser):
 
     def filter_information_desks(self, src, val):
         tel, contact, mail, web = val
-        if not tel and not contact and not mail and not web:
-            return []
         if not contact:
-            contact = u"Contact"
+            return []
         information_desk = self.obj.information_desks.first()
         if not information_desk:
             information_desk = InformationDesk(type=self.information_desk_type)
