@@ -25,3 +25,11 @@ INSTALLED_APPS.remove('geotrek.infrastructure')
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = True
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = True
 ZIP_TOURISTIC_CONTENTS_AS_POI = True
+
+THUMBNAIL_ALIASES['']['print'] = {'size': (800, 600), 'crop': 'smart'}
+EXPORT_HEADER_IMAGE_SIZE = {
+    'trek': (10.7, 8.025),
+    'poi': (10.7, 8.025),
+    'touristiccontent': (10.7, 8.025),
+    'touristicevent': (10.7, 8.025),
+}
