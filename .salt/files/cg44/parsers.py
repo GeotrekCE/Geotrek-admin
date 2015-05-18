@@ -157,7 +157,7 @@ class CG44LADTrekParser(TourInSoftParser):
         'description': 'Descriptif',
     }
     m2m_fields = {
-        # 'information_desks': ('Tel', 'Contact', 'Mail'),
+        'information_desks': ('CommTel', 'NomGest', 'CommMail', 'CommWeb'),
     }
     non_fields = {
         'attachments': 'Photos',
@@ -171,15 +171,18 @@ class CG44LADTrekParser(TourInSoftParser):
             raise GlobalImportError(u"Information desk type '{name}' does not exists in Geotrek-Admin. Please add it.".format(name=self.information_desk_type_name))
 
     def filter_information_desks(self, src, val):
-        tel, contact, mail = val
-        if not contact:
+        tel, contact, mail, web = val
+        if not tel and not contact and not mail and not web:
             return []
+        if not contact:
+            contact = u"Contact"
         information_desk = self.obj.information_desks.first()
         if not information_desk:
             information_desk = InformationDesk(type=self.information_desk_type)
         information_desk.phone = tel
         information_desk.name = contact
         information_desk.email = mail
+        information_desk.web = web
         information_desk.save()
         return [information_desk]
 
