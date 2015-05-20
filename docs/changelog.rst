@@ -24,6 +24,7 @@ CHANGELOG
 **Bug fixes**
 
 * Remove HTTP calls to SoundCloud API at serialization
+* Fix a crash in appy pod (PDF generation)
 
 
 0.34.0 (2015-05-20)
