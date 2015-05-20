@@ -471,6 +471,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             u"id": self.category.prefixed_id,
             u"order": None,
             u"label": self.category.label,
+            u"slug": u"touristic-content",
             u"type1_label": self.category.type1_label,
             u"type2_label": self.category.type2_label,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
@@ -509,6 +510,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
                              {u"id": 'E',
                               u"order": None,
                               u"label": u"Touristic event",
+                              u"slug": u"touristic-event",
                               u"type1_label": u"Type",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
 
