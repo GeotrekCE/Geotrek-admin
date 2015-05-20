@@ -71,6 +71,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     networks = models.ManyToManyField('Network',
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = PathManager()
 
