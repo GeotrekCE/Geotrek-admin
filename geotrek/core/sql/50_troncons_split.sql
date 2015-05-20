@@ -195,6 +195,7 @@ BEGIN
                                                  depart,
                                                  arrivee,
                                                  confort,
+                                                 id_externe,
                                                  geom)
                             VALUES (NEW.structure,
                                     NEW.visible,
@@ -207,6 +208,7 @@ BEGIN
                                     NEW.depart,
                                     NEW.arrivee,
                                     NEW.confort,
+                                    NEW.id_externe,
                                     segment)
                             RETURNING id INTO tid_clone;
                     END IF;
@@ -266,6 +268,7 @@ BEGIN
                                                  depart,
                                                  arrivee,
                                                  confort,
+                                                 id_externe,
                                                  geom)
                             VALUES (troncon.structure,
                                     troncon.visible,
@@ -278,6 +281,7 @@ BEGIN
                                     troncon.depart,
                                     troncon.arrivee,
                                     troncon.confort,
+                                    troncon.id_externe,
                                     segment)
                             RETURNING id INTO tid_clone;
 

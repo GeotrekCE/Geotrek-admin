@@ -19,6 +19,7 @@ CHANGELOG
 * Add previous/next treks and category slugs to geojson API
 * Add external id in trekking/tourism detail pages and exports
 * Zip touristic contents as POI for mobile app v1
+* Add external id field on Path
 
 **Bug fixes**
 
