@@ -5,7 +5,9 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
-*
+**Bug fixes**
+
+* Fix a crash in appy pod (PDF generation)
 
 
 0.34.0 (2015-05-20)
