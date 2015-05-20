@@ -445,6 +445,7 @@ class CirkwiPOIView(ListView):
 translation.ugettext_noop(u"Altimetric profile")
 translation.ugettext_noop(u"Attribution")
 translation.ugettext_noop(u"Edition of")
+translation.ugettext_noop(u"In more details...")
 translation.ugettext_noop(u"Max elevation")
 translation.ugettext_noop(u"Min elevation")
 translation.ugettext_noop(u"On the way...")
