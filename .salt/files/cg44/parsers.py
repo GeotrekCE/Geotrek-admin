@@ -180,7 +180,7 @@ class CG44LADTrekParser(TourInSoftParser):
         information_desk.phone = tel
         information_desk.name = contact
         information_desk.email = mail
-        information_desk.web = web
+        information_desk.website = web
         information_desk.save()
         return [information_desk]
 
