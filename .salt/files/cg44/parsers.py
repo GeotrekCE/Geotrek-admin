@@ -13,6 +13,12 @@ from geotrek.trekking.parsers import TrekParser
 from geotrek.zoning.parsers import CityParser
 
 
+def add_http(url):
+    if url and '://' not in url:
+        return 'http://' + url
+    return url
+
+
 class CG44TourInSoftParser(TourInSoftParser):
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
 
@@ -60,6 +66,9 @@ class CG44TouristicContentParser(CG44TourInSoftParser):
         geom.transform(settings.SRID)
         return geom
 
+    def filter_website(self, src, val):
+        return add_http(val)
+
 
 class CG44POIParser(CG44TourInSoftParser):
     model = POI
@@ -76,6 +85,7 @@ class CG44POIParser(CG44TourInSoftParser):
 
     def filter_description(self, src, val):
         (Adresse1, Adresse1Suite, Adresse2, Adresse3, CodePostal, Commune, Cedex, CommMail, CommWeb) = val
+        CommWeb = add_http(CommWeb)
         lines = [line for line in [
             ' '.join([part for part in [Adresse1, Adresse1Suite] if part]),
             Adresse2,
@@ -180,7 +190,7 @@ class CG44LADTrekParser(TourInSoftParser):
         information_desk.phone = tel
         information_desk.name = contact
         information_desk.email = mail
-        information_desk.website = web
+        information_desk.website = add_http(web)
         information_desk.save()
         return [information_desk]
 
