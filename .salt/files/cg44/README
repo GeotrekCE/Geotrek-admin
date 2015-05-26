@@ -1,13 +1,30 @@
+* Save users
+./bin/django dumpdata auth.user > user.json
+# remove internal user from user.json
+
+* Reset DB & media
+rm -rf var/media/*
+./bin/django flush --noinput
+./bin/django migrate --fake
+
 * Load fixtures
+./bin/django loaddata user.json
 ./bin/django loaddata .salt/files/cg44/fixtures.json
 cp .salt/files/cg44/upload/* var/media/upload/
 
+* Load MNT/communes
+./bin/django loaddem
+./bin/django import -v2 parsers.CG44CityParser COMMUNE-44.shp
+# Corriger: Guenrouët, Bonnoeuvre, Paimboeuf
+
 * Import content
-ln -s .salt/files/cg44/parsers.py .
-./bin/django import parsers.CG44AFairePOIParser
-./bin/django import parsers.CG44AVoirPOIParser
-./bin/django import parsers.CG44RestaurationPOIParser
-./bin/django import parsers.CG44HebergementPOIParser
-./bin/django import parsers.CG44PedestreTrekParser CG44-ITI-44-PED-EQ-VTT.shp
-./bin/django import parsers.CG44AVeloTrekParser G44-ITI-44-VELO.shp
-./bin/django import parsers.CG44ExcelTrekParser LAD-ITI-44.xls 
+ln -sf .salt/files/cg44/parsers.py .
+./bin/django import -v2 parsers.CG44AFaireParser
+./bin/django import -v2 parsers.CG44AVoirParser
+./bin/django import -v2 parsers.CG44RestaurationParser
+./bin/django import -v2 parsers.CG44HebergementParser
+./bin/django import -v2 parsers.CG44PedestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
+./bin/django import -v2 parsers.CG44VTTTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
+./bin/django import -v2 parsers.CG44EquestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
+./bin/django import -v2 parsers.CG44AVeloTrekParser G44-ITI-44-VELO.shp
+./bin/django import -v2 parsers.CG44LADTrekParser
