@@ -214,42 +214,38 @@
 },
 {
     "pk": 1, 
-    "model": "trekking.poitype", 
+    "model": "tourism.touristiccontentcategory", 
+    "fields": {
+        "label": "A voir", 
+        "label_fr": "A voir", 
+        "pictogram": "upload/category-avoir.svg"
+    }
+},
+{
+    "pk": 2, 
+    "model": "tourism.touristiccontentcategory", 
     "fields": {
         "label": "A faire", 
         "label_fr": "A faire", 
-        "cirkwi": null, 
         "pictogram": "upload/category-afaire.svg"
+    }
+},
+{
+    "pk": 1, 
+    "model": "trekking.poitype", 
+    "fields": {
+        "label": "H\u00e9bergement", 
+        "label_fr": "H\u00e9bergement", 
+        "pictogram": "upload/category-hebergement.png"
     }
 },
 {
     "pk": 2, 
     "model": "trekking.poitype", 
     "fields": {
-        "label": "A voir", 
-        "label_fr": "A voir", 
-        "cirkwi": null, 
-        "pictogram": "upload/category-avoir.svg"
-    }
-},
-{
-    "pk": 3, 
-    "model": "trekking.poitype", 
-    "fields": {
-        "label": "H\u00e9bergement", 
-        "label_fr": "H\u00e9bergement", 
-        "cirkwi": null, 
-        "pictogram": "upload/category-hebergement.svg"
-    }
-},
-{
-    "pk": 4, 
-    "model": "trekking.poitype", 
-    "fields": {
         "label": "Restauration", 
         "label_fr": "Restauration", 
-        "cirkwi": null, 
-        "pictogram": "upload/category-restauration.svg"
+        "pictogram": "upload/category-restauration.png"
     }
 },
 {
