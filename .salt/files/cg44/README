@@ -1,6 +1,7 @@
 * Save users
-./bin/django dumpdata auth.user > user.json
+./bin/django dumpdata auth.user authent.structure authent.userprofile > user.json
 # remove internal user from user.json
+-> flatpages !!!
 
 * Reset DB & media
 rm -rf var/media/*
@@ -10,10 +11,11 @@ rm -rf var/media/*
 * Load fixtures
 ./bin/django loaddata user.json
 ./bin/django loaddata .salt/files/cg44/fixtures.json
+mkdir var/media/upload/
 cp .salt/files/cg44/upload/* var/media/upload/
 
 * Load MNT/communes
-./bin/django loaddem
+#./bin/django loaddem
 ./bin/django import -v2 parsers.CG44CityParser COMMUNE-44.shp
 # Corriger: Guenrouët, Bonnoeuvre, Paimboeuf
 
@@ -23,8 +25,8 @@ ln -sf .salt/files/cg44/parsers.py .
 ./bin/django import -v2 parsers.CG44AVoirParser
 ./bin/django import -v2 parsers.CG44RestaurationParser
 ./bin/django import -v2 parsers.CG44HebergementParser
-./bin/django import -v2 parsers.CG44PedestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
-./bin/django import -v2 parsers.CG44VTTTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
-./bin/django import -v2 parsers.CG44EquestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.zip
+./bin/django import -v2 parsers.CG44PedestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.shp
+./bin/django import -v2 parsers.CG44VTTTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.shp
+./bin/django import -v2 parsers.CG44EquestreTrekParser CG44-TRONCONS-ITI-44-PED-EQ-VTT.shp
 ./bin/django import -v2 parsers.CG44AVeloTrekParser G44-ITI-44-VELO.shp
 ./bin/django import -v2 parsers.CG44LADTrekParser
