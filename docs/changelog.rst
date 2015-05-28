@@ -20,6 +20,7 @@ CHANGELOG
 * Add external id in trekking/tourism detail pages and exports
 * Zip touristic contents as POI for mobile app v1
 * Add external id field on Path
+* Order intersections in Geotrek light mode
 
 **Bug fixes**
 
