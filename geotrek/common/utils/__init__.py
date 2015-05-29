@@ -3,6 +3,7 @@ import re
 
 from django.db import connection
 from django.utils.timezone import utc
+from django.conf import settings
 from django.contrib.gis.measure import Distance
 
 from mapentity.serializers import plain_text
@@ -117,6 +118,11 @@ def intersecting(cls, obj, distance=None):
         qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
     else:
         qs = qs.filter(geom__intersects=obj.geom)
+        if obj.geom.geom_type == 'LineString':
+            # FIXME: move transform from DRF viewset to DRF itself and remove transform here
+            ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
+            qs = qs.extra(select={'d': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
+            qs = qs.extra(order_by=['d'])
     if obj.__class__ == cls:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
