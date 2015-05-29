@@ -255,6 +255,10 @@ class Command(BaseCommand):
                 self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
             for picture, resized in poi.resized_pictures[1:]:
                 self.sync_media_file(lang, resized)
+        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
+            for content in trek.published_touristic_contents:
+                if content.resized_pictures:
+                    self.sync_media_file(lang, content.resized_pictures[0][1], zipfile=self.trek_zipfile)
         self.sync_media_file(lang, trek.thumbnail, zipfile=self.zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
