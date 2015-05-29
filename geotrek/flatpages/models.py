@@ -47,6 +47,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         db_table = 'p_t_page'
         verbose_name = _(u'Flat page')
         verbose_name_plural = _(u'Flat pages')
+        ordering = ['id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
