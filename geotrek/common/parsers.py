@@ -3,6 +3,7 @@
 import os
 import re
 import requests
+from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 
@@ -51,6 +52,7 @@ class Parser(object):
     fields = None
     m2m_fields = {}
     constant_fields = {}
+    m2m_constant_fields = {}
     non_fields = {}
     natural_keys = {}
     field_options = {}
@@ -101,14 +103,19 @@ class Parser(object):
             val = []
             for subsrc in src:
                 try:
-                    val.append(row[subsrc])
+                    val.append(self.get_val(row, subsrc))
                 except KeyError:
                     raise ValueImportError(_(u"Missing field '{src}'").format(src=subsrc))
         else:
-            try:
-                val = row[src]
-            except KeyError:
-                raise ValueImportError(_(u"Missing field '{src}'").format(src=src))
+            val = row
+            for part in src.split('.'):
+                try:
+                    if part.isdigit():
+                        val = val[int(part)]
+                    else:
+                        val = val[part]
+                except (KeyError, IndexError):
+                    raise ValueImportError(_(u"Missing field '{src}'").format(src=src))
         return val
 
     def apply_filter(self, dst, src, val):
@@ -156,7 +163,7 @@ class Parser(object):
                 self.add_warning(unicode(warning))
                 return False
         if hasattr(self.obj, dst):
-            if dst in self.m2m_fields:
+            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
                 val = set(val)
             else:
@@ -176,13 +183,16 @@ class Parser(object):
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
-            if dst in self.constant_fields:
+            if dst in self.constant_fields or dst in self.m2m_constant_fields:
                 val = src
             else:
                 src = self.normalize_src(src)
                 try:
                     val = self.get_val(row, src)
                 except ValueImportError as warning:
+                    field = self.model._meta.get_field_by_name(dst)[0]
+                    if not field.null:
+                        raise RowImportError(warning)
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
                     continue
@@ -209,6 +219,7 @@ class Parser(object):
         else:
             self.obj.save(update_fields=update_fields)
         update_fields += self.parse_fields(row, self.m2m_fields)
+        update_fields += self.parse_fields(row, self.m2m_constant_fields)
         update_fields += self.parse_fields(row, self.non_fields, non_field=True)
         if operation == u"created":
             self.nb_created += 1
@@ -224,7 +235,7 @@ class Parser(object):
             raise GlobalImportError(_(u"Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
         eid_src = self.normalize_field_name(eid_src)
         try:
-            eid_val = row[eid_src]
+            eid_val = self.get_val(row, eid_src)
         except KeyError:
             raise GlobalImportError(_(u"Missing id field '{eid_src}'").format(eid_src=eid_src))
         if hasattr(self, 'filter_{0}'.format(self.eid)):
@@ -495,3 +506,41 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         if not val:
             return []
         return [subval.split('||') for subval in val.split('##')]
+
+
+class TourismSystemParser(AttachmentParserMixin, Parser):
+    @property
+    def items(self):
+        return self.root['data']
+
+    def next_row(self):
+        size = 1000
+        skip = 0
+        while True:
+            params = {
+                'size': size,
+                'start': skip,
+            }
+            response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.user, self.password))
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            self.root = response.json()
+            self.nb = int(self.root['metadata']['total'])
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+            skip += size
+            if skip >= self.nb:
+                return
+
+    def filter_attachments(self, src, val):
+        result = []
+        for subval in val or []:
+            try:
+                name = subval['name']['fr']
+            except KeyError:
+                name = None
+            result.append((subval['URL'], name, None))
+        return result
+
+    def normalize_field_name(self, name):
+        return name
