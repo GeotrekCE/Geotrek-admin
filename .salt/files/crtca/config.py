@@ -11,3 +11,5 @@ LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Ortho'), 'http://gpp3-wxs.ign.fr/f9an5dduzx730f47doku6vdv/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
      '&copy; IGN - GeoPortail'),
 ]
+
+SPLIT_TREKS_CATEGORIES_BY_PRACTICE = True
