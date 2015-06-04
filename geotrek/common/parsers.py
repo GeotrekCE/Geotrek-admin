@@ -104,8 +104,9 @@ class Parser(object):
             for subsrc in src:
                 try:
                     val.append(self.get_val(row, subsrc))
-                except KeyError:
-                    raise ValueImportError(_(u"Missing field '{src}'").format(src=subsrc))
+                except ValueImportError as warning:
+                    self.add_warning(unicode(warning))
+                    val.append(None)
         else:
             val = row
             for part in src.split('.'):
