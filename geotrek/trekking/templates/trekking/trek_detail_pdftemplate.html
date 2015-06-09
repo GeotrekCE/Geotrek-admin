@@ -1,0 +1,10 @@
+{% extends "mapentity/mapentity_detail_pdftemplate.html" %}
+{% load mapentity_tags staticfiles %}
+
+
+{% block EntityDetail %}
+
+	{% include "trekking/trek_detail_basicinfo.html" %}
+
+ 	{{ block.super }}
+{% endblock EntityDetail %}
