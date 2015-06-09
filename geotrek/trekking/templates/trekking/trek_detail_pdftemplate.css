@@ -1,16 +1,9 @@
-{% load staticfiles %}
-
-@import url("{% static "bootstrap/css/bootstrap.css" %}");
-@import url("{% static "mapentity/dataTables/css/dataTables.bootstrap.css" %}");
-@import url("{% static "style.css" %}");
 
 @page {
 	size: A4;/* 21 x 29.7 cm */
-}
-
-.autohide {
-	display: none;
-	visibility: hidden;
+	@top-left {
+		content: "";
+	}
 }
 
 /* Map image */
