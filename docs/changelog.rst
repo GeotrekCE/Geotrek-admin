@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix a crash in appy pod (PDF generation)
+* Fix login with restricted access to some contents
 
 
 0.34.0 (2015-05-20)

@@ -7,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.core.cache import get_cache
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from mapentity import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -29,12 +31,13 @@ logger = logging.getLogger(__name__)
 @login_required
 def last_list(request):
     last = request.session.get('last_list')  # set in MapEntityList
-    if not last:
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            return redirect('core:path_list')
-        else:
-            return redirect('trekking:trek_list')
-    return redirect(last)
+    for entity in registry.entities:
+        if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    for entity in registry.entities:
+        if request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    return redirect('trekking:trek_list')
 
 home = last_list
 
