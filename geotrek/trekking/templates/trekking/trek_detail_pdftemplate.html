@@ -1,4 +1,5 @@
 {% extends "mapentity/mapentity_detail_pdftemplate.html" %}
+<<<<<<< HEAD
 {% load mapentity_tags %}
 
 {% block style %}
@@ -15,4 +16,14 @@
 
  	{{ block.super }}
 
+=======
+{% load mapentity_tags staticfiles %}
+
+
+{% block EntityDetail %}
+
+	{% include "trekking/trek_detail_basicinfo.html" %}
+
+ 	{{ block.super }}
+>>>>>>> 708aca3... basic informations about the trek are now in trek_detail_basicinfo.html (FILENAME CAN CHANGE), the file is included in trek_detail.html and trek_detail_pdftmeplate.html
 {% endblock EntityDetail %}
