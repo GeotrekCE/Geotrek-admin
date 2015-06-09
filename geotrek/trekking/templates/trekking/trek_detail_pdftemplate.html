@@ -1,10 +1,18 @@
 {% extends "mapentity/mapentity_detail_pdftemplate.html" %}
-{% load mapentity_tags staticfiles %}
+{% load mapentity_tags %}
 
+{% block style %}
+	{{ block.super }}
+
+    <style type="text/css">
+		{% include "trekking/trek_detail_pdftemplate.css" %}
+	</style>
+{% endblock style %}
 
 {% block EntityDetail %}
 
 	{% include "trekking/trek_detail_basicinfo.html" %}
 
  	{{ block.super }}
+
 {% endblock EntityDetail %}
