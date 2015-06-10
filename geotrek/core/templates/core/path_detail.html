@@ -6,51 +6,6 @@
         <div class="alert alert-error"><strong>{% trans "Not validated" %}</strong></div>
     {% endif %}
 
-    <div class="groupfields">
-        <h4>{{ path|verbose:"comments" }}</h4>
-        {{ path.comments|default:_("None")|safe }}
-    </div>
-
-    <table class="table-striped table-bordered table">
-        <tr>
-            <th>{{ path|verbose:"departure" }}</th>
-            <td>{{ path.departure }}</td>
-        </tr>
-        <tr>
-            <th>{{ path|verbose:"arrival" }}</th>
-            <td>{{ path.arrival }}</td>
-        </tr>
-        <tr>
-            <th>{{ path|verbose:"comfort" }}</th>
-            <td>{% if path.comfort %}{{ path.comfort }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
-            <th>{{ path|verbose:"source" }}</th>
-            <td>{% if path.source %}{{ path.source }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr><tr>
-            <th>{{ path|verbose:"stake" }}</th>
-            <td>{% if path.stake %}{{ path.stake }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>{{ path|verbose:"usages" }}</th>
-            <td>
-                {% valuelist object.usages.all %}
-            </td>
-        </tr><tr>
-            <th>{{ path|verbose:"networks" }}</th>
-            <td>
-                {% valuelist object.networks.all %}
-            </td>
-        </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
     {{ block.super }}
 {% endblock detailspanel %}
 
