@@ -267,12 +267,15 @@ msgstr "Évènement touristique"
 msgid "Touristic events"
 msgstr "Évènements touristiques"
 
+#, python-brace-format
 msgid "starting from {begin}"
 msgstr "à partir du {begin}"
 
+#, python-brace-format
 msgid "up to {end}"
 msgstr "jusqu'au {end}"
 
+#, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
 
