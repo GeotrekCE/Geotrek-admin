@@ -12,6 +12,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
                              HttpJSONResponse)
+from mapentity import app_settings
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
@@ -117,13 +118,14 @@ class PathDetail(MapEntityDetail):
         return context
 
 
-class PathDocument(MapEntityDocument):
-    model = Path
+if not app_settings['MAPENTITY_WEASYPRINT']:
+    class PathDocument(MapEntityDocument):
+        model = Path
 
-    def get_context_data(self, *args, **kwargs):
-        language = self.request.LANGUAGE_CODE
-        self.get_object().prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(PathDocument, self).get_context_data(*args, **kwargs)
+        def get_context_data(self, *args, **kwargs):
+            language = self.request.LANGUAGE_CODE
+            self.get_object().prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+            return super(PathDocument, self).get_context_data(*args, **kwargs)
 
 
 class PathCreate(MapEntityCreate):
