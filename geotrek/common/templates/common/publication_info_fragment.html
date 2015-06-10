@@ -3,6 +3,7 @@
     <th>{{ object|verbose:"published" }}</th>
     <td>
     {% if object.any_published %}
+        <ul>
         {% for status in object.published_status %}
             {% if status.status %}
             <li class="active">
@@ -11,6 +12,7 @@
             </li>
             {% endif %}
         {% endfor %}
+        </ul>
         ({{ object|verbose:"publication_date" }}: {{ object.publication_date }})
     {% else %}
         {% if object.review %}
