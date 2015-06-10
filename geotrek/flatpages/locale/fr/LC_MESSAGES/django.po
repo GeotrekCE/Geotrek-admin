@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-20 17:40+0100\n"
+"POT-Creation-Date: 2015-06-09 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Content"
+msgstr "Contenu"
 
 msgid "All"
 msgstr "Tout"
@@ -37,9 +40,6 @@ msgstr "Lien externe"
 
 msgid "Link to external website instead of HTML content"
 msgstr "Lien vers site externe à la place du contenu HTML"
-
-msgid "Content"
-msgstr "Contenu"
 
 msgid "HTML content"
 msgstr "Contenu HTML"
