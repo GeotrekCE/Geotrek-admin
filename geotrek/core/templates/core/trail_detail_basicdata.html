@@ -1,8 +1,9 @@
-{% extends "mapentity/mapentity_detail.html" %}
-{% load i18n static mapentity_tags %}
+{% extends "mapentity/mapentity_detail_basicdata.html" %}
+{% load i18n trekking_tags mapentity_tags %}
 
 
-{% block detailspanel %}
+{% block basicdata %}
+    <h3>{% trans "BasicData" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ trail|verbose:"name" }}</th>
@@ -20,5 +21,7 @@
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+
     {{ block.super }}
-{% endblock detailspanel %}
+
+{% endblock basicdata %}
