@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-14 18:01+0200\n"
+"POT-Creation-Date: 2015-06-09 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -267,12 +267,15 @@ msgstr "Évènement touristique"
 msgid "Touristic events"
 msgstr "Évènements touristiques"
 
+#, python-brace-format
 msgid "starting from {begin}"
 msgstr "à partir du {begin}"
 
+#, python-brace-format
 msgid "up to {end}"
 msgstr "jusqu'au {end}"
 
+#, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-11 18:37+0200\n"
+"POT-Creation-Date: 2015-06-09 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,7 @@ msgstr ""
 msgid "Difficulty with id '%s' already exists"
 msgstr "Une difficulté avec l'id %s existe déjà"
 
+#, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
@@ -297,15 +298,17 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
+#, python-brace-format
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
+#, python-brace-format
 msgid ""
-"Geometry for field '{src}' should be LineString, not MultiLineString. Unable "
-"to compute altimetry information"
+"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
 msgstr ""
 
+#, python-brace-format
 msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
@@ -383,17 +386,20 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
+msgid "BasicData"
+msgstr "Informations"
+
 msgid "yes,no"
 msgstr "oui,non"
 
 msgid "Itinerancy"
 msgstr "Itinérance"
 
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
-"                        Child of %(name)s\n"
-"                    "
+"                    Child of %(name)s\n"
+"                "
 msgstr ""
 "\n"
 "                        Enfant de %(name)s\n"
