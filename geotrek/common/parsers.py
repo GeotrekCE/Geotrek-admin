@@ -6,6 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
+import json
 
 from django.db import models
 from django.conf import settings
@@ -191,8 +192,7 @@ class Parser(object):
                 try:
                     val = self.get_val(row, src)
                 except ValueImportError as warning:
-                    field = self.model._meta.get_field_by_name(dst)[0]
-                    if not field.null:
+                    if dst not in self.non_fields and not self.model._meta.get_field_by_name(dst)[0].null:
                         raise RowImportError(warning)
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
@@ -541,6 +541,49 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
             except KeyError:
                 name = None
             result.append((subval['URL'], name, None))
+        return result
+
+    def normalize_field_name(self, name):
+        return name
+
+
+class SitraParser(AttachmentParserMixin, Parser):
+    url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+
+    @property
+    def items(self):
+        return self.root['objetsTouristiques']
+
+    def next_row(self):
+        size = 100
+        skip = 0
+        while True:
+            params = {
+                'apiKey': self.api_key,
+                'projetId': self.project_id,
+                'selectionIds': [self.selection_id],
+                'count': size,
+                'first': skip,
+            }
+            response = requests.get(self.url, params={'query': json.dumps(params)})
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            self.root = response.json()
+            self.nb = int(self.root['numFound'])
+            for row in self.items:
+                yield row
+            skip += size
+            if skip >= self.nb:
+                return
+
+    def filter_attachments(self, src, val):
+        result = []
+        for subval in val or []:
+            if 'nom' in subval:
+                name = subval['nom']['libelleFr']
+            else:
+                name = None
+            result.append((subval['traductionFichiers'][0]['url'], name, None))
         return result
 
     def normalize_field_name(self, name):
