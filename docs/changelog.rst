@@ -21,11 +21,13 @@ CHANGELOG
 * Zip touristic contents as POI for mobile app v1
 * Add external id field on Path
 * Order intersections in Geotrek light mode
+* Auto cleanup of HTML markup when pasting into TinyMCE
 
 **Bug fixes**
 
 * Remove HTTP calls to SoundCloud API at serialization
 * Fix a crash in appy pod (PDF generation)
+* Fix login with restricted access to some contents
 
 
 0.34.0 (2015-05-20)

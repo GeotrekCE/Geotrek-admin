@@ -172,7 +172,7 @@ class InformationDesk(models.Model):
         try:
             return thumbnailer.get_thumbnail(aliases.get('thumbnail'))
         except InvalidImageFormatError:
-            logger.error(_("Image %s invalid or missing from disk.") % self.photo)
+            logger.info(_("Image %s invalid or missing from disk.") % self.photo)
             return None
 
     @property
