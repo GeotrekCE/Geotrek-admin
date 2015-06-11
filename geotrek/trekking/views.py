@@ -12,6 +12,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, MapEntityViewSet)
 from mapentity.helpers import alphabet_enumeration
+from mapentity.settings import app_settings
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -183,12 +184,13 @@ class TrekDocumentPublic(DocumentPublic):
 
         return context
 
-    def render_to_response(self, context, **response_kwargs):
-        # Prepare altimetric graph
-        trek = self.get_object()
-        language = self.request.LANGUAGE_CODE
-        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
+    if not app_settings['MAPENTITY_WEASYPRINT']:
+        def render_to_response(self, context, **response_kwargs):
+            # Prepare altimetric graph
+            trek = self.get_object()
+            language = self.request.LANGUAGE_CODE
+            trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+            return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
