@@ -21,6 +21,7 @@ CHANGELOG
 * Zip touristic contents as POI for mobile app v1
 * Add external id field on Path
 * Order intersections in Geotrek light mode
+* Add reservation id field for touristic contents
 
 **Bug fixes**
 
