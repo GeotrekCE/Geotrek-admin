@@ -33,6 +33,13 @@ class CDRP05Parser(SitraParser):
     natural_keys = {
         'category': 'label',
     }
+    field_options = {
+        'name': {'required': True},
+        'geom': {'required': True},
+    }
+
+    def filter_eid(self, src, val):
+        return unicode(val)
 
     def filter_comm(self, val, code):
         if not val:
