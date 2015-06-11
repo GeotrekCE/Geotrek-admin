@@ -99,14 +99,15 @@ class Parser(object):
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
-    def get_val(self, row, src):
+    def get_val(self, row, dst, src):
         if hasattr(src, '__iter__'):
             val = []
             for subsrc in src:
                 try:
-                    val.append(self.get_val(row, subsrc))
+                    val.append(self.get_val(row, dst, subsrc))
                 except ValueImportError as warning:
-                    self.add_warning(unicode(warning))
+                    if self.warn_on_missing_fields:
+                        self.add_warning(unicode(warning))
                     val.append(None)
         else:
             val = row
@@ -117,7 +118,8 @@ class Parser(object):
                     else:
                         val = val[part]
                 except (KeyError, IndexError):
-                    raise ValueImportError(_(u"Missing field '{src}'").format(src=src))
+                    required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
+                    raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
         return val
 
     def apply_filter(self, dst, src, val):
@@ -190,8 +192,10 @@ class Parser(object):
             else:
                 src = self.normalize_src(src)
                 try:
-                    val = self.get_val(row, src)
+                    val = self.get_val(row, dst, src)
                 except ValueImportError as warning:
+                    if self.field_options.get(dst, {}).get('required', False):
+                        raise RowImportError(warning)
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
                     continue
@@ -234,7 +238,7 @@ class Parser(object):
             raise GlobalImportError(_(u"Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
         eid_src = self.normalize_field_name(eid_src)
         try:
-            eid_val = self.get_val(row, eid_src)
+            eid_val = self.get_val(row, self.eid, eid_src)
         except KeyError:
             raise GlobalImportError(_(u"Missing id field '{eid_src}'").format(eid_src=eid_src))
         if hasattr(self, 'filter_{0}'.format(self.eid)):
