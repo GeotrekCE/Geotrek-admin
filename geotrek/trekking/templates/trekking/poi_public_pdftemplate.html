@@ -1,5 +1,7 @@
 {% load i18n mapentity_tags %}
 
+<img src="{% media_static_fallback "upload/logo-header.png" "images/logo-header.png" %}">
+
 <h2>{{ object.name }}</h2>
 
 <h3>{{ object.districts.0 }}</h3>
