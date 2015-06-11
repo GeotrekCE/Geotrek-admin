@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
 
-from geotrek.common.parsers import SitraParser
+from geotrek.common.parsers import SitraParser, OpenSystemParser
 from geotrek.tourism.models import TouristicContent
 
 
@@ -112,4 +112,16 @@ class AlimentationParser(CDRP05Parser):
     constant_fields = {
         'category': u"Alimentation",
         'published': True,
+    }
+
+
+class ResaParser(OpenSystemParser):
+    login = 'concentrateurhautesalpes'
+    password = 'bz7895nkex'
+    model = TouristicContent
+    eid = 'eid'
+    update_only = True
+    fields = {
+        'eid': 'id_sitra',
+        'reservation_id': 'id_opensystem',
     }
