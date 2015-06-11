@@ -192,8 +192,6 @@ class Parser(object):
                 try:
                     val = self.get_val(row, src)
                 except ValueImportError as warning:
-                    if dst not in self.non_fields and not self.model._meta.get_field_by_name(dst)[0].null:
-                        raise RowImportError(warning)
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
                     continue
@@ -585,6 +583,32 @@ class SitraParser(AttachmentParserMixin, Parser):
                 name = None
             result.append((subval['traductionFichiers'][0]['url'], name, None))
         return result
+
+    def normalize_field_name(self, name):
+        return name
+
+
+class OpenSystemParser(Parser):
+    url = 'http://proxy-xml.open-system.fr/rest.aspx'
+
+    def next_row(self):
+        params = {
+            'Login': self.login,
+            'Pass': self.password,
+            'Action': 'concentrateur_liaisons',
+        }
+        response = requests.get(self.url, params=params)
+        if response.status_code != 200:
+            raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+        self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
+        self.nb = len(self.root)
+        for row in self.root:
+            id_sitra = row.find('ObjetCle').find('Cle').text
+            for liaison in row.find('Liaisons'):
+                yield {
+                    'id_sitra': id_sitra,
+                    'id_opensystem': liaison.find('ObjetOS').find('CodeUI').text,
+                }
 
     def normalize_field_name(self, name):
         return name
