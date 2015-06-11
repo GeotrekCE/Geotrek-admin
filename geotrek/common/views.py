@@ -9,6 +9,7 @@ from django.http import HttpResponse
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
+from mapentity.settings import app_settings
 
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
@@ -62,32 +63,47 @@ class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
         return self.get_object().get_document_public_url()
 
 
-class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
-    template_name_suffix = "_public"
-    with_html_attributes = False
+if app_settings['MAPENTITY_WEASYPRINT']:
+    class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
+        template_name_suffix = "_public"
 
-    # Override view_permission_required
-    def dispatch(self, *args, **kwargs):
-        return super(mapentity_views.MapEntityDocument, self).dispatch(*args, **kwargs)
+        # Override view_permission_required
+        def dispatch(self, *args, **kwargs):
+            return super(mapentity_views.MapEntityDocument, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(DocumentPublic, self).get_context_data(**kwargs)
-        modelname = self.get_model()._meta.object_name.lower()
-        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
-        return context
+        def get_context_data(self, **kwargs):
+            context = super(DocumentPublic, self).get_context_data(**kwargs)
+            modelname = self.get_model()._meta.object_name.lower()
+            context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
+            return context
 
-    def render_to_response(self, context, **response_kwargs):
-        # Use attachment that overrides document print, if any.
-        # And return it as response
-        try:
-            overriden = self.object.get_attachment_print()
-            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
-            with open(overriden, 'rb') as f:
-                response.write(f.read())
-            return response
-        except ObjectDoesNotExist:
-            pass
-        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+else:
+    class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
+        template_name_suffix = "_public"
+        with_html_attributes = False
+
+        # Override view_permission_required
+        def dispatch(self, *args, **kwargs):
+            return super(mapentity_views.MapEntityDocument, self).dispatch(*args, **kwargs)
+
+        def get_context_data(self, **kwargs):
+            context = super(DocumentPublic, self).get_context_data(**kwargs)
+            modelname = self.get_model()._meta.object_name.lower()
+            context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
+            return context
+
+        def render_to_response(self, context, **response_kwargs):
+            # Use attachment that overrides document print, if any.
+            # And return it as response
+            try:
+                overriden = self.object.get_attachment_print()
+                response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
+                with open(overriden, 'rb') as f:
+                    response.write(f.read())
+                return response
+            except ObjectDoesNotExist:
+                pass
+            return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
 #
