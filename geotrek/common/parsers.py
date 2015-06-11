@@ -192,8 +192,6 @@ class Parser(object):
                 try:
                     val = self.get_val(row, src)
                 except ValueImportError as warning:
-                    if dst not in self.non_fields and not self.model._meta.get_field_by_name(dst)[0].null:
-                        raise RowImportError(warning)
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
                     continue
