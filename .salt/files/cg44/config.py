@@ -11,6 +11,8 @@ LEAFLET_CONFIG['TILES'] = [
     (gettext_noop('Ortho'), 'http://{s}.tiles.cg44.makina-corpus.net/ortho-2012/{z}/{x}/{y}.jpg', {'attribution': 'Source: Département de Loire-Atlantique', 'tms': True}),
 ]
 
+MOBILE_TILES_URL = LEAFLET_CONFIG['TILES'][0][1]
+
 TREKKING_TOPOLOGY_ENABLED = False
 TRAIL_MODEL_ENABLED = False
 
