@@ -144,7 +144,7 @@ class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublic(DocumentPublic):
+class TrekDocumentPublicBase(DocumentPublic):
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
@@ -184,13 +184,21 @@ class TrekDocumentPublic(DocumentPublic):
 
         return context
 
-    if not app_settings['MAPENTITY_WEASYPRINT']:
-        def render_to_response(self, context, **response_kwargs):
-            # Prepare altimetric graph
-            trek = self.get_object()
-            language = self.request.LANGUAGE_CODE
-            trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-            return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
+
+class TrekDocumentPublicOdt(TrekDocumentPublicBase):
+
+    def render_to_response(self, context, **response_kwargs):
+        # Prepare altimetric graph
+        trek = self.get_object()
+        language = self.request.LANGUAGE_CODE
+        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+        return super(TrekDocumentPublicOdt, self).render_to_response(context, **response_kwargs)
+
+
+if app_settings['MAPENTITY_WEASYPRINT']:
+    TrekDocumentPublic = TrekDocumentPublicBase
+else:
+    TrekDocumentPublic = TrekDocumentPublicOdt
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
