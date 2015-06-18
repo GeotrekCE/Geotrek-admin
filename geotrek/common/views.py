@@ -76,7 +76,6 @@ class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocumen
             context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
             return context
 
-
 class DocumentPublicOdt(DocumentPublicBase):
     with_html_attributes = False
 
@@ -91,7 +90,7 @@ class DocumentPublicOdt(DocumentPublicBase):
             return response
         except ObjectDoesNotExist:
             pass
-        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(DocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
 
 if app_settings['MAPENTITY_WEASYPRINT']:
