@@ -255,7 +255,11 @@ class Parser(object):
             eid_kwargs = {}
             objects = self.model.objects.none()
         else:
-            eid_kwargs = self.get_eid_kwargs(row)
+            try:
+                eid_kwargs = self.get_eid_kwargs(row)
+            except RowImportError as warnings:
+                self.add_warning(unicode(warnings))
+                return
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:

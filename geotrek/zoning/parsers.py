@@ -7,11 +7,12 @@ from geotrek.common.parsers import ShapeParser
 from geotrek.zoning.models import City
 
 
+# Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
 class CityParser(ShapeParser):
     model = City
     eid = 'code'
     fields = {
-        'code': 'code',
+        'code': 'insee',
         'name': 'nom',
         'geom': 'geom',
     }
