@@ -266,6 +266,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         else:
             return settings.TOURISM_INTERSECTION_MARGIN
 
+    def is_public(self):
+        return self.any_published or (self.parent and self.parent.any_published)
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:

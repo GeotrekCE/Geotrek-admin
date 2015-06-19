@@ -8,6 +8,7 @@ import shutil
 import tempfile
 from zipfile import ZipFile
 
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
@@ -314,7 +315,7 @@ class Command(BaseCommand):
             self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
+        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'parent__published_{lang}'.format(lang=lang): True}))
 
         for trek in treks:
             self.sync_trek(lang, trek)

@@ -48,6 +48,7 @@ class Parser(object):
     update_only = False
     duplicate_eid_allowed = False
     warn_on_missing_fields = False
+    warn_on_missing_objects = False
     separator = '+'
     eid = None
     fields = None
@@ -254,10 +255,15 @@ class Parser(object):
             eid_kwargs = {}
             objects = self.model.objects.none()
         else:
-            eid_kwargs = self.get_eid_kwargs(row)
+            try:
+                eid_kwargs = self.get_eid_kwargs(row)
+            except RowImportError as warnings:
+                self.add_warning(unicode(warnings))
+                return
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
-            self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
+            if self.warn_on_missing_objects:
+                self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         elif len(objects) == 0:
             objects = [self.model(**eid_kwargs)]
