@@ -3,8 +3,9 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
 
-from geotrek.common.parsers import SitraParser, OpenSystemParser
+from geotrek.common.parsers import SitraParser, OpenSystemParser, RowImportError
 from geotrek.tourism.models import TouristicContent
+from geotrek.zoning.parsers import CityParser
 
 
 class CDRP05Parser(SitraParser):
@@ -151,3 +152,12 @@ class ResaParser(OpenSystemParser):
         'eid': 'id_sitra',
         'reservation_id': 'id_opensystem',
     }
+
+
+# Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
+class CDRP05CityParser(CityParser):
+    def filter_code(self, src, val):
+        val = super(CDRP05CityParser, self).filter_code(src, val)
+        if val[:2] not in ['04', '05']:
+            raise RowImportError('Outside target zone')
+        return val
