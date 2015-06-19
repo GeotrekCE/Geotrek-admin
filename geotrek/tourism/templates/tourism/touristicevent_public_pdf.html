@@ -9,86 +9,88 @@
 
 <table>
 	{% if object.type %}
-	<tr>
-		<th>
-			{% trans "Type" %}
-		</th>
-		<td>
-			{{ object.type }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Type" %}
+			</th>
+			<td>
+				{{ object.type }}
+			</td>
+		</tr>
 	{% endif %}
 
 	{% if object.dates_display %}
-	<tr>
-		<th>
-			{% trans "Dates" %}
-		</th>
-		<td>
-			{{ object.dates_display }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Dates" %}
+			</th>
+			<td>
+				{{ object.dates_display }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.target_audience %}
-	<tr>
-		<th>
-			{% trans "Target audience" %}
-		</th>
-		<td>
-			{{ object.target_audience }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Target audience" %}
+			</th>
+			<td>
+				{{ object.target_audience }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.organizer %}
-	<tr>
-		<th>
-			{% trans "Organizer" %}
-		</th>
-		<td>
-			{{ object.organizer }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Organizer" %}
+			</th>
+			<td>
+				{{ object.organizer }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.speaker %}
-	<tr>
-		<th>
-			{% trans "Speaker" %}
-		</th>
-		<td>
-			{{ object.speaker }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Speaker" %}
+			</th>
+			<td>
+				{{ object.speaker }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.accessibility %}
-	<tr>
-		<th>
-			{% trans "Accessibility" %}
-		</th>
-		<td>
-			{{ object.accessibility }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Accessibility" %}
+			</th>
+			<td>
+				{{ object.accessibility }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.participant_number %}
-	<tr>
-		<th>
-			{% trans "Number of participants" %}
-		</th>
-		<td>
-			{{ object.participant_number }}
-		</td>
-	</tr>
+		<tr>
+			<th>
+				{% trans "Number of participants" %}
+			</th>
+			<td>
+				{{ object.participant_number }}
+			</td>
+		</tr>
 	{% endif %}
 	{% if object.approved %}
-	<tr>
-		Labellisé
-	</tr>
+		<tr>
+			Labellisé
+		</tr>
 	{% endif %}
 </table>
 
-{% if MEDIA_ROOT|add:object.picture_print.name %}
-	<img src="{{ MEDIA_ROOT|add:object.picture_print.name }}">
+{% if MEDIA_URL|add:object.picture_print.name %}
+	<img src="{{ MEDIA_URL|add:object.picture_print.name }}">
+{% endif %}
 
+{% if object.pictures.0.author and object.pictures.0.legend %}
 	<p>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>
 {% endif %}
 
@@ -112,9 +114,9 @@
 	<h3>{% trans "Contact" %}</h3>
 
 	<p>
-	{{ object.contact }}<br>
-	{{ object.email }}<br>
-	{{ object.website }}<br>
+		{{ object.contact }}<br>
+		{{ object.email }}<br>
+		{{ object.website }}<br>
 	</p>
 {% endif %}
 
