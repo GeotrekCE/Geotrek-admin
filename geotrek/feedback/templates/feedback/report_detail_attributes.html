@@ -1,8 +1,8 @@
-{% extends "mapentity/mapentity_detail_basicdata.html" %}
+{% extends "mapentity/mapentity_detail_attributes.html" %}
 {% load i18n mapentity_tags %}
 
 
-{% block basicdata %}
+{% block attributes %}
     <h3>{% trans "BasicData" %}</h3>
 
     <table class="table-striped table-bordered table">
@@ -24,4 +24,4 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-{% endblock basicdata %}
+{% endblock attributes %}
