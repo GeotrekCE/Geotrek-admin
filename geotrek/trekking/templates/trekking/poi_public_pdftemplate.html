@@ -7,7 +7,7 @@
 <h3>{{ object.districts.0 }}</h3>
 <h3>{{ object.cities.0 }}</h3>
 
-<img src="{{ MEDIA_ROOT|add:object.picture_print.name }}">
+<img src="{{ MEDIA_URL|add:object.picture_print.name }}">
 
 <table>
 	<tr>
@@ -43,7 +43,8 @@
 
 <img src="{{ image_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
 
-<a href="http://geotrek.fr">{% trans "Powered by http://geotrek.fr" %}</a>
 {% if object.pictures.0.legend or object.pictures.0.author %}
 	<p>{% trans "Credits photo" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>
 {% endif %}
+
+<a href="http://geotrek.fr">{% trans "Powered by http://geotrek.fr" %}</a>
