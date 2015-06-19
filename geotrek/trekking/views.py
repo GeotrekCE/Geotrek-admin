@@ -148,7 +148,7 @@ class TrekDocumentPublicBase(DocumentPublic):
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TrekDocumentPublic, self).get_context_data(**kwargs)
+        context = super(TrekDocumentPublicBase, self).get_context_data(**kwargs)
         trek = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
