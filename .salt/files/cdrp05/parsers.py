@@ -32,6 +32,7 @@ class CDRP05Parser(SitraParser):
     }
     natural_keys = {
         'category': 'label',
+        'type1': 'label',
     }
     field_options = {
         'name': {'required': True},
@@ -77,48 +78,66 @@ class CDRP05Parser(SitraParser):
 class CampingsParser(CDRP05Parser):
     selection_id = 33075
     constant_fields = {
-        'category': u"Campings",
+        'category': u"Hébergements",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Campings",
     }
 
 
 class ChambresDHotesParser(CDRP05Parser):
     selection_id = 33076
     constant_fields = {
-        'category': u"Chambres d'hôtes",
+        'category': u"Hébergements",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Chambres d'hôtes",
     }
 
 
 class HotelsParser(CDRP05Parser):
     selection_id = 33077
     constant_fields = {
-        'category': u"Hôtels",
+        'category': u"Hébergements",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Hôtels",
     }
 
 
 class GitesDEtapeParser(CDRP05Parser):
     selection_id = 33079
     constant_fields = {
-        'category': u"Gîtes d'étape",
+        'category': u"Hébergements",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Gîtes d'étape",
     }
 
 
 class HebergementsInsolitesParser(CDRP05Parser):
     selection_id = 33080
     constant_fields = {
-        'category': u"Hébergements insolites",
+        'category': u"Hébergements",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Hébergements insolites",
     }
 
 
 class AlimentationParser(CDRP05Parser):
     selection_id = 33081
     constant_fields = {
-        'category': u"Alimentation",
+        'category': u"Services",
         'published': True,
+    }
+    m2m_constant_fields = {
+        'type1': u"Alimentation",
     }
 
 
