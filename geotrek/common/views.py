@@ -76,6 +76,7 @@ class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocumen
             context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
             return context
 
+
 class DocumentPublicOdt(DocumentPublicBase):
     with_html_attributes = False
 
