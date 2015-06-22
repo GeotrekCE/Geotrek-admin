@@ -71,7 +71,7 @@ class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocumen
             return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
         def get_context_data(self, **kwargs):
-            context = super(DocumentPublic, self).get_context_data(**kwargs)
+            context = super(DocumentPublicBase, self).get_context_data(**kwargs)
             modelname = self.get_model()._meta.object_name.lower()
             context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
             return context
@@ -91,7 +91,7 @@ class DocumentPublicOdt(DocumentPublicBase):
             return response
         except ObjectDoesNotExist:
             pass
-        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(DocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
 
 if app_settings['MAPENTITY_WEASYPRINT']:
