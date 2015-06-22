@@ -215,12 +215,15 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1 gdal-bin libgdal-dev
+    sudo apt-get install -y -q --no-upgrade libjson0 libproj0 libgeos-c1  
     echo_progress
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
+    echo_progress
+    # Necessary for MapEntity Weasyprint
+    sudo apt-get install -y -qq libffi-dev libgdk-pixbuf2.0-dev
     echo_progress
 
     if $prod || $standalone ; then

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-23 14:08+0100\n"
+"POT-Creation-Date: 2015-06-09 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,14 +56,14 @@ msgstr "Publié"
 msgid "Publication date"
 msgstr "Date de publication"
 
-msgid "Waiting for publication"
-msgstr "En attente de publication"
-
 msgid "Name"
 msgstr "Nom"
 
 msgid "Public name (Change carefully)"
 msgstr "Nom public (changez prudemment)"
+
+msgid "Waiting for publication"
+msgstr "En attente de publication"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
@@ -74,20 +74,11 @@ msgstr "Organisme"
 msgid "Organisms"
 msgstr "Organismes"
 
-msgid "Cirkwi id"
-msgstr "Id Cirkwi"
-
-msgid "Cirkwi name"
-msgstr "Nom Cirkwi"
+msgid "Label"
+msgstr "Label"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
-
-msgid "Cirkwi tags"
-msgstr "Tags Cirkwi"
-
-msgid "Label"
-msgstr "Label"
 
 msgid "Theme"
 msgstr "Thème"
@@ -104,17 +95,91 @@ msgstr "Source des fiches"
 msgid "Record sources"
 msgstr "Sources des fiches"
 
-msgid "Topology is not valid."
-msgstr "L'événement n'est pas valide"
-
-msgid ""
-"This project is co-financed by the European Union through FEDER Massif Alpin."
+#, python-brace-format
+msgid "Id {eid}"
 msgstr ""
-"Ce projet est co-financé par l'Union Européenne au travers du FEDER Massif "
-"Alpin"
 
-msgid "Powered by http://geotrek.fr"
-msgstr "Propulsé par http://geotrek.fr"
+#, python-brace-format
+msgid "Line {line}"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid "Destination field '{dst}' not in natural keys configuration"
+msgstr ""
+
+#, python-brace-format
+msgid "Null value not allowed for field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid "Blank value not allowed for field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid "Eid field '{eid_dst}' missing in parser configuration"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing id field '{eid_src}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{eid_val}' for field '{eid_src}'. Multiple treks with this "
+"identifier"
+msgstr ""
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should contain {values}"
+msgstr ""
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+
+msgid "Filename is required"
+msgstr ""
+
+#, python-brace-format
+msgid "File does not exists at: {filename}"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid geometry pointer"
+msgstr "a une géométrie invalide;"
+
+msgid "Attachments"
+msgstr ""
+
+#, python-brace-format
+msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
 
 msgid "Any year"
 msgstr "N'importe quelle année"
@@ -134,6 +199,36 @@ msgstr "Cadre (WGS84)"
 msgid "Mouse"
 msgstr "Souris"
 
+#, python-format
+msgid "%(n)s/%(nb_lines)s line imported."
+msgid_plural "%(n)s/%(nb_lines)s lines imported."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record created."
+msgid_plural "%(n)s records created."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record updated."
+msgid_plural "%(n)s records updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record unmodified."
+msgid_plural "%(n)s records unmodified."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s warning:"
+msgid_plural "%(n)s warnings:"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Draft"
 msgstr "Brouillon"
 
@@ -145,6 +240,28 @@ msgstr "semble incomplet;"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
+
+msgid "Topology is not valid."
+msgstr "L'événement n'est pas valide"
+
+#~ msgid "Cirkwi id"
+#~ msgstr "Id Cirkwi"
+
+#~ msgid "Cirkwi name"
+#~ msgstr "Nom Cirkwi"
+
+#~ msgid "Cirkwi tags"
+#~ msgstr "Tags Cirkwi"
+
+#~ msgid ""
+#~ "This project is co-financed by the European Union through FEDER Massif "
+#~ "Alpin."
+#~ msgstr ""
+#~ "Ce projet est co-financé par l'Union Européenne au travers du FEDER "
+#~ "Massif Alpin"
+
+#~ msgid "Powered by http://geotrek.fr"
+#~ msgstr "Propulsé par http://geotrek.fr"
 
 #~ msgid "Not published"
 #~ msgstr "Non publié"
