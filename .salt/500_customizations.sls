@@ -61,6 +61,16 @@
     - group: {{cfg.group}}
     - makedirs: true
 {% endif %}
+
+{% if data.path_locale %}
+{{cfg.name}}-locale:
+  file.recurse:
+    - name: {{cfg.project_dir}}/project/geotrek/locale
+    - source: {{data.path_locale}}
+    - user: {{cfg.user}}
+    - group: {{cfg.group}}
+    - makedirs: true
+{% endif %}
 {% endif %}
 
 
