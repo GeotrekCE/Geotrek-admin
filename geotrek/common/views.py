@@ -91,8 +91,13 @@ class DocumentPublicOdt(DocumentPublicBase):
             return response
         except ObjectDoesNotExist:
             pass
-        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(DocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
+
+if app_settings['MAPENTITY_WEASYPRINT']:
+    DocumentPublic = DocumentPublicBase
+else:
+    DocumentPublic = DocumentPublicOdt
 
 if app_settings['MAPENTITY_WEASYPRINT']:
     DocumentPublic = DocumentPublicBase
