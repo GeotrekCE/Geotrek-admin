@@ -447,7 +447,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
-            'published', 'published_status', 'slug', 'source', 'themes',
+            'published', 'published_status', 'reservation_id', 'slug', 'source', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks',
             'type1', 'type2', 'videos', 'website'],
             sorted(self.result.keys()))
