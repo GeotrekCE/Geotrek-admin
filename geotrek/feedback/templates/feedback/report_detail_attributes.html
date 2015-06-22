@@ -1,7 +1,10 @@
-{% extends "mapentity/mapentity_detail.html" %}
+{% extends "mapentity/mapentity_detail_attributes.html" %}
 {% load i18n mapentity_tags %}
 
-{% block detailspanel %}
+
+{% block attributes %}
+    <h3>{% trans "BasicData" %}</h3>
+
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ report|verbose:"name" }}</th>
@@ -21,4 +24,4 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-{% endblock detailspanel %}
+{% endblock attributes %}
