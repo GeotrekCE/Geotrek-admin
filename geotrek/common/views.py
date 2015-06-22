@@ -68,7 +68,7 @@ class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocumen
 
         # Override view_permission_required
         def dispatch(self, *args, **kwargs):
-            return super(mapentity_views.MapEntityDocument, self).dispatch(*args, **kwargs)
+            return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
         def get_context_data(self, **kwargs):
             context = super(DocumentPublic, self).get_context_data(**kwargs)
