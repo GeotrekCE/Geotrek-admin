@@ -44,7 +44,7 @@
 <img src="{{ map_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
 
 {% if object.pictures.0.legend or object.pictures.0.author %}
-	<p>{% trans "Credits photo" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>
+	<p>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>
 {% endif %}
 
 <a href="http://geotrek.fr">{% trans "Powered by http://geotrek.fr" %}</a>
