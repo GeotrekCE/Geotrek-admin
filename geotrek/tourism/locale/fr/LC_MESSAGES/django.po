@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-15 10:10+0200\n"
+"POT-Creation-Date: 2015-06-23 13:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -198,6 +198,9 @@ msgstr "Source"
 msgid "External id"
 msgstr "Identifiant externe"
 
+msgid "Reservation id"
+msgstr ""
+
 msgid "Approved"
 msgstr "Labellisé"
 
@@ -267,12 +270,15 @@ msgstr "Évènement touristique"
 msgid "Touristic events"
 msgstr "Évènements touristiques"
 
+#, python-brace-format
 msgid "starting from {begin}"
 msgstr "à partir du {begin}"
 
+#, python-brace-format
 msgid "up to {end}"
 msgstr "jusqu'au {end}"
 
+#, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
 
@@ -309,6 +315,9 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
+msgid "Attributes"
+msgstr "Informations"
+
 msgid "yes,no"
 msgstr "oui,non"
 
@@ -318,8 +327,14 @@ msgstr "Aperçu"
 msgid "All"
 msgstr "Tout"
 
+msgid "Attribution"
+msgstr "Crédit photos"
+
 msgid "None"
 msgstr "Aucun"
+
+msgid "Dates"
+msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
