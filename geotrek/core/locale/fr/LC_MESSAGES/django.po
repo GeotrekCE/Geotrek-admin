@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-23 14:08+0100\n"
+"POT-Creation-Date: 2015-06-23 13:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,6 +102,9 @@ msgstr "Usages"
 msgid "Networks"
 msgstr "Réseaux"
 
+msgid "External id"
+msgstr ""
+
 #, python-format
 msgid "path %d"
 msgstr "tronçon %d"
@@ -180,3 +183,6 @@ msgstr "Ajouter un sentier"
 
 msgid "Not validated"
 msgstr "Non validé"
+
+msgid "Attributes"
+msgstr "Informations"
