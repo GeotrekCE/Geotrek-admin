@@ -64,17 +64,17 @@ class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
 
 
 class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
-        template_name_suffix = "_public"
+    template_name_suffix = "_public"
 
-        # Override view_permission_required
-        def dispatch(self, *args, **kwargs):
-            return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
+    # Override view_permission_required
+    def dispatch(self, *args, **kwargs):
+        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
-        def get_context_data(self, **kwargs):
-            context = super(DocumentPublicBase, self).get_context_data(**kwargs)
-            modelname = self.get_model()._meta.object_name.lower()
-            context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
-            return context
+    def get_context_data(self, **kwargs):
+        context = super(DocumentPublicBase, self).get_context_data(**kwargs)
+        modelname = self.get_model()._meta.object_name.lower()
+        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
+        return context
 
 
 class DocumentPublicOdt(DocumentPublicBase):
