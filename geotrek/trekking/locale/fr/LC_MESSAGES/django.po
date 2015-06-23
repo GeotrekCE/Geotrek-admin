@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-11 18:37+0200\n"
+"POT-Creation-Date: 2015-06-23 13:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,7 @@ msgstr ""
 msgid "Difficulty with id '%s' already exists"
 msgstr "Une difficulté avec l'id %s existe déjà"
 
+#, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
@@ -297,15 +298,17 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
+#, python-brace-format
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
+#, python-brace-format
 msgid ""
-"Geometry for field '{src}' should be LineString, not MultiLineString. Unable "
-"to compute altimetry information"
+"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
 msgstr ""
 
+#, python-brace-format
 msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
@@ -364,11 +367,17 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
+msgid "Attributes"
+msgstr "Informations"
+
 msgid "None"
 msgstr "Aucun"
 
 msgid "Thumbnail"
 msgstr "Vignette"
+
+msgid "Elevation"
+msgstr "Élévation"
 
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
@@ -402,6 +411,9 @@ msgstr ""
 msgid "Parent of:"
 msgstr "Parent de :"
 
+msgid "Map"
+msgstr "Carte"
+
 msgid "Add a point of reference"
 msgstr "Ajouter un point de référence"
 
@@ -431,6 +443,21 @@ msgstr "Pas de résultat"
 
 msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
+
+msgid "Length"
+msgstr ""
+
+msgid "Trek_ascent"
+msgstr "Dénivelé positif"
+
+msgid "Disabled Infrastructure"
+msgstr "Aménagement handicapés"
+
+msgid "Related Treks"
+msgstr "Itinéraires liés"
+
+msgid "Powered by http://geortrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
 
 msgid "Trekking"
 msgstr "Itinéraire"
