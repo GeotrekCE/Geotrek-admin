@@ -1,9 +1,9 @@
-{% extends "mapentity/mapentity_detail_basicdata.html" %}
+{% extends "mapentity/mapentity_detail_attributes.html" %}
 {% load i18n trekking_tags mapentity_tags %}
 
 
-{% block basicdata %}
-    <h3>{% trans "BasicData" %}</h3>
+{% block attributes %}
+    <h3>{% trans "Attributes" %}</h3>
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
         {{ path.comments|default:_("None")|safe }}
@@ -52,4 +52,4 @@
 
     {{ block.super }}
 
-{% endblock basicdata %}
+{% endblock attributes %}
