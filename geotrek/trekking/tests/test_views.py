@@ -22,6 +22,7 @@ from django.utils import translation
 from django.utils.timezone import utc, make_aware
 from django.utils.unittest import util as testutil
 
+from mapentity import app_settings
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
@@ -345,24 +346,25 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
 
-    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
-    def test_overriden_document(self, get_attributes_html):
-        trek = TrekFactory.create()
+    if not app_settings['MAPENTITY_WEASYPRINT']:
+        @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+        def test_overriden_document(self, get_attributes_html):
+            trek = TrekFactory.create()
 
-        get_attributes_html.return_value = '<p>mock</p>'
-        with open(trek.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
-        with open(trek.get_elevation_chart_path('fr'), 'w') as f:
-            f.write('***' * 1000)
+            get_attributes_html.return_value = '<p>mock</p>'
+            with open(trek.get_map_image_path(), 'w') as f:
+                f.write('***' * 1000)
+            with open(trek.get_elevation_chart_path('fr'), 'w') as f:
+                f.write('***' * 1000)
 
-        response = self.client.get(trek.get_document_public_url())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) > 1000)
+            response = self.client.get(trek.get_document_public_url())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(len(response.content) > 1000)
 
-        AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        response = self.client.get(trek.get_document_public_url())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) < 1000)
+            AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
+            response = self.client.get(trek.get_document_public_url())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(len(response.content) < 1000)
 
     @mock.patch('django.template.loaders.filesystem.open', create=True)
     def test_overriden_public_template(self, open_patched):
