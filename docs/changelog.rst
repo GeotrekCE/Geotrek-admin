@@ -22,6 +22,7 @@ CHANGELOG
 * Add external id field on Path
 * Order intersections in Geotrek light mode
 * Add reservation id field for touristic contents
+* Integration of WeasyPrint to generate PDF from HTML/CSS instead of ODT
 
 **Bug fixes**
 
