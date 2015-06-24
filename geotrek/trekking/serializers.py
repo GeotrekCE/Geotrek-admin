@@ -110,10 +110,21 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 class RelatedTrekSerializer(TranslatedModelSerializer):
     pk = rest_serializers.Field(source='id')
     slug = rest_serializers.Field(source='slug')
+    category_id = rest_serializers.Field(source='prefixed_category_id')
+    category_slug = rest_serializers.SerializerMethodField('get_category_slug')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'pk', 'slug', 'name')
+        fields = ('id', 'slug', 'name', 'category_id', 'category_slug')
+
+    def get_category_slug(self, obj):
+        accessibility = getattr(obj, 'accessibility', None)
+        if accessibility:
+            return accessibility.slug
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+            return obj.practice.slug
+        else:
+            return _('trek')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
