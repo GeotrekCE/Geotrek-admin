@@ -7,6 +7,7 @@ from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 import json
+import urllib2
 
 from django.db import models
 from django.conf import settings
@@ -468,11 +469,20 @@ class AttachmentParserMixin(object):
                     break
             if found:
                 continue
-            response = requests.get(url)
-            if response.status_code != requests.codes.ok:
-                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                continue
-            f = ContentFile(response.content)
+            if url[:6] == 'ftp://':
+                try:
+                    response = urllib2.urlopen(url)
+                except:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    continue
+                content = response.read()
+            else:
+                response = requests.get(url)
+                if response.status_code != requests.codes.ok:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    continue
+                content = response.content
+            f = ContentFile(content)
             attachment = Attachment()
             attachment.content_object = self.obj
             attachment.attachment_file.save(name, f, save=False)
