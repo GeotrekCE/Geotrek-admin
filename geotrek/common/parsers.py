@@ -47,6 +47,7 @@ class Parser(object):
     url = None
     simplify_tolerance = 0  # meters
     update_only = False
+    delete = False
     duplicate_eid_allowed = False
     warn_on_missing_fields = False
     warn_on_missing_objects = False
@@ -276,6 +277,7 @@ class Parser(object):
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
+            self.to_delete.remove(self.obj.pk)
         self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb)
@@ -286,6 +288,7 @@ class Parser(object):
             'nb_lines': self.line,
             'nb_created': self.nb_created,
             'nb_updated': self.nb_updated,
+            'nb_deleted': len(self.to_delete),
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
@@ -362,6 +365,7 @@ class Parser(object):
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
+        self.to_delete = set(self.model.objects.values_list('pk', flat=True))
         for i, row in enumerate(self.next_row()):
             if limit and i >= limit:
                 break
@@ -371,6 +375,8 @@ class Parser(object):
                 self.add_warning(unicode(e))
                 if settings.DEBUG:
                     raise
+        if self.delete:
+            self.model.objects.filter(pk__in=self.to_delete).delete()
         self.end()
 
 
