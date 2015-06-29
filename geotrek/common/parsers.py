@@ -277,7 +277,7 @@ class Parser(object):
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
-            self.to_delete.remove(self.obj.pk)
+            self.to_delete.discard(self.obj.pk)
         self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb)
@@ -288,7 +288,7 @@ class Parser(object):
             'nb_lines': self.line,
             'nb_created': self.nb_created,
             'nb_updated': self.nb_updated,
-            'nb_deleted': len(self.to_delete),
+            'nb_deleted': len(self.to_delete) if self.delete else 0,
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
@@ -441,6 +441,7 @@ class AtomParser(Parser):
 
 class AttachmentParserMixin(object):
     base_url = ''
+    delete_attachments = False
     filetype_name = u"Photographie"
     non_fields = {
         'attachments': _(u"Attachments"),
@@ -453,6 +454,14 @@ class AttachmentParserMixin(object):
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+        self.attachments_to_delete = {obj.pk: set(Attachment.objects.attachments_for_object(obj)) for obj in self.model.objects.all()}
+
+    def end(self):
+        if not self.delete_attachments:
+            return
+        for atts in self.attachments_to_delete.itervalues():
+            for att in atts:
+                att.delete()
 
     def filter_attachments(self, src, val):
         if not val:
@@ -461,17 +470,16 @@ class AttachmentParserMixin(object):
 
     def save_attachments(self, src, val):
         updated = False
-        to_delete = set(Attachment.objects.attachments_for_object(self.obj))
         for url, name, author in self.filter_attachments(src, val):
             url = self.base_url + url
             name = os.path.basename(url)
             found = False
-            for attachment in to_delete:
+            for attachment in self.attachments_to_delete[self.obj.pk]:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
                 if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
                     found = True
-                    to_delete.remove(attachment)
+                    self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
             if found:
                 continue
@@ -495,9 +503,6 @@ class AttachmentParserMixin(object):
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.save()
-            updated = True
-        if to_delete:
-            Attachment.objects.filter(pk__in=[a.pk for a in to_delete]).delete()
             updated = True
         return updated
 
