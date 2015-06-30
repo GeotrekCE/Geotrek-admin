@@ -1,6 +1,4 @@
 from django.views.generic.list import ListView
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from mapentity import views as mapentity_views
 
 from geotrek.feedback import models as feedback_models
@@ -26,7 +24,6 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CategoryList, self).dispatch(*args, **kwargs)
 

@@ -23,6 +23,7 @@ from geotrek.common.views import DocumentPublicPDF
 from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.flatpages.views import FlatPageViewSet
+from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -302,6 +303,7 @@ class Command(BaseCommand):
         self.sync_geojson(lang, TrekViewSet, 'treks', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois')
         self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
+        self.sync_view(lang, FeedbackCategoryList.as_view(), os.path.join('api', lang, 'feedback', 'categories.json'), zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)

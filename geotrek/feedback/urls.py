@@ -8,7 +8,7 @@ from .views import CategoryList
 
 urlpatterns = patterns(
     '',
-    url(r'^api/feedback/categories.json$', CategoryList.as_view(), name="categories_json"),
+    url(r'^api/(?P<lang>\w+)/feedback/categories.json$', CategoryList.as_view(), name="categories_json"),
 )
 
 urlpatterns += registry.register(feedback_models.Report)
