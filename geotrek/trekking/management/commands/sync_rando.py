@@ -15,11 +15,13 @@ from django.core.management.base import BaseCommand, CommandError
 from django.test.client import RequestFactory
 from django.utils import translation
 
+from mapentity.settings import app_settings as mapentity_settings
+
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 from geotrek.tourism import models as tourism_models
-from geotrek.common.views import DocumentPublicPDF
+from geotrek.common.views import DocumentPublic, DocumentPublicPDF
 from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
 from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.flatpages.views import FlatPageViewSet
@@ -191,7 +193,10 @@ class Command(BaseCommand):
     def sync_pdf(self, lang, obj):
         if self.skip_pdf:
             return
-        view = DocumentPublicPDF.as_view(model=type(obj))
+        if mapentity_settings['MAPENTITY_WEASYPRINT']:
+            view = DocumentPublic.as_view(model=type(obj))
+        else:
+            view = DocumentPublicPDF.as_view(model=type(obj))
         self.sync_object_view(lang, obj, view, '{obj.slug}.pdf')
 
     def sync_profile_json(self, lang, obj, zipfile=None):
