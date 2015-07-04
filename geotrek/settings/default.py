@@ -61,9 +61,9 @@ CACHES['fat']['TIMEOUT'] = envini.getint('cachetimeout', 3600 * 24)
 
 
 LANGUAGE_CODE = envini.get('language', LANGUAGE_CODE, env=False)
+LANGUAGES = [l for l in LANGUAGES_LIST if l[0] in envini.getstrings('languages')]
 MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
-_MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
-                               if l[0] in envini.getstrings('languages')]
+_MODELTRANSLATION_LANGUAGES = LANGUAGES
 MODELTRANSLATION_LANGUAGES = [l[0] for l in _MODELTRANSLATION_LANGUAGES]
 
 TITLE = envini.get('title', MAPENTITY_CONFIG['TITLE'])
