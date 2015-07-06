@@ -48,24 +48,17 @@ class BaseAPITest(TestCase):
 class CreateReportsAPITest(BaseAPITest):
     def setUp(self):
         super(CreateReportsAPITest, self).setUp()
-        self.add_url = '/report/add/'
+        self.add_url = '/api/en/reports/report'
         self.data = {
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'name': 'You Yeah',
             'email': 'yeah@you.com'
         }
-        self.login()
 
     def post_report_data(self, data):
-        response = self.client.get(self.add_url,
-                                   allow_redirects=False)
-        self.assertEqual(response.status_code, 200)
-        csrf = response.cookies['csrftoken']
-        data['csrfmiddlewaretoken'] = csrf
         response = self.client.post(self.add_url, data=data,
                                     allow_redirects=False)
-        self.assertEqual(response.status_code, 302)
-        return response
+        self.assertEqual(response.status_code, 201)
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
@@ -83,7 +76,7 @@ class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
         self.cat = feedback_factories.ReportCategoryFactory(category_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
-        response = self.client.get('/api/fr/feedback/categories.json')
+        response = self.client.get('/api/en/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data[0]['id'], self.cat.id)

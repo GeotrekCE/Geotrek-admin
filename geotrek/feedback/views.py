@@ -1,7 +1,10 @@
 from django.views.generic.list import ListView
+from rest_framework.decorators import list_route
+from rest_framework.permissions import AllowAny
 from mapentity import views as mapentity_views
 
 from geotrek.feedback import models as feedback_models
+from geotrek.feedback import serializers as feedback_serializers
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
@@ -30,3 +33,13 @@ class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
                  'label': c.category} for c in self.object_list]
+
+
+class ReportViewSet(mapentity_views.MapEntityViewSet):
+    """Disable permissions requirement"""
+    model = feedback_models.Report
+    serializer_class = feedback_serializers.ReportSerializer
+
+    @list_route(methods=['post'], permission_classes=[AllowAny])
+    def report(self, request, lang=None):
+        return super(ReportViewSet, self).create(request)
