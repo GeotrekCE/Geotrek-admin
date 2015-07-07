@@ -254,6 +254,7 @@ PROJECT_APPS += (
     'mapentity',
     'rest_framework',
     'embed_video',
+    'djcelery',
 )
 
 
@@ -556,3 +557,12 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+
+import djcelery
+djcelery.setup_loader()
+
+CELERY_RESULT_BACKEND='redis://127.0.0.1:6379/0'
+BROKER_URL='redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

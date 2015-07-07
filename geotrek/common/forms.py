@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import forms as django_forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 
@@ -9,6 +10,9 @@ from geotrek.authent.models import (default_structure, StructureRelated,
 
 from .mixins import NoDeleteMixin
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, Submit
+from crispy_forms.bootstrap import FormActions
 
 class CommonForm(MapEntityForm):
 
@@ -68,3 +72,35 @@ class CommonForm(MapEntityForm):
 
         for name, field in self.fields.items():
             self.filter_related_field(name, field)
+
+class ImportDatasetForm(django_forms.Form):
+    parser = forms.TypedChoiceField(
+        label='Parseur',
+        widget=forms.RadioSelect,
+        required=True,
+    )
+    file = forms.FileField(
+        label='Fichier',
+        required=True,
+        widget=forms.FileInput
+    )
+
+
+    def __init__(self, choices=None, *args, **kwargs):
+            super(ImportDatasetForm, self).__init__(*args, **kwargs)
+
+            self.fields['parser'].choices = choices
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                Div(
+                    Div(
+                        'parser',
+                        'file',
+                    ),
+                    FormActions(
+                        Submit('submit', u"Transférer", css_class='button white')
+                    ),
+                    css_class='file-attachment-form',
+                )
+            )

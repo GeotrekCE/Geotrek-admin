@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -14,6 +15,16 @@ from mapentity.settings import app_settings
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
+#async data imports
+import os
+import json
+from zipfile import ZipFile
+from geotrek.celery import app
+from celery.result import AsyncResult
+
+from .tasks import import_datas
+from .forms import ImportDatasetForm
+from pip.cmdoptions import no_cache
 
 class FormsetMixin(object):
     context_name = None
@@ -176,3 +187,58 @@ class UserArgMixin(object):
         kwargs = super(UserArgMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+def import_view(request):
+    choices = []
+    from bulkimport import parsers
+    classes = dict([(name, cls) for name, cls in parsers.__dict__.items() if isinstance(cls, type)])
+    for cls in classes:
+        if hasattr(classes[cls], 'label'):
+            try:
+                choices.append((classes[cls].__name__, classes[cls].__name__))
+            except:
+                pass
+    if request.method == 'POST':
+        form = ImportDatasetForm(choices, request.POST, request.FILES)
+
+        if form.is_valid():
+            uploaded = request.FILES['file']
+            if uploaded.content_type == u'application/zip':
+                
+                save_dir = '/tmp/geotrek/{}'.format(uploaded.name)
+                if not os.path.exists('/tmp/geotrek'):
+                    os.mkdir('/tmp/geotrek')
+                if not os.path.exists(save_dir):
+                    os.mkdir(save_dir)
+                with open(save_dir+'/{}'.format(uploaded.name), 'w+') as f:
+                    f.write(uploaded.file.read())
+                    
+                    zfile = ZipFile(f)
+                    for name in zfile.namelist():
+                        zfile.extract(name, save_dir)
+                        if name.endswith('shp'):
+                            try:
+                                async_job = import_datas.delay('/'.join((save_dir, name)), form['parser'].value())
+                            except Exception as e:
+                                pass
+    else:
+        form = ImportDatasetForm(choices)
+
+    return render(request, 'common/import_dataset.html', {
+        'form': form
+    })
+
+
+def import_update_json(request):
+    i = app.control.inspect()
+    results = []
+    if app.control.ping():
+        for pool in (i.active(), i.reserved()):
+            for host in pool:
+                for worker in pool[host]:
+                    result = AsyncResult(worker['id'])
+                    results.append({'id': worker['id'], 'result': result.info or {'current': 0, 'total': 0}})
+
+    return render(request, 'common/import_dataset_progressbars.html', {'results': results})
+
