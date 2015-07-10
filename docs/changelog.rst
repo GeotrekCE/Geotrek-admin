@@ -5,10 +5,16 @@ CHANGELOG
 0.34.1.dev0
 -------------------
 
+**New features**
+
+* Add an import framework
+
+
 **Bug fixes**
 
 * Fix a crash in appy pod (PDF generation)
 * Fix login with restricted access to some contents
+* Fix buildout bootstrap arguments
 
 
 0.34.0 (2015-05-20)
