@@ -26,7 +26,6 @@ from datetime import datetime, timedelta
 
 from .tasks import import_datas
 from .forms import ImportDatasetForm
-from pip.cmdoptions import no_cache
 
 class FormsetMixin(object):
     context_name = None
