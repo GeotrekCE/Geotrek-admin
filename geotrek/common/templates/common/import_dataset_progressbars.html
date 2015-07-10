@@ -1,8 +1,0 @@
-{% for worker in results %}
-<div id="{{ worker.id }}">
-	<div class="pull-left" style="width: 35px; margin-left: 5px; margin-right: 5px;">{{ worker.result.current }}%</div>
-	<div class="progress progress-striped active">
-	  <div class="bar" style="width: {{ worker.result.current }}%;"></div>
-	</div>
-</div>
-{% endfor %}

@@ -13,4 +13,20 @@
     </div>
     <div id="progress-bars" style="margin-top: 1.5em;" class="span5">
     </div>
+    
+    <script id="import-template" type="text/template">
+	    <div id="progress-tpl">
+			<div class="pull-left" style="width: 35px; margin-left: 5px; margin-right: 5px;">
+				<span></span>
+			</div>
+			<div class="progress progress-striped active">
+			  <div class="bar"></div>
+			</div>
+		    <div class="alert alert-error" style="margin-left: 45px; display: none;">
+		      <button type="button" class="close" data-dismiss="alert">&times;</button>
+		      <span></span>
+		    </div>
+		    <hr></hr>
+		</div>
+	</script>
 {% endblock mainpanel %}

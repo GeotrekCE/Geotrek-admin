@@ -19,8 +19,10 @@ from geotrek import __version__
 import os
 import json
 from zipfile import ZipFile
+from geotrek.common.parsers import AttachmentParserMixin
 from geotrek.celery import app
-from celery.result import AsyncResult
+from djcelery.models import TaskMeta
+from datetime import datetime, timedelta
 
 from .tasks import import_datas
 from .forms import ImportDatasetForm
@@ -189,16 +191,35 @@ class UserArgMixin(object):
         return kwargs
 
 
+def get_all_subclasses(cls):
+    all_subclasses = []
+
+    for subclass in cls.__subclasses__():
+        all_subclasses.append(subclass)
+        all_subclasses.extend(get_all_subclasses(subclass))
+
+    return all_subclasses
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
+    """
+    Gets the existing declared parsers for the current project.
+    This view handles only the file based import parsers.
+    """
     choices = []
-    from bulkimport import parsers
-    classes = dict([(name, cls) for name, cls in parsers.__dict__.items() if isinstance(cls, type)])
-    for cls in classes:
-        if hasattr(classes[cls], 'label'):
-            try:
-                choices.append((classes[cls].__name__, classes[cls].__name__))
-            except:
-                pass
+    try:
+        from bulkimport.parsers import *
+    except ImportError:
+        pass
+    
+    classes = get_all_subclasses(AttachmentParserMixin)
+    for index, cls in enumerate(classes):
+        choices.append((index, cls.__name__))
+    
+    choices = sorted(choices, key=lambda x: x[1])
+    
     if request.method == 'POST':
         form = ImportDatasetForm(choices, request.POST, request.FILES)
 
@@ -219,9 +240,10 @@ def import_view(request):
                         zfile.extract(name, save_dir)
                         if name.endswith('shp'):
                             try:
-                                async_job = import_datas.delay('/'.join((save_dir, name)), form['parser'].value())
+                                parser = classes[int(form['parser'].value())]
+                                async_job = import_datas.delay('/'.join((save_dir, name)), parser.__name__, parser.__module__)
                             except Exception as e:
-                                pass
+                                raise e
     else:
         form = ImportDatasetForm(choices)
 
@@ -229,16 +251,19 @@ def import_view(request):
         'form': form
     })
 
-
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def import_update_json(request):
-    i = app.control.inspect()
     results = []
-    if app.control.ping():
-        for pool in (i.active(), i.reserved()):
-            for host in pool:
-                for worker in pool[host]:
-                    result = AsyncResult(worker['id'])
-                    results.append({'id': worker['id'], 'result': result.info or {'current': 0, 'total': 0}})
+    threshold = datetime.now() - timedelta(seconds=30)
+    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+        results.append(
+           {
+            'id': task.task_id,
+            'result': task.result or {'current': 0, 'total': 0},
+            'status': task.status
+           }
+        )
 
-    return render(request, 'common/import_dataset_progressbars.html', {'results': results})
+    return HttpResponse(json.dumps(results), content_type="application/json")
 
