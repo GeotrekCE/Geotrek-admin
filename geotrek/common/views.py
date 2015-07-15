@@ -254,7 +254,7 @@ def import_view(request):
 @user_passes_test(lambda u: u.is_superuser)
 def import_update_json(request):
     results = []
-    threshold = datetime.now() - timedelta(seconds=30)
+    threshold = datetime.now() - timedelta(seconds=60)
     for task in TaskMeta.objects.filter(date_done__gte=threshold):
         results.append(
            {
