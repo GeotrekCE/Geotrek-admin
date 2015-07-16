@@ -79,7 +79,7 @@ class ImportDatasetForm(django_forms.Form):
         widget=forms.RadioSelect,
         required=True,
     )
-    file = forms.FileField(
+    zipfile = forms.FileField(
         label='Fichier',
         required=True,
         widget=forms.FileInput
@@ -96,7 +96,7 @@ class ImportDatasetForm(django_forms.Form):
                 Div(
                     Div(
                         'parser',
-                        'file',
+                        'zipfile',
                     ),
                     FormActions(
                         Submit('submit', u"Transférer", css_class='button white')
@@ -104,3 +104,7 @@ class ImportDatasetForm(django_forms.Form):
                     css_class='file-attachment-form',
                 )
             )
+
+    def clean_zipfile(self):
+        if self.cleaned_data['zipfile'].content_type != "application/zip":
+            raise django_forms.ValidationError("File must be of ZIP type.", code='invalid')

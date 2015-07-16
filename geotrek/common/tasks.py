@@ -12,7 +12,7 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
     except:
-        raise Exception("Failed to import parser class '{0}' from module '{1}".format(class_name, module_name))
+        raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(class_name, module_name))
 
     def progress_cb(progress):
         current_task.update_state(

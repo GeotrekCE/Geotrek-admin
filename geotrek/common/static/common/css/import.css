@@ -1,0 +1,21 @@
+#progress-bars {
+	margin-top: 1.5em;
+}
+
+#progress-bars .close {
+	display: block;
+	float: none;
+	text-align: right;
+	width: 100%;
+}
+
+#progress-bars div.pull-left {
+	width: 35px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#progress-bars div.alert-error {
+	margin-left: 45px;
+	display: none;
+}

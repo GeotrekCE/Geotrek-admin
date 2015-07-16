@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{{appname}}
+
+{% if appname == "common" %}
+<div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        <strong>
+        	{% trans "Imports" %}
+        </strong>
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+    	<li><a href="{% url 'common:import_dataset' %}">{% trans "Imports" %}</a></li>
+    </ul>
+</div>
+{% endif %}

@@ -15,7 +15,7 @@ from mapentity.settings import app_settings
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
-#async data imports
+# async data imports
 import os
 import json
 from zipfile import ZipFile
@@ -24,8 +24,11 @@ from geotrek.celery import app
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
 
+from .utils.import_celery import subclasses, create_tmp_destination 
+
 from .tasks import import_datas
 from .forms import ImportDatasetForm
+
 
 class FormsetMixin(object):
     context_name = None
@@ -47,15 +50,18 @@ class FormsetMixin(object):
         context = super(FormsetMixin, self).get_context_data(**kwargs)
         if self.request.POST:
             try:
-                context[self.context_name] = self.formset_class(self.request.POST, instance=self.object)
+                context[self.context_name] = self.formset_class(
+                    self.request.POST, instance=self.object)
             except ValidationError:
                 pass
         else:
-            context[self.context_name] = self.formset_class(instance=self.object)
+            context[self.context_name] = self.formset_class(
+                instance=self.object)
         return context
 
 
 class PublicOrReadPermMixin(object):
+
     def get_object(self, queryset=None):
         obj = super(PublicOrReadPermMixin, self).get_object(queryset)
         if not obj.is_public():
@@ -68,6 +74,7 @@ class PublicOrReadPermMixin(object):
 
 class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
     # Override login_required
+
     def dispatch(self, *args, **kwargs):
         return super(mapentity_views.Convert, self).dispatch(*args, **kwargs)
 
@@ -97,7 +104,8 @@ class DocumentPublicOdt(DocumentPublicBase):
         # And return it as response
         try:
             overriden = self.object.get_attachment_print()
-            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
+            response = HttpResponse(
+                mimetype='application/vnd.oasis.opendocument.text')
             with open(overriden, 'rb') as f:
                 response.write(f.read())
             return response
@@ -117,6 +125,7 @@ else:
 
 
 class JSSettings(mapentity_views.JSSettings):
+
     """ Override mapentity base settings in order to provide
     Geotrek necessary stuff.
     """
@@ -155,7 +164,8 @@ def admin_check_extents(request):
     path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM l_t_troncon;")
     path_extent = api_bbox(path_extent_native)
     try:
-        dem_extent_native = sql_extent("SELECT ST_Extent(rast::geometry) FROM mnt;")
+        dem_extent_native = sql_extent(
+            "SELECT ST_Extent(rast::geometry) FROM mnt;")
         dem_extent = api_bbox(dem_extent_native)
     except DatabaseError:  # mnt table missing
         dem_extent_native = None
@@ -184,21 +194,11 @@ def admin_check_extents(request):
 
 
 class UserArgMixin(object):
+
     def get_form_kwargs(self):
         kwargs = super(UserArgMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
-
-def get_all_subclasses(cls):
-    all_subclasses = []
-
-    for subclass in cls.__subclasses__():
-        all_subclasses.append(subclass)
-        all_subclasses.extend(get_all_subclasses(subclass))
-
-    return all_subclasses
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -210,45 +210,45 @@ def import_view(request):
     choices = []
     try:
         from bulkimport.parsers import *
+        from .parsers import Parser
     except ImportError:
         pass
-    
-    classes = get_all_subclasses(AttachmentParserMixin)
+
+    classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         choices.append((index, cls.__name__))
-    
+
     choices = sorted(choices, key=lambda x: x[1])
-    
+
     if request.method == 'POST':
         form = ImportDatasetForm(choices, request.POST, request.FILES)
 
         if form.is_valid():
-            uploaded = request.FILES['file']
-            if uploaded.content_type == u'application/zip':
-                
-                save_dir = '/tmp/geotrek/{}'.format(uploaded.name)
-                if not os.path.exists('/tmp/geotrek'):
-                    os.mkdir('/tmp/geotrek')
-                if not os.path.exists(save_dir):
-                    os.mkdir(save_dir)
-                with open(save_dir+'/{}'.format(uploaded.name), 'w+') as f:
-                    f.write(uploaded.file.read())
-                    
-                    zfile = ZipFile(f)
-                    for name in zfile.namelist():
-                        zfile.extract(name, save_dir)
+            uploaded = request.FILES['zipfile']
+
+            destination_dir, destination_file = create_tmp_destination(uploaded.name)
+
+            with open(destination_file, 'w+') as f:
+                f.write(uploaded.file.read())
+                zfile = ZipFile(f)
+                for name in zfile.namelist():
+                    try:
+                        zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
                         if name.endswith('shp'):
-                            try:
                                 parser = classes[int(form['parser'].value())]
-                                async_job = import_datas.delay('/'.join((save_dir, name)), parser.__name__, parser.__module__)
-                            except Exception as e:
-                                raise e
+                                import_datas.delay(
+                                    '/'.join((destination_dir, name)),
+                                    parser.__name__, parser.__module__
+                                )
+                    except Exception as e:
+                        raise e
     else:
         form = ImportDatasetForm(choices)
 
     return render(request, 'common/import_dataset.html', {
         'form': form
     })
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -257,12 +257,11 @@ def import_update_json(request):
     threshold = datetime.now() - timedelta(seconds=30)
     for task in TaskMeta.objects.filter(date_done__gte=threshold):
         results.append(
-           {
-            'id': task.task_id,
-            'result': task.result or {'current': 0, 'total': 0},
-            'status': task.status
-           }
+            {
+                'id': task.task_id,
+                'result': task.result or {'current': 0, 'total': 0},
+                'status': task.status
+            }
         )
 
     return HttpResponse(json.dumps(results), content_type="application/json")
-

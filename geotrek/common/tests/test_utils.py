@@ -7,7 +7,9 @@ from django.test import TestCase
 
 from ..utils import almostequal, sql_extent, uniquify
 from ..utils.postgresql import debug_pg_notices
+from ..utils.import_celery import create_tmp_destination, subclasses
 
+from geotrek.common.parsers import Parser
 
 class UtilsTest(TestCase):
     def test_almostequal(self):
@@ -37,3 +39,30 @@ class UtilsTest(TestCase):
         with mock.patch('geotrek.common.utils.postgresql.logger') as fake_log:
             raisenotice()
             fake_log.debug.assert_called_with('hello')
+
+    def test_subclasses(self):
+        class_list = subclasses(Parser)
+        for classname in (
+                          'TrekParser',
+                          'TourInSoftParser',
+                          'CityParser',
+                          'ExcelParser',
+                          'OpenSystemParser',
+                          'ShapeParser',
+                          'SitraParser',
+                          'TourismSystemParser'):
+            self.assert_(classname not in class_list)
+            
+    def test_create_tmp_directory(self):
+        self.assertTupleEqual(
+            ('/tmp/geotrek/bombadil', '/tmp/geotrek/bombadil/bombadil'),
+            create_tmp_destination('bombadil')
+        )
+        
+        
+        
+        
+        
+        
+        
+        

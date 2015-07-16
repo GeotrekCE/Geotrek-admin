@@ -2,8 +2,12 @@
 {% load static crispy_forms_tags %}
 
 {% block extrahead %}
-	<script type="text/javascript" src="{% static "common/import.js" %}"></script>
+	<script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
+	<link rel="stylesheet" href="{% static "common/css/import.css" %}" />
 {% endblock extrahead %}
+
+{% block toolbar %}
+{% endblock toolbar %}
 
 {% block mainpanel %}
 	<div class="span3 offset2">
@@ -11,19 +15,19 @@
         {% crispy form form.helper %}
     {% endblock mainform %}
     </div>
-    <div id="progress-bars" style="margin-top: 1.5em;" class="span5">
+    <div id="progress-bars" class="span5">
     </div>
     
     <script id="import-template" type="text/template">
 	    <div id="progress-tpl">
-			<div class="pull-left" style="width: 35px; margin-left: 5px; margin-right: 5px;">
+    		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<div class="pull-left">
 				<span></span>
 			</div>
 			<div class="progress progress-striped active">
 			  <div class="bar"></div>
 			</div>
-		    <div class="alert alert-error" style="margin-left: 45px; display: none;">
-		      <button type="button" class="close" data-dismiss="alert">&times;</button>
+		    <div class="alert alert-error">
 		      <span></span>
 		    </div>
 		    <hr></hr>
