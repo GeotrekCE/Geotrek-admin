@@ -19,9 +19,9 @@ from geotrek import __version__
 import os
 import json
 from zipfile import ZipFile
-from geotrek.common.parsers import Parser
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
+from .parsers import Parser
 
 from .utils.import_celery import subclasses, create_tmp_destination 
 
@@ -211,7 +211,7 @@ def import_view(request):
         from bulkimport.parsers import *
     except ImportError:
         pass
-
+    
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         choices.append((index, cls.__name__))
