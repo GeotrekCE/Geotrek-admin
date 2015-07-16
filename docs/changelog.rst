@@ -15,6 +15,7 @@ CHANGELOG
 * Fix a crash in appy pod (PDF generation)
 * Fix login with restricted access to some contents
 * Fix buildout bootstrap arguments
+* Fix installation on ubuntu 12.04 with recent updates
 
 
 0.34.0 (2015-05-20)
