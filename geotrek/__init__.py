@@ -5,5 +5,3 @@ distribution = pkg_resources.get_distribution('geotrek')
 
 #: Module version, as defined in PEP-0396.
 __version__ = distribution.version
-
-from .celery import app as celery_app

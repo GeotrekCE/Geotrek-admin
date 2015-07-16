@@ -59,10 +59,12 @@ class ViewsTest(TestCase):
 
         url = reverse('common:import_dataset')
 
-        response = self.client.post(url, {'parser': 'CityParser', 'zipfile': good_archive})
+        response = self.client.post(
+            url, {'parser': 'CityParser', 'zipfile': good_archive})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.post(url, {'parser': 'CityParser', 'zipfile': bad_archive})
+        response = self.client.post(
+            url, {'parser': 'CityParser', 'zipfile': bad_archive})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'zipfile', ["File must be of ZIP type.", ])
-        
+        self.assertFormError(
+            response, 'form', 'zipfile', ["File must be of ZIP type.", ])

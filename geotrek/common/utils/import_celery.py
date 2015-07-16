@@ -1,5 +1,6 @@
 import os
 
+
 def subclasses(cls):
     all_subclasses = []
 
@@ -8,6 +9,7 @@ def subclasses(cls):
         all_subclasses.extend(subclasses(subclass))
 
     return all_subclasses
+
 
 def create_tmp_destination(name):
     save_dir = '/tmp/geotrek/{}'.format(name)

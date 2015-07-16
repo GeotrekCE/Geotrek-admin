@@ -23,7 +23,7 @@ from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
 from .parsers import Parser
 
-from .utils.import_celery import subclasses, create_tmp_destination 
+from .utils.import_celery import subclasses, create_tmp_destination
 
 from .tasks import import_datas
 from .forms import ImportDatasetForm
@@ -199,6 +199,7 @@ class UserArgMixin(object):
         kwargs['user'] = self.request.user
         return kwargs
 
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
@@ -208,10 +209,11 @@ def import_view(request):
     """
     choices = []
     try:
-        from bulkimport.parsers import *
+        import importlib
+        importlib.import_module('bulkimport.parsers')
     except ImportError:
         pass
-    
+
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         choices.append((index, cls.__name__))

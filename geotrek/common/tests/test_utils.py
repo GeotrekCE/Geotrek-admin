@@ -11,7 +11,9 @@ from ..utils.import_celery import create_tmp_destination, subclasses
 
 from geotrek.common.parsers import Parser
 
+
 class UtilsTest(TestCase):
+
     def test_almostequal(self):
         self.assertTrue(almostequal(0.001, 0.002))
         self.assertFalse(almostequal(0.001, 0.002, precision=3))
@@ -20,7 +22,8 @@ class UtilsTest(TestCase):
         self.assertFalse(almostequal(1, -1))
 
     def test_sqlextent(self):
-        ext = sql_extent("SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
+        ext = sql_extent(
+            "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
         self.assertEqual((0.0, 0.0, 10.0, 10.0), ext)
 
     def test_uniquify(self):
@@ -43,26 +46,18 @@ class UtilsTest(TestCase):
     def test_subclasses(self):
         class_list = subclasses(Parser)
         for classname in (
-                          'TrekParser',
-                          'TourInSoftParser',
-                          'CityParser',
-                          'ExcelParser',
-                          'OpenSystemParser',
-                          'ShapeParser',
-                          'SitraParser',
-                          'TourismSystemParser'):
+                'TrekParser',
+                'TourInSoftParser',
+                'CityParser',
+                'ExcelParser',
+                'OpenSystemParser',
+                'ShapeParser',
+                'SitraParser',
+                'TourismSystemParser'):
             self.assert_(classname not in class_list)
-            
+
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
             ('/tmp/geotrek/bombadil', '/tmp/geotrek/bombadil/bombadil'),
             create_tmp_destination('bombadil')
         )
-        
-        
-        
-        
-        
-        
-        
-        

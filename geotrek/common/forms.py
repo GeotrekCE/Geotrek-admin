@@ -14,6 +14,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit
 from crispy_forms.bootstrap import FormActions
 
+
 class CommonForm(MapEntityForm):
 
     class Meta:
@@ -73,6 +74,7 @@ class CommonForm(MapEntityForm):
         for name, field in self.fields.items():
             self.filter_related_field(name, field)
 
+
 class ImportDatasetForm(django_forms.Form):
     parser = forms.TypedChoiceField(
         label='Parseur',
@@ -84,7 +86,6 @@ class ImportDatasetForm(django_forms.Form):
         required=True,
         widget=forms.FileInput
     )
-
 
     def __init__(self, choices=None, *args, **kwargs):
             super(ImportDatasetForm, self).__init__(*args, **kwargs)
