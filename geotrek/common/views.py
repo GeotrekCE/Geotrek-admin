@@ -19,8 +19,7 @@ from geotrek import __version__
 import os
 import json
 from zipfile import ZipFile
-from geotrek.common.parsers import AttachmentParserMixin
-from geotrek.celery import app
+from geotrek.common.parsers import Parser
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
 
@@ -210,7 +209,6 @@ def import_view(request):
     choices = []
     try:
         from bulkimport.parsers import *
-        from .parsers import Parser
     except ImportError:
         pass
 
