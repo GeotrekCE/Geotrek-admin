@@ -76,6 +76,17 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
+    def test_elevation_topology_outside_dem(self):
+        outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
+        topo = TopologyFactory.create(no_path=True)
+        topo.add_path(outside_path, start=0.5, end=0.5)
+        topo.save()
+        self.assertEqual(topo.geom_3d.coords[2], 0)
+        self.assertEqual(topo.ascent, 0)
+        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.min_elevation, 0)
+        self.assertEqual(topo.max_elevation, 0)
+
 
 class ElevationProfileTest(TestCase):
     def test_elevation_profile_wrong_geom(self):
