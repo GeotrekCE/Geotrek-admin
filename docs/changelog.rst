@@ -28,6 +28,7 @@ CHANGELOG
 
 * Remove HTTP calls to SoundCloud API at serialization
 * Fix a crash in appy pod (PDF generation)
+* Allow DEM to partially cover spatial extent
 
 
 0.34.0 (2015-05-20)
