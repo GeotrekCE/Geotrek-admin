@@ -2,13 +2,15 @@ from django.conf.urls import patterns, url
 from mapentity.registry import MapEntityOptions
 from mapentity.settings import app_settings
 
-from .views import JSSettings, admin_check_extents, DocumentPublic, DocumentPublicPDF
+from .views import JSSettings, admin_check_extents, DocumentPublic, DocumentPublicPDF, import_view, import_update_json
 
 
 urlpatterns = patterns(
     '',
     url(r'^api/settings.json', JSSettings.as_view(), name='settings_json'),
     url(r'^tools/extents/', admin_check_extents, name='check_extents'),
+    url(r'^import-update.json$', import_update_json, name='import_update_json'),
+    url(r'^import$', import_view, name='import_dataset'),
 )
 
 

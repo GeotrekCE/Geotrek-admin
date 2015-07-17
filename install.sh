@@ -225,6 +225,9 @@ function geotrek_system_dependencies {
     # Necessary for MapEntity Weasyprint
     sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
     echo_progress
+    # Redis for async imports and tasks management
+    sudo apt-get install -y -qq redis-server
+    echo_progress
 
     if $prod || $standalone ; then
         sudo apt-get install -y -qq ntp fail2ban

@@ -34,6 +34,8 @@ setup(
         'django-embed-video',
         'xlrd',
         'landez',
+        'django-celery',
+        'redis',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
