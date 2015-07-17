@@ -2,35 +2,42 @@
 {% load static crispy_forms_tags %}
 
 {% block extrahead %}
-	<script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
-	<link rel="stylesheet" href="{% static "common/css/import.css" %}" />
+<script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
+<link rel="stylesheet" href="{% static "common/css/import.css" %}" />
 {% endblock extrahead %}
 
 {% block toolbar %}
 {% endblock toolbar %}
 
 {% block mainpanel %}
-	<div class="span3 offset2">
-    {% block mainform %}
-        {% crispy form form.helper %}
-    {% endblock mainform %}
-    </div>
-    <div id="progress-bars" class="span5">
-    </div>
-    
-    <script id="import-template" type="text/template">
-	    <div id="progress-tpl">
-    		<button type="button" class="close" data-dismiss="alert">&times;</button>
-			<div class="pull-left">
-				<span></span>
-			</div>
-			<div class="progress progress-striped active">
-			  <div class="bar"></div>
-			</div>
-		    <div class="alert alert-error">
-		      <span></span>
-		    </div>
-		    <hr></hr>
+<div class="span3 offset2">
+	{% block mainform %}
+	{% crispy form form.helper %}
+	{% endblock mainform %}
+</div>
+<div id="progress-bars" class="span5">
+</div>
+
+<script id="import-template" type="text/template">
+	<div id="progress-tpl">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		<div class="description">
+			<span class="parser">
+			</span>
+			<strong>:</strong>
+			<span class="filename">
+			</span>
 		</div>
-	</script>
+		<div class="pull-left">
+			<span></span>
+		</div>
+		<div class="progress progress-striped active">
+			<div class="bar"></div>
+		</div>
+		<div class="alert alert-error">
+			<span></span>
+		</div>
+		<hr></hr>
+	</div>
+</script>
 {% endblock mainpanel %}

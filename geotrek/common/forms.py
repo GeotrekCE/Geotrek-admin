@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms as django_forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
+from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms
 from mapentity.forms import MapEntityForm
@@ -77,12 +78,12 @@ class CommonForm(MapEntityForm):
 
 class ImportDatasetForm(django_forms.Form):
     parser = forms.TypedChoiceField(
-        label='Parseur',
+        label=_('Parser'),
         widget=forms.RadioSelect,
         required=True,
     )
     zipfile = forms.FileField(
-        label='Fichier',
+        label=_('File'),
         required=True,
         widget=forms.FileInput
     )
@@ -100,7 +101,7 @@ class ImportDatasetForm(django_forms.Form):
                         'zipfile',
                     ),
                     FormActions(
-                        Submit('submit', u"Transférer", css_class='button white')
+                        Submit('submit', _("Upload"), css_class='button white')
                     ),
                     css_class='file-attachment-form',
                 )
@@ -108,4 +109,4 @@ class ImportDatasetForm(django_forms.Form):
 
     def clean_zipfile(self):
         if self.cleaned_data['zipfile'].content_type != "application/zip":
-            raise django_forms.ValidationError("File must be of ZIP type.", code='invalid')
+            raise django_forms.ValidationError(_("File must be of ZIP type."), code='invalid')

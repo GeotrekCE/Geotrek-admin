@@ -20,6 +20,8 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
             meta={
                 'current': int(100 * progress),
                 'total': 100,
+                'filename': filename.split('/').pop(-1),
+                'parser': class_name
             }
         )
         sys.stdout.write(
@@ -31,4 +33,9 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
     except Exception as e:
         raise e
 
-    return
+    return {
+        'current': 100,
+        'total': 100,
+        'filename': filename.split('/').pop(-1),
+        'parser': class_name
+    }

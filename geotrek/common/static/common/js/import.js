@@ -22,7 +22,8 @@ function updateImportProgressBars() {
 				element.id = row.id;
 				element.querySelector('.bar').style.width = local_percent;
 				element.querySelector('.pull-left').innerHTML = local_percent;
-
+				element.querySelector('.parser').innerHTML = row.result.parser;
+				element.querySelector('.filename').innerHTML = row.result.filename;
 				parent.appendChild(element);
 			}
 			if (row.result.exc_message) {
