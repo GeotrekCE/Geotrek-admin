@@ -216,7 +216,9 @@ def import_view(request):
 
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
-        choices.append((index, cls.__name__))
+        if not getattr(cls, 'url', None):
+            if not getattr(cls, 'base_url', None):
+                choices.append((index, cls.__name__))
 
     choices = sorted(choices, key=lambda x: x[1])
 
@@ -226,21 +228,23 @@ def import_view(request):
         if form.is_valid():
             uploaded = request.FILES['zipfile']
 
-            destination_dir, destination_file = create_tmp_destination(uploaded.name)
+            destination_dir, destination_file = create_tmp_destination(
+                uploaded.name)
 
             with open(destination_file, 'w+') as f:
                 f.write(uploaded.file.read())
                 zfile = ZipFile(f)
                 for name in zfile.namelist():
                     try:
-                        zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
+                        zfile.extract(
+                            name, os.path.dirname(os.path.realpath(f.name)))
                         if name.endswith('shp'):
-                                parser = classes[int(form['parser'].value())]
-                                import_datas.delay(
-                                    '/'.join((destination_dir, name)),
-                                    parser.__name__, parser.__module__
-                                )
-                    except Exception as e:
+                            parser = classes[int(form['parser'].value())]
+                            import_datas.delay(
+                                '/'.join((destination_dir, name)),
+                                parser.__name__, parser.__module__
+                            )
+                    except Exception:
                         raise
     else:
         form = ImportDatasetForm(choices)
