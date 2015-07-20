@@ -81,6 +81,7 @@ prepreqs-{{cfg.name}}:
       - postgresql-client-9.3
       - postgresql-server-dev-all
       - memcached
+      - redis-server
 
 {{cfg.name}}-dirs:
   file.directory:
