@@ -474,7 +474,7 @@ class AttachmentParserMixin(object):
             url = self.base_url + url
             name = os.path.basename(url)
             found = False
-            for attachment in self.attachments_to_delete[self.obj.pk]:
+            for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
                 if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
