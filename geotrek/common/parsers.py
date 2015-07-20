@@ -489,14 +489,13 @@ class AttachmentParserMixin(object):
                 except:
                     self.add_warning(_(u"Failed to download '{url}'").format(url=url))
                     continue
-                content = response.read()
+                f = ContentFile(response.read())
             else:
                 response = requests.get(url)
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_(u"Failed to download '{url}'").format(url=url))
                     continue
-                content = response.content
-            f = ContentFile(content)
+                f = ContentFile(response.content)
             attachment = Attachment()
             attachment.content_object = self.obj
             attachment.attachment_file.save(name, f, save=False)
