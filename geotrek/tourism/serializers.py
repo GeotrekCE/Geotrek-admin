@@ -1,6 +1,7 @@
 from rest_framework import serializers as rest_serializers
 
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
@@ -24,6 +25,7 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 
     class Meta:
         model = tourism_models.InformationDesk
+        geo_field = 'geom'
         fields = ('name', 'description', 'phone', 'email', 'website',
                   'photo_url', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude', 'type')
@@ -55,10 +57,14 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     id = rest_serializers.Field(source='prefixed_id')
+    slug = rest_serializers.SerializerMethodField('get_slug')
 
     class Meta:
         model = tourism_models.TouristicContentCategory
-        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order')
+        fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order', 'slug')
+
+    def get_slug(self, obj):
+        return _(u'touristic-content')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -81,7 +87,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'source', 'approved') + \
+                  'treks', 'pois', 'source', 'approved', 'reservation_id') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -132,4 +138,5 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'label': obj._meta.verbose_name,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
+            'slug': _(u'touristic-event'),
         }

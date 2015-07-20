@@ -4,7 +4,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.functional import lazy
 from django.utils.formats import date_format
 
@@ -123,6 +123,8 @@ class InformationDesk(models.Model):
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
 
+    objects = models.GeoManager()
+
     class Meta:
         db_table = 't_b_renseignement'
         verbose_name = _(u"Information desk")
@@ -163,17 +165,22 @@ class InformationDesk(models.Model):
         return None
 
     @property
-    def photo_url(self):
+    def thumbnail(self):
         if not self.photo:
             return None
         thumbnailer = get_thumbnailer(self.photo)
         try:
-            thumb_detail = thumbnailer.get_thumbnail(aliases.get('thumbnail'))
-            thumb_url = os.path.join(settings.MEDIA_URL, thumb_detail.name)
+            return thumbnailer.get_thumbnail(aliases.get('thumbnail'))
         except InvalidImageFormatError:
-            thumb_url = None
             logger.error(_("Image %s invalid or missing from disk.") % self.photo)
-        return thumb_url
+            return None
+
+    @property
+    def photo_url(self):
+        thumbnail = self.thumbnail
+        if not thumbnail:
+            return None
+        return os.path.join(settings.MEDIA_URL, thumbnail.name)
 
 
 GEOMETRY_TYPES = Choices(
@@ -298,6 +305,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                     null=True, blank=True, related_name='touristiccontents',
                                     verbose_name=_("Source"), db_table='t_r_contenu_touristique_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    reservation_id = models.CharField(verbose_name=_(u"Reservation id"), max_length=128, blank=True, db_column='id_reservation')
     approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
@@ -314,7 +322,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristiccontent_document_public', [str(self.pk)])
+        return ('tourism:touristiccontent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def districts_display(self):
@@ -340,10 +348,26 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def prefixed_category_id(self):
         return self.category.prefixed_id
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
+    @property
+    def type(self):
+        """Fake type to simulate POI for mobile app v1"""
+        return self.category
+
+    @property
+    def min_elevation(self):
+        return 0
+
+    @property
+    def max_elevation(self):
+        return 0
+
+Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
+TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
 
 
 class TouristicEventType(OptionalPictogramMixin):
@@ -417,7 +441,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('tourism:touristicevent_document_public', [str(self.pk)])
+        return ('tourism:touristicevent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):
@@ -452,11 +476,14 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     def prefixed_category_id(self):
         return self.category_id_prefix
 
-TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic contents"))
-TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic contents"))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
-TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
-TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Touristic events"))
-TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published touristic events"))
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
+TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
+TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
+Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))
+TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))
+TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _(u"Touristic events"))
+TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _(u"Published touristic events"))

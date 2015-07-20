@@ -65,6 +65,9 @@ BEGIN
         SELECT ST_Value(rast, 1, geom)::integer INTO ele
         FROM mnt
         WHERE ST_Intersects(rast, geom);
+        IF NOT FOUND THEN
+            ele := 0;
+        END IF;
     END IF;
 
     geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), ele);

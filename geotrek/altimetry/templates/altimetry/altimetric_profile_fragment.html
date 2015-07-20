@@ -11,6 +11,6 @@
     });
 
     $(window).on('detailmap:ready', function () {
-        $('#altitudegraph').append('<img src="{% url profile_url object.pk %}">');
+        $('#altitudegraph').append('<img src="{% url profile_url LANGUAGE_CODE object.pk %}">');
     });
 </script>

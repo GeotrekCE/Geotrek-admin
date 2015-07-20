@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import Permission
 from mapentity.factories import SuperUserFactory, UserFactory
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import factories as feedback_factories
 
@@ -77,30 +77,20 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
 
 
-class ListCategoriesTest(BaseAPITest):
+class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
         super(ListCategoriesTest, self).setUp()
-        self.cat = feedback_factories.ReportCategoryFactory.build()
-        self.cat.category_it = 'Obstaculo'
-        self.cat.save()
-        self.categories_url = '/api/feedback/categories.json'
-        self.login()
-
-    def test_protected_by_login(self):
-        self.client.logout()
-        response = self.client.get(self.categories_url, allow_redirects=False)
-        self.assertEqual(response.status_code, 302)
+        self.cat = feedback_factories.ReportCategoryFactory(category_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
-        response = self.client.get(self.categories_url)
+        response = self.client.get('/api/fr/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data[0]['id'], self.cat.id)
         self.assertEqual(data[0]['label'], self.cat.category)
 
     def test_categories_are_translated(self):
-        headers = {'HTTP_USER_AGENT': 'geotrek', 'HTTP_ACCEPT_LANGUAGE': 'it'}
-        response = self.client.get(self.categories_url, **headers)
+        response = self.client.get('/api/it/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data[0]['label'], self.cat.category_it)

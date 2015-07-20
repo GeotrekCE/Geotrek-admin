@@ -60,3 +60,15 @@ class TourismRelations(TestCase):
         self.assertNotIn(self.content, self.poi.touristic_contents.all())
         self.assertNotIn(self.event, self.trek.touristic_events.all())
         self.assertNotIn(self.event, self.poi.touristic_events.all())
+
+    def test_spatial_link_from_trek_with_practice_distance(self):
+        self.trek.practice.distance = 2000
+        self.trek.practice.save()
+        self.assertIn(self.content, self.trek.touristic_contents.all())
+        self.assertIn(self.event, self.trek.touristic_events.all())
+
+    def test_spatial_link_from_trek_with_practice_distance_respects_limit(self):
+        self.trek.practice.distance = 10
+        self.trek.practice.save()
+        self.assertNotIn(self.content, self.trek.touristic_contents.all())
+        self.assertNotIn(self.event, self.trek.touristic_events.all())

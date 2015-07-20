@@ -8,10 +8,10 @@ from geotrek.flatpages.views import FlatPageViewSet
 We don't use MapEntity for FlatPages, thus we use Django Rest Framework
 without sugar.
 """
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register(r'flatpages', FlatPageViewSet)
 
 urlpatterns = patterns(
     '',
-    url(r'^api/', include(router.urls)),
+    url(r'^api/(?P<lang>\w+)/', include(router.urls)),
 )

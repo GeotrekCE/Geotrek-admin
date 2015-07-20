@@ -5,7 +5,8 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
+from django.utils.translation import get_language, ugettext_lazy as _
 
 import simplekml
 from mapentity.models import MapEntityMixin
@@ -81,7 +82,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            related_name='related_treks+')  # Hide reverse attribute
     parent = models.ForeignKey('self', verbose_name=_(u"Parent"), db_column='parent', blank=True, null=True,
                                related_name='children')
-    information_desks = models.ManyToManyField(tourism_models.InformationDesk,
+    information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
                                                help_text=_(u"Where to obtain information"))
@@ -91,6 +92,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     null=True, blank=True, related_name='treks',
                                     verbose_name=_("Source"), db_table='o_r_itineraire_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, db_column='id_externe2')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -109,7 +111,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:trek_document_public', [str(self.pk)])
+        return ('trekking:trek_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def related(self):
@@ -222,8 +224,28 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return _(u"Add a new trek")
 
     @property
-    def published_children_id(self):
-        return self.children.filter(published=True).values_list('id', flat=True)
+    def children_id(self):
+        return list(self.children.order_by('name').values_list('id', flat=True))
+
+    @property
+    def previous_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) - 1]
+        except IndexError:
+            return None
+
+    @property
+    def next_id(self):
+        if self.parent is None:
+            return None
+        children = self.parent.children_id
+        try:
+            return children[children.index(self.id) + 1]
+        except IndexError:
+            return None
 
     def clean(self):
         if self.parent and self.parent == self:
@@ -238,15 +260,27 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         else:
             return self.category_id_prefix
 
+    def distance(self, to_cls):
+        if self.practice and self.practice.distance is not None:
+            return self.practice.distance
+        else:
+            return settings.TOURISM_INTERSECTION_MARGIN
+
+    def is_public(self):
+        return self.any_published or (self.parent and self.parent.any_published)
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
-Topology.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
+if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
+    Topology.add_property('published_treks', lambda self: [], _(u"Published treks"))
+else:
+    Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
 Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _(u"Treks"))
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _(u"Treks"))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
-tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"Treks"))
-tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published treks"))
+tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
+tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
+tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
+tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -313,6 +347,8 @@ class TrekNetwork(PictogramMixin):
 class Practice(PictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
+    distance = models.IntegerField(verbose_name=_(u"Distance"), blank=True, null=True, db_column='distance',
+                                   help_text=_(u"Touristic contents and events will associate within this distance (meters)"))
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
 
     class Meta:
@@ -323,6 +359,10 @@ class Practice(PictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
 
 
 class Accessibility(OptionalPictogramMixin):
@@ -344,6 +384,10 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def prefixed_id(self):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
 
 
 class Route(OptionalPictogramMixin):
@@ -467,7 +511,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:poi_document_public', [str(self.pk)])
+        return ('trekking:poi_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)
@@ -504,15 +548,18 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def published_topology_pois(cls, topology):
         return cls.topology_pois(topology).filter(published=True)
 
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
 Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
-tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published POIs"))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN), _(u"POIs"))
-tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self, distance=settings.TOURISM_INTERSECTION_MARGIN).filter(published=True), _(u"Published POIs"))
+tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _(u"POIs"))
+tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _(u"Published POIs"))
+tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _(u"POIs"))
+tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _(u"Published POIs"))
 
 
 class POIType(PictogramMixin):

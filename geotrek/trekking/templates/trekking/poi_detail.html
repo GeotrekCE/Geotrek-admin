@@ -13,36 +13,11 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-mini" href="{% url 'trekking:poi_printable' object.pk %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-mini" href="{% url 'trekking:poi_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
 {% endblock download %}
 
 
 {% block detailspanel %}
-
     {% include "common/publishable_completeness_fragment.html" %}
-
-    <table class="table-striped table-bordered table">
-        <tr>
-            <th>{{ poi|verbose:"type" }}</th>
-            <td>{{ poi.type }}</td>
-        </tr>
-        <tr>
-            <th>{{ poi|verbose:"name" }}</th>
-            <td>{{ poi.name }}</td>
-        </tr>
-        <tr>
-            <th>{{ poi|verbose:"description" }}</th>
-            <td>{% if poi.description %}{{ poi.description|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{% trans "Thumbnail" %}</th>
-            <td><img src="{{ poi.thumbnail.url }}"></td>
-        </tr>
-
-        {% include "altimetry/elevationinfo_fragment.html" %}
-        {% include "common/publication_info_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
-    </table>
     {{ block.super }}
 {% endblock detailspanel %}

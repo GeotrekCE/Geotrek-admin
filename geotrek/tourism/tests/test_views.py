@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
+from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -21,7 +22,6 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
-                                       InformationDeskFactory,
                                        TouristicContentFactory,
                                        TouristicEventFactory,
                                        TouristicContentCategoryFactory,
@@ -53,6 +53,7 @@ class DataSourceListViewTests(TrekkingManagerTest):
         self.response = self.client.get(self.url)
 
     def tearDown(self):
+        translation.deactivate()
         self.client.logout()
 
     def test_sources_are_listed_as_json(self):
@@ -137,6 +138,7 @@ class DataSourceTourInFranceViewTests(TrekkingManagerTest):
         self.login()
 
     def tearDown(self):
+        translation.deactivate()
         self.client.logout()
 
     def test_source_is_returned_as_geojson_when_tourinfrance(self):
@@ -167,6 +169,7 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
         self.login()
 
     def tearDown(self):
+        translation.deactivate()
         self.client.logout()
 
     def test_source_is_returned_as_geojson_when_sitra(self):
@@ -232,22 +235,6 @@ class DataSourceSitraViewTests(TrekkingManagerTest):
                                  {u'copyright': u'Christian Martelet',
                                   u'legend': u'Refuges en Valgaudemar',
                                   u'url': u'http://static.sitra-tourisme.com/filestore/objets-touristiques/images/600938.jpg'})
-
-
-class InformationDeskViewsTests(TrekkingManagerTest):
-    def setUp(self):
-        InformationDeskFactory.create_batch(size=10)
-        self.url = reverse('tourism:informationdesk_geojson')
-        self.login()
-
-    def tearDown(self):
-        self.client.logout()
-
-    def test_geojson_layer_of_all_information_desks(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        records = json.loads(response.content)
-        self.assertEqual(len(records['features']), 10)
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
@@ -320,19 +307,6 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         self.assertContains(response, 'Michelin')
 
 
-class TouristicContentCategoryListTest(TrekkingManagerTest):
-    def setUp(self):
-        self.category = TouristicContentCategoryFactory.create()
-        TouristicContentCategoryFactory.create()
-        self.login()
-
-    def test_categories_are_published_in_json(self):
-        url = "/api/touristiccontent/categories/"
-        response = self.client.get(url)
-        results = json.loads(response.content)
-        self.assertEqual(results[0]['label'], self.category.label)
-
-
 class TouristicContentFormTest(TrekkingManagerTest):
     def setUp(self):
         self.category = TouristicContentCategoryFactory()
@@ -357,7 +331,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         self._build_object()
 
         self.pk = self.content.pk
-        url = '/api/%ss/%s/' % (self.content._meta.module_name, self.pk)
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.module_name, pk=self.pk)
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
@@ -410,7 +384,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_videos(self):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
-                              u'code': 'Jm3anSjly0Y',
+                              u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
                               u'author': self.video.author})
@@ -473,7 +447,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'description', 'description_teaser', 'districts', 'email',
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
-            'published', 'published_status', 'slug', 'source', 'themes',
+            'published', 'published_status', 'reservation_id', 'slug', 'source', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks',
             'type1', 'type2', 'videos', 'website'],
             sorted(self.result.keys()))
@@ -497,6 +471,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             u"id": self.category.prefixed_id,
             u"order": None,
             u"label": self.category.label,
+            u"slug": u"touristic-content",
             u"type1_label": self.category.type1_label,
             u"type2_label": self.category.type2_label,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
@@ -535,6 +510,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
                              {u"id": 'E',
                               u"order": None,
                               u"label": u"Touristic event",
+                              u"slug": u"touristic-event",
                               u"type1_label": u"Type",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
 
@@ -578,31 +554,34 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         with open(content.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
 
-        response = self.client.get(content.get_document_public_url())
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
 
         AttachmentFactory.create(obj=content, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        response = self.client.get(content.get_document_public_url())
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_not_published_document(self):
         content = TouristicContentFactory.create(published=False)
-        response = self.client.get(content.get_document_public_url())
+        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)
-        url = '/api/touristiccontent/touristiccontent-%d.pdf' % content.pk
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -614,30 +593,33 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         with open(event.get_map_image_path(), 'w') as f:
             f.write('***' * 1000)
 
-        response = self.client.get(event.get_document_public_url())
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) > 1000)
 
         AttachmentFactory.create(obj=event, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        response = self.client.get(event.get_document_public_url())
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content) < 1000)
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_not_published_document(self):
+    def test_not_published_document_odt(self):
         content = TouristicEventFactory.create(published=False)
-        response = self.client.get(content.get_document_public_url())
+        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicEventFactory.create(published=False)
-        url = '/api/touristicevent/touristicevent-%d.pdf' % content.pk
+        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)

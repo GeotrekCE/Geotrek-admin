@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -9,9 +10,23 @@ from django.http import HttpResponse
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
+from mapentity.settings import app_settings
 
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
+
+# async data imports
+import os
+import json
+from zipfile import ZipFile
+from djcelery.models import TaskMeta
+from datetime import datetime, timedelta
+from .parsers import Parser
+
+from .utils.import_celery import subclasses, create_tmp_destination
+
+from .tasks import import_datas
+from .forms import ImportDatasetForm
 
 
 class FormsetMixin(object):
@@ -34,15 +49,18 @@ class FormsetMixin(object):
         context = super(FormsetMixin, self).get_context_data(**kwargs)
         if self.request.POST:
             try:
-                context[self.context_name] = self.formset_class(self.request.POST, instance=self.object)
+                context[self.context_name] = self.formset_class(
+                    self.request.POST, instance=self.object)
             except ValidationError:
                 pass
         else:
-            context[self.context_name] = self.formset_class(instance=self.object)
+            context[self.context_name] = self.formset_class(
+                instance=self.object)
         return context
 
 
 class PublicOrReadPermMixin(object):
+
     def get_object(self, queryset=None):
         obj = super(PublicOrReadPermMixin, self).get_object(queryset)
         if not obj.is_public():
@@ -55,6 +73,7 @@ class PublicOrReadPermMixin(object):
 
 class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
     # Override login_required
+
     def dispatch(self, *args, **kwargs):
         return super(mapentity_views.Convert, self).dispatch(*args, **kwargs)
 
@@ -62,33 +81,42 @@ class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
         return self.get_object().get_document_public_url()
 
 
-class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
+class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
     template_name_suffix = "_public"
-    with_html_attributes = False
 
     # Override view_permission_required
     def dispatch(self, *args, **kwargs):
-        return super(mapentity_views.MapEntityDocument, self).dispatch(*args, **kwargs)
+        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentPublic, self).get_context_data(**kwargs)
+        context = super(DocumentPublicBase, self).get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
+
+
+class DocumentPublicOdt(DocumentPublicBase):
+    with_html_attributes = False
 
     def render_to_response(self, context, **response_kwargs):
         # Use attachment that overrides document print, if any.
         # And return it as response
         try:
             overriden = self.object.get_attachment_print()
-            response = HttpResponse(mimetype='application/vnd.oasis.opendocument.text')
+            response = HttpResponse(
+                mimetype='application/vnd.oasis.opendocument.text')
             with open(overriden, 'rb') as f:
                 response.write(f.read())
             return response
         except ObjectDoesNotExist:
             pass
-        return super(DocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(DocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
+
+if app_settings['MAPENTITY_WEASYPRINT']:
+    DocumentPublic = DocumentPublicBase
+else:
+    DocumentPublic = DocumentPublicOdt
 
 #
 # Concrete views
@@ -96,6 +124,7 @@ class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
 
 
 class JSSettings(mapentity_views.JSSettings):
+
     """ Override mapentity base settings in order to provide
     Geotrek necessary stuff.
     """
@@ -134,7 +163,8 @@ def admin_check_extents(request):
     path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM l_t_troncon;")
     path_extent = api_bbox(path_extent_native)
     try:
-        dem_extent_native = sql_extent("SELECT ST_Extent(rast::geometry) FROM mnt;")
+        dem_extent_native = sql_extent(
+            "SELECT ST_Extent(rast::geometry) FROM mnt;")
         dem_extent = api_bbox(dem_extent_native)
     except DatabaseError:  # mnt table missing
         dem_extent_native = None
@@ -163,7 +193,75 @@ def admin_check_extents(request):
 
 
 class UserArgMixin(object):
+
     def get_form_kwargs(self):
         kwargs = super(UserArgMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def import_view(request):
+    """
+    Gets the existing declared parsers for the current project.
+    This view handles only the file based import parsers.
+    """
+    choices = []
+    try:
+        import importlib
+        importlib.import_module('bulkimport.parsers')
+    except ImportError:
+        pass
+
+    classes = subclasses(Parser)
+    for index, cls in enumerate(classes):
+        choices.append((index, cls.__name__))
+
+    choices = sorted(choices, key=lambda x: x[1])
+
+    if request.method == 'POST':
+        form = ImportDatasetForm(choices, request.POST, request.FILES)
+
+        if form.is_valid():
+            uploaded = request.FILES['zipfile']
+
+            destination_dir, destination_file = create_tmp_destination(uploaded.name)
+
+            with open(destination_file, 'w+') as f:
+                f.write(uploaded.file.read())
+                zfile = ZipFile(f)
+                for name in zfile.namelist():
+                    try:
+                        zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
+                        if name.endswith('shp'):
+                                parser = classes[int(form['parser'].value())]
+                                import_datas.delay(
+                                    '/'.join((destination_dir, name)),
+                                    parser.__name__, parser.__module__
+                                )
+                    except Exception as e:
+                        raise e
+    else:
+        form = ImportDatasetForm(choices)
+
+    return render(request, 'common/import_dataset.html', {
+        'form': form
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def import_update_json(request):
+    results = []
+    threshold = datetime.now() - timedelta(seconds=60)
+    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+        results.append(
+            {
+                'id': task.task_id,
+                'result': task.result or {'current': 0, 'total': 0},
+                'status': task.status
+            }
+        )
+
+    return HttpResponse(json.dumps(results), content_type="application/json")
