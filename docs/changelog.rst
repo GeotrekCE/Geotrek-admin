@@ -9,6 +9,10 @@ CHANGELOG
 
 * Reload supervisor configuration after Geotrek upgrade
 
+**Documentation**
+
+* Document server migration
+
 
 2.0.0 (2015-07-20)
 ------------------
