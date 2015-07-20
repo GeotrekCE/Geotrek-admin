@@ -241,7 +241,7 @@ def import_view(request):
                                     parser.__name__, parser.__module__
                                 )
                     except Exception as e:
-                        raise e
+                        raise
     else:
         form = ImportDatasetForm(choices)
 
