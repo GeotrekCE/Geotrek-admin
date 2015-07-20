@@ -12,7 +12,7 @@ BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
 BUILDOUT_VERSION = 1.7.1
 BUILDOUT_BOOTSTRAP_URL = http://downloads.buildout.org/2/bootstrap.py
 BUILDOUT_BOOTSTRAP = bootstrap.py
-BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --version=$(BUILDOUT_VERSION) buildout:directory=$(ROOT_DIR)
+BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --buildout-version=$(BUILDOUT_VERSION) buildout:directory=$(ROOT_DIR)
 BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
@@ -27,6 +27,7 @@ etc/settings.ini:
 
 bin/python:
 	virtualenv .
+	bin/pip install -U setuptools
 	mkdir -p lib/src
 	mkdir -p lib/eggs
 	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)

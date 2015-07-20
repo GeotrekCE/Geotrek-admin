@@ -100,13 +100,13 @@ class RESTViewsTest(TestCase):
         FlatPageFactory.create(published=False)
 
     def test_records_list(self):
-        response = self.client.get('/api/flatpages/')
+        response = self.client.get('/api/en/flatpages.json')
         self.assertEquals(response.status_code, 200)
         records = json.loads(response.content)
         self.assertEquals(len(records), 10)
 
     def test_serialized_attributes(self):
-        response = self.client.get('/api/flatpages/')
+        response = self.client.get('/api/en/flatpages.json')
         records = json.loads(response.content)
         record = records[0]
         self.assertEquals(sorted(record.keys()),

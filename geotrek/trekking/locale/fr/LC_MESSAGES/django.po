@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-14 16:23+0200\n"
+"POT-Creation-Date: 2015-06-23 14:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,7 @@ msgstr ""
 msgid "Difficulty with id '%s' already exists"
 msgstr "Une difficulté avec l'id %s existe déjà"
 
+#, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
@@ -168,6 +169,9 @@ msgstr "Source"
 msgid "External id"
 msgstr "Id externe"
 
+msgid "Second external id"
+msgstr "Deuxième id externe"
+
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -215,6 +219,15 @@ msgstr "Réseau d'itinéraire"
 
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
+
+msgid "Distance"
+msgstr "Distance"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"Les contenus et événements touristiques seront associés selon cette distance "
+"(mètres)"
 
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
@@ -285,6 +298,26 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
+#, python-brace-format
+msgid ""
+"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be LineString, not "
+"{geom_type}"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr "itineraire"
+
 msgid "Altimetric profile"
 msgstr "Profil altimétrique"
 
@@ -293,6 +326,9 @@ msgstr "Crédit photo"
 
 msgid "Edition of"
 msgstr "Édition du"
+
+msgid "In more details..."
+msgstr "En plus détaillé..."
 
 msgid "Max elevation"
 msgstr "Altitude max"
@@ -334,11 +370,17 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
+msgid "Attributes"
+msgstr "Informations"
+
 msgid "None"
 msgstr "Aucun"
 
 msgid "Thumbnail"
 msgstr "Vignette"
+
+msgid "Elevation"
+msgstr "Élévation"
 
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
@@ -372,6 +414,9 @@ msgstr ""
 msgid "Parent of:"
 msgstr "Parent de :"
 
+msgid "Map"
+msgstr "Carte"
+
 msgid "Add a point of reference"
 msgstr "Ajouter un point de référence"
 
@@ -402,6 +447,18 @@ msgstr "Pas de résultat"
 msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
 
+msgid "Length"
+msgstr ""
+
+msgid "Trek_ascent"
+msgstr "Dénivelé positif"
+
+msgid "Disabled Infrastructure"
+msgstr "Aménagement handicapés"
+
+msgid "Related Treks"
+msgstr "Itinéraires liés"
+
 msgid "Trekking"
 msgstr "Itinéraire"
 
@@ -424,8 +481,9 @@ msgid "%(hour)s h %(min)s"
 msgstr "%(hour)s h %(min)s"
 
 #, python-format
+msgid "%(hour)s h"
+msgstr "%(hour)s h"
+
+#, python-format
 msgid "%s min"
 msgstr "%s min"
-
-#~ msgid "Stay"
-#~ msgstr "Séjour"

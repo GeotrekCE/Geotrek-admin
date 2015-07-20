@@ -183,6 +183,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'geotrek.authent.middleware.LocaleForcedMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'geotrek.common.middleware.APILocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -253,6 +254,7 @@ PROJECT_APPS += (
     'mapentity',
     'rest_framework',
     'embed_video',
+    'djcelery',
 )
 
 
@@ -311,7 +313,7 @@ LOGGING = {
             'class': 'logging.NullHandler'
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
@@ -394,6 +396,7 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
+    'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -420,8 +423,8 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': SRID,
     'TILES': [
-        ('Scan', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.png',),
-        ('Ortho', 'http://{s}.tiles.openstreetmap.org/{z}/{x}/{y}.jpg'),
+        ('Scan', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',),
+        ('Ortho', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.jpg'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
@@ -541,6 +544,27 @@ TREK_CATEGORY_ORDER = None
 TOURISTIC_EVENT_CATEGORY_ORDER = None
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+ZIP_TOURISTIC_CONTENTS_AS_POI = False
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
 CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+# Mobile app_directories
+MOBILE_TILES_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
+MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
+MOBILE_TILES_GLOBAL_ZOOMS = range(13)
+MOBILE_TILES_LOW_ZOOMS = range(13, 15)
+MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+
+import djcelery
+djcelery.setup_loader()
+
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_RESULT_EXPIRES = 5
+TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'

@@ -14,8 +14,7 @@ urlpatterns = patterns(
     '',
     url(r'^api/datasource/datasources.json$', tourism_views.DataSourceList.as_view(), name="datasource_list_json"),
     url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', tourism_views.DataSourceGeoJSON.as_view(), name="datasource_geojson"),
-    url(r'^api/informationdesk/informationdesk.geojson$', tourism_views.InformationDeskGeoJSON.as_view(), name="informationdesk_geojson"),
-    url(r'^api/touristiccontent/categories/$', tourism_views.TouristicContentCategoryJSONList.as_view(), name="touristiccontentcategories_list_json"),
+    url(r'^api/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
 )
 
 

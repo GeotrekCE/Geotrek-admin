@@ -20,7 +20,7 @@ casper.test.begin('Trek exports files', function(test) {
                          'Public document is ODT');
     });
 
-    casper.thenOpen(utils.baseurl + '/api/trek/trek-9000.pdf', function(response) {
+    casper.thenOpen(utils.baseurl + '/api/en/trek/trek-9000.pdf', function(response) {
         test.assertEqual(200, response.status, 'Public export works');
         test.assertMatch(response.contentType, /^application\/pdf/,
                          'Public document can be converted to PDF');

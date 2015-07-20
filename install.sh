@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-0.34.0}
+VERSION=${VERSION:-2.0.0}
 dev=false
 tests=false
 prod=false
@@ -221,6 +221,12 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
     echo_progress
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
+    echo_progress
+    # Necessary for MapEntity Weasyprint
+    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+    echo_progress
+    # Redis for async imports and tasks management
+    sudo apt-get install -y -qq redis-server
     echo_progress
 
     if $prod || $standalone ; then

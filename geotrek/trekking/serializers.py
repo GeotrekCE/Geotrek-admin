@@ -6,6 +6,7 @@ import gpxpy
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import translation
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
@@ -109,11 +110,10 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 class RelatedTrekSerializer(TranslatedModelSerializer):
     pk = rest_serializers.Field(source='id')
     slug = rest_serializers.Field(source='slug')
-    url = rest_serializers.Field(source='get_detail_url')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'pk', 'slug', 'name', 'url')
+        fields = ('id', 'pk', 'slug', 'name')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
@@ -153,14 +153,14 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer()
-    children = rest_serializers.Field(source='published_children_id')
+    children = rest_serializers.Field(source='children_id')
+    previous = rest_serializers.Field(source='previous_id')
+    next = rest_serializers.Field(source='next_id')
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField('get_parking_location')
     points_reference = rest_serializers.SerializerMethodField('get_points_reference')
 
-    poi_layer = rest_serializers.SerializerMethodField('get_poi_layer_url')
-    information_desk_layer = rest_serializers.SerializerMethodField('get_information_desk_layer_url')
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
     structure = StructureSerializer()
@@ -206,9 +206,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
-                  'poi_layer', 'information_desk_layer', 'gpx', 'kml', 'source',
-                  'type1', 'type2', 'category', 'structure', 'treks',
-                  'parent', 'children') + \
+                  'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
+                  'treks', 'parent', 'children', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
@@ -225,17 +224,11 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
         return json.loads(geojson)
 
-    def get_poi_layer_url(self, obj):
-        return reverse('trekking:trek_poi_geojson', kwargs={'pk': obj.pk})
-
-    def get_information_desk_layer_url(self, obj):
-        return reverse('trekking:trek_information_desk_geojson', kwargs={'pk': obj.pk})
-
     def get_gpx_url(self, obj):
-        return reverse('trekking:trek_gpx_detail', kwargs={'pk': obj.pk})
+        return reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_kml_url(self, obj):
-        return reverse('trekking:trek_kml_detail', kwargs={'pk': obj.pk})
+        return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_category(self, obj):
         accessibility = getattr(obj, 'accessibility', None)
@@ -244,20 +237,27 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'id': accessibility.prefixed_id,
                 'label': accessibility.name,
                 'pictogram': accessibility.get_pictogram_url(),
+                'slug': accessibility.slug,
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
                 'id': obj.prefixed_category_id,
                 'label': obj.practice.name,
                 'pictogram': obj.practice.get_pictogram_url(),
+                'slug': obj.practice.slug,
             }
         else:
             data = {
                 'id': obj.category_id_prefix,
                 'label': obj._meta.verbose_name,
                 'pictogram': '/static/trekking/trek.svg',
+                # Translators: This is a slug (without space, accent or special char)
+                'slug': _('trek'),
             }
-        data['order'] = settings.TREK_CATEGORY_ORDER
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+            data['order'] = obj.practice and obj.practice.id
+        else:
+            data['order'] = settings.TREK_CATEGORY_ORDER
         if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['type1_label'] = obj._meta.get_field('practice').verbose_name
         if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:

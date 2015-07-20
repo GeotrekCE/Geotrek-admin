@@ -2,6 +2,55 @@
 CHANGELOG
 =========
 
+2.0.0 (2015-07-20)
+------------------
+
+**Breaking changes**
+
+* Rework API URL schemas
+
+**New features**
+
+* Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
+* Build zip files for mobile application
+* Trek / Touristic content association distance depending on trek practice
+* Option to hide published treks nearby topologies
+* Add previous/next treks and category slugs to geojson API
+* Add external id in trekking/tourism detail pages and exports
+* Zip touristic contents as POI for mobile app v1
+* Add external id field on Path
+* Order intersections in Geotrek light mode
+* Add reservation id field for touristic contents
+* Integration of WeasyPrint to generate PDF from HTML/CSS instead of ODT
+
+**Bug fixes**
+
+* Remove HTTP calls to SoundCloud API at serialization
+* Allow DEM to partially cover spatial extent
+
+
+0.35.1 (2015-07-17)
+-------------------
+
+**Bug fixes**
+
+* Fix installation on ubuntu 12.04 with recent updates
+
+
+0.35.0 (2015-07-10)
+-------------------
+
+**New features**
+
+* Add an import framework
+
+**Bug fixes**
+
+* Fix a crash in appy pod (PDF generation)
+* Fix login with restricted access to some contents
+* Fix buildout bootstrap arguments
+
+
 0.34.0 (2015-05-20)
 -------------------
 
@@ -17,6 +66,10 @@ CHANGELOG
 
 * Fix duration notation
 * Flatten altimetry profiles
+
+**Bug fixes**
+
+* Show accessibility in trek detail page (fixes #1399)
 
 
 0.33.4 (2015-04-07)

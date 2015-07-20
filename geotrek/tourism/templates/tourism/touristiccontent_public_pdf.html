@@ -1,0 +1,84 @@
+{% load i18n mapentity_tags %}
+
+<img src="{% media_static_fallback "upload/logo-header.png" "images/logo-header.png" %}">
+
+<h2>{{ object.name }}</h2>
+
+<h3>{{ object.districts_display }}</h3>
+
+<table>
+	<tr>
+		<th>
+			{% trans "Category" %}
+		</th>
+		<td>
+			{{ object.category }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			{{ object.type1_label }}
+		</th>
+		{% if object.types1_display %}
+			<td>
+				{{ object.types1_display }}
+			</td>
+		{% endif %}
+	</tr>
+	<tr>
+		<th>
+			{{ object.type2_label }}
+		</th>
+		{% if object.types1_display %}
+			<td>
+				{{ object.types2_display }}
+			</td>
+		{% endif %}
+	</tr>
+	{% if object.themes.all %}
+		<tr>
+			<th>
+				{% trans "Themes" %}
+			</th>
+			<td>
+				{% for theme in object.themes.all %}
+					{{ theme.label }}<br>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			{% if object.approved %}
+				<th>Labellisé</th>
+			{% endif %}
+		</tr>
+	{% endif %}
+</table>
+
+{% if MEDIA_URL|add:object.picture_print.name %}
+	<img src="{{ MEDIA_URL|add:object.picture_print.name }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+{% endif %}
+
+{% if object.pictures.0.legend and object.pictures.0.author %}
+	<p>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>
+{% endif %}
+
+<p>{{ object.description_teaser }}</p>
+
+<p>{{ object.description }}</p>
+
+<img src="{{ image_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+
+{% if object.contact or object.email or object.website %}
+	<h3>{% trans "Contact" %}</h3>
+
+	<p>
+		{{ object.contact }}<br>
+		{{ object.email }}<br>
+		<a href="{{ object.website }}">{{ object.website }}</a><br>
+	</p>
+{% endif %}
+
+{% if object.practical_info %}
+	<h3>{% trans "Practical info" %}</h3>
+	<p>{{ object.practical_info }}</p>
+{% endif %}
