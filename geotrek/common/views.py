@@ -23,10 +23,10 @@ from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
 from .parsers import Parser
 
-from .utils.import_celery import subclasses, create_tmp_destination
+from .utils.import_celery import subclasses, create_tmp_destination, discover_available_parsers
 
-from .tasks import import_datas
-from .forms import ImportDatasetForm
+from .tasks import import_datas, import_datas_from_web
+from .forms import ImportDatasetForm, ImportDatasetFormWithFile
 
 
 class FormsetMixin(object):
@@ -208,50 +208,60 @@ def import_view(request):
     This view handles only the file based import parsers.
     """
     choices = []
-    try:
-        import importlib
-        importlib.import_module('bulkimport.parsers')
-    except ImportError:
-        pass
+    choices_url = []
+    render_dict = {}
 
-    classes = subclasses(Parser)
-    for index, cls in enumerate(classes):
-        if not getattr(cls, 'url', None):
-            if not getattr(cls, 'base_url', None):
-                choices.append((index, cls.__name__))
+    choices, choices_url, classes = discover_available_parsers()
 
-    choices = sorted(choices, key=lambda x: x[1])
+    form = ImportDatasetFormWithFile(choices, prefix="with-file")
+    form_without_file = ImportDatasetForm(
+        choices_url, prefix="without-file")
 
     if request.method == 'POST':
-        form = ImportDatasetForm(choices, request.POST, request.FILES)
+        if 'upload-file' in request.POST:
+            form = ImportDatasetFormWithFile(
+                choices, request.POST, request.FILES, prefix="with-file")
 
-        if form.is_valid():
-            uploaded = request.FILES['zipfile']
+            if form.is_valid():
+                print(request.FILES)
+                uploaded = request.FILES['with-file-zipfile']
 
-            destination_dir, destination_file = create_tmp_destination(
-                uploaded.name)
+                destination_dir, destination_file = create_tmp_destination(
+                    uploaded.name)
 
-            with open(destination_file, 'w+') as f:
-                f.write(uploaded.file.read())
-                zfile = ZipFile(f)
-                for name in zfile.namelist():
-                    try:
-                        zfile.extract(
-                            name, os.path.dirname(os.path.realpath(f.name)))
-                        if name.endswith('shp'):
-                            parser = classes[int(form['parser'].value())]
-                            import_datas.delay(
-                                '/'.join((destination_dir, name)),
-                                parser.__name__, parser.__module__
-                            )
-                    except Exception:
-                        raise
-    else:
-        form = ImportDatasetForm(choices)
+                with open(destination_file, 'w+') as f:
+                    f.write(uploaded.file.read())
+                    zfile = ZipFile(f)
+                    for name in zfile.namelist():
+                        try:
+                            zfile.extract(
+                                name, os.path.dirname(os.path.realpath(f.name)))
+                            if name.endswith('shp'):
+                                parser = classes[int(form['parser'].value())]
+                                import_datas.delay(
+                                    '/'.join((destination_dir, name)),
+                                    parser.__name__, parser.__module__
+                                )
+                                continue
+                        except Exception:
+                            raise
 
-    return render(request, 'common/import_dataset.html', {
-        'form': form
-    })
+        if 'import-web' in request.POST:
+            form_without_file = ImportDatasetForm(
+                choices_url, request.POST, prefix="without-file")
+
+            if form_without_file.is_valid():
+                parser = classes[int(form_without_file['parser'].value())]
+                import_datas_from_web.delay(
+                    parser.__name__, parser.__module__
+                )
+
+    # Hide second form if parser has no web based imports.
+    render_dict['form'] = form
+    if choices_url:
+        render_dict['form_without_file'] = form_without_file
+
+    return render(request, 'common/import_dataset.html', render_dict)
 
 
 @login_required
