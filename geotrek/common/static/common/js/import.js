@@ -20,20 +20,25 @@ function updateImportProgressBars() {
 				element = document.createElement('div');
 				element.innerHTML = document.querySelector('#import-template').innerHTML
 				element.id = row.id;
-				element.querySelector('.bar').style.width = local_percent;
+				element.querySelector('.bar').style.width = local_percent + ' : ';
 				element.querySelector('.pull-left').innerHTML = local_percent;
 				
 				if(row.status !== 'FAILURE'){
 					element.querySelector('.parser').innerHTML = row.result.parser;
 					element.querySelector('.filename').innerHTML = row.result.filename;
-				} else {
-					element.querySelector('.separator').innerHTML = '';
 				}
 				
 				parent.appendChild(element);
 			}
 			if (row.result.exc_message) {
+				element.querySelector('.alert').classList.add('alert-error');
 				element.querySelector('.alert span').innerHTML = "Error message : " + row.result.exc_message;
+				element.querySelector('.alert').style.display = 'block';
+			}
+
+			if (row.result.report) {
+				element.querySelector('.alert').classList.add('alert-success');
+				element.querySelector('.alert span').innerHTML = row.result.report;
 				element.querySelector('.alert').style.display = 'block';
 			}
 

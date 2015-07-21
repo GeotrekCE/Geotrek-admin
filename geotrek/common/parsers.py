@@ -292,7 +292,7 @@ class Parser(object):
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
-        return render_to_string('common/parser_report.txt', context)
+        return render_to_string('common/parser_report.html', context)
 
     def get_mapping(self, src, val, mapping, partial):
         if partial:

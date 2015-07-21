@@ -21,9 +21,8 @@ import json
 from zipfile import ZipFile
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
-from .parsers import Parser
 
-from .utils.import_celery import subclasses, create_tmp_destination, discover_available_parsers
+from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
 from .forms import ImportDatasetForm, ImportDatasetFormWithFile

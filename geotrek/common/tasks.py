@@ -38,7 +38,8 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
         'current': 100,
         'total': 100,
         'filename': filename.split('/').pop(-1),
-        'parser': class_name
+        'parser': class_name,
+        'report': parser.report()
     }
 
 
@@ -74,5 +75,6 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
         'current': 100,
         'total': 100,
         'filename': _("Import from web."),
-        'parser': class_name
+        'parser': class_name,
+        'report': parser.report()
     }
