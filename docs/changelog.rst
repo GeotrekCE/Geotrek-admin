@@ -5,6 +5,10 @@ CHANGELOG
 0.35.2.dev0
 -------------------
 
+**Bug fixes**
+
+* Order intersections in Geotrek light mode
+
 
 0.35.1 (2015-07-17)
 -------------------
