@@ -20,3 +20,15 @@
 #progress-bars span.parser{
 	font-weight: bold;
 }
+
+#progress-bars button {
+	margin-top: 1em;
+}
+
+#progress-bars .collapse {
+	margin-top: 1em;
+}
+
+#import-forms .file-attachment-form {
+	width: auto;
+}

@@ -1,52 +1,62 @@
 {% load i18n %}
 
-{% blocktrans count n=nb_success %}
-	<div>
-		{{ n }}/{{ nb_lines }} line imported.{% plural %}{{ n }}/{{ nb_lines }} lines imported.
-	</div>
-{% endblocktrans %}
+<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#collapse-$celery_id">
+  {%trans "Display report" %}
+</button>
 
-{% if nb_created %}
-	{% blocktrans count n=nb_created %}
-	<div>
-		{{ n }} record created.{% plural %}{{ n }} records created.
-	</div>
+<div id="collapse-$celery_id" class="collapse">	
+	<div class="nb-success">
+	{% blocktrans count n=nb_success %}
+			{{ n }}/{{ nb_lines }} line imported.{% plural %}{{ n }}/{{ nb_lines }} lines imported.
 	{% endblocktrans %}
-{% endif %}
-
-{% if nb_updated %}
-	{% blocktrans count n=nb_updated %}
-	<div>
-		{{ n }} record updated.{% plural %}{{ n }} records updated.
 	</div>
-	{% endblocktrans %}
-{% endif %}
 
-{% if nb_deleted %}
-	{% blocktrans count n=nb_deleted %}
-	<div>
-		{{ n }} record deleted.{% plural %}{{ n }} records deleted.
-	</div>
-	{% endblocktrans %}
-{% endif %}
+	{% if nb_created %}
+		<div class="nb-created">
+		{% blocktrans count n=nb_created %}
+			{{ n }} record created.{% plural %}{{ n }} records created.
+		{% endblocktrans %}
+		</div>
+	{% endif %}
 
-{% if nb_unmodified %}
-	{% blocktrans count n=nb_unmodified %}
-	<div>
-		{{ n }} record unmodified.{% plural %}{{ n }} records unmodified.
-	</div>
-	{% endblocktrans %}
-{% endif %}
+	{% if nb_updated %}
+		<div class="nb-updated">
+		{% blocktrans count n=nb_updated %}
+			{{ n }} record updated.{% plural %}{{ n }} records updated.
+		{% endblocktrans %}
+		</div>
+	{% endif %}
 
-{% if warnings %}
-	{% blocktrans count n=warnings|length %}
-	<div>
-		{{ n }} warning:{% plural %}{{ n }} warnings:
-	</div>
-	{% endblocktrans %}
+	{% if nb_deleted %}
+		<div class="nb-deleted">
+		{% blocktrans count n=nb_deleted %}
+			{{ n }} record deleted.{% plural %}{{ n }} records deleted.
+		{% endblocktrans %}
+		</div>
+	{% endif %}
 
-	{% for id, msgs in warnings.iteritems %}# {{ id }}:
-		{% for msg in msgs %}- {{ msg|safe }},
+	{% if nb_unmodified %}
+		<div class="nb-unmodified">
+		{% blocktrans count n=nb_unmodified %}
+			{{ n }} record unmodified.{% plural %}{{ n }} records unmodified.
+		{% endblocktrans %}
+		</div>
+	{% endif %}
+
+	{% if warnings %}
+		<div class="warnings">
+		{% blocktrans count n=warnings|length %}	
+			{{ n }} warning:{% plural %}{{ n }} warnings:
+		{% endblocktrans %}
+		
+		<ul>
+		{% for id, msgs in warnings.iteritems %}
+			<li><div># {{ id }}:</div>
+			{% for msg in msgs %}
+				<div>- {{ msg|safe }},</div></li>
+			{% endfor %}
 		{% endfor %}
-	{% endfor %}
-{% endif %}
+		</ul>
+		</div>
+	{% endif %}
+</div>

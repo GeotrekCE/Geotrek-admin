@@ -10,7 +10,7 @@
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div class="span3 offset2">
+<div id="import-forms" class="span3 offset2">
 	{% block mainform %}
 	{% crispy form form.helper %}
 	{% if form_without_file %}
