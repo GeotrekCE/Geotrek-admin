@@ -10,9 +10,12 @@
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div class="span3 offset2">
+<div id="import-forms" class="span3 offset2">
 	{% block mainform %}
 	{% crispy form form.helper %}
+	{% if form_without_file %}
+		{% crispy form_without_file form_without_file.helper%}
+	{% endif %}
 	{% endblock mainform %}
 </div>
 <div id="progress-bars" class="span5">
@@ -22,9 +25,7 @@
 	<div id="progress-tpl">
 		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		<div class="description">
-			<span class="parser">
-			</span>
-			<strong>:</strong>
+			<span class="parser"></span>
 			<span class="filename">
 			</span>
 		</div>
@@ -34,7 +35,7 @@
 		<div class="progress progress-striped active">
 			<div class="bar"></div>
 		</div>
-		<div class="alert alert-error">
+		<div class="alert">
 			<span></span>
 		</div>
 		<hr></hr>

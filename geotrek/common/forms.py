@@ -33,7 +33,8 @@ class CommonForm(MapEntityForm):
 
     def replace_orig_fields(self):
         model = self._meta.model
-        codeperm = '%s.publish_%s' % (model._meta.app_label, model._meta.object_name.lower())
+        codeperm = '%s.publish_%s' % (
+            model._meta.app_label, model._meta.object_name.lower())
         if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
             del self.fields['published']
             self.deep_remove(self.fieldslayout, 'published')
@@ -55,7 +56,8 @@ class CommonForm(MapEntityForm):
         model = modelfield.related.parent_model
         # Filter structured choice fields according to user's structure
         if issubclass(model, StructureRelated):
-            field.queryset = StructureRelatedQuerySet.queryset_for_user(field.queryset, self.user)
+            field.queryset = StructureRelatedQuerySet.queryset_for_user(
+                field.queryset, self.user)
         if issubclass(model, NoDeleteMixin):
             field.queryset = field.queryset.filter(deleted=False)
 
@@ -82,31 +84,50 @@ class ImportDatasetForm(django_forms.Form):
         widget=forms.RadioSelect,
         required=True,
     )
+
+    def __init__(self, choices=None, *args, **kwargs):
+        super(ImportDatasetForm, self).__init__(*args, **kwargs)
+
+        self.fields['parser'].choices = choices
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'parser',
+                ),
+                FormActions(
+                    Submit('import-web', _("Import"), css_class='button white')
+                ),
+                css_class='file-attachment-form',
+            )
+        )
+
+
+class ImportDatasetFormWithFile(ImportDatasetForm):
     zipfile = forms.FileField(
         label=_('File'),
         required=True,
         widget=forms.FileInput
     )
 
-    def __init__(self, choices=None, *args, **kwargs):
-            super(ImportDatasetForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
 
-            self.fields['parser'].choices = choices
-
-            self.helper = FormHelper()
-            self.helper.layout = Layout(
+        self.helper.layout = Layout(
+            Div(
                 Div(
-                    Div(
-                        'parser',
-                        'zipfile',
-                    ),
-                    FormActions(
-                        Submit('submit', _("Upload"), css_class='button white')
-                    ),
-                    css_class='file-attachment-form',
-                )
+                    'parser',
+                    'zipfile',
+                ),
+                FormActions(
+                    Submit('upload-file', _("Upload"), css_class='button white')
+                ),
+                css_class='file-attachment-form',
             )
+        )
 
     def clean_zipfile(self):
         if self.cleaned_data['zipfile'].content_type != "application/zip":
-            raise django_forms.ValidationError(_("File must be of ZIP type."), code='invalid')
+            raise django_forms.ValidationError(
+                _("File must be of ZIP type."), code='invalid')

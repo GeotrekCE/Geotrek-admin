@@ -292,7 +292,7 @@ class Parser(object):
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
-        return render_to_string('common/parser_report.txt', context)
+        return render_to_string('common/parser_report.html', context)
 
     def get_mapping(self, src, val, mapping, partial):
         if partial:
@@ -352,10 +352,11 @@ class Parser(object):
         return dst
 
     def start(self):
-        pass
+        self.to_delete = set(self.model.objects.values_list('pk', flat=True))
 
     def end(self):
-        pass
+        if self.delete:
+            self.model.objects.filter(pk__in=self.to_delete).delete()
 
     def parse(self, filename=None, limit=None):
         if filename:
@@ -365,7 +366,6 @@ class Parser(object):
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
-        self.to_delete = set(self.model.objects.values_list('pk', flat=True))
         for i, row in enumerate(self.next_row()):
             if limit and i >= limit:
                 break
@@ -375,8 +375,6 @@ class Parser(object):
                 self.add_warning(unicode(e))
                 if settings.DEBUG:
                     raise
-        if self.delete:
-            self.model.objects.filter(pk__in=self.to_delete).delete()
         self.end()
 
 

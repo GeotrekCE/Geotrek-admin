@@ -13,29 +13,48 @@ function updateImportProgressBars() {
 				status_class = "progress-danger";
 			}
 
+			// Update element if exists
 			if (element = document.getElementById(row.id)) {
 				element.querySelector('.bar').style.width = local_percent;
 				element.querySelector('.pull-left').innerHTML = local_percent;
-			} else {
+
+				if(!element.querySelector('.alert').classList.contains('alert-success')) {					
+					// Add report if success.
+					if (row.result.report) {
+						element.querySelector('.alert').classList.add('alert-success');
+						element.querySelector('.alert').innerHTML = row.result.report;
+						element.querySelector('.alert').style.display = 'block';
+					}
+				}
+
+			} else { //Create element in dom.
 				element = document.createElement('div');
 				element.innerHTML = document.querySelector('#import-template').innerHTML
 				element.id = row.id;
-				element.querySelector('.bar').style.width = local_percent;
+				element.querySelector('.bar').style.width = local_percent + ' : ';
 				element.querySelector('.pull-left').innerHTML = local_percent;
-				element.querySelector('.parser').innerHTML = row.result.parser;
-				element.querySelector('.filename').innerHTML = row.result.filename;
+				
+				if(row.status !== 'FAILURE'){
+					element.querySelector('.parser').innerHTML = row.result.parser;
+					element.querySelector('.filename').innerHTML = row.result.filename;
+				}
+				
 				parent.appendChild(element);
 			}
+
+			// Handle errors if any.
 			if (row.result.exc_message) {
+				element.querySelector('.alert').classList.add('alert-error');
 				element.querySelector('.alert span').innerHTML = "Error message : " + row.result.exc_message;
 				element.querySelector('.alert').style.display = 'block';
 			}
 
+			// Add class on status change.
 			if (!element.querySelector('.progress').classList.contains(status_class)) {
 				element.querySelector('.progress').classList.add(status_class);
 			}
 		});
-	});
+});
 }
 
 $(document).ready(function() {

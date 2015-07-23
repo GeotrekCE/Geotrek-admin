@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.0.1.dev0
+------------------
+
+**Bug fixes**
+
+* Reload supervisor configuration after Geotrek upgrade
+
+**Documentation**
+
+* Document server migration
+
+
 2.0.0 (2015-07-20)
 ------------------
 

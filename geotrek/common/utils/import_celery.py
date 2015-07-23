@@ -1,4 +1,7 @@
 import os
+import importlib
+
+from geotrek.common.parsers import Parser
 
 
 def subclasses(cls):
@@ -18,3 +21,24 @@ def create_tmp_destination(name):
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     return save_dir, '/'.join((save_dir, name))
+
+
+def discover_available_parsers():
+    choices = []
+    choices_url = []
+    try:
+        importlib.import_module('bulkimport.parsers')
+    except ImportError:
+        pass
+
+    classes = subclasses(Parser)
+    for index, cls in enumerate(classes):
+        if not getattr(cls, 'url', None) or not getattr(cls, 'base_url', None):
+            choices.append((index, cls.__name__))
+        else:
+            choices_url.append((index, cls.__name__))
+
+    choices = sorted(choices, key=lambda x: x[1])
+    choices_url = sorted(choices_url, key=lambda x: x[1])
+
+    return choices, choices_url, classes
