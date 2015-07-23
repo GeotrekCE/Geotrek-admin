@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from geotrek.common.parsers import TourismSystemParser, RowImportError
+from geotrek.trekking.models import Trek
 from geotrek.tourism.models import TouristicContent
 
 
@@ -11,6 +12,7 @@ class CrtCaParser(TourismSystemParser):
     user = 'makina_guest'
     password = 'e976946a'
     eid = 'eid'
+    delete = True
     fields = {
         'eid': 'data.idFiche',
         'name': 'data.dublinCore.title',
@@ -72,7 +74,14 @@ class CrtCaParser(TourismSystemParser):
             raise RowImportError(u"Required value for fields 'GmapLatitude' and 'GmapLongitude'.")
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
+        if not Trek.objects.filter(geom__dwithin=(geom, settings.TOURISM_INTERSECTION_MARGIN)).exists():
+            raise RowImportError('Too far from a trek')  # Will be deleted if existing
         return geom
+
+    def start(self):
+        super(CrtCaParser, self).start()
+        label = self.m2m_constant_fields['type1']
+        self.to_delete = set(TouristicContent.objects.filter(type1__label=label).values_list('pk', flat=True))
 
 
 class CampingsParser(CrtCaParser):
