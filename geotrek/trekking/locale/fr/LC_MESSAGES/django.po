@@ -327,6 +327,9 @@ msgstr "Crédit photo"
 msgid "Edition of"
 msgstr "Édition du"
 
+msgid "In more details..."
+msgstr "En plus détaillé..."
+
 msgid "Max elevation"
 msgstr "Altitude max"
 

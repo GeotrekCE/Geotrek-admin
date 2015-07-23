@@ -60,8 +60,12 @@ def sitra_to_geojson(objects, language):
 
         name = key_lang(objdict['nom'], 'libelle', language)
         description = key_lang(objdict.get('presentation', {}).get('descriptifCourt', {}), 'libelle', language)
-        website = find_by_type(objdict.get('informations', {}).get('moyensCommunication', {}), 205).get('coordonnee')
-        phone = find_by_type(objdict.get('informations', {}).get('moyensCommunication', {}), 201).get('coordonnee')
+        website = find_by_type(objdict.get('informations', {}).get('moyensCommunication', {}), 205).get('coordonnees')
+        if website:
+            website = website.get('fr')
+        phone = find_by_type(objdict.get('informations', {}).get('moyensCommunication', {}), 201).get('coordonnees')
+        if phone:
+            phone = phone.get('fr')
         geometry = objdict.get('localisation', {}).get('geolocalisation', {}).get('geoJson')
 
         pictures = []

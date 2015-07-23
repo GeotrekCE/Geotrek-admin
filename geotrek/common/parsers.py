@@ -7,6 +7,7 @@ from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 import json
+import urllib2
 
 from django.db import models
 from django.conf import settings
@@ -46,6 +47,7 @@ class Parser(object):
     url = None
     simplify_tolerance = 0  # meters
     update_only = False
+    delete = False
     duplicate_eid_allowed = False
     warn_on_missing_fields = False
     warn_on_missing_objects = False
@@ -275,6 +277,7 @@ class Parser(object):
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
+            self.to_delete.discard(self.obj.pk)
         self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb)
@@ -285,6 +288,7 @@ class Parser(object):
             'nb_lines': self.line,
             'nb_created': self.nb_created,
             'nb_updated': self.nb_updated,
+            'nb_deleted': len(self.to_delete) if self.delete else 0,
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
@@ -361,6 +365,7 @@ class Parser(object):
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
         self.start()
+        self.to_delete = set(self.model.objects.values_list('pk', flat=True))
         for i, row in enumerate(self.next_row()):
             if limit and i >= limit:
                 break
@@ -370,6 +375,8 @@ class Parser(object):
                 self.add_warning(unicode(e))
                 if settings.DEBUG:
                     raise
+        if self.delete:
+            self.model.objects.filter(pk__in=self.to_delete).delete()
         self.end()
 
 
@@ -434,6 +441,7 @@ class AtomParser(Parser):
 
 class AttachmentParserMixin(object):
     base_url = ''
+    delete_attachments = False
     filetype_name = u"Photographie"
     non_fields = {
         'attachments': _(u"Attachments"),
@@ -446,6 +454,14 @@ class AttachmentParserMixin(object):
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+        self.attachments_to_delete = {obj.pk: set(Attachment.objects.attachments_for_object(obj)) for obj in self.model.objects.all()}
+
+    def end(self):
+        if not self.delete_attachments:
+            return
+        for atts in self.attachments_to_delete.itervalues():
+            for att in atts:
+                att.delete()
 
     def filter_attachments(self, src, val):
         if not val:
@@ -454,34 +470,39 @@ class AttachmentParserMixin(object):
 
     def save_attachments(self, src, val):
         updated = False
-        to_delete = set(Attachment.objects.attachments_for_object(self.obj))
         for url, name, author in self.filter_attachments(src, val):
             url = self.base_url + url
             name = os.path.basename(url)
             found = False
-            for attachment in to_delete:
+            for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
                 if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
                     found = True
-                    to_delete.remove(attachment)
+                    self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
             if found:
                 continue
-            response = requests.get(url)
-            if response.status_code != requests.codes.ok:
-                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                continue
-            f = ContentFile(response.content)
+            if url[:6] == 'ftp://':
+                try:
+                    response = urllib2.urlopen(url)
+                except:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    continue
+                content = response.read()
+            else:
+                response = requests.get(url)
+                if response.status_code != requests.codes.ok:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    continue
+                content = response.content
+            f = ContentFile(content)
             attachment = Attachment()
             attachment.content_object = self.obj
             attachment.attachment_file.save(name, f, save=False)
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.save()
-            updated = True
-        if to_delete:
-            Attachment.objects.filter(pk__in=[a.pk for a in to_delete]).delete()
             updated = True
         return updated
 

@@ -27,6 +27,7 @@ etc/settings.ini:
 
 bin/python:
 	virtualenv .
+	bin/pip install -U setuptools
 	mkdir -p lib/src
 	mkdir -p lib/eggs
 	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
@@ -111,7 +112,7 @@ update:
 	make all_compilemessages
 
 deploy: update
-	bin/supervisorctl restart all
+	bin/supervisorctl reload
 
 all_makemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done

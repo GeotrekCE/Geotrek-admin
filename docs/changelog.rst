@@ -2,8 +2,20 @@
 CHANGELOG
 =========
 
-2.0.0.dev0
--------------------
+2.0.1.dev0
+------------------
+
+**Bug fixes**
+
+* Reload supervisor configuration after Geotrek upgrade
+
+**Documentation**
+
+* Document server migration
+
+
+2.0.0 (2015-07-20)
+------------------
 
 **Breaking changes**
 
@@ -11,7 +23,6 @@ CHANGELOG
 
 **New features**
 
-* Import framework
 * Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)
 * Build zip files for mobile application
 * Trek / Touristic content association distance depending on trek practice
@@ -27,8 +38,29 @@ CHANGELOG
 **Bug fixes**
 
 * Remove HTTP calls to SoundCloud API at serialization
-* Fix a crash in appy pod (PDF generation)
 * Allow DEM to partially cover spatial extent
+
+
+0.35.1 (2015-07-17)
+-------------------
+
+**Bug fixes**
+
+* Fix installation on ubuntu 12.04 with recent updates
+
+
+0.35.0 (2015-07-10)
+-------------------
+
+**New features**
+
+* Add an import framework
+
+**Bug fixes**
+
+* Fix a crash in appy pod (PDF generation)
+* Fix login with restricted access to some contents
+* Fix buildout bootstrap arguments
 
 
 0.34.0 (2015-05-20)

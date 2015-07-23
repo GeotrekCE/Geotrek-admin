@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 
 class DataSourceList(JSONResponseMixin, ListView):
-    model = DataSource
+    queryset = DataSource.objects.order_by('id')
 
     def get_context_data(self):
         results = []

@@ -113,6 +113,51 @@ Check the version on the login page !
 Check out the :ref:`troubleshooting page<troubleshooting-section>` for common problems.
 
 
+Server migration
+----------------
+
+It is a new installation with an additional backup/restore and a file transfert
+in between.
+
+Files and database backup on the old server :
+
+::
+
+    cd Geotrek
+    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
+    tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/
+
+Files restoration on the new server :
+
+::
+
+    wget https://github.com/makinacorpus/Geotrek/archive/2.0.0.zip
+    unzip 2.0.0.zip
+    mv Geotrek-2.0.0 Geotrek
+    cd Geotrek
+    scp old_server:Geotrek/data.tgz .
+    tar xvzf data.tgz
+
+Then edit `etc/settings.ini` to update host variable and `geotrek/settings/custom.py`
+to update IGN key.
+
+Installation on the new server :
+
+::
+
+    ./install.sh
+
+Database restoration on the new server :
+
+::
+
+    sudo service geotrek stop
+    sudo -u postgres psql -c "drop database geotrekdb;"
+    sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
+    sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
+    make update deploy
+
+
 Tips and Tricks
 ---------------
 
