@@ -15,7 +15,7 @@ class CrtCaParser(TourismSystemParser):
     delete = True
     fields = {
         'eid': 'data.idFiche',
-        'name': 'data.dublinCore.title',
+        'name': 'data.businessName',
         'description_fr': 'data.dublinCore.description.fr',
         'description_en': 'data.dublinCore.description.en',
         'description_de': 'data.dublinCore.description.de',
