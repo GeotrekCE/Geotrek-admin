@@ -1,8 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import io
-from zipfile import ZipFile
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.test import TestCase
@@ -37,8 +34,7 @@ class ViewsImportTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory.create(username='homer', password='dooh')
-        success = self.client.login(
-        username=self.user.username, password='dooh')
+        success = self.client.login(username=self.user.username, password='dooh')
         self.assertTrue(success)
 
     def test_import_form_access(self):
