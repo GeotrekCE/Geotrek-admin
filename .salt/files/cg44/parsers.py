@@ -257,7 +257,9 @@ class CG44TrekParser(TrekParser):
     def filter_duration(self, src, val):
         duration, usages = val
         first_usage = usages.split(self.separator)[0].strip()
-        if first_usage == self.practice:
+        if duration == '?':
+            return 0
+        elif first_usage == self.practice:
             return super(CG44TrekParser, self).filter_duration(src, duration)
         else:
             raise ValueImportError(u"Ignore duration since it does not correspond to practice")
@@ -323,6 +325,9 @@ class CG44TrekParser(TrekParser):
                 prev = row
                 line = row['GEOM']
                 second = True
+        if rows:
+            prev['GEOM'] = line
+            yield prev
 
 
 class CG44PedestreTrekParser(CG44TrekParser):
