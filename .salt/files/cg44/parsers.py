@@ -222,6 +222,10 @@ class CG44TrekParser(TrekParser):
     ALIAS_to_pk = {}
     relationships = []
 
+    def start(self):
+        super(CG44TrekParser, self).start()
+        self.to_delete = set(Trek.objects.filter(practice__name=self.practice).values_list('pk', flat=True))
+
     def end(self):
         for pk_a, name_b in self.relationships:
             try:
