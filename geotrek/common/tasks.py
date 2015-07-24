@@ -15,7 +15,7 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 
-    def progress_cb(progress):
+    def progress_cb(progress, line, eid):
         current_task.update_state(
             state='PROGRESS',
             meta={
@@ -52,7 +52,7 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 
-    def progress_cb(progress):
+    def progress_cb(progress, line, eid):
         current_task.update_state(
             state='PROGRESS',
             meta={
