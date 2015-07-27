@@ -50,7 +50,7 @@ class CreateReportsAPITest(BaseAPITest):
         super(CreateReportsAPITest, self).setUp()
         self.add_url = '/api/en/reports/report'
         self.data = {
-            'geom': '{"type": "Point", "coordinates": [0, 0]}',
+            'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'name': 'You Yeah',
             'email': 'yeah@you.com'
         }
@@ -63,6 +63,9 @@ class CreateReportsAPITest(BaseAPITest):
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+        report = feedback_models.Report.objects.get()
+        self.assertAlmostEqual(report.geom.x, 700000)
+        self.assertAlmostEqual(report.geom.y, 6600000)
 
     def test_reports_can_be_created_without_geom(self):
         self.data.pop('geom')
