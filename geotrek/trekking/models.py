@@ -270,17 +270,18 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return self.any_published or (self.parent and self.parent.any_published)
 
     def save(self, *args, **kwargs):
-        field_names = set()
-        for field in self._meta.concrete_fields:
-            if not field.primary_key and not hasattr(field, 'through'):
-                field_names.add(field.attname)
         if self.pk is not None:
+            field_names = set()
+            for field in self._meta.concrete_fields:
+                if not field.primary_key and not hasattr(field, 'through'):
+                    field_names.add(field.attname)
             old_trek = Trek.objects.get(pk=self.pk)
             if old_trek.geom.equals_exact(self.geom, tolerance=0.00001):
                 field_names.remove('geom')
             if old_trek.geom_3d.equals_exact(self.geom_3d, tolerance=0.00001):
                 field_names.remove('geom_3d')
-        super(Trek, self).save(update_fields=field_names, *args, **kwargs)
+            return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
+        super(Trek, self).save(*args, **kwargs)
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
