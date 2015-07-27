@@ -71,8 +71,6 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     except Exception as e:
         raise e
 
-    print(parser.report())
-
     return {
         'current': 100,
         'total': 100,
