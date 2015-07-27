@@ -276,9 +276,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                 if not field.primary_key and not hasattr(field, 'through'):
                     field_names.add(field.attname)
             old_trek = Trek.objects.get(pk=self.pk)
-            if old_trek.geom.equals_exact(self.geom, tolerance=0.00001):
+            if self.geom is not None and old_trek.geom.equals_exact(self.geom, tolerance=0.00001):
                 field_names.remove('geom')
-            if old_trek.geom_3d.equals_exact(self.geom_3d, tolerance=0.00001):
+            if self.geom_3d is not None and old_trek.geom_3d.equals_exact(self.geom_3d, tolerance=0.00001):
                 field_names.remove('geom_3d')
             return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
         super(Trek, self).save(*args, **kwargs)
