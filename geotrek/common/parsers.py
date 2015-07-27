@@ -280,7 +280,7 @@ class Parser(object):
             self.to_delete.discard(self.obj.pk)
         self.nb_success += 1  # FIXME
         if self.progress_cb:
-            self.progress_cb(float(self.line) / self.nb)
+            self.progress_cb(float(self.line) / self.nb, self.line, self.eid_val)
 
     def report(self):
         context = {

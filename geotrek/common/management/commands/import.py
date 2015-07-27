@@ -36,9 +36,10 @@ class Command(BaseCommand):
         if not Parser.filename and not Parser.url and len(args) < 2:
             raise CommandError("File path missing")
 
-        def progress_cb(progress):
+        def progress_cb(progress, line, eid):
             if verbosity >= 2:
-                self.stdout.write("{progress:02d}%".format(progress=int(100 * progress)))
+                self.stdout.write("{line:04d}: {eid: <10} ({progress:02d}%)".format(
+                    line=line, eid=eid, progress=int(100 * progress)))
 
         parser = Parser(progress_cb=progress_cb)
 

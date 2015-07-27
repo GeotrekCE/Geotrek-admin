@@ -9,7 +9,6 @@ from mapentity.factories import UserFactory
 
 
 class ViewsTest(TestCase):
-
     def setUp(self):
         self.user = UserFactory.create(username='homer', password='dooh')
         success = self.client.login(
@@ -30,6 +29,14 @@ class ViewsTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+
+class ViewsImportTest(TestCase):
+
+    def setUp(self):
+        self.user = UserFactory.create(username='homer', password='dooh')
+        success = self.client.login(username=self.user.username, password='dooh')
+        self.assertTrue(success)
+
     def test_import_form_access(self):
         url = reverse('common:import_dataset')
         response = self.client.get(url)
@@ -48,23 +55,36 @@ class ViewsTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_import_form_file_content_type_handling(self):
+    def test_import_form_file_good_file(self):
         self.user.is_superuser = True
         self.user.save()
 
-        good_archive = SimpleUploadedFile(
-            "file.zip", "file_content", content_type="application/zip")
-        bad_archive = SimpleUploadedFile(
-            "file.doc", "file_content", content_type="application/msword")
-
+        real_archive = open('geotrek/common/tests/data/test.txt.gz', 'r+')
         url = reverse('common:import_dataset')
 
-        response = self.client.post(
-            url, {'parser': 'CityParser', 'zipfile': good_archive})
-        self.assertEqual(response.status_code, 200)
+        response_real = self.client.post(
+            url, {
+                'upload-file': 'Upload',
+                'with-file-parser': '7',
+                'with-file-zipfile': real_archive
+            }
+        )
+        self.assertEqual(response_real.status_code, 200)
 
-        response = self.client.post(
-            url, {'parser': 'CityParser', 'zipfile': bad_archive})
-        self.assertEqual(response.status_code, 200)
-        self.assertFormError(
-            response, 'form', 'zipfile', ["File must be of ZIP type.", ])
+    def test_import_form_file_bad_file(self):
+        self.user.is_superuser = True
+        self.user.save()
+
+        fake_archive = SimpleUploadedFile(
+            "file.doc", "file_content", content_type="application/msword")
+        url = reverse('common:import_dataset')
+
+        response_fake = self.client.post(
+            url, {
+                'upload-file': 'Upload',
+                'with-file-parser': '7',
+                'with-file-zipfile': fake_archive
+            }
+        )
+        self.assertEqual(response_fake.status_code, 200)
+        self.assertContains(response_fake, "File must be of ZIP type.", 1)
