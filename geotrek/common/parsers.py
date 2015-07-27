@@ -455,11 +455,11 @@ class AttachmentParserMixin(object):
         self.attachments_to_delete = {obj.pk: set(Attachment.objects.attachments_for_object(obj)) for obj in self.model.objects.all()}
 
     def end(self):
-        if not self.delete_attachments:
-            return
-        for atts in self.attachments_to_delete.itervalues():
-            for att in atts:
-                att.delete()
+        if self.delete_attachments:
+            for atts in self.attachments_to_delete.itervalues():
+                for att in atts:
+                    att.delete()
+        super(AttachmentParserMixin, self).end()
 
     def filter_attachments(self, src, val):
         if not val:
