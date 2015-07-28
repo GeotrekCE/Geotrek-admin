@@ -270,7 +270,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return self.any_published or (self.parent and self.parent.any_published)
 
     def save(self, *args, **kwargs):
-        if self.pk is not None:
+        if self.pk is not None and kwargs.get('update_fields', None) is None:
             field_names = set()
             for field in self._meta.concrete_fields:
                 if not field.primary_key and not hasattr(field, 'through'):
