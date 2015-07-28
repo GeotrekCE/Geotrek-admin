@@ -282,7 +282,7 @@ class Parser(object):
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb, self.line, self.eid_val)
 
-    def report(self):
+    def report(self, output_format='txt'):
         context = {
             'nb_success': self.nb_success,
             'nb_lines': self.line,
@@ -292,7 +292,8 @@ class Parser(object):
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
-        return render_to_string('common/parser_report.html', context)
+        print(output_format)
+        return render_to_string('common/parser_report.{output_format}'.format(output_format=output_format), context)
 
     def get_mapping(self, src, val, mapping, partial):
         if partial:
