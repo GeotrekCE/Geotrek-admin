@@ -1068,20 +1068,20 @@ class TrekWorkflowTest(TestCase):
 
 class TrekUpdateGeomTest(TestCase):
     def setUp(self):
-        self.trek = TrekFactory.create(published=True, geom=LineString(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2))))
+        self.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
 
     def tearDown(self):
         del (self.trek)
 
     def test_save_with_same_geom(self):
-        geom = LineString(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))
+        geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
         self.trek.geom = geom
         self.trek.save()
         retrieve_trek = Trek.objects.get(pk=self.trek.pk)
         self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
 
     def test_save_with_another_geom(self):
-        geom = LineString(((-7, -7), (5, -7), (5, 5), (-7, 5), (-7, -7)))
+        geom = LineString(((-7, -7), (5, -7), (5, 5), (-7, 5), (-7, -7)), srid=2154)
         self.trek.geom = geom
         self.trek.save()
         retrieve_trek = Trek.objects.get(pk=self.trek.pk)
