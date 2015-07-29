@@ -9,6 +9,10 @@ casper.test.begin('Login from home page', function(test) {
         test.assertExists('form', 'Form present.');
     });
 
+    casper.then(function() {
+        require('utils').dump(this.getPageContent());
+    });
+
     casper.then(function () {
         casper.fill('form', {
             'username':    'admin',
