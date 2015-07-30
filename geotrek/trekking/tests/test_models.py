@@ -225,3 +225,47 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
                                                               (3, 9), (3, 3)))))
         self.assertEqual(trek.cities, [city1, city2])
         self.assertEqual(trek.city_departure, unicode(city1))
+
+
+class TrekUpdateGeomTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
+
+    def tearDown(self):
+        del (self.trek)
+
+    def test_save_with_same_geom(self):
+        geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
+        self.trek.geom = geom
+        self.trek.save()
+        retrieve_trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
+
+    def test_save_with_another_geom(self):
+        geom = LineString(((-7, -7), (5, -7), (5, 5), (-7, 5), (-7, -7)), srid=2154)
+        self.trek.geom = geom
+        self.trek.save()
+        retrieve_trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
+
+    def test_save_with_provided_one_field_exclusion(self):
+        self.trek.save(update_fields=['geom'])
+        self.assertTrue(self.trek.pk)
+
+    def test_save_with_multiple_fields_exclusion(self):
+        new_trek = TrekFactory.create()
+
+        new_trek.description_en = 'Description Test update'
+        new_trek.ambiance = 'Very special ambiance, for test purposes.'
+
+        new_trek.save(update_fields=['description_en'])
+        db_trek = Trek.objects.get(pk=new_trek.pk)
+
+        self.assertTrue(db_trek.pk)
+        self.assertEqual(db_trek.description_en, 'Description Test update')
+        self.assertNotEqual(db_trek.ambiance, 'Very special ambiance, for test purposes.')
+
+        new_trek.save(update_fields=['ambiance_en'])
+        db_trek = Trek.objects.get(pk=new_trek.pk)
+
+        self.assertEqual(db_trek.ambiance_en, 'Very special ambiance, for test purposes.')

@@ -292,7 +292,6 @@ class Parser(object):
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
-        print(output_format)
         return render_to_string('common/parser_report.{output_format}'.format(output_format=output_format), context)
 
     def get_mapping(self, src, val, mapping, partial):

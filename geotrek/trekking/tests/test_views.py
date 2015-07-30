@@ -1064,29 +1064,3 @@ class TrekWorkflowTest(TestCase):
         self.assertContains(response, 'Published')
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
-
-
-class TrekUpdateGeomTest(TestCase):
-    def setUp(self):
-        self.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
-
-    def tearDown(self):
-        del (self.trek)
-
-    def test_save_with_same_geom(self):
-        geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
-        self.trek.geom = geom
-        self.trek.save()
-        retrieve_trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
-
-    def test_save_with_another_geom(self):
-        geom = LineString(((-7, -7), (5, -7), (5, 5), (-7, 5), (-7, -7)), srid=2154)
-        self.trek.geom = geom
-        self.trek.save()
-        retrieve_trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
-
-    def test_save_with_provided_field_exclusion(self):
-        self.trek.save(update_fields=['geom'])
-        self.assertTrue(self.trek.pk)
