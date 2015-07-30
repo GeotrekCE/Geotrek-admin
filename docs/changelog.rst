@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Reload supervisor configuration after Geotrek upgrade
+* Fix projection of waypoints in GPX exports
 
 **Documentation**
 
