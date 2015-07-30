@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Order intersections in Geotrek light mode
+* Projection of waypoints in GPX exports
 
 
 0.35.1 (2015-07-17)

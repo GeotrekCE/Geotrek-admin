@@ -14,7 +14,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
-from django.db import connection
+from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.template.loader import find_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
@@ -702,6 +702,16 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
 class TrekGPXTest(TrekkingManagerTest):
 
     def setUp(self):
+        # Create a simple fake DEM
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        for y in range(0, 1):
+            for x in range(0, 1):
+                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
+
         self.login()
 
         self.trek = TrekWithPOIsFactory.create()
@@ -738,8 +748,12 @@ class TrekGPXTest(TrekkingManagerTest):
         waypoint = waypoints[0]
         name = waypoint.find('name').string
         description = waypoint.find('desc').string
+        elevation = waypoint.find('ele').string
         self.assertEqual(name, u"%s: %s" % (pois[0].type, pois[0].name))
         self.assertEqual(description, pois[0].description)
+        self.assertEqual(waypoint['lat'], '46.5003601787')
+        self.assertEqual(waypoint['lon'], '3.00052158552')
+        self.assertEqual(elevation, '42.0')
 
 
 class TrekViewTranslationTest(TrekkingManagerTest):
