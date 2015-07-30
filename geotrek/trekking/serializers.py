@@ -2,7 +2,7 @@ import copy
 import datetime
 import json
 
-import gpxpy
+import gpxpy.gpx
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import translation
@@ -29,9 +29,10 @@ class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
         super(TrekGPXSerializer, self).end_object(trek)
         for poi in trek.pois.all():
-            wpt = gpxpy.gpx.GPXWaypoint(latitude=poi.geom.y,
-                                        longitude=poi.geom.x,
-                                        elevation=poi.geom.z)
+            geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
+            wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
+                                        longitude=geom_3d.x,
+                                        elevation=geom_3d.z)
             wpt.name = u"%s: %s" % (poi.type, poi.name)
             wpt.description = poi.description
             self.gpx.waypoints.append(wpt)
