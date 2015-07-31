@@ -22,7 +22,8 @@ from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 from geotrek.tourism import models as tourism_models
 from geotrek.common.views import DocumentPublic, DocumentPublicPDF
-from geotrek.trekking.views import TrekViewSet, POIViewSet, TrekPOIViewSet, TrekGPXDetail, TrekKMLDetail
+from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
+                                    TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet)
 from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
@@ -185,6 +186,11 @@ class Command(BaseCommand):
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
             self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
 
+    def sync_trek_services(self, lang, trek, zipfile=None):
+        view = TrekServiceViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'services.geojson')
+        self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
+
     def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, **kwargs):
         modelname = obj._meta.model_name
         name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
@@ -249,6 +255,7 @@ class Command(BaseCommand):
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
+        self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
         self.sync_pdf(lang, trek)
@@ -316,6 +323,7 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.DifficultyLevel, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile)
+        self.sync_pictograms(lang, trekking_models.ServiceType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:

@@ -133,6 +133,7 @@
 
                 ["read_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"],
+                ["read_service", "trekking", "service"],
 
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"]
@@ -159,6 +160,10 @@
                 ["change_poi", "trekking", "poi"],
                 ["delete_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
+                ["add_service", "trekking", "service"],
+                ["change_service", "trekking", "service"],
+                ["delete_service", "trekking", "service"],
+                ["export_service", "trekking", "service"],
 
                 ["add_theme", "common", "theme"],
                 ["change_theme", "common", "theme"],
@@ -185,6 +190,10 @@
                 ["add_weblinkcategory", "trekking", "weblinkcategory"],
                 ["change_weblinkcategory", "trekking", "weblinkcategory"],
                 ["delete_weblinkcategory", "trekking", "weblinkcategory"],
+                ["add_servicetype", "trekking", "servicetype"],
+                ["change_servicetype", "trekking", "servicetype"],
+                ["delete_servicetype", "trekking", "servicetype"],
+                ["publish_servicetype", "trekking", "servicetype"],
 
                 ["add_informationdesk", "tourism", "informationdesk"],
                 ["change_informationdesk", "tourism", "informationdesk"],
@@ -224,6 +233,7 @@
 
                 ["read_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"],
+                ["read_service", "trekking", "service"],
 
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"],
@@ -318,6 +328,7 @@
 
                 ["read_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"],
+                ["read_service", "trekking", "service"],
 
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"]
@@ -338,6 +349,8 @@
                 ["export_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"],
                 ["export_poi", "trekking", "poi"],
+                ["read_service", "trekking", "service"],
+                ["export_service", "trekking", "service"],
 
                 ["read_touristicevent", "tourism", "touristicevent"],
                 ["export_touristicevent", "tourism", "touristicevent"],

@@ -8,7 +8,7 @@ from modeltranslation.admin import TranslationAdmin
 
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek,
+    WebLink, WebLinkCategory, Trek, ServiceType,
 )
 
 
@@ -107,6 +107,15 @@ class WebLinkCategoryAdmin(TranslationAdmin):
     search_fields = ('label', )
 
 
+class ServiceTypeAdmin(TranslationAdmin):
+    list_display = ('name', 'pictogram_img', 'practices_display')
+    search_fields = ('name',)
+
+    def practices_display(self, obj):
+        return ', '.join([practice.name for practice in obj.practices.all()])
+    practices_display.short_description = _(u"Practices")
+
+
 # Register previously defined modeladmins
 trek_admin_to_register = [
     (POIType, POITypeAdmin),
@@ -117,6 +126,7 @@ trek_admin_to_register = [
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
+    (ServiceType, ServiceTypeAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

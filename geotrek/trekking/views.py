@@ -25,11 +25,11 @@ from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.zoning.models import District, City, RestrictedArea
 
-from .models import Trek, POI, WebLink
-from .filters import TrekFilterSet, POIFilterSet
-from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
+from .models import Trek, POI, WebLink, Service
+from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
+from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer)
+                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 
 
 class FlattenPicturesMixin(object):
@@ -119,6 +119,7 @@ class TrekDetail(MapEntityDetail):
     def icon_sizes(self):
         return {
             'POI': settings.TREK_ICON_SIZE_POI,
+            'service': settings.TREK_ICON_SIZE_SERVICE,
             'parking': settings.TREK_ICON_SIZE_PARKING,
             'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
         }
@@ -379,6 +380,85 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class ServiceLayer(MapEntityLayer):
+    properties = ['label', 'published']
+    queryset = Service.objects.existing()
+
+
+class ServiceList(MapEntityList):
+    filterform = ServiceFilterSet
+    columns = ['id', 'name']
+    queryset = Service.objects.existing()
+
+
+class ServiceJsonList(MapEntityJsonList, ServiceList):
+    pass
+
+
+class ServiceFormatList(MapEntityFormat, ServiceList):
+    columns = [
+        'id', 'eid', 'type'
+    ] + AltimetryMixin.COLUMNS
+
+
+class ServiceDetail(MapEntityDetail):
+    queryset = Service.objects.existing()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ServiceDetail, self).get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class ServiceCreate(MapEntityCreate):
+    model = Service
+    form_class = ServiceForm
+
+
+class ServiceUpdate(MapEntityUpdate):
+    queryset = Service.objects.existing()
+    form_class = ServiceForm
+
+    @same_structure_required('trekking:service_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(ServiceUpdate, self).dispatch(*args, **kwargs)
+
+
+class ServiceDelete(MapEntityDelete):
+    model = Service
+
+    @same_structure_required('trekking:service_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(ServiceDelete, self).dispatch(*args, **kwargs)
+
+
+class ServiceViewSet(MapEntityViewSet):
+    model = Service
+    serializer_class = ServiceSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Service.objects.existing().filter(type__published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekServiceViewSet(viewsets.ModelViewSet):
+    model = Service
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(ServiceSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(Q(published=True) | Q(parent__published=True), pk=pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class CirkwiTrekView(ListView):

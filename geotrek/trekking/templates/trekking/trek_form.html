@@ -59,6 +59,15 @@
                 // Recompute scrollable panels
                 $(window).trigger('resize');
             })
+
+            // Insert service buttons
+            $('.servicetype').click(function(e) {
+                var url = $(this).data('url');
+                var name = $(this).data('name');
+                var id = $('div[id^="description_"]:not([id*="teaser"]):visible textarea').attr('id');
+                tinymce.get(id).execCommand('mceInsertContent', false, '<img src="' + url + '" alt="' + name + '" width="18" height="18" />');
+                return false;
+            });
         });
     </script>
 {% endblock extrabody %}
