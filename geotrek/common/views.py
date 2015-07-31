@@ -222,7 +222,6 @@ def import_view(request):
                 choices, request.POST, request.FILES, prefix="with-file")
 
             if form.is_valid():
-                print(request.FILES)
                 uploaded = request.FILES['with-file-zipfile']
 
                 destination_dir, destination_file = create_tmp_destination(
