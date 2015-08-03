@@ -2,13 +2,16 @@
 CHANGELOG
 =========
 
-0.35.2.dev0
--------------------
+1.0.0 (2015-08-03)
+------------------
+
+This version is numbered 1.0.0 so the major number reflects
+the API compatibility with Geotrek-Rando.
 
 **Bug fixes**
 
 * Order intersections in Geotrek light mode
-* Projection of waypoints in GPX exports
+* Fix projection of waypoints in GPX exports
 
 
 0.35.1 (2015-07-17)
