@@ -1,0 +1,265 @@
+/**
+ * node-sass --output-style=expanded trek_public_pdf.scss -o .
+ */
+
+$titleColor:      rgba(0, 0, 0, 1);
+$textColor:       rgba(100, 100, 100, 1);
+$highlightColor1: rgba(174, 201, 14, 1);
+$highlightColor2: darken($highlightColor1, 5);
+
+$quoteBgColor:    lighten($highlightColor1, 50);;
+
+@page {
+	margin: 1.3cm 1.8cm 2.5cm 1.8cm;
+	@bottom-left {
+		font-family: sans, sans-serif;
+		color: $textColor;
+		font-weight: 100;
+		font-size: .8em;
+		font-style: italic;
+		content: "Page " counter(page);
+	}
+}
+
+html {
+	-weasy-hyphens: auto;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: sans, sans-serif;
+	color: $textColor;
+	font-weight: 100;
+
+
+	margin: 0;
+	padding: 0;
+}
+
+img  {
+	max-width: 100%;
+}
+
+h1, h2, h3, h4, h5 {
+	color: $titleColor;
+	font-weight: normal;
+}
+
+h1 {
+	font-weight: normal;
+}
+h2 {
+	font-weight: 100;
+}
+
+section {
+	page-break-inside: avoid;
+}
+
+#footer {
+	position: fixed;
+	height: 2cm;
+	bottom: -2cm;
+	left: 0;
+	right: 0;
+
+	.text {
+		display: inline-block;
+		vertical-align: middle;
+
+		max-width: 60%;
+		font-size: .8em;
+		font-style: italic;
+	}
+
+	.loire-atlantique {
+		float: right;
+		height: 1cm;
+	}
+}
+
+header {
+
+}
+
+.main-title {
+	text-align: center;
+	padding-bottom: 2.36em;
+	h1, h2 {
+		margin: 0;
+	}
+
+	h2 {
+		font-size: 1.25em;
+	}
+}
+
+
+.map {
+	img {
+		max-width: 100%;
+	}
+}
+
+header .meta {
+	margin-top: 1em;
+	font-size: .65em;
+}
+
+.ambiance {
+	margin-top: 1em;
+	font-style: italic;
+}
+
+.teaser {
+	margin-top: 1em;
+}
+
+
+.meta {
+	.lists {
+		display: inline;
+	}
+}
+
+.meta-item {
+	display: inline-block;
+	vertical-align: middle;
+
+	border-radius:   .05em;
+	margin-bottom: 0.236em;
+	margin-top:     .236em;
+	margin-right:   .472em;
+	padding-right:  .354em;
+
+	.item-label,
+	.item-value {
+		border-radius: .25mm 0 0 .25mm;
+		display: inline-block;
+	}
+
+	.item-label {
+		margin: -1px 0 -1px -1px;
+		padding: 1.2mm 1.5mm;
+	}
+
+	.item-value + .item-value {
+		&:before {
+			content: ", ";
+		}
+	}
+}
+
+// Colors
+.meta-item {
+	background-color: lighten($highlightColor1, 50);
+	border: 1px solid rgba($highlightColor1, .45);
+	color: darken($highlightColor1, 30);
+	.item-label {
+		background-color: $highlightColor1;
+	}
+	.lists & {
+		background-color: lighten($highlightColor2, 50);
+		border: 1px solid rgba($highlightColor2, .45);
+		color: darken($highlightColor2, 30);
+		.item-label {
+			background-color: $highlightColor2;
+		}
+	}
+}
+
+
+.centered {
+	font-size: .80em;
+	padding: 2mm;
+	margin-top: 1.2em;
+	background-color: $quoteBgColor;
+}
+
+.text-content {
+	line-height: 1.5;
+}
+
+.elevation {
+	img {
+		padding: 2mm;
+		border: 1px solid #aaa;
+		background-color: lighten($highlightColor1, 50);
+		border: 1px solid rgba($highlightColor1, .45);
+	}
+
+	.meta {
+
+	}
+}
+
+.pic {
+	legend {
+		font-style: italic;
+		text-align: right;
+		font-size: .8em;
+	}
+}
+
+.pois-summary {
+	page-break-inside: auto;
+
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	.poi {
+		page-break-inside: avoid;
+		clear: both;
+	}
+	.thumbnail {
+		float: right;
+		margin-left: 1.5em;
+	}
+	.icon {
+		display: inline-block;
+		width: 1.5em;
+		height: 1em;
+		vertical-align: baseline;
+		img {
+			display: block;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	}
+}
+
+.information-desks {
+	.intro {
+		font-style: italic;
+		font-size: .85em;
+	}
+}
+
+.desks {
+	margin-top: 1em;
+	font-size: .8em;
+}
+
+.desk {
+	padding: .5em;
+	margin-top: .5em;
+	.content {
+		padding-left: 2em;
+	}
+}
+
+.desk-name {
+	font-weight: bold;
+}
+
+footer {
+	margin-top: 2em;
+	background-color: #eee;
+	padding: .3em;
+	text-align: center;
+}
