@@ -22,7 +22,7 @@ def launch_sync_rando(*args, **kwargs):
             url=kwargs.get('url'),
             verbosity='2'
         )
-    except Exception as e:
+    except Exception:
         raise
     print('Sync rando ended')
 
