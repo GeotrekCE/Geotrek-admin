@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse, Http404
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.contrib.auth.decorators import login_required
 
@@ -30,6 +31,13 @@ from .filters import TrekFilterSet, POIFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer)
+from .tasks import launch_sync_rando
+
+
+def launch_rocket(request):
+    url = "{scheme}://{host}".format(scheme='https' if request.is_secure() else 'http', host=request.get_host())
+    launch_sync_rando.delay(url=url)
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 class FlattenPicturesMixin(object):

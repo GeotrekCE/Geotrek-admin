@@ -268,12 +268,13 @@ def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
     for task in TaskMeta.objects.filter(date_done__gte=threshold):
-        results.append(
-            {
-                'id': task.task_id,
-                'result': task.result or {'current': 0, 'total': 0},
-                'status': task.status
-            }
-        )
+        if hasattr(task, 'result') and 'name' in task.result and task.result.get('name', '').startswith('geotrek.common'):
+            results.append(
+                {
+                    'id': task.task_id,
+                    'result': task.result or {'current': 0, 'total': 0},
+                    'status': task.status
+                }
+            )
 
     return HttpResponse(json.dumps(results), content_type="application/json")

@@ -9,8 +9,8 @@ urlpatterns = patterns(
     '',
     url(r'^api/settings.json', JSSettings.as_view(), name='settings_json'),
     url(r'^tools/extents/', admin_check_extents, name='check_extents'),
-    url(r'^import-update.json$', import_update_json, name='import_update_json'),
-    url(r'^import$', import_view, name='import_dataset'),
+    url(r'^commands/import-update.json$', import_update_json, name='import_update_json'),
+    url(r'^commands/import$', import_view, name='import_dataset'),
 )
 
 
