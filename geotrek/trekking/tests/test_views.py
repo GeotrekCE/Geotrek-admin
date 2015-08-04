@@ -1078,3 +1078,9 @@ class TrekWorkflowTest(TestCase):
         self.assertContains(response, 'Published')
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
+
+
+class SyncRandoViewTest(TestCase):
+    def test_return_redirect(self):
+        response = self.client.get(reverse('sync_randos'))
+        self.assertEqual(response.status_code, 302)
