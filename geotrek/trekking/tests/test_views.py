@@ -1081,6 +1081,15 @@ class TrekWorkflowTest(TestCase):
 
 
 class SyncRandoViewTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('bart', password='mahaha')
+
     def test_return_redirect(self):
-        response = self.client.get(reverse('sync_randos'))
+        response = self.client.get(reverse('trekking:sync_randos'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_return_redirect_superuser(self):
+        self.user.is_superuser = True
+        response = self.client.get(reverse('trekking:sync_randos'))
         self.assertEqual(response.status_code, 302)

@@ -6,7 +6,7 @@ from django.utils.html import escape
 from django.utils import translation
 from django.views.generic import CreateView, ListView, RedirectView
 from django.views.generic.detail import BaseDetailView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
@@ -38,6 +38,8 @@ class SyncRandoRedirect(RedirectView):
     permanent = False
     query_string = False
 
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def get(self, request, *args, **kwargs):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http', host=self.request.get_host())
         launch_sync_rando.delay(url=url)
