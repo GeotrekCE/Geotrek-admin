@@ -86,7 +86,6 @@ class POIViewsTest(CommonTest):
 
         for url in [self.model.get_jsonlist_url(),
                     self.model.get_format_list_url()]:
-
             num_queries_old = len(connection.queries)
             self.client.get(url)
             num_queries_new = len(connection.queries)
@@ -110,14 +109,22 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.attachment = AttachmentFactory.create(obj=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(701000 6601000)' % settings.SRID, published=True)  # too far
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(702000 6602000)' % settings.SRID, published=True)  # too far
+        self.touristic_content = tourism_factories.TouristicContentFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                  published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                  published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(701000 6601000)' % settings.SRID,
+                                                  published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID,
+                                                published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID,
+                                                published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(702000 6602000)' % settings.SRID,
+                                                published=True)  # too far
 
         self.pk = self.poi.pk
         url = '/api/en/pois/%s.json' % self.pk
@@ -259,7 +266,7 @@ class TrekViewsTest(CommonTest):
 
     def test_basic_format(self):
         super(TrekViewsTest, self).test_basic_format()
-        self.modelfactory.create(name="ukélélé")   # trek with utf8
+        self.modelfactory.create(name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
@@ -272,7 +279,6 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 
 
 class TrekCustomViewTests(TrekkingManagerTest):
-
     def setUp(self):
         self.login()
 
@@ -345,7 +351,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
-
     if not app_settings['MAPENTITY_WEASYPRINT']:
         @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
         def test_overriden_document(self, get_attributes_html):
@@ -462,14 +467,22 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                                        trek_a=self.trek,
                                        trek_b=self.trek_b)
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True)
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID, published=True)  # too far
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True)
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=False)  # not published
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, published=True).delete()  # deleted
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID, published=True)  # too far
+        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                                           published=True)
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                  published=False)  # not published
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                  published=True).delete()  # deleted
+        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID,
+                                                  published=True)  # too far
+        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                                                       published=True)
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                                published=False)  # not published
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                                published=True).delete()  # deleted
+        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID,
+                                                published=True)  # too far
         trek2 = TrekFactory(no_path=True, published=False)  # not published
         trek2.add_path(path2)
         trek3 = TrekFactory(no_path=True, published=True)  # deleted
@@ -489,7 +502,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.result = json.loads(self.response.content)
 
     def test_related_urls(self):
-
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
         self.assertEqual(self.result['map_image_url'],
@@ -507,7 +519,8 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
-                         os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
+                         os.path.join(settings.MEDIA_URL,
+                                      self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
@@ -515,7 +528,8 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name) + '.800x800_q85.png',
+                             {u'url': os.path.join(settings.MEDIA_URL,
+                                                   self.attachment.attachment_file.name) + '.800x800_q85.png',
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})
@@ -702,13 +716,13 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
 
 
 class TrekGPXTest(TrekkingManagerTest):
-
     def setUp(self):
         # Create a simple fake DEM
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))', [settings.SRID])
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
+                    [settings.SRID])
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
         for y in range(0, 1):
             for x in range(0, 1):
@@ -1081,7 +1095,6 @@ class TrekWorkflowTest(TestCase):
 
 
 class SyncRandoViewTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user('bart', password='mahaha')
 
