@@ -117,9 +117,10 @@ Server migration
 ----------------
 
 It is a new installation with an additional backup/restore and a file transfert
-in between.
+in between. The commands below are examples to adapt to your actual configuration
+(server names, database configuration).
 
-Files and database backup on the old server :
+Backup files and database on the old server:
 
 ::
 
@@ -127,7 +128,7 @@ Files and database backup on the old server :
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
     tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/
 
-Files restoration on the new server :
+Get and unzip Geotrek sources on the new server:
 
 ::
 
@@ -135,19 +136,24 @@ Files restoration on the new server :
     unzip 2.0.0.zip
     mv Geotrek-2.0.0 Geotrek
     cd Geotrek
+
+Restore files on the new server:
+
+::
+
     scp old_server:Geotrek/data.tgz .
     tar xvzf data.tgz
 
 Then edit `etc/settings.ini` to update host variable and `geotrek/settings/custom.py`
 to update IGN key.
 
-Installation on the new server :
+Install Geotrek on the new server:
 
 ::
 
     ./install.sh
 
-Database restoration on the new server :
+Restore database on the new server:
 
 ::
 

@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
+from django.template.base import TemplateDoesNotExist
 
 from paperclip.models import Attachment
 
@@ -71,6 +72,20 @@ class ParserTests(TestCase):
         organisms = Organism.objects.order_by('pk')
         self.assertEqual(organisms[0].organism, u"Comité Théodule")
         self.assertEqual(organisms[1].organism, u"Comité Hippolyte")
+
+    def test_report_format_text(self):
+        parser = OrganismParser()
+        self.assertRegexpMatches(parser.report(), '0/0 lines imported.')
+        self.assertNotRegexpMatches(parser.report(), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+
+    def test_report_format_html(self):
+        parser = OrganismParser()
+        self.assertRegexpMatches(parser.report(output_format='html'), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+
+    def test_report_format_bad(self):
+        parser = OrganismParser()
+        with self.assertRaises(TemplateDoesNotExist):
+            parser.report(output_format='toto')
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))

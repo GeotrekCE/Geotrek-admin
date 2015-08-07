@@ -39,7 +39,7 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
         'total': 100,
         'filename': filename.split('/').pop(-1),
         'parser': class_name,
-        'report': parser.report().replace('$celery_id', current_task.request.id)
+        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id)
     }
 
 
@@ -71,12 +71,10 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     except Exception as e:
         raise e
 
-    print(parser.report())
-
     return {
         'current': 100,
         'total': 100,
         'filename': _("Import from web."),
         'parser': class_name,
-        'report': parser.report().replace('$celery_id', current_task.request.id)
+        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id)
     }
