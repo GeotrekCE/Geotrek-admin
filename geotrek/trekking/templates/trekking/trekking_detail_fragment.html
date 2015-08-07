@@ -36,4 +36,24 @@
         </td>
     </tr>
     {% endif %}
+
+    {% if modelname != "service" %}
+    <tr>
+        <th>{% trans "Services" %}</th>
+        <td>
+            {% if perms.trekking.add_service %}
+            <p class="autohide"><a href="{% url 'trekking:service_add' %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a new service" %}</a>
+            </p>
+            {% endif %}
+
+            {% if modelname == "trek" %}
+                {# Because, in trek detail, we show enumeration on service layer #}
+                {% valuelist object.services field='name' enumeration=True %}
+            {% else %}
+                {% valuelist object.services field='name' %}
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
 </table>

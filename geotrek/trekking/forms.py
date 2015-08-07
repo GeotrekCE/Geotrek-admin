@@ -12,7 +12,7 @@ from mapentity.widgets import SelectMultipleWithPop
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from .models import Trek, POI, WebLink
+from .models import Trek, POI, WebLink, Service, ServiceType
 
 
 class TrekRelationshipForm(forms.ModelForm):
@@ -67,58 +67,6 @@ class TrekForm(BaseTrekForm):
 
     leftpanel_scrollable = False
 
-    fieldslayout = [
-        Div(
-            HTML("""
-            <ul class="nav nav-tabs">
-                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
-            Div(
-                Div(
-                    'name',
-                    'review',
-                    'published',
-                    'is_park_centered',
-                    'departure',
-                    'arrival',
-                    'duration',
-                    'difficulty',
-                    'route',
-                    'ambiance',
-                    'access',
-                    'description_teaser',
-                    'description',
-                    css_id="main",
-                    css_class="scrollable tab-pane active"
-                ),
-                Div(
-                    'points_reference',
-                    'disabled_infrastructure',
-                    'advised_parking',
-                    'parking_location',
-                    'public_transport',
-                    'advice',
-                    'themes',
-                    'networks',
-                    'practice',
-                    'accessibilities',
-                    'web_links',
-                    'information_desks',
-                    'source',
-                    'parent',
-                    'eid',
-                    'eid2',
-                    Fieldset(_("Related treks"),),
-                    css_id="advanced",  # used in Javascript for activating tab if error
-                    css_class="scrollable tab-pane"
-                ),
-                css_class="tab-content"
-            ),
-            css_class="tabbable"
-        ),
-    ]
-
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
@@ -139,6 +87,59 @@ class TrekForm(BaseTrekForm):
         for f in ['themes', 'networks', 'accessibilities',
                   'web_links', 'information_desks', 'source']:
             self.fields[f].help_text = ''
+
+        self.fieldslayout = [
+            Div(
+                HTML("""
+                <ul class="nav nav-tabs">
+                    <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                    <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+                </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+                Div(
+                    Div(
+                        'name',
+                        'review',
+                        'published',
+                        'is_park_centered',
+                        'departure',
+                        'arrival',
+                        'duration',
+                        'difficulty',
+                        'route',
+                        'ambiance',
+                        'access',
+                        'description_teaser',
+                        'description',
+                        HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'),
+                        css_id="main",
+                        css_class="scrollable tab-pane active"
+                    ),
+                    Div(
+                        'points_reference',
+                        'disabled_infrastructure',
+                        'advised_parking',
+                        'parking_location',
+                        'public_transport',
+                        'advice',
+                        'themes',
+                        'networks',
+                        'practice',
+                        'accessibilities',
+                        'web_links',
+                        'information_desks',
+                        'source',
+                        'parent',
+                        'eid',
+                        'eid2',
+                        Fieldset(_("Related treks"),),
+                        css_id="advanced",  # used in Javascript for activating tab if error
+                        css_class="scrollable tab-pane"
+                    ),
+                    css_class="tab-content"
+                ),
+                css_class="tabbable"
+            ),
+        ]
 
     def clean_duration(self):
         """For duration, an HTML5 "number" field is used. If the user fills an invalid
@@ -193,6 +194,43 @@ class POIForm(BasePOIForm):
 
     class Meta(BasePOIForm.Meta):
         fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review']
+
+
+if settings.TREKKING_TOPOLOGY_ENABLED:
+
+    class BaseServiceForm(TopologyForm):
+        def __init__(self, *args, **kwargs):
+            super(BaseServiceForm, self).__init__(*args, **kwargs)
+            self.fields['topology'].widget = PointTopologyWidget()
+
+        class Meta(TopologyForm.Meta):
+            model = Service
+
+else:
+
+    class BaseServiceForm(CommonForm):
+        geomfields = ['geom']
+
+        def __init__(self, *args, **kwargs):
+            super(BaseServiceForm, self).__init__(*args, **kwargs)
+            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+
+        class Meta(CommonForm.Meta):
+            model = Service
+            fields = CommonForm.Meta.fields + ['geom']
+
+
+class ServiceForm(BaseServiceForm):
+    fieldslayout = [
+        Div(
+            'type',
+            'review',
+            'eid',
+        )
+    ]
+
+    class Meta(BaseServiceForm.Meta):
+        fields = BaseServiceForm.Meta.fields + ['type']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

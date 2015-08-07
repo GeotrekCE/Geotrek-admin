@@ -31,6 +31,7 @@
 {% block extrabody %}
     {{ block.super }}
     <script src="{% static "trekking/poilayer.js" %}"></script>
+    <script src="{% static "trekking/servicelayer.js" %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
@@ -72,6 +73,23 @@
                 map.addLayer(pois);
 
                 pois.showEnumeration();
+            });
+
+            //
+            // Trek services layer
+            $.getJSON('{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+                var services = new ServiceLayer(data, {
+                    iconSize: {{ view.icon_sizes.service }}
+                });
+
+                var serviceUrl = "{% url 'trekking:service_detail' 0 %}";
+                services.eachLayer(function (layer) {
+                    layer.on('dblclick', function (e) {
+                        window.location = serviceUrl.replace('0', layer.properties.pk);
+                    });
+                });
+                map.layerscontrol.addOverlay(services, tr('services'), tr('Objects'));
+                map.addLayer(services);
             });
 
             //

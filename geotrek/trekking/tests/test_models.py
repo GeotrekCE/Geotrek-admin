@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory, TrekWithPOIsFactory)
+from geotrek.trekking.factories import (POIFactory, TrekFactory,
+                                        TrekWithPOIsFactory, ServiceFactory)
 from geotrek.trekking.models import Trek
 
 
@@ -156,25 +157,33 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
         poi = POIFactory.create(no_path=True)
+        service = ServiceFactory.create(no_path=True)
+        service.type.practices.add(trek.practice)
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       start_position=0.5)
         PathAggregationFactory.create(topo_object=trek, path=p2)
         PathAggregationFactory.create(topo_object=poi, path=p1,
                                       start_position=0.6, end_position=0.6)
+        PathAggregationFactory.create(topo_object=service, path=p1,
+                                      start_position=0.7, end_position=0.7)
         # /!\ District are automatically linked to paths at DB level
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
 
         # Ensure related objects are accessible
         self.assertItemsEqual(trek.pois, [poi])
+        self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
+        self.assertItemsEqual(service.treks, [trek])
         self.assertItemsEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       end_position=0.5)
         self.assertItemsEqual(trek.pois, [poi])
+        self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
+        self.assertItemsEqual(service.treks, [trek])
 
         d2 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
@@ -189,6 +198,17 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.pois, [poi])
         poi.delete()
         self.assertItemsEqual(trek.pois, [])
+
+    def test_deleted_services(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        service = ServiceFactory.create(no_path=True)
+        service.type.practices.add(trek.practice)
+        service.add_path(p1, start=0.6, end=0.6)
+        self.assertItemsEqual(trek.services, [service])
+        service.delete()
+        self.assertItemsEqual(trek.services, [])
 
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))

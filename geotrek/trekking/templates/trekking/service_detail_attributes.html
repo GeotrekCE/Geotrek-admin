@@ -1,0 +1,22 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n mapentity_tags %}
+
+{% block attributes %}
+    <h3>{% trans "Attributes" %}</h3>
+
+    <table class="table-striped table-bordered table">
+         <tr>
+            <th>{{ service|verbose:"type" }}</th>
+            <td>{{ service.type }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{{ poi.eid }}</td>
+        </tr>
+
+        {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}
