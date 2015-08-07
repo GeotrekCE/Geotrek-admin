@@ -305,6 +305,23 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             PicturesSerializerMixin.Meta.fields
 
 
+class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.ServiceType
+        fields = ('id', 'pictogram', 'name')
+
+
+class ServiceSerializer(rest_serializers.ModelSerializer):
+    type = ServiceTypeSerializer()
+    structure = StructureSerializer()
+
+    class Meta:
+        model = trekking_models.Service
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        geo_field = 'geom'
+        fields = ('id', 'type', 'structure')
+
+
 def timestamp(dt):
     epoch = make_aware(datetime.datetime(1970, 1, 1), utc)
     return str(int((dt - epoch).total_seconds()))

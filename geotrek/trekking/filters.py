@@ -2,7 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
 from geotrek.core.filters import TopologyFilter
 
-from .models import Trek, POI
+from .models import Trek, POI, Service
 
 
 class TrekFilterSet(MapEntityFilterSet):
@@ -23,3 +23,9 @@ class POIFilterSet(MapEntityFilterSet):
     class Meta:
         model = POI
         fields = ['published', 'type', 'trek', 'structure']
+
+
+class ServiceFilterSet(MapEntityFilterSet):
+    class Meta:
+        model = Service
+        fields = ['type', 'structure']
