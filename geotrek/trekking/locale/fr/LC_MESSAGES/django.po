@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-23 14:14+0200\n"
+"POT-Creation-Date: 2015-08-07 14:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,9 @@ msgstr "Une difficulté avec l'id %s existe déjà"
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
+msgid "Practices"
+msgstr "Pratiques"
+
 msgid "Trek"
 msgstr "Itinéraire"
 
@@ -33,6 +36,9 @@ msgstr "Basique"
 
 msgid "Advanced"
 msgstr "Avancé"
+
+msgid "Insert service:"
+msgstr "Insérer un service :"
 
 msgid "Related treks"
 msgstr "Itinéraires liés"
@@ -232,9 +238,6 @@ msgstr ""
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
 
-msgid "Practices"
-msgstr "Pratiques"
-
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
 
@@ -298,21 +301,46 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
+msgid "Service type"
+msgstr "Type de service"
+
+msgid "Service types"
+msgstr "Types de service"
+
+msgid "Service"
+msgstr "Service"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Waiting for publication"
+msgstr "En attente de publication"
+
+msgid "Published Services"
+msgstr "Services publiés"
+
 #, python-brace-format
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
+"Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à "
+"'2h30', '2,5' ou '2.5'"
 
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
 msgstr ""
+"Le segment {i} n'est pas continu ({distance} m) dans la géométrie du champ '{src}'"
 
 #, python-brace-format
 msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
-msgstr ""
+msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être LineString, "
+"pas {geom_type}"
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "trek"
@@ -448,7 +476,7 @@ msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
 
 msgid "Length"
-msgstr ""
+msgstr "Longueur"
 
 msgid "Trek_ascent"
 msgstr "Dénivelé positif"
@@ -464,6 +492,9 @@ msgstr "Itinéraire"
 
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
+
+msgid "Add a new service"
+msgstr "Ajouter un service"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

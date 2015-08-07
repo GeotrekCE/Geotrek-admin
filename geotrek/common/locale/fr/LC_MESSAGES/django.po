@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-23 14:08+0100\n"
+"POT-Creation-Date: 2015-08-07 14:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,21 @@ msgstr "min %s"
 #, python-format
 msgid "max %s"
 msgstr "max %s"
+
+msgid "Parser"
+msgstr "Parseur"
+
+msgid "Import"
+msgstr "Importer"
+
+msgid "File"
+msgstr "Fichier"
+
+msgid "Upload"
+msgstr "Télécharger"
+
+msgid "File must be of ZIP type."
+msgstr "Le fichier doit être de type ZIP."
 
 msgid "Insertion date"
 msgstr "Date d'insertion"
@@ -56,14 +71,14 @@ msgstr "Publié"
 msgid "Publication date"
 msgstr "Date de publication"
 
-msgid "Waiting for publication"
-msgstr "En attente de publication"
-
 msgid "Name"
 msgstr "Nom"
 
 msgid "Public name (Change carefully)"
 msgstr "Nom public (changez prudemment)"
+
+msgid "Waiting for publication"
+msgstr "En attente de publication"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
@@ -74,20 +89,11 @@ msgstr "Organisme"
 msgid "Organisms"
 msgstr "Organismes"
 
-msgid "Cirkwi id"
-msgstr "Id Cirkwi"
-
-msgid "Cirkwi name"
-msgstr "Nom Cirkwi"
+msgid "Label"
+msgstr "Label"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
-
-msgid "Cirkwi tags"
-msgstr "Tags Cirkwi"
-
-msgid "Label"
-msgstr "Label"
 
 msgid "Theme"
 msgstr "Thème"
@@ -104,17 +110,99 @@ msgstr "Source des fiches"
 msgid "Record sources"
 msgstr "Sources des fiches"
 
-msgid "Topology is not valid."
-msgstr "L'événement n'est pas valide"
+#, python-brace-format
+msgid "Line {line}"
+msgstr "Ligne {line}"
 
+#, python-brace-format
+msgid "Missing {required}field '{src}'"
+msgstr "Le champ {required}'{src}' est manquant"
+
+#, python-brace-format
+msgid "Destination field '{dst}' not in natural keys configuration"
+msgstr "Le champ de destination '{dst}' n'est pas dans les clés naturelles"
+
+#, python-brace-format
+msgid "Null value not allowed for field '{src}'"
+msgstr "La valeur null n'est pas autorisée pour le champ '{src}'"
+
+#, python-brace-format
+msgid "Blank value not allowed for field '{src}'"
+msgstr "La valeur blank n'est pas autorisée pour le champ '{src}'"
+
+#, python-brace-format
+msgid "Eid field '{eid_dst}' missing in parser configuration"
+msgstr "Le champ eid '{eid_dst}' manque dans la configuration du parseur"
+
+#, python-brace-format
+msgid "Missing id field '{eid_src}'"
+msgstr "L'identifiant '{eid_src}' est manquant"
+
+#, python-brace-format
 msgid ""
-"This project is co-financed by the European Union through FEDER Massif Alpin."
+"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier"
 msgstr ""
-"Ce projet est co-financé par l'Union Européenne au travers du FEDER Massif "
-"Alpin"
+"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas "
+"d'itinéraire avec cet identifiant"
 
-msgid "Powered by http://geotrek.fr"
-msgstr "Propulsé par http://geotrek.fr"
+#, python-brace-format
+msgid ""
+"Bad value '{eid_val}' for field '{eid_src}'. Multiple treks with this "
+"identifier"
+msgstr ""
+"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs "
+"itinéraires avec cet identifiant"
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should contain {values}"
+msgstr ""
+"Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgstr ""
+"Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être {values}"
+
+#, python-brace-format
+msgid ""
+"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+"{model} '{val}' n'existait pas dans Geotrek-Admin. Il a été créé "
+"autoamtiquement"
+
+#, python-brace-format
+msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+
+msgid "Filename is required"
+msgstr "un nom de fichier est requis"
+
+#, python-brace-format
+msgid "File does not exists at: {filename}"
+msgstr "Le fichier à l'emplacement {filename} n'existe pas"
+
+msgid "Invalid geometry pointer"
+msgstr "Pointeur de géométrie invalide"
+
+msgid "Attachments"
+msgstr "Pièce-jointes"
+
+#, python-brace-format
+msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+"Le type de fichier '{name}' n'existe pas dans Geotrek-Admin. Merci de "
+"l'ajouter"
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
+msgstr "Impossible de télécharger '{url}'"
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr "Impossible de télécharger '{url}'. Code de statut HTTP {status_code}"
+
+msgid "Import from web."
+msgstr "Importer du web."
 
 msgid "Any year"
 msgstr "N'importe quelle année"
@@ -134,6 +222,48 @@ msgstr "Cadre (WGS84)"
 msgid "Mouse"
 msgstr "Souris"
 
+msgid "Imports"
+msgstr "Imports"
+
+msgid "Display report"
+msgstr "Afficher le rapport"
+
+#, python-format
+msgid "%(n)s/%(nb_lines)s line imported."
+msgid_plural "%(n)s/%(nb_lines)s lines imported."
+msgstr[0] "%(n)s/%(nb_lines)s ligne importée."
+msgstr[1] "%(n)s/%(nb_lines)s lignes importées."
+
+#, python-format
+msgid "%(n)s record created."
+msgid_plural "%(n)s records created."
+msgstr[0] "%(n)s enregistrement créé."
+msgstr[1] "%(n)s enregistrements créés."
+
+#, python-format
+msgid "%(n)s record updated."
+msgid_plural "%(n)s records updated."
+msgstr[0] "%(n)s enregistrement mis à jour."
+msgstr[1] "%(n)s enregistrements mis à jour."
+
+#, python-format
+msgid "%(n)s record deleted."
+msgid_plural "%(n)s records deleted."
+msgstr[0] "%(n)s enregistrement supprimé."
+msgstr[1] "%(n)s enregistrements supprimés."
+
+#, python-format
+msgid "%(n)s record unmodified."
+msgid_plural "%(n)s records unmodified."
+msgstr[0] "%(n)s enregistrement non modifié."
+msgstr[1] "%(n)s enregistrements non modifiés."
+
+#, python-format
+msgid "%(n)s warning:"
+msgid_plural "%(n)s warnings:"
+msgstr[0] "%(n)s avertissement:"
+msgstr[1] "%(n)s avertissements:"
+
 msgid "Draft"
 msgstr "Brouillon"
 
@@ -146,5 +276,5 @@ msgstr "semble incomplet;"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide;"
 
-#~ msgid "Not published"
-#~ msgstr "Non publié"
+msgid "Topology is not valid."
+msgstr "L'événement n'est pas valide"
