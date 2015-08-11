@@ -5,6 +5,10 @@ CHANGELOG
 2.0.1.dev0
 ------------------
 
+**New features**
+
+* Services
+
 **Bug fixes**
 
 * Reload supervisor configuration after Geotrek upgrade

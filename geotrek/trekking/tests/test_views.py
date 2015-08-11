@@ -33,10 +33,11 @@ from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.models import POI, Trek
+from geotrek.trekking.models import POI, Trek, Service
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
-                                        TrekRelationshipFactory)
+                                        TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
+                                        TrekWithServicesFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -298,6 +299,21 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poislayer = json.loads(response.content)
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
+
+    def test_services_geojson(self):
+        trek = TrekWithServicesFactory.create(published=True)
+        self.assertEqual(len(trek.services), 2)
+        service = trek.services[0]
+        service.published = True
+        service.save()
+        self.assertEqual(len(trek.services), 2)
+
+        url = '/api/en/treks/{pk}/services.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        serviceslayer = json.loads(response.content)
+        servicefeature = serviceslayer['features'][0]
+        self.assertTrue('type' in servicefeature['properties'])
 
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()
@@ -1106,3 +1122,67 @@ class SyncRandoViewTest(TestCase):
         self.user.is_superuser = True
         response = self.client.get(reverse('trekking:sync_randos'))
         self.assertEqual(response.status_code, 302)
+
+
+class ServiceViewsTest(CommonTest):
+    model = Service
+    modelfactory = ServiceFactory
+    userfactory = TrekkingManagerFactory
+
+    def get_good_data(self):
+        PathFactory.create()
+        return {
+            'type': ServiceTypeFactory.create().pk,
+            'topology': '{"lat": 5.1, "lng": 6.6}'
+        }
+
+    def test_empty_topology(self):
+        self.login()
+        data = self.get_good_data()
+        data['topology'] = ''
+        response = self.client.post(self.model.get_add_url(), data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+
+    def test_listing_number_queries(self):
+        self.login()
+        # Create many instances
+        for i in range(100):
+            self.modelfactory.create()
+        for i in range(10):
+            DistrictFactory.create()
+
+        # Enable query counting
+        settings.DEBUG = True
+
+        for url in [self.model.get_jsonlist_url(),
+                    self.model.get_format_list_url()]:
+            with self.assertNumQueries(5):
+                self.client.get(url)
+
+        settings.DEBUG = False
+
+
+class ServiceJSONTest(TrekkingManagerTest):
+    def setUp(self):
+        self.login()
+        self.service = ServiceFactory.create(type__published=True)
+        self.pk = self.service.pk
+
+    def test_list(self):
+        url = '/api/en/services.json'
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+        self.assertEqual(len(self.result), 1)
+        self.assertTrue('type' in self.result[0])
+
+    def test_detail(self):
+        url = '/api/en/services/%s.json' % self.pk
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+        self.assertDictEqual(self.result['type'],
+                             {'id': self.service.type.pk,
+                              'name': self.service.type.name,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
+                              })

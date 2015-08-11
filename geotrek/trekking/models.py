@@ -589,3 +589,104 @@ class POIType(PictogramMixin):
 
     def __unicode__(self):
         return self.label
+
+
+class ServiceType(PictogramMixin, PublishableMixin):
+
+    practices = models.ManyToManyField('Practice', related_name="services",
+                                       db_table="o_r_service_pratique", blank=True, null=True,
+                                       verbose_name=_(u"Practices"))
+
+    class Meta:
+        db_table = 'o_b_service'
+        verbose_name = _(u"Service type")
+        verbose_name_plural = _(u"Service types")
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class ServiceManager(models.GeoManager):
+    def get_queryset(self):
+        return super(ServiceManager, self).get_queryset().select_related('type', 'structure')
+
+
+class Service(StructureRelated, MapEntityMixin, Topology):
+
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       db_column='evenement')
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_(u"Type"), db_column='type')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+
+    class Meta:
+        db_table = 'o_t_service'
+        verbose_name = _(u"Service")
+        verbose_name_plural = _(u"Services")
+
+    # Override default manager
+    objects = Topology.get_manager_cls(ServiceManager)()
+
+    def __unicode__(self):
+        return unicode(self.type)
+
+    @property
+    def name(self):
+        return self.type.name
+
+    @property
+    def name_display(self):
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.name,
+                                                              self.name)
+        if self.type.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        elif self.type.review:
+            s = u'<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
+        return s
+
+    @classproperty
+    def name_verbose_name(cls):
+        return _("Type")
+
+    @property
+    def type_display(self):
+        return unicode(self.type)
+
+    @property
+    def serializable_type(self):
+        return {'label': self.type.label,
+                'pictogram': self.type.get_pictogram_url()}
+
+    @classmethod
+    def path_services(cls, path):
+        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+
+    @classmethod
+    def topology_services(cls, topology):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+        if isinstance(topology, Trek):
+            qs = qs.filter(type__practices=topology.practice)
+        return qs
+
+    @classmethod
+    def published_topology_services(cls, topology):
+        return cls.topology_services(topology).filter(type__published=True)
+
+    def distance(self, to_cls):
+        return settings.TOURISM_INTERSECTION_MARGIN
+
+Path.add_property('services', Service.path_services, _(u"Services"))
+Topology.add_property('services', Service.topology_services, _(u"Services"))
+Topology.add_property('published_services', Service.published_topology_services, _(u"Published Services"))
+Intervention.add_property('services', lambda self: self.topology.services if self.topology else [], _(u"Services"))
+Project.add_property('services', lambda self: self.edges_by_attr('services'), _(u"Services"))
+tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _(u"Services"))
+tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))
+tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _(u"Services"))
+tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))

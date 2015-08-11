@@ -4,13 +4,14 @@ from mapentity import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import PublishableEntityOptions
+from mapentity.registry import MapEntityOptions
 
 from . import models
 from .views import (
     TrekDocumentPublic, POIDocumentPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
-    SyncRandoRedirect
+    SyncRandoRedirect, TrekServiceViewSet,
 )
 from . import serializers as trekking_serializers
 
@@ -18,6 +19,7 @@ from . import serializers as trekking_serializers
 urlpatterns = patterns(
     '',
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/services\.geojson$', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).kml$', TrekKMLDetail.as_view(), name="trek_kml_detail"),
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
@@ -51,5 +53,12 @@ class POIEntityOptions(PublishableEntityOptions):
         return trekking_serializers.POISerializer
 
 
+class ServiceEntityOptions(MapEntityOptions):
+
+    def get_serializer(self):
+        return trekking_serializers.ServiceSerializer
+
+
 urlpatterns += registry.register(models.Trek, TrekEntityOptions)
 urlpatterns += registry.register(models.POI, POIEntityOptions)
+urlpatterns += registry.register(models.Service, ServiceEntityOptions)

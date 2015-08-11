@@ -104,6 +104,22 @@ class TrekWithPOIsFactory(TrekFactory):
         return trek
 
 
+class TrekWithServicesFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithServicesFactory, cls)._prepare(create, **kwargs)
+        path = trek.paths.all()[0]
+        service1 = ServiceFactory.create(no_path=True)
+        service1.add_path(path, start=0.5, end=0.5)
+        service1.type.practices.add(trek.practice)
+        service2 = ServiceFactory.create(no_path=True)
+        service2.add_path(path, start=0.4, end=0.4)
+        service2.type.practices.add(trek.practice)
+        if create:
+            trek.save()
+        return trek
+
+
 class TrekRelationshipFactory(factory.Factory):
     FACTORY_FOR = models.TrekRelationship
 
@@ -129,3 +145,17 @@ class POIFactory(PointTopologyFactory):
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
     type = factory.SubFactory(POITypeFactory)
     published = True
+
+
+class ServiceTypeFactory(factory.Factory):
+    FACTORY_FOR = models.ServiceType
+
+    name = factory.Sequence(lambda n: u"ServiceType %s" % n)
+    pictogram = dummy_filefield_as_sequence('pictogram %s')
+    published = True
+
+
+class ServiceFactory(PointTopologyFactory):
+    FACTORY_FOR = models.Service
+
+    type = factory.SubFactory(ServiceTypeFactory)
