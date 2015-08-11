@@ -1,5 +1,5 @@
 function updateImportProgressBars() {
-	$.getJSON('/import-update.json', function(json) {
+	$.getJSON('/commands/import-update.json', function(json) {
 		parent = document.querySelector('#progress-bars');
 		json.forEach(function(row) {
 			var local_percent = row.result.current + "%";

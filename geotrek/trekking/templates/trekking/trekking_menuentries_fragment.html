@@ -1,0 +1,5 @@
+{% load i18n %}
+
+{% if user.is_superuser %}
+    <li><a href="{% url 'trekking:sync_randos' %}">{% trans "Sync" %}</a></li>
+{% endif %}

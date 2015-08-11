@@ -45,6 +45,7 @@ STATIC_ROOT = envini.get('staticroot', section="django", default=os.path.join(DE
 CACHE_ROOT = envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
 UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
 MAPENTITY_CONFIG['TEMP_DIR'] = envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
+SYNC_RANDO_ROOT = envini.get('syncrandoroot', section="django", default=os.path.join(DEPLOY_ROOT, 'data'))
 
 MAILALERTSUBJECT = envini.get('mailalertsubject', section="settings")
 MAILALERTMESSAGE = envini.get('mailalertmessage', section="settings")

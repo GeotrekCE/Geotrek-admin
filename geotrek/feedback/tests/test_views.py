@@ -18,10 +18,10 @@ class ReportViewsetMailSend(TestCase):
         self.client.post(
             '/api/en/reports/report',
             {
-            'name': 'toto',
-            'email': 'test@geotrek.local',
-            'comment': 'Test comment',
-        })
+                'name': 'toto',
+                'email': 'test@geotrek.local',
+                'comment': 'Test comment',
+            })
 
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, settings.MAILALERTSUBJECT)

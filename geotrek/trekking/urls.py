@@ -11,7 +11,7 @@ from .views import (
     TrekDocumentPublic, POIDocumentPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
-    TrekServiceViewSet,
+    SyncRandoRedirect, TrekServiceViewSet,
 )
 from . import serializers as trekking_serializers
 
@@ -25,6 +25,7 @@ urlpatterns = patterns(
     url(r'^popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
     url(r'^api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
     url(r'^api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
+    url(r'^commands/sync$', SyncRandoRedirect.as_view(), name='sync_randos')
 )
 
 
