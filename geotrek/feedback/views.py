@@ -42,8 +42,9 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
     authentication_classes = []
+    permission_classes = [AllowAny]
 
-    @list_route(methods=['post'], permission_classes=[AllowAny])
+    @list_route(methods=['post'])
     def report(self, request, lang=None):
         send_mail(
             settings.MAILALERTSUBJECT,
