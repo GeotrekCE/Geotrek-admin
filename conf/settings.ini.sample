@@ -59,6 +59,16 @@ mailpassword =
 mailport = 25
 mailtls = False
 
+mailalertsubject = Geotrek : Signal a mistake
+mailalertmessage = Hello,
+
+                    We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
+
+                    Best regards,
+
+                    The Geotrek Team
+                    http://www.geotrek.fr
+
 #
 #  Internal settings
 #..........................

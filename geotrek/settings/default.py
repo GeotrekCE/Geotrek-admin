@@ -46,6 +46,8 @@ CACHE_ROOT = envini.get('cacheroot', section="django", default=os.path.join(DEPL
 UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
 MAPENTITY_CONFIG['TEMP_DIR'] = envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
 
+MAILALERTSUBJECT = envini.get('mailalertsubject', section="settings")
+MAILALERTMESSAGE = envini.get('mailalertmessage', section="settings")
 
 DATABASES['default']['NAME'] = envini.get('dbname')
 DATABASES['default']['USER'] = envini.get('dbuser')

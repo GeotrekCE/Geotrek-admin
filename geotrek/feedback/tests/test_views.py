@@ -1,13 +1,31 @@
 import json
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.test import TestCase
 from django.contrib.auth.models import Permission
+from django.core import mail
+
 from mapentity.factories import SuperUserFactory, UserFactory
 
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import factories as feedback_factories
+
+
+class ReportViewsetMailSend(TestCase):
+    def test_mail_send_on_request(self):
+        self.client.post(
+            '/api/en/reports/report',
+            {
+            'name': 'toto',
+            'email': 'test@geotrek.local',
+            'comment': 'Test comment',
+        })
+
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].subject, settings.MAILALERTSUBJECT)
+        self.assertEqual(mail.outbox[0].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
 class ReportViewsTest(CommonTest):

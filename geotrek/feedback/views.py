@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.views.generic.list import ListView
+from django.core.mail import send_mail
 from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
 from mapentity import views as mapentity_views
@@ -39,7 +41,14 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
+    authentication_classes = []
 
     @list_route(methods=['post'], permission_classes=[AllowAny])
     def report(self, request, lang=None):
+        send_mail(
+            settings.MAILALERTSUBJECT,
+            settings.MAILALERTMESSAGE,
+            settings.DEFAULT_FROM_EMAIL,
+            [request.DATA.get('email')]
+        )
         return super(ReportViewSet, self).create(request)
