@@ -6,7 +6,7 @@ from celery import shared_task, current_task
 from django.utils.translation import ugettext as _
 
 
-@shared_task
+@shared_task(name='geotrek.common.import-file')
 def import_datas(filename, class_name, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
@@ -22,7 +22,8 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
                 'current': int(100 * progress),
                 'total': 100,
                 'filename': filename.split('/').pop(-1),
-                'parser': class_name
+                'parser': class_name,
+                'name': current_task.name
             }
         )
         sys.stdout.write(
@@ -39,11 +40,12 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
         'total': 100,
         'filename': filename.split('/').pop(-1),
         'parser': class_name,
-        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id)
+        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id),
+        'name': current_task.name
     }
 
 
-@shared_task
+@shared_task(name='geotrek.common.import-web')
 def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
@@ -59,7 +61,8 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
                 'current': int(100 * progress),
                 'total': 100,
                 'filename': _("Import from web."),
-                'parser': class_name
+                'parser': class_name,
+                'name': current_task.name
             }
         )
         sys.stdout.write(
@@ -76,5 +79,6 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
         'total': 100,
         'filename': _("Import from web."),
         'parser': class_name,
-        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id)
+        'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id),
+        'name': current_task.name
     }

@@ -4,9 +4,9 @@ from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils import translation
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, RedirectView
 from django.views.generic.detail import BaseDetailView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
@@ -30,6 +30,24 @@ from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
+from .tasks import launch_sync_rando
+
+
+class SyncRandoRedirect(RedirectView):
+    http_method_names = ['get']
+    permanent = False
+    query_string = False
+
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def get(self, request, *args, **kwargs):
+        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http', host=self.request.get_host())
+        launch_sync_rando.delay(url=url)
+        return super(SyncRandoRedirect, self).get(request, *args, **kwargs)
+
+    def get_redirect_url(self, *args, **kwargs):
+        self.url = self.request.META.get('HTTP_REFERER')
+        return super(SyncRandoRedirect, self).get_redirect_url(*args, **kwargs)
 
 
 class FlattenPicturesMixin(object):
