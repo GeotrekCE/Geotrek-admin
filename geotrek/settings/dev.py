@@ -34,3 +34,5 @@ LEAFLET_CONFIG['SRID'] = 3857
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
