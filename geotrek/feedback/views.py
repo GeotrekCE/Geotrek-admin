@@ -47,7 +47,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     @list_route(methods=['post'])
     def report(self, request, lang=None):
         response = super(ReportViewSet, self).create(request)
-        if response.status_code == 201:
+        if settings.MAILALERTSUBJECT and response.status_code == 201:
             send_mail(
                 settings.MAILALERTSUBJECT,
                 settings.MAILALERTMESSAGE,
