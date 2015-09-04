@@ -23,7 +23,7 @@ class DurationParserMixin(object):
                 if hours < 0:
                     raise ValueError
                 return hours
-        except ValueError:
+        except (TypeError, ValueError):
             self.add_warning(_(u"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
 

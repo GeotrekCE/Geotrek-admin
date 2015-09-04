@@ -24,8 +24,8 @@ class ReportViewsetMailSend(TestCase):
             })
 
         self.assertEqual(len(mail.outbox), 2)
-        self.assertEqual(mail.outbox[0].subject, settings.MAILALERTSUBJECT)
-        self.assertEqual(mail.outbox[0].from_email, settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(mail.outbox[1].subject, "Acknowledgment of feedback email")
+        self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
 class ReportViewsTest(CommonTest):

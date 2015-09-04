@@ -15,3 +15,5 @@ LANGUAGE_CODE = 'en'
 SOUTH_TESTS_MIGRATE = False
 
 MAPENTITY_CONFIG['MAPENTITY_WEASYPRINT'] = False
+
+MAILALERTSUBJECT = "Acknowledgment of feedback email"
