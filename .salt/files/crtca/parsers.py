@@ -69,10 +69,15 @@ class CrtCaParser(TourismSystemParser):
         return self.filter_comm(val, '04.02.05')
 
     def filter_geom(self, src, val):
-        lat, lng = val
-        if lng == '' or lat == '':
-            raise RowImportError(u"Required value for fields 'GmapLatitude' and 'GmapLongitude'.")
-        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        strlat, strlng = val
+        try:
+            lat = float(strlat)
+            lng = float(strlng)
+        except ValueError:
+            raise RowImportError(u"Required float values for fields 'GmapLatitude' and 'GmapLongitude'.")
+        if lat < -90 or lat > 90 or lng < -180 or lng > 180:
+            raise RowImportError(u"Invalid value for fields 'GmapLatitude' and 'GmapLongitude'.")
+        geom = Point(lng, lat, srid=4326)  # WGS84
         geom.transform(settings.SRID)
         if not Trek.objects.filter(geom__dwithin=(geom, settings.TOURISM_INTERSECTION_MARGIN)).exists():
             raise RowImportError('Too far from a trek')  # Will be deleted if existing
