@@ -67,6 +67,58 @@ class TrekForm(BaseTrekForm):
 
     leftpanel_scrollable = False
 
+    fieldslayout = [
+        Div(
+            HTML("""
+            <ul class="nav nav-tabs">
+                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
+                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
+            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+            Div(
+                Div(
+                    'name',
+                    'review',
+                    'published',
+                    'is_park_centered',
+                    'departure',
+                    'arrival',
+                    'duration',
+                    'difficulty',
+                    'route',
+                    'ambiance',
+                    'access',
+                    'description_teaser',
+                    'description',
+                    css_id="main",
+                    css_class="scrollable tab-pane active"
+                ),
+                Div(
+                    'points_reference',
+                    'disabled_infrastructure',
+                    'advised_parking',
+                    'parking_location',
+                    'public_transport',
+                    'advice',
+                    'themes',
+                    'networks',
+                    'practice',
+                    'accessibilities',
+                    'web_links',
+                    'information_desks',
+                    'source',
+                    'parent',
+                    'eid',
+                    'eid2',
+                    Fieldset(_("Related treks"),),
+                    css_id="advanced",  # used in Javascript for activating tab if error
+                    css_class="scrollable tab-pane"
+                ),
+                css_class="tab-content"
+            ),
+            css_class="tabbable"
+        ),
+    ]
+
     def __init__(self, *args, **kwargs):
         super(TrekForm, self).__init__(*args, **kwargs)
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
@@ -88,58 +140,7 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks', 'source']:
             self.fields[f].help_text = ''
 
-        self.fieldslayout = [
-            Div(
-                HTML("""
-                <ul class="nav nav-tabs">
-                    <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                    <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-                </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
-                Div(
-                    Div(
-                        'name',
-                        'review',
-                        'published',
-                        'is_park_centered',
-                        'departure',
-                        'arrival',
-                        'duration',
-                        'difficulty',
-                        'route',
-                        'ambiance',
-                        'access',
-                        'description_teaser',
-                        'description',
-                        HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'),
-                        css_id="main",
-                        css_class="scrollable tab-pane active"
-                    ),
-                    Div(
-                        'points_reference',
-                        'disabled_infrastructure',
-                        'advised_parking',
-                        'parking_location',
-                        'public_transport',
-                        'advice',
-                        'themes',
-                        'networks',
-                        'practice',
-                        'accessibilities',
-                        'web_links',
-                        'information_desks',
-                        'source',
-                        'parent',
-                        'eid',
-                        'eid2',
-                        Fieldset(_("Related treks"),),
-                        css_id="advanced",  # used in Javascript for activating tab if error
-                        css_class="scrollable tab-pane"
-                    ),
-                    css_class="tab-content"
-                ),
-                css_class="tabbable"
-            ),
-        ]
+        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
 
     def clean_duration(self):
         """For duration, an HTML5 "number" field is used. If the user fills an invalid
