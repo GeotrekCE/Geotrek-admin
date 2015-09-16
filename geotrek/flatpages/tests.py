@@ -113,4 +113,4 @@ class RESTViewsTest(TestCase):
                           [u'content', u'external_url', u'id', u'last_modified',
                            u'media',
                            u'publication_date', u'published', u'published_status',
-                           u'slug', u'target', u'title'])
+                           u'slug', u'source', u'target', u'title'])

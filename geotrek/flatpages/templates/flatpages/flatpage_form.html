@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'flatpages/css/jquery.gridmanager.css' %}">
     <link rel="stylesheet" href="{% static 'mapentity/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'mapentity/chosen/chosen.css' %}">
     <style>
         .form-horizontal .control-label {
             float: left;
@@ -53,8 +54,10 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/4.1.2/tinymce.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/4.1.2/jquery.tinymce.min.js"></script> 
     <script src="{% static 'flatpages/js/jquery.gridmanager.js' %}"></script> 
+    <script src="{% static 'mapentity/chosen/chosen.jquery.min.js' %}"></script>
     <script type="text/javascript">
         (function () {
+            $('select[multiple]').width('100%').chosen();
             $('#button-id-cancel').click(function() {
                   window.history.go(-1);
             });
