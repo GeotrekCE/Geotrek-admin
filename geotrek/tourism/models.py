@@ -273,6 +273,18 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _(u"Second list types")
 
 
+class ReservationSystem(models.Model):
+    name = models.CharField(verbose_name=_(u"Name"), max_length=256,
+                            blank=False, null=False, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _(u"Reservation system")
+        verbose_name_plural = _(u"Reservation systems")
+
+
 class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
@@ -305,7 +317,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                     null=True, blank=True, related_name='touristiccontents',
                                     verbose_name=_("Source"), db_table='t_r_contenu_touristique_source')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
-    reservation_id = models.CharField(verbose_name=_(u"Reservation id"), max_length=128, blank=True, db_column='id_reservation')
+    reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_(u"Reservation system"),
+                                           blank=True, null=True)
+    reservation_id = models.CharField(verbose_name=_(u"Reservation ID"), max_length=128,
+                                      blank=True, db_column='id_reservation')
     approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()

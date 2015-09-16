@@ -64,3 +64,10 @@ class TouristicEventTypeAdmin(TranslationAdmin):
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
+
+
+class ReservationSystemAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+admin.site.register(tourism_models.ReservationSystem, ReservationSystemAdmin)

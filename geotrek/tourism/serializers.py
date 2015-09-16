@@ -87,7 +87,8 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'source', 'approved', 'reservation_id') + \
+                  'treks', 'pois', 'source', 'approved', 'reservation_id',
+                  'reservation_system',) + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
