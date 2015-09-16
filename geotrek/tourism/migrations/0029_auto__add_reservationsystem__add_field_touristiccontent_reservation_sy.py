@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+
 from south.db import db
 from south.v2 import SchemaMigration
+
 from geotrek.tourism import models as tourism_models
 
 
@@ -19,7 +21,7 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tourism.ReservationSystem'], null=True, blank=True),
                       keep_default=False)
 
-        # creating default instances
+        # creating default instances
 
         tourism_models.ReservationSystem.objects.create(
             name=u"OpenSystem"
@@ -33,14 +35,12 @@ class Migration(SchemaMigration):
             name=u"Gîtes de France"
         )
 
-
     def backwards(self, orm):
         # Deleting model 'ReservationSystem'
         db.delete_table(u'tourism_reservationsystem')
 
         # Deleting field 'TouristicContent.reservation_system'
         db.delete_column('t_t_contenu_touristique', 'reservation_system_id')
-
 
     models = {
         u'authent.structure': {
