@@ -369,6 +369,8 @@ class TrekViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = Trek.objects.existing()
         qs = qs.filter(Q(published=True) | Q(parent__published=True))
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'])
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 

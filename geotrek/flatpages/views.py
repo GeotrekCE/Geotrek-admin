@@ -19,7 +19,10 @@ class FlatPageViewSet(viewsets.ModelViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return flatpages_models.FlatPage.objects.filter(published=True)
+        qs = flatpages_models.FlatPage.objects.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'])
+        return qs
 
 
 class FlatPageEditMixin(object):

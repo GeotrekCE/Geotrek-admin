@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 
+from django.core import management
+from django.conf import settings
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 from mapentity.factories import SuperUserFactory
+from geotrek.common.factories import RecordSourceFactory
 from geotrek.flatpages.factories import FlatPageFactory
 
 
@@ -114,3 +118,22 @@ class RESTViewsTest(TestCase):
                            u'media',
                            u'publication_date', u'published', u'published_status',
                            u'slug', u'source', u'target', u'title'])
+
+
+def factory(factory, source):
+    obj = factory()
+    obj.source = (source, )
+    obj.published = True
+    obj.save()
+
+
+class SyncTest(TestCase):
+    def test_sync(self):
+        source_a = RecordSourceFactory(name='A')
+        source_b = RecordSourceFactory(name='B')
+        factory(FlatPageFactory, source_a)
+        factory(FlatPageFactory, source_b)
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='A', verbosity='0')
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f:
+            flatpages = json.load(f)
+        self.assertEquals(len(flatpages), 1)
