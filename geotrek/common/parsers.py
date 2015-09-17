@@ -1,13 +1,16 @@
 # -*- encoding: utf-8 -*-
 
 import os
-import re
 import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 import json
 import urllib2
+
+from ftplib import FTP
+from os.path import dirname
+from urlparse import urlparse
 
 from django.db import models
 from django.conf import settings
