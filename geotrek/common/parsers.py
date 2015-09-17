@@ -466,6 +466,28 @@ class AttachmentParserMixin(object):
             return []
         return [(subval.strip(), '', '') for subval in val.split(self.separator)]
 
+    def has_not_changed(self, url, attachment):
+        from ftplib import FTP
+        from os.path import dirname
+        from urlparse import urlparse
+
+        try:
+            parsed_url = urlparse(url)
+            if parsed_url.scheme == 'ftp':
+                directory = dirname(parsed_url.path)
+
+                ftp = FTP(parsed_url.hostname)
+                ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+                ftp.cwd(directory)
+                return ftp.size(parsed_url.path.split('/')[-1:][0]) == attachment.attachment_file.size
+
+            if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
+                http = urllib2.urlopen(url)
+                return http.headers.getheader('content-length') == attachment.attachment_file.size
+        except:
+            return False
+        return True
+
     def save_attachments(self, src, val):
         updated = False
         for url, name, author in self.filter_attachments(src, val):
@@ -474,8 +496,7 @@ class AttachmentParserMixin(object):
             found = False
             for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                existing_name = attachment.attachment_file.name
-                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
+                if self.has_not_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
