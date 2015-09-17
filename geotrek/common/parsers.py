@@ -13,7 +13,6 @@ from ftplib import FTP
 from os.path import dirname
 from urlparse import urlparse
 
-
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -480,11 +479,13 @@ class AttachmentParserMixin(object):
                 ftp = FTP(parsed_url.hostname)
                 ftp.login(user=parsed_url.username, passwd=parsed_url.password)
                 ftp.cwd(directory)
-                return ftp.size(parsed_url.path.split('/')[-1:][0]) == attachment.attachment_file.size
+                size = ftp.size(parsed_url.path.split('/')[-1:][0])
+                return size == attachment.attachment_file.size
 
             if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
                 http = urllib2.urlopen(url)
-                return http.headers.getheader('content-length') == attachment.attachment_file.size
+                size = http.headers.getheader('content-length')
+                return size == attachment.attachment_file.size
         except:
             return False
         return True
