@@ -9,6 +9,11 @@ import xml.etree.ElementTree as ET
 import json
 import urllib2
 
+from ftplib import FTP
+from os.path import dirname
+from urlparse import urlparse
+
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -467,10 +472,6 @@ class AttachmentParserMixin(object):
         return [(subval.strip(), '', '') for subval in val.split(self.separator)]
 
     def has_not_changed(self, url, attachment):
-        from ftplib import FTP
-        from os.path import dirname
-        from urlparse import urlparse
-
         try:
             parsed_url = urlparse(url)
             if parsed_url.scheme == 'ftp':
