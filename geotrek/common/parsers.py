@@ -469,7 +469,7 @@ class AttachmentParserMixin(object):
             return []
         return [(subval.strip(), '', '') for subval in val.split(self.separator)]
 
-    def has_not_changed(self, url, attachment):
+    def has_size_changed(self, url, attachment):
         try:
             parsed_url = urlparse(url)
             if parsed_url.scheme == 'ftp':
@@ -497,7 +497,7 @@ class AttachmentParserMixin(object):
             found = False
             for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                if not self.has_not_changed(url, attachment):
+                if not self.has_size_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
