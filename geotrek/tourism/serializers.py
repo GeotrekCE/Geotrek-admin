@@ -74,6 +74,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
     source = RecordSourceSerializer()
+    reservation_system = rest_serializers.Field(source='reservation_system.name')
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')

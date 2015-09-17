@@ -64,7 +64,7 @@
         </tr>
         <tr>
             <th>{% trans "Reservation system" %}</th>
-            <td>{{ object.reservation_system }}</td>
+            <td>{% if object.reservation_system %}{{ object.reservation_system }}{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Reservation ID" %}</th>
