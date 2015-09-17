@@ -1,13 +1,16 @@
 # -*- encoding: utf-8 -*-
 
 import os
-import re
 import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 import json
 import urllib2
+
+from ftplib import FTP
+from os.path import dirname
+from urlparse import urlparse
 
 from django.db import models
 from django.conf import settings
@@ -468,16 +471,35 @@ class AttachmentParserMixin(object):
             return []
         return [(subval.strip(), '', '') for subval in val.split(self.separator)]
 
+    def has_size_changed(self, url, attachment):
+        try:
+            parsed_url = urlparse(url)
+            if parsed_url.scheme == 'ftp':
+                directory = dirname(parsed_url.path)
+
+                ftp = FTP(parsed_url.hostname)
+                ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+                ftp.cwd(directory)
+                size = ftp.size(parsed_url.path.split('/')[-1:][0])
+                return size == attachment.attachment_file.size
+
+            if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
+                http = urllib2.urlopen(url)
+                size = http.headers.getheader('content-length')
+                return size == attachment.attachment_file.size
+        except:
+            return False
+        return True
+
     def save_attachments(self, src, val):
         updated = False
         for url, name, author in self.filter_attachments(src, val):
             url = self.base_url + url
             name = os.path.basename(url)
             found = False
-            for attachment in self.attachments_to_delete[self.obj.pk]:
+            for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                existing_name = attachment.attachment_file.name
-                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name):
+                if not self.has_size_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
