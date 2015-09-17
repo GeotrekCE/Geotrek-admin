@@ -497,7 +497,7 @@ class AttachmentParserMixin(object):
             found = False
             for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                if self.has_not_changed(url, attachment):
+                if not self.has_not_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
