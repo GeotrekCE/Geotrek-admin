@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 import os
-import re
 import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
