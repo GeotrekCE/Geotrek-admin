@@ -63,8 +63,20 @@
             <td>{{ object.eid }}</td>
         </tr>
         <tr>
+            <th>{% trans "Reservation system" %}</th>
+            <td>{% if object.reservation_system %}{{ object.reservation_system }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Reservation ID" %}</th>
+            <td>{{ object.reservation_id }}</td>
+        </tr>
+        <tr>
             <th>{% trans "Thumbnail" %}</th>
-            <td><img src="{{ object.thumbnail.url }}"></td>
+            <td>
+            	{% if object.thumbnail.url %}
+            	<img src="{{ object.thumbnail.url }}">
+            	{% endif %}
+            </td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

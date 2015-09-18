@@ -11,7 +11,7 @@ class TouristicContentForm(CommonForm):
         fields = ['name', 'category', 'type1', 'type2', 'review', 'published',
                   'description_teaser', 'description', 'themes', 'contact',
                   'email', 'website', 'practical_info', 'approved', 'source',
-                  'geom', 'eid']
+                  'geom', 'eid', 'reservation_system', 'reservation_id', ]
         model = TouristicContent
 
     def __init__(self, *args, **kwargs):
