@@ -21,7 +21,7 @@ class SyncTest(TestCase):
         factory(TouristicContentFactory, source_b)
         factory(TouristicEventFactory, source_a)
         factory(TouristicEventFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='A', verbosity='0')
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='A', skip_tiles=True, verbosity='0')
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
         self.assertEquals(len(tcontents['features']), 1)
