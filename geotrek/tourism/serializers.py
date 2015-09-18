@@ -74,6 +74,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
     source = RecordSourceSerializer()
+    reservation_system = rest_serializers.Field(source='reservation_system.name')
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -87,7 +88,8 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'source', 'approved', 'reservation_id') + \
+                  'treks', 'pois', 'source', 'approved', 'reservation_id',
+                  'reservation_system',) + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

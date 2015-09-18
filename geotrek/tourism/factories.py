@@ -59,6 +59,12 @@ class TouristicContentTypeFactory(factory.Factory):
     in_list = 1
 
 
+class ReservationSystemFactory(factory.Factory):
+    FACTORY_FOR = models.ReservationSystem
+
+    name = factory.Sequence(lambda n: u"ReservationSystem %s" % n)
+
+
 class TouristicContentFactory(StructureRelatedDefaultFactory):
     FACTORY_FOR = models.TouristicContent
 
@@ -66,6 +72,8 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
     published = True
+    reservation_system = factory.SubFactory(ReservationSystemFactory)
+    reservation_id = 'XXXXXXXXX'
 
 
 class TouristicEventTypeFactory(factory.Factory):

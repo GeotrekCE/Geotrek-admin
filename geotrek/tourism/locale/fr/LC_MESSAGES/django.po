@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-23 13:52+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2015-09-15 15:32+0200\n"
+"PO-Revision-Date: 2015-09-15 15:33+0100\n"
+"Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Project-Id-Version: \n"
+"X-Generator: Poedit 1.5.4\n"
 
 msgid "After"
 msgstr "À partir du"
@@ -156,6 +157,15 @@ msgstr "Types dans la première liste"
 msgid "Second list types"
 msgstr "Types dans la deuxième liste"
 
+msgid "Name"
+msgstr "Nom"
+
+msgid "Reservation system"
+msgstr "Système de réservation"
+
+msgid "Reservation systems"
+msgstr "Systèmes de réservation"
+
 msgid "Description teaser"
 msgstr "Chapeau"
 
@@ -198,8 +208,8 @@ msgstr "Source"
 msgid "External id"
 msgstr "Identifiant externe"
 
-msgid "Reservation id"
-msgstr ""
+msgid "Reservation ID"
+msgstr "ID de réservation"
 
 msgid "Approved"
 msgstr "Labellisé"
@@ -334,7 +344,7 @@ msgid "None"
 msgstr "Aucun"
 
 msgid "Dates"
-msgstr ""
+msgstr "Dates"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
