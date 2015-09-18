@@ -33,11 +33,15 @@ prepreqs-{{cfg.name}}:
       - git
       - groff
       - libbz2-dev
+      - libcairo2
       - libcurl4-openssl-dev
       - libdb-dev
-      - libgdbm-dev
-      - libreadline-dev
+      - libffi-dev
       - libfreetype6-dev
+      - libgdbm-dev
+      - libgdk-pixbuf2.0-0
+      - libreadline-dev
+      - libpango1.0-0
       - libsigc++-2.0-dev
       - libsqlite0-dev
       - libsqlite3-dev
@@ -57,7 +61,9 @@ prepreqs-{{cfg.name}}:
       - poppler-utils
       - python-dev
       - python-imaging
+      - python-lxml
       - python-setuptools
+      - shared-mime-info
       - tcl8.4
       - tcl8.4-dev
       - tcl8.5
