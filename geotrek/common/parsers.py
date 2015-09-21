@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import os
+import re
 import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
@@ -479,12 +480,12 @@ class AttachmentParserMixin(object):
                 ftp.login(user=parsed_url.username, passwd=parsed_url.password)
                 ftp.cwd(directory)
                 size = ftp.size(parsed_url.path.split('/')[-1:][0])
-                return size == attachment.attachment_file.size
+                return size != attachment.attachment_file.size
 
             if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
                 http = urllib2.urlopen(url)
                 size = http.headers.getheader('content-length')
-                return size == attachment.attachment_file.size
+                return size != attachment.attachment_file.size
         except:
             return False
         return True
@@ -497,7 +498,8 @@ class AttachmentParserMixin(object):
             found = False
             for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                if not self.has_size_changed(url, attachment):
+                existing_name = attachment.attachment_file.name
+                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
                     break
