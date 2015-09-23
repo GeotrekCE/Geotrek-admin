@@ -281,6 +281,7 @@ class ReservationSystem(models.Model):
         return self.name
 
     class Meta:
+        #db_table = 't_b_systeme_reservation'
         verbose_name = _(u"Reservation system")
         verbose_name_plural = _(u"Reservation systems")
 

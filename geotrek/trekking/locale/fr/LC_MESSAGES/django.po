@@ -5,17 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-07 14:30+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-09-23 11:47+0200\n"
+"PO-Revision-Date: 2015-09-23 11:49+0100\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.7.5\n"
 
 #, python-format
 msgid "Difficulty with id '%s' already exists"
@@ -31,23 +32,35 @@ msgstr "Pratiques"
 msgid "Trek"
 msgstr "Itinéraire"
 
+msgid "Children"
+msgstr "Enfants"
+
+msgid "Select children in order"
+msgstr "Selectionnez les enfants dans l'ordre"
+
+msgid "Hidden ordered children"
+msgstr "Enfants ordonnés cachés"
+
 msgid "Main"
 msgstr "Basique"
 
 msgid "Advanced"
 msgstr "Avancé"
 
-msgid "Insert service:"
-msgstr "Insérer un service :"
-
 msgid "Related treks"
 msgstr "Itinéraires liés"
+
+msgid "Insert service:"
+msgstr "Insérer un service :"
 
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Create"
 msgstr "Créer"
+
+msgid "Cannot use a parent trek as child trek."
+msgstr "Impossible d'utiliser un itinéraire parent comme itinéraire enfant."
 
 msgid "Departure"
 msgstr "Départ"
@@ -157,9 +170,6 @@ msgstr "Ressources externes"
 msgid "Connections between treks"
 msgstr "Liens entre les itinéraires"
 
-msgid "Parent"
-msgstr "Parent"
-
 msgid "Information desks"
 msgstr "Lieux de renseignement"
 
@@ -187,11 +197,8 @@ msgstr "Durée formatée"
 msgid "Add a new trek"
 msgstr "Ajouter un itinéraire"
 
-msgid "Cannot use itself as parent trek."
-msgstr "Impossible d'utiliser soi-même comme itinéraire parent"
-
-msgid "Cannot use a a child trek as parent trek."
-msgstr "Impossible d'utiliser un enfant comme itinéraire parent"
+msgid "Cannot use itself as child trek."
+msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
@@ -326,21 +333,23 @@ msgstr "Services publiés"
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
-"Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à "
-"'2h30', '2,5' ou '2.5'"
+"Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à '2h30', "
+"'2,5' ou '2.5'"
 
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
 msgstr ""
-"Le segment {i} n'est pas continu ({distance} m) dans la géométrie du champ '{src}'"
+"Le segment {i} n'est pas continu ({distance} m) dans la géométrie du champ "
+"'{src}'"
 
 #, python-brace-format
 msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
-msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être LineString, "
-"pas {geom_type}"
+msgstr ""
+"Le type de géométrie du champ '{src}' est invalide. Il devrait être "
+"LineString, pas {geom_type}"
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "trek"
@@ -496,6 +505,9 @@ msgstr "Ajouter un POI"
 msgid "Add a new service"
 msgstr "Ajouter un service"
 
+msgid "Sync"
+msgstr "Sync"
+
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
@@ -518,3 +530,9 @@ msgstr "%(hour)s h"
 #, python-format
 msgid "%s min"
 msgstr "%s min"
+
+#~ msgid "Parent"
+#~ msgstr "Parent"
+
+#~ msgid "Cannot use a a child trek as parent trek."
+#~ msgstr "Impossible d'utiliser un enfant comme itinéraire parent"

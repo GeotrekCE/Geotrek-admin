@@ -12,7 +12,8 @@ from mapentity.widgets import SelectMultipleWithPop
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from .models import Trek, POI, WebLink, Service, ServiceType
+from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
+from django.db import transaction
 
 
 class TrekRelationshipForm(forms.ModelForm):
@@ -30,7 +31,6 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'DELETE')
 
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
-
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -64,6 +64,12 @@ else:
 
 
 class TrekForm(BaseTrekForm):
+    children_trek = forms.ModelMultipleChoiceField(label=_(u"Children"),
+                                                   queryset=Trek.objects.all(), required=False,
+                                                   help_text=_(u"Select children in order"))
+    hidden_ordered_children = forms.CharField(label=_(u"Hidden ordered children"),
+                                              widget=forms.widgets.HiddenInput(),
+                                              required=False)
 
     leftpanel_scrollable = False
 
@@ -106,9 +112,10 @@ class TrekForm(BaseTrekForm):
                     'web_links',
                     'information_desks',
                     'source',
-                    'parent',
+                    'children_trek',
                     'eid',
                     'eid2',
+                    'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
@@ -140,6 +147,16 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks', 'source']:
             self.fields[f].help_text = ''
 
+        if self.instance:
+            queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
+                                                        .order_by('order')
+            # init multiple children field with data
+            self.fields['children_trek'].queryset = Trek.objects.all().exclude(pk=self.instance.pk)
+            self.fields['children_trek'].initial = [c.child.pk for c in self.instance.trek_children.all()]
+
+            # init hidden field with children order
+            self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+
         self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
 
     def clean_duration(self):
@@ -150,13 +167,53 @@ class TrekForm(BaseTrekForm):
         duration = self.cleaned_data.get('duration')
         return 0.0 if duration is None else duration
 
+    def save(self, *args, **kwargs):
+        """
+        Custom form save override - ordered children management
+        """
+        sid = transaction.savepoint()
+
+        try:
+            return_value = BaseTrekForm.save(self, *args, **kwargs)
+            ordering = []
+
+            if self.cleaned_data['hidden_ordered_children']:
+                ordering = self.cleaned_data['hidden_ordered_children'].split(',')
+
+            order = 0
+
+            # add and update
+            for value in ordering:
+                child, created = OrderedTrekChild.objects.get_or_create(parent=self.instance,
+                                                                        child=Trek.objects.get(pk=value))
+                child.order = order
+                child.save()
+                order += 1
+
+            # delete
+            new_list_children = self.cleaned_data['children_trek'].values_list('pk', flat=True)
+
+            for child_relation in self.instance.trek_children.all():
+                # if existant child not in selection, deletion
+                if child_relation.child_id not in new_list_children:
+                    child_relation.delete()
+
+            transaction.savepoint_commit(sid)
+            return return_value
+
+        except Exception as exc:
+            transaction.savepoint_rollback(sid)
+            raise exc
+
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
-            ['name', 'review', 'published', 'is_park_centered', 'departure', 'arrival', 'duration', 'difficulty',
-             'route', 'ambiance', 'access', 'description_teaser', 'description',
-             'points_reference', 'disabled_infrastructure', 'advised_parking', 'parking_location', 'public_transport', 'advice',
-             'themes', 'networks', 'practice', 'accessibilities', 'web_links', 'information_desks', 'source', 'parent', 'eid', 'eid2']
-
+            ['name', 'review', 'published', 'is_park_centered', 'departure',
+             'arrival', 'duration', 'difficulty', 'route', 'ambiance',
+             'access', 'description_teaser', 'description', 'points_reference',
+             'disabled_infrastructure', 'advised_parking', 'parking_location',
+             'public_transport', 'advice', 'themes', 'networks', 'practice',
+             'accessibilities', 'web_links', 'information_desks', 'source',
+             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', ]
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 

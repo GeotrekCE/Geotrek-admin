@@ -10,7 +10,7 @@ from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import Trek, OrderedTrekChild
 
 
 class TrekTest(TranslationResetMixin, TestCase):
@@ -109,19 +109,29 @@ class TrekTest(TranslationResetMixin, TestCase):
                          list(Trek.objects.all().values_list('name', flat=True)))
 
     def test_trek_itself_as_parent(self):
-        a = TrekFactory.create(name='A')
-        a.parent = a
+        """
+        Test if a trek it is its own parent
+        """
+        trek1 = TrekFactory.create(name='trek1')
+        OrderedTrekChild.objects.create(parent=trek1, child=trek1)
         self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use itself as parent trek.",
-                                 a.full_clean)
+                                 u"Cannot use itself as child trek.",
+                                 trek1.full_clean)
 
     def test_trek_child_as_parent(self):
-        a = TrekFactory.create(name='A')
-        b = TrekFactory.create(name='B', parent=a)
-        c = TrekFactory.create(name='C', parent=b)
+        """
+        Test if a child trek can't be a parent
+        """
+        trek1 = TrekFactory.create(name='trek1')
+        trek2 = TrekFactory.create(name='trek2')
+        trek3 = TrekFactory.create(name='trek3')
+
+        OrderedTrekChild.objects.create(parent=trek1, child=trek2)
+        relation2 = OrderedTrekChild.objects.create(parent=trek3, child=trek1)
+
         self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use a a child trek as parent trek.",
-                                 c.full_clean)
+                                 u"Cannot use a parent trek as child trek.",
+                                 relation2.full_clean)
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):

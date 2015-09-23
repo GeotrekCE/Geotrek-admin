@@ -439,11 +439,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.parent = TrekFactory.create(published=True, name='Parent')
+        self.parents = TrekFactory.create(published=True, name='Parent')
 
         self.trek = TrekFactory.create(
             name='Step 2',
-            parent=self.parent,
+            #  parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
@@ -501,16 +501,24 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                                                 published=True)  # too far
         trek2 = TrekFactory(no_path=True, published=False)  # not published
         trek2.add_path(path2)
-        trek3 = TrekFactory(no_path=True, published=True)  # deleted
-        trek3.add_path(path2)
-        trek3.delete()
+        self.trek3 = TrekFactory(no_path=True, published=True)  # deleted
+        self.trek3.add_path(path2)
+        self.trek3.delete()
         trek4 = TrekFactory(no_path=True, published=True)  # too far
         trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
-        self.child1 = TrekFactory.create(published=False, parent=self.trek, name='Child 1')
-        self.child2 = TrekFactory.create(published=True, parent=self.trek, name='Child 2')
-        self.previous = TrekFactory.create(published=False, parent=self.parent, name='Step 1')
-        self.next = TrekFactory.create(published=False, parent=self.parent, name='Step 3')
+        self.child1 = TrekFactory.create(published=False, name='Child 1')
+        self.child2 = TrekFactory.create(published=True, name='Child 2')
+
+        trek_previous = TrekFactory.create(published=False, name='Step 1')
+        self.trek_previous_published = TrekFactory.create(published=True, name='Step 1')
+
+        self.trek_previous_published.add_child(self.trek)
+        self.trek.add_child(self.child1)
+        self.trek.add_child(self.child2)
+
+        self.previous = self.child2.previous_id
+        self.next = TrekFactory.create(published=False, name='Step 3')
 
         self.pk = self.trek.pk
         url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
@@ -697,18 +705,21 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'name': self.source.name,
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
-
+    """
     def test_parent(self):
         self.assertEqual(self.result['parent'], self.parent.pk)
+    """
 
     def test_children(self):
         self.assertEqual(self.result['children'], [self.child1.pk, self.child2.pk])
 
     def test_previous(self):
-        self.assertEqual(self.result['previous'], self.previous.pk)
+        self.assertDictEqual(self.result['previous'],
+                             {u"%s" % self.trek_previous_published.pk: self.pk})
 
     def test_next(self):
-        self.assertEqual(self.result['next'], self.next.pk)
+        self.assertDictEqual(self.result['next'],
+                             {u"%s" % self.pk: self.child1.pk})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

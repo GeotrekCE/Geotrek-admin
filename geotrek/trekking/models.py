@@ -27,6 +27,40 @@ from .templatetags import trekking_tags
 logger = logging.getLogger(__name__)
 
 
+class TrekOrderedChildManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        # Select treks foreign keys by default
+        qs = super(TrekOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+        # Exclude deleted treks
+        return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
+
+
+class OrderedTrekChild(models.Model):
+    parent = models.ForeignKey('Trek', related_name='trek_children', on_delete=models.CASCADE)
+    child = models.ForeignKey('Trek', related_name='trek_parents', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+
+    objects = TrekOrderedChildManager()
+
+    class Meta:
+        db_table = 'o_r_itineraire_itineraire2'
+        ordering = ('parent__id', 'order')
+        unique_together = (
+            ('parent', 'child'),
+        )
+
+    def clean(self):
+        """
+        Custom model validation
+        """
+        if self.child.trek_children.exists():
+            raise ValidationError(_(u"Cannot use a parent trek as child trek."))
+
+        models.Model.clean(self)
+
+
 class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
@@ -34,7 +68,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                  help_text=_(u"Departure description"), db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
                                help_text=_(u"Arrival description"), db_column='arrivee')
-
     description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
                                           help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
@@ -80,8 +113,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            verbose_name=_(u"Related treks"), symmetrical=False,
                                            help_text=_(u"Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
-    parent = models.ForeignKey('self', verbose_name=_(u"Parent"), db_column='parent', blank=True, null=True,
-                               related_name='children')
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                db_table="o_r_itineraire_renseignement", blank=True, null=True,
                                                verbose_name=_(u"Information desks"),
@@ -225,33 +256,49 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def children_id(self):
-        return list(self.children.order_by('name').values_list('id', flat=True))
+        """
+        Get children IDs
+        """
+        children = self.trek_children.order_by('order')\
+                                     .values_list('child__id',
+                                                  flat=True)
+        return list(children)
 
     @property
     def previous_id(self):
-        if self.parent is None:
-            return None
-        children = self.parent.children_id
-        try:
-            return children[children.index(self.id) - 1]
-        except IndexError:
-            return None
+        """
+        Parents published
+        """
+        dict_response = {}
+
+        for parent in self.trek_parents.filter(parent__published=True)\
+                                       .order_by('order')\
+                                       .values('parent__id', 'child__id'):
+            dict_response.setdefault(parent['parent__id'],
+                                     parent['child__id'])
+
+        return dict_response
 
     @property
     def next_id(self):
-        if self.parent is None:
-            return None
-        children = self.parent.children_id
-        try:
-            return children[children.index(self.id) + 1]
-        except IndexError:
-            return None
+        """
+        Children
+        """
+        dict_response = {}
+
+        for parent in self.trek_children.order_by('order')\
+                                        .values('parent__id', 'child__id'):
+            dict_response.setdefault(parent['parent__id'],
+                                     parent['child__id'])
+
+        return dict_response
 
     def clean(self):
-        if self.parent and self.parent == self:
-            raise ValidationError(_(u"Cannot use itself as parent trek."))
-        if self.parent and self.parent.parent:
-            raise ValidationError(_(u"Cannot use a a child trek as parent trek."))
+        """
+        Custom model validation
+        """
+        if self.pk in self.trek_children.values_list('child__id', flat=True):
+            raise ValidationError(_(u"Cannot use itself as child trek."))
 
     @property
     def prefixed_category_id(self):
@@ -267,7 +314,22 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             return settings.TOURISM_INTERSECTION_MARGIN
 
     def is_public(self):
-        return self.any_published or (self.parent and self.parent.any_published)
+        return self.any_published
+        #  or (self.parent and self.parent.any_published)
+
+    def add_parent(self, trek):
+        """
+        Add parent if instance created
+        """
+        if self.pk:
+            self.trek_parents.add(OrderedTrekChild(parent=trek, child=self))
+
+    def add_child(self, trek):
+        """
+        Add child if instance created
+        """
+        if self.pk:
+            self.trek_children.add(OrderedTrekChild(child=trek, parent=self))
 
     def save(self, *args, **kwargs):
         if self.pk is not None and kwargs.get('update_fields', None) is None:

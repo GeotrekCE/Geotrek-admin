@@ -3,19 +3,30 @@
 {% load i18n crispy_forms_tags staticfiles %}
 
 {% block mainform %}
+
+    <script type="text/javascript" src="/static/trekking/chosen.order.jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+        $(function(){
+            $("#id_children_trek").change(function(){
+               $("#id_hidden_ordered_children").val($("#id_children_trek").getSelectionOrder().toString());
+            });
+
+            $('#id_children_trek_chosen ul').sortable();
+        });
+    </script>
+
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
-
-    {% crispy form %}
-
-    <fieldset class="formset">
-        {{ relationship_formset.management_form }}
-        {% for relationship_form in relationship_formset %}
-            <div class="form-row inline controls controls-row {{ relationship_formset.prefix }}">
-            {% crispy relationship_form %}
-            </div>
-        {% endfor %}
-    </fieldset>
-
+        {% crispy form %}
+        <fieldset class="formset">
+            {{ relationship_formset.management_form }}
+            {% for relationship_form in relationship_formset %}
+                <div class="form-row inline controls controls-row {{ relationship_formset.prefix }}">
+                {% crispy relationship_form %}
+                </div>
+            {% endfor %}
+        </fieldset>
     </form>
 {% endblock mainform %}
 
@@ -68,6 +79,9 @@
                 tinymce.get(id).execCommand('mceInsertContent', false, '<img src="' + url + '" alt="' + name + '" width="18" height="18" />');
                 return false;
             });
+
+            $("#id_children_trek").setSelectionOrder($("#id_hidden_ordered_children").val().split(","));
         });
+
     </script>
 {% endblock extrabody %}
