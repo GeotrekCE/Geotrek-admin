@@ -174,7 +174,7 @@ class TrekForm(BaseTrekForm):
         sid = transaction.savepoint()
 
         try:
-            return_value = BaseTrekForm.save(self, *args, **kwargs)
+            return_value = super(TrekForm, self).save(self, *args, **kwargs)
             ordering = []
 
             if self.cleaned_data['hidden_ordered_children']:
