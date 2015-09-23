@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -11,13 +10,14 @@ class Migration(SchemaMigration):
         # Deleting field 'Trek.parent'
         db.delete_column('o_t_itineraire', 'parent')
 
-
     def backwards(self, orm):
         # Adding field 'Trek.parent'
         db.add_column('o_t_itineraire', 'parent',
-                      self.gf('django.db.models.fields.related.ForeignKey')(related_name='children', null=True, to=orm['trekking.Trek'], db_column='parent', blank=True),
+                      self.gf('django.db.models.fields.related.ForeignKey')(related_name='children',
+                                                                            null=True,
+                                                                            to=orm['trekking.Trek'],
+                                                                            db_column='parent', blank=True),
                       keep_default=False)
-
 
     models = {
         u'authent.structure': {
@@ -47,7 +47,9 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['name']", 'object_name': 'RecordSource', 'db_table': "'o_b_source_fiche'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'null': 'True', 'db_column': "'picto'", 'blank': 'True'}),
+            'pictogram': ('django.db.models.fields.files.FileField', [],
+                          {'max_length': '512', 'null': 'True',
+                           'db_column': "'picto'", 'blank': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '256', 'null': 'True', 'db_column': "'website'", 'blank': 'True'})
         },

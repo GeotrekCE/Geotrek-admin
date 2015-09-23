@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
-from geotrek.trekking import models as trek_models
 
 
 class Migration(SchemaMigration):
@@ -21,14 +19,12 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'OrderedTrekChild', fields ['parent', 'child']
         db.create_unique('o_r_itineraire_itineraire2', ['parent_id', 'child_id'])
 
-
     def backwards(self, orm):
         # Removing unique constraint on 'OrderedTrekChild', fields ['parent', 'child']
         db.delete_unique('o_r_itineraire_itineraire2', ['parent_id', 'child_id'])
 
         # Deleting model 'OrderedTrekChild'
         db.delete_table('o_r_itineraire_itineraire2')
-
 
     models = {
         u'authent.structure': {
