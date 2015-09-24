@@ -510,7 +510,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.child1 = TrekFactory.create(published=False, name='Child 1')
         self.child2 = TrekFactory.create(published=True, name='Child 2')
 
-        trek_previous = TrekFactory.create(published=False, name='Step 1')
         self.trek_previous_published = TrekFactory.create(published=True, name='Step 1')
 
         self.trek_previous_published.add_child(self.trek)
