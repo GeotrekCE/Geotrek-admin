@@ -2,9 +2,6 @@
 
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
-
-from geotrek.tourism import models as tourism_models
 
 
 class Migration(SchemaMigration):
