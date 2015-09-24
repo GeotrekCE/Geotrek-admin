@@ -17,7 +17,7 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    columns = ['id', 'name', 'type', 'cities']
+    columns = ['id', 'name', 'type', 'state', 'cities']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -75,7 +75,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    columns = ['id', 'name', 'type', 'cities']
+    columns = ['id', 'name', 'type', 'state', 'cities']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
@@ -84,7 +84,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'id', 'name', 'type', 'description',
+        'id', 'name', 'type', 'state', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS

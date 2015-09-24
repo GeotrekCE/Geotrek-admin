@@ -12,6 +12,10 @@
             <td>{{ object.type }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"state" }}</th>
+            <td>{{ object.state }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description" }}</th>
             <td>{% if object.description %}{{ object.description|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

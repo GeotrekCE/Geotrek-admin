@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -10,17 +9,24 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'InfrastructureState'
         db.create_table('a_b_etat', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'], db_column='structure')),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=250, db_column='etat')),
+            (u'id',
+             self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('structure',
+             self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'],
+                                                                   db_column='structure')),
+            ('label',
+             self.gf('django.db.models.fields.CharField')(max_length=250,
+                                                          db_column='etat')),
         ))
         db.send_create_signal(u'infrastructure', ['InfrastructureState'])
 
         # Adding field 'BaseInfrastructure.state'
-        db.add_column('a_t_amenagement', 'state',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureState'], null=True, db_column='etat'),
+        db.add_column('a_t_amenagement',
+                      'state',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureState'],
+                                                                            null=True,
+                                                                            db_column='etat'),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting model 'InfrastructureState'
@@ -28,7 +34,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'BaseInfrastructure.state'
         db.delete_column('a_t_amenagement', 'etat')
-
 
     models = {
         u'authent.structure': {
