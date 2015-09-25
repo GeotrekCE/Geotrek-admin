@@ -492,9 +492,9 @@ class AttachmentParserMixin(object):
                 http = urllib2.urlopen(url)
                 size = http.headers.getheader('content-length')
                 return size != attachment.attachment_file.size
-        except Exception as e:
-            print(e.reason)
-            return True
+        except:
+            return False
+        return True
 
     def save_attachments(self, src, val):
         updated = False
