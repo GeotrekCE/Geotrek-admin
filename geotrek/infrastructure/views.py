@@ -2,11 +2,12 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
-from .models import Infrastructure, Signage
+from geotrek.core.views import CreateFromTopologyMixin
+
 from .filters import InfrastructureFilterSet, SignageFilterSet
 from .forms import InfrastructureForm, SignageForm
+from .models import Infrastructure, Signage
 
 
 class InfrastructureLayer(MapEntityLayer):
@@ -26,7 +27,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
-        'id', 'name', 'type', 'description',
+        'id', 'name', 'type', 'state', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -49,6 +50,17 @@ class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Infrastructure
     form_class = InfrastructureForm
 
+    def get_form(self, form_class):
+        """
+        customize form in generic view
+        """
+        form = super(InfrastructureCreate, self).get_form(form_class)
+
+        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
+            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+
+        return form
+
 
 class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
@@ -57,6 +69,17 @@ class InfrastructureUpdate(MapEntityUpdate):
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
+
+    def get_form(self, form_class):
+        """
+        customize form in generic view
+        """
+        form = super(InfrastructureUpdate, self).get_form(form_class)
+
+        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
+            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+
+        return form
 
 
 class InfrastructureDelete(MapEntityDelete):
@@ -107,6 +130,17 @@ class SignageCreate(MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
+    def get_form(self, form_class):
+        """
+        customize form in generic view
+        """
+        form = super(SignageCreate, self).get_form(form_class)
+
+        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
+            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+
+        return form
+
 
 class SignageUpdate(MapEntityUpdate):
     queryset = Signage.objects.existing()
@@ -115,6 +149,17 @@ class SignageUpdate(MapEntityUpdate):
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageUpdate, self).dispatch(*args, **kwargs)
+
+    def get_form(self, form_class):
+        """
+        customize form in generic view
+        """
+        form = super(SignageUpdate, self).get_form(form_class)
+
+        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
+            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+
+        return form
 
 
 class SignageDelete(MapEntityDelete):

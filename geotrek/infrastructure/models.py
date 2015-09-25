@@ -75,7 +75,9 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     description = models.TextField(blank=True, db_column='description',
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
-    state = models.ForeignKey(InfrastructureState, db_column='etat', verbose_name=_("State"), null=True)
+    state = models.ForeignKey(InfrastructureState, db_column='etat',
+                              verbose_name=_("State"), null=True,
+                              on_delete=models.PROTECT)
 
     class Meta:
         db_table = 'a_t_amenagement'
