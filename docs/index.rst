@@ -11,6 +11,7 @@ Contents:
    configuration
    advanced-configuration
    maintenance
+   synchronization
    troubleshooting
    faq
    user-manual
