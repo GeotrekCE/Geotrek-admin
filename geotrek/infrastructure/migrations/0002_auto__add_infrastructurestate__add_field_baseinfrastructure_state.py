@@ -18,12 +18,12 @@ class Migration(SchemaMigration):
              self.gf('django.db.models.fields.CharField')(max_length=250,
                                                           db_column='etat')),
         ))
-        db.send_create_signal(u'infrastructure', ['InfrastructureState'])
+        db.send_create_signal(u'infrastructure', ['InfrastructureCondition'])
 
         # Adding field 'BaseInfrastructure.state'
         db.add_column('a_t_amenagement',
-                      'state',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureState'],
+                      'condition',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureCondition'],
                                                                             null=True,
                                                                             db_column='etat'),
                       keep_default=False)
@@ -130,12 +130,12 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'a_t_amenagement'", '_ormbases': [u'core.Topology']},
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'state': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureState']", 'null': 'True', 'db_column': "'etat'"}),
+            'condition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureCondition']", 'null': 'True', 'db_column': "'etat'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
             'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureType']", 'db_column': "'type'"})
         },
-        u'infrastructure.infrastructurestate': {
+        u'infrastructure.infrastructurecondition': {
             'Meta': {'object_name': 'InfrastructureState', 'db_table': "'a_b_etat'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'label': ('django.db.models.fields.CharField', [], {'max_length': '250', 'db_column': "'etat'"}),

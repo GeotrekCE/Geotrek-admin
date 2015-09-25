@@ -3,7 +3,7 @@
 from django.contrib import admin
 
 from geotrek.authent.models import Structure
-from geotrek.infrastructure.models import InfrastructureType, InfrastructureState
+from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
 
 
 class InfrastructureTypeAdmin(admin.ModelAdmin):
@@ -12,7 +12,7 @@ class InfrastructureTypeAdmin(admin.ModelAdmin):
     list_filter = ('type', 'structure',)
 
 
-class InfrastructureStateAdmin(admin.ModelAdmin):
+class InfrastructureConditionAdmin(admin.ModelAdmin):
     list_display = ('label', 'structure')
     search_fields = ('label', 'structure')
     list_filter = ('structure',)
@@ -21,7 +21,7 @@ class InfrastructureStateAdmin(admin.ModelAdmin):
         """
         custom admin form generation
         """
-        form = super(InfrastructureStateAdmin, self).get_form(request, obj, **kwargs)
+        form = super(InfrastructureConditionAdmin, self).get_form(request, obj, **kwargs)
 
         if not request.user.has_perm('infrastructure.add_infrastructurestate'):
             form.base_fields['structure'].queryset = Structure.objects.filter(pk=request.user.profile.structure_id)
@@ -30,4 +30,4 @@ class InfrastructureStateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(InfrastructureType, InfrastructureTypeAdmin)
-admin.site.register(InfrastructureState, InfrastructureStateAdmin)
+admin.site.register(InfrastructureCondition, InfrastructureConditionAdmin)

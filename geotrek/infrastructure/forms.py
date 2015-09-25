@@ -10,7 +10,7 @@ class BaseInfrastructureForm(TopologyForm):
     class Meta(TopologyForm.Meta):
         fields = TopologyForm.Meta.fields + \
             ['structure',
-             'name', 'description', 'type', 'state']
+             'name', 'description', 'type', 'condition']
 
 
 class InfrastructureForm(BaseInfrastructureForm):
