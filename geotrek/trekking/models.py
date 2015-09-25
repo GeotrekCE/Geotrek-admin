@@ -255,6 +255,14 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return _(u"Add a new trek")
 
     @property
+    def parents(self):
+        return Trek.objects.filter(trek_children__child=self)
+
+    @property
+    def children(self):
+        return Trek.objects.filter(trek_parents__parent=self)
+
+    @property
     def children_id(self):
         """
         Get children IDs
