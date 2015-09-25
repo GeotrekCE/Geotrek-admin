@@ -10,11 +10,11 @@ from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
-                                           InfrastructureState, Signage,
+                                           InfrastructureCondition, Signage,
                                            INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
-                                              InfrastructureTypeFactory, InfrastructureStateFactory)
+                                              InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
 
 
@@ -47,7 +47,7 @@ class InfrastructureViewsTest(CommonTest):
             'description': 'oh',
             'structure': default_structure().pk,
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
-            'state': InfrastructureStateFactory.create().pk,
+            'condition': InfrastructureConditionFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
@@ -66,7 +66,7 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             'description': 'oh',
             'structure': default_structure().pk,
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
-            'state': InfrastructureStateFactory.create().pk,
+            'condition': InfrastructureConditionFactory.create().pk,
             'topology': '{"lat": 0.42, "lng": 0.666}'
         }
 
@@ -78,7 +78,7 @@ class SignageViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
         data = super(SignageViewsTest, self).get_good_data()
         data['type'] = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE).pk
-        data['state'] = InfrastructureStateFactory.create().pk
+        data['condition'] = InfrastructureConditionFactory.create().pk
         return data
 
 
@@ -96,13 +96,13 @@ class InfrastructureTypeTest(TestCase):
         self.assertItemsEqual(InfrastructureType.objects.all(), [it1, it2, it3])
 
 
-class InfrastructureStateTest(TestCase):
+class InfrastructureConditionTest(TestCase):
     def test_manager(self):
-        it1 = InfrastructureStateFactory.create()
-        it2 = InfrastructureStateFactory.create()
-        it3 = InfrastructureStateFactory.create()
+        it1 = InfrastructureConditionFactory.create()
+        it2 = InfrastructureConditionFactory.create()
+        it3 = InfrastructureConditionFactory.create()
 
-        self.assertItemsEqual(InfrastructureState.objects.all(), [it1, it2, it3])
+        self.assertItemsEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
 class InfraFilterTestMixin():

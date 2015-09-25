@@ -23,10 +23,22 @@ class InfrastructureConditionAdmin(admin.ModelAdmin):
         """
         form = super(InfrastructureConditionAdmin, self).get_form(request, obj, **kwargs)
 
-        if not request.user.has_perm('infrastructure.add_infrastructurestate'):
-            form.base_fields['structure'].queryset = Structure.objects.filter(pk=request.user.profile.structure_id)
+        # if not bypass structure, hide structure field
+
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            del form.base_fields['structure']
 
         return form
+
+    def save_form(self, request, form, change):
+        """
+        custom save form
+        """
+        # if not bypass structure, fix user structure
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            form.instance.structure = request.user.profile.structure
+
+        return super(InfrastructureConditionAdmin, self).save_form(request, form, change)
 
 
 admin.site.register(InfrastructureType, InfrastructureTypeAdmin)

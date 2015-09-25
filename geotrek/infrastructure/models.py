@@ -57,8 +57,8 @@ class InfrastructureCondition(StructureRelated):
     label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
 
     class Meta:
-        verbose_name = _(u"Infrastructure State")
-        verbose_name_plural = _(u"Infrastructure States")
+        verbose_name = _(u"Infrastructure Condition")
+        verbose_name_plural = _(u"Infrastructure Conditions")
         db_table = "a_b_etat"
 
     def __unicode__(self):

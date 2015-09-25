@@ -18,7 +18,7 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    columns = ['id', 'name', 'type', 'state', 'cities']
+    columns = ['id', 'name', 'type', 'condition', 'cities']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -27,7 +27,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
-        'id', 'name', 'type', 'state', 'description',
+        'id', 'name', 'type', 'condition', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -56,8 +56,8 @@ class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
         """
         form = super(InfrastructureCreate, self).get_form(form_class)
 
-        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
-            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+        if not self.request.user.has_perm('authent.can_bypass_structure'):
+            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
 
         return form
 
@@ -76,8 +76,8 @@ class InfrastructureUpdate(MapEntityUpdate):
         """
         form = super(InfrastructureUpdate, self).get_form(form_class)
 
-        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
-            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+        if not self.request.user.has_perm('authent.can_bypass_structure'):
+            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
 
         return form
 
@@ -98,7 +98,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    columns = ['id', 'name', 'type', 'state', 'cities']
+    columns = ['id', 'name', 'type', 'condition', 'cities']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
@@ -107,7 +107,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'id', 'name', 'type', 'state', 'description',
+        'id', 'name', 'type', 'condition', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -136,8 +136,8 @@ class SignageCreate(MapEntityCreate):
         """
         form = super(SignageCreate, self).get_form(form_class)
 
-        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
-            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+        if not self.request.user.has_perm('authent.can_bypass_structure'):
+            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
 
         return form
 
@@ -156,8 +156,8 @@ class SignageUpdate(MapEntityUpdate):
         """
         form = super(SignageUpdate, self).get_form(form_class)
 
-        if not self.request.user.has_perm('infrastructure.add_infrastructurestate'):
-            form.fields['state'].queryset = self.request.user.profile.structure.infrastructurestate_set.all()
+        if not self.request.user.has_perm('infrastructure.add_infrastructurecondition'):
+            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
 
         return form
 

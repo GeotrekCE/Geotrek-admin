@@ -1,39 +1,34 @@
 # -*- coding: utf-8 -*-
-
+from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
+from django.db import models
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'InfrastructureState'
+        # Adding model 'InfrastructureCondition'
         db.create_table('a_b_etat', (
-            (u'id',
-             self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('structure',
-             self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'],
-                                                                   db_column='structure')),
-            ('label',
-             self.gf('django.db.models.fields.CharField')(max_length=250,
-                                                          db_column='etat')),
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'], db_column='structure')),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=250, db_column='etat')),
         ))
         db.send_create_signal(u'infrastructure', ['InfrastructureCondition'])
 
-        # Adding field 'BaseInfrastructure.state'
-        db.add_column('a_t_amenagement',
-                      'condition',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureCondition'],
-                                                                            null=True,
-                                                                            db_column='etat'),
+        # Adding field 'BaseInfrastructure.condition'
+        db.add_column('a_t_amenagement', 'condition',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureCondition'], null=True, on_delete=models.PROTECT, db_column='etat'),
                       keep_default=False)
 
+
     def backwards(self, orm):
-        # Deleting model 'InfrastructureState'
+        # Deleting model 'InfrastructureCondition'
         db.delete_table('a_b_etat')
 
-        # Deleting field 'BaseInfrastructure.state'
+        # Deleting field 'BaseInfrastructure.condition'
         db.delete_column('a_t_amenagement', 'etat')
+
 
     models = {
         u'authent.structure': {
@@ -128,15 +123,15 @@ class Migration(SchemaMigration):
         },
         u'infrastructure.baseinfrastructure': {
             'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'a_t_amenagement'", '_ormbases': [u'core.Topology']},
+            'condition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureCondition']", 'null': 'True', 'on_delete': 'models.PROTECT', 'db_column': "'etat'"}),
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'condition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureCondition']", 'null': 'True', 'db_column': "'etat'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
             'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureType']", 'db_column': "'type'"})
         },
         u'infrastructure.infrastructurecondition': {
-            'Meta': {'object_name': 'InfrastructureState', 'db_table': "'a_b_etat'"},
+            'Meta': {'object_name': 'InfrastructureCondition', 'db_table': "'a_b_etat'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'label': ('django.db.models.fields.CharField', [], {'max_length': '250', 'db_column': "'etat'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})

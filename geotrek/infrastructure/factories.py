@@ -15,7 +15,7 @@ class InfrastructureTypeFactory(factory.Factory):
 class InfrastructureConditionFactory(factory.Factory):
     FACTORY_FOR = models.InfrastructureCondition
 
-    label = factory.Sequence(lambda n: u"State %s" % n)
+    label = factory.Sequence(lambda n: u"Condition %s" % n)
 
 
 class InfrastructureFactory(TopologyFactory):
