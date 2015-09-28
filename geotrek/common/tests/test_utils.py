@@ -7,7 +7,10 @@ from django.test import TestCase
 
 from ..utils import almostequal, sql_extent, uniquify
 from ..utils.postgresql import debug_pg_notices
-from ..utils.import_celery import create_tmp_destination, subclasses
+from ..utils.import_celery import (create_tmp_destination,
+                                   subclasses,
+                                   discover_available_parsers
+                                   )
 
 from geotrek.common.parsers import Parser
 
@@ -55,6 +58,13 @@ class UtilsTest(TestCase):
                 'SitraParser',
                 'TourismSystemParser'):
             self.assert_(classname not in class_list)
+    
+    def test_retrieve_class_label(self):
+        choices, choices_url, classes = discover_available_parsers()
+        self.assertEqual(Parser.label, None)
+        for cls in classes:
+            self.assertIsNotNone(cls.label)
+        
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
