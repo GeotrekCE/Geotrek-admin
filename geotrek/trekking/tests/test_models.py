@@ -118,21 +118,6 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  u"Cannot use itself as child trek.",
                                  trek1.full_clean)
 
-    def test_trek_child_as_parent(self):
-        """
-        Test if a child trek can't be a parent
-        """
-        trek1 = TrekFactory.create(name='trek1')
-        trek2 = TrekFactory.create(name='trek2')
-        trek3 = TrekFactory.create(name='trek3')
-
-        OrderedTrekChild.objects.create(parent=trek1, child=trek2)
-        relation2 = OrderedTrekChild.objects.create(parent=trek3, child=trek1)
-
-        self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use a parent trek as child trek.",
-                                 relation2.full_clean)
-
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):
     def setUp(self):
