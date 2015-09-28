@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
 
 import floppyforms as forms
@@ -158,6 +159,18 @@ class TrekForm(BaseTrekForm):
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
 
         self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
+
+    def clean_children_trek(self):
+        """
+        Check the trek is not parent and child at the same time
+        """
+        children = self.cleaned_data['children_trek']
+        if children and self.instance and self.instance.trek_parents.exists():
+            raise ValidationError(_(u"Cannot add children because this trek is itself a child."))
+        for child in children:
+            if child.trek_children.exists():
+                raise ValidationError(_(u"Cannot use parent trek {name} as a child trek.".format(name=child.name)))
+        return children
 
     def clean_duration(self):
         """For duration, an HTML5 "number" field is used. If the user fills an invalid

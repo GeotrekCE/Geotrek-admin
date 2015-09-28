@@ -51,15 +51,6 @@ class OrderedTrekChild(models.Model):
             ('parent', 'child'),
         )
 
-    def clean(self):
-        """
-        Custom model validation
-        """
-        if self.child.trek_children.exists():
-            raise ValidationError(_(u"Cannot use a parent trek as child trek."))
-
-        models.Model.clean(self)
-
 
 class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
