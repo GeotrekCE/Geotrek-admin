@@ -2,7 +2,6 @@
 
 from django.contrib import admin
 
-from geotrek.authent.models import Structure
 from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
 
 
