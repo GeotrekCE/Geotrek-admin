@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -21,14 +21,12 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureCondition'], null=True, on_delete=models.PROTECT, db_column='etat'),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting model 'InfrastructureCondition'
         db.delete_table('a_b_etat')
 
         # Deleting field 'BaseInfrastructure.condition'
         db.delete_column('a_t_amenagement', 'etat')
-
 
     models = {
         u'authent.structure': {
