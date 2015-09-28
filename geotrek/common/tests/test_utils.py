@@ -58,13 +58,12 @@ class UtilsTest(TestCase):
                 'SitraParser',
                 'TourismSystemParser'):
             self.assert_(classname not in class_list)
-    
+
     def test_retrieve_class_label(self):
         choices, choices_url, classes = discover_available_parsers()
         self.assertEqual(Parser.label, None)
         for cls in classes:
             self.assertIsNotNone(cls.label)
-        
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
