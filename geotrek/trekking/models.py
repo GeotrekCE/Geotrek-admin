@@ -251,7 +251,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def children(self):
-        return Trek.objects.filter(trek_parents__parent=self)
+        return Trek.objects.filter(trek_parents__parent=self).order_by('trek_parents__order')
 
     @property
     def children_id(self):
@@ -263,34 +263,33 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                                   flat=True)
         return list(children)
 
+    def previous_id_for(self, parent):
+        children_id = parent.children_id
+        index = children_id.index(self.id)
+        if index == 0:
+            return None
+        return children_id[index - 1]
+
+    def next_id_for(self, parent):
+        children_id = parent.children_id
+        index = children_id.index(self.id)
+        if index == len(children_id) - 1:
+            return None
+        return children_id[index + 1]
+
     @property
     def previous_id(self):
         """
-        Parents published
+        Dict of parent -> previous child
         """
-        dict_response = {}
-
-        for parent in self.trek_parents.filter(parent__published=True)\
-                                       .order_by('order')\
-                                       .values('parent__id', 'child__id'):
-            dict_response.setdefault(parent['parent__id'],
-                                     parent['child__id'])
-
-        return dict_response
+        return {parent.id: self.previous_id_for(parent) for parent in self.parents.filter(published=True)}
 
     @property
     def next_id(self):
         """
-        Children
+        Dict of parent -> next child
         """
-        dict_response = {}
-
-        for parent in self.trek_children.order_by('order')\
-                                        .values('parent__id', 'child__id'):
-            dict_response.setdefault(parent['parent__id'],
-                                     parent['child__id'])
-
-        return dict_response
+        return {parent.id: self.next_id_for(parent) for parent in self.parents.filter(published=True)}
 
     def clean(self):
         """
@@ -315,20 +314,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def is_public(self):
         return self.any_published
         #  or (self.parent and self.parent.any_published)
-
-    def add_parent(self, trek):
-        """
-        Add parent if instance created
-        """
-        if self.pk:
-            self.trek_parents.add(OrderedTrekChild(parent=trek, child=self))
-
-    def add_child(self, trek):
-        """
-        Add child if instance created
-        """
-        if self.pk:
-            self.trek_children.add(OrderedTrekChild(child=trek, parent=self))
 
     def save(self, *args, **kwargs):
         if self.pk is not None and kwargs.get('update_fields', None) is None:

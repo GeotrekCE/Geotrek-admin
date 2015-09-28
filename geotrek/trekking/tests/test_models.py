@@ -284,3 +284,26 @@ class TrekUpdateGeomTest(TestCase):
         db_trek = Trek.objects.get(pk=new_trek.pk)
 
         self.assertEqual(db_trek.ambiance_en, 'Very special ambiance, for test purposes.')
+
+
+class TrekItinerancyTest(TestCase):
+    def test_next_previous(self):
+        trekA = TrekFactory(name=u"A")
+        trekB = TrekFactory(name=u"B")
+        trekC = TrekFactory(name=u"C")
+        trekD = TrekFactory(name=u"D")
+        OrderedTrekChild(parent=trekC, child=trekA, order=42).save()
+        OrderedTrekChild(parent=trekC, child=trekB, order=15).save()
+        OrderedTrekChild(parent=trekD, child=trekA, order=1).save()
+        self.assertEqual(trekA.children_id, [])
+        self.assertEqual(trekB.children_id, [])
+        self.assertEqual(trekC.children_id, [trekB.id, trekA.id])
+        self.assertEqual(trekD.children_id, [trekA.id])
+        self.assertEqual(trekA.next_id, {trekC.id: None, trekD.id: None})
+        self.assertEqual(trekB.next_id, {trekC.id: trekA.id})
+        self.assertEqual(trekC.next_id, {})
+        self.assertEqual(trekD.next_id, {})
+        self.assertEqual(trekA.previous_id, {trekC.id: trekB.id, trekD.id: None})
+        self.assertEqual(trekB.previous_id, {trekC.id: None})
+        self.assertEqual(trekC.previous_id, {})
+        self.assertEqual(trekD.previous_id, {})

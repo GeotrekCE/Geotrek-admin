@@ -33,7 +33,7 @@ from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.models import POI, Trek, Service
+from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
@@ -439,8 +439,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.parents = TrekFactory.create(published=True, name='Parent')
-
         self.trek = TrekFactory.create(
             name='Step 2',
             #  parent=self.parent,
@@ -507,17 +505,14 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         trek4 = TrekFactory(no_path=True, published=True)  # too far
         trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
+        self.parent = TrekFactory.create(published=True, name='Parent')
         self.child1 = TrekFactory.create(published=False, name='Child 1')
         self.child2 = TrekFactory.create(published=True, name='Child 2')
-
-        self.trek_previous_published = TrekFactory.create(published=True, name='Step 1')
-
-        self.trek_previous_published.add_child(self.trek)
-        self.trek.add_child(self.child1)
-        self.trek.add_child(self.child2)
-
-        self.previous = self.child2.previous_id
-        self.next = TrekFactory.create(published=False, name='Step 3')
+        self.sibling = TrekFactory.create(published=True, name='Sibling')
+        OrderedTrekChild(parent=self.parent, child=self.trek, order=0).save()
+        OrderedTrekChild(parent=self.trek, child=self.child1, order=3).save()
+        OrderedTrekChild(parent=self.trek, child=self.child2, order=2).save()
+        OrderedTrekChild(parent=self.parent, child=self.sibling, order=1).save()
 
         self.pk = self.trek.pk
         url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
@@ -704,21 +699,17 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'name': self.source.name,
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
-    """
-    def test_parent(self):
-        self.assertEqual(self.result['parent'], self.parent.pk)
-    """
 
     def test_children(self):
-        self.assertEqual(self.result['children'], [self.child1.pk, self.child2.pk])
+        self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])
 
     def test_previous(self):
         self.assertDictEqual(self.result['previous'],
-                             {u"%s" % self.trek_previous_published.pk: self.pk})
+                             {u"%s" % self.parent.pk: None})
 
     def test_next(self):
         self.assertDictEqual(self.result['next'],
-                             {u"%s" % self.pk: self.child1.pk})
+                             {u"%s" % self.parent.pk: self.sibling.pk})
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
