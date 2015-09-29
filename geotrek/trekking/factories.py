@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import factory
-from django.contrib.gis.geos import Point
 
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
@@ -80,7 +79,6 @@ class TrekFactory(TopologyFactory):
     is_park_centered = False
 
     advised_parking = factory.Sequence(lambda n: u"<p>Advised parking %s</p>" % n)
-    parking_location = Point(1, 1)
 
     public_transport = factory.Sequence(lambda n: u"<p>Public transport %s</p>" % n)
     advice = factory.Sequence(lambda n: u"<p>Advice %s</p>" % n)

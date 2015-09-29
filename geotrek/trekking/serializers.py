@@ -159,7 +159,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     next = rest_serializers.Field(source='next_id')
 
     # Idea: use rest-framework-gis
-    parking_location = rest_serializers.SerializerMethodField('get_parking_location')
     points_reference = rest_serializers.SerializerMethodField('get_points_reference')
 
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
@@ -206,18 +205,13 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'information_desks', 'themes', 'practice', 'accessibilities',
                   'usages', 'access', 'route', 'public_transport', 'advised_parking',
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
-                  'parking_location', 'relationships', 'points_reference',
+                  'relationships', 'points_reference',
                   'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
                   'treks', 'children', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
-
-    def get_parking_location(self, obj):
-        if not obj.parking_location:
-            return None
-        return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
     def get_points_reference(self, obj):
         if not obj.points_reference:

@@ -224,7 +224,6 @@ class TrekViewsTest(CommonTest):
             'duration': '0',
             'is_park_centered': '',
             'advised_parking': 'Very close',
-            'parking_location': 'POINT (1.0 1.0)',
             'public_transport': 'huhu',
             'advice_fr': '',
             'advice_en': '',
@@ -257,13 +256,10 @@ class TrekViewsTest(CommonTest):
         self.login()
 
         bad_data, form_error = self.get_bad_data()
-        bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
         self.assertEqual(response.status_code, 200)
-        form = self.get_form(response)
-        self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
     def test_basic_format(self):
         super(TrekViewsTest, self).test_basic_format()
@@ -444,7 +440,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             #  parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
-            parking_location=Point(0, 0, srid=settings.SRID)
         )
         path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
         self.trek.add_path(path1)
@@ -644,10 +639,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                                         u'id': self.trek_b.id,
                                         u'slug': self.trek_b.slug,
                                         u'name': self.trek_b.name}})
-
-    def test_parking_location_in_wgs84(self):
-        parking_location = self.result['parking_location']
-        self.assertEqual(parking_location[0], -1.3630812101179004)
 
     def test_points_reference_are_exported_in_wgs84(self):
         geojson = self.result['points_reference']
