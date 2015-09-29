@@ -1,9 +1,12 @@
 import os
 import json
+
 from django.test import TestCase
 from django.core import management
 from django.conf import settings
+
 from geotrek.common.factories import RecordSourceFactory
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import TouristicContentFactory, TouristicEventFactory
 
 
@@ -13,7 +16,7 @@ def factory(factory, source):
     obj.save()
 
 
-class SyncTest(TestCase):
+class SyncTest(TranslationResetMixin, TestCase):
     def test_sync(self):
         source_a = RecordSourceFactory(name='A')
         source_b = RecordSourceFactory(name='B')

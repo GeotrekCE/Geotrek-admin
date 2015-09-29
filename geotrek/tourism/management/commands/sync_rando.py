@@ -28,11 +28,15 @@ class Command(BaseCommand):
 
         contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
         contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})
+        if self.source:
+            contents = contents.filter(source__name__in=self.source)
         for content in contents:
             self.sync_content(lang, content)
 
         events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
         events = events.filter(**{'published_{lang}'.format(lang=lang): True})
+        if self.source:
+            events = events.filter(source__name__in=self.source)
         for event in events:
             self.sync_event(lang, event)
 
