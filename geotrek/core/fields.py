@@ -37,6 +37,8 @@ class TopologyField(forms.CharField):
             return Topology.deserialize(value)
         except Topology.DoesNotExist:
             raise ValidationError(self.error_messages['unknown_topology'] % value)
+        except IndexError:
+            raise ValidationError(_("Cannot add Topology without Path in database."))
         except ValueError as e:
             logger.warning("User input error: %s" % e)
             raise ValidationError(self.error_messages['invalid_topology'])
