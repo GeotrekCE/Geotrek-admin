@@ -44,6 +44,9 @@
                 ["add_infrastructuretype", "infrastructure", "infrastructuretype"],
                 ["change_infrastructuretype", "infrastructure", "infrastructuretype"],
                 ["delete_infrastructuretype", "infrastructure", "infrastructuretype"],
+                ["add_infrastructurecondition", "infrastructure", "infrastructurecondition"],
+                ["change_infrastructurecondition", "infrastructure", "infrastructurecondition"],
+                ["delete_infrastructurecondition", "infrastructure", "infrastructurecondition"],
 
 
 

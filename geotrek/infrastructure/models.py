@@ -53,6 +53,18 @@ class InfrastructureType(StructureRelated):
         return self.label
 
 
+class InfrastructureCondition(StructureRelated):
+    label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
+
+    class Meta:
+        verbose_name = _(u"Infrastructure Condition")
+        verbose_name_plural = _(u"Infrastructure Conditions")
+        db_table = "a_b_etat"
+
+    def __unicode__(self):
+        return self.label
+
+
 class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
@@ -63,6 +75,9 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     description = models.TextField(blank=True, db_column='description',
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
+    condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
+                                  verbose_name=_("Condition"), null=True,
+                                  on_delete=models.PROTECT)
 
     class Meta:
         db_table = 'a_t_amenagement'

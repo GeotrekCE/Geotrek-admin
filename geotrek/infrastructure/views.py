@@ -2,11 +2,12 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.core.models import AltimetryMixin
-from .models import Infrastructure, Signage
+from geotrek.core.views import CreateFromTopologyMixin
+
 from .filters import InfrastructureFilterSet, SignageFilterSet
 from .forms import InfrastructureForm, SignageForm
+from .models import Infrastructure, Signage
 
 
 class InfrastructureLayer(MapEntityLayer):
@@ -17,7 +18,7 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    columns = ['id', 'name', 'type', 'cities']
+    columns = ['id', 'name', 'type', 'condition', 'cities']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -26,7 +27,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
-        'id', 'name', 'type', 'description',
+        'id', 'name', 'type', 'condition', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -75,7 +76,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    columns = ['id', 'name', 'type', 'cities']
+    columns = ['id', 'name', 'type', 'condition', 'cities']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
@@ -84,7 +85,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'id', 'name', 'type', 'description',
+        'id', 'name', 'type', 'condition', 'description',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
