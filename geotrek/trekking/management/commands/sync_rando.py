@@ -344,7 +344,7 @@ class Command(BaseCommand):
             self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'parent__published_{lang}'.format(lang=lang): True}))
+        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 

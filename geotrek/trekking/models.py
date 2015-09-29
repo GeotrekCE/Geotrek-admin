@@ -312,8 +312,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             return settings.TOURISM_INTERSECTION_MARGIN
 
     def is_public(self):
+        for parent in self.parents:
+            if parent.any_published:
+                return True
         return self.any_published
-        #  or (self.parent and self.parent.any_published)
 
     def save(self, *args, **kwargs):
         if self.pk is not None and kwargs.get('update_fields', None) is None:

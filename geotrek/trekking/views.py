@@ -399,8 +399,10 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
-            trek = Trek.objects.existing().get(published=True, pk=pk)
+            trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -478,8 +480,10 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
-            trek = Trek.objects.existing().get(published=True, pk=pk)
+            trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
             raise Http404
         return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
