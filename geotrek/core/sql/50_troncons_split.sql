@@ -360,13 +360,12 @@ BEGIN
             END LOOP;
 
 
-            -- For each existing point topology with offset, re-attach it
+            -- For each existing point topology, re-attach it
             -- to the closest path, among those splitted.
             WITH existing_rec AS (SELECT MAX(et.id) AS id, e.decallage, e.geom
                                     FROM e_r_evenement_troncon et,
                                          e_t_evenement e
                                    WHERE et.evenement = e.id
-                                     AND e.decallage > 0
                                      AND et.troncon = troncon.id
                                      AND et.id = ANY(existing_et)
                                      GROUP BY e.id

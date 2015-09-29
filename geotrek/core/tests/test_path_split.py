@@ -872,21 +872,33 @@ class SplitPathPointTopologyTest(TestCase):
 
     def test_split_tee_2(self):
         """
-                C
-        A +--X--+----+ B
-                |
-                +    AB exists.
-                D    Add CD.
+              C
+        A +---+---=====--+ B
+              |   A'  B'
+              +           AB exists with topology A'B'.
+              D           Add CD
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        # Create a topology
         topology = TopologyFactory.create(no_path=True)
-        topology.add_path(ab, start=0.25, end=0.25)
-        self.assertEqual(len(topology.paths.all()), 1)
-        PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        self.assertEqual(len(topology.paths.all()), 1)
+        topology.add_path(ab, start=0.5, end=0.75)
+        topogeom = topology.geom
+        # Topology covers 1 path
         self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.all()[0]
-        self.assertEqual((0.5, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.paths.all()[0], ab)
+        PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
+        # CB was just created
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+
+        # AB has no topology anymore
+        self.assertEqual(len(ab.aggregations.all()), 0)
+        # Topology now still covers 1 path, but the new one
+        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(len(cb.aggregations.all()), 1)
+        self.assertEqual(topology.paths.all()[0].pk, cb.pk)
+        topology.reload()
+        self.assertEqual(topology.geom, topogeom)
 
     def test_split_tee_3(self):
         """
@@ -1021,39 +1033,28 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertTrue(almostequal(0.75, aggr_cb.end_position))
 
     def test_split_on_update(self):
-        """                               + D
-                                          :
-                                          :
-        A +-----------+ B         A +-----X---+ B
-                                          :
-        C +---X---+ D              C +----+
+        """
+                                       + E
+                                       :
+        A +----+----+ B         A +----+----+ B
+                                       :
+        C +----+ D              C +----+ D
+                                    AB and CD exist. CD updated into CE.
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
-        cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
+        cd = PathFactory.create(name="CD", geom=LineString((0, -2), (2, -2)))
+        self.assertEqual(ab.length, 4)
+        self.assertEqual(cd.length, 2)
 
-        topology = TopologyFactory.create(no_path=True)
-        topology.add_path(cd, start=0.5, end=0.5)
-        self.assertEqual(len(topology.paths.all()), 1)
-
-        cd.geom = LineString((2, -2), (2, 2))
+        cd.geom = LineString((0, -2), (2, -2), (2, 2))
         cd.save()
-        ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-
-        self.assertEqual(len(ab2.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 4)
-
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_ab2 = ab2.aggregations.all()[0]
-        aggr_cd = cd.aggregations.all()[0]
-        aggr_cd2 = cd2.aggregations.all()[0]
-        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cd2.start_position, aggr_cd2.end_position))
+        ab.reload()
+        self.assertEqual(ab.length, 2)
+        self.assertEqual(cd.length, 4)
+        ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        cd_2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
+        self.assertEqual(ab_2.length, 2)
+        self.assertEqual(cd_2.length, 2)
 
     def test_split_on_update_2(self):
         """                               + D
