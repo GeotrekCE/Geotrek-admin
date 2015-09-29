@@ -434,5 +434,24 @@
             "publication_date": null, 
             "name_en": "Steep descent"
         }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.servicetype",
+        "fields": {
+            "name_fr": "Parking",
+            "name": "Parking",
+            "review": false,
+            "pictogram": "upload/parking.png",
+            "practices": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "published": true,
+            "publication_date": null,
+            "name_en": "Parking"
+        }
     }
 ]
