@@ -4,6 +4,9 @@ CHANGELOG
 
 2.0.1.dev0
 ------------------
+**Breaking changes**
+
+* Trek relations parent / child have changed. Please reconfigure trek links.*
 
 **New features**
 

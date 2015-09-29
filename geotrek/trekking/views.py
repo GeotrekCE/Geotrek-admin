@@ -27,7 +27,8 @@ from geotrek.zoning.models import District, City, RestrictedArea
 
 from .models import Trek, POI, WebLink, Service
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
-from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
+from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
+                    WebLinkCreateFormPopup, ServiceForm)
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
@@ -102,7 +103,8 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'information_desks', 'themes', 'practice', 'accessibilities', 'access',
         'route', 'public_transport', 'advised_parking',
         'web_links', 'is_park_centered', 'disabled_infrastructure',
-        'parking_location', 'points_reference', 'related', 'pois',
+        'parking_location', 'points_reference', 'related',
+        'children', 'parents', 'pois',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'source',
@@ -368,7 +370,8 @@ class TrekViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         qs = Trek.objects.existing()
-        qs = qs.filter(Q(published=True) | Q(parent__published=True))
+        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
+               .order_by('pk').distinct('pk')
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'])
         qs = qs.transform(settings.API_SRID, field_name='geom')
@@ -396,8 +399,10 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
-            trek = Trek.objects.existing().get(Q(published=True) | Q(parent__published=True), pk=pk)
+            trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -475,8 +480,10 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
-            trek = Trek.objects.existing().get(Q(published=True) | Q(parent__published=True), pk=pk)
+            trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
             raise Http404
         return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 

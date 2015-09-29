@@ -82,6 +82,8 @@ class Command(BaseCommand):
                     default=False, help='Skip generation of zip tiles files'),
         make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
                     default=False, help='Skip generation of DEM files for mobile app'),
+        make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
+                    default=False, help='Skip generation of PNG elevation profile'),
     )
 
     def mkdirs(self, name):
@@ -255,6 +257,12 @@ class Command(BaseCommand):
         for obj in model.objects.all():
             self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
+    def sync_poi_media(self, lang, poi):
+        if poi.resized_pictures:
+            self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
+        for picture, resized in poi.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
+
     def sync_trek(self, lang, trek):
         zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
         zipfullname = os.path.join(self.tmp_root, zipname)
@@ -267,15 +275,13 @@ class Command(BaseCommand):
         self.sync_kml(lang, trek)
         self.sync_pdf(lang, trek)
         self.sync_profile_json(lang, trek)
-        self.sync_profile_png(lang, trek, zipfile=self.zipfile)
+        if not self.skip_profile_png:
+            self.sync_profile_png(lang, trek, zipfile=self.zipfile)
         self.sync_dem(lang, trek)
         for desk in trek.information_desks.all():
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
-            if poi.resized_pictures:
-                self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
-            for picture, resized in poi.resized_pictures[1:]:
-                self.sync_media_file(lang, resized)
+            self.sync_poi_media(lang, poi)
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
             for content in trek.published_touristic_contents:
                 if content.resized_pictures:
@@ -338,7 +344,7 @@ class Command(BaseCommand):
             self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'parent__published_{lang}'.format(lang=lang): True}))
+        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 
@@ -384,6 +390,7 @@ class Command(BaseCommand):
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
         self.skip_dem = options['skip_dem']
+        self.skip_profile_png = options['skip_profile_png']
         self.source = options['source']
         if self.source is not None:
             self.source = self.source.split(',')

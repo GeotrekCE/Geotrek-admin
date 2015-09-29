@@ -120,14 +120,13 @@
         <tr>
             <th>{% trans "Itinerancy" %}</th>
             <td>
-                {% if trek.parent %}
-                    {% blocktrans with name=trek.parent.name_display|safe %}
-                        Child of {{ name }}
-                    {% endblocktrans %}
+                {% if trek.parents %}
+                    {% trans "Child of:" %}<br/>
+                    {% valuelist trek.parents field='name_display' %}
                 {% endif %}
-                {% if trek.children.all %}
+                {% if trek.children %}
                     {% trans "Parent of:" %}<br/>
-                    {% valuelist trek.children.all field='name_display' %}
+                    {% valuelist trek.children field='name_display' %}
                 {% endif %}
             </td>
         </tr>

@@ -10,7 +10,7 @@ from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import Trek, OrderedTrekChild
 
 
 class TrekTest(TranslationResetMixin, TestCase):
@@ -109,19 +109,14 @@ class TrekTest(TranslationResetMixin, TestCase):
                          list(Trek.objects.all().values_list('name', flat=True)))
 
     def test_trek_itself_as_parent(self):
-        a = TrekFactory.create(name='A')
-        a.parent = a
+        """
+        Test if a trek it is its own parent
+        """
+        trek1 = TrekFactory.create(name='trek1')
+        OrderedTrekChild.objects.create(parent=trek1, child=trek1)
         self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use itself as parent trek.",
-                                 a.full_clean)
-
-    def test_trek_child_as_parent(self):
-        a = TrekFactory.create(name='A')
-        b = TrekFactory.create(name='B', parent=a)
-        c = TrekFactory.create(name='C', parent=b)
-        self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use a a child trek as parent trek.",
-                                 c.full_clean)
+                                 u"Cannot use itself as child trek.",
+                                 trek1.full_clean)
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):
@@ -289,3 +284,26 @@ class TrekUpdateGeomTest(TestCase):
         db_trek = Trek.objects.get(pk=new_trek.pk)
 
         self.assertEqual(db_trek.ambiance_en, 'Very special ambiance, for test purposes.')
+
+
+class TrekItinerancyTest(TestCase):
+    def test_next_previous(self):
+        trekA = TrekFactory(name=u"A")
+        trekB = TrekFactory(name=u"B")
+        trekC = TrekFactory(name=u"C")
+        trekD = TrekFactory(name=u"D")
+        OrderedTrekChild(parent=trekC, child=trekA, order=42).save()
+        OrderedTrekChild(parent=trekC, child=trekB, order=15).save()
+        OrderedTrekChild(parent=trekD, child=trekA, order=1).save()
+        self.assertEqual(trekA.children_id, [])
+        self.assertEqual(trekB.children_id, [])
+        self.assertEqual(trekC.children_id, [trekB.id, trekA.id])
+        self.assertEqual(trekD.children_id, [trekA.id])
+        self.assertEqual(trekA.next_id, {trekC.id: None, trekD.id: None})
+        self.assertEqual(trekB.next_id, {trekC.id: trekA.id})
+        self.assertEqual(trekC.next_id, {})
+        self.assertEqual(trekD.next_id, {})
+        self.assertEqual(trekA.previous_id, {trekC.id: trekB.id, trekD.id: None})
+        self.assertEqual(trekB.previous_id, {trekC.id: None})
+        self.assertEqual(trekC.previous_id, {})
+        self.assertEqual(trekD.previous_id, {})
