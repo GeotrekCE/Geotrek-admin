@@ -6,38 +6,73 @@ from geotrek.infrastructure.models import InfrastructureType, InfrastructureCond
 
 
 class InfrastructureTypeAdmin(admin.ModelAdmin):
-    list_display = ('label', 'type', 'structure')
     search_fields = ('label', 'structure')
-    list_filter = ('type', 'structure',)
+
+    def get_queryset(self, request):
+        """
+        filter objects by structure
+        """
+        qs = super(InfrastructureTypeAdmin, self).get_queryset(request)
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            qs = qs.filter(structure=request.user.profile.structure)
+        return qs
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'structure':
+            if not request.user.has_perm('authent.can_bypass_structure'):
+                return None
+            kwargs['initial'] = request.user.profile.structure
+            return db_field.formfield(**kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            obj.structure = request.user.profile.structure
+        obj.save()
+
+    def get_list_display(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ('label', 'type')
+        return ('label', 'type', 'structure')
+
+    def get_list_filter(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ('type', )
+        return ('type', 'structure')
 
 
 class InfrastructureConditionAdmin(admin.ModelAdmin):
-    list_display = ('label', 'structure')
     search_fields = ('label', 'structure')
-    list_filter = ('structure',)
 
-    def get_form(self, request, obj=None, **kwargs):
+    def get_queryset(self, request):
         """
-        custom admin form generation
+        filter objects by structure
         """
-        form = super(InfrastructureConditionAdmin, self).get_form(request, obj, **kwargs)
-
-        # if not bypass structure, hide structure field
-
+        qs = super(InfrastructureConditionAdmin, self).get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
-            del form.base_fields['structure']
+            qs = qs.filter(structure=request.user.profile.structure)
+        return qs
 
-        return form
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'structure':
+            if not request.user.has_perm('authent.can_bypass_structure'):
+                return None
+            kwargs['initial'] = request.user.profile.structure
+            return db_field.formfield(**kwargs)
 
-    def save_form(self, request, form, change):
-        """
-        custom save form
-        """
-        # if not bypass structure, fix user structure
+    def save_model(self, request, obj, form, change):
         if not request.user.has_perm('authent.can_bypass_structure'):
-            form.instance.structure = request.user.profile.structure
+            obj.structure = request.user.profile.structure
+        obj.save()
 
-        return super(InfrastructureConditionAdmin, self).save_form(request, form, change)
+    def get_list_display(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ('label', )
+        return ('label', 'structure')
+
+    def get_list_filter(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ()
+        return ('structure',)
 
 
 admin.site.register(InfrastructureType, InfrastructureTypeAdmin)

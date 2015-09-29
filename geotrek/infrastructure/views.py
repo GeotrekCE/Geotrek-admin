@@ -50,17 +50,6 @@ class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Infrastructure
     form_class = InfrastructureForm
 
-    def get_form(self, form_class):
-        """
-        customize form in generic view
-        """
-        form = super(InfrastructureCreate, self).get_form(form_class)
-
-        if not self.request.user.has_perm('authent.can_bypass_structure'):
-            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
-
-        return form
-
 
 class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
@@ -69,17 +58,6 @@ class InfrastructureUpdate(MapEntityUpdate):
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
-
-    def get_form(self, form_class):
-        """
-        customize form in generic view
-        """
-        form = super(InfrastructureUpdate, self).get_form(form_class)
-
-        if not self.request.user.has_perm('authent.can_bypass_structure'):
-            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
-
-        return form
 
 
 class InfrastructureDelete(MapEntityDelete):
@@ -130,17 +108,6 @@ class SignageCreate(MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
-    def get_form(self, form_class):
-        """
-        customize form in generic view
-        """
-        form = super(SignageCreate, self).get_form(form_class)
-
-        if not self.request.user.has_perm('authent.can_bypass_structure'):
-            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
-
-        return form
-
 
 class SignageUpdate(MapEntityUpdate):
     queryset = Signage.objects.existing()
@@ -149,17 +116,6 @@ class SignageUpdate(MapEntityUpdate):
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageUpdate, self).dispatch(*args, **kwargs)
-
-    def get_form(self, form_class):
-        """
-        customize form in generic view
-        """
-        form = super(SignageUpdate, self).get_form(form_class)
-
-        if not self.request.user.has_perm('infrastructure.add_infrastructurecondition'):
-            form.fields['condition'].queryset = self.request.user.profile.structure.infrastructurecondition_set.all()
-
-        return form
 
 
 class SignageDelete(MapEntityDelete):

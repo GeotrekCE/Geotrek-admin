@@ -12,6 +12,15 @@ class BaseInfrastructureForm(TopologyForm):
             ['structure',
              'name', 'description', 'type', 'condition']
 
+    def __init__(self, *args, **kwargs):
+        super(BaseInfrastructureForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            structure = self.instance.structure
+        else:
+            structure = self.user.profile.structure
+        self.fields['type'].queryset = structure.infrastructuretype_set.all()
+        self.fields['condition'].queryset = structure.infrastructurecondition_set.all()
+
 
 class InfrastructureForm(BaseInfrastructureForm):
     def __init__(self, *args, **kwargs):
