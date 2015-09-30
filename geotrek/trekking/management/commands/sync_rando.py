@@ -74,12 +74,16 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--url', '-u', action='store', dest='url',
                     default='http://localhost', help='Base url'),
+        make_option('--source', '-s', action='store', dest='source',
+                    default=None, help='Filter by source(s)'),
         make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
                     default=False, help='Skip generation of PDF files'),
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
                     default=False, help='Skip generation of zip tiles files'),
         make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
                     default=False, help='Skip generation of DEM files for mobile app'),
+        make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
+                    default=False, help='Skip generation of PNG elevation profile'),
     )
 
     def mkdirs(self, name):
@@ -147,13 +151,13 @@ class Command(BaseCommand):
 
         tiles.run()
 
-    def sync_view(self, lang, view, name, url='/', zipfile=None, **kwargs):
+    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, **kwargs):
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
-        request = self.factory.get(url, HTTP_HOST=self.host)
+        request = self.factory.get(url, params, HTTP_HOST=self.host)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
         response = view(request, **kwargs)
@@ -173,24 +177,28 @@ class Command(BaseCommand):
     def sync_geojson(self, lang, viewset, name, zipfile=None):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
-        self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile)
+        params = {'format': 'geojson'}
+        if self.source:
+            params['source'] = ','.join(self.source)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
             view = TrekTouristicContentAndPOIViewSet.as_view({'get': 'list'})
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
+            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
             view = TrekPOIViewSet.as_view({'get': 'list'})
-            self.sync_view(lang, view, name, url='/?format=geojson', zipfile=None, pk=trek.pk)
+            self.sync_view(lang, view, name, params=params, zipfile=None, pk=trek.pk)
         else:
             view = TrekPOIViewSet.as_view({'get': 'list'})
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
+            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_services(self, lang, trek, zipfile=None):
         view = TrekServiceViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'services.geojson')
-        self.sync_view(lang, view, name, url='/?format=geojson', zipfile=zipfile, pk=trek.pk)
+        self.sync_view(lang, view, name, params={'format': 'geojson'}, zipfile=zipfile, pk=trek.pk)
 
     def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, **kwargs):
         modelname = obj._meta.model_name
@@ -249,6 +257,12 @@ class Command(BaseCommand):
         for obj in model.objects.all():
             self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
+    def sync_poi_media(self, lang, poi):
+        if poi.resized_pictures:
+            self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
+        for picture, resized in poi.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
+
     def sync_trek(self, lang, trek):
         zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
         zipfullname = os.path.join(self.tmp_root, zipname)
@@ -261,15 +275,13 @@ class Command(BaseCommand):
         self.sync_kml(lang, trek)
         self.sync_pdf(lang, trek)
         self.sync_profile_json(lang, trek)
-        self.sync_profile_png(lang, trek, zipfile=self.zipfile)
+        if not self.skip_profile_png:
+            self.sync_profile_png(lang, trek, zipfile=self.zipfile)
         self.sync_dem(lang, trek)
         for desk in trek.information_desks.all():
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
-            if poi.resized_pictures:
-                self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
-            for picture, resized in poi.resized_pictures[1:]:
-                self.sync_media_file(lang, resized)
+            self.sync_poi_media(lang, poi)
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
             for content in trek.published_touristic_contents:
                 if content.resized_pictures:
@@ -332,7 +344,9 @@ class Command(BaseCommand):
             self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'parent__published_{lang}'.format(lang=lang): True}))
+        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
+        if self.source:
+            treks = treks.filter(source__name__in=self.source)
 
         for trek in treks:
             self.sync_trek(lang, trek)
@@ -376,6 +390,10 @@ class Command(BaseCommand):
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
         self.skip_dem = options['skip_dem']
+        self.skip_profile_png = options['skip_profile_png']
+        self.source = options['source']
+        if self.source is not None:
+            self.source = self.source.split(',')
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},

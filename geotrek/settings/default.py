@@ -130,6 +130,5 @@ if _others_color:
 
 # Experimental apps and features
 _EXPERIMENTAL_MODE = TEST or envini.getbool('experimental', 'False')
-if _EXPERIMENTAL_MODE:
-    FLATPAGES_ENABLED = True
-    TOURISM_ENABLED = True
+FLATPAGES_ENABLED = True
+TOURISM_ENABLED = True

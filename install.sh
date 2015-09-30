@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-VERSION=${VERSION:-2.0.1.dev0}
+VERSION=${VERSION:-2.1.0}
 dev=false
 tests=false
 prod=false
@@ -461,6 +461,7 @@ function geotrek_setup {
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
         bin/django syncdb --noinput
+        bin/django collectstatic --clear --noinput --verbosity=0
     fi
 
     if $prod || $standalone ; then

@@ -38,6 +38,9 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
                                help_text=_('HTML content'))
     target = models.CharField(verbose_name=_(u'Target'), max_length=12, choices=FLATPAGES_TARGETS,
                               db_column='cible', default=FLATPAGES_TARGETS.ALL)
+    source = models.ManyToManyField('common.RecordSource',
+                                    null=True, blank=True, related_name='flatpages',
+                                    verbose_name=_("Source"), db_table='t_r_page_source')
 
     @property
     def slug(self):

@@ -7,38 +7,10 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'ReservationSystem'
-        db.create_table(u'tourism_reservationsystem', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
-        ))
-        db.send_create_signal(u'tourism', ['ReservationSystem'])
-
-        # Adding field 'TouristicContent.reservation_system'
-        db.add_column('t_t_contenu_touristique', 'reservation_system',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tourism.ReservationSystem'], null=True, blank=True),
-                      keep_default=False)
-
-        # creating default instances
-
-        orm.ReservationSystem.objects.create(
-            name=u"OpenSystem"
-        )
-
-        orm.ReservationSystem.objects.create(
-            name=u"FFCAM"
-        )
-
-        orm.ReservationSystem.objects.create(
-            name=u"Gîtes de France"
-        )
+        db.rename_table('tourism_reservationsystem', 't_b_systeme_reservation')
 
     def backwards(self, orm):
-        # Deleting model 'ReservationSystem'
-        db.delete_table(u'tourism_reservationsystem')
-
-        # Deleting field 'TouristicContent.reservation_system'
-        db.delete_column('t_t_contenu_touristique', 'reservation_system_id')
+        db.rename_table('t_b_systeme_reservation', 'tourism_reservationsystem')
 
     models = {
         u'authent.structure': {
@@ -98,7 +70,7 @@ class Migration(SchemaMigration):
             'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'null': 'True', 'db_column': "'picto'"})
         },
         u'tourism.reservationsystem': {
-            'Meta': {'object_name': 'ReservationSystem'},
+            'Meta': {'object_name': 'ReservationSystem', 'db_table': "'t_b_systeme_reservation'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
         },

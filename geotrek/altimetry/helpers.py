@@ -126,9 +126,8 @@ class AltimetryHelper(object):
         if height / precision > 10000:
             precision = int(width / max_resolution)
         cursor = connection.cursor()
-        try:
-            cursor.execute('SELECT * FROM mnt LIMIT 1;')
-        except:
+        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='mnt'")
+        if cursor.rowcount == 0:
             logger.warn("No DEM present")
             return {}
 

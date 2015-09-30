@@ -259,6 +259,8 @@ class TouristicContentViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = TouristicContent.objects.existing()
         qs = qs.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'])
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 
@@ -271,6 +273,8 @@ class TouristicEventViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = TouristicEvent.objects.existing()
         qs = qs.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'])
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 

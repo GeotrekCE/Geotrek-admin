@@ -2,17 +2,35 @@
 CHANGELOG
 =========
 
-2.0.1.dev0
+2.1.0 (2015-09-29)
 ------------------
+
+**Breaking changes**
+
+* Instead of storing the parent of a trek, Geotrek now stores the children of a trek.
+  This allows to use the same trek in several parents and to order them.
+  WARNING! Existing parent/child relation are lost. You will have to set them
+  again after upgrade. Fixes #1479
 
 **New features**
 
-* Services
+* Add trek infos (aka services for now)
+* Add email sent to reporting user after submit
+* Handle multiple reservation systems (fixes #1488)
+* Add an option to sync_rando to filter by source (fixes #1480)
+* Add add condition field to infrastructure table (fixes #1494)
+* New Geotrek logo
 
 **Bug fixes**
 
 * Reload supervisor configuration after Geotrek upgrade
 * Fix projection of waypoints in GPX exports
+* Prevent unnecessary save for geom fields if they are not updated.
+  This prevents triggering geom recalculation in postgres.
+* Fix crash in case of missing or invalid picture
+* Fix feedback API
+* Unzip eggs to fix templates not found error
+* Various parsers (import system) fixes and improvements
 
 **Documentation**
 

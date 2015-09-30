@@ -29,3 +29,4 @@ bootstrap.py
 /.buildout
 geotrek/settings/custom.py
 /parsers.py
+/install.log
