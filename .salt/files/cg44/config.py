@@ -41,3 +41,14 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'touristiccontent': (10.7, 8.025),
     'touristicevent': (10.7, 8.025),
 }
+
+MAILALERTSUBJECT = u"Votre signalement sur rando.loire-atlantique.fr"
+MAILALERTMESSAGE = u"""Bonjour,
+
+Nous accusons bonne réception de votre message et vous remercions de l’intérêt porté à notre site.
+
+Bien cordialement,
+
+Département de Loire-Atlantique
+http://rando.loire-atlantique.fr
+http://www.loire-atlantique.fr"""
