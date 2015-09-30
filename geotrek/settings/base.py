@@ -1,5 +1,6 @@
 import os
 import sys
+import djcelery
 
 from django.contrib.messages import constants as messages
 
@@ -559,7 +560,6 @@ MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
 
-import djcelery
 djcelery.setup_loader()
 
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
