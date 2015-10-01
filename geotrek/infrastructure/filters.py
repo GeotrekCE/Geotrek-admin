@@ -26,7 +26,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition']
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
@@ -40,4 +40,4 @@ class SignageFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields + ['type']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition']
