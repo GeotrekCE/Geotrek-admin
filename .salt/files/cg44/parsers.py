@@ -106,6 +106,7 @@ class CG44POIParser(CG44TourInSoftParser):
 
 
 class CG44HebergementParser(CG44POIParser):
+    label = u"Hébergements"
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/b94de37c-b0b1-414f-9559-53510be235dc/Objects'
     constant_fields = {
         'type': u"Hébergement",
@@ -117,6 +118,7 @@ class CG44HebergementParser(CG44POIParser):
 
 
 class CG44RestaurationParser(CG44POIParser):
+    label = u"Restauration"
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/e079fe27-11ad-4389-ac67-34bda49cc324/Objects'
     constant_fields = {
         'type': u"Restauration",
@@ -128,6 +130,7 @@ class CG44RestaurationParser(CG44POIParser):
 
 
 class CG44AVoirParser(CG44TouristicContentParser):
+    label = u"A voir"
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/99c93523-4194-428c-97f4-56bd3f774982/Objects'
     constant_fields = {
         'category': u"A voir",
@@ -142,6 +145,7 @@ class CG44AVoirParser(CG44TouristicContentParser):
 
 
 class CG44AFaireParser(CG44TouristicContentParser):
+    label = u"A faire"
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/7b171134-26bf-485f-b1e1-65f9f4187c6f/Objects'
     constant_fields = {
         'category': u"A faire",
@@ -153,6 +157,7 @@ class CG44AFaireParser(CG44TouristicContentParser):
 
 
 class CG44LADTrekParser(TourInSoftParser):
+    label = u"Descriptif des itinéraires"
     url = 'http://wcf.tourinsoft.com/Syndication/cdt44/31cd7100-e547-4780-8292-53dabbc884a9/Objects'
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
     model = Trek
@@ -335,6 +340,7 @@ class CG44TrekParser(TrekParser):
 
 
 class CG44PedestreTrekParser(CG44TrekParser):
+    label = u"Itinéraires pédestre"
     practice = u"Pédestre"
 
     def filter_eid(self, src, val):
@@ -342,6 +348,7 @@ class CG44PedestreTrekParser(CG44TrekParser):
 
 
 class CG44VTTTrekParser(CG44TrekParser):
+    label = u"Itinéraires VTT"
     practice = u"VTT"
 
     def filter_eid(self, src, val):
@@ -349,6 +356,7 @@ class CG44VTTTrekParser(CG44TrekParser):
 
 
 class CG44EquestreTrekParser(CG44TrekParser):
+    label = u"Itinéraires équestres"
     practice = u"Equestre"
 
     def filter_eid(self, src, val):
@@ -356,6 +364,7 @@ class CG44EquestreTrekParser(CG44TrekParser):
 
 
 class CG44AVeloTrekParser(TrekParser):
+    label = u"Itinéraires vélo"
     warn_on_missing_fields = True
     eid = 'eid'
     fields = {
