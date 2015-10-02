@@ -384,8 +384,6 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
-    label = 'Root parser for Shapefiles (SHP)'
-
     def next_row(self):
         datasource = DataSource(self.filename)
         layer = datasource[0]
@@ -412,8 +410,6 @@ class ShapeParser(Parser):
 
 
 class ExcelParser(Parser):
-    label = 'Root parser for Excel format'
-
     def next_row(self):
         workbook = xlrd.open_workbook(self.filename)
         sheet = workbook.sheet_by_index(0)
@@ -426,7 +422,6 @@ class ExcelParser(Parser):
 
 
 class AtomParser(Parser):
-    label = 'Root parser for Atom format'
     ns = {
         'Atom': 'http://www.w3.org/2005/Atom',
         'georss': 'http://www.georss.org/georss',
@@ -535,8 +530,6 @@ class AttachmentParserMixin(object):
 
 
 class TourInSoftParser(AttachmentParserMixin, Parser):
-    label = 'Root parser for TourInSoft SIT'
-
     @property
     def items(self):
         return self.root['d']['results']
@@ -568,8 +561,6 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):
-    label = 'Root parser for TourismSystem SIT'
-
     @property
     def items(self):
         return self.root['data']
@@ -608,8 +599,6 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
 
 
 class SitraParser(AttachmentParserMixin, Parser):
-    label = 'Root parser for Sitra SIT'
-
     url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
 
     @property
@@ -653,8 +642,6 @@ class SitraParser(AttachmentParserMixin, Parser):
 
 
 class OpenSystemParser(Parser):
-    label = 'Root parser for OpenSystem <-> Sitra link'
-
     url = 'http://proxy-xml.open-system.fr/rest.aspx'
 
     def next_row(self):

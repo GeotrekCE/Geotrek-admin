@@ -33,11 +33,12 @@ def discover_available_parsers():
 
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
-        label = cls.label or cls.__name__
+        if cls.label is None:
+            continue
         if not getattr(cls, 'url', None) or not getattr(cls, 'base_url', None):
-            choices.append((index, label))
+            choices.append((index, cls.label))
         else:
-            choices_url.append((index, label))
+            choices_url.append((index, cls.label))
 
     choices = sorted(choices, key=lambda x: x[1])
     choices_url = sorted(choices_url, key=lambda x: x[1])

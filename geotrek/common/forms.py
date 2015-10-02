@@ -80,7 +80,7 @@ class CommonForm(MapEntityForm):
 
 class ImportDatasetForm(django_forms.Form):
     parser = forms.TypedChoiceField(
-        label=_('Parser'),
+        label=_('Data to import from network'),
         widget=forms.RadioSelect,
         required=True,
     )
@@ -114,6 +114,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
     def __init__(self, *args, **kwargs):
         super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
 
+        self.fields['parser'].label = _('Data to import from local file')
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -121,7 +122,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                     'zipfile',
                 ),
                 FormActions(
-                    Submit('upload-file', _("Upload"), css_class='button white')
+                    Submit('upload-file', _("Import"), css_class='button white')
                 ),
                 css_class='file-attachment-form',
             )
