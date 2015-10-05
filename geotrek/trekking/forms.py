@@ -99,7 +99,6 @@ class TrekForm(BaseTrekForm):
                     'points_reference',
                     'disabled_infrastructure',
                     'advised_parking',
-                    'parking_location',
                     'public_transport',
                     'advice',
                     'themes',
