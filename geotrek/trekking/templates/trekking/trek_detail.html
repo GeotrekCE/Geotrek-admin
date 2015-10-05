@@ -37,26 +37,6 @@
             var map = data.map;
 
             //
-            // Parking
-            {% if object.parking_location %}
-                var parkingIcon = L.icon({
-                    iconUrl: "{% static "trekking/parking.png" %}",
-                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
-                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
-                });
-                var point = {{object.parking_location|geojsonfeature|safe}};
-                var location = point.geometry.coordinates.reverse();
-                L.marker(location, {icon: parkingIcon})
-                 .bindPopup("{{ object.advised_parking|default:_("None") }}")
-                 .addTo(map);
-
-                // Make sure parking icon is visible on the map
-                var bounds = map.getBounds();
-                bounds.extend(location);
-                map.fitBounds(bounds);
-            {% endif %}
-
-            //
             // Trek POIs layer
             $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var pois = new POILayer(data, {

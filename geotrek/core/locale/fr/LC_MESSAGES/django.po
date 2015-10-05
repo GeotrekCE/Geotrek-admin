@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-23 13:48+0200\n"
+"POT-Creation-Date: 2015-09-29 14:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,9 @@ msgstr "La topologie n'est pas valide."
 #, python-format
 msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
+
+msgid "Cannot add Topology without Path in database."
+msgstr "Impossible d'ajouter une topologie sans tronçon dans la base de données."
 
 msgid "Linestring invalid snapping."
 msgstr "La ligne a un snapping invalide"

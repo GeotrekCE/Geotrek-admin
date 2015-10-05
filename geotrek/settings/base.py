@@ -434,8 +434,7 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
                            'core/leaflet.textpath.js',
-                           'trekking/points_reference.js',
-                           'trekking/parking_location.js']},
+                           'trekking/points_reference.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
                               'core/dijkstra.js',

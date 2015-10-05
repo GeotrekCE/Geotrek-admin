@@ -21,7 +21,6 @@
         "advised_parking": "<p>Advised parking 0</p>",
         "name_it": null,
         "departure_it": null,
-        "parking_location": "POINT(5.95 44.9)",
         "points_reference": "MULTIPOINT(5.94 44.8, 5.93 44.7)",
         "description_teaser": "<p>description_teaser 0</p>",
         "networks": [],

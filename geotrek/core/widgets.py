@@ -58,7 +58,7 @@ class BaseTopologyWidget(MapWidget):
             return Topology.objects.get(pk=value)
         try:
             return Topology.deserialize(value)
-        except ValueError:
+        except (ValueError, IndexError):
             return None
 
     def render(self, name, value, attrs=None):

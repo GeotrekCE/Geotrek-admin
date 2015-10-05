@@ -76,8 +76,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                            help_text=_(u"Crosses center of park"))
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',
                                        help_text=_(u"Where to park"))
-    parking_location = models.PointField(verbose_name=_(u"Parking location"), db_column='geom_parking',
-                                         srid=settings.SRID, spatial_index=False, blank=True, null=True)
     public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True, db_column='transport',
                                         help_text=_(u"Train, bus (see web links)"))
     advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation',

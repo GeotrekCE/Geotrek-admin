@@ -41,8 +41,6 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields['topology'].widget = LineTopologyWidget()
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'topology'
-            self.fields['parking_location'].label = ''
-            self.fields['parking_location'].widget.target_map = 'topology'
 
         class Meta(TopologyForm.Meta):
             model = Trek
@@ -56,8 +54,6 @@ else:
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'geom'
-            self.fields['parking_location'].label = ''
-            self.fields['parking_location'].widget.target_map = 'geom'
 
         class Meta(CommonForm.Meta):
             model = Trek
@@ -103,7 +99,6 @@ class TrekForm(BaseTrekForm):
                     'points_reference',
                     'disabled_infrastructure',
                     'advised_parking',
-                    'parking_location',
                     'public_transport',
                     'advice',
                     'themes',
@@ -140,7 +135,6 @@ class TrekForm(BaseTrekForm):
             # Edit points of reference with custom edition JavaScript class
             self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
-        self.fields['parking_location'].widget.geometry_field_class = 'ParkingLocationField'
         self.fields['duration'].widget.attrs['min'] = '0'
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
@@ -223,7 +217,7 @@ class TrekForm(BaseTrekForm):
             ['name', 'review', 'published', 'is_park_centered', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
-             'disabled_infrastructure', 'advised_parking', 'parking_location',
+             'disabled_infrastructure', 'advised_parking',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source',
              'children_trek', 'eid', 'eid2', 'hidden_ordered_children', ]
