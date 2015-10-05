@@ -6,10 +6,11 @@ from geotrek.trekking.models import Service, ServiceType, Trek
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        type = ServiceType.objects.get(pk=3)
-        for trek in Trek.objects.all():
-            service = Service(type=type, eid=trek.eid, geom=trek.parking_location)
-            service.save()
+        if Trek.objects.count():
+            type = ServiceType.objects.get(pk=3)
+            for trek in Trek.objects.all():
+                service = Service(type=type, eid=trek.eid, geom=trek.parking_location)
+                service.save()
 
     def backwards(self, orm):
         pass
