@@ -14,7 +14,7 @@ matrix:
 
 
 cache:
-  - apt
+  apt: true
   directories:
     - $HOME/.builout/downloads
 
