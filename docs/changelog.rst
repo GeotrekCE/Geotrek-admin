@@ -23,6 +23,7 @@ CHANGELOG
 * Handle multiple reservation systems (fixes #1488)
 * Add an option to sync_rando to filter by source (fixes #1480)
 * Add add condition field to infrastructure table (fixes #1494)
+* Add a Synchro and Import menu, activated by default for superusers (fixes #1486)
 * New Geotrek logo
 
 **Bug fixes**
@@ -39,6 +40,7 @@ CHANGELOG
 **Documentation**
 
 * Document server migration
+* Document synchronization
 
 
 2.0.0 (2015-07-20)
