@@ -218,7 +218,7 @@ class TrekForm(BaseTrekForm):
             ['name', 'review', 'published', 'is_park_centered', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
-             'disabled_infrastructure', 'advised_parking', 'parking_location',
+             'disabled_infrastructure', 'advised_parking',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source',
              'children_trek', 'eid', 'eid2', 'hidden_ordered_children', ]
