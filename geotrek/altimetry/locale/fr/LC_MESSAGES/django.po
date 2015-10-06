@@ -5,56 +5,72 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-07 14:30+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-10-06 12:11+0200\n"
+"PO-Revision-Date: 2015-10-06 12:11+0100\n"
+"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.7.5\n"
 
+#: helpers.py:84
 msgid "Distance (m)"
 msgstr "Distance (m)"
 
+#: helpers.py:85
 msgid "Altitude (m)"
 msgstr "Altitude (m)"
 
+#: helpers.py:91
 msgid "Altimetry data not available"
 msgstr "Données altimétriques non disponibles"
 
-msgid "Length"
-msgstr "Longueur"
+#: models.py:17
+msgid "Length 3D"
+msgstr "Longueur 3D"
 
+#: models.py:19
 msgid "Ascent"
 msgstr "Dénivelée positive"
 
+#: models.py:21
 msgid "Descent"
 msgstr "Dénivelée négative"
 
+#: models.py:23
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
 
+#: models.py:25
 msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
+#: models.py:27 templates/altimetry/elevationinfo_fragment.html:17
 msgid "Slope"
 msgstr "Dénivelé"
 
+#: templates/altimetry/altimetric_profile_fragment.html:4
 msgid "Toggle altimetric profile"
 msgstr "Afficher/cacher le profile altimétrique"
 
+#: templates/altimetry/altimetric_profile_fragment.html:4
 msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
+#: templates/altimetry/elevationinfo_fragment.html:4
+#: templates/altimetry/elevationinfo_fragment.html:21
 msgid "Elevation"
 msgstr "Altitude"
 
+#: templates/altimetry/elevationinfo_fragment.html:12
 msgid "3D"
 msgstr "3D"
 
+#: templates/altimetry/elevationinfo_fragment.html:14
 msgid "2D"
 msgstr "2D"
