@@ -7,189 +7,255 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-06 10:59+0200\n"
-"PO-Revision-Date: 2015-10-06 11:46+0100\n"
+"POT-Creation-Date: 2015-10-06 13:35+0200\n"
+"PO-Revision-Date: 2015-10-06 13:36+0100\n"
+"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
+"Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.7.5\n"
 
+#: fields.py:26
 msgid "Topology is empty."
 msgstr "La topologie est vide."
 
+#: fields.py:27
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
+#: fields.py:28
 #, python-format
 msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
 
+#: fields.py:52 tests/test_views.py:30
 msgid "Linestring invalid snapping."
 msgstr "La ligne a un snapping invalide"
 
+#: filters.py:80
 msgid "length"
 msgstr "Longueur"
 
+#: filters.py:81 filters.py:91 models.py:49 models.py:506
 msgid "Name"
 msgstr "Nom"
 
+#: filters.py:82 filters.py:94 models.py:51 models.py:509
 msgid "Comments"
 msgstr "Commentaires"
 
+#: filters.py:92 models.py:54 models.py:507
 msgid "Departure"
 msgstr "Départ"
 
+#: filters.py:93 models.py:56 models.py:508
 msgid "Arrival"
 msgstr "Arrivée"
 
+#: filters.py:110 models.py:513
 msgid "Trail"
 msgstr "Sentier"
 
+#: forms.py:55
 msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
+#: forms.py:56
 msgid "The path will be reversed once saved"
 msgstr "Le tronçon sera inversé une fois sauvegardé."
 
+#: forms.py:75
 msgid "Invalid snapped geometry."
 msgstr "La géométrie snappée est invalide"
 
+#: forms.py:77
 msgid "Geometry is not simple."
 msgstr "La géométrie est non simple"
 
+#: forms.py:79
 msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
 
+#: models.py:45
 msgid "Validity"
 msgstr "Validité"
 
+#: models.py:46
 msgid "Approved by manager"
 msgstr "Approuvé par le référent"
 
+#: models.py:47
 msgid "Visible"
 msgstr "Visible"
 
+#: models.py:48
 msgid "Shown in lists and maps"
 msgstr "Affiché dans les listes et sur les cartes"
 
+#: models.py:50
 msgid "Official name"
 msgstr "Nom officiel"
 
+#: models.py:52
 msgid "Remarks"
 msgstr "Remarques"
 
+#: models.py:55
 msgid "Departure place"
 msgstr "Lieu de départ"
 
+#: models.py:57
 msgid "Arrival place"
 msgstr "Lieu d'arrivée"
 
+#: models.py:61 models.py:463 models.py:467
 msgid "Comfort"
 msgstr "Confort"
 
+#: models.py:64 models.py:425
 msgid "Source"
 msgstr "Source"
 
+#: models.py:67 models.py:444
 msgid "Maintenance stake"
 msgstr "Enjeu d'entretien"
 
+#: models.py:70 models.py:482
 msgid "Usages"
 msgstr "Usages"
 
+#: models.py:73 models.py:496
 msgid "Networks"
 msgstr "Réseaux"
 
+#: models.py:74
 msgid "External id"
 msgstr "ID externe"
 
-msgid "Length"
-msgstr "Longueur"
-
+#: models.py:89 models.py:234
 msgid "2D"
 msgstr "2D"
 
+#: models.py:89 models.py:234
+msgid "Length"
+msgstr "Longueur"
+
+#: models.py:100
 #, python-format
 msgid "path %d"
 msgstr "tronçon %d"
 
+#: models.py:104 models.py:200 models.py:377
 msgid "Path"
 msgstr "Tronçon"
 
+#: models.py:105 templates/core/core_detail_fragment.html:8
+#: templates/core/core_extrabody_fragment.html:3
 msgid "Paths"
 msgstr "Tronçons"
 
+#: models.py:178 models.py:514 models.py:534 models.py:535
+#: templates/core/core_detail_fragment.html:24
 msgid "Trails"
 msgstr "Sentiers"
 
+#: models.py:185 models.py:192
+#: templates/core/aggregations_list_fragment.html:32
+#: templates/core/path_detail_attributes.html:9
+#: templates/core/path_detail_attributes.html:24
+#: templates/core/path_detail_attributes.html:31
+#: templates/core/path_detail_attributes.html:36
 msgid "None"
 msgstr "Aucun(e)"
 
+#: models.py:196
 msgid "Add a new path"
 msgstr "Ajouter un tronçon"
 
+#: models.py:201
 msgid "Offset"
 msgstr "Décalage"
 
+#: models.py:202
 msgid "Kind"
 msgstr "Type de topologie"
 
+#: models.py:216 models.py:249 models.py:381
 msgid "Topology"
 msgstr "Topologie"
 
+#: models.py:217
 msgid "Topologies"
 msgstr "Topologies"
 
+#: models.py:382
 msgid "Start position"
 msgstr "Position de début"
 
+#: models.py:383
 msgid "End position"
 msgstr "Position de fin"
 
+#: models.py:384
 msgid "Order"
 msgstr "Ordre"
 
+#: models.py:390 models.py:417
 msgid "Path aggregation"
 msgstr "Aggrégation de tronçons"
 
+#: models.py:418
 msgid "Path aggregations"
 msgstr "Aggrégations de tronçons"
 
+#: models.py:429
 msgid "Path source"
 msgstr "Source des tronçon"
 
+#: models.py:430
 msgid "Path sources"
 msgstr "Sources des tronçons"
 
+#: models.py:440
 msgid "Stake"
 msgstr "Enjeu"
 
+#: models.py:445
 msgid "Maintenance stakes"
 msgstr "Enjeux d'entretien"
 
+#: models.py:468
 msgid "Comforts"
 msgstr "Conforts"
 
+#: models.py:477 models.py:481
 msgid "Usage"
 msgstr "Usage"
 
+#: models.py:491 models.py:495
 msgid "Network"
 msgstr "Réseau"
 
+#: templates/core/core_detail_fragment.html:3
 msgid "Management"
 msgstr "Gestion"
 
+#: templates/core/core_detail_fragment.html:15
 msgid "No information"
 msgstr "Pas d'information"
 
+#: templates/core/core_detail_fragment.html:29
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
 
+#: templates/core/path_detail.html:6
 msgid "Not validated"
 msgstr "Non validé"
 
+#: templates/core/path_detail_attributes.html:6
+#: templates/core/trail_detail_attributes.html:6
 msgid "Attributes"
 msgstr "Informations"
