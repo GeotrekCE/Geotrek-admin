@@ -107,7 +107,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'children', 'parents', 'pois',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'source',
+        'cities', 'districts', 'areas', 'source', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
