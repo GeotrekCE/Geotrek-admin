@@ -7,10 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-06 13:35+0200\n"
-"PO-Revision-Date: 2015-10-06 13:36+0100\n"
-"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
-"Language-Team: \n"
+"POT-Creation-Date: 2015-10-06 10:59+0200\n"
+"PO-Revision-Date: 2015-10-06 11:46+0100\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -135,6 +133,7 @@ msgstr "Réseaux"
 msgid "External id"
 msgstr "ID externe"
 
+<<<<<<< HEAD
 #: models.py:89 models.py:234
 msgid "2D"
 msgstr "2D"
@@ -142,6 +141,13 @@ msgstr "2D"
 #: models.py:89 models.py:234
 msgid "Length"
 msgstr "Longueur"
+=======
+msgid "Length"
+msgstr "Longueur"
+
+msgid "2D"
+msgstr "2D"
+>>>>>>> add 2D length methods / add 2d length columns in list an csv extracts
 
 #: models.py:100
 #, python-format
