@@ -14,7 +14,7 @@ class AltimetryMixin(models.Model):
     geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
                                    editable=False, null=True, default=None)
     length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur',
-                               verbose_name=_(u"Length 3D"))
+                               verbose_name=_(u"3D Length"))
     ascent = models.IntegerField(editable=False, default=0, null=True, blank=True,
                                  db_column='denivelee_positive', verbose_name=_(u"Ascent"))
     descent = models.IntegerField(editable=False, default=0, null=True, blank=True,
