@@ -387,7 +387,8 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
-                              u'author': self.video.author})
+                              u'author': self.video.author,
+                              u'code': self.video.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
