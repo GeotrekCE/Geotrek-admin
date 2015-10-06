@@ -77,6 +77,25 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     is_reversed = False
 
+    @property
+    def length_2d(self):
+        if self.geom:
+            return round(self.geom.length, 1)
+        else:
+            return None
+
+    @classproperty
+    def length_2d_verbose_name(cls):
+        return u"{} {}".format(_(u"Length"), _(u"2D"))
+
+    @property
+    def length_2d_display(self):
+        return self.length_2d
+
+    @property
+    def length_2d_csv_display(self):
+        return self.length_2d_display
+
     def __unicode__(self):
         return self.name or _('path %d') % self.pk
 
@@ -201,6 +220,26 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         super(Topology, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
+
+    @property
+    def length_2d(self):
+        if self.geom and not self.ispoint():
+            return round(self.geom.length, 1)
+
+        else:
+            return None
+
+    @classproperty
+    def length_2d_verbose_name(cls):
+        return u"%s %s" % (_(u"Length"), _(u"2D"))
+
+    @property
+    def length_2d_display(self):
+        return self.length_2d
+
+    @property
+    def length_2d_csv_display(self):
+        return self.length_2d_display
 
     @classproperty
     def KIND(cls):
