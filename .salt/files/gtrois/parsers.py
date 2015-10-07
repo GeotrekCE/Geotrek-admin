@@ -111,7 +111,9 @@ class ItiXmlParser(XmlParserMixin, TrekParser):
         return self.apply_filter('networks', src, val)
 
     def filter_description(self, src, val):
-        description = ('<p>', val[0], '</p>')
+        description = ()
+        if val[0]:
+            description += ('<p>', val[0], '</p>')
         if val[1]:
             description += ('<h3>Variante</h3><p>', val[1], '</p>')
         if val[2]:
@@ -119,9 +121,9 @@ class ItiXmlParser(XmlParserMixin, TrekParser):
         return ''.join(description)
 
     def filter_description_en(self, src, val):
-        if not val[0]:
-            return None
-        description = ('<p>', val[0], '</p>')
+        description = ()
+        if val[0]:
+            description += ('<p>', val[0], '</p>')
         if val[1]:
             description += ('<h3>Variant</h3><p>', val[1], '</p>')
         if val[2]:
