@@ -86,11 +86,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classproperty
     def length_2d_verbose_name(cls):
-<<<<<<< HEAD
         return _(u"2D Length")
-=======
-        return u"{} {}".format(_(u"2D"), _(u"Length"))
->>>>>>> f3e8de31a7ee566f5754913a402ba2d73c136250
 
     @property
     def length_2d_display(self):
@@ -235,11 +231,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     @classproperty
     def length_2d_verbose_name(cls):
-<<<<<<< HEAD
         return _(u"2D Length")
-=======
-        return u"{} {}".format(_(u"2D"), _(u"Length"))
->>>>>>> f3e8de31a7ee566f5754913a402ba2d73c136250
 
     @property
     def length_2d_display(self):
