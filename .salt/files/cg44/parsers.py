@@ -427,7 +427,28 @@ class CG44AVeloTrekParser(TrekParser):
         self.relationships[iti][int(etap)] = self.obj
 
 
+class CG44PedestreDeleteTrekParser(CG44PedestreTrekParser):
+    label = u"Itinéraires pédestre (avec suppression)"
+    delete = True
+
+
+class CG44VTTDeleteTrekParser(CG44VTTTrekParser):
+    label = u"Itinéraires VTT (avec suppression)"
+    delete = True
+
+
+class CG44EquestreDeleteTrekParser(CG44EquestreTrekParser):
+    label = u"Itinéraires équestres (avec suppression)"
+    delete = True
+
+
+class CG44AVeloDeleteTrekParser(CG44AVeloTrekParser):
+    label = u"Itinéraires vélo (avec suppression)"
+    delete = True
+
+
 class CG44CityParser(CityParser):
+    label = u"Communes"
     warn_on_missing_fields = True
     fields = {
         'code': 'INSEE',
