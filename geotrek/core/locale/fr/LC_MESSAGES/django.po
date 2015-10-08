@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-07 14:08+0200\n"
+"POT-Creation-Date: 2015-10-08 15:27+0200\n"
 "PO-Revision-Date: 2015-10-06 13:36+0100\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -105,15 +105,8 @@ msgstr "Réseaux"
 msgid "External id"
 msgstr "ID externe"
 
-#, fuzzy
 msgid "2D Length"
-msgstr "Longueur"
-
-msgid "2D"
-msgstr "2D"
-
-msgid "Length"
-msgstr "Longueur"
+msgstr "Longueur 2D"
 
 #, python-format
 msgid "path %d"
