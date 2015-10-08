@@ -92,10 +92,6 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def length_2d_display(self):
         return self.length_2d
 
-    @property
-    def length_2d_csv_display(self):
-        return self.length_2d_display
-
     def __unicode__(self):
         return self.name or _('path %d') % self.pk
 
@@ -236,10 +232,6 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     @property
     def length_2d_display(self):
         return self.length_2d
-
-    @property
-    def length_2d_csv_display(self):
-        return self.length_2d_display
 
     @classproperty
     def KIND(cls):
