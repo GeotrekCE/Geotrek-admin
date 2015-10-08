@@ -46,10 +46,12 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
         Put elevation profile into response context.
         """
         data = {}
+        elevation_profile = self.object.get_elevation_profile()
         # Formatted as distance, elevation, [lng, lat]
-        for step in self.object.get_elevation_profile():
+        for step in elevation_profile:
             formatted = step[0], step[3], step[1:3]
             data.setdefault('profile', []).append(formatted)
+        data['limits'] = dict(zip(['ceil', 'floor'], self.object.get_elevation_limits()))
         return data
 
 
