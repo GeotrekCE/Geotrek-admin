@@ -92,7 +92,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                  blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
                                              db_table="o_r_itineraire_accessibilite", blank=True, null=True,
-                                             verbose_name=_(u"Accessibilities"))
+                                             verbose_name=_(u"Accessibility"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
