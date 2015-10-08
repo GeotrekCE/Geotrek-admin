@@ -5,6 +5,15 @@ CHANGELOG
 2.1.1.dev0
 ------------------
 
+**New features**
+
+* Added normalisation for altimetry's json export
+* Clarify 2D/3D lengths (fixes #1400)
+
+**Bug fixes**
+
+* Change plural on accessibility label for admin filter
+
 
 2.1.0 (2015-09-29)
 ------------------

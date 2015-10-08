@@ -6,7 +6,7 @@
     </tr>
 {% else %}
 <tr>
-    <th>{{ object|verbose:"length" }}</th>
+    <th>{% trans "Length" %}</th>
     <td>
     {# ``length`` attribute comes from AltimetryMixin and triggers #}
     <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }}m</span>

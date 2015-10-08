@@ -134,7 +134,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         response = self.client.get(reverse('core:path_json_list'))
         self.assertEqual(response.status_code, 200)
         paths_json = json.loads(response.content)
-        trails_column = paths_json['aaData'][0][4]
+        trails_column = paths_json['aaData'][0][5]
         self.assertTrue(trails_column == u'%s, %s' % (self.trail1.name_display, self.trail2.name_display) or
                         trails_column == u'%s, %s' % (self.trail2.name_display, self.trail1.name_display))
 

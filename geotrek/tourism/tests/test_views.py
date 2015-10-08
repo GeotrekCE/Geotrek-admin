@@ -26,6 +26,7 @@ from geotrek.tourism.factories import (DataSourceFactory,
                                        TouristicEventFactory,
                                        TouristicContentCategoryFactory,
                                        TouristicContentTypeFactory)
+from embed_video.backends import detect_backend
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -348,6 +349,8 @@ class BasicJSONAPITest(TranslationResetMixin):
                                                            attachment_file=get_dummy_uploaded_document())
         self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
                                                         attachment_video='https://www.youtube.com/watch?v=Jm3anSjly0Y')
+        self.video_detected = detect_backend(self.video.attachment_video)
+
         self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
         self.source = common_factories.RecordSourceFactory()
@@ -387,7 +390,8 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
-                              u'author': self.video.author})
+                              u'author': self.video.author,
+                              u'code': self.video_detected.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
