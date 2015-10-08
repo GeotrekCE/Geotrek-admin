@@ -409,6 +409,8 @@ PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
+ALTIMETRIC_PROFILE_AVERAGE = 5  # nb of points for altimetry moving average
+ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
 ALTIMETRIC_PROFILE_BACKGROUND = 'white'
 ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
