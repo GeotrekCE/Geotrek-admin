@@ -274,8 +274,7 @@ BEGIN
     previous_geom := NULL;
     
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
-        -- Smooth the elevation profile with level minimum
-        ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
+        ele := ST_Z(current);
 
 	-- get inflexion points
 	IF last_ele IS NULL
@@ -325,10 +324,6 @@ BEGIN
 
         -- Create the 3d points
         points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
-        -- Add positive only if ele - last_ele > 0
-        --result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
-        -- Add negative only if ele - last_ele < 0
-        --result.negative_gain := result.negative_gain + least(ele - coalesce(last_ele, ele), 0);
 
 	last_last_ele := last_ele;
 	last_ele := ele;
@@ -344,15 +339,16 @@ BEGIN
     
     FOREACH current_geom IN ARRAY point3d_inflexion
     LOOP
+        -- Add positive only if ele - last_ele > 0
 		result.positive_gain := result.positive_gain + greatest(ST_Z(current_geom) - coalesce(ST_Z(previous_geom),
 																ST_Z(current_geom)), 0);
+	    -- Add negative only if ele - last_ele < 0
 		result.negative_gain := result.negative_gain + least(ST_Z(current_geom) - coalesce(ST_Z(previous_geom),
 															 ST_Z(current_geom)), 0);
 		previous_geom := current_geom;
     END LOOP;
     
     result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
-    --result.points_inflexion := ST_SetSRID(ST_MakeLine(point3d_inflexion, ST_SRID(geom));
     result.min_elevation := ST_ZMin(result.draped)::integer;
     result.max_elevation := ST_ZMax(result.draped)::integer;
 
