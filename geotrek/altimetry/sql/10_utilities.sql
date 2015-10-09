@@ -91,6 +91,7 @@ CREATE OR REPLACE FUNCTION geotrek.ft_drape_line(linegeom geometry, step integer
     RETURNS SETOF geometry AS $$
 DECLARE
     points geometry[];
+result geometry[];
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
@@ -100,11 +101,12 @@ BEGIN
     IF ST_ZMin(linegeom) < 0 OR ST_ZMax(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
-        RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(ft_smooth_line(linegeom, {{ALTIMETRIC_PROFILE_AVERAGE}})))).geom AS geom;
+        RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
 
-    ELSE
-        
-            WITH -- Get endings of each segment of the line
+    ELSE 
+	RETURN QUERY 
+        with
+                 -- Get endings of each segment of the line
                  r1 AS (SELECT ST_PointN(linegeom, generate_series(1, ST_NPoints(linegeom)-1)) as p1,
                                ST_PointN(linegeom, generate_series(2, ST_NPoints(linegeom))) as p2,
                                generate_series(2, ST_NPoints(linegeom)) = ST_NPoints(linegeom) as is_last),
@@ -118,8 +120,10 @@ BEGIN
                                ST_SRID(p1) AS srid FROM r3),
                  -- Set SRID of new points
                  r5 AS (SELECT ST_SetSRID(p, srid) as p FROM r4)
-            SELECT array_append(points, add_point_elevation(r5.p));
-	    RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(ft_smooth_line(ST_MAKELINE(points), {{ALTIMETRIC_PROFILE_AVERAGE}})))).geom AS geom;
+
+		
+                SELECT add_point_elevation(p) FROM r5;
+		
     END IF;
 END;
 
@@ -220,19 +224,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry, seuil integer) RETURNS elevation_infos AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;
     points3d geometry[];
-    point3d_inflexion geometry[];
-    ele integer;
-    last_ele integer;
-    last_last_ele integer;
+    points3d_smoothed geometry[];
+    points3d_simplified geometry[];
     result elevation_infos;
-    inflexion_direction boolean;
     previous_geom geometry;
-    current_geom geometry;
 BEGIN
     -- Skip if no DEM (speed-up tests)
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
@@ -254,8 +254,8 @@ BEGIN
         RETURN result;
     END IF;
 
-    -- Case of seuil <= 0:
-    IF seuil <= 0
+    -- Case of epsilon <= 0:
+    IF epsilon <= 0
     THEN
         SELECT * FROM ft_elevation_infos(geom) INTO result;
         RETURN result;
@@ -263,92 +263,45 @@ BEGIN
 
     -- Now geom is LineString only.
 
-    -- Compute gain and elevation using (higher resolution)
+
     result.positive_gain := 0;
     result.negative_gain := 0;
-    last_ele := NULL;
-    last_last_ele := NULL;
     points3d := ARRAY[]::geometry[];
-    point3d_inflexion := ARRAY[]::geometry[];
-    inflexion_direction := TRUE;
-    previous_geom := NULL;
+    points3d_smoothed := ARRAY[]::geometry[];
+    points3d_simplified := ARRAY[]::geometry[];
     
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
-        ele := ST_Z(current);
-
-	-- get inflexion points
-	IF last_ele IS NULL
-	THEN
-	    -- first point
-            point3d_inflexion := array_append(point3d_inflexion, current);
-	ELSIF last_last_ele IS NULL
-	THEN
-	    -- second point, get inflexion_direction if possible
-	    IF ST_Z(current) <> ST_Z(previous_geom)
-	    THEN
-		inflexion_direction := ST_Z(current) > ST_Z(previous_geom);
-	    END IF;
-	ELSIF inflexion_direction = TRUE
-	THEN
-	    -- searching next element lower
-	    IF ST_Z(current) < ST_Z(previous_geom)
-            THEN
-		-- only if seuil respected
-	        IF abs(ST_Z(previous_geom) - ST_Z(current)) >= seuil
-		THEN
-		    point3d_inflexion := array_append(point3d_inflexion, previous_geom);
-		END IF;
-
-		-- change inflexion search direction
-	        inflexion_direction := FALSE;
-            END IF;
-	 ELSIF  inflexion_direction = FALSE
-	 THEN
-	     -- searching next element upper
-	     IF ST_Z(current) > ST_Z(previous_geom)
-	     THEN
-	         IF abs(ST_Z(current) - ST_Z(previous_geom)) >= seuil
-		 THEN
-		     point3d_inflexion := array_append(point3d_inflexion, previous_geom);
-		 END IF;
-	                
-	         inflexion_direction := TRUE;
-	    END IF;
-	ELSE
-	    -- case of no direction inflexion
-	    IF ST_Z(current) <> ST_Z(previous_geom)
-	    THEN
-		inflexion_direction := ST_Z(current) > ST_Z(previous_geom);
-	    END IF;
-	END IF;
-
         -- Create the 3d points
-        points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
-
-	last_last_ele := last_ele;
-	last_ele := ele;
-        previous_geom := current;
-        
+        points3d := array_append(points3d, current);   
     END LOOP;
 
-    -- always add last point
-    point3d_inflexion := array_append(point3d_inflexion, previous_geom);
+    -- smoothing line
+    FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ALTIMETRIC_PROFILE_AVERAGE}}) LOOP
+        -- Create the 3d points
+        points3d_smoothed := array_append(points3d_smoothed, current);   
+    END LOOP;
+
+    -- simplify gain calculs
 
     previous_geom := NULL;
-    current_geom := NULL;
     
-    FOREACH current_geom IN ARRAY point3d_inflexion
+    -- Compute gain using simplification
+    -- see http://www.postgis.org/docs/ST_Simplify.html
+    --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
+    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(ST_MAKELINE(points3d_smoothed), epsilon))).geom
     LOOP
-        -- Add positive only if ele - last_ele > 0
-		result.positive_gain := result.positive_gain + greatest(ST_Z(current_geom) - coalesce(ST_Z(previous_geom),
-																ST_Z(current_geom)), 0);
-	    -- Add negative only if ele - last_ele < 0
-		result.negative_gain := result.negative_gain + least(ST_Z(current_geom) - coalesce(ST_Z(previous_geom),
-															 ST_Z(current_geom)), 0);
-		previous_geom := current_geom;
+        -- Add positive only if current - previous_geom > 0
+	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),
+								ST_Z(current)), 0);
+	-- Add negative only if current - previous_geom < 0
+	result.negative_gain := result.negative_gain + least(ST_Z(current) - coalesce(ST_Z(previous_geom),
+							     ST_Z(current)), 0);
+	previous_geom := current;
     END LOOP;
     
-    result.draped := ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom));
+    result.draped := ST_SetSRID(ST_MakeLine(points3d_smoothed), ST_SRID(geom));
+
+    -- Compute elevation using (higher resolution)
     result.min_elevation := ST_ZMin(result.draped)::integer;
     result.max_elevation := ST_ZMax(result.draped)::integer;
 
@@ -362,4 +315,5 @@ BEGIN
 
     RETURN result;
 END;
+
 $$ LANGUAGE plpgsql;
