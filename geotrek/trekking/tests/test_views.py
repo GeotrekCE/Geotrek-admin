@@ -1085,7 +1085,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</pois>'.format(**attrs))
 
 
-class TrekWorkflowTest(TestCase):
+class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
         call_command('update_permissions')
         self.trek = TrekFactory.create(published=False)
