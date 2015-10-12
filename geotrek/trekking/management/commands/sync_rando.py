@@ -174,13 +174,13 @@ class Command(BaseCommand):
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
-    def sync_geojson(self, lang, viewset, name, zipfile=None):
+    def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
-        params = {'format': 'geojson'}
+        params.update({'format': 'geojson'})
         if self.source:
             params['source'] = ','.join(self.source)
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
