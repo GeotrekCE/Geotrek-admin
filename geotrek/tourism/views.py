@@ -17,6 +17,7 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework.filters import DjangoFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
@@ -25,7 +26,7 @@ from geotrek.tourism.models import DataSource, InformationDesk
 from geotrek.trekking.models import Trek
 from geotrek.trekking.serializers import POISerializer
 
-from .filters import TouristicContentFilterSet, TouristicEventFilterSet
+from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
 from .models import TouristicContent, TouristicEvent, TouristicContentCategory
@@ -269,6 +270,8 @@ class TouristicEventViewSet(MapEntityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filter_backends = [DjangoFilterBackend, ]
+    filter_class = TouristicEventApiFilterSet
 
     def get_queryset(self):
         qs = TouristicEvent.objects.existing()
