@@ -48,14 +48,14 @@ class Command(BaseCommand):
         if self.with_events:
             self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents', zipfile=self.zipfile)
 
-        events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
-        events = events.filter(**{'published_{lang}'.format(lang=lang): True})
-
-        if self.source:
-            events = events.filter(source__name__in=self.source)
-
-        for event in events:
-            self.sync_event(lang, event, zipfile=self.zipfile)
+            events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
+            events = events.filter(**{'published_{lang}'.format(lang=lang): True})
+    
+            if self.source:
+                events = events.filter(source__name__in=self.source)
+    
+            for event in events:
+                self.sync_event(lang, event, zipfile=self.zipfile)
 
         # adding custom sync_trek for tourism content by categories
         if self.categories:
@@ -72,16 +72,16 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile, zipname)
 
     def sync_content(self, lang, content, zipfile=None):
-        self.sync_pdf(lang, content, zipfile=zipfile)
+        self.sync_pdf(lang, content)
 
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=zipfile)
 
     def sync_event(self, lang, event, zipfile=None):
-        self.sync_pdf(lang, event, zipfile=zipfile)
+        self.sync_pdf(lang, event)
 
         for picture, resized in event.resized_pictures:
-            self.sync_media_file(lang, resized)
+            self.sync_media_file(lang, resized, zipfile=zipfile)
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents',)
