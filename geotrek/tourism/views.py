@@ -1,20 +1,20 @@
-import logging
 from itertools import chain
+import logging
 
-import requests
-from requests.exceptions import RequestException
-import geojson
 from django.conf import settings
-from django.http import Http404
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+import geojson
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
+import requests
+from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -259,9 +259,15 @@ class TouristicContentViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = TouristicContent.objects.existing()
         qs = qs.filter(published=True)
+
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'])
+
+        if 'categories' in self.request.GET:
+            qs = qs.filter(category__label__in=self.request.GET['categories'].split(','))
+
         qs = qs.transform(settings.API_SRID, field_name='geom')
+
         return qs
 
 
