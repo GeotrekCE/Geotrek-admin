@@ -4,10 +4,8 @@ from zipfile import ZipFile
 
 from django.conf import settings
 from django.utils import translation
-
 from geotrek.tourism import (models as tourism_models,
                              views as tourism_views)
-from geotrek.tourism.views import TouristicEventViewSet, TouristicContentViewSet
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
@@ -46,14 +44,14 @@ class Command(BaseCommand):
 
         # adding custom sync_trek for tourism events
         if self.with_events:
-            self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents', zipfile=self.zipfile)
+            self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents', zipfile=self.zipfile)
 
             events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
             events = events.filter(**{'published_{lang}'.format(lang=lang): True})
-    
+
             if self.source:
                 events = events.filter(source__name__in=self.source)
-    
+
             for event in events:
                 self.sync_event(lang, event, zipfile=self.zipfile)
 
@@ -66,7 +64,7 @@ class Command(BaseCommand):
             if self.source:
                 params['source'] = ','.join(self.source)
 
-            self.sync_view(lang, TouristicContentViewSet.as_view({'get': 'list'}),
+            self.sync_view(lang, tourism_views.TouristicContentViewSet.as_view({'get': 'list'}),
                            name, url="/", params=params, zipfile=self.zipfile)
 
         self.close_zip(self.zipfile, zipname)
