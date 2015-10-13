@@ -26,7 +26,7 @@ etc/settings.ini:
 	chmod -f 600 etc/settings.ini
 
 bin/python:
-	virtualenv .
+	virtualenv -p /usr/bin/python2 .
 	bin/pip install -U setuptools
 	mkdir -p lib/src
 	mkdir -p lib/eggs
