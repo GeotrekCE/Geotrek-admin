@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-*
+* Sync rando now exports only future events based on current date.
 
 **Bug fixes**
 
