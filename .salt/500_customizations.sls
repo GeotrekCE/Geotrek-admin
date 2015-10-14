@@ -71,6 +71,15 @@
     - group: {{cfg.group}}
     - makedirs: true
 {% endif %}
+
+{% if data.path_touristic_event_icon %}
+{{cfg.name}}-touristic-event-icon:
+  file.recurse:
+    - name: {{cfg.project_dir}}/var/static/tourism/touristicevent.svg
+    - source: {{data.path_touristic_event_icon}}
+    - user: {{cfg.user}}
+    - group: {{cfg.group}}
+{% endif %}
 {% endif %}
 
 
