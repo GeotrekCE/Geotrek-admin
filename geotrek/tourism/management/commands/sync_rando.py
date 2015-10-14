@@ -1,15 +1,13 @@
-# -*- encoding: UTF-8
-
-from django.conf import settings
-from django.utils import translation
 from optparse import make_option
 import os
 from zipfile import ZipFile
 
-from geotrek.tourism import (models as tourism_models,
-                             views as tourism_views)
-from geotrek.tourism.views import TrekTouristicContentViewSet,\
-    TrekTouristicEventViewSet
+from django.conf import settings
+from django.utils import translation
+
+from geotrek.tourism import models as tourism_models
+from geotrek.tourism.views import (TouristicContentViewSet, TouristicEventViewSet,
+                                   TrekTouristicContentViewSet, TrekTouristicEventViewSet)
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
@@ -51,8 +49,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, resized)
 
     def sync_tourism(self, lang):
-        self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents',)
-        self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents',)
+        self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
+        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents')
 
         contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
         contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})

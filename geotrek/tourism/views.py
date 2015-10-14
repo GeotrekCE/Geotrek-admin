@@ -1,3 +1,6 @@
+from itertools import chain
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -5,15 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from itertools import chain
-import logging
-
 import geojson
-from geotrek.authent.decorators import same_structure_required
-from geotrek.common.utils import plain_text_preserve_linebreaks
-from geotrek.common.views import DocumentPublic
-from geotrek.trekking.models import Trek
-from geotrek.trekking.serializers import POISerializer
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
@@ -22,6 +17,12 @@ import requests
 from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
+from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import plain_text_preserve_linebreaks
+from geotrek.common.views import DocumentPublic
+from geotrek.trekking.models import Trek
+from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
@@ -316,10 +317,14 @@ class TrekTouristicContentAndPOIViewSet(viewsets.ModelViewSet):
         return chain(qs1, qs2)
 
 
-class TrekTouristicContentViewSet(MapEntityViewSet):
+class TrekTouristicContentViewSet(viewsets.ModelViewSet):
     model = TouristicContent
-    serializer_class = TouristicContentSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(TouristicContentSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
 
     def get_queryset(self):
         try:
@@ -339,10 +344,14 @@ class TrekTouristicContentViewSet(MapEntityViewSet):
         return queryset
 
 
-class TrekTouristicEventViewSet(MapEntityViewSet):
+class TrekTouristicEventViewSet(viewsets.ModelViewSet):
     model = TouristicEvent
-    serializer_class = TouristicEventSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(TouristicEventSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
 
     def get_queryset(self):
         try:
