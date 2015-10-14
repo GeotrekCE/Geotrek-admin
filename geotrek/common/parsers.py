@@ -486,7 +486,7 @@ class AttachmentParserMixin(object):
             if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
                 http = urllib2.urlopen(url)
                 size = http.headers.getheader('content-length')
-                return size != attachment.attachment_file.size
+                return int(size) != attachment.attachment_file.size
         except:
             return False
         return True
