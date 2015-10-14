@@ -18,37 +18,37 @@ class Command(BaseCommand):
         make_option('--with-touristicevents',
                     '-w',
                     action='store_true',
-                    dest='with-events',
+                    dest='with_events',
                     default=False,
-                    help='include touristic events'),
+                    help='include touristic events in individual trek zips'),
         make_option('--with-touristiccontent-categories',
                     '-c',
                     action='store',
-                    dest='content-categories',
+                    dest='content_categories',
                     default=None,
-                    help='include touristic categories separated by commas'),
+                    help='include touristic events in individual trek zips (filtered by category name)'),
     )
 
     def handle(self, *args, **options):
-        self.with_events = options.get('with-events', False)
+        self.with_events = options.get('with_events', False)
         self.categories = None
 
-        if options.get('content-categories', u""):
-            self.categories = options.get('content-categories', u"").split(',')
+        if options.get('content_categories', u""):
+            self.categories = options.get('content_categories', u"").split(',')
 
         super(Command, self).handle(*args, **options)
 
-    def sync_content(self, lang, content, zipfile=None):
+    def sync_content(self, lang, content):
         self.sync_pdf(lang, content)
 
         for picture, resized in content.resized_pictures:
-            self.sync_media_file(lang, resized, zipfile=zipfile)
+            self.sync_media_file(lang, resized)
 
-    def sync_event(self, lang, event, zipfile=None):
+    def sync_event(self, lang, event):
         self.sync_pdf(lang, event)
 
         for picture, resized in event.resized_pictures:
-            self.sync_media_file(lang, resized, zipfile=zipfile)
+            self.sync_media_file(lang, resized)
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents',)
