@@ -21,6 +21,7 @@ def add_http(url):
 
 class CG44TourInSoftParser(TourInSoftParser):
     base_url = 'http://cdt44.media.tourinsoft.eu/upload/'
+    delete_attachments = True
 
 
 class CG44TouristicContentParser(CG44TourInSoftParser):
