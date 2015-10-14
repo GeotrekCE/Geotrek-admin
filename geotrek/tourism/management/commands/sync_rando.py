@@ -1,23 +1,27 @@
+# -*- encoding: UTF-8
+
+from django.conf import settings
+from django.utils import translation
 from optparse import make_option
 import os
 from zipfile import ZipFile
 
-from django.conf import settings
-from django.utils import translation
 from geotrek.tourism import (models as tourism_models,
                              views as tourism_views)
+from geotrek.tourism.views import TrekTouristicContentViewSet,\
+    TrekTouristicEventViewSet
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('--with-events',
+        make_option('--with-touristicevents',
                     '-w',
                     action='store_true',
                     dest='with-events',
                     default=False,
                     help='include touristic events'),
-        make_option('--content-categories',
+        make_option('--with-touristiccontent-categories',
                     '-c',
                     action='store',
                     dest='content-categories',
@@ -33,41 +37,6 @@ class Command(BaseCommand):
             self.categories = options.get('content-categories', u"").split(',')
 
         super(Command, self).handle(*args, **options)
-
-    def sync_trekking(self, lang):
-        super(Command, self).sync_trekking(lang)
-
-        # after base sync_trekking, reopen zip to add features
-        zipname = os.path.join('zip', 'treks', lang, 'global.zip')
-        zipfullname = os.path.join(self.tmp_root, zipname)
-        self.zipfile = ZipFile(zipfullname, 'a')
-
-        # adding custom sync_trek for tourism events
-        if self.with_events:
-            self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents', zipfile=self.zipfile)
-
-            events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
-            events = events.filter(**{'published_{lang}'.format(lang=lang): True})
-
-            if self.source:
-                events = events.filter(source__name__in=self.source)
-
-            for event in events:
-                self.sync_event(lang, event, zipfile=self.zipfile)
-
-        # adding custom sync_trek for tourism content by categories
-        if self.categories:
-            name = os.path.join('api', lang, '{name}.geojson'.format(name='touristiccontents'))
-            params = {'format': 'geojson',
-                      'categories': ','.join(category for category in self.categories)}
-
-            if self.source:
-                params['source'] = ','.join(self.source)
-
-            self.sync_view(lang, tourism_views.TouristicContentViewSet.as_view({'get': 'list'}),
-                           name, url="/", params=params, zipfile=self.zipfile)
-
-        self.close_zip(self.zipfile, zipname)
 
     def sync_content(self, lang, content, zipfile=None):
         self.sync_pdf(lang, content)
@@ -99,6 +68,20 @@ class Command(BaseCommand):
         for event in events:
             self.sync_event(lang, event)
 
+    def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson',
+                  'categories': ','.join(category for category in self.categories), }
+
+        view = TrekTouristicContentViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+    def sync_trek_touristicevents(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson', }
+        view = TrekTouristicEventViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
     def sync(self):
         super(Command, self).sync()
 
@@ -111,3 +94,18 @@ class Command(BaseCommand):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             translation.activate(lang)
             self.sync_tourism(lang)
+
+    def sync_trek(self, lang, trek):
+        super(Command, self).sync_trek(lang, trek)
+        # reopen trek zip and add custom info if needed
+        zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
+        zipfullname = os.path.join(self.tmp_root, zipname)
+        self.trek_zipfile = ZipFile(zipfullname, 'a')
+
+        if self.with_events:
+            self.sync_trek_touristicevents(lang, trek, zipfile=self.trek_zipfile)
+
+        if self.categories:
+            self.sync_trek_touristiccontents(lang, trek, zipfile=self.trek_zipfile)
+
+        self.close_zip(self.trek_zipfile, zipname)
