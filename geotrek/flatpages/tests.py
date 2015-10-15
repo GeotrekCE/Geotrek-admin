@@ -15,10 +15,10 @@ from geotrek.flatpages.forms import FlatPageForm
 
 class FlatPageFormTest(TestCase):
     def login(self):
-        profile = UserProfileFactory(user__username='spammer', user__password='pipo')
-        profile.user.is_superuser = True
-        profile.user.is_saff = True
-        profile.user.save()
+        profile = UserProfileFactory(
+            user__username='spammer',
+            user__password='pipo'
+        )
         user = profile.user
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
