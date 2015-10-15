@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from django.contrib.gis.geos import Point
 
 import factory
@@ -98,13 +99,11 @@ class TrekWithTouristicEventFactory(TrekFactory):
     @classmethod
     def _prepare(cls, create, **kwargs):
         trek = super(TrekWithTouristicEventFactory, cls)._prepare(create, **kwargs)
-        path = trek.paths.all()[0]
-        te1 = TouristicEventFactory.create(no_path=True)
-        te1.add_path(path, start=0.5, end=0.5)
-        te2 = TouristicEventFactory.create(no_path=True)
-        te2.add_path(path, start=0.4, end=0.4)
+        TouristicEventFactory.create(geom='POINT(700000 6600000)')
+        TouristicEventFactory.create(geom='POINT(700100 6600100)')
 
         if create:
+            trek.published_fr = True
             trek.save()
 
         return trek
@@ -114,13 +113,15 @@ class TrekWithTouristicContentFactory(TrekFactory):
     @classmethod
     def _prepare(cls, create, **kwargs):
         trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
-        path = trek.paths.all()[0]
-        tc1 = TouristicContentFactory.create(no_path=True)
-        tc1.add_path(path, start=0.5, end=0.5)
-        tc2 = TouristicContentFactory.create(no_path=True)
-        tc2.add_path(path, start=0.4, end=0.4)
+        tc1 = TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
+                                             geom='POINT(700000 6600000)')
+        # tc1.add_path(path, start=0.5, end=0.5)
+        tc2 = TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
+                                             geom='POINT(700100 6600100)')
+        # tc2.add_path(path, start=0.4, end=0.4)
 
         if create:
+            trek.published_fr = True
             trek.save()
 
         return trek

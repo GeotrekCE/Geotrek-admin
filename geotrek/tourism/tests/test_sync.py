@@ -39,23 +39,36 @@ class SyncTest(TranslationResetMixin, TestCase):
             tevents = json.load(f)
         self.assertEquals(len(tevents['features']), 1)
 
-        # test with including tevents and tcontents in trek zips
-        source_c = RecordSourceFactory(name='C')
-        source_d = RecordSourceFactory(name='D')
-        factory(TrekWithTouristicEventFactory, source_c)
-        factory(TrekWithTouristicContentFactory, source_d)
+    def test_sync_trek_zip_content(self):
+        """
+        Test including tevents and tcontents in trek zips
+        """
+
+        trek1 = TrekWithTouristicEventFactory.create()
+        trek2 = TrekWithTouristicContentFactory.create()
 
         management.call_command('sync_rando',
                                 settings.SYNC_RANDO_ROOT,
                                 url='http://localhost:8000',
-                                source='A',
                                 skip_tiles=True,
-                                whith_events=True,
-                                content_catgories=u"Restaurants,Musée",
+                                with_events=True,
+                                content_categories=u"Restaurant,Musée",
                                 verbosity='0')
+        print "events : ", trek1.touristic_events.count(), trek2.touristic_events.count()
+        print "contents : ", trek1.touristic_contents.count(), trek2.touristic_contents.count()
 
-        with ZipFile.open(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'en',
-                                       '{pk}.zip'.format(pk=Trek.objects.existing().filter(published=True)[0])),
-                          'r') as zipf:
-            raise Exception(u"{}".format(zipf.namelist()))
+        with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
+                                  '{pk}.zip'.format(pk=trek1.pk)),
+                     'r') as zipf:
+            self.assertIn(os.path.join('api', 'fr', 'treks',
+                                       '{pk}'.format(pk=trek1.pk),
+                                       'touristicevents.geojson'),
+                          zipf.namelist())
 
+        with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
+                                  '{pk}.zip'.format(pk=trek2.pk)),
+                     'r') as zipf:
+            self.assertIn(os.path.join('api', 'fr', 'treks',
+                                       '{pk}'.format(pk=trek2.pk),
+                                       'touristiccontents.geojson'),
+                          zipf.namelist())

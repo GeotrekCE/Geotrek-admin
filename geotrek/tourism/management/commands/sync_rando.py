@@ -74,11 +74,29 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
+        for content in trek.touristic_contents.all():
+            self.sync_touristiccontent_media(lang, content, zipfile=zipfile)
+
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson', }
         view = TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+        for event in trek.touristic_events.all():
+            self.sync_touristicevent_media(lang, event, zipfile=zipfile)
+
+    def sync_touristicevent_media(self, lang, event, zipfile=None):
+        if event.resized_pictures:
+            self.sync_media_file(lang, event.resized_pictures[0][1], zipfile=zipfile)
+        for picture, resized in event.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
+
+    def sync_touristiccontent_media(self, lang, content, zipfile=None):
+        if content.resized_pictures:
+            self.sync_media_file(lang, content.resized_pictures[0][1], zipfile=zipfile)
+        for picture, resized in content.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
 
     def sync(self):
         super(Command, self).sync()
