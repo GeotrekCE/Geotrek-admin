@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib.gis.geos import Point
+from django.utils import timezone
 
 import factory
 
@@ -89,5 +90,7 @@ class TouristicEventFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
     published = True
+    begin_date = timezone.now()
+    end_date = timezone.now()
 
     type = factory.SubFactory(TouristicEventTypeFactory)

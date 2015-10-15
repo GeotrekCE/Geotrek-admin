@@ -3,11 +3,14 @@ import os
 import json
 
 import mock
+
+from datetime import datetime
 from requests.exceptions import ConnectionError
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
+from django.test import TestCase
 from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
@@ -627,3 +630,18 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
+
+
+class TouristicEventViewSetTest(TestCase):
+    def test_touristic_events_without_enddate_filter(self):
+        TouristicEventFactory.create_batch(10, published=True)
+        response = self.client.get('/api/en/touristicevents.geojson')
+        geojson = json.loads(response.content)
+        self.assertEqual(len(geojson['features']), 10)
+
+    def test_touristic_events_with_enddate_filter(self):
+        TouristicEventFactory.create_batch(5, published=True)
+        TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
+        response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
+        geojson = json.loads(response.content)
+        self.assertEqual(len(geojson['features']), 5)

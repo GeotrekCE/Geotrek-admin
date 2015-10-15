@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils import translation
+from django.utils import translation, timezone
 
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism.views import TouristicContentViewSet, TouristicEventViewSet
@@ -24,10 +24,11 @@ class Command(BaseCommand):
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
-        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents')
+        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents', params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
         contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
         contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})
+
         if self.source:
             contents = contents.filter(source__name__in=self.source)
         for content in contents:
