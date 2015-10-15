@@ -7,6 +7,7 @@ from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefield_as_sequence
 
 from . import models
+from geotrek.trekking.factories import TrekFactory
 
 
 class DataSourceFactory(factory.Factory):
@@ -91,3 +92,35 @@ class TouristicEventFactory(factory.Factory):
     published = True
 
     type = factory.SubFactory(TouristicEventTypeFactory)
+
+
+class TrekWithTouristicEventFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicEventFactory, cls)._prepare(create, **kwargs)
+        path = trek.paths.all()[0]
+        te1 = TouristicEventFactory.create(no_path=True)
+        te1.add_path(path, start=0.5, end=0.5)
+        te2 = TouristicEventFactory.create(no_path=True)
+        te2.add_path(path, start=0.4, end=0.4)
+
+        if create:
+            trek.save()
+
+        return trek
+
+
+class TrekWithTouristicContentFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
+        path = trek.paths.all()[0]
+        tc1 = TouristicContentFactory.create(no_path=True)
+        tc1.add_path(path, start=0.5, end=0.5)
+        tc2 = TouristicContentFactory.create(no_path=True)
+        tc2.add_path(path, start=0.4, end=0.4)
+
+        if create:
+            trek.save()
+
+        return trek
