@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-*
+* Added a custom validation to accept url only contribution in flatpages without content.
 
 **Bug fixes**
 
