@@ -12,7 +12,6 @@ from geotrek.common.factories import RecordSourceFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import (TouristicContentFactory, TouristicEventFactory,
                                        TrekWithTouristicEventFactory, TrekWithTouristicContentFactory)
-from geotrek.trekking.models import Trek
 
 
 def factory(factory, source):
@@ -54,8 +53,6 @@ class SyncTest(TranslationResetMixin, TestCase):
                                 with_events=True,
                                 content_categories=u"Restaurant,Musée",
                                 verbosity='0')
-        print "events : ", trek1.touristic_events.count(), trek2.touristic_events.count()
-        print "contents : ", trek1.touristic_contents.count(), trek2.touristic_contents.count()
 
         with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
                                   '{pk}.zip'.format(pk=trek1.pk)),

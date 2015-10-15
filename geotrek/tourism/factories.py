@@ -113,12 +113,10 @@ class TrekWithTouristicContentFactory(TrekFactory):
     @classmethod
     def _prepare(cls, create, **kwargs):
         trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
-        tc1 = TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
-                                             geom='POINT(700000 6600000)')
-        # tc1.add_path(path, start=0.5, end=0.5)
-        tc2 = TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
-                                             geom='POINT(700100 6600100)')
-        # tc2.add_path(path, start=0.4, end=0.4)
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
+                                       geom='POINT(700000 6600000)')
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
+                                       geom='POINT(700100 6600100)')
 
         if create:
             trek.published_fr = True
