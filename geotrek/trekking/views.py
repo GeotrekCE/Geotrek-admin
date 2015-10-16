@@ -1,50 +1,59 @@
+from datetime import timedelta
+import json
+
 from django.conf import settings
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+from django.utils import translation
+from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.utils import translation
 from django.views.generic import CreateView, ListView, RedirectView
 from django.views.generic.detail import BaseDetailView
-from django.contrib.auth.decorators import login_required, user_passes_test
-
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                             MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin, MapEntityViewSet)
+from djcelery.models import TaskMeta
 from mapentity.helpers import alphabet_enumeration
 from mapentity.settings import app_settings as mapentity_settings
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+                             MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.core.models import AltimetryMixin
-from geotrek.core.views import CreateFromTopologyMixin
-
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
+from geotrek.core.models import AltimetryMixin
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.zoning.models import District, City, RestrictedArea
 
-from .models import Trek, POI, WebLink, Service
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
+from .models import Trek, POI, WebLink, Service
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
+from geotrek.trekking.forms import SyncRandoForm
 
 
 class SyncRandoRedirect(RedirectView):
-    http_method_names = ['get']
+    http_method_names = ['post']
     permanent = False
     query_string = False
 
     @method_decorator(login_required)
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def get(self, request, *args, **kwargs):
-        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http', host=self.request.get_host())
+    def post(self, request, *args, **kwargs):
+        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
+                                         host=self.request.get_host())
         launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect, self).get(request, *args, **kwargs)
+        return super(SyncRandoRedirect,
+                     self).post(request, *args, **kwargs)
 
     def get_redirect_url(self, *args, **kwargs):
         self.url = self.request.META.get('HTTP_REFERER')
@@ -519,6 +528,43 @@ class CirkwiPOIView(ListView):
         pois = self.get_queryset()
         serializer.serialize(pois)
         return response
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_view(request):
+    """
+    Custom views to view / track / launch a sync rando
+    """
+
+    return render_to_response(
+        'trekking/sync_rando.html',
+        {'form': SyncRandoForm(), },
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_update_json(request):
+    """
+    get info from sync_rando celery_task
+    """
+    results = []
+    threshold = datetime.now() - timedelta(seconds=60)
+
+    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+        if hasattr(task, 'result') and \
+                'name' in task.result and\
+                task.result.get('name', '').startswith('geotrek.common'):
+            results.append({
+                'id': task.task_id,
+                'result': task.result or {'current': 0,
+                                          'total': 0},
+                'status': task.status
+            })
+
+    return HttpResponse(json.dumps(results), content_type="application/json")
 
 # Translations for public PDF
 translation.ugettext_noop(u"Altimetric profile")

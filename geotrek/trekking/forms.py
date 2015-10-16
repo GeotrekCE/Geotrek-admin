@@ -17,6 +17,7 @@ from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
 from django.db import transaction
+from django.core.urlresolvers import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):
@@ -33,7 +34,9 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'is_circuit_step',
                                     'DELETE')
 
-TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
+TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through,
+                                                form=TrekRelationshipForm, fk_name='trek_a',
+                                                extra=1)
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -329,3 +332,14 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         model = WebLink
         fields = ['name_{0}'.format(l[0]) for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']] + \
                  ['url', 'category']
+
+
+class SyncRandoForm(forms.Form):
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_id = 'form-sync'
+        helper.form_action = reverse('trekking:sync_randos')
+        helper.form_class = 'search'
+        helper.add_input(Submit('sync-web', _("Sync")))
+        return helper
