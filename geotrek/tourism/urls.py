@@ -15,7 +15,6 @@ urlpatterns = patterns(
     url(r'^api/datasource/datasources.json$', tourism_views.DataSourceList.as_view(), name="datasource_list_json"),
     url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', tourism_views.DataSourceGeoJSON.as_view(), name="datasource_geojson"),
     url(r'^api/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
-    url(r'^api/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.geojson$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.geojson$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
 )

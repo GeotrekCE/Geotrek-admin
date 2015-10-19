@@ -114,7 +114,7 @@ class Command(BaseCommand):
     def sync_trek(self, lang, trek):
         super(Command, self).sync_trek(lang, trek)
         # reopen trek zip and add custom info if needed
-        zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
+        zipname = os.path.join('zip', 'treks', lang, 'global.zip'.format(pk=trek.pk))
         zipfullname = os.path.join(self.tmp_root, zipname)
         self.trek_zipfile = ZipFile(zipfullname, 'a')
 
