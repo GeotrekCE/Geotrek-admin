@@ -342,4 +342,5 @@ class SyncRandoForm(forms.Form):
         helper.form_action = reverse('trekking:sync_randos')
         helper.form_class = 'search'
         helper.add_input(Submit('sync-web', _("Sync")))
+
         return helper

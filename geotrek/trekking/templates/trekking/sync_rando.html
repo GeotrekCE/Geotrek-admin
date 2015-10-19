@@ -3,15 +3,26 @@
 {% load i18n %}
 
 {% block extrahead %}
-<!--<script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
-<link rel="stylesheet" href="{% static "common/css/import.css" %}" />-->
-<script type="text/javascript">
-	$(function(){
-		$('#form-sync').submit(function() {
-			return confirm("{% trans 'Are you sure you want to sync ?' %}");
-		});		
-	});
-</script>
+	<script type="text/javascript">
+		$(function(){
+			$('#form-sync').submit(function() {
+				return confirm("{% trans 'Are you sure you want to sync ?' %}");
+			});
+			
+			{% if request.GET.job %}
+			$.get("{% url 'trekking:sync_randos_state' %}?job={{ request.GET.job }}",
+			      function(response) {
+				      if(response.exc_type){
+				    	  $('#results').text(response.exc_type + " : " + response.exc_message);
+				      }
+				      else {
+			    	  	alert(response);
+				      }
+			      }
+			);
+			{% endif %}
+		});
+	</script>
 
 {% endblock extrahead %}
 
@@ -19,16 +30,22 @@
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div id="sync-div" class="span3 offset2">
-    <h3>{% trans "Launch a sync_rando" %}</h3>
-	{% block mainform %}
-		{% crispy form form.helper %}
-	{% endblock mainform %}
-</div>
-<div id="progress-bars" class="span5">
-</div>
 
-<script id="import-template" type="text/template">
+	<div id="sync-div" class="span3 offset2">
+	    <h3>{% trans "Launch a sync_rando" %}</h3>
+		{% block mainform %}
+			{% crispy form form.helper %}
+		{% endblock mainform %}
+		{{ request.GET.job }}
+	</div>
+	
+	<div id="progress-bars" class="span5">
+	</div>
+
+	<div id="results">
+	</div>
+	
+	<script id="import-template" type="text/template">
 	<div id="progress-tpl">
 		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		<div class="description">
@@ -47,5 +64,6 @@
 		</div>
 		<hr></hr>
 	</div>
-</script>
+	</script>
+	
 {% endblock mainpanel %}

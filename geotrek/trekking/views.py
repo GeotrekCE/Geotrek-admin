@@ -39,6 +39,7 @@ from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
 from geotrek.trekking.forms import SyncRandoForm
+from celery.result import AsyncResult
 
 
 class SyncRandoRedirect(RedirectView):
@@ -51,13 +52,15 @@ class SyncRandoRedirect(RedirectView):
     def post(self, request, *args, **kwargs):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())
-        launch_sync_rando.delay(url=url)
+        self.job = launch_sync_rando.delay(url=url)
         return super(SyncRandoRedirect,
                      self).post(request, *args, **kwargs)
 
     def get_redirect_url(self, *args, **kwargs):
         self.url = self.request.META.get('HTTP_REFERER')
-        return super(SyncRandoRedirect, self).get_redirect_url(*args, **kwargs)
+        return super(SyncRandoRedirect,
+                     self).get_redirect_url(*args,
+                                            **kwargs) + '?job={}'.format(self.job.id)
 
 
 class FlattenPicturesMixin(object):
@@ -565,6 +568,24 @@ def sync_update_json(request):
             })
 
     return HttpResponse(json.dumps(results), content_type="application/json")
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_state(request):
+    """
+    A view to report the progress to the user
+    """
+    if 'job' in request.GET:
+        job_id = request.GET['job']
+
+    else:
+        return HttpResponse('No job id given.')
+
+    job = AsyncResult(job_id)
+    data = job.result or job.state
+
+    return HttpResponse(json.dumps(data), mimetype='application/json')
 
 # Translations for public PDF
 translation.ugettext_noop(u"Altimetric profile")
