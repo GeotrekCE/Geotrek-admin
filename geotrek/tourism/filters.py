@@ -32,3 +32,11 @@ class TouristicEventFilterSet(StructureRelatedFilterSet):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after', 'before', 'approved']
+
+
+class TouristicEventApiFilterSet(django_filters.FilterSet):
+    ends_after = django_filters.DateFilter('end_date', lookup_type='gte')
+
+    class Meta:
+        model = TouristicEvent
+        fields = ['end_date', ]

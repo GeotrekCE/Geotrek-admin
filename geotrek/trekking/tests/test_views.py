@@ -691,7 +691,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"label": u"Trek",
                               u"slug": u"trek",
                               u"type1_label": u"Practice",
-                              u"type2_label": u"Accessibilities",
+                              u"type2_label": u"Accessibility",
                               u"pictogram": u"/static/trekking/trek.svg"})
 
     def test_sources(self):
@@ -1085,7 +1085,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</pois>'.format(**attrs))
 
 
-class TrekWorkflowTest(TestCase):
+class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
         call_command('update_permissions')
         self.trek = TrekFactory.create(published=False)

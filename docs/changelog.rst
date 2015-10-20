@@ -2,7 +2,19 @@
 CHANGELOG
 =========
 
-2.1.1.dev0
+2.2.1.dev0
+------------------
+
+**New features**
+
+* Sync rando now exports only future events based on current date.
+
+**Bug fixes**
+
+*
+
+
+2.2.0 (2015-10-09)
 ------------------
 
 **New features**
