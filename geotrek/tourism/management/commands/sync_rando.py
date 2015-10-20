@@ -75,7 +75,7 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
         for content in trek.touristic_contents.all():
-            self.sync_touristiccontent_media(lang, content, zipfile=zipfile)
+            self.sync_touristiccontent_media(lang, content, zipfile=self.trek_zipfile)
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson', }
@@ -84,7 +84,7 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
         for event in trek.touristic_events.all():
-            self.sync_touristicevent_media(lang, event, zipfile=zipfile)
+            self.sync_touristicevent_media(lang, event, zipfile=self.trek_zipfile)
 
     def sync_touristicevent_media(self, lang, event, zipfile=None):
         if event.resized_pictures:
@@ -113,15 +113,15 @@ class Command(BaseCommand):
 
     def sync_trek(self, lang, trek):
         super(Command, self).sync_trek(lang, trek)
-        # reopen trek zip and add custom info if needed
-        zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
-        zipfullname = os.path.join(self.tmp_root, zipname)
-        self.trek_zipfile = ZipFile(zipfullname, 'a')
+
+        self.trek_zipfile = ZipFile(os.path.join(self.tmp_root, 'zip', 'treks',
+                                                 lang, '{pk}.zip'.format(pk=trek.pk)),
+                                    'a')
 
         if self.with_events:
-            self.sync_trek_touristicevents(lang, trek, zipfile=self.trek_zipfile)
+            self.sync_trek_touristicevents(lang, trek, zipfile=self.zipfile)
 
         if self.categories:
-            self.sync_trek_touristiccontents(lang, trek, zipfile=self.trek_zipfile)
+            self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
 
-        self.close_zip(self.trek_zipfile, zipname)
+        self.trek_zipfile.close()
