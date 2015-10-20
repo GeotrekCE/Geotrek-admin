@@ -57,11 +57,16 @@ class Command(BaseCommand):
                                             lang, 'global.zip'),
                                'a')
 
+        # picto touristic events
         self.sync_file(lang,
                        os.path.join('tourism', 'touristicevent.svg'),
                        settings.STATIC_ROOT,
                        settings.STATIC_URL,
                        zipfile=self.zipfile)
+
+        # pictos touristic content catgories
+        for category in tourism_models.TouristicContentCategory.objects.all():
+            self.sync_media_file(lang, category.pictogram, zipfile=self.zipfile)
 
         contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
         contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})
