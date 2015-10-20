@@ -55,16 +55,12 @@ class SyncTest(TranslationResetMixin, TestCase):
                                 verbosity='0')
 
         with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
-                                  '{pk}.zip'.format(pk=trek1.pk)),
+                                  'global.zip'),
                      'r') as zipf:
             self.assertIn(os.path.join('api', 'fr', 'treks',
                                        '{pk}'.format(pk=trek1.pk),
                                        'touristicevents.geojson'),
                           zipf.namelist())
-
-        with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
-                                  '{pk}.zip'.format(pk=trek2.pk)),
-                     'r') as zipf:
             self.assertIn(os.path.join('api', 'fr', 'treks',
                                        '{pk}'.format(pk=trek2.pk),
                                        'touristiccontents.geojson'),
