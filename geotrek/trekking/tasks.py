@@ -34,7 +34,6 @@ def launch_sync_rando(*args, **kwargs):
             settings.SYNC_RANDO_ROOT,
             url=kwargs.get('url'),
             verbosity='2',
-            skip_profile_png=True,
             task=current_task
         )
 
