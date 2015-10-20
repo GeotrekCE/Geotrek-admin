@@ -52,6 +52,17 @@ class Command(BaseCommand):
         self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
         self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents')
 
+        # picto in global zip
+        self.zipfile = ZipFile(os.path.join(self.tmp_root, 'zip', 'treks',
+                                            lang, 'global.zip'),
+                               'a')
+
+        self.sync_file(lang,
+                       os.path.join('tourism', 'touristicevent.svg'),
+                       settings.STATIC_ROOT,
+                       settings.STATIC_URL,
+                       zipfile=self.zipfile)
+
         contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
         contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})
         if self.source:
@@ -65,6 +76,8 @@ class Command(BaseCommand):
             events = events.filter(source__name__in=self.source)
         for event in events:
             self.sync_event(lang, event)
+
+        self.zipfile.close()
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
