@@ -1,4 +1,3 @@
-from datetime import timedelta
 import json
 
 from django.conf import settings
@@ -8,7 +7,6 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.utils import translation
-from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import CreateView, ListView, RedirectView
@@ -39,7 +37,6 @@ from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
 from geotrek.trekking.forms import SyncRandoForm
-from celery.result import AsyncResult
 
 
 class SyncRandoRedirect(RedirectView):
@@ -60,7 +57,7 @@ class SyncRandoRedirect(RedirectView):
         self.url = self.request.META.get('HTTP_REFERER')
         return super(SyncRandoRedirect,
                      self).get_redirect_url(*args,
-                                            **kwargs) + '?job={}'.format(self.job.id)
+                                            **kwargs)
 
 
 class FlattenPicturesMixin(object):
@@ -554,12 +551,12 @@ def sync_update_json(request):
     get info from sync_rando celery_task
     """
     results = []
-    threshold = datetime.now() - timedelta(seconds=60)
 
-    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+    for task in TaskMeta.objects.all():
         if hasattr(task, 'result') and \
                 'name' in task.result and\
-                task.result.get('name', '').startswith('geotrek.common'):
+                task.result.get('name', '').startswith('geotrek.trekking.sync-rando') and\
+                task.status != 'SUCCESS':
             results.append({
                 'id': task.task_id,
                 'result': task.result or {'current': 0,
@@ -567,25 +564,9 @@ def sync_update_json(request):
                 'status': task.status
             })
 
-    return HttpResponse(json.dumps(results), content_type="application/json")
+    return HttpResponse(json.dumps(results),
+                        content_type="application/json")
 
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_state(request):
-    """
-    A view to report the progress to the user
-    """
-    if 'job' in request.GET:
-        job_id = request.GET['job']
-
-    else:
-        return HttpResponse('No job id given.')
-
-    job = AsyncResult(job_id)
-    data = job.result or job.state
-
-    return HttpResponse(json.dumps(data), mimetype='application/json')
 
 # Translations for public PDF
 translation.ugettext_noop(u"Altimetric profile")

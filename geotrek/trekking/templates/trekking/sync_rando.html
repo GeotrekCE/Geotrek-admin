@@ -4,26 +4,80 @@
 
 {% block extrahead %}
 	<script type="text/javascript">
-		$(function(){
-			$('#form-sync').submit(function() {
-				return confirm("{% trans 'Are you sure you want to sync ?' %}");
-			});
-			
-			{% if request.GET.job %}
-			$.get("{% url 'trekking:sync_randos_state' %}?job={{ request.GET.job }}",
+		
+		function enable_sync_button() {
+			$('#submit-id-sync-web').attr('disabled', false);
+			$('#submit-id-sync-web').val('{% trans "Launch Sync" %}');			
+		}
+		
+		function disable_sync_button(init) {
+			$('#submit-id-sync-web').attr('disabled', true);
+			if (init==true){
+				$('#submit-id-sync-web').val('{% trans "Sync verifications" %}');
+			} else {
+				$('#submit-id-sync-web').val('{% trans "Sync in progress" %}');
+			}
+		}
+	
+		function get_sync_infos() {
+			$.get("{% url 'trekking:sync_randos_state' %}",
 			      function(response) {
-				      if(response.exc_type){
-				    	  $('#results').text(response.exc_type + " : " + response.exc_message);
-				      }
-				      else {
-			    	  	alert(response);
-				      }
+
+			    	  // test if sync_rando run
+			    	  var has_progress = false;
+			    	  
+			    	  // test in each result / must be one
+			    	  $.each(response, function(index) {
+			    	      if (this.status == 'PROGRESS'){
+			    	    	  has_progress = true;
+			    	    	  disable_sync_button(false);
+			    	    	  $('#progress-value').show();
+			    	    	  
+			    	    	  if (this.result.current) {
+			    	    		  $("#progress-value").css("width", this.result.current+'%');
+			    	    		  
+			    	    		  if (this.result.current == 100){
+			    	    			  $("#progress-value").parent().removeClass("active");
+			    	    		  }
+			    	    	  }
+			    	    	  if (this.result.infos) {
+			    	    		  $("#progress-text").text(this.result.infos); 
+			    	    	  }
+			    	      }
+			    	  });
+			    	  
+			    	  if (!has_progress) {
+			    		  enable_sync_button();
+			    	  }
 			      }
 			);
-			{% endif %}
+		}
+		
+		$(function(){
+			disable_sync_button(true);
+			get_sync_infos();
+			
+			$('#form-sync').submit(function(evt) {
+				$("#progress-value").css("width", '0%');
+				 $("#progress-text").text(''); 
+				$(this).unbind('submit');
+				
+				if(confirm("{% trans 'Are you sure you want to sync ?' %}")){
+				    $.post(
+				    		$(this).attr('action'), 
+				    		$(this).serialize()
+			        );					
+				}
+				
+				return false;
+			});
+			
+			window.setInterval(function(){
+				get_sync_infos();
+			}, 500);
 		});
 	</script>
-
+	<link rel="stylesheet" href="{% static 'trekking/css/sync_trek.css' %}" />
 {% endblock extrahead %}
 
 {% block toolbar %}
@@ -32,38 +86,14 @@
 {% block mainpanel %}
 
 	<div id="sync-div" class="span3 offset2">
-	    <h3>{% trans "Launch a sync_rando" %}</h3>
+	    <h3>{% trans "Trekking sync" %}</h3>
+		<div class="progress progress-striped active">
+		  <div id="progress-value" class="bar" style="width: 0%;"></div>
+		  <span id="progress-text"></span>
+		</div>
 		{% block mainform %}
 			{% crispy form form.helper %}
 		{% endblock mainform %}
-		{{ request.GET.job }}
 	</div>
-	
-	<div id="progress-bars" class="span5">
-	</div>
-
-	<div id="results">
-	</div>
-	
-	<script id="import-template" type="text/template">
-	<div id="progress-tpl">
-		<button type="button" class="close" data-dismiss="alert">&times;</button>
-		<div class="description">
-			<span class="parser"></span>
-			<span class="filename">
-			</span>
-		</div>
-		<div class="pull-left">
-			<span></span>
-		</div>
-		<div class="progress progress-striped active">
-			<div class="bar"></div>
-		</div>
-		<div class="alert">
-			<span></span>
-		</div>
-		<hr></hr>
-	</div>
-	</script>
 	
 {% endblock mainpanel %}

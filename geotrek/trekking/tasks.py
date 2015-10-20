@@ -5,6 +5,7 @@ import os
 from celery import shared_task, current_task
 from django.conf import settings
 from django.core.management import call_command
+from django.utils.translation import ugettext as _
 
 
 @shared_task(name='geotrek.trekking.sync-rando')
@@ -22,6 +23,9 @@ def launch_sync_rando(*args, **kwargs):
             state='PROGRESS',
             meta={
                 'name': current_task.name,
+                'current': 5,
+                'total': 100,
+                'infos': u"{}".format(_(u"Init sync ..."))
             }
         )
 
@@ -31,6 +35,7 @@ def launch_sync_rando(*args, **kwargs):
             url=kwargs.get('url'),
             verbosity='2',
             skip_profile_png=True,
+            task=current_task
         )
 
     except Exception:

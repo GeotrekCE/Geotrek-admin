@@ -12,7 +12,7 @@ from .views import (
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
-    sync_state
+    sync_update_json
 )
 from . import serializers as trekking_serializers
 
@@ -28,7 +28,7 @@ urlpatterns = patterns(
     url(r'^api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
     url(r'^commands/sync$', SyncRandoRedirect.as_view(), name='sync_randos'),
     url(r'^commands/syncview$', sync_view, name='sync_randos_view'),
-    url(r'^commands/statesync/$', sync_state, name='sync_randos_state'),
+    url(r'^commands/statesync/$', sync_update_json, name='sync_randos_state'),
 )
 
 

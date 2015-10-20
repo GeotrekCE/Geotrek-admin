@@ -335,6 +335,10 @@ class WebLinkCreateFormPopup(forms.ModelForm):
 
 
 class SyncRandoForm(forms.Form):
+    """
+    Sync Rando View Form
+    """
+
     @property
     def helper(self):
         helper = FormHelper()
