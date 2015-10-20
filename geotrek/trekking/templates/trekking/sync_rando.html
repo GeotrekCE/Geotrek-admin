@@ -82,7 +82,8 @@
 					$("#progress-value").css("width", '0%');
 					$("#progress-text").text('');
 					$("#progress-value").parent().addClass("active");
-					$("#progress-value").removeClass('bar-success bar-danger');
+					$("#progress-value").removeClass('bar-success');
+					$("#progress-value").removeClass('bar-danger');
 					
 				    $.post(
 				        $(this).attr('action'), 
