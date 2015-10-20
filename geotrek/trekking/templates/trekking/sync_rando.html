@@ -4,7 +4,8 @@
 
 {% block extrahead %}
 	<script type="text/javascript">
-		
+		var last_launched_tasked_id = null;	
+	
 		function enable_sync_button() {
 			$('#submit-id-sync-web').attr('disabled', false);
 			$('#submit-id-sync-web').val('{% trans "Launch Sync" %}');			
@@ -28,7 +29,13 @@
 			    	  
 			    	  // test in each result / must be one
 			    	  $.each(response, function(index) {
+			    		  
 			    	      if (this.status == 'PROGRESS'){
+			    	    	  
+			    	    	  if(last_launched_tasked_id == null){
+			    	    		  last_launched_tasked_id = this.id;
+			    	    	  }
+			    	    	  
 			    	    	  has_progress = true;
 			    	    	  disable_sync_button(false);
 			    	    	  $('#progress-value').show();
@@ -38,10 +45,20 @@
 			    	    		  
 			    	    		  if (this.result.current == 100){
 			    	    			  $("#progress-value").parent().removeClass("active");
+			    	    			  $("#progress-value").addClass('bar-success');
 			    	    		  }
 			    	    	  }
 			    	    	  if (this.result.infos) {
 			    	    		  $("#progress-text").text(this.result.infos); 
+			    	    	  }
+			    	      }
+			    	      else {
+			    	    	  if (this.status == 'FAILURE' && last_launched_tasked_id == this.id){
+			    	    		  // case of exception in task
+			    	    		  $("#progress-text").text("{% trans 'Une erreur est survenue' %}");
+			    	    		  $('#exception-message').text(this.result.exc_type + ' : ' + this.result.exc_message)
+			    	    		  $("#progress-value").addClass('bar-danger');
+			    	    		  
 			    	    	  }
 			    	      }
 			    	  });
@@ -58,14 +75,18 @@
 			get_sync_infos();
 			
 			$('#form-sync').submit(function(evt) {
-				$("#progress-value").css("width", '0%');
-				 $("#progress-text").text(''); 
-				$(this).unbind('submit');
+				
+				evt.preventDefault();
 				
 				if(confirm("{% trans 'Are you sure you want to sync ?' %}")){
+					$("#progress-value").css("width", '0%');
+					$("#progress-text").text('');
+					$("#progress-value").parent().addClass("active");
+					$("#progress-value").removeClass('bar-success bar-danger');
+					
 				    $.post(
-				    		$(this).attr('action'), 
-				    		$(this).serialize()
+				        $(this).attr('action'), 
+				        $(this).serialize()
 			        );					
 				}
 				
@@ -94,6 +115,9 @@
 		{% block mainform %}
 			{% crispy form form.helper %}
 		{% endblock mainform %}
+	</div>
+	
+	<div id="exception-message" style="display: none;">
 	</div>
 	
 {% endblock mainpanel %}

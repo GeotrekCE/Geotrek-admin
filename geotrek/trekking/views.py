@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import json
 
 from django.conf import settings
@@ -27,6 +28,7 @@ from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
@@ -36,7 +38,6 @@ from .models import Trek, POI, WebLink, Service
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
-from geotrek.trekking.forms import SyncRandoForm
 
 
 class SyncRandoRedirect(RedirectView):
@@ -551,12 +552,13 @@ def sync_update_json(request):
     get info from sync_rando celery_task
     """
     results = []
+    threshold = datetime.now() - timedelta(seconds=3600)
 
-    for task in TaskMeta.objects.all():
-        if hasattr(task, 'result') and \
-                'name' in task.result and\
-                task.result.get('name', '').startswith('geotrek.trekking.sync-rando') and\
-                task.status != 'SUCCESS':
+    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+        if (hasattr(task, 'result') and
+                'name' in task.result and
+                task.result.get('name', '').startswith('geotrek.trekking.sync-rando') and
+                task.status == 'PROGRESS') or task.status == 'FAILURE':
             results.append({
                 'id': task.task_id,
                 'result': task.result or {'current': 0,
