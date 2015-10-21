@@ -413,10 +413,6 @@ class Command(BaseCommand):
         current_value = 25
 
         for lang in self.languages:
-            translation.activate(lang)
-            self.sync_trekking(lang)
-            translation.deactivate()
-
             if self.celery_task:
                 self.celery_task.update_state(
                     state='PROGRESS',
@@ -428,6 +424,10 @@ class Command(BaseCommand):
                     }
                 )
                 current_value = current_value + step_value
+
+            translation.activate(lang)
+            self.sync_trekking(lang)
+            translation.deactivate()
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
