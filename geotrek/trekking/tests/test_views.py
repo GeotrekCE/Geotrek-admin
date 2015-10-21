@@ -1126,6 +1126,14 @@ class SyncRandoViewTest(TestCase):
         response = self.client.get(reverse('trekking:sync_randos_view'))
         self.assertEqual(response.status_code, 302)
 
+    def test_post_sync_redirect(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.user.is_superuser = True
+        response = self.client.post(reverse('trekking:sync_randos'))
+        self.assertEqual(response.status_code, 302)
+
 
 class ServiceViewsTest(CommonTest):
     model = Service

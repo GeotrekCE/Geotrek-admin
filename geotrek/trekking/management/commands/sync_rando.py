@@ -364,6 +364,7 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
+
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 
@@ -385,11 +386,22 @@ class Command(BaseCommand):
                         'name': self.celery_task.name,
                         'current': 10,
                         'total': 100,
-                        'infos': u"{}".format(_(u"Tiles syncing ..."))
+                        'infos': u"{}".format(_(u"Global tiles syncing ..."))
                     }
                 )
 
             self.sync_global_tiles()
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 20,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Trek tiles syncing ..."))
+                    }
+                )
 
             for trek in trekking_models.Trek.objects.existing().order_by('pk'):
                 if trek.any_published:
@@ -410,7 +422,7 @@ class Command(BaseCommand):
         self.sync_tiles()
 
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
-        current_value = 25
+        current_value = 30
 
         for lang in self.languages:
             if self.celery_task:

@@ -345,6 +345,10 @@ class SyncRandoForm(forms.Form):
         helper.form_id = 'form-sync'
         helper.form_action = reverse('trekking:sync_randos')
         helper.form_class = 'search'
-        helper.add_input(Submit('sync-web', _("Sync")))
+        # submit button with boostrap attributes, disabled by default
+        helper.add_input(Submit('sync-web', _("Launch Sync"),
+                                **{'data-toggle': "modal",
+                                   'data-target': "#confirm-submit",
+                                   'disabled': 'disabled'}))
 
         return helper

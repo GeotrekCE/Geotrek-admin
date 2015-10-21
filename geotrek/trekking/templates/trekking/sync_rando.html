@@ -1,4 +1,5 @@
 {% extends "mapentity/base.html" %}
+
 {% load static crispy_forms_tags %}
 {% load i18n %}
 
@@ -29,16 +30,14 @@
 			    	  
 			    	  // test in each result / must be one
 			    	  $.each(response, function(index) {
-			    		  
-			    	      if (this.status == 'PROGRESS'){
-			    	    	  
-			    	    	  if(last_launched_tasked_id == null){
-			    	    		  last_launched_tasked_id = this.id;
-			    	    	  }
-			    	    	  
+			    	      if (this.status == 'PROGRESS') {
+			    	    	  last_launched_tasked_id = this.id;
 			    	    	  has_progress = true;
 			    	    	  disable_sync_button(false);
+			    	    	  
 			    	    	  $('#progress-value').show();
+			    	    	  $("#progress-value").removeClass('bar-danger');
+			    	    	  $("#progress-value").parent().addClass("active");
 			    	    	  
 			    	    	  if (this.result.current) {
 			    	    		  $("#progress-value").css("width", this.result.current+'%');
@@ -55,10 +54,10 @@
 			    	      else {
 			    	    	  if (this.status == 'FAILURE' && last_launched_tasked_id == this.id){
 			    	    		  // case of exception in task
-			    	    		  $("#progress-text").text("{% trans 'Une erreur est survenue' %}");
+			    	    		  $("#progress-text").text("{% trans 'An error occured' %}");
 			    	    		  $('#exception-message').text(this.result.exc_type + ' : ' + this.result.exc_message)
 			    	    		  $("#progress-value").addClass('bar-danger');
-			    	    		  
+			    	    		  $("#progress-value").parent().removeClass("active");
 			    	    	  }
 			    	      }
 			    	  });
@@ -66,32 +65,26 @@
 			    	  if (!has_progress) {
 			    		  enable_sync_button();
 			    	  }
-			      }
-			);
+			  });
 		}
 		
 		$(function(){
 			disable_sync_button(true);
 			get_sync_infos();
 			
-			$('#form-sync').submit(function(evt) {
+			$('#btn-confirm').click(function(evt) {
+				$("#progress-value").css("width", '0%');
+				$("#progress-text").text('');
+				$("#progress-value").parent().addClass("active");
+				$("#progress-value").removeClass('bar-success');
+				$("#progress-value").removeClass('bar-danger');
 				
-				evt.preventDefault();
-				
-				if(confirm("{% trans 'Are you sure you want to sync ?' %}")){
-					$("#progress-value").css("width", '0%');
-					$("#progress-text").text('');
-					$("#progress-value").parent().addClass("active");
-					$("#progress-value").removeClass('bar-success');
-					$("#progress-value").removeClass('bar-danger');
-					
-				    $.post(
-				        $(this).attr('action'), 
-				        $(this).serialize()
-			        );					
-				}
-				
-				return false;
+			    $.post(
+			        $('#form-sync').attr('action'), 
+			        $('#form-sync').serialize()
+		        );
+			    
+			    $('#confirm-submit').modal('toggle');
 			});
 			
 			window.setInterval(function(){
@@ -121,4 +114,26 @@
 	<div id="exception-message" style="display: none;">
 	</div>
 	
+	<div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <!-- boostrap 2 modal confirmation -->
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                {% trans "Confirmation" %}
+	            </div>
+	            <div class="modal-body">
+	                {% trans "Are you sure you want to sync ?" %}
+	            </div>
+	
+	  			<div class="modal-footer">
+		            <button type="button" class="btn btn-default" data-dismiss="modal">
+		                {% trans "Cancel" %}
+		            </button>
+		            <a href="#" id="btn-confirm" class="btn btn-success success">
+		                {% trans "Sync" %}
+		            </a>
+		        </div>
+	    	</div>
+		</div>
+	</div>
 {% endblock mainpanel %}
