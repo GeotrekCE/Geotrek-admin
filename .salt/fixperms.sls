@@ -28,11 +28,11 @@
               --users www-data \
               --users {% if not cfg.no_user%}{{cfg.user}}{% else -%}root{% endif %} \
               --groups {{cfg.group}} \
+              --exclude="{{cfg.data_root}}/var/media/paperclip"\
               --user {% if not cfg.no_user%}{{cfg.user}}{% else -%}root{% endif %} \
               --group {{cfg.group}};
               "{{locs.resetperms}}" "${@}" \
               --no-recursive -o\
-              --exclude="{{cfg.data_root}}/var/media/paperclip"\
               --dmode '0555' --fmode '0644'  \
               --paths "{{cfg.project_root}}" \
               --paths "{{cfg.project_dir}}" \
