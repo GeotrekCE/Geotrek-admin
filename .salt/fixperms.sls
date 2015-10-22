@@ -32,6 +32,7 @@
               --group {{cfg.group}};
               "{{locs.resetperms}}" "${@}" \
               --no-recursive -o\
+              --exclude="{{cfg.data_root}}/var/media/paperclip"\
               --dmode '0555' --fmode '0644'  \
               --paths "{{cfg.project_root}}" \
               --paths "{{cfg.project_dir}}" \
