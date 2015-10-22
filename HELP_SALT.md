@@ -1,4 +1,4 @@
-= 1
+# 1
 ```bash
 cd ~/workspace/geotrek
 git pull github
@@ -9,7 +9,7 @@ git push deploy HEAD:master
 git push prod-geotre042 HEAD:master
 ```
 
-= 2
+# 2
 ```bash
 ssh prod-geotre042.makina-corpus.net
 cd  /srv/projects/geotrek/project
