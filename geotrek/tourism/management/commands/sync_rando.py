@@ -18,13 +18,13 @@ class Command(BaseCommand):
                     action='store_true',
                     dest='with_events',
                     default=False,
-                    help='include touristic events in individual trek zips'),
+                    help='include touristic events by trek in global.zip'),
         make_option('--with-touristiccontent-categories',
                     '-c',
                     action='store',
                     dest='content_categories',
                     default=None,
-                    help='include touristic events in individual trek zips (filtered by category name)'),
+                    help='include touristic contents by trek in global.zip (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
     )
 
     def handle(self, *args, **options):

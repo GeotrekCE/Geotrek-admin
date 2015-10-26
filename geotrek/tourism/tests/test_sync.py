@@ -51,7 +51,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                 url='http://localhost:8000',
                                 skip_tiles=True,
                                 with_events=True,
-                                content_categories=u"Restaurant,Musée",
+                                content_categories=u"1,2",
                                 verbosity='0')
 
         with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',

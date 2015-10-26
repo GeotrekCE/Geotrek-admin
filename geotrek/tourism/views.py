@@ -328,8 +328,7 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            trek = Trek.objects.existing().get(pk=self.kwargs['pk'],
-                                               published=True)
+            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
 
         except Trek.DoesNotExist:
             raise Http404
@@ -339,7 +338,7 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
                                                      field_name='geom')
 
         if 'categories' in self.request.GET:
-            queryset = queryset.filter(category__label__in=self.request.GET['categories'].split(','))
+            queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
 
         return queryset
 
@@ -355,8 +354,7 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            trek = Trek.objects.existing().get(pk=self.kwargs['pk'],
-                                               published=True)
+            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
 
         except Trek.DoesNotExist:
             raise Http404
