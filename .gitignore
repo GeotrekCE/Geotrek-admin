@@ -30,3 +30,5 @@ bootstrap.py
 geotrek/settings/custom.py
 /parsers.py
 /install.log
+/data/
+/sync_trek/

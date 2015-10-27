@@ -8,10 +8,11 @@ CHANGELOG
 **New features**
 
 * Sync rando now exports only future events based on current date.
+* Sync rando now synchronizes touristic contents and events.
 
 **Bug fixes**
 
-*
+* Added a custom validation to accept url only contribution in flatpages without content.
 
 
 2.2.0 (2015-10-09)

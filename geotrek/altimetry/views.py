@@ -79,7 +79,7 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
         return self.object.get_elevation_area()
 
 
-def serve_elevation_chart(request, model_name, pk):
+def serve_elevation_chart(request, model_name, pk, from_command=False):
     try:
         model = ContentType.objects.get(model=model_name).model_class()
     except:
@@ -96,7 +96,7 @@ def serve_elevation_chart(request, model_name, pk):
     obj.prepare_elevation_chart(language, request.build_absolute_uri('/'))
     path = obj.get_elevation_chart_path(language).replace(settings.MEDIA_ROOT, '').lstrip('/')
 
-    if settings.DEBUG:
+    if settings.DEBUG or from_command:
         response = static.serve(request, path, settings.MEDIA_ROOT)
     else:
         response = HttpResponse()

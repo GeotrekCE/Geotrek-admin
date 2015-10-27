@@ -221,7 +221,7 @@ class Command(BaseCommand):
     def sync_profile_png(self, lang, obj, zipfile=None):
         view = serve_elevation_chart
         model_name = type(obj)._meta.model_name
-        self.sync_object_view(lang, obj, view, 'profile.png', zipfile=zipfile, model_name=model_name)
+        self.sync_object_view(lang, obj, view, 'profile.png', zipfile=zipfile, model_name=model_name, from_command=True)
 
     def sync_dem(self, lang, obj):
         if self.skip_dem:
@@ -329,7 +329,9 @@ class Command(BaseCommand):
         self.sync_geojson(lang, POIViewSet, 'pois')
         self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
         self.sync_geojson(lang, ServiceViewSet, 'services', zipfile=self.zipfile)
-        self.sync_view(lang, FeedbackCategoryList.as_view(), os.path.join('api', lang, 'feedback', 'categories.json'), zipfile=self.zipfile)
+        self.sync_view(lang, FeedbackCategoryList.as_view(),
+                       os.path.join('api', lang, 'feedback', 'categories.json'),
+                       zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
