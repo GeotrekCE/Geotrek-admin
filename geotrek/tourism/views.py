@@ -1,20 +1,20 @@
-import logging
 from itertools import chain
+import logging
 
-import requests
-from requests.exceptions import RequestException
-import geojson
 from django.conf import settings
-from django.http import Http404
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+import geojson
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
+import requests
+from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.filters import DjangoFilterBackend
@@ -22,14 +22,14 @@ from rest_framework.filters import DjangoFilterBackend
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
-from geotrek.tourism.models import DataSource, InformationDesk
 from geotrek.trekking.models import Trek
 from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .helpers import post_process
-from .models import TouristicContent, TouristicEvent, TouristicContentCategory
+from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
+                     DataSource, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
 
@@ -318,3 +318,52 @@ class TrekTouristicContentAndPOIViewSet(viewsets.ModelViewSet):
         qs1 = trek.touristic_contents.filter(published=True).transform(settings.API_SRID, field_name='geom')
         qs2 = trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
         return chain(qs1, qs2)
+
+
+class TrekTouristicContentViewSet(viewsets.ModelViewSet):
+    model = TouristicContent
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(TouristicContentSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        try:
+            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
+
+        except Trek.DoesNotExist:
+            raise Http404
+
+        queryset = trek.touristic_contents.filter(published=True)\
+                                          .transform(settings.API_SRID,
+                                                     field_name='geom')
+
+        if 'categories' in self.request.GET:
+            queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
+
+        return queryset
+
+
+class TrekTouristicEventViewSet(viewsets.ModelViewSet):
+    model = TouristicEvent
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(TouristicEventSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        try:
+            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
+
+        except Trek.DoesNotExist:
+            raise Http404
+
+        queryset = trek.touristic_events.filter(published=True)\
+                                        .transform(settings.API_SRID,
+                                                   field_name='geom')
+
+        return queryset

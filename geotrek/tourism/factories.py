@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from django.contrib.gis.geos import Point
 from django.utils import timezone
 
@@ -8,6 +9,7 @@ from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefield_as_sequence
 
 from . import models
+from geotrek.trekking.factories import TrekFactory
 
 
 class DataSourceFactory(factory.Factory):
@@ -94,3 +96,33 @@ class TouristicEventFactory(factory.Factory):
     end_date = timezone.now()
 
     type = factory.SubFactory(TouristicEventTypeFactory)
+
+
+class TrekWithTouristicEventFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicEventFactory, cls)._prepare(create, **kwargs)
+        TouristicEventFactory.create(geom='POINT(700000 6600000)')
+        TouristicEventFactory.create(geom='POINT(700100 6600100)')
+
+        if create:
+            trek.published_fr = True
+            trek.save()
+
+        return trek
+
+
+class TrekWithTouristicContentFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
+                                       geom='POINT(700000 6600000)')
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
+                                       geom='POINT(700100 6600100)')
+
+        if create:
+            trek.published_fr = True
+            trek.save()
+
+        return trek
