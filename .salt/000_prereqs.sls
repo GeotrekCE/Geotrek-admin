@@ -39,7 +39,7 @@ prepreqs-{{cfg.name}}:
       - libffi-dev
       - libfreetype6-dev
       - libgdbm-dev
-      - libgdk-pixbuf2.0-0
+      - libgdk-pixbuf2.0-dev
       - libreadline-dev
       - libpango1.0-0
       - libsigc++-2.0-dev
