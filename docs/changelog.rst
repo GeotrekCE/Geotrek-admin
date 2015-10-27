@@ -11,7 +11,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Added a custom validation to accept url only contribution in flatpages without content.
 
 
 2.2.0 (2015-10-09)
