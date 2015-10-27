@@ -170,7 +170,9 @@
 					<h2>{% trans "On the way..." %}</h2>
 					{% for poi in pois %}
 						<div class="poi">
-							<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
+							{% if poi.thumbnail %}
+								<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
+							{% endif %}
 							<h3><span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{{ poi.name }} {{ enumeration.poi.pk }}</h3>
 							<div class="description">{{ poi.description }}</div>
 							{% if poi.thumbnail and poi.picture.0.author %}
