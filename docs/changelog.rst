@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Sync rando now exports only future events based on current date.
+* Sync rando now synchronizes touristic contents and events.
 
 **Bug fixes**
 
