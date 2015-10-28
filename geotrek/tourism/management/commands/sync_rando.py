@@ -64,6 +64,9 @@ class Command(BaseCommand):
                        settings.STATIC_URL,
                        zipfile=self.zipfile)
 
+        # json with
+        self.sync_json(lang, TouristicContentViewSet, 'touristiccontentcategories')
+
         # pictos touristic content catgories
         for category in tourism_models.TouristicContentCategory.objects.all():
             self.sync_media_file(lang, category.pictogram, zipfile=self.zipfile)
