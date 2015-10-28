@@ -9,6 +9,7 @@ CHANGELOG
 
 * Sync rando now exports only future events based on current date.
 * Sync rando now synchronizes touristic contents and events.
+* Sync rando now handles crashes when it calls django views.
 
 **Bug fixes**
 
