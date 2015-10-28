@@ -6,8 +6,10 @@ from django.conf import settings
 from django.utils import translation, timezone
 
 from geotrek.tourism import models as tourism_models
-from geotrek.tourism.views import (TouristicContentViewSet, TouristicEventViewSet,
-                                   TrekTouristicContentViewSet, TrekTouristicEventViewSet)
+from geotrek.tourism.views import (
+    TouristicContentViewSet, TouristicEventViewSet,
+    TrekTouristicContentViewSet, TrekTouristicEventViewSet,
+    TouristicContentCategoryViewSet)
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
@@ -50,9 +52,10 @@ class Command(BaseCommand):
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
-        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents', params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
+        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents',
+                          params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
-        # picto in global zip
+        # reopen global zip (closed after trekking sync)
         self.zipfile = ZipFile(os.path.join(self.tmp_root, 'zip', 'treks',
                                             lang, 'global.zip'),
                                'a')
@@ -65,7 +68,8 @@ class Command(BaseCommand):
                        zipfile=self.zipfile)
 
         # json with
-        self.sync_json(lang, TouristicContentViewSet, 'touristiccontentcategories')
+        self.sync_json(lang, TouristicContentCategoryViewSet, 'touristiccontentcategories',
+                       zipfile=self.zipfile)
 
         # pictos touristic content catgories
         for category in tourism_models.TouristicContentCategory.objects.all():

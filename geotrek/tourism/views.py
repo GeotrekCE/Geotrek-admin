@@ -33,6 +33,7 @@ from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
                      DataSource, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
+from geotrek.tourism.serializers import TouristicContentCategorySerializer
 
 
 logger = logging.getLogger(__name__)
@@ -267,6 +268,12 @@ class TouristicContentViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'])
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
+
+
+class TouristicContentCategoryViewSet(MapEntityViewSet):
+    model = TouristicContentCategory
+    serializer_class = TouristicContentCategorySerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
 
 class TouristicEventViewSet(MapEntityViewSet):
