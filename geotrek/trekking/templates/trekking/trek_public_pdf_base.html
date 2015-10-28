@@ -245,8 +245,8 @@
 									<div class="desk-description text-content">{{ desk.description_strip }}</div>
 									<picture class="desk-picture"><img src="{{ MEDIA_URL|add:desk.photo.name }}"></picture>
 									{% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
-									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}"></a></div>{% endif %}
-									{% if desk.email %}<div class="desk-email"><a href="{{ desk.email }}"></a></div>{% endif %}
+									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+									{% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
 									{% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
 									{% if desk.geom %}<div class="desk-coords">Lat : {{ desk.lattitude }} Long : {{ desk.longitude }}</div>{% endif %}
 								</div>
