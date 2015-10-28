@@ -4,6 +4,7 @@ import logging
 from optparse import make_option
 import os
 import re
+import sys
 import shutil
 import tempfile
 from zipfile import ZipFile
@@ -160,11 +161,19 @@ class Command(BaseCommand):
         request = self.factory.get(url, params, HTTP_HOST=self.host)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
-        response = view(request, **kwargs)
+        try:
+            response = view(request, **kwargs)
+        except Exception as e:
+            self.successfull = False
+            if self.verbosity == '2':
+                self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+            return
         if hasattr(response, 'render'):
             response.render()
         if response.status_code != 200:
-            self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+            self.successfull = False
+            if self.verbosity == '2':
+                self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
         f = open(fullname, 'w')
         f.write(response.content)
@@ -374,6 +383,7 @@ class Command(BaseCommand):
             self.sync_trekking(lang)
 
     def handle(self, *args, **options):
+        self.successfull = True
         self.verbosity = options.get('verbosity', '1')
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
@@ -419,3 +429,7 @@ class Command(BaseCommand):
 
         if self.verbosity >= '1':
             self.stdout.write('Done')
+
+        if not self.successfull:
+            self.stdout.write('Some errors raised during synchronization.')
+            sys.exit(1)
