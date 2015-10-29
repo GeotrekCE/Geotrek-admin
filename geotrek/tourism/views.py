@@ -13,6 +13,7 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
+from mapentity.settings import app_settings as mapentity_settings
 import requests
 from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
@@ -167,9 +168,10 @@ class TouristicContentDocumentPublic(DocumentPublic):
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
 
-        # Replace HTML text with plain text
-        for attr in ['description', 'description_teaser', 'contact', 'practical_info']:
-            setattr(content, attr, plain_text_preserve_linebreaks(getattr(content, attr)))
+        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
+            # Replace HTML text with plain text
+            for attr in ['description', 'description_teaser', 'contact', 'practical_info']:
+                setattr(content, attr, plain_text_preserve_linebreaks(getattr(content, attr)))
 
         context['object'] = context['content'] = content
 
@@ -243,9 +245,10 @@ class TouristicEventDocumentPublic(DocumentPublic):
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
 
-        # Replace HTML text with plain text
-        for attr in ['description', 'description_teaser', 'contact', 'booking', 'practical_info']:
-            setattr(event, attr, plain_text_preserve_linebreaks(getattr(event, attr)))
+        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
+            # Replace HTML text with plain text
+            for attr in ['description', 'description_teaser', 'contact', 'booking', 'practical_info']:
+                setattr(event, attr, plain_text_preserve_linebreaks(getattr(event, attr)))
 
         context['object'] = context['event'] = event
 
