@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+	{% load i18n mapentity_tags staticfiles %}
+
+	<head>
+		{% block style %}
+		<style type="text/css">
+		{% include template_css %}
+		</style>
+		{% endblock style %}
+	</head>
+	<body>
+
+		{% block footer %}
+			<div id="footer">
+                <div class="loire-atlantique"><img src="{{ MEDIA_URL|add:'upload/loire-atlantique.svg' }}"></div>
+				<div class="text">{{ object.name }} - {{ object.city_departure }}</div>
+			</div>
+		{% endblock footer %}
+
+		{% block body %}
+
+		<header>
+			<div class="main-title">
+				<h1>{{ object.name }}</h1>
+				<h2>{{ object.city_departure }}</h2>
+			</div>
+
+
+
+			{% block Map %}
+				<section class="map">
+					<img src="{{ map_url }}">
+				</section>
+			{% endblock Map %}
+
+
+
+			<section class="meta">
+				{% if object.duration_pretty %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Duration" %}</span>
+						<span class="item-value">{{ object.duration_pretty }}</span>
+					</span>
+				{% endif %}
+				{% if object.length_kilometer %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Length" %}</span>
+						<span class="item-value">{{ object.length_kilometer }} km</span>
+					</span>
+				{% endif %}
+				{% if object.ascent %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Trek_ascent" %}</span>
+						<span class="item-value">{{ object.ascent }} m</span>
+					</span>
+				{% endif %}
+				{% if object.difficulty %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Difficulty" %}</span>
+						<span class="item-value">{{ object.difficulty }}</span>
+					</span>
+				{% endif %}
+				{% if object.route %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Type" %}</span>
+						<span class="item-value">{{ object.route }}</span>
+					</span>
+				{% endif %}
+				{% if object.practice %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Practice" %}</span>
+						<span class="item-value">{{ object.practice }}</span>
+					</span>
+				{% endif %}
+				<div class="lists">
+					{% if object.themes.all %}
+						<span class="meta-item">
+							<span class="item-label">{% trans "Themes" %}</span>
+							{% for theme in object.themes.all %}<span class="item-value">{{ theme.label }}</span>{% endfor %}
+						</span>
+					{% endif %}
+					{% if object.accessibilities.all %}
+						<span class="meta-item">
+							<span class="item-label">{% trans "Accessibility" %}</span>
+							{% for accessibility in object.accessibilities.all %}<span class="item-value">{{ accessibility.name }}</span>{% endfor %}
+						</span>
+					{% endif %}
+				</div>
+			</section>
+
+			{% if object.ambiance %}
+				<section class="ambiance text-content">
+					{{ object.ambiance }}
+				</section>
+			{% endif %}
+
+
+
+			{% if object.description_teaser %}
+				<section class="teaser text-content">
+					{{ object.description_teaser|safe }}
+				</section>
+			{% endif %}
+		</header>
+
+
+		{% if object.is_park_centered %}
+			<div class="centered">
+				{% trans "This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors." %}
+			</div>
+		{% endif %}
+
+
+
+		{% block description %}
+			{% if object.description %}
+				<section class="description">
+					<h2>{% trans "Trek" %}</h2>
+					<div class="text-content">{{ object.description|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock description %}
+
+
+
+		{% block advice %}
+			{% if object.advice %}
+				<section class="advice">
+					<h2>{% trans "Advice" %}</h2>
+					<div class="text-content">{{ object.advice|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock advice %}
+
+
+{% comment %}
+        {# Masqué à la demande du CG44 (c'est tout plat) #}
+		{% block elevation %}
+			{% if object.get_elevation_chart_url %}
+				<section class="elevation">
+					<h2>{% trans "Altimetric profile" %}</h2>
+
+					<div class="meta">
+						<span class="meta-item"><span class="item-label">{% trans "Min elevation" %}</span> <span class="item-value">{{ object.min_elevation }} m</span></span>
+						<span class="meta-item"><span class="item-label">{% trans "Max elevation" %}</span> <span class="item-value">{{ object.max_elevation }} m</span></span>
+					</div>
+
+					<img src="{{ object.get_elevation_chart_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+				</section>
+			{% endif %}
+		{% endblock elevation %}
+{% endcomment %}
+
+
+		{% block Picture %}
+			<section class="pic">
+				{% if object.picture_print %}
+					<section class="pic">
+						<img src="{{ object.picture_print.url }}" alt="attached_picture_alt">
+						{% if object.pictures.0.legend and object.pictures.0.author %}<legend>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</legend>{% endif %}
+					</section>
+				{% endif %}
+			</section>
+		{% endblock Picture %}
+
+
+
+		{% block touristicContents %}
+			<section class="pois-summary">
+				{% if pois %}
+					<h2>A voir / A faire</h2>
+					{% for ct in object.published_touristic_contents.all %}
+						<div class="poi">
+							{% if ct.thumbnail %}
+								<div class="thumbnail"><img src="{{ MEDIA_URL|add:ct.thumbnail.name }}"></div>
+							{% endif %}
+							<h3><span class="icon"><img src="{{ MEDIA_URL|add:ct.category.pictogram.name }}"></span>{{ ct.name }}</h3>
+							<div class="description">
+							    {{ ct.description_teaser|safe }}
+							    {% if ct.contact %}<br>{{ ct.contact|safe }}{% endif %}
+							    {% if ct.email %}<br><a href="mailto:{{ ct.email }}">{{ ct.email }}</a>{% endif %}
+							    {% if ct.website %}<br><a href="{{ ct.website }}">{{ ct.website }}</a>{% endif %}
+							</div>
+							{% if ct.thumbnail and ct.picture.0.author %}
+								<legend>{% trans "Attribution" %} : {{ ct.picture.0.author }}</legend>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+		{% endblock touristicContents %}
+
+
+		{% block poisSummary %}
+			<section class="pois-summary">
+				{% if object.published_pois.all %}
+					<h2>Où dormir / Où manger</h2>
+					{% for poi in object.published_pois.all %}
+						<div class="poi">
+							{% if poi.thumbnail %}
+								<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
+							{% endif %}
+							<h3><span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{{ poi.name }} {{ enumeration.poi.pk }}</h3>
+							<div class="description">{{ poi.description|safe }}</div>
+							{% if poi.thumbnail and poi.picture.0.author %}
+								<legend>{% trans "Attribution" %} : {{ poi.picture.0.author }}</legend>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+		{% endblock poisSummary %}
+
+
+
+		{% block disabledInfrastructure %}
+			{% if object.disabled_infrastructure %}
+				<section class="disabled-infrastructure">
+					<h2>{% trans "Disabled Infrastructure" %}</h2>
+					<div class="text-content">{{ object.disabled_infrastructure|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock disabledInfrastructure %}
+
+
+
+		{% block access %}
+			{% if object.access %}
+				<section class="access">
+					<h2>{% trans "Access" %}</h2>
+					<div class="text-content">{{ object.access|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock access %}
+
+
+
+		{% block advisedParking %}
+			{% if object.advised_parking %}
+				<section class="advised-parking">
+					<h2>{% trans "Advised parking" %}</h2>
+					<div class="text-content">{{ object.advised_parking }}</div>
+				</section>
+			{% endif %}
+		{% endblock advisedParking %}
+
+		{% block related %}
+			{% if object.related %}
+				<section class="related">
+					<h2>{% trans "Related Treks" %}</h2>
+					<ul>
+						{% for other in object.related.all %}<li>{{ other.name }}</li>{% endfor %}
+					</ul>
+				</section>
+			{% endif %}
+		{% endblock related %}
+
+
+
+		{% block informationDesks %}
+			{% if  object.information_desks.all.count > 0 %}
+				<section class="information-desks">
+					<h2>{% trans "Information desks" %}</h2>
+					<div class="text-content intro">
+						{% trans "To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at" %}
+					</div>
+					<ul class="desks">
+						{% for desk in information_desks %}
+							<li class="desk">
+								<div class="desk-name">{{ desk.name }}</div>
+								<div class="content">
+									<div class="desk-description text-content">{{ desk.description_strip }}</div>
+									<picture class="desk-picture"><img src="{{ MEDIA_URL|add:desk.photo.name }}"></picture>
+									{% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
+									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+									{% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
+									{% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
+									{% if desk.geom %}<div class="desk-coords">Lat : {{ desk.lattitude }} Long : {{ desk.longitude }}</div>{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				</section>
+			{% endif %}
+		{% endblock informationDesks %}
+
+
+		{% endblock body %}
+
+		{% block credits %}
+			<footer class="credits">
+				<a href="http://geotrek.fr">{% trans "Powered by http://geotrek.fr" %}</a>
+			</footer>
+		{% endblock credits %}
+
+	</body>
+</html>
