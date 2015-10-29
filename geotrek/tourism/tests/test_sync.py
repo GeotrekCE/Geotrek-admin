@@ -38,6 +38,10 @@ class SyncTest(TranslationResetMixin, TestCase):
             tevents = json.load(f)
         self.assertEquals(len(tevents['features']), 1)
 
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontentcategories.json'), 'r') as f:
+            tevents = json.load(f)
+            self.assertEquals(len(tevents), 2)
+
     def test_sync_trek_zip_content(self):
         """
         Test including tevents and tcontents in trek zips
@@ -64,4 +68,7 @@ class SyncTest(TranslationResetMixin, TestCase):
             self.assertIn(os.path.join('api', 'fr', 'treks',
                                        '{pk}'.format(pk=trek2.pk),
                                        'touristiccontents.geojson'),
+                          zipf.namelist())
+            self.assertIn(os.path.join('api', 'fr',
+                                       'touristiccontentcategories.json'),
                           zipf.namelist())
