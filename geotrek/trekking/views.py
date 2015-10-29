@@ -12,7 +12,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
                              LastModifiedMixin, MapEntityViewSet)
 from mapentity.helpers import alphabet_enumeration
-from mapentity.settings import app_settings
+from mapentity.settings import app_settings as mapentity_settings
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -184,13 +184,14 @@ class TrekDocumentPublicBase(DocumentPublic):
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
         context['pois'] = pois
 
-        # Replace HTML text with plain text
-        for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
-                     'public_transport', 'advised_parking', 'disabled_infrastructure']:
-            setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
+        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
+            # Replace HTML text with plain text
+            for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
+                         'public_transport', 'advised_parking', 'disabled_infrastructure']:
+                setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
 
-        for poi in context['pois']:
-            setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
+            for poi in context['pois']:
+                setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
 
         #
         # POIs enumeration, like shown on the map
@@ -216,7 +217,7 @@ class TrekDocumentPublicOdt(TrekDocumentPublicBase):
         return super(TrekDocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
 
-if app_settings['MAPENTITY_WEASYPRINT']:
+if mapentity_settings['MAPENTITY_WEASYPRINT']:
     TrekDocumentPublic = TrekDocumentPublicBase
 else:
     TrekDocumentPublic = TrekDocumentPublicOdt
