@@ -657,7 +657,3 @@ class TouristicContentCategoryViewSetTest(TestCase):
         response = self.client.get(reverse('tourism:touristiccontent_categories_json', args=('en',)))
         json_response = json.loads(response.content)
         self.assertEqual(len(json_response), nb_elements)
-
-
-
-
