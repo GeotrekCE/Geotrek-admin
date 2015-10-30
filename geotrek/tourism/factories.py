@@ -79,18 +79,6 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        content = super(TouristicContentFactory, cls)._prepare(create, **kwargs)
-
-        if create:
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(content, 'published_{}'.format(lang), True)
-
-            content.save()
-
-        return content
-
 
 class TouristicEventTypeFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEventType
@@ -109,18 +97,6 @@ class TouristicEventFactory(factory.Factory):
     end_date = timezone.now()
 
     type = factory.SubFactory(TouristicEventTypeFactory)
-
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        event = super(TouristicEventFactory, cls)._prepare(create, **kwargs)
-
-        if create:
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(event, 'published_{}'.format(lang), True)
-
-            event.save()
-
-        return event
 
 
 class TrekWithTouristicEventFactory(TrekFactory):

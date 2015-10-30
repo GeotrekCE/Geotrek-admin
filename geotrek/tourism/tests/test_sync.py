@@ -81,14 +81,14 @@ class SyncTest(TranslationResetMixin, TestCase):
                               msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
                                                                                        lang=lang))
                 read_content = json.loads(zipf.read(path_touristevents_geojson))
-                self.assertEquals(len(read_content['features']), 2)
+                self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcontents_geojson,
                               file_list,
                               msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
                                                                                        lang=lang))
                 read_content = json.loads(zipf.read(path_touristcontents_geojson))
-                self.assertEquals(len(read_content['features']), 2)
+                self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcategories_json,
                               file_list,
