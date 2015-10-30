@@ -275,6 +275,14 @@ class TouristicContentCategoryViewSet(MapEntityViewSet):
     serializer_class = TouristicContentCategorySerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
+    def get_queryset(self):
+        queryset = super(TouristicContentCategoryViewSet, self).get_queryset()
+
+        if 'categories' in self.request.GET:
+            queryset = queryset.filter(pk__in=self.request.GET['categories'].split(','))
+
+        return queryset
+
 
 class TouristicEventViewSet(MapEntityViewSet):
     model = TouristicEvent

@@ -68,7 +68,15 @@ class Command(BaseCommand):
                        zipfile=self.zipfile)
 
         # json with
-        self.sync_json(lang, TouristicContentCategoryViewSet, 'touristiccontentcategories',
+        params = {}
+
+        if self.categories:
+            params.update({'categories': ','.join(category for category in self.categories), })
+
+        self.sync_json(lang,
+                       TouristicContentCategoryViewSet,
+                       'touristiccontentcategories',
+                       params=params,
                        zipfile=self.zipfile)
 
         # pictos touristic content catgories

@@ -10,6 +10,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefi
 
 from . import models
 from geotrek.trekking.factories import TrekFactory
+from django.conf import settings
 
 
 class DataSourceFactory(factory.Factory):
@@ -78,6 +79,18 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
 
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        content = super(TouristicContentFactory, cls)._prepare(create, **kwargs)
+
+        if create:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(content, 'published_{}'.format(lang), True)
+
+            content.save()
+
+        return content
+
 
 class TouristicEventTypeFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEventType
@@ -97,6 +110,18 @@ class TouristicEventFactory(factory.Factory):
 
     type = factory.SubFactory(TouristicEventTypeFactory)
 
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        event = super(TouristicEventFactory, cls)._prepare(create, **kwargs)
+
+        if create:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(event, 'published_{}'.format(lang), True)
+
+            event.save()
+
+        return event
+
 
 class TrekWithTouristicEventFactory(TrekFactory):
     @classmethod
@@ -106,7 +131,8 @@ class TrekWithTouristicEventFactory(TrekFactory):
         TouristicEventFactory.create(geom='POINT(700100 6600100)')
 
         if create:
-            trek.published_fr = True
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
             trek.save()
 
         return trek
@@ -122,7 +148,8 @@ class TrekWithTouristicContentFactory(TrekFactory):
                                        geom='POINT(700100 6600100)')
 
         if create:
-            trek.published_fr = True
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
             trek.save()
 
         return trek
