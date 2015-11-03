@@ -8,10 +8,12 @@ DECLARE
     unified_geom geometry;
     reverse_update boolean;
     reverse_unified boolean;
+    max_snap_distance float;
     
 BEGIN
     reverse_update := FALSE;
     reverse_unified := FALSE;
+    max_snap_distance := 10;
 
     IF updated = unified
     THEN
@@ -26,28 +28,49 @@ BEGIN
     -- DETECT matching point to rebuild path line
     IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(unified_geom))
     THEN
-	rebuild_line = ST_MAKELINE(ST_REVERSE(updated_geom), unified_geom);
+	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), unified_geom);
 	reverse_update := TRUE;
 	
     ELSIF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_ENDPOINT(unified_geom))
     THEN
-	rebuild_line = ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(unified_geom));
+	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(unified_geom));
 	reverse_update := TRUE;
 	reverse_unified := TRUE;
 	
     ELSIF ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(unified_geom))
     THEN
-	rebuild_line = ST_MAKELINE(updated_geom, ST_REVERSE(unified_geom));
+	rebuild_line := ST_MAKELINE(updated_geom, ST_REVERSE(unified_geom));
 	reverse_unified := TRUE;
 
     ELSIF ST_EQUALS(ST_ENDPOINT(updated_geom), ST_STARTPOINT(unified_geom))
     THEN
-	rebuild_line = ST_MAKELINE(updated_geom, unified_geom);
+	rebuild_line := ST_MAKELINE(updated_geom, unified_geom);
 
-    ELSE
-	-- no matching -> try snapping
-	RETURN FALSE;
+    ELSIF ST_DISTANCE(ST_STARTPOINT(updated_geom), ST_STARTPOINT(unified_geom))::float <= max_snap_distance
+    THEN
+    -- no matching -> try snapping
+	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), unified_geom);
+	reverse_update := TRUE;
 	
+    ELSIF ST_DISTANCE(ST_STARTPOINT(updated_geom), ST_ENDPOINT(unified_geom))::float <= max_snap_distance
+    THEN
+	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(unified_geom));
+	reverse_update := TRUE;
+	reverse_unified := TRUE;
+	
+    ELSIF ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_ENDPOINT(unified_geom))::float <= max_snap_distance
+    THEN
+	rebuild_line := ST_MAKELINE(updated_geom, ST_REVERSE(unified_geom));
+	reverse_unified := TRUE;
+
+    ELSIF ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_STARTPOINT(unified_geom))::float <= max_snap_distance
+    THEN
+	rebuild_line := ST_MAKELINE(updated_geom, unified_geom);
+    
+    ELSE
+    -- no snapping -> END !
+        RETURN FALSE;
+
     END IF;
 
     -- update events on updated path
