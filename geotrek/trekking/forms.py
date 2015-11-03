@@ -158,7 +158,9 @@ class TrekForm(BaseTrekForm):
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
 
-        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
+        if len(self.fieldslayout[0][1][0]) == 12:
+            self.fieldslayout[0][1][0].append(HTML(''))
+        self.fieldslayout[0][1][0][12] = HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>')
 
     def clean_children_trek(self):
         """

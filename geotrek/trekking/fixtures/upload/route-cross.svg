@@ -1,41 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="128"
-   height="128"
-   id="svg3041">
-  <defs
-     id="defs3043" />
-  <metadata
-     id="metadata3046">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <path
-     d="m 27.661016,21.152542 a 8.1355934,8.1355934 0 1 1 -16.271186,0 8.1355934,8.1355934 0 1 1 16.271186,0 z"
-     id="path3144"
-     style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-  <path
-     d="m 27.661016,21.152542 a 8.1355934,8.1355934 0 1 1 -16.271186,0 8.1355934,8.1355934 0 1 1 16.271186,0 z"
-     transform="translate(87.864408,81.898305)"
-     id="path3144-7"
-     style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-  <path
-     d="m 20.067796,29.288136 c 0,0 -17.3420003,23.360464 5.357615,39.13385 22.699615,15.773387 52.751392,-20.351623 74.637139,-8.816791 21.88575,11.534832 8.41202,34.767683 8.41202,34.767683"
-     id="path3164"
-     style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+	 id="cross" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="128px" height="128px"
+	 viewBox="0 0 128 128" enable-background="new 0 0 128 128" xml:space="preserve">
+<g class="base">
+	<path d="M108.5,97.9c-0.6,0-1.2-0.2-1.8-0.5c-1.7-1-2.2-3.1-1.3-4.8c0.1-0.1,5.5-9.8,2.9-18.8c-1.3-4.6-4.7-8.4-9.9-11.1
+		C89.5,58,78.3,62.8,66.4,68c-13.8,6-29.4,12.7-42.9,3.3c-7.3-5.1-11.6-11.4-12.8-18.9c-2.2-13.1,6.3-24.7,6.7-25.2
+		c1.2-1.6,3.3-1.9,4.9-0.7c1.6,1.2,1.9,3.3,0.7,4.9c-0.1,0.2-7.1,9.8-5.4,20c0.9,5.5,4.3,10.3,9.9,14.2c10.3,7.2,22.9,1.7,36.2-4
+		c12.9-5.6,26.2-11.3,38.1-5c7,3.7,11.5,8.9,13.4,15.4c3.4,11.9-3.3,23.7-3.6,24.2C110.9,97.2,109.7,97.9,108.5,97.9z"/>
+	<path d="M19.5,8.2c-7.2,0-13,5.8-13,13s5.8,13,13,13s13-5.8,13-13S26.7,8.2,19.5,8.2z M19.5,24.2c-1.7,0-3-1.3-3-3s1.3-3,3-3
+		s3,1.3,3,3S21.2,24.2,19.5,24.2z"/>
+	<path d="M107.4,90.1c-7.2,0-13,5.8-13,13s5.8,13,13,13s13-5.8,13-13S114.6,90.1,107.4,90.1z M107.4,106.1c-1.7,0-3-1.3-3-3
+		s1.3-3,3-3s3,1.3,3,3S109,106.1,107.4,106.1z"/>
+</g>
 </svg>
