@@ -94,3 +94,5 @@ class SyncTest(TranslationResetMixin, TestCase):
                               file_list,
                               msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
                                                                                        lang=lang))
+                read_content = json.loads(zipf.read(path_touristcategories_json))
+                self.assertEquals(len(read_content), 2)
