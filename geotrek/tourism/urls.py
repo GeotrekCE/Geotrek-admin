@@ -17,7 +17,7 @@ urlpatterns = patterns(
     url(r'^api/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.geojson$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.geojson$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
-    url(r'^api/(?P<lang>\w\w)/touristiccategories\.json$', 'geotrek.tourism.views.get_categories_json', name="touristic_categories_json"),
+    url(r'^api/(?P<lang>\w\w)/touristiccontentcategories\.json$', tourism_views.TouristicContentCategoryViewSet.as_view({'get': 'list'}), name="touristiccontent_categories_json"),
 )
 
 

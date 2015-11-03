@@ -1,15 +1,10 @@
 from itertools import chain
-import json
 import logging
-import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.http.response import HttpResponse
-from django.utils import translation
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -22,13 +17,12 @@ from mapentity.settings import app_settings as mapentity_settings
 import requests
 from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework.filters import DjangoFilterBackend
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework.filters import DjangoFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
-from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
 from geotrek.trekking.serializers import POISerializer
 
@@ -39,6 +33,7 @@ from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
                      DataSource, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
+from geotrek.tourism.serializers import TouristicContentCategorySerializer
 
 
 logger = logging.getLogger(__name__)
@@ -286,9 +281,6 @@ class TouristicContentCategoryViewSet(MapEntityViewSet):
         if 'categories' in self.request.GET:
             queryset = queryset.filter(pk__in=self.request.GET['categories'].split(','))
 
-        if self.request.GET.get('events', False):
-            queryset = queryset.filter(pk__in=self.request.GET['categories'].split(','))
-
         return queryset
 
 
@@ -393,38 +385,3 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
                                                    field_name='geom')
 
         return queryset
-
-
-def get_categories_json(request, lang):
-    """
-    Custom JSON with content categories and event
-    """
-    translation.activate(lang)
-
-    response = []
-
-    content_categories = TouristicContentCategory.objects.all()
-
-    if request.GET.get('categories', False):
-        categories = request.GET['categories'].split(',')
-        content_categories.filter(pk__in=categories)
-
-    for cont_cat in content_categories:
-        response.append({'id': cont_cat.prefixed_id,
-                         'label': cont_cat.label,
-                         'type1_label': cont_cat.type1_label,
-                         'type2_label': cont_cat.type2_label,
-                         'pictogram': os.path.join(settings.MEDIA_URL, cont_cat.pictogram.url),
-                         'order': cont_cat.order,
-                         'slug': 'touristic-content'})
-
-    if request.GET.get('events', False):
-        response.append({'id': 'E1',
-                         'label': _(u"Touristic events"),
-                         'type1_label': "",
-                         'type2_label': "",
-                         'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),
-                         'order': None,
-                         'slug': 'touristic-event'})
-
-    return HttpResponse(json.dumps(response), mimetype="application/json")
