@@ -17,6 +17,7 @@ from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import PathHelper, TopologyHelper
+from django.db import connections, DEFAULT_DB_ALIAS
 
 
 logger = logging.getLogger(__name__)
@@ -190,6 +191,26 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new path")
+
+    def unify_path(self, path_to_unify):
+        """
+        Path unification
+        :param path_to path_to_unify: Path instance to unify
+        :return: Boolean
+        """
+        if (self.pk and path_to_unify) and (self.pk != path_to_unify.pk):
+            conn = connections[DEFAULT_DB_ALIAS]
+            cursor = conn.cursor()
+            sql = "SELECT ft_path_unify({}, {});".format(self.pk, path_to_unify.pk)
+            cursor.execute(sql)
+
+            result = cursor.fetchall()[0][0]
+
+            if result:
+                # reload object after unification
+                self.reload()
+
+            return result
 
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):

@@ -36,3 +36,10 @@ LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+DATABASES['default']['NAME'] = "geotrekdb"
+DATABASES['default']['USER'] = "postgres"
+DATABASES['default']['PASSWORD'] = "postgres"
+DATABASES['default']['HOST'] = "10.0.3.92"
+DATABASES['default']['PORT'] = 5432
