@@ -176,13 +176,13 @@ class ItiDocParser(XmlParserMixin, AttachmentParserMixin, Parser):
         'eid': 'REFERENCE',
     }
     non_fields = {
-        'attachments': ('NUMERO', 'AUTEUR', 'LEGENDE'),
+        'attachments': ('NUMERO', 'LEGENDE', 'AUTEUR'),
     }
 
     def filter_attachments(self, src, val):
-        (numero, author, name) = val
+        (numero, legend, author) = val
         url = os.path.join(os.path.dirname(self.url), 'ITI_docs', numero)
-        return [(url, author, name)]
+        return [(url, legend, author)]
 
 
 class POIXmlParser(XmlParserMixin, Parser):
