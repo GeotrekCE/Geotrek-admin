@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -74,7 +76,7 @@ class TrekForm(BaseTrekForm):
 
     leftpanel_scrollable = False
 
-    fieldslayout = [
+    base_fieldslayout = [
         Div(
             HTML("""
             <ul class="nav nav-tabs">
@@ -128,7 +130,11 @@ class TrekForm(BaseTrekForm):
     ]
 
     def __init__(self, *args, **kwargs):
+        self.fieldslayout = deepcopy(self.base_fieldslayout)
+        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
+
         super(TrekForm, self).__init__(*args, **kwargs)
+
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
@@ -157,10 +163,6 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
-
-        if len(self.fieldslayout[0][1][0]) == 12:
-            self.fieldslayout[0][1][0].append(HTML(''))
-        self.fieldslayout[0][1][0][12] = HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>')
 
     def clean_children_trek(self):
         """

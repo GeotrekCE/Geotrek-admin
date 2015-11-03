@@ -90,7 +90,7 @@
 
 			{% if object.ambiance %}
 				<section class="ambiance text-content">
-					{{ object.ambiance }}
+					{{ object.ambiance|safe }}
 				</section>
 			{% endif %}
 
