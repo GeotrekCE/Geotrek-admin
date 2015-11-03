@@ -9,6 +9,8 @@ from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 import geojson
+import os
+import json
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
@@ -34,6 +36,7 @@ from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
+from django.http.response import HttpResponse
 
 
 logger = logging.getLogger(__name__)
@@ -385,3 +388,37 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
                                                    field_name='geom')
 
         return queryset
+
+def get_categories_json(request, lang):
+    """
+    Custom JSON with content categories and event
+    """
+    translation.activate(lang)
+
+    response = []
+
+    content_categories = TouristicContentCategory.objects.all()
+
+    if request.GET.get('categories', False):
+        categories = request.GET['categories'].split(',')
+        content_categories.filter(pk__in=categories)
+
+    for cont_cat in content_categories:
+        response.append({'id': cont_cat.prefixed_id,
+                         'label': cont_cat.label,
+                         'type1_label': cont_cat.type1_label,
+                         'type2_label': cont_cat.type2_label,
+                         'pictogram': os.path.join(settings.MEDIA_URL, cont_cat.pictogram.url),
+                         'order': cont_cat.order,
+                         'slug': 'touristic-content'})
+
+    if request.GET.get('events', False):
+        response.append({'id': 'E1',
+                         'label': _(u"Touristic events"),
+                         'type1_label': "",
+                         'type2_label': "",
+                         'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),
+                         'order': None,
+                         'slug': 'touristic-event'})
+
+    return HttpResponse(json.dumps(response), mimetype="application/json")

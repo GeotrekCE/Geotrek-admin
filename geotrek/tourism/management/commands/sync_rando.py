@@ -9,7 +9,7 @@ from geotrek.tourism import models as tourism_models
 from geotrek.tourism.views import (
     TouristicContentViewSet, TouristicEventViewSet,
     TrekTouristicContentViewSet, TrekTouristicEventViewSet,
-    TouristicContentCategoryViewSet)
+    get_categories_json)
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
@@ -73,11 +73,13 @@ class Command(BaseCommand):
         if self.categories:
             params.update({'categories': ','.join(category for category in self.categories), })
 
-        self.sync_json(lang,
-                       TouristicContentCategoryViewSet,
-                       'touristiccontentcategories',
-                       params=params,
-                       zipfile=self.zipfile)
+        if self.with_events:
+            params.update({'events': '1'})
+
+        self.sync_view(lang,
+                       get_categories_json,
+                       os.path.join('api', lang, 'touristiccontentcategories.json'),
+                       params=params, zipfile=self.zipfile,)
 
         # pictos touristic content catgories
         for category in tourism_models.TouristicContentCategory.objects.all():
