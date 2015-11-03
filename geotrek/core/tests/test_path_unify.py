@@ -51,32 +51,32 @@ class UnifyPathTest(TestCase):
 
     def test_recompute_pk_no_reverse(self):
         """
-        A---------------B + C-------------------D         A----------------------------------D
+        A---------------B + C-------------------D         A----------------BC----------------D
           |        |          |--|           |         =>   |       |        |--|           |
           E1 (0.2) |          E3 (0.2, 0.3)  |             E1 (0.1) |        E3 (0.6, 0.65) E4 (0.9)
                    E2 (0.6)                  E4 (0.8)               E2 (0.3)
 
         In case of AB == CD, matching B and C
         """
-        path_1 = PathFactory.create(name="PATH_1", geom=LineString((0, 1), (10, 1)))
-        path_2 = PathFactory.create(name="PATH_2", geom=LineString((10, 1), (20, 1)))
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
 
         e1 = TopologyFactory.create(geom=Point(2, 2))
-        a1 = PathAggregationFactory.create(path=path_1, topo_object=e1)
+        a1 = PathAggregationFactory.create(path=path_AB, topo_object=e1)
 
         e2 = TopologyFactory.create(geom=Point(6, 1))
-        a2 = PathAggregationFactory.create(path=path_1, topo_object=e2)
+        a2 = PathAggregationFactory.create(path=path_AB, topo_object=e2)
 
         e3 = TopologyFactory.create(geom=LineString((2, 1), (3, 1),))
-        a3 = PathAggregationFactory.create(path=path_2, topo_object=e3)
+        a3 = PathAggregationFactory.create(path=path_CD, topo_object=e3)
         e4 = TopologyFactory.create(geom=Point(8, 2))
-        a4 = PathAggregationFactory.create(path=path_2, topo_object=e4)
+        a4 = PathAggregationFactory.create(path=path_CD, topo_object=e4)
 
-        path_1_original_length = path_1.length
-        path_2_original_length = path_2.length
-        path_1.unify_path(path_2)
+        path_AB_original_length = path_AB.length
+        path_CD_original_length = path_CD.length
+        path_AB.unify_path(path_CD)
 
-        self.assertEqual(path_1.geom, LineString((0, 1), (10, 1), (20, 1)))
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
 
         # reload updated objects
         a1_updated = PathAggregation.objects.get(pk=a1.pk)
@@ -85,15 +85,162 @@ class UnifyPathTest(TestCase):
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
         # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
-        self.assertEqual(a1_updated.start_position, a1.start_position * (path_1_original_length / path_1.length))
-        self.assertEqual(a1_updated.end_position, a1.end_position * (path_1_original_length / path_1.length))
+        self.assertEqual(a1_updated.start_position, a1.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
 
-        self.assertEqual(a2_updated.start_position, a2.start_position * (path_1_original_length / path_1.length))
-        self.assertEqual(a2_updated.end_position, a1.end_position * (path_1_original_length / path_1.length))
+        self.assertEqual(a2_updated.start_position, a2.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(a3_updated.start_position, a3.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
-        self.assertEqual(a3_updated.start_position, a3.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
+        self.assertEqual(a3_updated.start_position, a3.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.end_position, a3.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
 
-        self.assertEqual(a4_updated.start_position, a4.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
-        self.assertEqual(a4_updated.start_position, a4.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
+        self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+    def test_recompute_pk_reverse_AB(self):
+        """
+        A---------------B + C-------------------D         B-----------------AC----------------D
+          |        |          |--|           |         =>    |          |     |--|           |
+          E1 (0.2) |          E3 (0.2, 0.3)  |               |       E1 (0.4) E3 (0.6, 0.65) E4 (0.9)
+                   E2 (0.6)                  E4 (0.8)        E2 (0.2)
+
+        In case of AB == CD, matching A and C
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((10, 1), (0, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
+
+        e1 = TopologyFactory.create(geom=Point(2, 2))
+        a1 = PathAggregationFactory.create(path=path_AB, topo_object=e1)
+
+        e2 = TopologyFactory.create(geom=Point(6, 1))
+        a2 = PathAggregationFactory.create(path=path_AB, topo_object=e2)
+
+        e3 = TopologyFactory.create(geom=LineString((2, 1), (3, 1),))
+        a3 = PathAggregationFactory.create(path=path_CD, topo_object=e3)
+        e4 = TopologyFactory.create(geom=Point(8, 2))
+        a4 = PathAggregationFactory.create(path=path_CD, topo_object=e4)
+
+        path_AB_original_length = path_AB.length
+        path_CD_original_length = path_CD.length
+        path_AB.unify_path(path_CD)
+
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+
+        # reload updated objects
+        a1_updated = PathAggregation.objects.get(pk=a1.pk)
+        a2_updated = PathAggregation.objects.get(pk=a2.pk)
+        a3_updated = PathAggregation.objects.get(pk=a3.pk)
+        a4_updated = PathAggregation.objects.get(pk=a4.pk)
+
+        # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
+        self.assertEqual(a1_updated.start_position, (1 - a1.start_position) * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.end_position, (1 - a1.end_position) * (path_AB_original_length / path_AB.length))
+
+        self.assertEqual(a2_updated.start_position, (1 - a2.start_position) * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.end_position, (1 - a1.end_position) * (path_AB_original_length / path_AB.length))
+
+        # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
+        self.assertEqual(a3_updated.start_position, a3.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.end_position, a3.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+        self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+    def test_recompute_pk_reverse_CD(self):
+        """
+        A---------------B + C-------------------D         A----------------BD----------------C
+          |        |          |--|           |         =>   |       |         |         |--|
+          E1 (0.2) |          E3 (0.2, 0.3)  |             E1 (0.1) |         |         E3 (0.8, 0.9)
+                   E2 (0.6)                  E4 (0.8)               E2 (0.3)  E4 (0.6)
+
+        In case of AB == CD, matching B and D
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((20, 1), (10, 1)))
+
+        e1 = TopologyFactory.create(geom=Point(2, 2))
+        a1 = PathAggregationFactory.create(path=path_AB, topo_object=e1)
+
+        e2 = TopologyFactory.create(geom=Point(6, 1))
+        a2 = PathAggregationFactory.create(path=path_AB, topo_object=e2)
+
+        e3 = TopologyFactory.create(geom=LineString((2, 1), (3, 1),))
+        a3 = PathAggregationFactory.create(path=path_CD, topo_object=e3)
+        e4 = TopologyFactory.create(geom=Point(8, 2))
+        a4 = PathAggregationFactory.create(path=path_CD, topo_object=e4)
+
+        path_AB_original_length = path_AB.length
+        path_CD_original_length = path_CD.length
+        path_AB.unify_path(path_CD)
+
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+
+        # reload updated objects
+        a1_updated = PathAggregation.objects.get(pk=a1.pk)
+        a2_updated = PathAggregation.objects.get(pk=a2.pk)
+        a3_updated = PathAggregation.objects.get(pk=a3.pk)
+        a4_updated = PathAggregation.objects.get(pk=a4.pk)
+
+        # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
+        self.assertEqual(a1_updated.start_position, a1.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+
+        self.assertEqual(a2_updated.start_position, a2.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+
+        # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
+        self.assertEqual(a3_updated.start_position, (1 - a3.start_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.end_position, (1 - a3.end_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+        self.assertEqual(a4_updated.start_position, (1 - a4.start_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.end_position, (1 - a4.end_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+    def test_recompute_pk_reverse_AB_CD(self):
+        """
+        A---------------B + C-------------------D         B----------------AD----------------C
+          |        |          |--|           |         =>    |          |     |         |--|
+          E1 (0.2) |          E3 (0.2, 0.3)  |               |       E1 (0.4) |         E3 (0.8, 0.9)
+                   E2 (0.6)                  E4 (0.8)       E2 (0.2)         E4 (0.6)
+
+        In case of AB == CD, matching A and D
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((10, 1), (0, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((20, 1), (10, 1)))
+
+        e1 = TopologyFactory.create(geom=Point(2, 2))
+        a1 = PathAggregationFactory.create(path=path_AB, topo_object=e1)
+
+        e2 = TopologyFactory.create(geom=Point(6, 1))
+        a2 = PathAggregationFactory.create(path=path_AB, topo_object=e2)
+
+        e3 = TopologyFactory.create(geom=LineString((2, 1), (3, 1),))
+        a3 = PathAggregationFactory.create(path=path_CD, topo_object=e3)
+        e4 = TopologyFactory.create(geom=Point(8, 2))
+        a4 = PathAggregationFactory.create(path=path_CD, topo_object=e4)
+
+        path_AB_original_length = path_AB.length
+        path_CD_original_length = path_CD.length
+        path_AB.unify_path(path_CD)
+
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+
+        # reload updated objects
+        a1_updated = PathAggregation.objects.get(pk=a1.pk)
+        a2_updated = PathAggregation.objects.get(pk=a2.pk)
+        a3_updated = PathAggregation.objects.get(pk=a3.pk)
+        a4_updated = PathAggregation.objects.get(pk=a4.pk)
+
+        # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
+        self.assertEqual(a1_updated.start_position, a1.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+
+        self.assertEqual(a2_updated.start_position, a2.start_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+
+        # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
+        self.assertEqual(a3_updated.start_position, a3.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.end_position, a3.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+        self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
