@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
-from geotrek.core.models import Path, PathAggregation
+from geotrek.core.models import PathAggregation
 
 
 class UnifyPathTest(TestCase):
@@ -23,29 +23,25 @@ class UnifyPathTest(TestCase):
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
 
-        path_AB.unify_path(path_CD)
-
+        self.assertEqual(path_AB.unify_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((4, 0), (8, 0)))
 
-        path_AB.unify_path(path_CD)
-
+        self.assertEqual(path_AB.unify_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
 
-        path_AB.unify_path(path_CD)
-
+        self.assertEqual(path_AB.unify_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
 
-        path_AB.unify_path(path_CD)
-
+        self.assertEqual(path_AB.unify_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
@@ -53,15 +49,14 @@ class UnifyPathTest(TestCase):
 
         self.assertEqual(path_AB.unify_path(path_CD), False)
 
-
-    def path_unify_and_recompute_pk(self):
+    def test_recompute_pk_no_reverse(self):
         """
         A---------------B + C-------------------D         A----------------------------------D
           |        |          |--|           |         =>   |       |        |--|           |
           E1 (0.2) |          E3 (0.2, 0.3)  |             E1 (0.1) |        E3 (0.6, 0.65) E4 (0.9)
                    E2 (0.6)                  E4 (0.8)               E2 (0.3)
 
-        In case of AB == CD
+        In case of AB == CD, matching B and C
         """
         path_1 = PathFactory.create(name="PATH_1", geom=LineString((0, 1), (10, 1)))
         path_2 = PathFactory.create(name="PATH_2", geom=LineString((10, 1), (20, 1)))
@@ -102,4 +97,3 @@ class UnifyPathTest(TestCase):
 
         self.assertEqual(a4_updated.start_position, a4.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
         self.assertEqual(a4_updated.start_position, a4.start_position * (path_2_original_length / path_1.length) + path_1_original_length / path_1.length)
-
