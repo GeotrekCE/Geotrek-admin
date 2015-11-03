@@ -10,13 +10,18 @@ TEMPLATE_DEBUG = True
 SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
 
 #
-# Developper Toolbar
+# Developper additions
 # ..........................
 
 INSTALLED_APPS = (
-    # 'debug_toolbar',
+    'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
+
+INTERNAL_IPS = (
+    '127.0.0.1',  # localhost default
+    '10.0.3.1',  # lxc default
+)
 
 #
 # Use some default tiles
