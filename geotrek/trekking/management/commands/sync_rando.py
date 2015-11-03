@@ -17,7 +17,6 @@ from django.test.client import RequestFactory
 from django.utils import translation
 
 from mapentity.settings import app_settings as mapentity_settings
-
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
@@ -29,9 +28,6 @@ from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
 from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
-
-# Register mapentity models
-from geotrek.trekking import urls  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -184,9 +180,8 @@ class Command(BaseCommand):
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
-        view = viewset.as_view({'get': 'list'})
+        view = viewset.as_view()
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
-        params.update({'format': 'json'})
         if self.source:
             params['source'] = ','.join(self.source)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)

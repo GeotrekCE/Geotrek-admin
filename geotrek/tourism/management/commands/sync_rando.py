@@ -6,10 +6,7 @@ from django.conf import settings
 from django.utils import translation, timezone
 
 from geotrek.tourism import models as tourism_models
-from geotrek.tourism.views import (
-    TouristicContentViewSet, TouristicEventViewSet,
-    TrekTouristicContentViewSet, TrekTouristicEventViewSet,
-    get_categories_json)
+from geotrek.tourism import views as tourism_views
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 
@@ -51,8 +48,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, resized)
 
     def sync_tourism(self, lang):
-        self.sync_geojson(lang, TouristicContentViewSet, 'touristiccontents')
-        self.sync_geojson(lang, TouristicEventViewSet, 'touristicevents',
+        self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents')
+        self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents',
                           params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
         # reopen global zip (closed after trekking sync)
@@ -76,10 +73,9 @@ class Command(BaseCommand):
         if self.with_events:
             params.update({'events': '1'})
 
-        self.sync_view(lang,
-                       get_categories_json,
-                       os.path.join('api', lang, 'touristiccontentcategories.json'),
-                       params=params, zipfile=self.zipfile,)
+        self.sync_json(lang, tourism_views.TouristicCategoryView,
+                       'touristiccontentcategories',
+                       zipfile=self.zipfile, params=params)
 
         # pictos touristic content catgories
         for category in tourism_models.TouristicContentCategory.objects.all():
@@ -106,7 +102,7 @@ class Command(BaseCommand):
         params = {'format': 'geojson',
                   'categories': ','.join(category for category in self.categories), }
 
-        view = TrekTouristicContentViewSet.as_view({'get': 'list'})
+        view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
@@ -115,7 +111,7 @@ class Command(BaseCommand):
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson', }
-        view = TrekTouristicEventViewSet.as_view({'get': 'list'})
+        view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 

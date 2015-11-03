@@ -1,16 +1,17 @@
 from itertools import chain
 import logging
+import os
+from django.utils.translation import ugettext as _
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 import geojson
-import os
-import json
 from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
@@ -19,12 +20,16 @@ from mapentity.settings import app_settings as mapentity_settings
 import requests
 from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.filters import DjangoFilterBackend
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
+from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
 from geotrek.trekking.serializers import POISerializer
 
@@ -35,8 +40,7 @@ from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
                      DataSource, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
-from geotrek.tourism.serializers import TouristicContentCategorySerializer
-from django.http.response import HttpResponse
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 logger = logging.getLogger(__name__)
@@ -389,36 +393,40 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-def get_categories_json(request, lang):
+
+class TouristicCategoryView(APIView):
     """
-    Custom JSON with content categories and event
+    touristiccategories.json generation for API
     """
-    translation.activate(lang)
+    renderer_classes = (JSONRenderer,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    response = []
+    def get(self, request, lang, format=None):
+        translation.activate(lang)
 
-    content_categories = TouristicContentCategory.objects.all()
+        response = []
+        content_categories = TouristicContentCategory.objects.all()
 
-    if request.GET.get('categories', False):
-        categories = request.GET['categories'].split(',')
-        content_categories.filter(pk__in=categories)
+        if request.GET.get('categories', False):
+            categories = request.GET['categories'].split(',')
+            content_categories.filter(pk__in=categories)
 
-    for cont_cat in content_categories:
-        response.append({'id': cont_cat.prefixed_id,
-                         'label': cont_cat.label,
-                         'type1_label': cont_cat.type1_label,
-                         'type2_label': cont_cat.type2_label,
-                         'pictogram': os.path.join(settings.MEDIA_URL, cont_cat.pictogram.url),
-                         'order': cont_cat.order,
-                         'slug': 'touristic-content'})
+        for cont_cat in content_categories:
+            response.append({'id': cont_cat.prefixed_id,
+                             'label': cont_cat.label,
+                             'type1_label': cont_cat.type1_label,
+                             'type2_label': cont_cat.type2_label,
+                             'pictogram': os.path.join(settings.MEDIA_URL, cont_cat.pictogram.url),
+                             'order': cont_cat.order,
+                             'slug': 'touristic-content'})
 
-    if request.GET.get('events', False):
-        response.append({'id': 'E1',
-                         'label': _(u"Touristic events"),
-                         'type1_label': "",
-                         'type2_label': "",
-                         'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),
-                         'order': None,
-                         'slug': 'touristic-event'})
+        if request.GET.get('events', False):
+            response.append({'id': 'E1',
+                             'label': _(u"Touristic events"),
+                             'type1_label': "",
+                             'type2_label': "",
+                             'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),
+                             'order': None,
+                             'slug': 'touristic-event'})
 
-    return HttpResponse(json.dumps(response), mimetype="application/json")
+        return Response(response)
