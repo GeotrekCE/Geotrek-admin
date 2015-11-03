@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
-from geotrek.core.models import PathAggregation
+from geotrek.core.models import PathAggregation, Topology
 
 
 class UnifyPathTest(TestCase):
@@ -147,6 +147,10 @@ class UnifyPathTest(TestCase):
         self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
         self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
 
+        # test offset changes
+        e1_updated = Topology.objects.get(pk=e1.pk)
+        self.assertEqual(e1_updated.offset, -e1.offset)
+
     def test_recompute_pk_reverse_CD(self):
         """
         A---------------B + C-------------------D         A----------------BD----------------C
@@ -196,6 +200,10 @@ class UnifyPathTest(TestCase):
         self.assertEqual(a4_updated.start_position, (1 - a4.start_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
         self.assertEqual(a4_updated.end_position, (1 - a4.end_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
 
+        # test offset changes
+        e4_updated = Topology.objects.get(pk=e4.pk)
+        self.assertEqual(e4_updated.offset, -e4.offset)
+
     def test_recompute_pk_reverse_AB_CD(self):
         """
         A---------------B + C-------------------D         B----------------AD----------------C
@@ -232,15 +240,21 @@ class UnifyPathTest(TestCase):
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
         # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
-        self.assertEqual(a1_updated.start_position, a1.start_position * (path_AB_original_length / path_AB.length))
-        self.assertEqual(a1_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.start_position, (1 - a1.start_position) * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a1_updated.end_position, (1 - a1.end_position) * (path_AB_original_length / path_AB.length))
 
-        self.assertEqual(a2_updated.start_position, a2.start_position * (path_AB_original_length / path_AB.length))
-        self.assertEqual(a2_updated.end_position, a1.end_position * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.start_position, (1 - a2.start_position) * (path_AB_original_length / path_AB.length))
+        self.assertEqual(a2_updated.end_position, (1 - a1.end_position) * (path_AB_original_length / path_AB.length))
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(a3_updated.start_position, a3.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
-        self.assertEqual(a3_updated.end_position, a3.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.start_position, (1 - a3.start_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a3_updated.end_position, (1 - a3.end_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
 
-        self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
-        self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.start_position, (1 - a4.start_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+        self.assertEqual(a4_updated.end_position, (1 - a4.end_position) * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+        # test offset changes
+        e1_updated = Topology.objects.get(pk=e1.pk)
+        self.assertEqual(e1_updated.offset, -e1.offset)
+        e4_updated = Topology.objects.get(pk=e4.pk)
+        self.assertEqual(e4_updated.offset, -e4.offset)

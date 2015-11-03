@@ -33,6 +33,7 @@ BEGIN
     THEN
 	rebuild_line = ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(unified_geom));
 	reverse_update := TRUE;
+	reverse_unified := TRUE;
 	
     ELSIF ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(unified_geom))
     THEN
@@ -59,6 +60,10 @@ BEGIN
 			   SET pk_debut = (1- pk_debut) * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom)),
 			       pk_fin = (1- pk_fin) * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))
 			   WHERE id = element.id;
+
+                    UPDATE e_t_evenement
+                           SET decallage = -decallage
+                           WHERE id = element.evenement;
 	    ELSE
 		    UPDATE e_r_evenement_troncon
 			   SET pk_debut = pk_debut * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom)),
@@ -77,6 +82,10 @@ BEGIN
 			   SET pk_debut = ((1- pk_debut) * ST_LENGTH(unified_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))),
 			       pk_fin = ((1- pk_fin) * ST_LENGTH(unified_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom)))
 			   WHERE id = element.id;
+
+                    UPDATE e_t_evenement
+                           SET decallage = -decallage
+                           WHERE id = element.evenement;
 	    ELSE
 		    UPDATE e_r_evenement_troncon
 			   SET pk_debut = (pk_debut * ST_LENGTH(unified_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(unified_geom))),
