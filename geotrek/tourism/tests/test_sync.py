@@ -38,7 +38,7 @@ class SyncTest(TranslationResetMixin, TestCase):
             tevents = json.load(f)
         self.assertEquals(len(tevents['features']), 1)
 
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontentcategories.json'), 'r') as f:
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
             self.assertEquals(len(tevents), 2)
 
@@ -74,7 +74,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                                             '{pk}'.format(pk=trek2.pk),
                                                             'touristiccontents.geojson')
                 path_touristcategories_json = os.path.join('api', lang,
-                                                           'touristiccontentcategories.json')
+                                                           'touristiccategories.json')
 
                 self.assertIn(path_touristevents_geojson,
                               file_list,
