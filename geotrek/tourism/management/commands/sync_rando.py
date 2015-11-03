@@ -79,7 +79,7 @@ class Command(BaseCommand):
         self.sync_view(lang,
                        get_categories_json,
                        os.path.join('api', lang, 'touristiccontentcategories.json'),
-                       params=params, zipfile=self.zipfile, lang=lang)
+                       params=params, zipfile=self.zipfile,)
 
         # pictos touristic content catgories
         for category in tourism_models.TouristicContentCategory.objects.all():
