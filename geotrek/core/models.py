@@ -191,7 +191,9 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new path")
-
+    
+    @
+    
     def merge_path(self, path_to_merge):
         """
         Path unification

@@ -73,7 +73,7 @@ class PathList(MapEntityList):
 
     @classproperty
     def columns(cls):
-        columns = ['id', 'name', 'networks', 'length', 'length_2d']
+        columns = ['id', 'select', 'name', 'networks', 'length', 'length_2d']
         if settings.TRAIL_MODEL_ENABLED:
             columns.append('trails')
         return columns
