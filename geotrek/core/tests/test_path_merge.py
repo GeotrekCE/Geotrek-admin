@@ -6,7 +6,6 @@ from django.test import TestCase
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
 from geotrek.core.models import PathAggregation, Topology
-from django.conf import settings
 
 
 class MergePathTest(TestCase):

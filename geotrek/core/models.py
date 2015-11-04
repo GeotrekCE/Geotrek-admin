@@ -18,7 +18,6 @@ from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import PathHelper, TopologyHelper
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.utils.safestring import mark_safe
 
 
 logger = logging.getLogger(__name__)
