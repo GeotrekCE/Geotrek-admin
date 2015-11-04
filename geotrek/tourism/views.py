@@ -401,9 +401,7 @@ class TouristicCategoryView(APIView):
     renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get(self, request, lang, format=None):
-        translation.activate(lang)
-
+    def get(self, request, format=None):
         response = []
         content_categories = TouristicContentCategory.objects.all()
 

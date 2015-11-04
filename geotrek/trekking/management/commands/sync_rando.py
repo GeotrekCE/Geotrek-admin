@@ -29,6 +29,9 @@ from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 
+# Register mapentity models
+from geotrek.trekking import urls  # NOQA
+
 
 logger = logging.getLogger(__name__)
 
