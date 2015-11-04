@@ -26,6 +26,7 @@ from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 from django.http.response import HttpResponse
+from django.contrib import messages
 
 
 logger = logging.getLogger(__name__)
@@ -258,6 +259,7 @@ def merge_path(request):
 
                 if path_a.merge_path(path_b):
                     response = {'success': _(u"Pathes merged succesfully")}
+                    messages.success(request, _(u"Pathes merged succesfully"))
 
                 else:
                     response = {'error': _(u"No matching points to merge pathes found")}
@@ -266,6 +268,6 @@ def merge_path(request):
                 raise
 
         except Exception as exc:
-            response = {'error': "{} : {}".format(_(u"Error in merging pathes"), exc)}
+            response = {'error': exc, }
 
     return HttpResponse(json.dumps(response), mimetype="application/json")

@@ -149,7 +149,7 @@ BEGIN
     -- link element or delete if unique already present
     FOR element IN SELECT * FROM l_r_troncon_usage WHERE path_id = merged
     LOOP
-        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_usage WHERE network_id=element.network_id AND path_id = updated) THEN
+        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_usage WHERE usage_id=element.usage_id AND path_id = updated) THEN
 	    UPDATE l_r_troncon_usage
 		   SET path_id = updated
 		   WHERE id = element.id;
