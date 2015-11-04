@@ -18,6 +18,7 @@ from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import PathHelper, TopologyHelper
 from django.db import connections, DEFAULT_DB_ALIAS
+from django.utils.safestring import mark_safe
 
 
 logger = logging.getLogger(__name__)
@@ -191,13 +192,24 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new path")
-    
-    @
-    
+
+    @property
+    def checkbox(self):
+        return u'<input type="checkbox" name="{}[]" value="{}" />'.format('path',
+                                                                          self.pk)
+
+    @classproperty
+    def checkbox_verbose_name(cls):
+        return _("Action")
+
+    @property
+    def checkbox_display(self):
+        return self.checkbox
+
     def merge_path(self, path_to_merge):
         """
         Path unification
-        :param path_to path_to_unify: Path instance to unify
+        :param path_to path_to_merge: Path instance to merge
         :return: Boolean
         """
         if (self.pk and path_to_merge) and (self.pk != path_to_merge.pk):

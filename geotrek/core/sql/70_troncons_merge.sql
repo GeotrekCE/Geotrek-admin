@@ -13,7 +13,7 @@ DECLARE
 BEGIN
     reverse_update := FALSE;
     reverse_merged := FALSE;
-    max_snap_distance := {{PATH_SNAPPING_DISTANCE}};
+    max_snap_distance := 2;
     rebuild_line := NULL;
 
     IF updated = merged
@@ -133,6 +133,31 @@ BEGIN
     UPDATE e_r_evenement_troncon
            SET troncon = updated
            WHERE troncon = merged;
+
+    -- link element or delete if unique already present
+    FOR element IN SELECT * FROM l_r_troncon_reseau WHERE path_id = merged
+    LOOP
+        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_reseau WHERE network_id=element.network_id AND path_id = updated) THEN
+	    UPDATE l_r_troncon_reseau
+		   SET path_id = updated
+		   WHERE id = element.id;
+        ELSE
+            DELETE FROM l_r_troncon_reseau WHERE path_id = merged;
+        END IF;
+    END LOOP;
+
+    -- link element or delete if unique already present
+    FOR element IN SELECT * FROM l_r_troncon_usage WHERE path_id = merged
+    LOOP
+        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_usage WHERE network_id=element.network_id AND path_id = updated) THEN
+	    UPDATE l_r_troncon_usage
+		   SET path_id = updated
+		   WHERE id = element.id;
+        ELSE
+            DELETE FROM l_r_troncon_usage WHERE path_id = merged;
+        END IF;
+    END LOOP;
+		   
     
     -- Delete merged Path
     DELETE FROM l_t_troncon WHERE id = merged;
