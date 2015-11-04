@@ -48,7 +48,7 @@ BEGIN
 	rebuild_line := ST_MAKELINE(updated_geom, merged_geom);
 
     ELSIF (ST_DISTANCE(ST_STARTPOINT(updated_geom), ST_STARTPOINT(merged_geom))::float <= max_snap_distance)
-    THEN
+    THEN 
 	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), merged_geom);
 	reverse_update := TRUE;
 	
@@ -63,7 +63,7 @@ BEGIN
 	rebuild_line := ST_MAKELINE(updated_geom, ST_REVERSE(merged_geom));
 	reverse_merged := TRUE;
 
-    ELSIF ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_STARTPOINT(merged_geom)) <= max_snap_distance
+    ELSIF (ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_STARTPOINT(merged_geom)) <= max_snap_distance)
     THEN
 	rebuild_line := ST_MAKELINE(updated_geom, merged_geom);
     

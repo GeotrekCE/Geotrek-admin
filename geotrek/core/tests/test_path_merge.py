@@ -6,6 +6,7 @@ from django.test import TestCase
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
 from geotrek.core.models import PathAggregation, Topology
+from django.conf import settings
 
 
 class MergePathTest(TestCase):
@@ -45,6 +46,46 @@ class MergePathTest(TestCase):
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((50, 0), (100, 0)))
+
+        self.assertEqual(path_AB.merge_path(path_CD), False)
+
+    def test_path_merge_with_snap(self):
+        """
+          A         B   C         D     A                  D
+          |---------| + |---------| --> |------------------|
+
+          Test five cases : 1 - A match with C : unification D-C-A-B
+                            2 - A match with D : unification C-D-A-B
+                            3 - B match with C : unification A-B-C-D
+                            4 - B match with D : unification A-B-D-C
+                            5 - no match       : no unification
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (15, 0)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((16, 0), (30, 0)))
+
+        self.assertEqual(path_AB.merge_path(path_CD), True)
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+
+        path_AB = PathFactory.create(name="path_AB", geom=LineString((15, 0), (0, 0)))
+        path_CD = PathFactory.create(name="path_CD", geom=LineString((16, 0), (30, 0)))
+
+        self.assertEqual(path_AB.merge_path(path_CD), True)
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+
+        path_AB = PathFactory.create(name="path_AB", geom=LineString((15, 0), (0, 0)))
+        path_CD = PathFactory.create(name="path_CD", geom=LineString((30, 0), (16, 0)))
+
+        self.assertEqual(path_AB.merge_path(path_CD), True)
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+
+        path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (15, 0)))
+        path_CD = PathFactory.create(name="path_CD", geom=LineString((30, 0), (16, 0)))
+
+        self.assertEqual(path_AB.merge_path(path_CD), True)
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (5, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((50, 0), (100, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), False)
