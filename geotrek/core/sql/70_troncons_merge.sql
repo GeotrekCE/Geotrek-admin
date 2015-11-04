@@ -13,7 +13,7 @@ DECLARE
 BEGIN
     reverse_update := FALSE;
     reverse_merged := FALSE;
-    max_snap_distance := 10.0;
+    max_snap_distance := {{PATH_SNAPPING_DISTANCE}};
     rebuild_line := NULL;
 
     IF updated = merged
