@@ -654,6 +654,6 @@ class TouristicContentCategoryViewSetTest(TestCase):
         """
         nb_elements = 10
         TouristicContentCategoryFactory.create_batch(nb_elements)
-        response = self.client.get(reverse('tourism:touristic_categories_json', args=('en',)))
+        response = self.client.get(reverse('tourism:touristic_categories_json', kwargs={'lang': 'en'}))
         json_response = json.loads(response.content)
         self.assertEqual(len(json_response), nb_elements)

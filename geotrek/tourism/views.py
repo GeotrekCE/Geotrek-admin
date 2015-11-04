@@ -6,7 +6,6 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
@@ -401,7 +400,7 @@ class TouristicCategoryView(APIView):
     renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get(self, request, format=None):
+    def get(self, request, format=None, lang=None):
         response = []
         content_categories = TouristicContentCategory.objects.all()
 
