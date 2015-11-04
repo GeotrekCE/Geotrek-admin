@@ -192,16 +192,16 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def get_create_label(cls):
         return _(u"Add a new path")
 
-    def unify_path(self, path_to_unify):
+    def merge_path(self, path_to_merge):
         """
         Path unification
         :param path_to path_to_unify: Path instance to unify
         :return: Boolean
         """
-        if (self.pk and path_to_unify) and (self.pk != path_to_unify.pk):
+        if (self.pk and path_to_merge) and (self.pk != path_to_merge.pk):
             conn = connections[DEFAULT_DB_ALIAS]
             cursor = conn.cursor()
-            sql = "SELECT ft_path_unify({}, {});".format(self.pk, path_to_unify.pk)
+            sql = "SELECT ft_merge_path({}, {});".format(self.pk, path_to_merge.pk)
             cursor.execute(sql)
 
             result = cursor.fetchall()[0][0]

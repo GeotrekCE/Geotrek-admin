@@ -8,8 +8,8 @@ from geotrek.core.factories import PathFactory, TopologyFactory, \
 from geotrek.core.models import PathAggregation, Topology
 
 
-class UnifyPathTest(TestCase):
-    def test_path_unify(self):
+class MergePathTest(TestCase):
+    def test_path_merge_without_snap(self):
         """
           A         B   C         D     A                  D
           |---------| + |---------| --> |------------------|
@@ -23,31 +23,31 @@ class UnifyPathTest(TestCase):
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
 
-        self.assertEqual(path_AB.unify_path(path_CD), True)
+        self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((4, 0), (8, 0)))
 
-        self.assertEqual(path_AB.unify_path(path_CD), True)
+        self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
 
-        self.assertEqual(path_AB.unify_path(path_CD), True)
+        self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
 
-        self.assertEqual(path_AB.unify_path(path_CD), True)
+        self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
-        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 0), (18, 0)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((50, 0), (100, 0)))
 
-        self.assertEqual(path_AB.unify_path(path_CD), False)
+        self.assertEqual(path_AB.merge_path(path_CD), False)
 
     def test_recompute_pk_no_reverse(self):
         """
@@ -74,7 +74,7 @@ class UnifyPathTest(TestCase):
 
         path_AB_original_length = path_AB.length
         path_CD_original_length = path_CD.length
-        path_AB.unify_path(path_CD)
+        path_AB.merge_path(path_CD)
 
         self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
 
@@ -123,7 +123,7 @@ class UnifyPathTest(TestCase):
 
         path_AB_original_length = path_AB.length
         path_CD_original_length = path_CD.length
-        path_AB.unify_path(path_CD)
+        path_AB.merge_path(path_CD)
 
         self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
 
@@ -176,7 +176,7 @@ class UnifyPathTest(TestCase):
 
         path_AB_original_length = path_AB.length
         path_CD_original_length = path_CD.length
-        path_AB.unify_path(path_CD)
+        path_AB.merge_path(path_CD)
 
         self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
 
@@ -229,7 +229,7 @@ class UnifyPathTest(TestCase):
 
         path_AB_original_length = path_AB.length
         path_CD_original_length = path_CD.length
-        path_AB.unify_path(path_CD)
+        path_AB.merge_path(path_CD)
 
         self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
 
