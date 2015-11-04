@@ -571,3 +571,7 @@ CELERY_TASK_RESULT_EXPIRES = 5
 CELERYD_TASK_TIME_LIMIT = 10800
 CELERYD_TASK_SOFT_TIME_LIMIT = 21600
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'convert_urls': False,
+}
