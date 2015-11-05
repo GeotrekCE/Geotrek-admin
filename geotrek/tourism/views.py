@@ -418,7 +418,7 @@ class TouristicCategoryView(APIView):
                              'slug': 'touristic-content'})
 
         if request.GET.get('events', False):
-            response.append({'id': 'E1',
+            response.append({'id': 'E',
                              'label': _(u"Touristic events"),
                              'type1_label': "",
                              'type2_label': "",
