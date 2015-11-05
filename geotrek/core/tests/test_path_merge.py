@@ -22,32 +22,46 @@ class MergePathTest(TestCase):
         """
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
+        original_AB_length = path_AB.length
+        original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((4, 0), (8, 0)))
+        original_AB_length = path_AB.length
+        original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
+        original_AB_length = path_AB.length
+        original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
+        original_AB_length = path_AB.length
+        original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
         self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((50, 0), (100, 0)))
+        original_AB_length = path_AB.length
 
         self.assertEqual(path_AB.merge_path(path_CD), False)
+        self.assertEqual(path_AB.length, original_AB_length)
 
     def test_path_merge_with_snap(self):
         """

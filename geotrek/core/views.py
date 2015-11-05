@@ -107,7 +107,7 @@ class PathList(MapEntityList):
 
 
 class PathJsonList(MapEntityJsonList, PathList):
-    columns = PathList.columns.remove('checkbox')
+    pass
 
 
 class PathFormatList(MapEntityFormat, PathList):
