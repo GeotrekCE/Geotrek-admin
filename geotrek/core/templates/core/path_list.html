@@ -38,11 +38,15 @@
 
     {{ block.super }}
     <div class="lightbox" id="wait_lightbox">
-	  <div class="row">
-	    <div class="col-lg-12">
-	      {% trans "Please, wait..." %}
+	    <div class="row">
 	    </div>
-	  </div>
+		<div class="row">
+			<div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6">
+				<div class="progress progress-striped active">
+					<div class="bar" style="width: 100%;"></div>
+				</div>
+			</div>
+		</div>
 	</div>
 	
     <div class="btn-group btn-danger">
