@@ -13,7 +13,7 @@ DECLARE
 BEGIN
     reverse_update := FALSE;
     reverse_merged := FALSE;
-    max_snap_distance := 2;
+    max_snap_distance := {{PATH_MERGE_SNAPPING_DISTANCE}};
     rebuild_line := NULL;
 
     IF updated = merged
@@ -134,7 +134,7 @@ BEGIN
            SET troncon = updated
            WHERE troncon = merged;
 
-    -- link element or delete if unique already present
+    -- link element or delete if target unique already present
     FOR element IN SELECT * FROM l_r_troncon_reseau WHERE path_id = merged
     LOOP
         IF NOT EXISTS (SELECT 1 FROM l_r_troncon_reseau WHERE network_id=element.network_id AND path_id = updated) THEN
@@ -146,7 +146,7 @@ BEGIN
         END IF;
     END LOOP;
 
-    -- link element or delete if unique already present
+    -- link element or delete if target unique already present
     FOR element IN SELECT * FROM l_r_troncon_usage WHERE path_id = merged
     LOOP
         IF NOT EXISTS (SELECT 1 FROM l_r_troncon_usage WHERE usage_id=element.usage_id AND path_id = updated) THEN

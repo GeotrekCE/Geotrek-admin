@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import json
 import logging
 
@@ -106,7 +107,7 @@ class PathList(MapEntityList):
 
 
 class PathJsonList(MapEntityJsonList, PathList):
-    pass
+    columns = PathList.columns.remove('checkbox')
 
 
 class PathFormatList(MapEntityFormat, PathList):
