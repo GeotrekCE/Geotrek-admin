@@ -3,35 +3,36 @@
 {% load static from staticfiles %}
 
 {% block extrahead %}
-{% csrf_token %}
- <link rel="stylesheet" href="{% static 'core/css/path_list.css' %}" />
- <script type="text/javascript">
-   $(function(){
-   	$('#btn-merge').click(function() {
-           if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
-               alert("{% trans 'Select two pathes to merge them' %}");
-           }
-           else {
-           	$('#wait_lightbox').show(0);
-               $.post(
-                   "{% url 'core:merge_path' %}",
-                   $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
-                   function(response){
-                       if(response.error){
-                    	   $('#wait_lightbox').hide(0);
-                       	   alert(response.error);
-                       }
-                       else {
-                       	   location.reload();
-                       }
-                   }
-               ).fail(function() {
-            	   $('#wait_lightbox').hide(0);
-               });
-           }
-       });
-   });
-</script>
+    {% csrf_token %}
+    <link rel="stylesheet" href="{% static 'core/css/path_list.css' %}" />
+    <script type="text/javascript">
+        $(function(){
+   	        $('#btn-merge').click(function() {
+                if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
+                    $('#btn-confirm-merge').hide();
+                    $('#modal-body-content').html("<h4></h4><p>{% trans 'Select two pathes to merge them' %}</p>");
+                }
+                else {
+                	$('#btn-confirm-merge').show();
+                    //$('#wait_lightbox').show(0);
+                    $.post("{% url 'core:merge_path' %}",
+                           $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+                           function(response){
+                               if(response.error){
+                    	           //$('#wait_lightbox').hide(0);
+                       	           $('#modal-body-content').html(response.error);
+                                }
+                                else {
+                       	            location.reload();
+                                }
+                           }
+                ).fail(function() {
+                    $('#wait_lightbox').hide(0);
+                });
+            }
+        });
+    });
+    </script>
 {% endblock %}
 
 {% block mainactions %}
@@ -53,8 +54,22 @@
       <a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
       <ul class="dropdown-menu">
-        <li><a href="#" id="btn-merge"><i class="icon-pencil"></i> Merge</a></li>
+        <li><a href="#myModal" id="btn-merge" role="button" data-toggle="modal"><i class="icon-pencil"></i> Merge</a></li>
       </ul>
     </div>
+    
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">{% trans "Merge pathes" %}</h3>
+	  </div>
+	  <div class="modal-body" id="modal-body-content">
+	      <p>One fine body…</p>
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+	    <button id="btn-confirm-merge" class="btn btn-primary">{% trans "Merge" %}</button>
+	  </div>
+	</div>
     
 {% endblock mainactions %}
