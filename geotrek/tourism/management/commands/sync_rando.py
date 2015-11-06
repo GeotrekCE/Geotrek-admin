@@ -77,7 +77,7 @@ class Command(BaseCommand):
             params.update({'events': '1'})
 
         self.sync_json(lang, tourism_views.TouristicCategoryView,
-                       'touristiccontentcategories',
+                       'touristiccategories',
                        zipfile=self.zipfile, params=params)
 
         # pictos touristic content catgories
