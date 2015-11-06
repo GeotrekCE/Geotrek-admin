@@ -74,7 +74,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                                             '{pk}'.format(pk=trek2.pk),
                                                             'touristiccontents.geojson')
                 path_touristcategories_json = os.path.join('api', lang,
-                                                           'touristiccontentcategories.json')
+                                                           'touristiccategories.json')
 
                 self.assertIn(path_touristevents_geojson,
                               file_list,
