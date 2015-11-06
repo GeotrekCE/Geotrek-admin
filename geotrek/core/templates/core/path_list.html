@@ -3,73 +3,92 @@
 {% load static from staticfiles %}
 
 {% block extrahead %}
+
     {% csrf_token %}
-    <link rel="stylesheet" href="{% static 'core/css/path_list.css' %}" />
+    
     <script type="text/javascript">
+    
         $(function(){
    	        $('#btn-merge').click(function() {
                 if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
-                    $('#btn-confirm-merge').hide();
-                    $('#modal-body-content').html("<h4></h4><p>{% trans 'Select two pathes to merge them' %}</p>");
+                    $('#btn-confirm').hide();
+                    $('#confirm-merge .modal-body h4').html("{% trans 'Select two pathes to merge them' %}");
                 }
                 else {
-                	$('#btn-confirm-merge').show();
-                    //$('#wait_lightbox').show(0);
-                    $.post("{% url 'core:merge_path' %}",
-                           $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
-                           function(response){
-                               if(response.error){
-                    	           //$('#wait_lightbox').hide(0);
-                       	           $('#modal-body-content').html(response.error);
-                                }
-                                else {
-                       	            location.reload();
-                                }
-                           }
+                	$('#confirm-merge .modal-body h4').html('{% trans "Are you sure you want to merge these pathes ?" %}');
+                	$('#btn-confirm').show();
+                }
+            });
+   	        
+   	        $('#btn-confirm').click(function() {
+   	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
+   	        	$('#btn-confirm').prop('disable', true);
+   	        	
+   	        	$.post("{% url 'core:merge_path' %}",
+                        $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+                        function(response){
+   	        		        $('#btn-confirm').prop('disable', false);
+   	        				
+                            if(response.error){
+                    	        $('#confirm-merge .modal-body h4').html(response.error);
+                    	        $('#btn-confirm').hide();
+                            }
+                            else {
+                   	            location.reload();
+                            }
+                        }
                 ).fail(function() {
-                    $('#wait_lightbox').hide(0);
+                	$('#confirm-merge .modal-body h4').html('{% trans "Unknown error" %}');
+                	$('#btn-confirm').prop('disable', false);
                 });
-            }
+   	        });
+   	        
         });
-    });
+        
     </script>
+    
 {% endblock %}
 
 {% block mainactions %}
 
     {{ block.super }}
-    <div class="lightbox" id="wait_lightbox">
-	    <div class="row">
-	    </div>
-		<div class="row">
-			<div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6">
-				<div class="progress progress-striped active">
-					<div class="bar" style="width: 100%;"></div>
-				</div>
-			</div>
+    
+    <div id="wait_lightbox" style="display: none;">
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: 100%;"></div>
 		</div>
 	</div>
 	
-    <div class="btn-group btn-danger">
-      <a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-      <ul class="dropdown-menu">
-        <li><a href="#myModal" id="btn-merge" role="button" data-toggle="modal"><i class="icon-pencil"></i> Merge</a></li>
-      </ul>
-    </div>
+	<div class="btn-group btn-danger">
+		<a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li>
+			    <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
+			        <i class="icon-pencil"></i> Merge</a>
+			</li>
+		</ul>
+	</div>
     
-	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	    <h3 id="myModalLabel">{% trans "Merge pathes" %}</h3>
-	  </div>
-	  <div class="modal-body" id="modal-body-content">
-	      <p>One fine body…</p>
-	  </div>
-	  <div class="modal-footer">
-	    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
-	    <button id="btn-confirm-merge" class="btn btn-primary">{% trans "Merge" %}</button>
-	  </div>
+	<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4>{% trans "Merge pathes" %}</h4>
+	            </div>
+	            <div class="modal-body">
+	                <h4></h4>
+	            </div>
+	  			<div class="modal-footer">test
+		            <button type="button" class="btn btn-default" data-dismiss="modal">
+		                {% trans "Cancel" %}
+		            </button>
+		            <button type="button" id="btn-confirm" class="btn btn-success success">
+		                {% trans "Merge" %}
+		            </button>
+		        </div>
+	    	</div>
+		</div>
 	</div>
     
 {% endblock mainactions %}
