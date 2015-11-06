@@ -22,24 +22,25 @@
    	        
    	        $('#btn-confirm').click(function() {
    	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
-   	        	$('#btn-confirm').prop('disable', true);
+   	         $('#btn-confirm').hide();
    	        	
    	        	$.post("{% url 'core:merge_path' %}",
-                        $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
-                        function(response){
-   	        		        $('#btn-confirm').prop('disable', false);
-   	        				
-                            if(response.error){
-                    	        $('#confirm-merge .modal-body h4').html(response.error);
-                    	        $('#btn-confirm').hide();
-                            }
-                            else {
-                   	            location.reload();
-                            }
-                        }
+	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+	                
+	                function(response){
+	    		        $('#btn-confirm').show();
+	    				
+	                    if(response.error){
+	            	        $('#confirm-merge .modal-body h4').html(response.error);
+	            	        $('#btn-confirm').hide();
+	                    }
+	                    else {
+	           	            location.reload();
+	                    }
+	                }
                 ).fail(function() {
                 	$('#confirm-merge .modal-body h4').html('{% trans "Unknown error" %}');
-                	$('#btn-confirm').prop('disable', false);
+                	$('#btn-confirm').show();
                 });
    	        });
    	        

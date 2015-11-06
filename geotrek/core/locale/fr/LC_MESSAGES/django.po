@@ -7,8 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-04 17:10+0100\n"
-"PO-Revision-Date: 2015-11-04 17:11+0100\n"
+"POT-Creation-Date: 2015-11-06 11:06+0100\n"
+"PO-Revision-Date: 2015-11-06 11:07+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.8.4\n"
-"Last-Translator: \n"
 
 msgid "Topology is empty."
 msgstr "La topologie est vide."
@@ -185,9 +185,6 @@ msgstr "Les tronçons ont été fusionnés."
 msgid "No matching points to merge pathes found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
-msgid "Error in merging pathes"
-msgstr "Erreur pendant la fusion des tronçons"
-
 msgid "Management"
 msgstr "Gestion"
 
@@ -206,5 +203,23 @@ msgstr "Informations"
 msgid "Select two pathes to merge them"
 msgstr "Sélectionner deux tronçons pour les fusionner"
 
-msgid "Please, wait..."
-msgstr "Patientez s'il vous plaît"
+msgid "Are you sure you want to merge these pathes ?"
+msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
+
+msgid "Unknown error"
+msgstr "Erreur inconnue"
+
+msgid "Merge pathes"
+msgstr "Fusionner les tronçons"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Merge"
+msgstr "Fusionner"
+
+#~ msgid "Error in merging pathes"
+#~ msgstr "Erreur pendant la fusion des tronçons"
+
+#~ msgid "Please, wait..."
+#~ msgstr "Patientez s'il vous plaît"
