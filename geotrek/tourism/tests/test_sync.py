@@ -38,7 +38,7 @@ class SyncTest(TranslationResetMixin, TestCase):
             tevents = json.load(f)
         self.assertEquals(len(tevents['features']), 1)
 
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontentcategories.json'), 'r') as f:
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
             self.assertEquals(len(tevents), 2)
 
