@@ -5,7 +5,9 @@ CHANGELOG
 2.3.1.dev0
 ------------------
 
-*
+**New features**
+
+* Add trek parents to API
 
 
 2.3.0 (2015-11-09)
