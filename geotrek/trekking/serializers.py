@@ -155,6 +155,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer()
     children = rest_serializers.Field(source='children_id')
+    parents = rest_serializers.Field(source='parents_id')
     previous = rest_serializers.Field(source='previous_id')
     next = rest_serializers.Field(source='next_id')
 
@@ -208,7 +209,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
-                  'treks', 'children', 'previous', 'next') + \
+                  'treks', 'children', 'parents', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \

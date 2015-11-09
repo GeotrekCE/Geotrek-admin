@@ -38,6 +38,10 @@ class SyncTest(TranslationResetMixin, TestCase):
             tevents = json.load(f)
         self.assertEquals(len(tevents['features']), 1)
 
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
+            tevents = json.load(f)
+            self.assertEquals(len(tevents), 2)
+
     def test_sync_trek_zip_content(self):
         """
         Test including tevents and tcontents in trek zips
@@ -51,17 +55,42 @@ class SyncTest(TranslationResetMixin, TestCase):
                                 url='http://localhost:8000',
                                 skip_tiles=True,
                                 with_events=True,
+                                skip_profile_png=True,
+                                skip_pdf=True,
+                                skip_dem=True,
                                 content_categories=u"1,2",
                                 verbosity='0')
 
-        with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', 'fr',
-                                  'global.zip'),
-                     'r') as zipf:
-            self.assertIn(os.path.join('api', 'fr', 'treks',
-                                       '{pk}'.format(pk=trek1.pk),
-                                       'touristicevents.geojson'),
-                          zipf.namelist())
-            self.assertIn(os.path.join('api', 'fr', 'treks',
-                                       '{pk}'.format(pk=trek2.pk),
-                                       'touristiccontents.geojson'),
-                          zipf.namelist())
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', lang,
+                                      'global.zip'),
+                         'r') as zipf:
+                file_list = zipf.namelist()
+
+                path_touristevents_geojson = os.path.join('api', lang, 'treks',
+                                                          '{pk}'.format(pk=trek1.pk),
+                                                          'touristicevents.geojson')
+                path_touristcontents_geojson = os.path.join('api', lang, 'treks',
+                                                            '{pk}'.format(pk=trek2.pk),
+                                                            'touristiccontents.geojson')
+                path_touristcategories_json = os.path.join('api', lang,
+                                                           'touristiccategories.json')
+
+                self.assertIn(path_touristevents_geojson,
+                              file_list,
+                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
+                                                                                       lang=lang))
+                read_content = json.loads(zipf.read(path_touristevents_geojson))
+                self.assertIn('features', read_content)
+
+                self.assertIn(path_touristcontents_geojson,
+                              file_list,
+                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
+                                                                                       lang=lang))
+                read_content = json.loads(zipf.read(path_touristcontents_geojson))
+                self.assertIn('features', read_content)
+
+                self.assertIn(path_touristcategories_json,
+                              file_list,
+                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
+                                                                                       lang=lang))
