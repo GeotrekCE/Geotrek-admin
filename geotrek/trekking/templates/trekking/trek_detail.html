@@ -125,7 +125,28 @@
                     })()
                 }).addTo(map);
             })(map);
-
+            /*
+            polygon = L.polygon([L.latLng(42.32606244456202, -5.80078125),
+                                 L.latLng(50.764259357116465, -5.80078125),
+                                 L.latLng(50.764259357116465, 7.4267578125),
+                                 L.latLng(42.32606244456202, 7.4267578125)
+                                ]);*/
+            
+            map.on('move', function () {
+        		// marker.setLatLng(map.getCenter());
+        		//console.log(map.getCenter());
+        		alert('ok');
+        		
+        		if(polygon.contains(map.getCenter()){
+        			// switch std map
+        			console.log('in');
+        		}
+        		else {
+        			// switch OSM map
+        			console.log('out');
+        		}
+        	});
+            
         });
     </script>
 {% endblock extrabody %}
