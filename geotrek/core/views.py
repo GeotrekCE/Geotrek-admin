@@ -3,6 +3,7 @@
 import json
 import logging
 
+from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -243,7 +244,7 @@ class TrailDelete(MapEntityDelete):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
 
 
-@login_required
+@permission_required('core.change_path')
 def merge_path(request):
     """
     Path merging view
@@ -257,8 +258,10 @@ def merge_path(request):
             if len(ids_path_merge) == 2:
                 path_a = Path.objects.get(pk=ids_path_merge[0])
                 path_b = Path.objects.get(pk=ids_path_merge[1])
+                if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+                    response = {'error': _(u"You don't have the right to change these paths")}
 
-                if path_a.merge_path(path_b):
+                elif path_a.merge_path(path_b):
                     response = {'success': _(u"Paths merged successfully")}
                     messages.success(request, _(u"Paths merged successfully"))
 

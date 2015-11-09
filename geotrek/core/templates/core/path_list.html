@@ -60,6 +60,7 @@
 		</div>
 	</div>
 	
+	{% if perms.core.change_path %}
 	<div class="btn-group btn-danger">
 		<a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
@@ -70,6 +71,7 @@
 			</li>
 		</ul>
 	</div>
+	{% endif %}
     
 	<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
 	    <div class="modal-dialog">
