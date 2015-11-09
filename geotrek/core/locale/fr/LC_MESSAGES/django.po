@@ -179,10 +179,10 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
-msgid "Pathes merged succesfully"
+msgid "Paths merged successfully"
 msgstr "Les tronçons ont été fusionnés."
 
-msgid "No matching points to merge pathes found"
+msgid "No matching points to merge paths found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Management"
@@ -200,16 +200,16 @@ msgstr "Non validé"
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Select two pathes to merge them"
+msgid "Select two paths to merge them"
 msgstr "Sélectionner deux tronçons pour les fusionner"
 
-msgid "Are you sure you want to merge these pathes ?"
+msgid "Are you sure you want to merge these paths ?"
 msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
 
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
-msgid "Merge pathes"
+msgid "Merge paths"
 msgstr "Fusionner les tronçons"
 
 msgid "Cancel"
@@ -217,9 +217,3 @@ msgstr "Annuler"
 
 msgid "Merge"
 msgstr "Fusionner"
-
-#~ msgid "Error in merging pathes"
-#~ msgstr "Erreur pendant la fusion des tronçons"
-
-#~ msgid "Please, wait..."
-#~ msgstr "Patientez s'il vous plaît"

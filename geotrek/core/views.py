@@ -259,11 +259,11 @@ def merge_path(request):
                 path_b = Path.objects.get(pk=ids_path_merge[1])
 
                 if path_a.merge_path(path_b):
-                    response = {'success': _(u"Pathes merged succesfully")}
-                    messages.success(request, _(u"Pathes merged succesfully"))
+                    response = {'success': _(u"Paths merged successfully")}
+                    messages.success(request, _(u"Paths merged successfully"))
 
                 else:
-                    response = {'error': _(u"No matching points to merge pathes found")}
+                    response = {'error': _(u"No matching points to merge paths found")}
 
             else:
                 raise

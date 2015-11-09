@@ -407,7 +407,7 @@ VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 PATHS_LINE_MARKER = 'dotL'
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
-PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge pathes
+PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge paths
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 ALTIMETRIC_PROFILE_BACKGROUND = 'white'
