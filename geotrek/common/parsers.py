@@ -493,8 +493,10 @@ class AttachmentParserMixin(object):
 
     def save_attachments(self, src, val):
         updated = False
-        for url, name, author in self.filter_attachments(src, val):
+        for url, legend, author in self.filter_attachments(src, val):
             url = self.base_url + url
+            legend = legend or u""
+            author = author or u""
             name = os.path.basename(url)
             found = False
             for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
@@ -503,6 +505,11 @@ class AttachmentParserMixin(object):
                 if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
                     found = True
                     self.attachments_to_delete[self.obj.pk].remove(attachment)
+                    if author != attachment.author or legend != attachment.legend:
+                        attachment.author = author
+                        attachment.legend = legend
+                        attachment.save()
+                        updated = True
                     break
             if found:
                 continue
@@ -524,6 +531,8 @@ class AttachmentParserMixin(object):
             attachment.attachment_file.save(name, f, save=False)
             attachment.filetype = self.filetype
             attachment.creator = self.creator
+            attachment.author = author
+            attachment.legend = legend
             attachment.save()
             updated = True
         return updated
