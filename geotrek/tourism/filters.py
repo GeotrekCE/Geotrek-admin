@@ -29,6 +29,11 @@ class CompletedFilter(django_filters.BooleanFilter):
     """
     Filter events with end_date in past (event completed)
     """
+    @property
+    def field(self):
+        field = super(CompletedFilter, self).field
+        field.initial = True
+        return field
 
     def filter(self, qs, value):
         queryset = qs
