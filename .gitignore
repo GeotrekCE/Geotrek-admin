@@ -32,3 +32,7 @@ geotrek/settings/custom.py
 /install.log
 /data/
 /sync_trek/
+/.project
+/.pydevproject
+/.settings/
+screamshotter.log

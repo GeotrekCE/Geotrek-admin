@@ -90,8 +90,7 @@ MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', s
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
-TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
-                              'mapentity', 'templates'),
+TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
                  os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
 
 
@@ -123,6 +122,11 @@ _others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
+
+FORCE_OSMBASELAYER_BOUNDINGBOX = [(43.464880828929545, 4.5428466796875),
+                                  (45.57175504130605,  4.5428466796875),
+                                  (45.57175504130605,  7.124633789062499),
+                                  (43.464880828929545, 7.124633789062499)]
 
 #
 # Internal settings

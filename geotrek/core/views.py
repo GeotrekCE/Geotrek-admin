@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import json
 import logging
 
@@ -23,7 +24,9 @@ from geotrek.core.models import AltimetryMixin
 from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
-from . import graph as graph_lib
+from geotrek.core import graph as graph_lib
+from django.http.response import HttpResponse
+from geojson import Polygon
 
 
 logger = logging.getLogger(__name__)
@@ -234,3 +237,11 @@ class TrailDelete(MapEntityDelete):
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
+
+@login_required
+def get_bound_force_osm(request):
+    polygon_array = Polygon(getattr(settings,
+                                    'FORCE_OSMBASELAYER_BOUNDINGBOX',
+                                    []))
+    return HttpResponse([polygon_array],
+                        mimetype="application/json")

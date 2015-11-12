@@ -1,0 +1,57 @@
+{% extends "mapentity:mapentity/base.html" %}
+
+{% block extrabody %}
+
+    {{ block.super }}
+    
+    <script type="text/javascript">
+	    /*
+	     * Force osm base layer if map center is outside bounding box defined in settings
+	     */
+		var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+		var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+		var osm = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 18, attribution: osmAttrib});  
+		var map;
+		
+        $(window).on('detailmap:ready', function (e, data) {
+
+        	map = data.map;
+	        
+	        $.get(
+	        	"{% url 'core:force_osm_baselayer_bound' %}",
+	            function(result){
+	            	if(result.coordinates.length == 4) {
+	            		
+	            		var polygon = L.polygon(result.coordinates);
+	            		
+	            		if(polygon.getBounds().contains(map.getCenter())){
+			    			// switch std map
+			    			map.removeLayer(osm);
+			    			//console.log('in');
+			    		}
+			    		else {
+			    			// switch OSM map
+						    map.addLayer(osm);
+						    //console.log(map.getCenter() + ' not in (' +polygon.getBounds()._northEast+' - '+polygon.getBounds()._southWest);
+			    		}
+		    		
+				        map.on('move', function () {
+				    		// marker.setLatLng(map.getCenter());
+				    		// console.log(map.getCenter());
+				    		
+				    		if(polygon.getBounds().contains(map.getCenter())){
+				    			// switch std map
+				    			map.removeLayer(osm);
+				    		}
+				    		else {
+				    			// switch OSM map
+							    map.addLayer(osm);
+				    		}
+				    	});
+            		}
+	        });
+        });
+
+	</script>
+	
+{% endblock %}
