@@ -420,7 +420,6 @@ class Command(BaseCommand):
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
-        print 'languages:', self.languages
         if self.source is not None:
             self.source = self.source.split(',')
         self.builder_args = {
