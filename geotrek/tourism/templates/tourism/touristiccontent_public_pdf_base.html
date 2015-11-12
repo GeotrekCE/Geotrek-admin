@@ -68,7 +68,7 @@
 
 			{% if object.description_teaser %}
 				<section class="teaser text-content">
-					{{ object.description_teaser }}
+					{{ object.description_teaser|safe }}
 				</section>
 			{% endif %}
 		</header>
@@ -79,7 +79,7 @@
 			{% if object.description %}
 				<section class="description">
 					<h2>{% trans "Description" %}</h2>
-					<div class="text-content">{{ object.description }}</div>
+					<div class="text-content">{{ object.description|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock description %}
@@ -90,7 +90,7 @@
 			{% if object.advice %}
 				<section class="advice">
 					<h2>{% trans "Advice" %}</h2>
-					<div class="text-content">{{ object.advice }}</div>
+					<div class="text-content">{{ object.advice|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock advice %}
@@ -114,7 +114,7 @@
 			{% if object.practical_info %}
 				<section class="practical_info">
 					<h2>{% trans "Practical info" %}</h2>
-					<div class="text-content">{{ object.practical_info }}</div>
+					<div class="text-content">{{ object.practical_info|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock practical_info %}
@@ -138,7 +138,7 @@
 			<section class="contact">
 				<h2>{% trans "Contact" %}</h2>
 				<div class="content">
-					<div class="contact-description text-content">{{ object.contact }}</div>
+					<div class="contact-description text-content">{{ object.contact|safe }}</div>
 					{% if object.website %}<div class="desk-website"><a href="{{ object.website }}">{{ object.website }}</a></div>{% endif %}
 					{% if object.email %}<div class="desk-email"><a href="mailto:{{ object.email }}">{{ object.email }}</a></div>{% endif %}
 				</div>
