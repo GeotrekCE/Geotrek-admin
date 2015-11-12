@@ -167,7 +167,7 @@
 		{% block touristicContents %}
 			<section class="pois-summary">
 				{% if object.published_touristic_contents.all %}
-					<h2>A voir / A faire</h2>
+					<h2>{% trans "On the way..." %}</h2>
 					{% for ct in object.published_touristic_contents.all %}
 						<div class="poi">
 							{% if ct.thumbnail %}
