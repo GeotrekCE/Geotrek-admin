@@ -36,4 +36,3 @@ class Loader(BaseLoader):
 
         return super(Loader, self).load_template_source(template_name, template_dirs=[template_dir])
     load_template_source.is_usable = True
-
