@@ -142,7 +142,7 @@ class Command(BaseCommand):
         self.sync_pictograms('**', tourism_models.TouristicContentType)
         self.sync_pictograms('**', tourism_models.TouristicEventType)
 
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
+        for lang in self.languages:
             translation.activate(lang)
             self.sync_tourism(lang)
 

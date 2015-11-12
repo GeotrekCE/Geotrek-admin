@@ -84,6 +84,8 @@ class Command(BaseCommand):
                     default=False, help='Skip generation of DEM files for mobile app'),
         make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
                     default=False, help='Skip generation of PNG elevation profile'),
+        make_option('--languages', '-l', action='store', dest='languages',
+                    default='', help='Languages to sync'),
     )
 
     def mkdirs(self, name):
@@ -384,9 +386,17 @@ class Command(BaseCommand):
     def sync(self):
         self.sync_tiles()
 
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
+        for lang in self.languages:
             translation.activate(lang)
             self.sync_trekking(lang)
+
+    def check_dst_root_is_empty(self):
+        if not os.path.exists(self.dst_root):
+            return
+        existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
+        remaining = existing - set(('api', 'media', 'static', 'zip'))
+        if remaining:
+            raise CommandError(u"Destination directory contains extra data")
 
     def handle(self, *args, **options):
         self.successfull = True
@@ -394,11 +404,7 @@ class Command(BaseCommand):
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
         self.dst_root = args[0].rstrip('/')
-        if os.path.exists(self.dst_root):
-            existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-            remaining = existing - set(('api', 'media', 'static', 'zip'))
-            if remaining:
-                raise CommandError(u"Destination directory contains extra data")
+        self.check_dst_root_is_empty()
         if(options['url'][:7] != 'http://'):
             raise CommandError('url parameter should start with http://')
         self.referer = options['url']
@@ -410,6 +416,11 @@ class Command(BaseCommand):
         self.skip_dem = options['skip_dem']
         self.skip_profile_png = options['skip_profile_png']
         self.source = options['source']
+        if options['languages']:
+            self.languages = options['languages'].split(',')
+        else:
+            self.languages = settings.MODELTRANSLATION_LANGUAGES
+        print 'languages:', self.languages
         if self.source is not None:
             self.source = self.source.split(',')
         self.builder_args = {
