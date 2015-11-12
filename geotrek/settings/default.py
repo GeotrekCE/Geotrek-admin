@@ -123,10 +123,7 @@ if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
 
-FORCE_OSMBASELAYER_BOUNDINGBOX = [(43.464880828929545, 4.5428466796875),
-                                  (45.57175504130605,  4.5428466796875),
-                                  (45.57175504130605,  7.124633789062499),
-                                  (43.464880828929545, 7.124633789062499)]
+FORCE_OSMBASELAYER_BOUNDINGBOX = [] # [(lat1, lng1), (lat2, lng2), (lat3, lng3)], (lat4, lng4)]
 
 #
 # Internal settings

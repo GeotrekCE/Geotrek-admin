@@ -238,6 +238,7 @@ class TrailDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
 
+
 @login_required
 def get_bound_force_osm(request):
     polygon_array = Polygon(getattr(settings,

@@ -12,7 +12,6 @@ urlpatterns = patterns(
     '',
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
     url(r'^force_osm_baselayer_bound.json$', get_bound_force_osm, name="force_osm_baselayer_bound"),
-    
 )
 
 
