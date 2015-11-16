@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from copy import deepcopy
+
 from django import forms as django_forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -37,10 +40,8 @@ class CommonForm(MapEntityForm):
             model._meta.app_label, model._meta.object_name.lower())
         if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
             del self.fields['published']
-            self.deep_remove(self.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
             del self.fields['review']
-            self.deep_remove(self.fieldslayout, 'review')
         super(CommonForm, self).replace_orig_fields()
 
     def filter_related_field(self, name, field):
@@ -76,6 +77,15 @@ class CommonForm(MapEntityForm):
 
         for name, field in self.fields.items():
             self.filter_related_field(name, field)
+
+        # allow to modify layout per instance
+        self.helper.fieldlayout = deepcopy(self.fieldslayout)
+        model = self._meta.model
+        codeperm = '%s.publish_%s' % (model._meta.app_label, model._meta.object_name.lower())
+        if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
+            self.deep_remove(self.helper.fieldslayout, 'published')
+        if 'review' in self.fields and self.instance and self.instance.any_published:
+            self.deep_remove(self.helper.fieldslayout, 'review')
 
 
 class ImportDatasetForm(django_forms.Form):
