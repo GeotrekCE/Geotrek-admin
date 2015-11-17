@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+* Paths can be merged.
 * Add trek parents to API
 
 

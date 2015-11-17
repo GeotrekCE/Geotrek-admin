@@ -32,3 +32,6 @@ geotrek/settings/custom.py
 /install.log
 /data/
 /sync_trek/
+/.settings/
+/.project
+/.pydevproject

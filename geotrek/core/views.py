@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+
 import json
 import logging
 
+from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
+from django.utils.translation import ugettext as _
 from django.core.cache import get_cache
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
@@ -24,6 +27,8 @@ from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
+from django.http.response import HttpResponse
+from django.contrib import messages
 
 
 logger = logging.getLogger(__name__)
@@ -73,10 +78,13 @@ class PathList(MapEntityList):
 
     @classproperty
     def columns(cls):
-        columns = ['id', 'name', 'networks', 'length', 'length_2d']
+        columns = ['id', 'checkbox', 'name', 'networks', 'length', 'length_2d']
         if settings.TRAIL_MODEL_ENABLED:
             columns.append('trails')
         return columns
+
+    def get_template_names(self):
+        return (u"core/path_list.html",)
 
     def get_queryset(self):
         """
@@ -234,3 +242,36 @@ class TrailDelete(MapEntityDelete):
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
+
+
+@permission_required('core.change_path')
+def merge_path(request):
+    """
+    Path merging view
+    """
+    response = {}
+
+    if request.method == 'POST':
+        try:
+            ids_path_merge = request.POST.getlist('path[]')
+
+            if len(ids_path_merge) == 2:
+                path_a = Path.objects.get(pk=ids_path_merge[0])
+                path_b = Path.objects.get(pk=ids_path_merge[1])
+                if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+                    response = {'error': _(u"You don't have the right to change these paths")}
+
+                elif path_a.merge_path(path_b):
+                    response = {'success': _(u"Paths merged successfully")}
+                    messages.success(request, _(u"Paths merged successfully"))
+
+                else:
+                    response = {'error': _(u"No matching points to merge paths found")}
+
+            else:
+                raise
+
+        except Exception as exc:
+            response = {'error': exc, }
+
+    return HttpResponse(json.dumps(response), mimetype="application/json")
