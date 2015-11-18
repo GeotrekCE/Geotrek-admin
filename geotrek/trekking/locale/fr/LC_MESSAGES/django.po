@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-28 15:26+0200\n"
-"PO-Revision-Date: 2015-09-23 11:49+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2015-10-21 11:24+0200\n"
+"PO-Revision-Date: 2015-10-21 11:16+0200\n"
+"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.4\n"
 
 #, python-format
 msgid "Difficulty with id '%s' already exists"
@@ -54,16 +54,22 @@ msgid "Insert service:"
 msgstr "Insérer un service :"
 
 msgid "Cannot add children because this trek is itself a child."
-msgstr "Impossible d'ajouter des enfants car cet itinéraire est lui-même un enfant."
+msgstr ""
+"Impossible d'ajouter des enfants car cet itinéraire est lui-même un enfant."
 
+#, python-brace-format
 msgid "Cannot use parent trek {name} as a child trek."
-msgstr "Impossible d'utiliser l'itinéraire parent {name} comme itinéraire enfant."
+msgstr ""
+"Impossible d'utiliser l'itinéraire parent {name} comme itinéraire enfant."
 
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Create"
 msgstr "Créer"
+
+msgid "Launch Sync"
+msgstr "Lancer la synchro"
 
 msgid "Departure"
 msgstr "Départ"
@@ -155,8 +161,8 @@ msgstr "Réseaux de randonnée"
 msgid "Practice"
 msgstr "Pratique"
 
-msgid "Accessibilities"
-msgstr "Accessibilités"
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Route"
 msgstr "Parcours"
@@ -251,8 +257,8 @@ msgstr "Locomotion Cirkwi"
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
 
-msgid "Accessibility"
-msgstr "Accessibilité"
+msgid "Accessibilities"
+msgstr "Accessibilités"
 
 msgid "Routes"
 msgstr "Parcours"
@@ -358,6 +364,9 @@ msgstr ""
 msgid "trek"
 msgstr "itineraire"
 
+msgid "Init sync ..."
+msgstr "Début de synchro"
+
 msgid "Altimetric profile"
 msgstr "Profil altimétrique"
 
@@ -404,6 +413,21 @@ msgstr ""
 msgid "Trek ascent"
 msgstr "Dénivelé positif"
 
+msgid "Global tiles syncing ..."
+msgstr "Synchro des tuiles globales..."
+
+msgid "Trek tiles syncing ..."
+msgstr "Synchro des tuiles de randonnées..."
+
+msgid "Tiles synced ..."
+msgstr "Tuiles synchronisées..."
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Sync ended"
+msgstr "Synchro terminée"
+
 msgid "Public print"
 msgstr "Impression grand public"
 
@@ -428,6 +452,27 @@ msgid ""
 msgstr ""
 "Vos <strong>images doivent avoir le même ratio</strong> (height/width) pour "
 "une meilleure integration dans le portail public."
+
+msgid "Sync verifications"
+msgstr "Vérification des synchros"
+
+msgid "Sync in progress"
+msgstr "Synchronisation en cours"
+
+msgid "An error occured"
+msgstr "Une erreur est survenue"
+
+msgid "Public web site sync"
+msgstr "Synchro du site web public"
+
+msgid "Confirmation"
+msgstr "Confirmation"
+
+msgid "Are you sure you want to sync ?"
+msgstr "Etes-vous certain de vouloir lancer la synchro ?"
+
+msgid "Sync"
+msgstr "Sync"
 
 msgid "GPX"
 msgstr "GPX"
@@ -501,9 +546,6 @@ msgstr "Ajouter un POI"
 msgid "Add a new service"
 msgstr "Ajouter un service"
 
-msgid "Sync"
-msgstr "Sync"
-
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
@@ -526,3 +568,15 @@ msgstr "%(hour)s h"
 #, python-format
 msgid "%s min"
 msgstr "%s min"
+
+#~ msgid "Skip tiles"
+#~ msgstr "Passer les tuiles"
+
+#~ msgid "Skip PDF"
+#~ msgstr "Passer les PDF"
+
+#~ msgid "Skip DEM"
+#~ msgstr "Passer les DEM"
+
+#~ msgid "Skip profile PNG"
+#~ msgstr "Passer les profils PNG"
