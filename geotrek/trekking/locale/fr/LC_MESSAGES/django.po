@@ -462,8 +462,8 @@ msgstr "Synchronisation en cours"
 msgid "An error occured"
 msgstr "Une erreur est survenue"
 
-msgid "Trekking sync"
-msgstr "Synchro des randonnées"
+msgid "Public web site sync"
+msgstr "Synchro du site web public"
 
 msgid "Confirmation"
 msgstr "Confirmation"
