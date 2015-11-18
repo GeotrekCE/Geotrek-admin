@@ -2,13 +2,22 @@
 CHANGELOG
 =========
 
-2.3.1.dev0
+2.4.0 (2015-11-18)
 ------------------
 
 **New features**
 
-* Paths can be merged.
+* Paths can be merged
 * Add trek parents to API
+* Allow to sync public web site from web interface
+* Add begin and end dates to touristic events list
+* Filter conmpleted touristic events by default
+
+**Bug fixes**
+
+* Prevent concurrent imports and/or synchronization
+* Fix rendering of HTML markup in weasyprint templates
+* Fix missing publication field in some cases
 
 
 2.3.0 (2015-11-09)
