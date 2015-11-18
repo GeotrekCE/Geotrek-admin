@@ -1,5 +1,5 @@
-from landez import TilesManager
-from landez.sources import DownloadError
+# -*- encoding: UTF-8 -
+
 import logging
 from optparse import make_option
 import os
@@ -7,30 +7,30 @@ import re
 import sys
 import shutil
 import tempfile
+from time import sleep
 from zipfile import ZipFile
 
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 from django.test.client import RequestFactory
 from django.utils import translation
-
+from django.utils.translation import ugettext as _
+from landez import TilesManager
+from landez.sources import DownloadError
 from mapentity.settings import app_settings as mapentity_settings
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
-from geotrek.trekking import models as trekking_models
-from geotrek.tourism import models as tourism_models
 from geotrek.common.views import DocumentPublic, DocumentPublicPDF
+from geotrek.feedback.views import CategoryList as FeedbackCategoryList
+from geotrek.flatpages.views import FlatPageViewSet
+from geotrek.tourism import models as tourism_models
+from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
+from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet)
-from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
-from geotrek.flatpages.views import FlatPageViewSet
-from geotrek.feedback.views import CategoryList as FeedbackCategoryList
-
-# Register mapentity models
-from geotrek.trekking import urls  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -364,6 +364,7 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
+
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 
@@ -376,19 +377,69 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile, zipname)
 
     def sync_tiles(self):
-        if self.skip_tiles:
-            return
-        self.sync_global_tiles()
-        for trek in trekking_models.Trek.objects.existing().order_by('pk'):
-            if trek.any_published:
-                self.sync_trek_tiles(trek)
+        if not self.skip_tiles:
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 10,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Global tiles syncing ..."))
+                    }
+                )
+
+            self.sync_global_tiles()
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 20,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Trek tiles syncing ..."))
+                    }
+                )
+
+            for trek in trekking_models.Trek.objects.existing().order_by('pk'):
+                if trek.any_published:
+                    self.sync_trek_tiles(trek)
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 30,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Tiles synced ..."))
+                    }
+                )
 
     def sync(self):
         self.sync_tiles()
 
+        step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
+        current_value = 30
+
         for lang in self.languages:
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': current_value + step_value,
+                        'total': 100,
+                        'infos': u"{} : {} ...".format(_(u"Language"), lang)
+                    }
+                )
+                current_value = current_value + step_value
+
             translation.activate(lang)
             self.sync_trekking(lang)
+            translation.deactivate()
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
@@ -420,6 +471,8 @@ class Command(BaseCommand):
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
+        self.celery_task = options.get('task', None)
+
         if self.source is not None:
             self.source = self.source.split(',')
         self.builder_args = {
@@ -431,6 +484,16 @@ class Command(BaseCommand):
 
         try:
             self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Sync ended"))
+                    }
+                )
         except:
             shutil.rmtree(self.tmp_root)
             raise
@@ -449,3 +512,5 @@ class Command(BaseCommand):
         if not self.successfull:
             self.stdout.write('Some errors raised during synchronization.')
             sys.exit(1)
+
+        sleep(2)  # end sleep to ensure sync page get result

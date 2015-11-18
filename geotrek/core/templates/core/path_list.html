@@ -1,0 +1,97 @@
+{% extends "mapentity/mapentity_list.html" %}
+{% load i18n mapentity_tags %}
+{% load static from staticfiles %}
+
+{% block extrahead %}
+
+    {% csrf_token %}
+    
+    <script type="text/javascript">
+    
+        $(function(){
+   	        $('#btn-merge').click(function() {
+                if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
+                    $('#btn-confirm').hide();
+                    $('#confirm-merge .modal-body h4').html("{% trans 'Select two paths to merge them' %}");
+                }
+                else {
+                	$('#confirm-merge .modal-body h4').html('{% trans "Are you sure you want to merge these paths ?" %}');
+                	$('#btn-confirm').show();
+                }
+            });
+   	        
+   	        $('#btn-confirm').click(function() {
+   	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
+   	         $('#btn-confirm').hide();
+   	        	
+   	        	$.post("{% url 'core:merge_path' %}",
+	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+	                
+	                function(response){
+	    		        $('#btn-confirm').show();
+	    				
+	                    if(response.error){
+	            	        $('#confirm-merge .modal-body h4').html(response.error);
+	            	        $('#btn-confirm').hide();
+	                    }
+	                    else {
+	           	            location.reload();
+	                    }
+	                }
+                ).fail(function() {
+                	$('#confirm-merge .modal-body h4').html('{% trans "Unknown error" %}');
+                	$('#btn-confirm').show();
+                });
+   	        });
+   	        
+        });
+        
+    </script>
+    
+{% endblock %}
+
+{% block mainactions %}
+
+    {{ block.super }}
+    
+    <div id="wait_lightbox" style="display: none;">
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: 100%;"></div>
+		</div>
+	</div>
+	
+	{% if perms.core.change_path %}
+	<div class="btn-group btn-danger">
+		<a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li>
+			    <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
+			        <i class="icon-pencil"></i> {% trans "Merge" %}</a>
+			</li>
+		</ul>
+	</div>
+	{% endif %}
+    
+	<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4>{% trans "Merge paths" %}</h4>
+	            </div>
+	            <div class="modal-body">
+	                <h4></h4>
+	            </div>
+	  			<div class="modal-footer">test
+		            <button type="button" class="btn btn-default" data-dismiss="modal">
+		                {% trans "Cancel" %}
+		            </button>
+		            <button type="button" id="btn-confirm" class="btn btn-success success">
+		                {% trans "Merge" %}
+		            </button>
+		        </div>
+	    	</div>
+		</div>
+	</div>
+    
+{% endblock mainactions %}
