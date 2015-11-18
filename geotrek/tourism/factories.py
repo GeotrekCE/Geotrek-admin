@@ -10,6 +10,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefi
 
 from . import models
 from geotrek.trekking.factories import TrekFactory
+from django.conf import settings
 
 
 class DataSourceFactory(factory.Factory):
@@ -106,7 +107,8 @@ class TrekWithTouristicEventFactory(TrekFactory):
         TouristicEventFactory.create(geom='POINT(700100 6600100)')
 
         if create:
-            trek.published_fr = True
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
             trek.save()
 
         return trek
@@ -122,7 +124,8 @@ class TrekWithTouristicContentFactory(TrekFactory):
                                        geom='POINT(700100 6600100)')
 
         if create:
-            trek.published_fr = True
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
             trek.save()
 
         return trek

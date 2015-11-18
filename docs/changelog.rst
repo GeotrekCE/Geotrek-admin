@@ -2,18 +2,27 @@
 CHANGELOG
 =========
 
-2.2.1.dev0
+2.3.1.dev0
 ------------------
 
 **New features**
 
-* Sync rando now exports only future events based on current date.
+* Add trek parents to API
+
+
+2.3.0 (2015-11-09)
+------------------
+
+**New features**
+
 * Sync rando now synchronizes touristic contents and events.
-* Sync rando now handles crashes when it calls django views.
+* Sync rando now exports only future events based on current date.
+* Sync rando now synchronizes touristic content categories.
 
 **Bug fixes**
 
 * Added a custom validation to accept url only contribution in flatpages without content.
+* Sync rando now handles crashes when it calls django views.
 
 
 2.2.0 (2015-10-09)

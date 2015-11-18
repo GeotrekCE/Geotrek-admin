@@ -441,7 +441,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
         self.trek = TrekFactory.create(
             name='Step 2',
-            #  parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
@@ -702,6 +701,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_children(self):
         self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])
+
+    def test_parents(self):
+        self.assertEqual(self.result['parents'], [self.parent.pk])
 
     def test_previous(self):
         self.assertDictEqual(self.result['previous'],

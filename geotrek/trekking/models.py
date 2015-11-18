@@ -250,6 +250,11 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return Trek.objects.filter(trek_children__child=self)
 
     @property
+    def parents_id(self):
+        parents = self.trek_parents.values_list('parent__id', flat=True)
+        return list(parents)
+
+    @property
     def children(self):
         return Trek.objects.filter(trek_parents__parent=self).order_by('trek_parents__order')
 

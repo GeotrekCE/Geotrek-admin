@@ -66,7 +66,7 @@ You can run several commands to export several sources combinations into several
 
 
 Synchronization filtered by touristic content categories
-----------------------------------
+--------------------------------------------------------
 
 You can include touristic content per trek. You must specify ID categories :
 
