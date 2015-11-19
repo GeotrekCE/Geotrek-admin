@@ -34,7 +34,8 @@ def launch_sync_rando(*args, **kwargs):
             settings.SYNC_RANDO_ROOT,
             url=kwargs.get('url'),
             verbosity='2',
-            task=current_task
+            task=current_task,
+            **settings.SYNC_RANDO_OPTIONS
         )
 
     except Exception:

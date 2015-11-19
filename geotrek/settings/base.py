@@ -576,3 +576,5 @@ TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
+
+SYNC_RANDO_OPTIONS = {}
