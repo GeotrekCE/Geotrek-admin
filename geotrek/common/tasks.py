@@ -20,7 +20,7 @@ class GeotrekImportTask(Task):
             'FAILURE',
             {
                 'exc_type': type(exc).__name__,
-                'exc_message': exc.message,
+                'exc_message': unicode(exc),
                 'filename': filename.split('/').pop(-1),
                 'parser': class_name,
                 'name': self.name
