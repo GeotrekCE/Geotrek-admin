@@ -199,6 +199,22 @@ class UserArgMixin(object):
         return kwargs
 
 
+def import_file(uploaded, parser):
+    destination_dir, destination_file = create_tmp_destination(uploaded.name)
+    with open(destination_file, 'w+') as f:
+        f.write(uploaded.file.read())
+        zfile = ZipFile(f)
+        for name in zfile.namelist():
+            try:
+                zfile.extract(
+                    name, os.path.dirname(os.path.realpath(f.name)))
+            except Exception:
+                raise
+
+            if name.endswith('shp'):
+                import_datas.delay('/'.join((destination_dir, name)), parser.__name__, parser.__module__)
+
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
@@ -223,26 +239,8 @@ def import_view(request):
 
             if form.is_valid():
                 uploaded = request.FILES['with-file-zipfile']
-
-                destination_dir, destination_file = create_tmp_destination(
-                    uploaded.name)
-
-                with open(destination_file, 'w+') as f:
-                    f.write(uploaded.file.read())
-                    zfile = ZipFile(f)
-                    for name in zfile.namelist():
-                        try:
-                            zfile.extract(
-                                name, os.path.dirname(os.path.realpath(f.name)))
-                            if name.endswith('shp'):
-                                parser = classes[int(form['parser'].value())]
-                                import_datas.delay(
-                                    '/'.join((destination_dir, name)),
-                                    parser.__name__, parser.__module__
-                                )
-                                continue
-                        except Exception:
-                            raise
+                parser = classes[int(form['parser'].value())]
+                import_file(uploaded, parser)
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
@@ -268,7 +266,7 @@ def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
     for task in TaskMeta.objects.filter(date_done__gte=threshold):
-        if hasattr(task, 'result') and 'name' in task.result and task.result.get('name', '').startswith('geotrek.common'):
+        if hasattr(task, 'result') and task.result.get('name', '').startswith('geotrek.common'):
             results.append(
                 {
                     'id': task.task_id,
