@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Condition field of infrastructures is no more required
 * Fix zipfile detection at import.
 * Fix error handling at import (raise exception to browser).
 
