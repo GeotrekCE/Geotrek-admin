@@ -21,9 +21,10 @@ function updateImportProgressBars() {
 				if(!element.querySelector('.alert').classList.contains('alert-success')) {					
 					// Add report if success.
 					if (row.result.report) {
-						element.querySelector('.alert').classList.add('alert-success');
-						element.querySelector('.alert').innerHTML = row.result.report;
-						element.querySelector('.alert').style.display = 'block';
+                        alert = element.querySelector('.alert');
+						alert.classList.add('alert-success');
+						alert.innerHTML = row.result.report;
+						alert.style.display = 'block';
 					}
 				}
 
@@ -33,19 +34,16 @@ function updateImportProgressBars() {
 				element.id = row.id;
 				element.querySelector('.bar').style.width = local_percent + ' : ';
 				element.querySelector('.pull-left').innerHTML = local_percent;
-				
-				if(row.status !== 'FAILURE'){
-					element.querySelector('.parser').innerHTML = row.result.parser;
-					element.querySelector('.filename').innerHTML = row.result.filename;
-				}
-				
+				element.querySelector('.parser').innerHTML = row.result.parser;
+                element.querySelector('.filename').innerHTML = row.result.filename;
+
 				parent.appendChild(element);
 			}
 
 			// Handle errors if any.
 			if (row.result.exc_message) {
 				element.querySelector('.alert').classList.add('alert-error');
-				element.querySelector('.alert span').innerHTML = "Error message : " + row.result.exc_message;
+				element.querySelector('.alert span').innerHTML = row.result.exc_type + " : " + row.result.exc_message;
 				element.querySelector('.alert').style.display = 'block';
 			}
 

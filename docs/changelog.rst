@@ -2,10 +2,14 @@
 CHANGELOG
 =========
 
-2.4.1.dev0
+2.4.1 (2015-11-25)
 ------------------
 
-*
+**Bug fixes**
+
+* Condition field of infrastructures is no more required
+* Fix zipfile detection at import.
+* Fix error handling at import (raise exception to browser).
 
 
 2.4.0 (2015-11-18)
