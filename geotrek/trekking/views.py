@@ -384,7 +384,7 @@ class TrekViewSet(MapEntityViewSet):
         qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
                .order_by('pk').distinct('pk')
         if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'])
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 

@@ -10,7 +10,7 @@ from geotrek.tourism import views as tourism_views
 from geotrek.trekking.management.commands.sync_rando import Command as BaseCommand
 
 # Register mapentity models
-from geotrek.trekking import urls  # NOQA
+from geotrek.tourism import urls  # NOQA
 
 
 class Command(BaseCommand):
