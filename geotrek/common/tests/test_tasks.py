@@ -26,7 +26,7 @@ class TasksTest(TestCase):
 
     def test_import_return(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
-        task = import_datas.delay(filename, 'AttachmentParser', 'geotrek.common.tests.test_parsers')
+        task = import_datas.delay('AttachmentParser', filename, 'geotrek.common.tests.test_parsers')
 
         self.assertEqual(task.status, 'SUCCESS')
         self.assertEqual(task.result['parser'], 'AttachmentParser')

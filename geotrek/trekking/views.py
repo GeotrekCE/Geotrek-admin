@@ -30,6 +30,7 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
+from geotrek.celery import app as celery_app
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
@@ -552,13 +553,31 @@ def sync_update_json(request):
     get info from sync_rando celery_task
     """
     results = []
-    threshold = datetime.now() - timedelta(seconds=3600)
-
-    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+    threshold = datetime.now() - timedelta(seconds=60)
+    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='PROGRESS'):
         if (hasattr(task, 'result') and
                 'name' in task.result and
-                task.result.get('name', '').startswith('geotrek.trekking.sync-rando') and
-                task.status == 'PROGRESS') or task.status == 'FAILURE':
+                task.result.get('name', '').startswith('geotrek.trekking')):
+            results.append({
+                'id': task.task_id,
+                'result': task.result or {'current': 0,
+                                          'total': 0},
+                'status': task.status
+            })
+    i = celery_app.control.inspect([u'celery@geotrek'])
+    for task in reversed(i.reserved()[u'celery@geotrek']):
+        if task['name'].startswith('geotrek.trekking'):
+            results.append(
+                {
+                    'id': task['id'],
+                    'result': {'current': 0, 'total': 0},
+                    'status': 'PENDING',
+                }
+            )
+    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
+        if (hasattr(task, 'result') and
+                'name' in task.result and
+                task.result.get('name', '').startswith('geotrek.trekking')):
             results.append({
                 'id': task.task_id,
                 'result': task.result or {'current': 0,

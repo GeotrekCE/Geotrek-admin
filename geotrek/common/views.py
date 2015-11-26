@@ -7,15 +7,18 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
 from mapentity.settings import app_settings
 
+from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
 # async data imports
+import ast
 import os
 import json
 from zipfile import ZipFile
@@ -212,7 +215,7 @@ def import_file(uploaded, parser):
                 raise
 
             if name.endswith('shp'):
-                import_datas.delay('/'.join((destination_dir, name)), parser.__name__, parser.__module__)
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__)
 
 
 @login_required
@@ -265,13 +268,33 @@ def import_view(request):
 def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold):
+    for task in TaskMeta.objects.filter(date_done__gte=threshold).order_by('date_done'):
         if hasattr(task, 'result') and task.result.get('name', '').startswith('geotrek.common'):
             results.append(
                 {
                     'id': task.task_id,
                     'result': task.result or {'current': 0, 'total': 0},
                     'status': task.status
+                }
+            )
+    i = celery_app.control.inspect([u'celery@geotrek'])
+    for task in reversed(i.reserved()[u'celery@geotrek']):
+        if task['name'].startswith('geotrek.common'):
+            args = ast.literal_eval(task['args'])
+            if task['name'].endswith('import-file'):
+                filename = os.path.basename(args[1])
+            else:
+                filename = _("Import from web.")
+            results.append(
+                {
+                    'id': task['id'],
+                    'result': {
+                        'parser': args[0],
+                        'filename': filename,
+                        'current': 0,
+                        'total': 0
+                    },
+                    'status': 'PENDING',
                 }
             )
 
