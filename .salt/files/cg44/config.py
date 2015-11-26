@@ -54,3 +54,6 @@ Bien cordialement,
 Département de Loire-Atlantique
 http://rando.loire-atlantique.fr
 http://www.loire-atlantique.fr"""
+
+SYNC_RANDO_ROOT = '/srv/projects/rando/data/www/data'
+SYNC_RANDO_OPTIONS = {'skip_dem': True}
