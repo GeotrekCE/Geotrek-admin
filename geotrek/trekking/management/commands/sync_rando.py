@@ -31,6 +31,9 @@ from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet)
 
+# Register mapentity models
+from geotrek.trekking import urls  # NOQA
+
 
 logger = logging.getLogger(__name__)
 
