@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix permissions of sync rando output directory
+* Fix filtering by source in sync_rando
 
 
 2.4.1 (2015-11-25)
