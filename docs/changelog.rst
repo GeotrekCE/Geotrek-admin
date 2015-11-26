@@ -5,7 +5,9 @@ CHANGELOG
 2.4.2.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix permissions of sync rando output directory
 
 
 2.4.1 (2015-11-25)
