@@ -2,9 +2,12 @@
 CHANGELOG
 =========
 
-2.4.3.dev0
+2.4.3 (2015-11-27)
 ------------------
 
+**Bug fixes**
+
+* Show pending import/sync tasks
 * Fix filtering by source in sync_rando for flatpages and tiles too
 
 
