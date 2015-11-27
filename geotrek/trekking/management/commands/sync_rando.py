@@ -405,7 +405,11 @@ class Command(BaseCommand):
                     }
                 )
 
-            for trek in trekking_models.Trek.objects.existing().order_by('pk'):
+            treks = trekking_models.Trek.objects.existing().order_by('pk')
+            if self.source:
+                treks = treks.filter(source__name__in=self.source)
+
+            for trek in treks:
                 if trek.any_published:
                     self.sync_trek_tiles(trek)
 
