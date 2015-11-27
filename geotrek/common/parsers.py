@@ -384,8 +384,10 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
+    encoding = 'utf-8'
+
     def next_row(self):
-        datasource = DataSource(self.filename)
+        datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]
         self.nb = len(layer)
         for i, feature in enumerate(layer):
