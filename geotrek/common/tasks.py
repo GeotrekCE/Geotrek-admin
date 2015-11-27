@@ -29,7 +29,7 @@ class GeotrekImportTask(Task):
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
-def import_datas(filename, class_name, module_name="bulkimport.parsers"):
+def import_datas(class_name, filename, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
