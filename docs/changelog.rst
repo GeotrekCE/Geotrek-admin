@@ -5,7 +5,7 @@ CHANGELOG
 2.4.4.dev0
 ------------------
 
-*
+* Show pending import/sync tasks
 
 
 2.4.3 (2015-11-27)
@@ -13,7 +13,6 @@ CHANGELOG
 
 **Bug fixes**
 
-* Show pending import/sync tasks
 * Fix filtering by source in sync_rando for flatpages and tiles too
 
 
