@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+import redis
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -565,7 +566,12 @@ def sync_update_json(request):
                 'status': task.status
             })
     i = celery_app.control.inspect([u'celery@geotrek'])
-    for task in reversed(i.reserved()[u'celery@geotrek']):
+    try:
+        reserved = i.reserved()
+    except redis.exceptions.ConnectionError:
+        reserved = None
+    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    for task in tasks:
         if task['name'].startswith('geotrek.trekking'):
             results.append(
                 {

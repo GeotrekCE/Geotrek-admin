@@ -21,6 +21,7 @@ from geotrek import __version__
 import ast
 import os
 import json
+import redis
 from zipfile import ZipFile
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
@@ -278,7 +279,12 @@ def import_update_json(request):
                 }
             )
     i = celery_app.control.inspect([u'celery@geotrek'])
-    for task in reversed(i.reserved()[u'celery@geotrek']):
+    try:
+        reserved = i.reserved()
+    except redis.exceptions.ConnectionError:
+        reserved = None
+    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    for task in tasks:
         if task['name'].startswith('geotrek.common'):
             args = ast.literal_eval(task['args'])
             if task['name'].endswith('import-file'):
