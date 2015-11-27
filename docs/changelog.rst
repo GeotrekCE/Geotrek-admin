@@ -5,7 +5,7 @@ CHANGELOG
 2.4.3.dev0
 ------------------
 
-* Fix filtering by source in sync_rando for flatpages too
+* Fix filtering by source in sync_rando for flatpages and tiles too
 
 
 2.4.2 (2015-11-26)
