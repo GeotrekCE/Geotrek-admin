@@ -445,6 +445,10 @@ LEAFLET_CONFIG = {
     }
 }
 
+# define forced layers when map center in polygon
+# [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4)]),]
+FORCES_LAYERS = []
+
 """ This *pool* of colors is used to colorized lands records.
 """
 COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],

@@ -26,7 +26,7 @@ from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from geotrek.core import graph as graph_lib
 from django.http.response import HttpResponse
-from geojson import Polygon
+from geojson import Polygon, FeatureCollection
 
 
 logger = logging.getLogger(__name__)
@@ -237,12 +237,18 @@ class TrailDelete(MapEntityDelete):
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
-
+    
 
 @login_required
-def get_bound_force_osm(request):
-    polygon_array = Polygon(getattr(settings,
-                                    'FORCE_OSMBASELAYER_BOUNDINGBOX',
-                                    []))
-    return HttpResponse([polygon_array],
+def get_forced_layers(request):
+    response = []
+    for forced_layer in getattr(settings,
+                                'FORCES_LAYERS',
+                                []):
+        if forced_layer[0] in [layer[0] for layer in settings.LEAFLET_CONFIG['TILES']]:
+            response.append(
+                Polygon([forced_layer[1]], layer=[layer[1] for layer in settings.LEAFLET_CONFIG['TILES'] if layer[0] == forced_layer[0]][0])
+            )
+    return HttpResponse(json.dumps(response),
                         mimetype="application/json")
+

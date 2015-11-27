@@ -5,13 +5,13 @@ from mapentity import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.core.models import Path, Trail
-from geotrek.core.views import get_graph_json, get_bound_force_osm
+from geotrek.core.views import get_graph_json, get_forced_layers
 
 
 urlpatterns = patterns(
     '',
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
-    url(r'^force_osm_baselayer_bound.json$', get_bound_force_osm, name="force_osm_baselayer_bound"),
+    url(r'^force_layers.json$', get_forced_layers, name="force_layers"),
 )
 
 
