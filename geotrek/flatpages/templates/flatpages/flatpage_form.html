@@ -58,18 +58,94 @@
     <script type="text/javascript">
         (function () {
             $('select[multiple]').width('100%').chosen();
+
             $('#button-id-cancel').click(function() {
                   window.history.go(-1);
             });
+
+            tpl1 = "{% trans "Template 1" %}";
+            tpl2 = "{% trans "Template 2" %}";
+
             $('input[id^=id_content_]').each(function() {
                 var id = 'grid_' + $(this).attr('id');
                 $(this).hide();
                 $(this).parent().append('<div id="' +  id + '"></div>');
                 $('#' + id).html($(this).val());
+
+                controlButtons = [[12], [6,6], [4,4,4], [3,3,3,3], [2,2,2,2,2,2], [2,8,2], [4,8], [8,4]];
+
+                controlButtons.push([tpl1]);
+                controlButtons.push([tpl2]);
+
                 $('#' + id).gridmanager({
-                    debug: 1,
+                    "controlButtons": controlButtons,
                 });
             });
+
+            defaultTextContent = '<b><p>{% trans "Insert Text Here." %}</p></b>';
+            defaultImageContent = '' +
+                                    '<img src="{% static "images/logo-login.png" %}" />' +
+                             '<div>{% trans "Legend, ©, firstname and author name." %}</div>';
+
+            $(".add-" + tpl1.replace(" ", ".")).on('click', function (event) {
+                var gm = $('#'+$(this).parents()[4].id).data('gridmanager');
+                var canvas=gm.$el.find("#" + gm.options.canvasId);
+                var row = '';
+
+                [[8, 4], [8, 4], [8, 4], [8, 4], [8, 4]].forEach(function(ar){
+                    //This creates the row.
+                    row = gm.createRow(ar);
+                    first = true;
+
+                    $.each($(row).children(), function(){
+
+                        //This adds the RTE to the columns for the current row.
+                        gm.addEditableAreaClick(this, null);
+                        content = this.getElementsByClassName('gm-content')[0];
+
+                        if(first){
+                            content.innerHTML = defaultTextContent;
+                            first = false;
+                        }else{ // Special case, the second one is an image.
+                            content.innerHTML = defaultImageContent;
+                        }
+
+                    });
+                    // And we add the generated row to the content.
+                    canvas.prepend(row);
+                });
+
+                //This is need to get the full UI of the grid attached to the generated DOM elements.
+                gm.reset()
+                event.preventDefault();
+            });
+
+
+            $(".add-" + tpl2.replace(" ", ".")).on('click', function (event) {
+                var gm = $('#'+$(this).parents()[4].id).data('gridmanager');
+                var canvas=gm.$el.find("#" + gm.options.canvasId);
+                [[12, ], [3, 3, 3, 3], [12, ], [3, 3, 3, 3], [12, ]].forEach(function(ar, index){
+                    row = gm.createRow(ar);
+
+                    $.each($(row).children(), function(){
+
+                        gm.addEditableAreaClick(this, null);
+                        content = this.getElementsByClassName('gm-content')[0];
+
+                        if(index % 2){
+                            content.innerHTML = defaultImageContent;
+                        }else {
+                            content.innerHTML = defaultTextContent;
+                        }
+
+                    });
+                    canvas.prepend(row);
+                });
+
+                gm.reset();
+                event.preventDefault();
+            });
+
             $("#save_changes").removeAttr("onclick");
             $('#save_changes').click(function() {
                 $('input[id^=id_content_]').each(function() {
