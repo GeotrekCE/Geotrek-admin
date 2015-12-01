@@ -132,3 +132,15 @@ if _others_color:
 _EXPERIMENTAL_MODE = TEST or envini.getbool('experimental', 'False')
 FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True
+
+ORPHANED_APPS_MEDIABASE_DIRS = {
+    'app': {
+        'root': MEDIA_ROOT,
+        'skip': (
+            os.path.join(MEDIA_ROOT, 'convertit'),
+            os.path.join(MEDIA_ROOT, 'maps'),
+            os.path.join(MEDIA_ROOT, 'profiles'),
+            os.path.join(MEDIA_ROOT, 'upload'),
+        ),
+    }
+}
