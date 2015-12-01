@@ -6,14 +6,14 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'FlatPage.weight'
-        db.add_column('p_t_page', 'weight',
+        # Adding field 'FlatPage.order'
+        db.add_column('p_t_page', 'order',
                       self.gf('django.db.models.fields.FloatField')(default=1.0, null=True, blank=True),
                       keep_default=False)
 
     def backwards(self, orm):
-        # Deleting field 'FlatPage.weight'
-        db.delete_column('p_t_page', 'weight')
+        # Deleting field 'FlatPage.order'
+        db.delete_column('p_t_page', 'order')
 
     models = {
         u'authent.structure': {
@@ -30,7 +30,7 @@ class Migration(SchemaMigration):
             'website': ('django.db.models.fields.URLField', [], {'max_length': '256', 'null': 'True', 'db_column': "'website'", 'blank': 'True'})
         },
         u'flatpages.flatpage': {
-            'Meta': {'ordering': "['weight', 'id']", 'object_name': 'FlatPage', 'db_table': "'p_t_page'"},
+            'Meta': {'ordering': "['order', 'id']", 'object_name': 'FlatPage', 'db_table': "'p_t_page'"},
             'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'contenu'", 'blank': 'True'}),
             'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
@@ -40,7 +40,7 @@ class Migration(SchemaMigration):
             'source': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'flatpages'", 'to': u"orm['common.RecordSource']", 'db_table': "'t_r_page_source'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
             'target': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '12', 'db_column': "'cible'"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_column': "'titre'"}),
-            'weight': ('django.db.models.fields.FloatField', [], {'default': '1.0', 'null': 'True', 'blank': 'True'})
+            'order': ('django.db.models.fields.FloatField', [], {'default': '1.0', 'null': 'True', 'blank': 'True'})
         }
     }
 

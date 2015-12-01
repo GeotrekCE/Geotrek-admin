@@ -41,7 +41,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     source = models.ManyToManyField('common.RecordSource',
                                     null=True, blank=True, related_name='flatpages',
                                     verbose_name=_("Source"), db_table='t_r_page_source')
-    weight = models.FloatField(default=1.0, null=True, blank=True)
+    order = models.FloatField(default=1.0, null=True, blank=True)
 
     @property
     def slug(self):
@@ -51,7 +51,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         db_table = 'p_t_page'
         verbose_name = _(u'Flat page')
         verbose_name_plural = _(u'Flat pages')
-        ordering = ['weight', 'id']
+        ordering = ['order', 'id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
