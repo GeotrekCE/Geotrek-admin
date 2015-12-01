@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2015-12-01 13:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,4 +57,16 @@ msgid "Flat pages"
 msgstr ""
 
 msgid "Choose between external URL and HTML content"
+msgstr ""
+
+msgid "Template 1"
+msgstr ""
+
+msgid "Template 2"
+msgstr ""
+
+msgid "Insert Text Here."
+msgstr ""
+
+msgid "Legend, ©, firstname and author name."
 msgstr ""
