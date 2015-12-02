@@ -8,7 +8,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'FlatPage.order'
         db.add_column('p_t_page', 'order',
-                      self.gf('django.db.models.fields.FloatField')(default=1.0, null=True, blank=True),
+                      self.gf('django.db.models.fields.IntegerField')(default=1.0, null=True, blank=True),
                       keep_default=False)
 
     def backwards(self, orm):
@@ -40,7 +40,7 @@ class Migration(SchemaMigration):
             'source': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'flatpages'", 'to': u"orm['common.RecordSource']", 'db_table': "'t_r_page_source'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
             'target': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '12', 'db_column': "'cible'"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_column': "'titre'"}),
-            'order': ('django.db.models.fields.FloatField', [], {'default': '1.0', 'null': 'True', 'blank': 'True'})
+            'order': ('django.db.models.fields.IntegerField', [], {'default': '1.0', 'null': 'True', 'blank': 'True'})
         }
     }
 

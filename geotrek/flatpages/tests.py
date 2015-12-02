@@ -11,6 +11,7 @@ from geotrek.common.factories import RecordSourceFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.authent.factories import UserProfileFactory
 from geotrek.flatpages.forms import FlatPageForm
+from geotrek.flatpages.models import FlatPage
 
 
 class FlatPageFormTest(TestCase):
@@ -81,6 +82,22 @@ class FlatPageModelTest(TestCase):
         fp = FlatPageFactory(external_url=None,
                              content="<p></p>")
         fp.clean()
+
+    def test_retrieve_by_order(self):
+        try:
+            fp = FlatPageFactory.create_batch(5)
+            for index, flatpage in enumerate(FlatPage.objects.all()):
+                self.assertGreaterEqual(flatpage.order, int(fp[index].order))
+        finally:
+            (f.clean() for f in fp)
+
+    def test_retrieve_by_id_if_order_is_the_same(self):
+        try:
+            fp = FlatPageFactory.create_batch(5, order=0)
+            for index, flatpage in enumerate(FlatPage.objects.all()):
+                self.assertGreaterEqual(flatpage.id, fp[index].id)
+        finally:
+            (f.clean() for f in fp)
 
 
 class FlatPageMediaTest(TestCase):
