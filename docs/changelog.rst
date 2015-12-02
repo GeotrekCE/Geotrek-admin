@@ -2,12 +2,20 @@
 CHANGELOG
 =========
 
-2.4.3 (2015-11-27)
+2.4.4 (2015-12-02)
 ------------------
 
 **Bug fixes**
 
 * Show pending import/sync tasks
+* Add a command to clean orphaned attached media
+
+
+2.4.3 (2015-11-27)
+------------------
+
+**Bug fixes**
+
 * Fix filtering by source in sync_rando for flatpages and tiles too
 
 
