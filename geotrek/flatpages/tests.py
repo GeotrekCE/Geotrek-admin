@@ -87,17 +87,23 @@ class FlatPageModelTest(TestCase):
         try:
             fp = FlatPageFactory.create_batch(5)
             for index, flatpage in enumerate(FlatPage.objects.all()):
-                self.assertGreaterEqual(flatpage.order, int(fp[index].order))
+                if index == 0:
+                    continue
+                self.assertGreater(flatpage.order, int(fp[index - 1].order))
         finally:
-            (f.clean() for f in fp)
+            for f in fp:
+                f.clean()
 
     def test_retrieve_by_id_if_order_is_the_same(self):
         try:
             fp = FlatPageFactory.create_batch(5, order=0)
             for index, flatpage in enumerate(FlatPage.objects.all()):
-                self.assertGreaterEqual(flatpage.id, fp[index].id)
+                if index == 0:
+                    continue
+                self.assertGreater(flatpage.id, fp[index - 1].id)
         finally:
-            (f.clean() for f in fp)
+            for f in fp:
+                f.clean()
 
 
 class FlatPageMediaTest(TestCase):
