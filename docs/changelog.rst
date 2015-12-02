@@ -5,6 +5,8 @@ CHANGELOG
 2.4.4 (2015-12-02)
 ------------------
 
+**Bug fixes**
+
 * Show pending import/sync tasks
 
 
