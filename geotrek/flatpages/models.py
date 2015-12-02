@@ -41,7 +41,13 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     source = models.ManyToManyField('common.RecordSource',
                                     null=True, blank=True, related_name='flatpages',
                                     verbose_name=_("Source"), db_table='t_r_page_source')
-    order = models.FloatField(default=1.0, null=True, blank=True)
+    order = models.FloatField(default=1.0,
+                              null=True,
+                              blank=True,
+                              help_text=_(u"Alphabetical order if blank"),
+                              verbose_name=_(u"Order"),
+                              db_column='tri',
+                              )
 
     @property
     def slug(self):
