@@ -82,10 +82,10 @@
                 });
             });
 
-            defaultTextContent = '<b><p>{% trans "Insert Text Here." %}</p></b>';
-            defaultImageContent = '' +
-                                    '<img src="{% static "images/logo-login.png" %}" />' +
-                             '<div>{% trans "Legend, ©, firstname and author name." %}</div>';
+            defaultTextContent = "<b><p>{% trans "Insert Text Here." %}</p></b>";
+            defaultImageContent = "" +
+                                    "<img src="{% static "images/logo-login.png" %}" />" +
+                             "<div>{% trans "Legend, ©, firstname and author name." %}</div>";
 
             $(".add-" + tpl1.replace(" ", ".")).on('click', function (event) {
                 var gm = $('#'+$(this).parents()[4].id).data('gridmanager');
