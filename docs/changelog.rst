@@ -5,10 +5,7 @@ CHANGELOG
 2.4.4 (2015-12-02)
 ------------------
 
-**Bug fixes**
-
 * Show pending import/sync tasks
-* Add a command to clean orphaned attached media
 
 
 2.4.3 (2015-11-27)

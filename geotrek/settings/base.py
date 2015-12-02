@@ -256,7 +256,6 @@ PROJECT_APPS += (
     'rest_framework',
     'embed_video',
     'djcelery',
-    'django_orphaned',
 )
 
 

@@ -78,18 +78,6 @@ Extract media and configuration files :
 Re-run ``./install.sh``.
 
 
-Cleanup
--------
-
-When an attachment is deleted the attached file is not deleted from disk. From time to time you can run these commands
-to list and clean these files :
-
-.. code-block:: bash
-
-./bin/django deleteorphaned --info
-./bin/django deleteorphaned
-
-
 PostgreSQL optimization
 -----------------------
 

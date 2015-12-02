@@ -36,7 +36,6 @@ setup(
         'landez',
         'django-celery',
         'redis',
-        'django-orphaned-updated',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
