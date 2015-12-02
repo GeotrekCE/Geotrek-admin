@@ -5,7 +5,9 @@ CHANGELOG
 2.4.5.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Generate tiles zip files for all children of published treks
 
 
 2.4.4 (2015-12-02)
