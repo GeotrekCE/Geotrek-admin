@@ -6,7 +6,7 @@ CHANGELOG
 ------------------
 
 * Show pending import/sync tasks
-
+* Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
 
 2.4.3 (2015-11-27)
 ------------------
