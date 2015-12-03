@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-07 14:30+0200\n"
+"POT-Creation-Date: 2015-12-03 13:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,6 +46,15 @@ msgstr "Contenu HTML"
 
 msgid "Target"
 msgstr "Cible"
+
+msgid "Source"
+msgstr ""
+
+msgid "ID order if blank"
+msgstr "Ordonné par ID si nul ou équivalent"
+
+msgid "Order"
+msgstr ""
 
 msgid "Flat page"
 msgstr "Page statique"
