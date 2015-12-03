@@ -69,4 +69,4 @@ msgid "Insert Text Here."
 msgstr "Ajoutez du texte ici."
 
 msgid "Legend, ©, firstname and author name."
-msgstr "Légende, ©, prénom et nom de l'auteur."
+msgstr "Légende, ©, prénom et nom de l\\'auteur."
