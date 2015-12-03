@@ -6,7 +6,9 @@ CHANGELOG
 ------------------
 
 * Show pending import/sync tasks
-
+* Added 2 templates buttons for flatpages creating two layouts :
+    - 8-4 | 8-4 | 8-4 | 8-4 | 8-4
+    - 12 | 3-3-3-3 | 12 | 3-3-3-3 | 12
 
 2.4.3 (2015-11-27)
 ------------------
