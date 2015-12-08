@@ -316,8 +316,8 @@ header .url .geo {
 .pois-summary .poi {
   display: inline-block;
   width: 48%;
-  vertical-align: top;
   padding-right: .5cm;
+  vertical-align: top;
 }
 
 .pois-summary .icon img {
@@ -326,10 +326,10 @@ header .url .geo {
 }
 
 .pois-details .poi {
-  border-top: 1px solid #888;
-  padding-top: .5cm;
   margin-top: .5cm;
   margin-bottom: .5cm;
+  padding-top: .5cm;
+  border-top: 1px solid #888;
 }
 
 .pois-details .icon img {
@@ -345,7 +345,6 @@ header .url .geo {
 .pois-details .poi > .content {
   display: inline-block;
   vertical-align: top;
-  outline: 1px solid red;
 }
 
 .pois-details .thumbnail {
@@ -358,4 +357,17 @@ header .url .geo {
 
 .pois-details .poi > .content.with-pic {
   width: 75%;
+}
+
+.advice-icon,
+.information-desks-icon {
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
+.advice-icon img,
+.information-desks-icon img {
+  display: block;
+  max-width: .75cm;
+  max-height: .75cm;
 }

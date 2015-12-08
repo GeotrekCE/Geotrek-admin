@@ -136,7 +136,12 @@
 
 		{% if object.advice %}
 		<div class="advice">
-			<div class="advice-title">{% trans "Advices" %}</div>
+			<div class="advice-title">
+				<div class="advice-icon">
+					<img src="{{ MEDIA_URL|add:'upload/advice.svg' }}">
+				</div>
+				{% trans "Advices" %}
+			</div>
 			<div class="advice-content">{{ object.advice | safe }}</div>
 		</div>
 		{% endif %}
@@ -189,7 +194,12 @@
 			{% block informationDesks %}
 				{% if  object.information_desks.all %}
 					<section class="information-desks">
-						<h2>{% trans "Information desks" %}</h2>
+						<h2>
+							<div class="information-desks-icon">
+								<img src="{{ MEDIA_URL|add:'upload/information.svg' }}">
+							</div>
+							{% trans "Information desks" %}
+						</h2>
 						<div class="text-content intro">
 							Les différents relais d'information renseignent sur le patrimoine naturel et culturel, sur la réglementation qui s’applique en zone cœur, sur les activités et missions de l’établissement public. Ces acteurs du tourisme sont aussi fortement impliqués dans la promotion du Festival nature et des écomusées.
 						</div>
