@@ -6,7 +6,7 @@ from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate
 
 
 class FlatPagesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'published', 'publication_date', 'target')
+    list_display = ('title', 'published', 'publication_date', 'order', 'target')
     search_fields = ('title', 'content')
 
     def add_view(self, request, form_url='', extra_context=None):
