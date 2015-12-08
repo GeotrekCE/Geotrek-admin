@@ -64,3 +64,15 @@ msgstr ""
 
 msgid "Choose between external URL and HTML content"
 msgstr ""
+
+msgid "Template 1"
+msgstr ""
+
+msgid "Template 2"
+msgstr ""
+
+msgid "Insert Text Here."
+msgstr ""
+
+msgid "Legend, ©, firstname and author name."
+msgstr ""
