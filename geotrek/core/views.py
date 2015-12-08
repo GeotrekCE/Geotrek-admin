@@ -26,7 +26,7 @@ from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from geotrek.core import graph as graph_lib
 from django.http.response import HttpResponse
-from geojson import Polygon, FeatureCollection
+from geojson import Polygon
 
 
 logger = logging.getLogger(__name__)

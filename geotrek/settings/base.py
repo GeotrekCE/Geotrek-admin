@@ -544,10 +544,10 @@ TREK_ICON_SIZE_PARKING = 18
 TREK_ICON_SIZE_INFORMATION_DESK = 18
 
 # Static offsets in projection units
-TOPOLOGY_STATIC_OFFSETS = {'land':-5,
+TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'physical': 0,
                            'competence': 5,
-                           'signagemanagement':-10,
+                           'signagemanagement': -10,
                            'workmanagement': 10}
 
 
