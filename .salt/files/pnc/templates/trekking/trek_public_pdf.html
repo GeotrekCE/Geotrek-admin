@@ -21,7 +21,7 @@
 
 		<header>
 			<div class="logo">
-				<img src="http://dummyimage.com/600x400/ff8400/fff.png" alt="">
+				<img src="{{ MEDIA_URL|add:'upload/logo.png' }}" alt="">
 			</div>
 
 			<div class="url">
@@ -31,9 +31,11 @@
 		</header>
 
 		<div class="gray">
-			<div class="main-icon">
-				<img src="http://dummyimage.com/50x50/ff0084/fff.png" alt="">
+			{% if object.approved %}
+			<div class="trademark">
+				<img src="{{ MEDIA_URL|add:'upload/trademark.svg' }}" alt="">
 			</div>
+			{% endif %}
 
 			<div class="main-title">
 				<h1>{{ object.name }}</h1>
