@@ -130,6 +130,30 @@
 		</div>
 
 		<div class="inner-title">
+			<div>{{ object.name }}</div>
+			<h2>{% trans "On your path..." %}</h2>
+		</div>
+
+		{% block poisSummary %}
+			<section class="pois-summary">
+				{% if object.published_pois.all %}
+					{% for poi in object.published_pois.all %}
+						<div class="poi">
+								{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}
+								{{ enumeration.poi.pk }}
+								{{ poi.name }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+		{% endblock poisSummary %}
+
+
+		<div class="full-map">
+			<img src="{{ map_url }}" alt="">
+		</div>
+
+		<div class="inner-title">
 			<div class="doc-title">{{ object.name }}</div>
 			<h2>{% trans "Usefull informations" %}</h2>
 		</div>
@@ -223,29 +247,6 @@
 				{% endif %}
 			{% endblock informationDesks %}
 
-		</div>
-
-		<div class="inner-title">
-			<div>{{ object.name }}</div>
-			<h2>{% trans "On your path..." %}</h2>
-		</div>
-
-		{% block poisSummary %}
-			<section class="pois-summary">
-				{% if object.published_pois.all %}
-					{% for poi in object.published_pois.all %}
-						<div class="poi">
-								{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}
-								{{ enumeration.poi.pk }}
-								{{ poi.name }}
-						</div>
-					{% endfor %}
-				{% endif %}
-			</section>
-		{% endblock poisSummary %}
-
-		<div class="full-map">
-			<img src="{{ map_url }}" alt="">
 		</div>
 
 		{% block poisDetails %}
