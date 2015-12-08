@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
+* Added 2 templates buttons for flatpages creating two layouts
 
 **Bug fixes**
 
@@ -20,9 +21,6 @@ CHANGELOG
 **Bug fixes**
 
 * Show pending import/sync tasks
-* Added 2 templates buttons for flatpages creating two layouts :
-    - 8-4 | 8-4 | 8-4 | 8-4 | 8-4
-    - 12 | 3-3-3-3 | 12 | 3-3-3-3 | 12
 
 2.4.3 (2015-11-27)
 ------------------
