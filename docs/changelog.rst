@@ -2,12 +2,65 @@
 CHANGELOG
 =========
 
-2.3.1.dev0
+2.4.5.dev0
+------------------
+
+**Bug fixes**
+
+* Generate tiles zip files for all children of published treks
+
+
+2.4.4 (2015-12-02)
+------------------
+
+**Bug fixes**
+
+* Show pending import/sync tasks
+
+
+2.4.3 (2015-11-27)
+------------------
+
+**Bug fixes**
+
+* Fix filtering by source in sync_rando for flatpages and tiles too
+
+
+2.4.2 (2015-11-26)
+------------------
+
+**Bug fixes**
+
+* Fix permissions of sync rando output directory
+* Fix filtering by source in sync_rando
+
+
+2.4.1 (2015-11-25)
+------------------
+
+**Bug fixes**
+
+* Condition field of infrastructures is no more required
+* Fix zipfile detection at import.
+* Fix error handling at import (raise exception to browser).
+
+
+2.4.0 (2015-11-18)
 ------------------
 
 **New features**
 
+* Paths can be merged
 * Add trek parents to API
+* Allow to sync public web site from web interface
+* Add begin and end dates to touristic events list
+* Filter conmpleted touristic events by default
+
+**Bug fixes**
+
+* Prevent concurrent imports and/or synchronization
+* Fix rendering of HTML markup in weasyprint templates
+* Fix missing publication field in some cases
 
 
 2.3.0 (2015-11-09)

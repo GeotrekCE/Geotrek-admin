@@ -7,24 +7,7 @@ from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
 from geotrek.trekking.models import Trek
 
 
-class TrekParser(AttachmentParserMixin, ShapeParser):
-    model = Trek
-    simplify_tolerance = 2
-    eid = 'name'
-    constant_fields = {
-        'published': True,
-        'is_park_centered': False,
-        'deleted': False,
-    }
-    natural_keys = {
-        'difficulty': 'difficulty',
-        'route': 'route',
-        'themes': 'label',
-        'practice': 'name',
-        'accessibilities': 'name',
-        'networks': 'network',
-    }
-
+class DurationParserMixin(object):
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
         try:
@@ -43,6 +26,25 @@ class TrekParser(AttachmentParserMixin, ShapeParser):
         except (TypeError, ValueError):
             self.add_warning(_(u"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
+
+
+class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
+    model = Trek
+    simplify_tolerance = 2
+    eid = 'name'
+    constant_fields = {
+        'published': True,
+        'is_park_centered': False,
+        'deleted': False,
+    }
+    natural_keys = {
+        'difficulty': 'difficulty',
+        'route': 'route',
+        'themes': 'label',
+        'practice': 'name',
+        'accessibilities': 'name',
+        'networks': 'network',
+    }
 
     def filter_geom(self, src, val):
         if val is None:

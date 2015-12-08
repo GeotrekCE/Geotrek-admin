@@ -7,17 +7,21 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
 from mapentity.settings import app_settings
 
+from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
 # async data imports
+import ast
 import os
 import json
+import redis
 from zipfile import ZipFile
 from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
@@ -199,6 +203,22 @@ class UserArgMixin(object):
         return kwargs
 
 
+def import_file(uploaded, parser):
+    destination_dir, destination_file = create_tmp_destination(uploaded.name)
+    with open(destination_file, 'w+') as f:
+        f.write(uploaded.file.read())
+        zfile = ZipFile(f)
+        for name in zfile.namelist():
+            try:
+                zfile.extract(
+                    name, os.path.dirname(os.path.realpath(f.name)))
+            except Exception:
+                raise
+
+            if name.endswith('shp'):
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__)
+
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
@@ -223,26 +243,8 @@ def import_view(request):
 
             if form.is_valid():
                 uploaded = request.FILES['with-file-zipfile']
-
-                destination_dir, destination_file = create_tmp_destination(
-                    uploaded.name)
-
-                with open(destination_file, 'w+') as f:
-                    f.write(uploaded.file.read())
-                    zfile = ZipFile(f)
-                    for name in zfile.namelist():
-                        try:
-                            zfile.extract(
-                                name, os.path.dirname(os.path.realpath(f.name)))
-                            if name.endswith('shp'):
-                                parser = classes[int(form['parser'].value())]
-                                import_datas.delay(
-                                    '/'.join((destination_dir, name)),
-                                    parser.__name__, parser.__module__
-                                )
-                                continue
-                        except Exception:
-                            raise
+                parser = classes[int(form['parser'].value())]
+                import_file(uploaded, parser)
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
@@ -267,13 +269,38 @@ def import_view(request):
 def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold):
-        if hasattr(task, 'result') and 'name' in task.result and task.result.get('name', '').startswith('geotrek.common'):
+    for task in TaskMeta.objects.filter(date_done__gte=threshold).order_by('date_done'):
+        if hasattr(task, 'result') and task.result.get('name', '').startswith('geotrek.common'):
             results.append(
                 {
                     'id': task.task_id,
                     'result': task.result or {'current': 0, 'total': 0},
                     'status': task.status
+                }
+            )
+    i = celery_app.control.inspect([u'celery@geotrek'])
+    try:
+        reserved = i.reserved()
+    except redis.exceptions.ConnectionError:
+        reserved = None
+    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    for task in tasks:
+        if task['name'].startswith('geotrek.common'):
+            args = ast.literal_eval(task['args'])
+            if task['name'].endswith('import-file'):
+                filename = os.path.basename(args[1])
+            else:
+                filename = _("Import from web.")
+            results.append(
+                {
+                    'id': task['id'],
+                    'result': {
+                        'parser': args[0],
+                        'filename': filename,
+                        'current': 0,
+                        'total': 0
+                    },
+                    'status': 'PENDING',
                 }
             )
 

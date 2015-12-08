@@ -76,7 +76,7 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
-                                  verbose_name=_("Condition"), null=True,
+                                  verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.PROTECT)
 
     class Meta:
