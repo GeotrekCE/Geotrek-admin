@@ -35,3 +35,6 @@ msgstr "Festivals nature publiés"
 
 msgid "Add a new touristic event"
 msgstr "Ajouter un festival nature"
+
+msgid "Usefull informations"
+msgstr "Toutes les infos pratiques"
