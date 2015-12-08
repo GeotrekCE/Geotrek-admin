@@ -37,18 +37,28 @@ FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 # Keep default values equal to buildout default values
 DEPLOY_ROOT = envini.get('deployroot', section="django", default=DEPLOY_ROOT)
-MEDIA_URL_SECURE = envini.get('mediaurl_secure', section="django", default=MEDIA_URL_SECURE)
-STATIC_URL = '%s%s' % (ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
-MEDIA_URL = '%s%s' % (ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
-MEDIA_ROOT = envini.get('mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
-STATIC_ROOT = envini.get('staticroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'static'))
-CACHE_ROOT = envini.get('cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
+MEDIA_URL_SECURE = envini.get(
+    'mediaurl_secure', section="django", default=MEDIA_URL_SECURE)
+STATIC_URL = '%s%s' % (
+    ROOT_URL, envini.get('staticurl', section="django", default=STATIC_URL))
+MEDIA_URL = '%s%s' % (
+    ROOT_URL, envini.get('mediaurl', section="django", default=MEDIA_URL))
+MEDIA_ROOT = envini.get(
+    'mediaroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'media'))
+STATIC_ROOT = envini.get('staticroot', section="django", default=os.path.join(
+    DEPLOY_ROOT, 'var', 'static'))
+CACHE_ROOT = envini.get(
+    'cacheroot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'cache'))
 UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
-MAPENTITY_CONFIG['TEMP_DIR'] = envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
-SYNC_RANDO_ROOT = envini.get('syncrandoroot', section="django", default=os.path.join(DEPLOY_ROOT, 'data'))
+MAPENTITY_CONFIG['TEMP_DIR'] = envini.get(
+    'tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
+SYNC_RANDO_ROOT = envini.get(
+    'syncrandoroot', section="django", default=os.path.join(DEPLOY_ROOT, 'data'))
 
-MAILALERTSUBJECT = envini.get('mailalertsubject', section="settings", default="")
-MAILALERTMESSAGE = envini.get('mailalertmessage', section="settings", default="")
+MAILALERTSUBJECT = envini.get(
+    'mailalertsubject', section="settings", default="")
+MAILALERTMESSAGE = envini.get(
+    'mailalertmessage', section="settings", default="")
 
 DATABASES['default']['NAME'] = envini.get('dbname')
 DATABASES['default']['USER'] = envini.get('dbuser')
@@ -58,7 +68,8 @@ DATABASES['default']['PORT'] = envini.getint('dbport', 5432)
 
 
 CACHES['default']['TIMEOUT'] = envini.getint('cachetimeout', 3600 * 24)
-CACHES['fat']['BACKEND'] = 'django.core.cache.backends.filebased.FileBasedCache'
+CACHES['fat'][
+    'BACKEND'] = 'django.core.cache.backends.filebased.FileBasedCache'
 CACHES['fat']['LOCATION'] = CACHE_ROOT
 CACHES['fat']['TIMEOUT'] = envini.getint('cachetimeout', 3600 * 24)
 
@@ -84,17 +95,24 @@ EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
 # ..........................
 
 MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='convertit', default='http'),
-                                                        envini.get('host', section='convertit', default='127.0.0.1'),
+                                                        envini.get(
+                                                            'host', section='convertit', default='127.0.0.1'),
                                                         envini.get('port', section='convertit', default='6543'))
 
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
-                                                     envini.get('host', section='screamshotter', default='127.0.0.1'),
+                                                     envini.get(
+                                                         'host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
-TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
+
+"""TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
                               'mapentity', 'templates'),
                  os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
-                 os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
+                 os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS"""
 
+TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
+                 os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
+                              'mapentity', 'templates'),
+                 os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
 #
 # Geotrek settings
 # ..........................
@@ -109,23 +127,25 @@ SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
 LEAFLET_CONFIG['TILES'] = [
-    (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL, envini.get('scan_attributions', '')),
-    (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL, envini.get('ortho_attributions', '')),
+    (gettext_noop('Scan'),
+     '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL, envini.get('scan_attributions', '')),
+    (gettext_noop('Ortho'),
+     '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL, envini.get('ortho_attributions', '')),
 ]
 LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 
-MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])
-MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])
-MAP_STYLES['district']['color'] = envini.get('layercolor_land', MAP_STYLES['district']['color'])
+MAP_STYLES['path']['color'] = envini.get(
+    'layercolor_paths', MAP_STYLES['path']['color'])
+MAP_STYLES['city']['color'] = envini.get(
+    'layercolor_land', MAP_STYLES['city']['color'])
+MAP_STYLES['district']['color'] = envini.get(
+    'layercolor_land', MAP_STYLES['district']['color'])
 
 _others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
-
-FORCE_OSMBASELAYER_BOUNDINGBOX = []
-# [(lat1, lng1), (lat2, lng2), (lat3, lng3)], (lat4, lng4)]
 
 #
 # Internal settings

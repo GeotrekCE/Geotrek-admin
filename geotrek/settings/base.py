@@ -27,11 +27,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        # Or path to database file if using sqlite3.
+        'NAME': '',
+        'USER': '',  # Not used with sqlite3.
+        'PASSWORD': '',  # Not used with sqlite3.
+        # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '',
+        # Set to empty string for default. Not used with sqlite3.
+        'PORT': '',
     }
 }
 
@@ -44,7 +47,6 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-
     'auth': 'django',
     'django': 'django',
     'easy_thumbnails': 'django',
@@ -129,7 +131,7 @@ LOGIN_REDIRECT_URL = 'home'
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
 
-UPLOAD_DIR = 'upload'    # media root subdir
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -192,7 +194,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
-    'mapentity.middleware.AutoLoginMiddleware'
+    'mapentity.middleware.AutoLoginMiddleware',
 )
 
 ROOT_URLCONF = 'geotrek.urls'
@@ -365,7 +367,8 @@ THUMBNAIL_ALIASES = {
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
         'medium': {'size': (800, 800)},
-        # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
+        # Header image for trek export (keep ratio of
+        # TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
 }
@@ -381,7 +384,8 @@ PAPERCLIP_CONFIG = {
 # Data projection
 SRID = 3857
 
-# API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
+# API projection (client-side), can differ from SRID (database). Leaflet
+# requires 4326.
 API_SRID = 4326
 
 # Extent in native projection (Toulouse area)
@@ -417,7 +421,8 @@ ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
 ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
-ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+# Maximum number of points (by width/height)
+ALTIMETRIC_AREA_MAX_RESOLUTION = 150
 ALTIMETRIC_AREA_MARGIN = 0.15
 
 
@@ -447,7 +452,15 @@ LEAFLET_CONFIG = {
 
 # define forced layers when map center in polygon
 # [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4)]),]
-FORCES_LAYERS = []
+FORCES_LAYERS = [('Scan', [(51.34433866059924, 2.197265625),
+                           (48.80686346108517, 8.349609375),
+                           (46.34692761055676, 6.767578125),
+                           (45.182036837015886, 7.119140625),
+                           (43.67581809328344, 7.4267578125),
+                           (42.06560675405716, 3.955078125),
+                           (43.67581809328344, -2.548828125),
+                           (49.32512199104001, -6.064453125),
+                           (51.34433866059924, 2.197265625)]), ]
 
 """ This *pool* of colors is used to colorized lands records.
 """
@@ -482,7 +495,7 @@ MAP_STYLES = {
 }
 
 
-LAYER_PRECISION_LAND = 4   # Number of fraction digit
+LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -500,7 +513,8 @@ EXPORT_MAP_IMAGE_SIZE = {
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    # Keep ratio of THUMBNAIL_ALIASES['print']
+    'touristiccontent': (10.7, 5.35),
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
@@ -513,7 +527,8 @@ TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = False  # False because still experimental
 TOURISM_ENABLED = False  # False because still experimental
 
-TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+# meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TREK_POI_INTERSECTION_MARGIN = 500
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
@@ -529,10 +544,10 @@ TREK_ICON_SIZE_PARKING = 18
 TREK_ICON_SIZE_INFORMATION_DESK = 18
 
 # Static offsets in projection units
-TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+TOPOLOGY_STATIC_OFFSETS = {'land':-5,
                            'physical': 0,
                            'competence': 5,
-                           'signagemanagement': -10,
+                           'signagemanagement':-10,
                            'workmanagement': 10}
 
 
