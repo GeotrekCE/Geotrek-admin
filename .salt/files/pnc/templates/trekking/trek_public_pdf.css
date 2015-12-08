@@ -150,6 +150,11 @@ header .url .geo {
   background-size: contain;
 }
 
+.intro-left,
+.meta-items {
+  max-height: 12cm;
+}
+
 .intro-left {
   float: left;
   width: 60%;
