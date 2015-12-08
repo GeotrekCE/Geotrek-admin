@@ -9,6 +9,7 @@ CHANGELOG
 
 * Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
 * Added 2 templates buttons for flatpages creating two layouts
+* Option to add pois pictures to trek ones in Geotrek-Rando
 
 **Bug fixes**
 
