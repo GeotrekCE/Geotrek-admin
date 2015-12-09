@@ -27,14 +27,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        # Or path to database file if using sqlite3.
-        'NAME': '',
-        'USER': '',  # Not used with sqlite3.
-        'PASSWORD': '',  # Not used with sqlite3.
-        # Set to empty string for localhost. Not used with sqlite3.
-        'HOST': '',
-        # Set to empty string for default. Not used with sqlite3.
-        'PORT': '',
+        'NAME': '',                         # Or path to database file if using sqlite3.
+        'USER': '',                         # Not used with sqlite3.
+        'PASSWORD': '',                     # Not used with sqlite3.
+        'HOST': '',                         # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                         # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -47,6 +44,7 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
+
     'auth': 'django',
     'django': 'django',
     'easy_thumbnails': 'django',
@@ -131,7 +129,7 @@ LOGIN_REDIRECT_URL = 'home'
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
 
-UPLOAD_DIR = 'upload'  # media root subdir
+UPLOAD_DIR = 'upload'    # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -179,7 +177,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     'geotrek.templateloaders.Loader',
-    'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -217,6 +215,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    'geotrek.context_processors.forced_layers',
 
     'mapentity.context_processors.settings',
 )
@@ -367,8 +366,7 @@ THUMBNAIL_ALIASES = {
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
         'medium': {'size': (800, 800)},
-        # Header image for trek export (keep ratio of
-        # TREK_EXPORT_HEADER_IMAGE_SIZE)
+        # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
 }
@@ -384,8 +382,7 @@ PAPERCLIP_CONFIG = {
 # Data projection
 SRID = 3857
 
-# API projection (client-side), can differ from SRID (database). Leaflet
-# requires 4326.
+# API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
 
 # Extent in native projection (Toulouse area)
@@ -422,8 +419,7 @@ ALTIMETRIC_PROFILE_WIDTH = 800
 ALTIMETRIC_PROFILE_FONTSIZE = 25
 ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
-# Maximum number of points (by width/height)
-ALTIMETRIC_AREA_MAX_RESOLUTION = 150
+ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
 
@@ -451,9 +447,9 @@ LEAFLET_CONFIG = {
     }
 }
 
-# define forced layers when map center in polygon
+# define forced layers from LEAFLET_CONFIG when map center in polygon
 # [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4)]),]
-FORCES_LAYERS = []
+FORCED_LAYERS = []
 
 """ This *pool* of colors is used to colorized lands records.
 """
@@ -488,7 +484,7 @@ MAP_STYLES = {
 }
 
 
-LAYER_PRECISION_LAND = 4  # Number of fraction digit
+LAYER_PRECISION_LAND = 4    # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -506,8 +502,7 @@ EXPORT_MAP_IMAGE_SIZE = {
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    # Keep ratio of THUMBNAIL_ALIASES['print']
-    'touristiccontent': (10.7, 5.35),
+    'touristiccontent': (10.7, 5.35),   # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
@@ -520,8 +515,7 @@ TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = False  # False because still experimental
 TOURISM_ENABLED = False  # False because still experimental
 
-# meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
-TREK_POI_INTERSECTION_MARGIN = 500
+TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False

@@ -14,7 +14,6 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.decorators.http import last_modified as cache_last_modified
-from geojson import Polygon
 from mapentity import app_settings
 from mapentity import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
@@ -243,24 +242,6 @@ class TrailDelete(MapEntityDelete):
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
-
-
-@login_required
-def get_forced_layers(request):
-    """
-    Send Forced Layers and polygons associated
-    """
-    response = []
-    for forced_layer in getattr(settings,
-                                'FORCES_LAYERS',
-                                []):
-        if forced_layer[0] in [layer[0] for layer in settings.LEAFLET_CONFIG['TILES']]:
-            response.append(
-                Polygon([forced_layer[1]],
-                        layer=[layer[1] for layer in settings.LEAFLET_CONFIG['TILES'] if layer[0] == forced_layer[0]][0])
-            )
-    return HttpResponse(json.dumps(response),
-                        mimetype="application/json")
 
 
 @permission_required('core.change_path')

@@ -3,83 +3,70 @@
 {% load static from staticfiles %}
 
 {% block extrabody %}
-
     {{ block.super }}
-   
+
     <script type="text/javascript" src="{% static 'core/js/turf.min.js' %}"></script>
-    
+
     <script type="text/javascript">
-	    /*
-	     * Force layers in polygons defined in settings
-	     */
-	    var polygons_forced_layers = [];
-		var map;
-		var turf_map_center = null;
-		
-        $(window).on('detailmap:ready', function (e, data) {
-        	map = data.map;
-        	
-	        turf_map_center = {
-			  "type": "Feature",
-			  "geometry": {
-			    "type": "Point",
-			    "coordinates": [L.latLng(map.getCenter()).lat,
-				                L.latLng(map.getCenter()).lng]
-			  }
-			};
-	        
-	        map.on('move', function() {
-	            turf_map_center = {
-				  "type": "Feature",
-				  "geometry": {
-				    "type": "Point",
-				    "coordinates": [L.latLng(map.getCenter()).lat,
-				                    L.latLng(map.getCenter()).lng]
-				  }
-				};
-		        	
-	        	$.each(polygons_forced_layers, function(index, value){
-		    		//if(value[0].getBounds().contains(map.getCenter())){
-		    	    if(turf.inside(turf_map_center, value[0])){
-		    			// switch std map
-		    			alert('in');
-		    			map.removeLayer(value[1]);
-		    		}
-		    		else {
-		    			// switch OSM map
-					    map.addLayer(value[1]);
-		    		}
-	        	});
-	    	});
-	        
-	        $.get(
-	        	"{% url 'core:force_layers' %}",
-	            function(result){
-	            	$.each(result, function(index, value){
-	            		polygons_forced_layers.push([
-	            		    {
-							  "type": "Feature",
-							  "properties": {},
-							  "geometry": {
-							    "type": "Polygon",
-							    "coordinates": value.coordinates
-							  }
-							},
-	            		    new L.TileLayer(value.layer, {minZoom: 0, maxZoom: 18, attribution: ''})
-	            		]);
-	            		
-	            		if(turf.inside(turf_map_center, polygons_forced_layers[polygons_forced_layers.length-1][0])){
-			    			map.removeLayer(polygons_forced_layers[polygons_forced_layers.length-1][1]);
-			    		}
-			    		else {
-						    map.addLayer(polygons_forced_layers[polygons_forced_layers.length-1][1]);
-			    		}
-			    		
-	            	});
-              }
-	        );
-        });
-		
-	</script>
-	
+    	/*
+    	 * Force layers in polygons defined in context
+    	 */
+
+    	var polygons_forced_layers = [];
+    	var map;
+        var turf_map_center = null;
+    	var json_forced_layers = null;
+
+        function create_turf_point(){
+            temp_current_center = map.getCenter();
+            return {
+                "type" : "Feature",
+                "geometry" : {
+                    "type" : "Point",
+                    "coordinates" : [L.latLng(temp_current_center).lat,
+                                     L.latLng(temp_current_center).lng]
+                }
+            };
+        }
+
+        function check_layer_switch(){
+            turf_map_center = create_turf_point();
+
+            $.each(polygons_forced_layers, function(index, value) {
+                if (turf.inside(turf_map_center, value[0])) {
+                    // remove forced layer
+                    map.removeLayer(value[1]);
+                } else {
+                    // add forced layer
+                    map.addLayer(value[1]);
+                }
+            });
+        }
+
+    	$(window).on('detailmap:ready', function(e, data) {
+    	    map = data.map;
+            json_forced_layers = $.parseJSON("{{ FORCED_LAYERS }}".replace(/&quot;/ig,'"'));
+
+			$.each(json_forced_layers, function(index, value) {
+				polygons_forced_layers.push([{
+					"type" : "Feature",
+					"properties" : {},
+					"geometry" : {
+						"type" : "Polygon",
+						"coordinates" : value.coordinates
+					}
+				}, new L.TileLayer(value.layer,
+				                   { minZoom : 0,
+					                 maxZoom : 18,
+					                 attribution : '',})]);
+			});
+
+			check_layer_switch();
+
+            map.on('move', function() {
+                check_layer_switch();
+            });
+    	});
+    </script>
+
 {% endblock %}
