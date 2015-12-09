@@ -15,6 +15,7 @@ CHANGELOG
 * Generate tiles zip files for all children of published treks
 * Fix URL of video/audio media in API
 * Fix default filtering of past touristic events in UI
+* Fix link event to closest visible path only
 
 
 2.4.4 (2015-12-02)

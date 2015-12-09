@@ -60,6 +60,26 @@ class TopologyTest(TestCase):
         self.assertEqual(e.kind, LandEdge.KIND)
         self.assertEqual(1, len(Topology.objects.filter(kind='LANDEDGE')))
 
+    def test_link_closest_visible_path(self):
+        """
+        Topology must be linked to the closest visible path only
+        """
+        path_visible = Path(name="visible",
+                            geom='LINESTRING(0 0, 1 0, 2 0)',
+                            visible=True)
+        path_visible.save()
+        path_unvisible = Path(name="unvisible",
+                              geom='LINESTRING(0 3, 1 3, 2 3)',
+                              visible=False)
+        path_unvisible.save()
+        topology = Topology.objects.create(geom="POINT(0 0)")
+        # topology.reload()
+
+        self.assertEqual(Path.include_invisible.count(), 2)
+        self.assertIn(path_visible,
+                      PathAggregation.include_invisible.filter())
+        self.assertNotIn(path_unvisible, topology.paths.include_invible.all())
+
 
 class TopologyDeletionTest(TestCase):
 

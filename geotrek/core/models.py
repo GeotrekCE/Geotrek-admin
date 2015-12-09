@@ -33,10 +33,20 @@ class PathManager(models.GeoManager):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
+class PathInvisibleManager(models.GeoManager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        """Hide all ``Path`` records that are not marked as visible.
+        """
+        return super(PathInvisibleManager, self).get_queryset()
+
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
+
 
 class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
@@ -75,6 +85,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = PathManager()
+    include_invisible = PathInvisibleManager()
 
     is_reversed = False
 
