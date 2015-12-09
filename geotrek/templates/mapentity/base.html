@@ -4,9 +4,11 @@
 
 {% block extrabody %}
 
-    <div id="forced_layers_data" data-options="{{ FORCED_LAYERS }}" />
-
     {{ block.super }}
+
+    {% if FORCED_LAYERS and FORCED_LAYERS != "[]" %}
+
+    <div id="forced_layers_data" data-options="{{ FORCED_LAYERS }}" />
 
     <script type="text/javascript" src="{% static 'core/js/turf.min.js' %}"></script>
 
@@ -69,5 +71,7 @@
             });
     	});
     </script>
+
+    {% endif %}
 
 {% endblock %}
