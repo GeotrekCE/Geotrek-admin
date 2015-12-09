@@ -48,17 +48,15 @@
             json_forced_layers = $.parseJSON("{{ FORCED_LAYERS }}".replace(/&quot;/ig,'"'));
 
             $.each(json_forced_layers, function(index, value) {
-            	polygons_forced_layers.push([{
-            		"type" : "Feature",
-            		"properties" : {},
-            		"geometry" : {
-            			"type" : "Polygon",
-            			"coordinates" : value.coordinates
-            		}
-            	}, new L.TileLayer(value.layer,
-            	                   { minZoom : 0,
-                                     maxZoom : 18,
-                                     attribution : '',})]);
+                polygons_forced_layers.push([{
+                        "type" : "Feature",
+            	        "properties" : {},
+            		    "geometry" : { "type" : "Polygon",
+            		                   "coordinates" : value.coordinates }
+                    }, new L.TileLayer(value.layer,
+                                       { minZoom : 0,
+                                         maxZoom : 18,
+                                         attribution : '',})]);
             });
 
             check_layer_switch();

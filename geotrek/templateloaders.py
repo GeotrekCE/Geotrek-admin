@@ -2,8 +2,8 @@
 
 from os.path import dirname, join, abspath, isdir
 
-from django.db.models import get_app
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import get_app
 from django.template import TemplateDoesNotExist
 from django.template.loaders.filesystem import Loader as BaseLoader
 

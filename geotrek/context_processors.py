@@ -1,11 +1,10 @@
-# -*- encoding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 """
-Template Context Processors for Geotrek
+Custom Template Context Processors for Geotrek
 """
 
 from django.conf import settings
-import json
 from geojson import Polygon
 
 
