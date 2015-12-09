@@ -7,6 +7,7 @@ from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.core.models import Path, Trail
 from geotrek.core.views import get_graph_json, merge_path
 
+
 urlpatterns = patterns(
     '',
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),

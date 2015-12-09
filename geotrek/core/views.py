@@ -3,32 +3,32 @@
 import json
 import logging
 
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.decorators.cache import never_cache as force_cache_validation
+from django.utils.translation import ugettext as _
 from django.core.cache import get_cache
 from django.core.urlresolvers import reverse
-from django.http.response import HttpResponse
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
-from django.views.decorators.cache import never_cache as force_cache_validation
-from django.views.decorators.http import last_modified as cache_last_modified
-from mapentity import app_settings
 from mapentity import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate,
-                             MapEntityUpdate, MapEntityDelete, MapEntityFormat,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, MapEntityFormat,
                              HttpJSONResponse)
+from mapentity import app_settings
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
-from geotrek.core import graph as graph_lib
 from geotrek.core.models import AltimetryMixin
 
-from .filters import PathFilterSet, TrailFilterSet
-from .forms import PathForm, TrailForm
 from .models import Path, Trail, Topology
+from .forms import PathForm, TrailForm
+from .filters import PathFilterSet, TrailFilterSet
+from . import graph as graph_lib
+from django.http.response import HttpResponse
+from django.contrib import messages
 
 
 logger = logging.getLogger(__name__)

@@ -27,11 +27,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        'NAME': '',                         # Or path to database file if using sqlite3.
-        'USER': '',                         # Not used with sqlite3.
-        'PASSWORD': '',                     # Not used with sqlite3.
-        'HOST': '',                         # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                         # Set to empty string for default. Not used with sqlite3.
+        'NAME': '',  # Or path to database file if using sqlite3.
+        'USER': '',  # Not used with sqlite3.
+        'PASSWORD': '',  # Not used with sqlite3.
+        'HOST': '',  # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',  # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -192,7 +192,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
-    'mapentity.middleware.AutoLoginMiddleware',
+    'mapentity.middleware.AutoLoginMiddleware'
 )
 
 ROOT_URLCONF = 'geotrek.urls'
@@ -484,7 +484,7 @@ MAP_STYLES = {
 }
 
 
-LAYER_PRECISION_LAND = 4    # Number of fraction digit
+LAYER_PRECISION_LAND = 4   # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -502,7 +502,7 @@ EXPORT_MAP_IMAGE_SIZE = {
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
-    'touristiccontent': (10.7, 5.35),   # Keep ratio of THUMBNAIL_ALIASES['print']
+    'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
