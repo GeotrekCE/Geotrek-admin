@@ -3,6 +3,9 @@
 {% load static from staticfiles %}
 
 {% block extrabody %}
+
+    <div id="forced_layers_data" data-options="{{ FORCED_LAYERS }}" />
+
     {{ block.super }}
 
     <script type="text/javascript" src="{% static 'core/js/turf.min.js' %}"></script>
@@ -45,7 +48,7 @@
 
     	$(window).on('detailmap:ready', function(e, data) {
     	    map = data.map;
-            json_forced_layers = $.parseJSON("{{ FORCED_LAYERS }}".replace(/&quot;/ig,'"'));
+            json_forced_layers = $('#forced_layers_data').data('options');
 
             $.each(json_forced_layers, function(index, value) {
                 polygons_forced_layers.push([{
