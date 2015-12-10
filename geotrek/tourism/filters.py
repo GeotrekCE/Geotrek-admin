@@ -32,7 +32,7 @@ class CompletedFilter(django_filters.BooleanFilter):
     @property
     def field(self):
         field = super(CompletedFilter, self).field
-        field.initial = True
+        field.initial = False
         return field
 
     def filter(self, qs, value):

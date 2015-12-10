@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-07 14:30+0200\n"
+"POT-Creation-Date: 2015-12-03 13:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,15 @@ msgstr "Contenu HTML"
 msgid "Target"
 msgstr "Cible"
 
+msgid "Source"
+msgstr "Source"
+
+msgid "ID order if blank"
+msgstr "Ordonné par ID si nul ou équivalent"
+
+msgid "Order"
+msgstr "Ordre"
+
 msgid "Flat page"
 msgstr "Page statique"
 
@@ -55,3 +64,15 @@ msgstr "Pages statiques"
 
 msgid "Choose between external URL and HTML content"
 msgstr "Choisir entre lien externe et contenu HTML"
+
+msgid "Template 1"
+msgstr "Gabarit 1"
+
+msgid "Template 2"
+msgstr "Gabarit 2"
+
+msgid "Insert Text Here."
+msgstr "Ajoutez du texte ici."
+
+msgid "Legend, ©, firstname and author name."
+msgstr "Légende, ©, prénom et nom de l\\'auteur."

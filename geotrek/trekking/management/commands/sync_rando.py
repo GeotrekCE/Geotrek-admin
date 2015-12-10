@@ -6,7 +6,6 @@ import os
 import re
 import sys
 import shutil
-import tempfile
 from time import sleep
 from zipfile import ZipFile
 
@@ -31,6 +30,9 @@ from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet)
+
+# Register mapentity models
+from geotrek.trekking import urls  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -403,8 +405,12 @@ class Command(BaseCommand):
                     }
                 )
 
-            for trek in trekking_models.Trek.objects.existing().order_by('pk'):
-                if trek.any_published:
+            treks = trekking_models.Trek.objects.existing().order_by('pk')
+            if self.source:
+                treks = treks.filter(source__name__in=self.source)
+
+            for trek in treks:
+                if trek.any_published or any([parent.any_published for parent in trek.parents]):
                     self.sync_trek_tiles(trek)
 
             if self.celery_task:
@@ -449,6 +455,15 @@ class Command(BaseCommand):
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
+    def rename_root(self):
+        if os.path.exists(self.dst_root):
+            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_rando')
+            os.rename(self.dst_root, tmp_root2)
+            os.rename(self.tmp_root, self.dst_root)
+            shutil.rmtree(tmp_root2)
+        else:
+            os.rename(self.tmp_root, self.dst_root)
+
     def handle(self, *args, **options):
         self.successfull = True
         self.verbosity = options.get('verbosity', '1')
@@ -461,7 +476,8 @@ class Command(BaseCommand):
         self.referer = options['url']
         self.host = self.referer[7:]
         self.factory = RequestFactory()
-        self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        os.mkdir(self.tmp_root)
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
         self.skip_dem = options['skip_dem']
@@ -498,13 +514,7 @@ class Command(BaseCommand):
             shutil.rmtree(self.tmp_root)
             raise
 
-        if os.path.exists(self.dst_root):
-            tmp_root2 = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
-            os.rename(self.dst_root, os.path.join(tmp_root2, 'to_delete'))
-            os.rename(self.tmp_root, self.dst_root)
-            shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        self.rename_root()
 
         if self.verbosity >= '1':
             self.stdout.write('Done')

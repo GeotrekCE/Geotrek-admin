@@ -172,6 +172,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type2 = TypeSerializer(source='accessibilities', many=True)
     category = rest_serializers.SerializerMethodField('get_category')
 
+    # Method called to retrieve relevant pictures based on settings
+    pictures = rest_serializers.SerializerMethodField('get_pictures')
+
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
         if instance and hasattr(instance, '__iter__') and settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
@@ -214,6 +217,14 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+    def get_pictures(self, obj):
+        pictures_list = []
+        pictures_list.extend(obj.serializable_pictures)
+        if settings.TREK_WITH_POIS_PICTURES:
+            for poi in obj.published_pois:
+                pictures_list.extend(poi.serializable_pictures)
+        return pictures_list
 
     def get_parking_location(self, obj):
         if not obj.parking_location:

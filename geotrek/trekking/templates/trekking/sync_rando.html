@@ -5,13 +5,11 @@
 
 {% block extrahead %}
 	<script type="text/javascript">
-		var last_launched_tasked_id = null;	
-	
 		function enable_sync_button() {
 			$('#submit-id-sync-web').attr('disabled', false);
-			$('#submit-id-sync-web').val('{% trans "Launch Sync" %}');			
+			$('#submit-id-sync-web').val('{% trans "Launch Sync" %}');
 		}
-		
+
 		function disable_sync_button(init) {
 			$('#submit-id-sync-web').attr('disabled', true);
 			if (init==true){
@@ -20,39 +18,38 @@
 				$('#submit-id-sync-web').val('{% trans "Sync in progress" %}');
 			}
 		}
-	
+
 		function get_sync_infos() {
 			$.get("{% url 'trekking:sync_randos_state' %}",
 			      function(response) {
 
 			    	  // test if sync_rando run
 			    	  var has_progress = false;
-			    	  
+
 			    	  // test in each result / must be one
 			    	  $.each(response, function(index) {
-			    	      if (this.status == 'PROGRESS') {
-			    	    	  last_launched_tasked_id = this.id;
+			    	      if (this.status == 'PROGRESS' || this.status == 'PENDING') {
 			    	    	  has_progress = true;
 			    	    	  disable_sync_button(false);
-			    	    	  
+
 			    	    	  $('#progress-value').show();
 			    	    	  $("#progress-value").removeClass('bar-danger');
 			    	    	  $("#progress-value").parent().addClass("active");
-			    	    	  
+
 			    	    	  if (this.result.current) {
 			    	    		  $("#progress-value").css("width", this.result.current+'%');
-			    	    		  
+
 			    	    		  if (this.result.current == 100){
 			    	    			  $("#progress-value").parent().removeClass("active");
 			    	    			  $("#progress-value").addClass('bar-success');
 			    	    		  }
 			    	    	  }
 			    	    	  if (this.result.infos) {
-			    	    		  $("#progress-text").text(this.result.infos); 
+			    	    		  $("#progress-text").text(this.result.infos);
 			    	    	  }
 			    	      }
 			    	      else {
-			    	    	  if (this.status == 'FAILURE' && last_launched_tasked_id == this.id){
+			    	    	  if (this.status == 'FAILURE'){
 			    	    		  // case of exception in task
 			    	    		  $("#progress-text").text("{% trans 'An error occured' %}");
 			    	    		  $('#exception-message').text(this.result.exc_type + ' : ' + this.result.exc_message)
@@ -61,32 +58,32 @@
 			    	    	  }
 			    	      }
 			    	  });
-			    	  
+
 			    	  if (!has_progress) {
 			    		  enable_sync_button();
 			    	  }
 			  });
 		}
-		
+
 		$(function(){
 			disable_sync_button(true);
 			get_sync_infos();
-			
+
 			$('#btn-confirm').click(function(evt) {
 				$("#progress-value").css("width", '0%');
 				$("#progress-text").text('');
 				$("#progress-value").parent().addClass("active");
 				$("#progress-value").removeClass('bar-success');
 				$("#progress-value").removeClass('bar-danger');
-				
+
 			    $.post(
-			        $('#form-sync').attr('action'), 
+			        $('#form-sync').attr('action'),
 			        $('#form-sync').serialize()
 		        );
-			    
+
 			    $('#confirm-submit').modal('toggle');
 			});
-			
+
 			window.setInterval(function(){
 				get_sync_infos();
 			}, 500);
@@ -110,10 +107,10 @@
 			{% crispy form form.helper %}
 		{% endblock mainform %}
 	</div>
-	
+
 	<div id="exception-message" style="display: none;">
 	</div>
-	
+
 	<div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	    <!-- boostrap 2 modal confirmation -->
 	    <div class="modal-dialog">
@@ -124,7 +121,7 @@
 	            <div class="modal-body">
 	                {% trans "Are you sure you want to sync ?" %}
 	            </div>
-	
+
 	  			<div class="modal-footer">
 		            <button type="button" class="btn btn-default" data-dismiss="modal">
 		                {% trans "Cancel" %}

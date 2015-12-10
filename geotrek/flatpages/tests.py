@@ -11,6 +11,7 @@ from geotrek.common.factories import RecordSourceFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.authent.factories import UserProfileFactory
 from geotrek.flatpages.forms import FlatPageForm
+from geotrek.flatpages.models import FlatPage
 
 
 class FlatPageFormTest(TestCase):
@@ -81,6 +82,28 @@ class FlatPageModelTest(TestCase):
         fp = FlatPageFactory(external_url=None,
                              content="<p></p>")
         fp.clean()
+
+    def test_retrieve_by_order(self):
+        try:
+            fp = FlatPageFactory.create_batch(5)
+            for index, flatpage in enumerate(FlatPage.objects.all()):
+                if index == 0:
+                    continue
+                self.assertGreater(flatpage.order, int(fp[index - 1].order))
+        finally:
+            for f in fp:
+                f.clean()
+
+    def test_retrieve_by_id_if_order_is_the_same(self):
+        try:
+            fp = FlatPageFactory.create_batch(5, order=0)
+            for index, flatpage in enumerate(FlatPage.objects.all()):
+                if index == 0:
+                    continue
+                self.assertGreater(flatpage.id, fp[index - 1].id)
+        finally:
+            for f in fp:
+                f.clean()
 
 
 class FlatPageMediaTest(TestCase):
@@ -162,11 +185,11 @@ def factory(factory, source):
 
 class SyncTest(TestCase):
     def test_sync(self):
-        source_a = RecordSourceFactory(name='A')
-        source_b = RecordSourceFactory(name='B')
+        source_a = RecordSourceFactory(name='Source A')
+        source_b = RecordSourceFactory(name='Source B')
         factory(FlatPageFactory, source_a)
         factory(FlatPageFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='A', skip_tiles=True, verbosity='0')
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f:
             flatpages = json.load(f)
         self.assertEquals(len(flatpages), 1)

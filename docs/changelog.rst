@@ -2,10 +2,60 @@
 CHANGELOG
 =========
 
-2.4.1.dev0
+2.5.1.dev0
 ------------------
 
 *
+
+
+2.5.0 (2015-12-08)
+------------------
+
+**New features**
+
+* Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
+* Added 2 templates buttons for flatpages creating two layouts
+* Option to add pois pictures to trek ones in Geotrek-Rando
+
+**Bug fixes**
+
+* Generate tiles zip files for all children of published treks
+* Fix URL of video/audio media in API
+* Fix default filtering of past touristic events in UI
+
+
+2.4.4 (2015-12-02)
+------------------
+
+**Bug fixes**
+
+* Show pending import/sync tasks
+
+2.4.3 (2015-11-27)
+------------------
+
+**Bug fixes**
+
+* Fix filtering by source in sync_rando for flatpages and tiles too
+
+
+2.4.2 (2015-11-26)
+------------------
+
+**Bug fixes**
+
+* Fix permissions of sync rando output directory
+* Fix filtering by source in sync_rando
+
+
+2.4.1 (2015-11-25)
+------------------
+
+**Bug fixes**
+
+* Condition field of infrastructures is no more required
+* Fix zipfile detection at import.
+* Fix error handling at import (raise exception to browser).
 
 
 2.4.0 (2015-11-18)

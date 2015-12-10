@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
+from zipfile import is_zipfile
 
 from django import forms as django_forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
@@ -139,6 +140,9 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         )
 
     def clean_zipfile(self):
-        if self.cleaned_data['zipfile'].content_type != "application/zip":
+        z = self.cleaned_data['zipfile']
+        if not is_zipfile(z):
             raise django_forms.ValidationError(
                 _("File must be of ZIP type."), code='invalid')
+        # Reset position for further use.
+        z.seek(0)

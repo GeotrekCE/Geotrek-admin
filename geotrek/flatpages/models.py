@@ -41,6 +41,9 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     source = models.ManyToManyField('common.RecordSource',
                                     null=True, blank=True, related_name='flatpages',
                                     verbose_name=_("Source"), db_table='t_r_page_source')
+    order = models.IntegerField(default=None, null=True, blank=True,
+                                help_text=_(u"ID order if blank", ),
+                                verbose_name=_(u"Order"))
 
     @property
     def slug(self):
@@ -50,7 +53,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         db_table = 'p_t_page'
         verbose_name = _(u'Flat page')
         verbose_name_plural = _(u'Flat pages')
-        ordering = ['id']
+        ordering = ['order', 'id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
