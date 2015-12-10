@@ -34,12 +34,9 @@ class PathManager(models.GeoManager):
 
 
 class PathInvisibleManager(models.GeoManager):
-    # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
 
     def get_queryset(self):
-        """Hide all ``Path`` records that are not marked as visible.
-        """
         return super(PathInvisibleManager, self).get_queryset()
 
 # GeoDjango note:

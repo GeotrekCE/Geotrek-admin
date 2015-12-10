@@ -5,7 +5,8 @@ CHANGELOG
 2.5.1.dev0
 ------------------
 
-*
+**Bug fixes**
+* Fix event link to closest visible path only
 
 
 2.5.0 (2015-12-08)
@@ -22,7 +23,6 @@ CHANGELOG
 * Generate tiles zip files for all children of published treks
 * Fix URL of video/audio media in API
 * Fix default filtering of past touristic events in UI
-* Fix link event to closest visible path only
 
 
 2.4.4 (2015-12-02)
