@@ -191,9 +191,12 @@ class TrekDocumentPublicBase(DocumentPublic):
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
         context['information_desks'] = information_desks
 
-        pois = list(trek.pois.filter(published=True))
+        pois = list(trek.published_pois.all())
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        letters = alphabet_enumeration(len(pois))
+        for i, poi in enumerate(pois):
+            poi.letter = letters[i]
         context['pois'] = pois
 
         if not mapentity_settings['MAPENTITY_WEASYPRINT']:
@@ -204,15 +207,6 @@ class TrekDocumentPublicBase(DocumentPublic):
 
             for poi in context['pois']:
                 setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
-
-        #
-        # POIs enumeration, like shown on the map
-        # https://github.com/makinacorpus/Geotrek/issues/871
-        enumeration = {}
-        letters = alphabet_enumeration(len(trek.pois))
-        for i, p in enumerate(trek.pois):
-            enumeration[p.pk] = letters[i]
-        context['enumeration'] = enumeration
 
         context['object'] = context['trek'] = trek
 
