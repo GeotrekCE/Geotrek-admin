@@ -351,7 +351,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.document = common_factories.AttachmentFactory(obj=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
         self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
-                                                        attachment_video='https://www.youtube.com/watch?v=Jm3anSjly0Y')
+                                                        attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         self.video_detected = detect_backend(self.video.attachment_video)
 
         self.theme = common_factories.ThemeFactory()
@@ -390,7 +390,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_videos(self):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
-                              u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
+                              u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
                               u'author': self.video.author,
