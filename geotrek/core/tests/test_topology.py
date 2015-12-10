@@ -3,12 +3,23 @@ import math
 
 from django.test import TestCase
 from django.conf import settings
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import Point, LineString
 
 from geotrek.common.utils import dbnow, almostequal
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
+from geotrek.core.helpers import TopologyHelper
+
+
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
 
 
 class TopologyTest(TestCase):
@@ -72,13 +83,55 @@ class TopologyTest(TestCase):
                               geom='LINESTRING(0 3, 1 3, 2 3)',
                               visible=False)
         path_unvisible.save()
-        topology = Topology.objects.create(geom="POINT(0 0)")
-        # topology.reload()
 
+        # default manager see 1 path
+        self.assertEqual(Path.objects.count(), 1)
+
+        # custom manager see 2 paths
         self.assertEqual(Path.include_invisible.count(), 2)
-        self.assertIn(path_visible,
-                      PathAggregation.include_invisible.filter())
-        self.assertNotIn(path_unvisible, topology.paths.include_invible.all())
+
+        # create topo on visible path
+        topology = TopologyHelper._topologypoint(0, 0, None).reload()
+
+        # because FK and M2M are used with default manager only, others tests are in SQL
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT t.id as id_path,
+                   et.evenement as id_topology,
+                   t.visible as visible
+            FROM e_r_evenement_troncon et
+            JOIN l_t_troncon t ON et.troncon=t.id
+            WHERE et.evenement={topo_id}
+            """.format(topo_id=topology.pk))
+
+        datas = dictfetchall(cur)
+
+        # topo must be linked to visible path
+        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], u"{}".format(datas))
+        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+
+        # new topo on invible path
+        topology = TopologyHelper._topologypoint(0, 3, None).reload()
+
+        cur.execute(
+            """
+            SELECT t.id as id_path,
+                   et.evenement as id_topology,
+                   t.visible as visible
+            FROM e_r_evenement_troncon et
+            JOIN l_t_troncon t ON et.troncon=t.id
+            WHERE et.evenement={topo_id}
+            """.format(topo_id=topology.pk))
+
+        datas = dictfetchall(cur)
+
+        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], u"{}".format(datas))
+        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+        cur.close()
 
 
 class TopologyDeletionTest(TestCase):
