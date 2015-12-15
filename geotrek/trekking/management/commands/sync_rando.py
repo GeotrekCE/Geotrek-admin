@@ -1,11 +1,11 @@
 # -*- encoding: UTF-8 -
 
-import logging
 from optparse import make_option
 import os
 import re
 import sys
 import shutil
+import logging
 from time import sleep
 from zipfile import ZipFile
 
@@ -498,18 +498,20 @@ class Command(BaseCommand):
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
 
+        if self.verbosity == '0':
+            logging.getLogger('geotrek').setLevel(logging.ERROR)
+
         try:
             self.sync()
             if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 100,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Sync ended"))
-                    }
-                )
+                self.celery_task.update_state(state='PROGRESS',
+                                              meta={
+                                                  'name': self.celery_task.name,
+                                                  'current': 100,
+                                                  'total': 100,
+                                                  'infos': u"{}".format(_(u"Sync ended"))
+                                              }
+                                              )
         except:
             shutil.rmtree(self.tmp_root)
             raise
