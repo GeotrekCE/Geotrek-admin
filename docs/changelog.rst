@@ -5,7 +5,9 @@ CHANGELOG
 2.5.1.dev0
 ------------------
 
-*
+**New features**
+
+* Add list of stages to trek public PDF
 
 
 2.5.0 (2015-12-08)
