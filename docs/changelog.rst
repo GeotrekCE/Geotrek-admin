@@ -9,6 +9,10 @@ CHANGELOG
 
 * Add list of stages to trek public PDF
 
+**Bug fixes**
+
+* Fix size of service pictograms in trek public PDF
+
 
 2.5.0 (2015-12-08)
 ------------------
