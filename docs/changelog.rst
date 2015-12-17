@@ -2,16 +2,12 @@
 CHANGELOG
 =========
 
-2.5.1.dev0
+2.5.1 (2015-12-18)
 ------------------
-
-**New features**
-
-* Add list of stages to trek public PDF
 
 **Bug fixes**
 
-* Fix service pictograms and numbered lists in description of trek public PDF
+* Trek public PDF fixes (size of service pictos, style of numbered lists, stages)
 
 
 2.5.0 (2015-12-08)
