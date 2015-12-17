@@ -111,6 +111,19 @@
 		{% endif %}
 
 
+		{% block stages %}
+			{% if object.children %}
+				<section class="stages">
+					<h2>{% trans "Stages" %}</h2>
+					<ol>
+						{% for child in object.children %}
+							<li>{{ child.name }}</li>
+						{% endfor %}
+					</ol>
+				</section>
+			{% endif %}
+		{% endblock stages %}
+
 
 		{% block description %}
 			{% if object.description %}
@@ -161,7 +174,6 @@
 				{% endif %}
 			</section>
 		{% endblock Picture %}
-
 
 
 		{% block touristicContents %}
