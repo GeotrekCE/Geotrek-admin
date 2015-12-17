@@ -11,7 +11,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix size of service pictograms in trek public PDF
+* Fix service pictograms and numbered lists in description of trek public PDF
 
 
 2.5.0 (2015-12-08)
