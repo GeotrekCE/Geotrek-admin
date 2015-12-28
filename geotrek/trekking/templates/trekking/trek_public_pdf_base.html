@@ -111,6 +111,19 @@
 		{% endif %}
 
 
+		{% block stages %}
+			{% if object.children %}
+				<section class="stages">
+					<h2>{% trans "Stages" %}</h2>
+					<ol>
+						{% for child in object.children %}
+							<li>{{ child.name }}</li>
+						{% endfor %}
+					</ol>
+				</section>
+			{% endif %}
+		{% endblock stages %}
+
 
 		{% block description %}
 			{% if object.description %}
@@ -163,7 +176,6 @@
 		{% endblock Picture %}
 
 
-
 		{% block touristicContents %}
 			<section class="pois-summary">
 				{% if object.published_touristic_contents.all %}
@@ -192,14 +204,14 @@
 
 		{% block poisSummary %}
 			<section class="pois-summary">
-				{% if object.published_pois.all %}
+				{% if pois %}
 					<h2>{% trans "On the way..." %}</h2>
-					{% for poi in object.published_pois.all %}
+					{% for poi in pois %}
 						<div class="poi">
 							{% if poi.thumbnail %}
 								<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
 							{% endif %}
-              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}{{ poi.name }} {{ enumeration.poi.pk }}</h3>
+              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
 							<div class="description">{{ poi.description|safe }}</div>
 							{% if poi.thumbnail and poi.picture.0.author %}
 								<legend>{% trans "Attribution" %} : {{ poi.picture.0.author }}</legend>

@@ -410,7 +410,7 @@ class Command(BaseCommand):
                 treks = treks.filter(source__name__in=self.source)
 
             for trek in treks:
-                if trek.any_published:
+                if trek.any_published or any([parent.any_published for parent in trek.parents]):
                     self.sync_trek_tiles(trek)
 
             if self.celery_task:

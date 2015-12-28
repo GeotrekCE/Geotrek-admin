@@ -1,3 +1,6 @@
+/**
+ * node-sass --output-style=expanded trek_public_pdf.scss -o .
+ */
 @page {
   margin: 1.3cm 1.8cm 2.5cm 1.8cm;
   @bottom-left {
@@ -99,6 +102,44 @@ header .meta {
   margin-top: 1em;
 }
 
+.description ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: li;
+}
+
+.description ol li {
+  position: relative;
+  line-height: 1.5em;
+  vertical-align: middle;
+  padding-left: 2em;
+  padding-bottom: 0.5em;
+}
+
+.description ol li:empty {
+  display: none;
+}
+
+.description ol li:before {
+  content: counter(li);
+  /* Use the counter as content */
+  counter-increment: li;
+  position: absolute;
+  background: #E83737;
+  color: white;
+  font-weight: bold;
+  vertical-align: middle;
+  font-size: .9em;
+  text-align: center;
+  line-height: 26px;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
 .meta .lists {
   display: inline;
 }
@@ -115,7 +156,7 @@ header .meta {
 
 .meta-item .item-label,
 .meta-item .item-value {
-  border-radius: 0.25mm 0 0 0.25mm;
+  border-radius: .25mm 0 0 .25mm;
   display: inline-block;
 }
 

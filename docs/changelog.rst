@@ -2,13 +2,36 @@
 CHANGELOG
 =========
 
+2.5.1 (2015-12-18)
+------------------
+
+**Bug fixes**
+
+* Trek public PDF fixes (size of service pictos, style of numbered lists, stages)
+
+
+2.5.0 (2015-12-08)
+------------------
+
+**New features**
+
+* Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
+* Added 2 templates buttons for flatpages creating two layouts
+* Option to add pois pictures to trek ones in Geotrek-Rando
+
+**Bug fixes**
+
+* Generate tiles zip files for all children of published treks
+* Fix URL of video/audio media in API
+* Fix default filtering of past touristic events in UI
+
+
 2.4.4 (2015-12-02)
 ------------------
 
 **Bug fixes**
 
 * Show pending import/sync tasks
-
 
 2.4.3 (2015-11-27)
 ------------------

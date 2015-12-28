@@ -118,6 +118,41 @@ header .meta {
 	margin-top: 1em;
 }
 
+.description {
+	ol {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		counter-reset:li;
+		li {
+			position: relative;
+			line-height: 1.5em;
+			vertical-align: middle;
+			padding-left: 2em;
+			padding-bottom: 0.5em;
+			&:empty {
+				display: none;
+			}
+		}
+		li:before {
+			content:counter(li); /* Use the counter as content */
+			counter-increment:li;
+			position: absolute;
+			background: #E83737;
+			color: white;
+			font-weight: bold;
+			vertical-align: middle;
+			font-size: .9em;
+			text-align: center;
+			line-height: 26px;
+			left: 0;
+			top: 0;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+		}
+	}
+}
 
 .meta {
 	.lists {

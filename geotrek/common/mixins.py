@@ -174,7 +174,7 @@ class PicturesMixin(object):
                 'title': att.title,
                 'legend': att.legend,
                 'backend': type(video).__name__.replace('Backend', ''),
-                'url': att.attachment_video,
+                'url': video.get_url(),
                 'code': video.code,
             })
         return serialized

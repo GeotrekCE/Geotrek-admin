@@ -569,6 +569,9 @@ msgstr "%(hour)s h"
 msgid "%s min"
 msgstr "%s min"
 
+msgid "Stages"
+msgstr "Étapes"
+
 #~ msgid "Skip tiles"
 #~ msgstr "Passer les tuiles"
 
