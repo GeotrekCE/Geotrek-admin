@@ -5,7 +5,9 @@ CHANGELOG
 2.5.2.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix hyphenation language in public PDF templates
 
 
 2.5.1 (2015-12-18)
