@@ -10,6 +10,7 @@ CHANGELOG
 * Fix hyphenation language in public PDF templates
 * Add parents to trek public PDF template
 * Fix numbering style in trek public PDF template
+* Show points of reference over other features on trek detail map
 
 
 2.5.1 (2015-12-18)
