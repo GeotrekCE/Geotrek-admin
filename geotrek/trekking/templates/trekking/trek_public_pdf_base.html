@@ -127,6 +127,20 @@
 		{% endblock stages %}
 
 
+		{% block itinerancy %}
+			{% if object.parents %}
+				<section class="itinerancy">
+					<h2>{% trans "Itinerancy" %}</h2>
+					<ul>
+						{% for parent in object.parents %}
+							<li>{{ parent.name }}</li>
+						{% endfor %}
+					</ul>
+				</section>
+			{% endif %}
+		{% endblock itinerancy %}
+
+
 		{% block description %}
 			{% if object.description %}
 				<section class="description">

@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix hyphenation language in public PDF templates
+* Add parents to trek public PDF template
 
 
 2.5.1 (2015-12-18)
