@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Synchronize record source pictograms
+* Add buttons to attachment update form
 
 
 2.5.2 (2015-12-29)
