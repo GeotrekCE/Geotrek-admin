@@ -5,7 +5,9 @@ CHANGELOG
 2.5.3.dev0
 ------------------
 
-*
+**New features**
+
+* Customization of practices ordering
 
 
 2.5.2 (2015-12-29)
