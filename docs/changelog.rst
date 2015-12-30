@@ -5,6 +5,10 @@ CHANGELOG
 2.5.3.dev0
 ------------------
 
+**New features**
+
+* Customization of practices ordering
+
 **Bug fixes**
 
 * Synchronize record source pictograms
