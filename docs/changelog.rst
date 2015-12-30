@@ -13,6 +13,7 @@ CHANGELOG
 
 * Synchronize record source pictograms
 * Add buttons to attachment update form
+* Fix timestamps in database when connection with timezone other than UTC
 
 
 2.5.2 (2015-12-29)
