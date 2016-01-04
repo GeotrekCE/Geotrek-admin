@@ -14,8 +14,9 @@ from django.template.base import TemplateDoesNotExist
 
 from paperclip.models import Attachment
 
+from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType
-from geotrek.common.parsers import ExcelParser, AttachmentParserMixin
+from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser
 
 
 class OrganismParser(ExcelParser):
@@ -117,3 +118,15 @@ class AttachmentParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(mocked.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
+
+
+class TourInSoftParserTests(TestCase):
+
+    def test_attachment(self):
+        class TestTourParser(TourInSoftParser):
+            def __init__(self):
+                self.model = Trek
+                super(TestTourParser, self).__init__()
+        parser = TestTourParser()
+        result = parser.filter_attachments('', 'a||b||c##||||##d||e||f')
+        self.assertListEqual(result, [['a', 'b', 'c'], ['d', 'e', 'f']])
