@@ -29,9 +29,7 @@ class FlatPageForm(CommonForm):
             # Test if HTML was filled
             # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
             html_content = cleaned_data.get('content_{}'.format(lang), None) or ''
-            if cleaned_data['external_url_{}'.format(lang)] \
-                    and cleaned_data['external_url_{}'.format(lang)].strip() \
-                    and strip_tags(html_content):
+            if external_url and external_url.strip() and strip_tags(html_content):
                 raise ValidationError(_('Choose between external URL and HTML content'))
 
         return cleaned_data
