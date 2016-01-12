@@ -642,6 +642,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u'trek': {u'pk': self.trek_b.pk,
                                         u'id': self.trek_b.id,
                                         u'slug': self.trek_b.slug,
+                                        u'category_slug': u'trek',
                                         u'name': self.trek_b.name}})
 
     def test_parking_location_in_wgs84(self):

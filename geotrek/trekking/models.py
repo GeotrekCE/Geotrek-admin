@@ -417,12 +417,14 @@ class Practice(PictogramMixin):
     distance = models.IntegerField(verbose_name=_(u"Distance"), blank=True, null=True, db_column='distance',
                                    help_text=_(u"Touristic contents and events will associate within this distance (meters)"))
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
+    order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
+                                help_text=_(u"Alphabetical order if blank"))
 
     class Meta:
         db_table = 'o_b_pratique'
         verbose_name = _(u"Practice")
         verbose_name_plural = _(u"Practices")
-        ordering = ['name']
+        ordering = ['order', 'name']
 
     def __unicode__(self):
         return self.name

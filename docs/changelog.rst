@@ -2,6 +2,31 @@
 CHANGELOG
 =========
 
+2.6.0 (2015-12-30)
+------------------
+
+**New features**
+
+* Customization of practices ordering
+
+**Bug fixes**
+
+* Synchronize record source pictograms
+* Add buttons to attachment update form
+* Fix timestamps in database when connection with timezone other than UTC
+
+
+2.5.2 (2015-12-29)
+------------------
+
+**Bug fixes**
+
+* Fix hyphenation language in public PDF templates
+* Add parents to trek public PDF template
+* Fix numbering style in trek public PDF template
+* Show points of reference over other features on trek detail map
+
+
 2.5.1 (2015-12-18)
 ------------------
 

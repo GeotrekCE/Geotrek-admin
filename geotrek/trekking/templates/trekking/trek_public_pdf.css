@@ -111,10 +111,13 @@ header .meta {
 
 .description ol li {
   position: relative;
+  margin-top: 1em;
   line-height: 1.5em;
   vertical-align: middle;
   padding-left: 2em;
   padding-bottom: 0.5em;
+  orphans: 3;
+  text-indent: -36px;
 }
 
 .description ol li:empty {
@@ -125,7 +128,7 @@ header .meta {
   content: counter(li);
   /* Use the counter as content */
   counter-increment: li;
-  position: absolute;
+  display: inline-block;
   background: #E83737;
   color: white;
   font-weight: bold;
@@ -133,11 +136,12 @@ header .meta {
   font-size: .9em;
   text-align: center;
   line-height: 26px;
-  left: 0;
-  top: 0;
   width: 26px;
   height: 26px;
   border-radius: 50%;
+  page-break-after: avoid;
+  text-indent: 0;
+  margin-right: 10px;
 }
 
 .meta .lists {

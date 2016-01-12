@@ -119,7 +119,8 @@
                                                   className: 'point-reference'});
                             return L.marker(latlng, {
                                 clickable: false,
-                                icon: icon
+                                icon: icon,
+                                zIndexOffset: 9999
                             }).addTo(map);
                         };
                     })()
