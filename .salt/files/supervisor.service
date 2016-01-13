@@ -1,0 +1,15 @@
+# {%- set cfg = salt['mc_project.get_configuration'](project) %}
+# {%- set data = cfg.data %} # MANAGED VIA SALT -- DO NOT EDIT
+[Unit]
+Description=supervisor_{{cfg.name}}
+After=syslog.target network.target
+
+[Service]
+Environment="DAEMONIZED=--nodaemon"
+ExecStart=/etc/init.d/supervisor_{{cfg.name}} start
+ExecReload=/etc/init.d/supervisor_{{cfg.name}} reload
+ExecStop=-/etc/init.d/supervisor_{{cfg.name}} stop && sleep 2
+ExecStop=/etc/init.d/supervisor_{{cfg.name}} stop
+
+[Install]
+WantedBy=multi-user.target
