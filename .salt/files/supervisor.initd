@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+source /etc/profile || /bin/true
+# {%- set cfg = salt['mc_project.get_configuration'](project) %}
+# {%- set data = cfg.data %}
+# MANAGED VIA SALT -- DO NOT EDIT
+# RedHat startup script for a supervisor instance
+# chkconfig: - 90 15
+# description: supervisor init script
+### BEGIN INIT INFO
+# Provides:          supervisor_{{cfg.name}}
+# Required-Start:    $syslog $network $time
+# Required-Stop:     $syslog $network
+# Should-Start:
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: supervisor_{{cfg.name}}
+# Description:       
+### END INIT INFO
+TMPDIR="/tmp"
+NAME=supervisor_{{cfg.name}}
+SCRIPTNAME=/etc/init.d/$NAME
+DESC=supervisor_{{cfg.name}}
+EFFECTIVE_USER="{{cfg.user}}"
+FORCE_STOP="1"
+DAEMON="{{cfg.project_root}}/bin/supervisord"
+DAEMONCTL="{{cfg.project_root}}/bin/supervisorctl" 
+PIDFILE=/var/run/$NAME.pid
+DAEMON_ARGS=""
+DAEMONIZED="${DAEMONIZED:-""}"
+GRACE_TIME=10
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+export TMPDIR
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+[ "x$DAEMON" != "x" ] || exit 1
+[ "x$DAEMONCTL" != "x" ] || exit 1
+[ -f $DAEMON ] || exit 1
+[ -f $DAEMONCTL ] || exit 1
+if [ "x${DEBUG}" != "x" ];then set -x;fi
+
+is_lxc() {
+    echo  "$(cat -e /proc/1/environ |grep container=lxc|wc -l|sed -e "s/ //g")"
+}
+
+filter_host_pids() {
+    if [ "x$(is_lxc)" != "x0" ];then
+        echo "${@}"
+    else
+        for pid in ${@};do
+            if [ "x$(grep -q lxc /proc/${pid}/cgroup 2>/dev/null;echo "${?}")" != "x0" ];then
+                 echo ${pid}
+             fi
+         done
+    fi
+}
+
+daemon_pids() {
+    filter_host_pids $(\
+        ps aux|egrep "$(basename $DAEMON)" \
+        | grep -v grep | grep -v $(basename $DAEMONCTL) | awk '{print $2}')
+}
+
+do_start() {
+    pids="$(daemon_pids)"
+    if [ "x$(echo ${pids}|wc -w|sed -e "s/  //g")" != "x0" ];then
+        log_begin_msg "$DESC already running."
+        log_end_msg 0
+        RC=0
+        return $RC
+    fi
+    log_daemon_msg "Starting $NAME daemon: "
+    start-stop-daemon --start --quiet --exec $DAEMON -- $DAEMONIZED $DAEMON_ARGS ${@}
+    RC=${?}
+    log_end_msg $RC
+    return ${RC}
+}
+
+do_stop() {
+    echo "Stopping ${DAEMON}"
+    pids="$(daemon_pids)"
+    if [ "x$(echo ${pids}|wc -w|sed -e "s/  //g")" != "x0" ];then
+        "${DAEMONCTL}" shutdown
+        if [ "x${FORCE_STOP}" = "x" ];then
+            echo "Waiting $(($GRACE_TIME+1))sec for exit"
+            sleep $(($GRACE_TIME+1))
+        fi
+    fi
+    pids="$(daemon_pids)"
+    if [ "x$(echo ${pids}|wc -w|sed -e "s/  //g")" != "x0" ];then
+        for pid in ${pids};do kill -9 $pid || /bin/true;done
+    fi
+    test "x$(daemon_pids|wc -w|sed -e "s/  //g")" = "x0"
+    RC=${?}
+    [ $RC -eq 0 ] && rm -f $PIDFILE
+    log_end_msg $RC
+    return ${RC}
+}
+
+do_reload() {
+    echo "Reloading ${DAEMON}"
+    pids="$(daemon_pids)"
+    if [ "x$(echo ${pids}|wc -w|sed -e "s/  //g")" != "x0" ];then
+        "${DAEMONCTL}" reread && "${DAEMONCTL}" update
+    else
+        do_start "${@}"
+    fi
+    RC=$?
+    return ${RC}
+}
+
+RC=0
+case "${1}" in
+    start)
+        shift
+        [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+        do_start ${@}
+        RC=$?
+        case "$RC" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+              2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    stop)
+        shift
+        [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+        do_stop
+        RC=$?
+        case "$RC" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+              2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    graceful-stop)
+        FORCE_STOP=""
+        shift
+        do_stop "$@"
+        RC=$?
+        case "$RC" in
+            0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+              2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+        esac
+        ;;
+    status)
+        status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+        ;;
+    reload)
+        shift
+        do_reload "$@"
+        ;;
+    restart|force-reload)
+        shift
+        log_daemon_msg "Restarting $DESC" "$NAME"
+        do_stop
+        RC=$?
+        case "$RC" in
+          0|1)
+              do_start ${@}
+              RC=$?
+              case "$RC" in
+                  0) log_end_msg 0 ;;
+                  1) log_end_msg 1 ;; # Old process is still running
+                  *) log_end_msg 1 ;; # Failed to start
+              esac
+              ;;
+          *)
+              # Failed to stop
+              log_end_msg 1
+              ;;
+        esac
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop|status|restart|reload|graceful-stop}" >&2
+        RC=3
+        ;;
+esac
+exit $RC
+# vim:set ft=sh:

@@ -27,6 +27,7 @@
       - file: {{cfg.name}}-restricted-perms
 {#- copy upstart job (no link, upstart is not always fine
     with symlinks#}
+{% if grains['oscodename'] in ['trusty'] %}
 etc-init-supervisor.{{cfg.name}}:
   cmd.run:
     - name: >
@@ -36,13 +37,56 @@ etc-init-supervisor.{{cfg.name}}:
     - stateful: true
     - watch:
       - cmd: {{cfg.name}}-restricted-perms
+    - watch_in:
+      - service: {{cfg.name}}-service
+{% else %}
+etc-systemd-supervisor.{{cfg.name}}:
+  file.managed:
+    - source: salt://makina-projects/{{cfg.name}}/files/supervisor.service
+    - name: /etc/systemd/system/supervisor_{{cfg.name}}.service
+    - mode: 644
+    - user: root
+    - template: jinja
+    - defaults:
+        project: {{cfg.name}}
+    - group: root
+    - makedirs: true
+    - watch:
+      - cmd: {{cfg.name}}-restricted-perms
+    - watch_in:
+      - service: {{cfg.name}}-service 
+      - cmd: etc-init-supervisor.{{cfg.name}}
+etc-init-supervisor.{{cfg.name}}:
+  file.managed:
+    - source: salt://makina-projects/{{cfg.name}}/files/supervisor.initd
+    - name: /etc/init.d/supervisor_{{cfg.name}}
+    - mode: 755
+    - user: root
+    - template: jinja
+    - defaults:
+        project: {{cfg.name}}
+    - group: root
+    - makedirs: true
+    - watch:
+      - cmd: {{cfg.name}}-restricted-perms
+    - watch_in:
+      - service: {{cfg.name}}-service
+  cmd.run:
+    - onlyif: hash -r systemctl && systemctl status|grep -q State
+    - name: systemctl daemon-reload && echo changed=false
+    - stateful: true
+    - watch:
+      - cmd: {{cfg.name}}-restricted-perms
+      - file: etc-init-supervisor.{{cfg.name}}
+    - watch_in:
+      - service: {{cfg.name}}-service
+{% endif %}
 
 {{cfg.name}}-service:
   service.running:
     - name: supervisor_{{cfg.name}}
     - enable: True
-    - watch:
-      - cmd: etc-init-supervisor.{{cfg.name}}
+
   cmd.run:
     - name: service supervisor_{{cfg.name}} restart
     - onlyif: test "$({{cfg.project_root}}/bin/supervisorctl status 2>&1 |grep "refused connection"|wc -l)" != 0

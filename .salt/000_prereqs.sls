@@ -54,7 +54,13 @@ prepreqs-{{cfg.name}}:
       - libxml2-dev
       - libxslt1-dev
       - libopenjpeg-dev
+      {% if grains['oscodename'] in ['trusty'] %}
+      - postgresql-client-9.3
       - libopenjpeg2
+      {% else %}
+      - postgresql-client-9.4
+      - libopenjpeg5
+      {% endif %}
       - m4
       - man-db
       - pkg-config
@@ -84,7 +90,6 @@ prepreqs-{{cfg.name}}:
       - gdal-bin
       - libgdal-dev
       #
-      - postgresql-client-9.3
       - postgresql-server-dev-all
       - memcached
       - redis-server
