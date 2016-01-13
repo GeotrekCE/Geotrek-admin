@@ -129,16 +129,18 @@
                         content.innerHTML = defaultImageContent;
                     }
 
-                    this.classList.forEach(function (cls, index, ar) {
-                        console.log(cls);
-                        switch (cls) {
-                            case 'col-sm-4':
-                            case 'col-sm-8':
-                                ar.remove(cls);
-                                ar.add('col-sm-12');
-                                break;
-                        }
-                    });
+                    if (this.classList.contains('col-sm-4')) {
+                      this.classList.remove('col-sm-4');
+                      this.classList.remove('col-xs-4');
+                      this.classList.add('col-sm-12');
+                      this.classList.add('col-xs-12');
+                    }
+                    if (this.classList.contains('col-sm-8')) {
+                      this.classList.remove('col-sm-8');
+                      this.classList.remove('col-xs-8');
+                      this.classList.add('col-sm-12');
+                      this.classList.add('col-xs-12');
+                    }
                 });
                 // And we add the generated row to the content.
                 canvas.prepend(row);
@@ -167,20 +169,12 @@
                         content.innerHTML = defaultTextContent;
                     }
 
-                    this.classList.forEach(function (cls, index, ar) {
-                        console.log(cls);
-                        switch (cls) {
-                            case 'col-sm-3':
-                                ar.remove(cls);
-                                ar.add('col-sm-6');
-                                break;
-                            case 'col-sm-4':
-                            case 'col-sm-8':
-                                ar.remove(cls);
-                                ar.add('col-sm-12');
-                                break;
-                        }
-                    });
+                    if (this.classList.contains('col-sm-3')) {
+                      this.classList.remove('col-sm-3');
+                      this.classList.remove('col-xs-3');
+                      this.classList.add('col-sm-6');
+                      this.classList.add('col-xs-12');
+                    }
                 });
                 canvas.prepend(row);
             });
