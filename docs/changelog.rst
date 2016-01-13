@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * New button to add Youtube videos in flat pages
+* Change map background in map screenshots depending on location
 
 **Bug fixes**
 
