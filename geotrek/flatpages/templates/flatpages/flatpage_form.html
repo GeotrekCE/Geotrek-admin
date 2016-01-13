@@ -90,14 +90,18 @@
                 tinymce: {
                     config: {
                         inline: true,
+                        selector: "textarea",
+                        external_plugins: {
+                            'youtube': '/static/tiny_mce/plugins/youtube/plugin.min.js'
+                        },
                         plugins: [
                             "advlist autolink lists link image charmap print preview anchor",
                             "searchreplace visualblocks code fullscreen",
-                            "insertdatetime table contextmenu paste"
+                            "insertdatetime table contextmenu paste youtube"
                         ],
-                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image youtube",
                     }
-                },
+                }
             });
         });
 

@@ -5,7 +5,12 @@ CHANGELOG
 2.6.1.dev0
 ------------------
 
+**New features**
+
+* New button to add Youtube videos in flat pages
+
 **Bug fixes**
+
 * Fix iframe inclusion in flatpages.
 * Fix double column buttons in gridmanager.
 * Fix validation on flatpages for combo external_url + content.
