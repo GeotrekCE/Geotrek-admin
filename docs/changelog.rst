@@ -2,13 +2,12 @@
 CHANGELOG
 =========
 
-2.6.1.dev0
+2.7.0 (2016-01-14)
 ------------------
 
 **New features**
 
 * New button to add Youtube videos in flat pages
-* Change map background in map screenshots depending on location
 
 **Bug fixes**
 
