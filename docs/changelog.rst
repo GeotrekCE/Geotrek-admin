@@ -16,6 +16,7 @@ CHANGELOG
 * Fix double column buttons in gridmanager.
 * Fix validation on flatpages for combo external_url + content.
 * Fix responsive layout for provided templates in flatpages.
+* Fix event link to closest visible path only
 
 
 2.6.0 (2015-12-30)

@@ -33,10 +33,17 @@ class PathManager(models.GeoManager):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
+class PathInvisibleManager(models.GeoManager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return super(PathInvisibleManager, self).get_queryset()
+
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
+
 
 class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
@@ -75,6 +82,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
 
     objects = PathManager()
+    include_invisible = PathInvisibleManager()
 
     is_reversed = False
 
@@ -110,7 +118,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        return cls.objects.all().distance(point).order_by('distance')[0]
+        return cls.objects.all().exclude(visible=False).distance(point).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
