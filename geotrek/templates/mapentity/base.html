@@ -60,8 +60,9 @@
             		                   "coordinates" : value.coordinates }
                     }, new L.TileLayer(value.layer,
                                        { minZoom : 0,
-                                         maxZoom : 18,
-                                         attribution : '',})]);
+                                         maxZoom : 20,
+                                         attribution : '',
+                                         zIndex : 99})]);
             });
 
             check_layer_switch();
