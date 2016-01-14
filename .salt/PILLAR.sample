@@ -47,6 +47,7 @@ makina-projects.projectname:
     path_trek_public_template: ~
     path_touristiccontent_public_template: ~
     path_touristicevent_public_template: ~
+    path_touristic_event_icon: ~
     path_logo_login: "salt://makina-projects/{name}/files/demo/logo-login.png"
     path_logo_header: "salt://makina-projects/{name}/files/demo/logo-header.png"
     path_favicon: "salt://makina-projects/{name}/files/demo/favicon.png"
