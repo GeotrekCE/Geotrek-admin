@@ -17,6 +17,7 @@ CHANGELOG
 * Fix validation on flatpages for combo external_url + content.
 * Fix responsive layout for provided templates in flatpages.
 * Fix event link to closest visible path only
+* Do not log anymore an error when submitting a form with an empty geometry
 
 
 2.6.0 (2015-12-30)
