@@ -473,7 +473,12 @@ function geotrek_setup {
 
         # If buildout was successful, deploy really !
         if [ -f etc/init/supervisor.conf ]; then
-            sudo rm /etc/nginx/sites-enabled/default
+            server_name=$(ini_value $settingsfile server_name)
+            if [ $server_name -eq _ ]; then
+                sudo rm /etc/nginx/sites-enabled/default
+            else
+                sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+            fi
             sudo cp etc/nginx.conf /etc/nginx/sites-available/geotrek
             sudo ln -sf /etc/nginx/sites-available/geotrek /etc/nginx/sites-enabled/geotrek
 

@@ -16,6 +16,7 @@ CHANGELOG
 * Fix double column buttons in gridmanager.
 * Fix validation on flatpages for combo external_url + content.
 * Fix responsive layout for provided templates in flatpages.
+* Don't catch all domain names if it is defined in settings.ini
 
 
 2.6.0 (2015-12-30)
