@@ -136,7 +136,7 @@ Release
 * Pin (fixed revision) of eggs under development in *buildout.cfg*
 * Use semantic versioning
 * Use zest.releaser
-* Add git tag vX.Y.Z
+* Add git tag X.Y.Z
 * Add release on Github (copy-paste ``CHANGES`` paragraph)
 
 

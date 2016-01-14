@@ -176,6 +176,7 @@ SECRET_KEY = 'public_key'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'geotrek.templateloaders.Loader',
     # 'django.template.loaders.eggs.Loader',
 )
 
@@ -214,6 +215,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    'geotrek.context_processors.forced_layers',
 
     'mapentity.context_processors.settings',
 )
@@ -444,6 +446,10 @@ LEAFLET_CONFIG = {
                               'core/topology_helper.js']}
     }
 }
+
+# define forced layers from LEAFLET_CONFIG when map center in polygon
+# [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4), (lat1, lng1)]),]
+FORCED_LAYERS = []
 
 """ This *pool* of colors is used to colorized lands records.
 """

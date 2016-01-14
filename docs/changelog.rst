@@ -2,6 +2,22 @@
 CHANGELOG
 =========
 
+2.6.1.dev0
+------------------
+
+**New features**
+
+* New button to add Youtube videos in flat pages
+* Change map background in map screenshots depending on location
+
+**Bug fixes**
+
+* Fix iframe inclusion in flatpages.
+* Fix double column buttons in gridmanager.
+* Fix validation on flatpages for combo external_url + content.
+* Fix responsive layout for provided templates in flatpages.
+
+
 2.6.0 (2015-12-30)
 ------------------
 

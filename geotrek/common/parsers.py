@@ -568,7 +568,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [subval.split('||') for subval in val.split('##')]
+        return [subval.split('||') for subval in val.split('##') if subval.split('||') != ['', '', '']]
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):
