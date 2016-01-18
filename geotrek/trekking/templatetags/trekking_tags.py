@@ -21,7 +21,7 @@ def duration(value):
     if duration.day > 1:
         if duration.hour > 0 or duration.minute > 0:
             final_duration = _("%s days") % duration.day
-            
+
         else:
             final_duration = _("%s days") % (duration.day - 1)
 
