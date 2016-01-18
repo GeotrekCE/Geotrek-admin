@@ -885,11 +885,12 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"4 h", trekking_tags.duration(4))
         self.assertEqual(u"6 h", trekking_tags.duration(6))
         self.assertEqual(u"10 h", trekking_tags.duration(10))
-        self.assertEqual(u"2 days", trekking_tags.duration(11))
+        self.assertEqual(u"1 days", trekking_tags.duration(24))
         self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))
+        self.assertEqual(u"3 days", trekking_tags.duration(49))
+        self.assertEqual(u"8 days", trekking_tags.duration(24 * 8))
+        self.assertEqual(u"9 days", trekking_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
