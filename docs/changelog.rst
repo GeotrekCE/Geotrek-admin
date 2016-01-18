@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.7.1.dev0
+2.7.1 (2016-01-18)
 ------------------
 
 **Bug fixes**
 
-* Fix random z-index on forced layer polygon *
+* Fix random z-index on forced layer polygon
+* Fix pretty duration
 
 
 2.7.0 (2016-01-14)
