@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from django import template
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -18,25 +17,22 @@ def duration(value):
 
     seconds = timedelta(minutes=float(value) * 60)
     duration = datetime(1, 1, 1) + seconds
-    days = duration.day - 1
 
-    if days > 1:
-        final_duration = _("%s days") % days
+    if duration.day > 1:
+        if duration.hour > 0 or duration.minute > 0:
+            final_duration = _("%s days") % duration.day
+            
+        else:
+            final_duration = _("%s days") % (duration.day - 1)
+
+    elif duration.hour > 0 and duration.minute > 0:
+        final_duration = _("%(hour)s h %(min)s") % {'hour': duration.hour,
+                                                    'min': duration.minute, }
+
+    elif duration.hour > 0:
+        final_duration = _("%(hour)s h") % {'hour': duration.hour}
 
     else:
-        hours = (settings.TREK_DAY_DURATION * days) + duration.hour
-
-        if hours > settings.TREK_DAY_DURATION:
-            final_duration = _("%s days") % 2
-
-        elif duration.hour > 0 and duration.minute > 0:
-            final_duration = _("%(hour)s h %(min)s") % {'hour': duration.hour,
-                                                        'min': duration.minute}
-
-        elif duration.hour > 0:
-            final_duration = _("%(hour)s h") % {'hour': duration.hour}
-
-        else:
-            final_duration = _("%s min") % duration.minute
+        final_duration = _("%s min") % duration.minute
 
     return final_duration
