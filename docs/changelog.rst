@@ -5,7 +5,9 @@ CHANGELOG
 2.7.1.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix random z-index on forced layer polygon *
 
 
 2.7.0 (2016-01-14)
