@@ -37,14 +37,28 @@
         function check_layer_switch(){
             turf_map_center = create_turf_point();
 
+            back_layer = $('.leaflet-control-layers-base :input[checked]').next().text().trim();
+
             $.each(polygons_forced_layers, function(index, value) {
+
                 if (turf.inside(turf_map_center, value[0])) {
                     // remove forced layer
-                    map.removeLayer(value[1]);
+                    $('.leaflet-control-layers-base :input').each(function(index) {
+                        if ($(this).next().text().trim() == back_layer) {
+                            $('.leaflet-control-layers-base :input')[0].click();
+                        }
+                    });
+
                 } else {
                     // add forced layer
-                    map.addLayer(value[1]);
+                    //map.addLayer(value[1]);
+                    $('.leaflet-control-layers-base :input').each(function(index) {
+                        if ($(this).next().text().trim() == value[1]) {
+                            $(this).click();
+                        }
+                    });
                 }
+
             });
         }
 
@@ -58,11 +72,7 @@
             	        "properties" : {},
             		    "geometry" : { "type" : "Polygon",
             		                   "coordinates" : value.coordinates }
-                    }, new L.TileLayer(value.layer,
-                                       { minZoom : 0,
-                                         maxZoom : 20,
-                                         attribution : '',
-                                         zIndex : 99})]);
+                    }, value.layer]);
             });
 
             check_layer_switch();
@@ -72,7 +82,8 @@
             });
     	});
     </script>
-
+    {% else %}
+    <input type="hidden" value="NO FORCED LAYER : {{ FORCED_LAYERS }}" />
     {% endif %}
 
 {% endblock %}
