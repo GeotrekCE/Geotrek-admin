@@ -67,6 +67,6 @@ class TouristicEventApiFilterSet(django_filters.FilterSet):
 
     def events_end_after(self, queryset, value):
         return queryset.filter(
-            Q(end_date__isnull=True)|
+            Q(end_date__isnull=True) |
             Q(end_date__gte=value)
         )
