@@ -640,10 +640,15 @@ class TouristicEventViewSetTest(TestCase):
         self.assertEqual(len(geojson['features']), 10)
 
     def test_touristic_events_with_enddate_filter(self):
+        # 5 events with no end
         TouristicEventFactory.create_batch(5, end_date=None, published=True)
+        # 5 events with end after relative date
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
+        # 7 events with end before relative date
+        TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
         response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
         geojson = json.loads(response.content)
+        # only events with no end or end in future must be included
         self.assertEqual(len(geojson['features']), 10)
 
 

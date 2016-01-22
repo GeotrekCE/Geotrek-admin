@@ -5,7 +5,9 @@ CHANGELOG
 2.7.2.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix touristic events with no end date in API
 
 
 2.7.1 (2016-01-18)
