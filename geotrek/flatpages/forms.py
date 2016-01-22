@@ -1,4 +1,6 @@
 import floppyforms as forms
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from geotrek.common.forms import CommonForm
 from geotrek.flatpages.models import FlatPage
@@ -23,4 +25,11 @@ class FlatPageForm(CommonForm):
             if external_url is not None and len(external_url) > 0:
                 if 'content_' + lang in self.errors:
                     self.errors.pop('content_' + lang)
+
+            # Test if HTML was filled
+            # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
+            html_content = cleaned_data.get('content_{}'.format(lang), None) or ''
+            if external_url and external_url.strip() and strip_tags(html_content):
+                raise ValidationError(_('Choose between external URL and HTML content'))
+
         return cleaned_data

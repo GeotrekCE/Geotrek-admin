@@ -18,6 +18,22 @@ upstream tile_server {
 add_header Access-Control-Allow-Origin ${options.cors};
 {% end %}
 
+{% if options.default in ['False', 'false'] %}
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server ipv6only=on;
+
+	root /usr/share/nginx/html;
+	index index.html index.htm;
+
+	server_name localhost;
+
+	location / {
+		try_files ${options.dollar}uri ${options.dollar}uri/ =404;
+	}
+}
+{% end %}
+
 server {
     listen ${options.port} {% if options.default in ['True', 'true'] %} default {% end %};
     server_name ${options.server_name};

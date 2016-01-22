@@ -2,10 +2,69 @@
 CHANGELOG
 =========
 
-2.5.1.dev0
+2.7.2.dev0
 ------------------
 
 *
+
+
+2.7.1 (2016-01-18)
+------------------
+
+**Bug fixes**
+
+* Fix random z-index on forced layer polygon
+* Fix pretty duration
+
+
+2.7.0 (2016-01-14)
+------------------
+
+**New features**
+
+* New button to add Youtube videos in flat pages
+
+**Bug fixes**
+
+* Fix iframe inclusion in flatpages.
+* Fix double column buttons in gridmanager.
+* Fix validation on flatpages for combo external_url + content.
+* Fix responsive layout for provided templates in flatpages.
+* Fix event link to closest visible path only
+* Do not log anymore an error when submitting a form with an empty geometry
+
+
+2.6.0 (2015-12-30)
+------------------
+
+**New features**
+
+* Customization of practices ordering
+
+**Bug fixes**
+
+* Synchronize record source pictograms
+* Add buttons to attachment update form
+* Fix timestamps in database when connection with timezone other than UTC
+
+
+2.5.2 (2015-12-29)
+------------------
+
+**Bug fixes**
+
+* Fix hyphenation language in public PDF templates
+* Add parents to trek public PDF template
+* Fix numbering style in trek public PDF template
+* Show points of reference over other features on trek detail map
+
+
+2.5.1 (2015-12-18)
+------------------
+
+**Bug fixes**
+
+* Trek public PDF fixes (size of service pictos, style of numbered lists, stages)
 
 
 2.5.0 (2015-12-08)

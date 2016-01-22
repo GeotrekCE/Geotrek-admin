@@ -176,6 +176,7 @@ SECRET_KEY = 'public_key'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'geotrek.templateloaders.Loader',
     # 'django.template.loaders.eggs.Loader',
 )
 
@@ -214,6 +215,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
+    'geotrek.context_processors.forced_layers',
 
     'mapentity.context_processors.settings',
 )
@@ -445,6 +447,10 @@ LEAFLET_CONFIG = {
     }
 }
 
+# define forced layers from LEAFLET_CONFIG when map center in polygon
+# [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4), (lat1, lng1)]),]
+FORCED_LAYERS = []
+
 """ This *pool* of colors is used to colorized lands records.
 """
 COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
@@ -518,7 +524,6 @@ TREK_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
-TREK_DAY_DURATION = 10  # Max duration to be done in one day
 TREK_ICON_SIZE_POI = 18
 TREK_ICON_SIZE_SERVICE = 18
 TREK_ICON_SIZE_PARKING = 18

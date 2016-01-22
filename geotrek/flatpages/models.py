@@ -2,9 +2,7 @@ import mimetypes
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
-from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from bs4 import BeautifulSoup
@@ -65,11 +63,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         html_content = ''
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             html_content += getattr(self, 'content_%s' % l[0], None) or ''
-
-        # Test if HTML was filled
-        # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
-        if self.external_url and self.external_url.strip() and strip_tags(html_content):
-            raise ValidationError(_('Choose between external URL and HTML content'))
 
     def parse_media(self):
         soup = BeautifulSoup(self.content or '')

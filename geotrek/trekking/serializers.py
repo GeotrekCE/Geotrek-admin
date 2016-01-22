@@ -111,10 +111,18 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 class RelatedTrekSerializer(TranslatedModelSerializer):
     pk = rest_serializers.Field(source='id')
     slug = rest_serializers.Field(source='slug')
+    category_slug = rest_serializers.SerializerMethodField('get_category_slug')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'pk', 'slug', 'name')
+        fields = ('id', 'pk', 'slug', 'name', 'category_slug')
+
+    def get_category_slug(self, obj):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+            return obj.practice.slug
+        else:
+            # Translators: This is a slug (without space, accent or special char)
+            return _('trek')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
@@ -268,7 +276,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'slug': _('trek'),
             }
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            data['order'] = obj.practice and obj.practice.id
+            data['order'] = obj.practice and obj.practice.order
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
         if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
