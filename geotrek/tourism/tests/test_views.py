@@ -25,6 +25,7 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
+                                       InformationDeskFactory,
                                        TouristicContentFactory,
                                        TouristicEventFactory,
                                        TouristicContentCategoryFactory,
@@ -667,3 +668,17 @@ class TouristicContentCategoryViewSetTest(TestCase):
         response = self.client.get(reverse('tourism:touristic_categories_json', kwargs={'lang': 'en'}))
         json_response = json.loads(response.content)
         self.assertEqual(len(json_response), nb_elements)
+
+
+class InformationDeskAPITest(TestCase):
+    def test_json(self):
+        InformationDeskFactory.create()
+        desk2 = InformationDeskFactory.create()
+        response = self.client.get('/api/en/information_desks.geojson?type={}'.format(desk2.type.id))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        self.assertIn('features', result)
+        self.assertEqual(len(result['features']), 1)
+        self.assertEqual(result['features'][0]['type'], 'Feature')
+        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
+        self.assertEqual(result['features'][0]['properties']['name'], desk2.name)

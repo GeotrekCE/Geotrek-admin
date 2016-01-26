@@ -193,7 +193,7 @@ class Command(BaseCommand):
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
-        name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
+        name = os.path.join('api', lang, name)
         params.update({'format': 'geojson'})
         if self.source:
             params['source'] = ','.join(self.source)
@@ -339,10 +339,10 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.zipfile = ZipFile(zipfullname, 'w')
 
-        self.sync_geojson(lang, TrekViewSet, 'treks', zipfile=self.zipfile)
-        self.sync_geojson(lang, POIViewSet, 'pois')
-        self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
-        self.sync_geojson(lang, ServiceViewSet, 'services', zipfile=self.zipfile)
+        self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
                        zipfile=self.zipfile)

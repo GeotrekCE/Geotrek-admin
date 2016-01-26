@@ -57,8 +57,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, resized)
 
     def sync_tourism(self, lang):
-        self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents')
-        self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents',
+        self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson')
+        self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents.geojson',
                           params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
         # reopen global zip (closed after trekking sync)
@@ -104,6 +104,12 @@ class Command(BaseCommand):
             events = events.filter(source__name__in=self.source)
         for event in events:
             self.sync_event(lang, event)
+
+        # Information desks
+        self.sync_geojson(lang, tourism_views.InformationDeskViewSet, 'information_desks.geojson')
+        for pk in tourism_models.InformationDeskType.objects.values_list('pk', flat=True):
+            name = 'information_desks-{}.geojson'.format(pk)
+            self.sync_geojson(lang, tourism_views.InformationDeskViewSet, name, type=pk)
 
         self.zipfile.close()
 
