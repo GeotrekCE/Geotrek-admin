@@ -322,6 +322,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                 return True
         return self.any_published
 
+    @property
+    def picture_print(self):
+        picture = super(Trek, self).picture_print
+        if picture:
+            return picture
+        for poi in self.published_pois:
+            picture = poi.picture_print
+            if picture:
+                return picture
+
     def save(self, *args, **kwargs):
         if self.pk is not None and kwargs.get('update_fields', None) is None:
             field_names = set()

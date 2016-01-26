@@ -5,7 +5,10 @@ CHANGELOG
 2.7.3.dev0
 ------------------
 
-*
+**New features**
+
+* Use POI pictures in PDF if the trek has no picture itself
+* Use a placeholder in PDF if there is no picture
 
 
 2.7.2 (2016-01-26)
