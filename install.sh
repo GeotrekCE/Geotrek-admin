@@ -20,7 +20,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.7.1}
+STABLE_VERSION=${STABLE_VERSION:-2.7.2}
 dev=false
 tests=false
 prod=false
