@@ -1,5 +1,6 @@
 import os
 import json
+import mock
 from django.test import TestCase
 from django.core import management
 from django.conf import settings
@@ -19,7 +20,8 @@ class SyncTest(TestCase):
         source_b = RecordSourceFactory(name='Source B')
         factory(TrekFactory, source_a)
         factory(TrekFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
         self.assertEquals(len(treks['features']), 1)
