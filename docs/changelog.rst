@@ -7,7 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix touristic events with no end date in API
+* Synchronize touristic events with no end date
+* Fix PDF synchronization (eg. missing list of POI)
 
 
 2.7.1 (2016-01-18)

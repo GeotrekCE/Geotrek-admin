@@ -2,6 +2,7 @@
 
 import json
 import os
+import mock
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -28,7 +29,10 @@ class SyncTest(TranslationResetMixin, TestCase):
         factory(TouristicContentFactory, source_b)
         factory(TouristicEventFactory, source_a)
         factory(TouristicEventFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
+        with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
+            with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
+                management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                        source='Source A', skip_tiles=True, verbosity='0')
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
@@ -50,16 +54,17 @@ class SyncTest(TranslationResetMixin, TestCase):
         trek1 = TrekWithTouristicEventFactory.create()
         trek2 = TrekWithTouristicContentFactory.create()
 
-        management.call_command('sync_rando',
-                                settings.SYNC_RANDO_ROOT,
-                                url='http://localhost:8000',
-                                skip_tiles=True,
-                                with_events=True,
-                                skip_profile_png=True,
-                                skip_pdf=True,
-                                skip_dem=True,
-                                content_categories=u"1,2",
-                                verbosity='0')
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando',
+                                    settings.SYNC_RANDO_ROOT,
+                                    url='http://localhost:8000',
+                                    skip_tiles=True,
+                                    with_events=True,
+                                    skip_profile_png=True,
+                                    skip_pdf=True,
+                                    skip_dem=True,
+                                    content_categories=u"1,2",
+                                    verbosity='0')
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', lang,
