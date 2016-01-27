@@ -35,7 +35,7 @@ def discover_available_parsers():
     for index, cls in enumerate(classes):
         if cls.label is None:
             continue
-        if not getattr(cls, 'url', None) or not getattr(cls, 'base_url', None):
+        if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
             choices.append((index, cls.label))
         else:
             choices_url.append((index, cls.label))
