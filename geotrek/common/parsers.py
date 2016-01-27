@@ -6,7 +6,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
-import json
 import urllib2
 
 from ftplib import FTP
@@ -163,17 +162,9 @@ class Parser(object):
     def parse_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self, 'filter_{0}'.format(dst)):
-            try:
-                val = getattr(self, 'filter_{0}'.format(dst))(src, val)
-            except ValueImportError as warning:
-                self.add_warning(unicode(warning))
-                return False
+            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
-            try:
-                val = self.apply_filter(dst, src, val)
-            except ValueImportError as warning:
-                self.add_warning(unicode(warning))
-                return False
+            val = self.apply_filter(dst, src, val)
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
@@ -195,27 +186,27 @@ class Parser(object):
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
-            if dst in self.constant_fields or dst in self.m2m_constant_fields:
-                val = src
-            else:
-                src = self.normalize_src(src)
-                try:
+            try:
+                if dst in self.constant_fields or dst in self.m2m_constant_fields:
+                    val = src
+                else:
+                    src = self.normalize_src(src)
                     val = self.get_val(row, dst, src)
-                except ValueImportError as warning:
-                    if self.field_options.get(dst, {}).get('required', False):
-                        raise RowImportError(warning)
-                    if self.warn_on_missing_fields:
-                        self.add_warning(unicode(warning))
-                    continue
-            if non_field:
-                modified = self.parse_non_field(dst, src, val)
-            else:
-                modified = self.parse_field(dst, src, val)
-            if modified:
-                updated.append(dst)
-                if dst in self.translated_fields:
-                    lang = translation.get_language()
-                    updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+                if non_field:
+                    modified = self.parse_non_field(dst, src, val)
+                else:
+                    modified = self.parse_field(dst, src, val)
+                if modified:
+                    updated.append(dst)
+                    if dst in self.translated_fields:
+                        lang = translation.get_language()
+                        updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+            except ValueImportError as warning:
+                if self.field_options.get(dst, {}).get('required', False):
+                    raise RowImportError(warning)
+                if self.warn_on_missing_fields:
+                    self.add_warning(unicode(warning))
+                continue
         return updated
 
     def parse_obj(self, row, operation):
@@ -493,6 +484,24 @@ class AttachmentParserMixin(object):
             return False
         return True
 
+    def download_attachment(self, url):
+        if url[:6] == 'ftp://':
+            try:
+                response = urllib2.urlopen(url)
+            except:
+                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                return None
+            return response.read()
+        else:
+            try:
+                response = requests.get(url)
+            except requests.exceptions.RequestException as e:
+                raise ValueImportError('Failed to load attachment: ' + unicode(e))
+            if response.status_code != requests.codes.ok:
+                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                return None
+            return response.content
+
     def save_attachments(self, src, val):
         updated = False
         for url, legend, author in self.filter_attachments(src, val):
@@ -515,19 +524,9 @@ class AttachmentParserMixin(object):
                     break
             if found:
                 continue
-            if url[:6] == 'ftp://':
-                try:
-                    response = urllib2.urlopen(url)
-                except:
-                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                    continue
-                content = response.read()
-            else:
-                response = requests.get(url)
-                if response.status_code != requests.codes.ok:
-                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                    continue
-                content = response.content
+            content = self.download_attachment(url)
+            if content is None:
+                continue
             f = ContentFile(content)
             attachment = Attachment()
             attachment.content_object = self.obj
@@ -604,49 +603,6 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
             except KeyError:
                 name = None
             result.append((subval['URL'], name, None))
-        return result
-
-    def normalize_field_name(self, name):
-        return name
-
-
-class SitraParser(AttachmentParserMixin, Parser):
-    url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
-
-    @property
-    def items(self):
-        return self.root['objetsTouristiques']
-
-    def next_row(self):
-        size = 100
-        skip = 0
-        while True:
-            params = {
-                'apiKey': self.api_key,
-                'projetId': self.project_id,
-                'selectionIds': [self.selection_id],
-                'count': size,
-                'first': skip,
-            }
-            response = requests.get(self.url, params={'query': json.dumps(params)})
-            if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
-            self.root = response.json()
-            self.nb = int(self.root['numFound'])
-            for row in self.items:
-                yield row
-            skip += size
-            if skip >= self.nb:
-                return
-
-    def filter_attachments(self, src, val):
-        result = []
-        for subval in val or []:
-            if 'nom' in subval:
-                name = subval['nom']['libelleFr']
-            else:
-                name = None
-            result.append((subval['traductionFichiers'][0]['url'], name, None))
         return result
 
     def normalize_field_name(self, name):

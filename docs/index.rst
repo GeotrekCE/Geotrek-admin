@@ -12,6 +12,7 @@ Contents:
    advanced-configuration
    maintenance
    synchronization
+   import
    troubleshooting
    faq
    user-manual
@@ -27,4 +28,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

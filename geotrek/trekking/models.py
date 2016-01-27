@@ -70,7 +70,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In decimal hours (ex. 1.5 for 1 h 30)"),
+                                 help_text=_(u"In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
@@ -113,8 +113,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     source = models.ManyToManyField('common.RecordSource',
                                     null=True, blank=True, related_name='treks',
                                     verbose_name=_("Source"), db_table='o_r_itineraire_source')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, db_column='id_externe2')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -573,7 +573,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -682,7 +682,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_service'
