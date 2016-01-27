@@ -11,6 +11,10 @@ CHANGELOG
 * Use a placeholder in PDF if there is no picture
 * Parser to import touristic contents from SITRA
 
+**Bug fixes**
+
+* Allow NULL values for id_externe fields in database
+
 
 2.7.2 (2016-01-26)
 ------------------

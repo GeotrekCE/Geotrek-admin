@@ -7,14 +7,38 @@ from django.conf import settings
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Practice.order'
-        db.add_column('o_b_pratique', 'order',
-                      self.gf('django.db.models.fields.IntegerField')(null=True, db_column='tri', blank=True),
-                      keep_default=False)
+
+        db.execute('DROP VIEW IF EXISTS o_v_itineraire')
+        db.execute('DROP VIEW IF EXISTS o_v_poi')
+
+        # Changing field 'Trek.eid'
+        db.alter_column('o_t_itineraire', 'id_externe', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, db_column='id_externe'))
+
+        # Changing field 'Trek.eid2'
+        db.alter_column('o_t_itineraire', 'id_externe2', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, db_column='id_externe2'))
+
+        # Changing field 'Service.eid'
+        db.alter_column('o_t_service', 'id_externe', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, db_column='id_externe'))
+
+        # Changing field 'POI.eid'
+        db.alter_column('o_t_poi', 'id_externe', self.gf('django.db.models.fields.CharField')(max_length=128, null=True, db_column='id_externe'))
 
     def backwards(self, orm):
-        # Deleting field 'Practice.order'
-        db.delete_column('o_b_pratique', 'tri')
+
+        db.execute('DROP VIEW IF EXISTS o_v_itineraire')
+        db.execute('DROP VIEW IF EXISTS o_v_poi')
+
+        # Changing field 'Trek.eid'
+        db.alter_column('o_t_itineraire', 'id_externe', self.gf('django.db.models.fields.CharField')(default='', max_length=128, db_column='id_externe'))
+
+        # Changing field 'Trek.eid2'
+        db.alter_column('o_t_itineraire', 'id_externe2', self.gf('django.db.models.fields.CharField')(default='', max_length=128, db_column='id_externe2'))
+
+        # Changing field 'Service.eid'
+        db.alter_column('o_t_service', 'id_externe', self.gf('django.db.models.fields.CharField')(default='', max_length=128, db_column='id_externe'))
+
+        # Changing field 'POI.eid'
+        db.alter_column('o_t_poi', 'id_externe', self.gf('django.db.models.fields.CharField')(default='', max_length=128, db_column='id_externe'))
 
     models = {
         u'authent.structure': {
@@ -77,7 +101,7 @@ class Migration(SchemaMigration):
             'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'departure': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'depart'", 'blank': 'True'}),
             'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'id_externe'", 'blank': 'True'}),
+            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': settings.SRID, 'spatial_index': 'False'}),
             'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': settings.SRID}),
             'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
@@ -186,7 +210,7 @@ class Migration(SchemaMigration):
         u'trekking.poi': {
             'Meta': {'object_name': 'POI', 'db_table': "'o_t_poi'", '_ormbases': [u'core.Topology']},
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'"}),
-            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'id_externe'", 'blank': 'True'}),
+            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'publication_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'db_column': "'date_publication'", 'blank': 'True'}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'public'"}),
@@ -215,11 +239,11 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['route']", 'object_name': 'Route', 'db_table': "'o_b_parcours'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'null': 'True', 'db_column': "'picto'", 'blank': 'True'}),
-            'route': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'parcours'"}),
+            'route': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'parcours'"})
         },
         u'trekking.service': {
             'Meta': {'object_name': 'Service', 'db_table': "'o_t_service'", '_ormbases': [u'core.Topology']},
-            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'id_externe'", 'blank': 'True'}),
+            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
             'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'services'", 'db_column': "'type'", 'to': u"orm['trekking.ServiceType']"})
@@ -248,8 +272,8 @@ class Migration(SchemaMigration):
             'difficulty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'difficulte'", 'to': u"orm['trekking.DifficultyLevel']"}),
             'disabled_infrastructure': ('django.db.models.fields.TextField', [], {'db_column': "'handicap'", 'blank': 'True'}),
             'duration': ('django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'duree'", 'blank': 'True'}),
-            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'id_externe'", 'blank': 'True'}),
-            'eid2': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'id_externe2'", 'blank': 'True'}),
+            'eid': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
+            'eid2': ('django.db.models.fields.CharField', [], {'max_length': '128', 'null': 'True', 'db_column': "'id_externe2'", 'blank': 'True'}),
             'information_desks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'treks'", 'to': u"orm['tourism.InformationDesk']", 'db_table': "'o_r_itineraire_renseignement'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
             'is_park_centered': ('django.db.models.fields.BooleanField', [], {'db_column': "'coeur'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
