@@ -119,6 +119,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'T'
+    capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     class Meta:
         db_table = 'o_t_itineraire'

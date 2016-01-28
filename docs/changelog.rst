@@ -15,6 +15,10 @@ CHANGELOG
 **Bug fixes**
 
 * Allow NULL values for id_externe fields in database
+* Fix missing elements (eg. POI enumeration) on trek map capture
+* Prevent overlaping controls at bottom of list view
+* Translation of column names in shapefiles export
+* UTF-8 and truncated alerts in shapefile export
 
 
 2.7.2 (2016-01-26)
