@@ -674,7 +674,7 @@ class InformationDeskAPITest(TestCase):
     def test_json(self):
         InformationDeskFactory.create()
         desk2 = InformationDeskFactory.create()
-        response = self.client.get('/api/en/information_desks.geojson?type={}'.format(desk2.type.id))
+        response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
         self.assertIn('features', result)
