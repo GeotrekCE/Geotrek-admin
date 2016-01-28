@@ -8,7 +8,7 @@ from mapentity.registry import MapEntityOptions
 
 from . import models
 from .views import (
-    TrekDocumentPublic, POIDocumentPublic,
+    TrekDocumentPublic, POIDocumentPublic, TrekMapImage,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
@@ -29,6 +29,7 @@ urlpatterns = patterns(
     url(r'^commands/sync$', SyncRandoRedirect.as_view(), name='sync_randos'),
     url(r'^commands/syncview$', sync_view, name='sync_randos_view'),
     url(r'^commands/statesync/$', sync_update_json, name='sync_randos_state'),
+    url(r'^image/trek-(?P<pk>\d+)-(?P<lang>\w\w).png$', TrekMapImage.as_view(), name='trek_map_image'),
 )
 
 

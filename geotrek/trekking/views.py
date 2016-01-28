@@ -172,6 +172,13 @@ class TrekDetail(MapEntityDetail):
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
 
+    def dispatch(self, *args, **kwargs):
+        lang = kwargs.pop('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super(TrekMapImage, self).dispatch(*args, **kwargs)
+
 
 class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
