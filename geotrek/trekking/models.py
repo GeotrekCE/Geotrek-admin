@@ -131,6 +131,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return self.name
 
     @models.permalink
+    def get_map_image_url(self):
+        return ('trekking:trek_map_image', [], {'pk': str(self.pk), 'lang': get_language()})
+
+    def get_map_image_path(self):
+        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
+        if not os.path.exists(basefolder):
+            os.makedirs(basefolder)
+        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.module_name, self.pk, get_language()))
+
+    @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
