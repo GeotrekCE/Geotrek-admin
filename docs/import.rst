@@ -48,7 +48,7 @@ You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
 
-START IMPORT FROM COMMAND LINE
-------------------------------
+START IMPORT GEOTREK-ADMIN UI
+-----------------------------
 
 Open the top right menu and clic on ``imports``.
