@@ -2,8 +2,10 @@
 CHANGELOG
 =========
 
-2.8.1.dev0
+2.8.1 (2016-01-29)
 ------------------
+
+**Bug fixes**
 
 * Synchronize information desk thumbnails
 
