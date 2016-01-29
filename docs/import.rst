@@ -3,7 +3,7 @@ IMPORT FROM SIT
 ===============
 
 
-CONFIGURE SITRA IMPORT
+Configure SITRA import
 ----------------------
 
 To import touristic content from SITRA, create a ``bulkimport/parsers.py`` file with the following content:
@@ -34,21 +34,21 @@ You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
 
-START IMPORT FROM COMMAND LINE
+Start import from command line
 ------------------------------
 
 Just run:
 
 ::
 
-    ./bin/django import bulkimport.sitra.HebergementParser
+    ./bin/django import bulkimport.parsers.HebergementParser
 
 Change the last element ``HebergementParser`` to match one of the class names in ``bulkimport/parsers.py`` file.
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
 
-START IMPORT GEOTREK-ADMIN UI
------------------------------
+Start import from Geotrek-Admin UI
+----------------------------------
 
 Open the top right menu and clic on ``imports``.
